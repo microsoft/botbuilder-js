@@ -9,6 +9,7 @@ import { ConnectedService } from './connectedService';
 
 /**
  * Base class for all azure service definitions.
+ *
  * @deprecated See https://aka.ms/bot-file-basics for more information.
  */
 export class AzureService extends ConnectedService implements IAzureService {
@@ -34,6 +35,7 @@ export class AzureService extends ConnectedService implements IAzureService {
 
     /**
      * Creates a new AzureService instance.
+     *
      * @param source (Optional) JSON based service definition.
      * @param type Type of service being defined.
      */

@@ -9,6 +9,7 @@ import { ConnectedService } from './connectedService';
 
 /**
  * Defines a LUIS service connection.
+ *
  * @deprecated See https://aka.ms/bot-file-basics for more information.
  */
 export class LuisService extends ConnectedService implements ILuisService {
@@ -45,8 +46,9 @@ export class LuisService extends ConnectedService implements ILuisService {
 
     /**
      * Creates a new LuisService instance.
+     *
      * @param source (Optional) JSON based service definition.
-     * @param type (Optional) type of service being defined.
+     * @param serviceType (Optional) type of service being defined.
      */
     constructor(source: ILuisService = {} as ILuisService, serviceType?: ServiceTypes) {
         super(source, serviceType || ServiceTypes.Luis);
@@ -55,6 +57,8 @@ export class LuisService extends ConnectedService implements ILuisService {
     /**
      * Get endpoint for the luis service. If a customEndpoint is set then this is returned
      * otherwise the endpoint is automatically generated based on the region set.
+     *
+     * @returns The URL for this service.
      */
     public getEndpoint(): string {
         // If a custom endpoint has been supplied, then we should return this instead of
@@ -68,7 +72,7 @@ export class LuisService extends ConnectedService implements ILuisService {
         // usgovvirginia is that actual azure region name, but the cognitive service team called their endpoint 'virginia' instead of 'usgovvirginia'
         // We handle both region names as an alias for virginia.api.cognitive.microsoft.us
         if (reg === 'virginia' || reg === 'usgovvirginia') {
-            return `https://virginia.api.cognitive.microsoft.us`;
+            return 'https://virginia.api.cognitive.microsoft.us';
         }
         // regardless, if it starts with usgov or usdod then it is us TLD (ex: api.cognitive.microsoft.us )
         else if (reg.startsWith('usgov') || reg.startsWith('usdod')) {
@@ -80,6 +84,7 @@ export class LuisService extends ConnectedService implements ILuisService {
 
     /**
      * Encrypt properties on this service.
+     *
      * @param secret Secret to use to encrypt.
      * @param encryptString Function called to encrypt an individual value.
      */
@@ -94,6 +99,7 @@ export class LuisService extends ConnectedService implements ILuisService {
 
     /**
      * Decrypt properties on this service.
+     *
      * @param secret Secret to use to decrypt.
      * @param decryptString Function called to decrypt an individual value.
      */

@@ -8,6 +8,7 @@ import { IConnectedService, ServiceTypes } from '../schema';
 
 /**
  * Base class for all connected service definitions.
+ *
  * @deprecated See https://aka.ms/bot-file-basics for more information.
  */
 export class ConnectedService implements IConnectedService {
@@ -23,6 +24,7 @@ export class ConnectedService implements IConnectedService {
 
     /**
      * Creates a new ConnectedService instance.
+     *
      * @param source (Optional) JSON based service definition.
      * @param type (Optional) type of service being defined.
      */
@@ -34,7 +36,9 @@ export class ConnectedService implements IConnectedService {
     }
 
     /**
-     * Returns a JSON based version of the model for saving to disk.
+     * Creates a JSON based version of the model for saving to disk.
+     *
+     * @returns An IConnectedService JSON.
      */
     public toJSON(): IConnectedService {
         return <IConnectedService>Object.assign({}, this);
@@ -42,19 +46,21 @@ export class ConnectedService implements IConnectedService {
 
     /**
      * Encrypt properties on this service.
-     * @param secret Secret to use to encrypt the keys in this service.
-     * @param encryptString Function called to encrypt an individual value.
+     *
+     * @param _secret Secret to use to encrypt the keys in this service.
+     * @param _encryptString Function called to encrypt an individual value.
      */
-    public encrypt(secret: string, encryptString: (value: string, secret: string) => string): void {
+    public encrypt(_secret: string, _encryptString: (value: string, secret: string) => string): void {
         // noop
     }
 
     /**
      * Decrypt properties on this service.
-     * @param secret Secret to use to decrypt the keys in this service.
-     * @param decryptString Function called to decrypt an individual value.
+     *
+     * @param _secret Secret to use to decrypt the keys in this service.
+     * @param _decryptString Function called to decrypt an individual value.
      */
-    public decrypt(secret: string, decryptString: (value: string, secret: string) => string): void {
+    public decrypt(_secret: string, _decryptString: (value: string, secret: string) => string): void {
         // noop
     }
 }

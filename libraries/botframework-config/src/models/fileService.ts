@@ -9,6 +9,7 @@ import { ConnectedService } from './connectedService';
 
 /**
  * Defines an file service connection.
+ *
  * @deprecated See https://aka.ms/bot-file-basics for more information.
  */
 export class FileService extends ConnectedService implements IFileService {
@@ -19,6 +20,7 @@ export class FileService extends ConnectedService implements IFileService {
 
     /**
      * Creates a new FileService instance.
+     *
      * @param source (Optional) JSON based service definition.
      */
     constructor(source: IFileService = {} as IFileService) {
@@ -27,19 +29,21 @@ export class FileService extends ConnectedService implements IFileService {
 
     /**
      * Encrypt properties on this service.
-     * @param secret Secret to use to encrypt.
-     * @param encryptString Function called to encrypt an individual value.
+     *
+     * @param _secret Secret to use to encrypt.
+     * @param _encryptString Function called to encrypt an individual value.
      */
-    public encrypt(secret: string, encryptString: (value: string, secret: string) => string): void {
+    public encrypt(_secret: string, _encryptString: (value: string, secret: string) => string): void {
         return;
     }
 
     /**
      * Decrypt properties on this service.
-     * @param secret Secret to use to decrypt.
-     * @param decryptString Function called to decrypt an individual value.
+     *
+     * @param _secret Secret to use to decrypt.
+     * @param _decryptString Function called to decrypt an individual value.
      */
-    public decrypt(secret: string, decryptString: (value: string, secret: string) => string): void {
+    public decrypt(_secret: string, _decryptString: (value: string, secret: string) => string): void {
         return;
     }
 }

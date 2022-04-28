@@ -9,6 +9,7 @@ import { LuisService } from './luisService';
 
 /**
  * Defines a dispatch service connection.
+ *
  * @deprecated See https://aka.ms/bot-file-basics for more information.
  */
 export class DispatchService extends LuisService implements IDispatchService {
@@ -19,6 +20,7 @@ export class DispatchService extends LuisService implements IDispatchService {
 
     /**
      * Creates a new DispatchService instance.
+     *
      * @param source (Optional) JSON based service definition.
      */
     constructor(source: IDispatchService = {} as IDispatchService) {

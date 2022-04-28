@@ -51,8 +51,10 @@ export class BotConfigurationBase implements Partial<IBotConfiguration> {
     }
 
     /**
-     * Returns a ConnectedService instance given a JSON based service configuration.
+     * Loads a ConnectedService instance given a JSON based service configuration.
+     *
      * @param service JSON based service configuration.
+     * @returns A new ConnectedService instance.
      */
     public static serviceFromJSON(service: IConnectedService): ConnectedService {
         switch (service.type) {
@@ -92,8 +94,10 @@ export class BotConfigurationBase implements Partial<IBotConfiguration> {
     }
 
     /**
-     * Returns a new BotConfigurationBase instance given a JSON based configuration.
+     * Loads a new BotConfigurationBase instance given a JSON based configuration.
+     *
      * @param source JSON based configuration.
+     * @returns A new BotConfigurationBase instance.
      */
     public static fromJSON(source: Partial<IBotConfiguration> = {}): BotConfigurationBase {
         // tslint:disable-next-line:prefer-const
@@ -109,7 +113,9 @@ export class BotConfigurationBase implements Partial<IBotConfiguration> {
     }
 
     /**
-     * Returns a JSON based version of the current bot.
+     * Creates a JSON based version of the current bot.
+     *
+     * @returns An IBotConfiguration JSON.
      */
     public toJSON(): IBotConfiguration {
         const newConfig: IBotConfiguration = <IBotConfiguration>{};
@@ -124,6 +130,7 @@ export class BotConfigurationBase implements Partial<IBotConfiguration> {
 
     /**
      * Connect a service to the bot file.
+     *
      * @param newService Service to add.
      * @returns Assigned ID for the service.
      */
@@ -150,7 +157,9 @@ export class BotConfigurationBase implements Partial<IBotConfiguration> {
 
     /**
      * Find service by id.
+     *
      * @param id ID of the service to find.
+     * @returns The IConnectedService based on the provided id.
      */
     public findService(id: string): IConnectedService {
         for (const service of this.services) {
@@ -164,7 +173,9 @@ export class BotConfigurationBase implements Partial<IBotConfiguration> {
 
     /**
      * Find service by name or id.
+     *
      * @param nameOrId Name or ID of the service to find.
+     * @returns The IConnectedService based on the provided name or id.
      */
     public findServiceByNameOrId(nameOrId: string): IConnectedService {
         for (const service of this.services) {
@@ -184,7 +195,9 @@ export class BotConfigurationBase implements Partial<IBotConfiguration> {
 
     /**
      * Remove service by name or id.
+     *
      * @param nameOrId Name or ID of the service to remove.
+     * @returns The removed IConnectedService based on the provided name or id.
      */
     public disconnectServiceByNameOrId(nameOrId: string): IConnectedService {
         const { services = [] } = this;
@@ -200,7 +213,8 @@ export class BotConfigurationBase implements Partial<IBotConfiguration> {
 
     /**
      * Remove service by id.
-     * @param nameOrId ID of the service to remove.
+     *
+     * @param id ID of the service to remove.
      */
     public disconnectService(id: string): void {
         const { services = [] } = this;
