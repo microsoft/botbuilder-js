@@ -920,13 +920,11 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
                     const message = QnACardBuilder.getQnAAnswerCard(answer, this.displayPreciseAnswerOnly);
                     await step.context.sendActivity(message);
                     return Dialog.EndOfTurn;
-                }
-                else {
+                } else {
                     const message = QnACardBuilder.getQnAAnswerCard(answer, this.displayPreciseAnswerOnly);
                     await step.context.sendActivity(message);
                     return step.endDialog();
                 }
-
             }
         }
 

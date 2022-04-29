@@ -260,7 +260,6 @@ export class QnAMaker implements QnAMakerClient, QnAMakerTelemetryClient {
         telemetryProperties?: { [key: string]: string },
         telemetryMetrics?: { [key: string]: number }
     ): Promise<QnAMakerResults> {
-        const queryResult: QnAMakerResult[] = [] as QnAMakerResult[];
         const question: string = this.getTrimmedMessageText(context);
         const queryOptions: QnAMakerOptions = { ...this._options, ...options } as QnAMakerOptions;
 
