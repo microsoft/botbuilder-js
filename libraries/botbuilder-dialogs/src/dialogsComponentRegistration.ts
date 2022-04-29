@@ -22,6 +22,9 @@ export class DialogsComponentRegistration
         pathResolvers: [],
     });
 
+    /**
+     * Creates an instance of the [DialogsComponentRegistration](xref:botbuilder-dialogs.DialogsComponentRegistration) class.
+     */
     constructor() {
         super();
 

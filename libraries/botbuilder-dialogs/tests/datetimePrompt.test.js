@@ -2,9 +2,9 @@ const { ActivityTypes, ConversationState, MemoryStorage, TestAdapter } = require
 const { DateTimePrompt, DialogSet, DialogTurnStatus } = require('../');
 const assert = require('assert');
 
-const answerMessage = { text: `January 1st, 2018 at 9am`, type: ActivityTypes.Message };
-const answerMessage2 = { text: `September 2nd, 2012`, type: ActivityTypes.Message };
-const invalidMessage = { text: `I am not sure`, type: ActivityTypes.Message };
+const answerMessage = { text: 'January 1st, 2018 at 9am', type: ActivityTypes.Message };
+const answerMessage2 = { text: 'September 2nd, 2012', type: ActivityTypes.Message };
+const invalidMessage = { text: 'I am not sure', type: ActivityTypes.Message };
 
 describe('DatetimePrompt', function () {
     this.timeout(5000);
@@ -31,7 +31,8 @@ describe('DatetimePrompt', function () {
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new DateTimePrompt('prompt'));
 
-        await adapter.send('Hello')
+        await adapter
+            .send('Hello')
             .assertReply('Please say something.')
             .send(answerMessage)
             .assertReply('2018-01-01T09')
@@ -57,7 +58,8 @@ describe('DatetimePrompt', function () {
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new DateTimePrompt('prompt'));
 
-        await adapter.send('Hello')
+        await adapter
+            .send('Hello')
             .assertReply('Please say something.')
             .send(answerMessage)
             .assertReply('2018-01-01T09')
@@ -82,12 +84,15 @@ describe('DatetimePrompt', function () {
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
-        dialogs.add(new DateTimePrompt('prompt', async (prompt) => {
-            assert(prompt);
-            return prompt.recognized.succeeded;
-        }));
+        dialogs.add(
+            new DateTimePrompt('prompt', async (prompt) => {
+                assert(prompt);
+                return prompt.recognized.succeeded;
+            })
+        );
 
-        await adapter.send('Hello')
+        await adapter
+            .send('Hello')
             .assertReply('Please say something.')
             .send(answerMessage)
             .assertReply('2018-01-01T09')
@@ -100,7 +105,10 @@ describe('DatetimePrompt', function () {
 
             const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
-                await dc.prompt('prompt', { prompt: 'Please say something.', retryPrompt: 'Please provide a valid datetime.' });
+                await dc.prompt('prompt', {
+                    prompt: 'Please say something.',
+                    retryPrompt: 'Please provide a valid datetime.',
+                });
             } else if (results.status === DialogTurnStatus.complete) {
                 const dates = results.result;
                 await turnContext.sendActivity(dates[0].timex);
@@ -112,12 +120,15 @@ describe('DatetimePrompt', function () {
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
-        dialogs.add(new DateTimePrompt('prompt', async (prompt) => {
-            assert(prompt);
-            return prompt.recognized.succeeded;
-        }));
+        dialogs.add(
+            new DateTimePrompt('prompt', async (prompt) => {
+                assert(prompt);
+                return prompt.recognized.succeeded;
+            })
+        );
 
-        await adapter.send('Hello')
+        await adapter
+            .send('Hello')
             .assertReply('Please say something.')
             .send(invalidMessage)
             .assertReply('Please provide a valid datetime.')
@@ -132,7 +143,10 @@ describe('DatetimePrompt', function () {
 
             const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
-                await dc.prompt('prompt', { prompt: 'Please say something.', retryPrompt: 'Please provide a valid datetime.' });
+                await dc.prompt('prompt', {
+                    prompt: 'Please say something.',
+                    retryPrompt: 'Please provide a valid datetime.',
+                });
             } else if (results.status === DialogTurnStatus.complete) {
                 const dates = results.result;
                 await turnContext.sendActivity(dates[0].timex);
@@ -144,15 +158,18 @@ describe('DatetimePrompt', function () {
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
-        dialogs.add(new DateTimePrompt('prompt', async (prompt) => {
-            assert(prompt);
-            if (!prompt.recognized.succeeded) {
-                await prompt.context.sendActivity('That was a bad date.');
-            }
-            return prompt.recognized.succeeded;
-        }));
+        dialogs.add(
+            new DateTimePrompt('prompt', async (prompt) => {
+                assert(prompt);
+                if (!prompt.recognized.succeeded) {
+                    await prompt.context.sendActivity('That was a bad date.');
+                }
+                return prompt.recognized.succeeded;
+            })
+        );
 
-        await adapter.send('Hello')
+        await adapter
+            .send('Hello')
             .assertReply('Please say something.')
             .send(invalidMessage)
             .assertReply('That was a bad date.')
@@ -179,16 +196,14 @@ describe('DatetimePrompt', function () {
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
-        dialogs.add(new DateTimePrompt('prompt', async (prompt) => {
-            assert(prompt);
-            return prompt.recognized.succeeded;
-        }));
+        dialogs.add(
+            new DateTimePrompt('prompt', async (prompt) => {
+                assert(prompt);
+                return prompt.recognized.succeeded;
+            })
+        );
 
-        await adapter.send('Hello')
-            .send(invalidMessage)
-            .send(answerMessage2)
-            .assertReply('2012-09-02')
-            .startTest();
+        await adapter.send('Hello').send(invalidMessage).send(answerMessage2).assertReply('2012-09-02').startTest();
     });
 
     it('should not recognize, then re-prompt without error for falsy input.', async function () {
@@ -213,7 +228,8 @@ describe('DatetimePrompt', function () {
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new DateTimePrompt('prompt'));
 
-        await adapter.send('Hello')
+        await adapter
+            .send('Hello')
             .assertReply('Enter a date.')
             .send('')
             .assertReply('Enter a date.')

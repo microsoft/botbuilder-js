@@ -22,6 +22,7 @@ export abstract class DialogContainer<O extends object = {}> extends Dialog<O> {
 
     /**
      * Creates an inner dialog context for the containers active child.
+     *
      * @param dc Parents dialog context.
      * @returns A new dialog context for the active child or `undefined` if there is no active child.
      */
@@ -29,7 +30,9 @@ export abstract class DialogContainer<O extends object = {}> extends Dialog<O> {
 
     /**
      * Finds a child dialog that was previously added to the container.
+     *
      * @param dialogId ID of the dialog to lookup.
+     * @returns The Dialog if found; otherwise null.
      */
     public findDialog(dialogId: string): Dialog | undefined {
         return this.dialogs.find(dialogId);
@@ -41,6 +44,7 @@ export abstract class DialogContainer<O extends object = {}> extends Dialog<O> {
      *
      * @param dc The dialog context for the current turn of conversation.
      * @param e The event being raised.
+     * @returns True if the event is handled by the current dialog and bubbling should stop.
      */
     public async onDialogEvent(dc: DialogContext, e: DialogEvent): Promise<boolean> {
         const handled = await super.onDialogEvent(dc, e);
@@ -104,6 +108,8 @@ export abstract class DialogContainer<O extends object = {}> extends Dialog<O> {
 
     /**
      * Get the current telemetry client.
+     *
+     * @returns The [BotTelemetryClient](xref:botbuilder.BotTelemetryClient) to use for logging.
      */
     public get telemetryClient(): BotTelemetryClient {
         return this._telemetryClient;

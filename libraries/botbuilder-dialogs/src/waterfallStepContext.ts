@@ -40,6 +40,7 @@ export interface WaterfallStepInfo<O extends object> {
 
     /**
      * Called to skip to the next waterfall step.
+     *
      * @param result (Optional) result to pass to the next step.
      */
     onNext(result?: any): Promise<DialogTurnResult>;
@@ -47,6 +48,7 @@ export interface WaterfallStepInfo<O extends object> {
 
 /**
  * Context object passed in to a `WaterfallStep`.
+ *
  * @param O (Optional) type of options passed to the steps waterfall dialog in the call to `DialogContext.beginDialog()`.
  */
 export class WaterfallStepContext<O extends object = {}> extends DialogContext {
@@ -54,6 +56,7 @@ export class WaterfallStepContext<O extends object = {}> extends DialogContext {
 
     /**
      * Creates a new WaterfallStepContext instance.
+     *
      * @param dc The dialog context for the current turn of conversation.
      * @param info Values to initialize the step context with.
      */
@@ -65,6 +68,8 @@ export class WaterfallStepContext<O extends object = {}> extends DialogContext {
 
     /**
      * The index of the current waterfall step being executed.
+     *
+     * @returns The index of the current waterfall step being executed.
      */
     public get index(): number {
         return this._info.index;
@@ -73,6 +78,8 @@ export class WaterfallStepContext<O extends object = {}> extends DialogContext {
     /**
      * Any options passed to the steps waterfall dialog when it was started with
      * `DialogContext.beginDialog()`.
+     *
+     * @returns Any options the waterfall dialog was called with.
      */
     public get options(): O {
         return this._info.options;
@@ -80,6 +87,8 @@ export class WaterfallStepContext<O extends object = {}> extends DialogContext {
 
     /**
      * The reason the waterfall step is being executed.
+     *
+     * @returns The reason the waterfall step is being executed.
      */
     public get reason(): DialogReason {
         return this._info.reason;
@@ -87,6 +96,8 @@ export class WaterfallStepContext<O extends object = {}> extends DialogContext {
 
     /**
      * Results returned by a dialog or prompt that was called in the previous waterfall step.
+     *
+     * @returns The result from the previous waterfall step.
      */
     public get result(): any {
         return this._info.result;
@@ -94,6 +105,8 @@ export class WaterfallStepContext<O extends object = {}> extends DialogContext {
 
     /**
      * A dictionary of values which will be persisted across all waterfall steps.
+     *
+     * @returns A dictionary of values which will be persisted across all waterfall steps.
      */
     public get values(): object {
         return this._info.values;
@@ -108,6 +121,7 @@ export class WaterfallStepContext<O extends object = {}> extends DialogContext {
      * return await step.skip();
      * ```
      * @param result (Optional) result to pass to the next step.
+     * @returns A promise with the DialogTurnResult.
      */
     public async next(result?: any): Promise<DialogTurnResult> {
         return await this._info.onNext(result);

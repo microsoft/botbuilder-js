@@ -19,6 +19,7 @@ import { WaterfallStepContext } from './waterfallStepContext';
  * ```TypeScript
  * type WaterfallStep<O extends object = {}> = (step: WaterfallStepContext<O>) => Promise<DialogTurnResult>;
  * ```
+ *
  * @param O (Optional) type of dialog options passed into the step.
  * @param WaterfallStep.step Contextual information for the current step being executed.
  */
@@ -91,12 +92,13 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
 
     /**
      * Gets the dialog version, composed of the ID and number of steps.
+     *
      * @returns Dialog version, composed of the ID and number of steps.
      */
     public getVersion(): string {
         // Simply return the id + number of steps to help detect when new steps have
         // been added to a given waterfall.
-        return `${ this.id }:${ this.steps.length }`;
+        return `${this.id}:${this.steps.length}`;
     }
 
     /**
@@ -136,6 +138,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
      * helloDialog.addStep(this.helloWorldStep.bind(this));
      * ```
      * @param step Asynchronous step function to call.
+     * @returns Waterfall dialog for fluent calls to `addStep()`.
      */
     public addStep(step: WaterfallStep<O>): this {
         this.steps.push(step);
@@ -145,6 +148,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
 
     /**
      * Called when the [WaterfallDialog](xref:botbuilder-dialogs.WaterfallDialog) is started and pushed onto the dialog stack.
+     *
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Optional, initial information to pass to the [Dialog](xref:botbuilder-dialogs.Dialog).
      * @returns A Promise representing the asynchronous operation.
@@ -177,6 +181,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
     /**
      * Called when the [WaterfallDialog](xref:botbuilder-dialogs.WaterfallDialog) is _continued_, where it is the active dialog and the
      * user replies with a new [Activity](xref:botframework-schema.Activity).
+     *
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @returns A Promise representing the asynchronous operation.
      * @remarks
@@ -196,6 +201,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
 
     /**
      * Called when a child [WaterfallDialog](xref:botbuilder-dialogs.WaterfallDialog) completed its turn, returning control to this dialog.
+     *
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of the conversation.
      * @param reason [Reason](xref:botbuilder-dialogs.DialogReason) why the dialog resumed.
      * @param result Optional, value returned from the dialog that was called. The type
@@ -224,6 +230,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
      * }
      * ```
      * @param step Context object for the waterfall step to execute.
+     * @returns A promise with the DialogTurnResult.
      */
     protected async onStep(step: WaterfallStepContext<O>): Promise<DialogTurnResult> {
         // Log Waterfall Step event.
@@ -242,6 +249,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
 
     /**
      * Executes a step of the [WaterfallDialog](xref:botbuilder-dialogs.WaterfallDialog).
+     *
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param index The index of the current waterfall step to execute.
      * @param reason The [Reason](xref:botbuilder-dialogs.DialogReason) the waterfall step is being executed.
@@ -320,6 +328,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
 
     /**
      * Identifies the step name by its position index.
+     *
      * @param index Step position
      * @returns A string that identifies the step name.
      */

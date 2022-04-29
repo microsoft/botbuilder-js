@@ -2,9 +2,7 @@ const { ActivityTypes, ConversationState, MemoryStorage, TestAdapter } = require
 const { ConfirmPrompt, DialogSet, DialogTurnStatus, ListStyle } = require('../');
 const assert = require('assert');
 
-const beginMessage = { text: `begin`, type: 'message' };
-const answerMessage = { text: `yes`, type: 'message' };
-const invalidMessage = { text: `what?`, type: 'message' };
+const invalidMessage = { text: 'what?', type: 'message' };
 
 describe('ConfirmPrompt', function () {
     this.timeout(5000);
@@ -18,7 +16,7 @@ describe('ConfirmPrompt', function () {
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please confirm.' });
             } else if (results.status === DialogTurnStatus.complete) {
-                await turnContext.sendActivity(`The result found is '${ results.result }'.`);
+                await turnContext.sendActivity(`The result found is '${results.result}'.`);
             }
             await convoState.saveChanges(turnContext);
         });
@@ -31,10 +29,11 @@ describe('ConfirmPrompt', function () {
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new ConfirmPrompt('prompt'));
 
-        await adapter.send('Hello')
+        await adapter
+            .send('Hello')
             .assertReply('Please confirm. (1) Yes or (2) No')
             .send('yes')
-            .assertReply(`The result found is 'true'.`)
+            .assertReply("The result found is 'true'.")
             .startTest();
     });
 
@@ -46,7 +45,7 @@ describe('ConfirmPrompt', function () {
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', { prompt: 'Please confirm. Yes or No' });
             } else if (results.status === DialogTurnStatus.complete) {
-                await turnContext.sendActivity(`The result found is '${ results.result }'.`);
+                await turnContext.sendActivity(`The result found is '${results.result}'.`);
             }
             await convoState.saveChanges(turnContext);
         });
@@ -56,16 +55,17 @@ describe('ConfirmPrompt', function () {
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
         const confirmPrompt = new ConfirmPrompt('prompt', async (prompt) => {
-            assert(prompt, `PromptValidatorContext not found.`);
+            assert(prompt, 'PromptValidatorContext not found.');
             return prompt.recognized.succeeded;
         });
         confirmPrompt.style = ListStyle.none;
         dialogs.add(confirmPrompt);
 
-        await adapter.send('Hello')
+        await adapter
+            .send('Hello')
             .assertReply('Please confirm. Yes or No')
             .send('no')
-            .assertReply(`The result found is 'false'.`)
+            .assertReply("The result found is 'false'.")
             .startTest();
     });
 
@@ -77,10 +77,10 @@ describe('ConfirmPrompt', function () {
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', {
                     prompt: 'Please confirm. Yes or No',
-                    retryPrompt: `Please reply with 'Yes' or 'No'.`
+                    retryPrompt: "Please reply with 'Yes' or 'No'.",
                 });
             } else if (results.status === DialogTurnStatus.complete) {
-                await turnContext.sendActivity(`The result found is '${ results.result }'.`);
+                await turnContext.sendActivity(`The result found is '${results.result}'.`);
             }
             await convoState.saveChanges(turnContext);
         });
@@ -93,13 +93,13 @@ describe('ConfirmPrompt', function () {
         confirmPrompt.style = ListStyle.none;
         dialogs.add(confirmPrompt);
 
-
-        await adapter.send('Hello')
+        await adapter
+            .send('Hello')
             .assertReply('Please confirm. Yes or No')
             .send('what?')
-            .assertReply(`Please reply with 'Yes' or 'No'.`)
+            .assertReply("Please reply with 'Yes' or 'No'.")
             .send('no')
-            .assertReply(`The result found is 'false'.`)
+            .assertReply("The result found is 'false'.")
             .startTest();
     });
 
@@ -111,10 +111,10 @@ describe('ConfirmPrompt', function () {
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', {
                     prompt: 'Please confirm. Yes or No',
-                    retryPrompt: `Please reply with 'Yes' or 'No'.`
+                    retryPrompt: "Please reply with 'Yes' or 'No'.",
                 });
             } else if (results.status === DialogTurnStatus.complete) {
-                await turnContext.sendActivity(`The result found is '${ results.result }'.`);
+                await turnContext.sendActivity(`The result found is '${results.result}'.`);
             }
             await convoState.saveChanges(turnContext);
         });
@@ -124,18 +124,19 @@ describe('ConfirmPrompt', function () {
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
         const confirmPrompt = new ConfirmPrompt('prompt', async (prompt) => {
-            assert(prompt, `PromptValidatorContext not found.`);
+            assert(prompt, 'PromptValidatorContext not found.');
             return prompt.recognized.succeeded;
         });
         confirmPrompt.style = ListStyle.none;
         dialogs.add(confirmPrompt);
 
-        await adapter.send('Hello')
+        await adapter
+            .send('Hello')
             .assertReply('Please confirm. Yes or No')
             .send('what?')
-            .assertReply(`Please reply with 'Yes' or 'No'.`)
+            .assertReply("Please reply with 'Yes' or 'No'.")
             .send('no')
-            .assertReply(`The result found is 'false'.`)
+            .assertReply("The result found is 'false'.")
             .startTest();
     });
 
@@ -147,10 +148,10 @@ describe('ConfirmPrompt', function () {
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', {
                     prompt: 'Please confirm. Yes or No',
-                    retryPrompt: `Please reply with 'Yes' or 'No'.`
+                    retryPrompt: "Please reply with 'Yes' or 'No'.",
                 });
             } else if (results.status === DialogTurnStatus.complete) {
-                await turnContext.sendActivity(`The result found is '${ results.result }'.`);
+                await turnContext.sendActivity(`The result found is '${results.result}'.`);
             }
             await convoState.saveChanges(turnContext);
         });
@@ -160,22 +161,22 @@ describe('ConfirmPrompt', function () {
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
         const confirmPrompt = new ConfirmPrompt('prompt', async (prompt) => {
-            assert(prompt, `PromptValidatorContext not found.`);
+            assert(prompt, 'PromptValidatorContext not found.');
             if (!prompt.recognized.succeeded) {
-                await prompt.context.sendActivity('The correct response is either yes or no. Please choose one.')
+                await prompt.context.sendActivity('The correct response is either yes or no. Please choose one.');
             }
             return prompt.recognized.succeeded;
         });
         confirmPrompt.style = ListStyle.none;
         dialogs.add(confirmPrompt);
 
-
-        await adapter.send('Hello')
+        await adapter
+            .send('Hello')
             .assertReply('Please confirm. Yes or No')
             .send('what?')
             .assertReply('The correct response is either yes or no. Please choose one.')
             .send('no')
-            .assertReply(`The result found is 'false'.`)
+            .assertReply("The result found is 'false'.")
             .startTest();
     });
 
@@ -187,7 +188,7 @@ describe('ConfirmPrompt', function () {
             if (results.status === DialogTurnStatus.empty) {
                 await dc.beginDialog('prompt');
             } else if (results.status === DialogTurnStatus.complete) {
-                await turnContext.sendActivity(`The result found is '${ results.result }'.`);
+                await turnContext.sendActivity(`The result found is '${results.result}'.`);
             }
             await convoState.saveChanges(turnContext);
         });
@@ -200,13 +201,13 @@ describe('ConfirmPrompt', function () {
         confirmPrompt.style = ListStyle.none;
         dialogs.add(confirmPrompt);
 
-
-        await adapter.send('Hello')
+        await adapter
+            .send('Hello')
             .assertReply('')
             .send('what?')
             .assertReply('')
             .send('no')
-            .assertReply(`The result found is 'false'.`)
+            .assertReply("The result found is 'false'.")
             .startTest();
     });
 
@@ -218,10 +219,10 @@ describe('ConfirmPrompt', function () {
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', {
                     prompt: 'Please confirm. Yes or No',
-                    retryPrompt: `Please reply with 'Yes' or 'No'.`
+                    retryPrompt: "Please reply with 'Yes' or 'No'.",
                 });
             } else if (results.status === DialogTurnStatus.complete) {
-                await turnContext.sendActivity(`The result found is '${ results.result }'.`);
+                await turnContext.sendActivity(`The result found is '${results.result}'.`);
             }
             await convoState.saveChanges(turnContext);
         });
@@ -234,13 +235,13 @@ describe('ConfirmPrompt', function () {
         confirmPrompt.style = ListStyle.none;
         dialogs.add(confirmPrompt);
 
-
-        await adapter.send('Hello')
+        await adapter
+            .send('Hello')
             .assertReply('Please confirm. Yes or No')
-            .send({ type: ActivityTypes.Message, attachments: ['ignoreThis']})
-            .assertReply(`Please reply with 'Yes' or 'No'.`)
+            .send({ type: ActivityTypes.Message, attachments: ['ignoreThis'] })
+            .assertReply("Please reply with 'Yes' or 'No'.")
             .send('no')
-            .assertReply(`The result found is 'false'.`)
+            .assertReply("The result found is 'false'.")
             .startTest();
     });
 
@@ -252,10 +253,10 @@ describe('ConfirmPrompt', function () {
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', {
                     prompt: 'Please confirm. Yes or No',
-                    retryPrompt: `Please reply with 'Yes' or 'No'.`
+                    retryPrompt: "Please reply with 'Yes' or 'No'.",
                 });
             } else if (results.status === DialogTurnStatus.complete) {
-                await turnContext.sendActivity(`The result found is '${ results.result }'.`);
+                await turnContext.sendActivity(`The result found is '${results.result}'.`);
             }
             await convoState.saveChanges(turnContext);
         });
@@ -268,15 +269,15 @@ describe('ConfirmPrompt', function () {
         confirmPrompt.style = ListStyle.none;
         dialogs.add(confirmPrompt);
 
-
-        await adapter.send('Hello')
+        await adapter
+            .send('Hello')
             .assertReply('Please confirm. Yes or No')
             .send('')
-            .assertReply('Please reply with \'Yes\' or \'No\'.')
+            .assertReply("Please reply with 'Yes' or 'No'.")
             .send({ type: ActivityTypes.Message, text: null })
-            .assertReply('Please reply with \'Yes\' or \'No\'.')
+            .assertReply("Please reply with 'Yes' or 'No'.")
             .send('no')
-            .assertReply(`The result found is 'false'.`)
+            .assertReply("The result found is 'false'.")
             .startTest();
     });
 
@@ -301,16 +302,21 @@ describe('ConfirmPrompt', function () {
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
-        const confirmPrompt = new ConfirmPrompt('prompt', async (prompt) => {
-            assert(prompt);
-            if (!prompt.recognized.succeeded) {
-                await prompt.context.sendActivity('bad input.');
-            }
-            return prompt.recognized.succeeded;
-        }, 'ja-jp');
+        const confirmPrompt = new ConfirmPrompt(
+            'prompt',
+            async (prompt) => {
+                assert(prompt);
+                if (!prompt.recognized.succeeded) {
+                    await prompt.context.sendActivity('bad input.');
+                }
+                return prompt.recognized.succeeded;
+            },
+            'ja-jp'
+        );
         dialogs.add(confirmPrompt);
 
-        await adapter.send({ text: 'Hello', type: ActivityTypes.Message })
+        await adapter
+            .send({ text: 'Hello', type: ActivityTypes.Message })
             .assertReply('Please confirm. (1) はい または (2) いいえ')
             .send(invalidMessage)
             .assertReply('bad input.')
@@ -349,7 +355,8 @@ describe('ConfirmPrompt', function () {
         });
         dialogs.add(confirmPrompt);
 
-        await adapter.send({ text: 'Hello', type: ActivityTypes.Message, locale: 'ja-jp' })
+        await adapter
+            .send({ text: 'Hello', type: ActivityTypes.Message, locale: 'ja-jp' })
             .assertReply('Please confirm. (1) はい または (2) いいえ')
             .send({ text: 'いいえ', type: ActivityTypes.Message, locale: 'ja-jp' })
             .assertReply('false')
@@ -377,16 +384,21 @@ describe('ConfirmPrompt', function () {
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
-        const confirmPrompt = new ConfirmPrompt('prompt', async (prompt) => {
-            assert(prompt);
-            if (!prompt.recognized.succeeded) {
-                await prompt.context.sendActivity('bad input.');
-            }
-            return prompt.recognized.succeeded;
-        }, 'es-es');
+        const confirmPrompt = new ConfirmPrompt(
+            'prompt',
+            async (prompt) => {
+                assert(prompt);
+                if (!prompt.recognized.succeeded) {
+                    await prompt.context.sendActivity('bad input.');
+                }
+                return prompt.recognized.succeeded;
+            },
+            'es-es'
+        );
         dialogs.add(confirmPrompt);
 
-        await adapter.send({ text: 'Hello', type: ActivityTypes.Message, locale: 'ja-jp' })
+        await adapter
+            .send({ text: 'Hello', type: ActivityTypes.Message, locale: 'ja-jp' })
             .assertReply('Please confirm. (1) はい または (2) いいえ')
             .send({ text: 'いいえ', type: ActivityTypes.Message, locale: 'ja-jp' })
             .assertReply('false')
@@ -394,20 +406,10 @@ describe('ConfirmPrompt', function () {
     });
 
     it('should recognize locale variations of correct locales', async function () {
-        const locales = [
-            'es-es',
-            'nl-nl',
-            'en-us',
-            'fr-fr',
-            'de-de',
-            'ja-jp',
-            'it-it',
-            'pt-br',
-            'zh-cn'
-        ];
+        const locales = ['es-es', 'nl-nl', 'en-us', 'fr-fr', 'de-de', 'ja-jp', 'it-it', 'pt-br', 'zh-cn'];
         // es-ES
         const capEnding = (locale) => {
-            return `${ locale.split('-')[0] }-${ locale.split('-')[1].toUpperCase() }`;
+            return `${locale.split('-')[0]}-${locale.split('-')[1].toUpperCase()}`;
         };
         // es-Es
         const titleEnding = (locale) => {
@@ -430,61 +432,70 @@ describe('ConfirmPrompt', function () {
                 capEnding(locale),
                 titleEnding(locale),
                 capTwoLetter(locale),
-                lowerTwoLetter(locale)
+                lowerTwoLetter(locale),
             ];
             return obj;
         }, {});
 
         // Test each valid locale
-        await Promise.all(Object.keys(localeTests).map(async (validLocale) => {
-            // Hold the correct answer from when a valid locale is used
-            let expectedAnswer;
-            // Test each of the test locales
-            await Promise.all(localeTests[validLocale].map(async (testLocale) => {
-                const adapter = new TestAdapter(async (turnContext) => {
-                    const dc = await dialogs.createContext(turnContext);
-        
-                    const results = await dc.continueDialog();
-                    if (results.status === DialogTurnStatus.empty) {
-                        await dc.prompt('prompt', { prompt: 'Please confirm.' });
-                    } else if (results.status === DialogTurnStatus.complete) {
-                        const confirmed = results.result;
-                        if (confirmed) {
-                            await turnContext.sendActivity('true');
-                        } else {
-                            await turnContext.sendActivity('false');
-                        }
-                    }
-                    await convoState.saveChanges(turnContext);
-                });
-                const convoState = new ConversationState(new MemoryStorage());
-        
-                const dialogState = convoState.createProperty('dialogState');
-                const dialogs = new DialogSet(dialogState);
-                const confirmPrompt = new ConfirmPrompt('prompt', async (prompt) => {
-                    assert(prompt);
-                    if (!prompt.recognized.succeeded) {
-                        await prompt.context.sendActivity('bad input.');
-                    }
-                    return prompt.recognized.succeeded;
-                }, testLocale);
-                dialogs.add(confirmPrompt);
-        
-                await adapter.send({ text: 'Hello', type: ActivityTypes.Message, locale: testLocale })
-                    .assertReply((activity) => {
-                        // if the valid locale is tested, save the answer because then we can test to see
-                        //    if the test locales produce the same answer
-                        if (validLocale === testLocale) {
-                            expectedAnswer = activity.text;
-                        }
-                        assert.strictEqual(activity.text, expectedAnswer);
+        await Promise.all(
+            Object.keys(localeTests).map(async (validLocale) => {
+                // Hold the correct answer from when a valid locale is used
+                let expectedAnswer;
+                // Test each of the test locales
+                await Promise.all(
+                    localeTests[validLocale].map(async (testLocale) => {
+                        const adapter = new TestAdapter(async (turnContext) => {
+                            const dc = await dialogs.createContext(turnContext);
+
+                            const results = await dc.continueDialog();
+                            if (results.status === DialogTurnStatus.empty) {
+                                await dc.prompt('prompt', { prompt: 'Please confirm.' });
+                            } else if (results.status === DialogTurnStatus.complete) {
+                                const confirmed = results.result;
+                                if (confirmed) {
+                                    await turnContext.sendActivity('true');
+                                } else {
+                                    await turnContext.sendActivity('false');
+                                }
+                            }
+                            await convoState.saveChanges(turnContext);
+                        });
+                        const convoState = new ConversationState(new MemoryStorage());
+
+                        const dialogState = convoState.createProperty('dialogState');
+                        const dialogs = new DialogSet(dialogState);
+                        const confirmPrompt = new ConfirmPrompt(
+                            'prompt',
+                            async (prompt) => {
+                                assert(prompt);
+                                if (!prompt.recognized.succeeded) {
+                                    await prompt.context.sendActivity('bad input.');
+                                }
+                                return prompt.recognized.succeeded;
+                            },
+                            testLocale
+                        );
+                        dialogs.add(confirmPrompt);
+
+                        await adapter
+                            .send({ text: 'Hello', type: ActivityTypes.Message, locale: testLocale })
+                            .assertReply((activity) => {
+                                // if the valid locale is tested, save the answer because then we can test to see
+                                //    if the test locales produce the same answer
+                                if (validLocale === testLocale) {
+                                    expectedAnswer = activity.text;
+                                }
+                                assert.strictEqual(activity.text, expectedAnswer);
+                            })
+                            .startTest();
                     })
-                    .startTest();
-            }));
-        }));       
+                );
+            })
+        );
     });
 
-    it('should accept and recognize custom locale dict', async function() {
+    it('should accept and recognize custom locale dict', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -509,7 +520,7 @@ describe('ConfirmPrompt', function () {
             locale: 'custom-custom',
             separator: 'customSeparator',
             noInLanguage: 'customNo',
-            yesInLanguage: 'customYes'
+            yesInLanguage: 'customYes',
         };
 
         const customDict = {
@@ -519,23 +530,29 @@ describe('ConfirmPrompt', function () {
                     inlineSeparator: culture.separator,
                     inlineOr: culture.inlineOr,
                     inlineOrMore: culture.inlineOrMore,
-                    includeNumbers: true
-                }
-            }
+                    includeNumbers: true,
+                },
+            },
         };
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
-        const confirmPrompt = new ConfirmPrompt('prompt', async (prompt) => {
-            assert(prompt);
-            if (!prompt.recognized.succeeded) {
-                await prompt.context.sendActivity('bad input.');
-            }
-            return prompt.recognized.succeeded;
-        }, culture.locale, customDict);
+        const confirmPrompt = new ConfirmPrompt(
+            'prompt',
+            async (prompt) => {
+                assert(prompt);
+                if (!prompt.recognized.succeeded) {
+                    await prompt.context.sendActivity('bad input.');
+                }
+                return prompt.recognized.succeeded;
+            },
+            culture.locale,
+            customDict
+        );
         dialogs.add(confirmPrompt);
 
-        await adapter.send({ text: 'Hello', type: ActivityTypes.Message, locale: culture.locale })
+        await adapter
+            .send({ text: 'Hello', type: ActivityTypes.Message, locale: culture.locale })
             .assertReply('Please confirm. (1) customYes customOr (2) customNo')
             .send('customYes')
             .assertReply('true')
@@ -550,7 +567,7 @@ describe('ConfirmPrompt', function () {
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt');
             } else if (results.status === DialogTurnStatus.complete) {
-                await turnContext.sendActivity(`The result found is '${ results.result }'.`);
+                await turnContext.sendActivity(`The result found is '${results.result}'.`);
             }
             await convoState.saveChanges(turnContext);
         });
@@ -563,12 +580,13 @@ describe('ConfirmPrompt', function () {
         prompt.choiceOptions = { includeNumbers: true };
         dialogs.add(prompt);
 
-        await adapter.send('Hello')
+        await adapter
+            .send('Hello')
             .assertReply(' (1) Yes or (2) No')
             .send('lala')
             .assertReply(' (1) Yes or (2) No')
             .send('yes')
-            .assertReply(`The result found is 'true'.`)
+            .assertReply("The result found is 'true'.")
             .startTest();
     });
 
@@ -580,10 +598,13 @@ describe('ConfirmPrompt', function () {
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', {
                     prompt: { text: 'Please confirm.', type: ActivityTypes.Message },
-                    retryPrompt: { text: 'Please confirm, say "yes" or "no" or something like that.', type: ActivityTypes.Message }
+                    retryPrompt: {
+                        text: 'Please confirm, say "yes" or "no" or something like that.',
+                        type: ActivityTypes.Message,
+                    },
                 });
             } else if (results.status === DialogTurnStatus.complete) {
-                await turnContext.sendActivity(`The result found is '${ results.result }'.`);
+                await turnContext.sendActivity(`The result found is '${results.result}'.`);
             }
             await convoState.saveChanges(turnContext);
         });
@@ -596,18 +617,18 @@ describe('ConfirmPrompt', function () {
         prompt.choiceOptions = { includeNumbers: true };
         dialogs.add(prompt);
 
-        await adapter.send('Hello')
+        await adapter
+            .send('Hello')
             .assertReply('Please confirm. (1) Yes or (2) No')
             .send('lala')
             .assertReply('Please confirm, say "yes" or "no" or something like that. (1) Yes or (2) No')
             .send('1')
-            .assertReply(`The result found is 'true'.`)
+            .assertReply("The result found is 'true'.")
             .startTest();
     });
 
     it('should recognize valid number and default to en if locale is null.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
-
             turnContext.activity.locale = null;
 
             const dc = await dialogs.createContext(turnContext);
@@ -616,10 +637,13 @@ describe('ConfirmPrompt', function () {
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', {
                     prompt: { text: 'Please confirm.', type: ActivityTypes.Message },
-                    retryPrompt: { text: 'Please confirm, say "yes" or "no" or something like that.', type: ActivityTypes.Message }
+                    retryPrompt: {
+                        text: 'Please confirm, say "yes" or "no" or something like that.',
+                        type: ActivityTypes.Message,
+                    },
                 });
             } else if (results.status === DialogTurnStatus.complete) {
-                await turnContext.sendActivity(`The result found is '${ results.result }'.`);
+                await turnContext.sendActivity(`The result found is '${results.result}'.`);
             }
             await convoState.saveChanges(turnContext);
         });
@@ -632,18 +656,18 @@ describe('ConfirmPrompt', function () {
         prompt.choiceOptions = { includeNumbers: true };
         dialogs.add(prompt);
 
-        await adapter.send('Hello')
+        await adapter
+            .send('Hello')
             .assertReply('Please confirm. (1) Yes or (2) No')
             .send('lala')
             .assertReply('Please confirm, say "yes" or "no" or something like that. (1) Yes or (2) No')
             .send('1')
-            .assertReply(`The result found is 'true'.`)
+            .assertReply("The result found is 'true'.")
             .startTest();
     });
 
     it('should recognize valid number and default to en if locale invalid string.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
-
             turnContext.activity.locale = 'invalid-locale';
 
             const dc = await dialogs.createContext(turnContext);
@@ -652,10 +676,13 @@ describe('ConfirmPrompt', function () {
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', {
                     prompt: { text: 'Please confirm.', type: ActivityTypes.Message },
-                    retryPrompt: { text: 'Please confirm, say "yes" or "no" or something like that.', type: ActivityTypes.Message }
+                    retryPrompt: {
+                        text: 'Please confirm, say "yes" or "no" or something like that.',
+                        type: ActivityTypes.Message,
+                    },
                 });
             } else if (results.status === DialogTurnStatus.complete) {
-                await turnContext.sendActivity(`The result found is '${ results.result }'.`);
+                await turnContext.sendActivity(`The result found is '${results.result}'.`);
             }
             await convoState.saveChanges(turnContext);
         });
@@ -668,28 +695,31 @@ describe('ConfirmPrompt', function () {
         prompt.choiceOptions = { includeNumbers: true };
         dialogs.add(prompt);
 
-        await adapter.send('Hello')
+        await adapter
+            .send('Hello')
             .assertReply('Please confirm. (1) Yes or (2) No')
             .send('lala')
             .assertReply('Please confirm, say "yes" or "no" or something like that. (1) Yes or (2) No')
             .send('1')
-            .assertReply(`The result found is 'true'.`)
+            .assertReply("The result found is 'true'.")
             .startTest();
     });
 
     it('should recognize valid number and default to en if defaultLocale invalid string.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
-
             const dc = await dialogs.createContext(turnContext);
 
             const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', {
                     prompt: { text: 'Please confirm.', type: ActivityTypes.Message },
-                    retryPrompt: { text: 'Please confirm, say "yes" or "no" or something like that.', type: ActivityTypes.Message }
+                    retryPrompt: {
+                        text: 'Please confirm, say "yes" or "no" or something like that.',
+                        type: ActivityTypes.Message,
+                    },
                 });
             } else if (results.status === DialogTurnStatus.complete) {
-                await turnContext.sendActivity(`The result found is '${ results.result }'.`);
+                await turnContext.sendActivity(`The result found is '${results.result}'.`);
             }
             await convoState.saveChanges(turnContext);
         });
@@ -702,15 +732,16 @@ describe('ConfirmPrompt', function () {
         prompt.choiceOptions = { includeNumbers: true };
         dialogs.add(prompt);
 
-        await adapter.send('Hello')
+        await adapter
+            .send('Hello')
             .assertReply('Please confirm. (1) Yes or (2) No')
             .send('lala')
             .assertReply('Please confirm, say "yes" or "no" or something like that. (1) Yes or (2) No')
             .send('1')
-            .assertReply(`The result found is 'true'.`)
+            .assertReply("The result found is 'true'.")
             .startTest();
     });
-    
+
     it('should not recognize invalid number when choiceOptions.includeNumbers is true.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
@@ -719,10 +750,13 @@ describe('ConfirmPrompt', function () {
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', {
                     prompt: { text: 'Please confirm.', type: ActivityTypes.Message },
-                    retryPrompt: { text: 'Please confirm, say "yes" or "no" or something like that.', type: ActivityTypes.Message }
+                    retryPrompt: {
+                        text: 'Please confirm, say "yes" or "no" or something like that.',
+                        type: ActivityTypes.Message,
+                    },
                 });
             } else if (results.status === DialogTurnStatus.complete) {
-                await turnContext.sendActivity(`The result found is '${ results.result }'.`);
+                await turnContext.sendActivity(`The result found is '${results.result}'.`);
             }
             await convoState.saveChanges(turnContext);
         });
@@ -735,12 +769,13 @@ describe('ConfirmPrompt', function () {
         prompt.choiceOptions = { includeNumbers: true };
         dialogs.add(prompt);
 
-        await adapter.send('Hello')
+        await adapter
+            .send('Hello')
             .assertReply('Please confirm. (1) Yes or (2) No')
             .send('400')
             .assertReply('Please confirm, say "yes" or "no" or something like that. (1) Yes or (2) No')
             .send('1')
-            .assertReply(`The result found is 'true'.`)
+            .assertReply("The result found is 'true'.")
             .startTest();
     });
 
@@ -752,10 +787,13 @@ describe('ConfirmPrompt', function () {
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', {
                     prompt: { text: 'Please confirm.', type: ActivityTypes.Message },
-                    retryPrompt: { text: 'Please confirm, say "yes" or "no" or something like that.', type: ActivityTypes.Message }
+                    retryPrompt: {
+                        text: 'Please confirm, say "yes" or "no" or something like that.',
+                        type: ActivityTypes.Message,
+                    },
                 });
             } else if (results.status === DialogTurnStatus.complete) {
-                await turnContext.sendActivity(`The result found is '${ results.result }'.`);
+                await turnContext.sendActivity(`The result found is '${results.result}'.`);
             }
             await convoState.saveChanges(turnContext);
         });
@@ -768,12 +806,13 @@ describe('ConfirmPrompt', function () {
         prompt.choiceOptions = { includeNumbers: false, inlineSeparator: '~' };
         dialogs.add(prompt);
 
-        await adapter.send('Hello')
+        await adapter
+            .send('Hello')
             .assertReply('Please confirm. Yes or No')
             .send('1')
             .assertReply('Please confirm, say "yes" or "no" or something like that. Yes or No')
             .send('no')
-            .assertReply(`The result found is 'false'.`)
+            .assertReply("The result found is 'false'.")
             .startTest();
     });
 
@@ -785,10 +824,13 @@ describe('ConfirmPrompt', function () {
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', {
                     prompt: { text: 'Please confirm.', type: ActivityTypes.Message },
-                    retryPrompt: { text: 'Please confirm, say "yes" or "no" or something like that.', type: ActivityTypes.Message }
+                    retryPrompt: {
+                        text: 'Please confirm, say "yes" or "no" or something like that.',
+                        type: ActivityTypes.Message,
+                    },
                 });
             } else if (results.status === DialogTurnStatus.complete) {
-                await turnContext.sendActivity(`The result found is '${ results.result }'.`);
+                await turnContext.sendActivity(`The result found is '${results.result}'.`);
             }
             await convoState.saveChanges(turnContext);
         });
@@ -801,12 +843,13 @@ describe('ConfirmPrompt', function () {
         prompt.choiceOptions = { includeNumbers: undefined };
         dialogs.add(prompt);
 
-        await adapter.send('Hello')
+        await adapter
+            .send('Hello')
             .assertReply('Please confirm. Yes or No')
             .send('lala')
             .assertReply('Please confirm, say "yes" or "no" or something like that. Yes or No')
             .send('1')
-            .assertReply(`The result found is 'true'.`)
+            .assertReply("The result found is 'true'.")
             .startTest();
     });
 });

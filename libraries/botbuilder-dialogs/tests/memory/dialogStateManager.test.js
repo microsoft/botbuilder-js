@@ -11,7 +11,7 @@ const {
 } = require('../..');
 
 const beginMessage = {
-    text: `begin`,
+    text: 'begin',
     type: 'message',
     channelId: 'test',
     from: { id: 'user' },
@@ -122,9 +122,9 @@ describe('Dialog State Manager', function () {
 
     it('create a standard configuration by default.', function () {
         const config = this.dc.state.configuration;
-        assert(config, `No config returned`);
-        assert(config.pathResolvers.length > 0, `No path resolvers`);
-        assert(config.memoryScopes.length > 0, `No memory scopes`);
+        assert(config, 'No config returned');
+        assert(config.pathResolvers.length > 0, 'No path resolvers');
+        assert(config.memoryScopes.length > 0, 'No memory scopes');
     });
 
     it('read values from the SETTINGS memory scope.', function () {
@@ -315,7 +315,7 @@ describe('Dialog State Manager', function () {
             },
         });
 
-        const value = this.dc.state.getValue(`turn.addresses['work'].zip`);
+        const value = this.dc.state.getValue("turn.addresses['work'].zip");
         assert(value == '98052');
     });
 
@@ -329,7 +329,7 @@ describe('Dialog State Manager', function () {
             },
         });
 
-        const value = this.dc.state.getValue(`turn.addresses["work"].zip`);
+        const value = this.dc.state.getValue('turn.addresses["work"].zip');
         assert(value == '98052');
     });
 
@@ -343,7 +343,7 @@ describe('Dialog State Manager', function () {
             },
         });
 
-        const value = this.dc.state.getValue(`turn.addresses['\\"work\\"'].zip`);
+        const value = this.dc.state.getValue('turn.addresses[\'\\"work\\"\'].zip');
         assert(value == '98052');
     });
 
@@ -358,7 +358,7 @@ describe('Dialog State Manager', function () {
                 },
             });
 
-            this.dc.state.getValue(`turn.addresses['work"].zip`);
+            this.dc.state.getValue('turn.addresses[\'work"].zip');
         });
     });
 
@@ -373,23 +373,23 @@ describe('Dialog State Manager', function () {
                 },
             });
 
-            this.dc.state.getValue(`turn.addresses.~work.zip`);
+            this.dc.state.getValue('turn.addresses.~work.zip');
         });
     });
 
     it('raise an error for assignments to a negative array index.', function () {
-        assert.throws(() => this.dc.state.setValue(`turn.foo[-1]`, 'test'));
+        assert.throws(() => this.dc.state.setValue('turn.foo[-1]', 'test'));
     });
 
     it('raise an error for array assignments to non-array values.', function () {
         assert.throws(() => {
             this.dc.state.setValue('turn.foo', 'bar');
-            this.dc.state.setValue(`turn.foo[3]`, 'test');
+            this.dc.state.setValue('turn.foo[3]', 'test');
         });
     });
 
     it('raise an error for un-matched brackets.', function () {
-        assert.throws(() => this.dc.state.setValue(`turn.foo[0`, 'test'));
+        assert.throws(() => this.dc.state.setValue('turn.foo[0', 'test'));
     });
 
     it('alow indexer based path lookups.', function () {

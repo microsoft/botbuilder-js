@@ -89,6 +89,7 @@ export class ChoiceFactory {
      * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to speak for the message.
      * @param options (Optional) formatting options to use when rendering as a list.
+     * @returns The created message activity.
      */
     public static forChannel(
         channelOrContext: string | TurnContext,
@@ -134,10 +135,9 @@ export class ChoiceFactory {
         }
     }
 
-
     /**
      * Creates a message [Activity](xref:botframework-schema.Activity) that includes a [Choice](xref:botbuilder-dialogs.Choice) list that have been added as `HeroCard`'s.
-     * 
+     *
      * @param choices Optional. The [Choice](xref:botbuilder-dialogs.Choice) list to add.
      * @param text Optional. Text of the message.
      * @param speak Optional. SSML text to be spoken by the bot on a speech-enabled channel.
@@ -172,6 +172,7 @@ export class ChoiceFactory {
      * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to speak for the message.
      * @param options (Optional) formatting options to tweak rendering of list.
+     * @returns The created message activity.
      */
     public static inline(
         choices: (string | Choice)[],
@@ -222,6 +223,7 @@ export class ChoiceFactory {
      * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to speak for the message.
      * @param options (Optional) formatting options to tweak rendering of list.
+     * @returns The created message activity.
      */
     public static list(
         choices: (string | Choice)[],
@@ -263,6 +265,7 @@ export class ChoiceFactory {
      * @param choices List of choices to add.
      * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to speak for the message.
+     * @returns An activity with choices as suggested actions.
      */
     public static suggestedAction(choices: (string | Choice)[], text?: string, speak?: string): Partial<Activity> {
         // Map choices to actions
@@ -291,6 +294,7 @@ export class ChoiceFactory {
      * const choices = ChoiceFactory.toChoices(['red', 'green', 'blue']);
      * ```
      * @param choices List of choices to add.
+     * @returns A list of choices.
      */
     public static toChoices(choices: (string | Choice)[] | undefined): Choice[] {
         return (choices || [])

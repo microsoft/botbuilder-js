@@ -40,6 +40,7 @@ import { ModelResult } from './modelResult';
  * @param utterance The text or user utterance to search over. For an incoming 'message' activity you can simply use `context.activity.text`.
  * @param choices List of choices to search over.
  * @param options (Optional) options used to tweak the search that's performed.
+ * @returns A list of found choices, sorted by most relevant first.
  */
 export function recognizeChoices(
     utterance: string,
@@ -63,7 +64,7 @@ export function recognizeChoices(
                     },
                 });
             }
-        } catch (e) {
+        } catch {
             // noop
             // TODO: Should this log an error or do something?
         }

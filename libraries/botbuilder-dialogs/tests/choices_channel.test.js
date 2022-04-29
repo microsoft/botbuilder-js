@@ -57,13 +57,13 @@ describe('channel methods', function () {
         assert.strictEqual(supportsCardActions(Channels.Skype, 5), false);
     });
 
-    it('should return true for supportsCardActions() with teams and 50', function (){
+    it('should return true for supportsCardActions() with teams and 50', function () {
         assert.strictEqual(supportsCardActions(Channels.Msteams, 50), true);
-    })
+    });
 
-    it('should return false for supportsCardActions() with teams and 51', function (){
+    it('should return false for supportsCardActions() with teams and 51', function () {
         assert.strictEqual(supportsCardActions(Channels.Msteams, 51), false);
-    })
+    });
 
     it('should return the channelId from context.activity.', function () {
         assert.strictEqual(getChannelId({ activity: { channelId: Channels.Facebook } }), Channels.Facebook);

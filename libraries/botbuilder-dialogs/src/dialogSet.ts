@@ -95,6 +95,7 @@ export class DialogSet {
     /**
      * Returns a 32-bit hash of the all the `Dialog.version` values in the set.
      *
+     * @returns A version that will change when any of the child dialogs version changes.
      * @remarks
      * This hash is persisted to state storage and used to detect changes to a dialog set.
      */
@@ -123,17 +124,18 @@ export class DialogSet {
      * of "duplicate2".
      * @param dialog The dialog or prompt to add.
      * If a telemetryClient is present on the dialog set, it will be added to each dialog.
+     * @returns The dialog set after the operation is complete.
      */
     public add<T extends Dialog>(dialog: T): this {
         if (!(dialog instanceof Dialog)) {
-            throw new Error(`DialogSet.add(): Invalid dialog being added.`);
+            throw new Error('DialogSet.add(): Invalid dialog being added.');
         }
 
         // Ensure new version hash is computed
         this._version = undefined;
 
         // Ensure dialogs ID is unique.
-        if (this.dialogs.hasOwnProperty(dialog.id)) {
+        if (Object.prototype.hasOwnProperty.call(this.dialogs, dialog.id)) {
             // If we are trying to add the same exact instance, it's not a name collision.
             // No operation required since the instance is already in the dialog set.
             if (this.dialogs[dialog.id] === dialog) {
@@ -143,9 +145,10 @@ export class DialogSet {
             // If we are adding a new dialog with a conflicting name, add a suffix to avoid
             // dialog name collisions.
             let nextSuffix = 2;
+            // eslint-disable-next-line no-constant-condition
             while (true) {
                 const suffixId = dialog.id + nextSuffix.toString();
-                if (!this.dialogs.hasOwnProperty(suffixId)) {
+                if (!Object.prototype.hasOwnProperty.call(this.dialogs, suffixId)) {
                     dialog.id = suffixId;
                     break;
                 } else {
@@ -174,12 +177,14 @@ export class DialogSet {
 
     /**
      * Creates a dialog context which can be used to work with the dialogs in the set.
+     *
      * @param context Context for the current turn of conversation with the user.
+     * @returns A promise representing the asynchronous operation.
      */
     public async createContext(context: TurnContext): Promise<DialogContext> {
         if (!this.dialogState) {
             throw new Error(
-                `DialogSet.createContext(): the dialog set was not bound to a stateProperty when constructed.`
+                'DialogSet.createContext(): the dialog set was not bound to a stateProperty when constructed.'
             );
         }
         const state: DialogState = await this.dialogState.get(context, { dialogStack: [] } as DialogState);
@@ -197,13 +202,16 @@ export class DialogSet {
      * const dialog = dialogs.find('greeting');
      * ```
      * @param dialogId ID of the dialog or prompt to lookup.
+     * @returns The dialog if found; otherwise undefined.
      */
     public find(dialogId: string): Dialog | undefined {
-        return this.dialogs.hasOwnProperty(dialogId) ? this.dialogs[dialogId] : undefined;
+        return Object.prototype.hasOwnProperty.call(this.dialogs, dialogId) ? this.dialogs[dialogId] : undefined;
     }
 
     /**
      * Set the telemetry client for this dialog set and apply it to all current dialogs.
+     *
+     * @returns The [BotTelemetryClient](xref:botbuilder.BotTelemetryClient) to use for logging.
      */
     public get telemetryClient(): BotTelemetryClient {
         return this._telemetryClient;

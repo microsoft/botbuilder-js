@@ -3,8 +3,8 @@ const { ChoicePrompt, ChoiceFactory, DialogSet, ListStyle, DialogTurnStatus } = 
 const { PromptCultureModels } = require('../');
 const assert = require('assert');
 
-const answerMessage = { text: `red`, type: 'message' };
-const invalidMessage = { text: `purple`, type: 'message' };
+const answerMessage = { text: 'red', type: 'message' };
+const invalidMessage = { text: 'purple', type: 'message' };
 
 const stringChoices = ['red', 'green', 'blue'];
 
@@ -292,7 +292,7 @@ describe('ChoicePrompt', function () {
 
         await adapter
             .send({ text: 'Hello', type: ActivityTypes.Message, locale: undefined })
-            .assertReply((activity) => {
+            .assertReply(() => {
                 assert('Please choose a color. (1) red, (2) green, o (3) blue');
             })
             .send(invalidMessage)
