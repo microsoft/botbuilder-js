@@ -21,6 +21,7 @@ import { PromptOptions, PromptRecognizerResult, PromptValidator } from './prompt
 export class ActivityPrompt extends Dialog {
     /**
      * Creates a new ActivityPrompt instance.
+     *
      * @param dialogId Unique ID of the dialog within its parent `DialogSet` or `ComponentDialog`.
      * @param validator Validator that will be called each time a new activity is received.
      */
@@ -30,12 +31,13 @@ export class ActivityPrompt extends Dialog {
 
     /**
      * Called when a prompt dialog is pushed onto the dialog stack and is being activated.
+     *
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current
      * turn of the conversation.
      * @param options [PromptOptions](xref:botbuilder-dialogs.PromptOptions), additional
      * information to pass to the prompt being started.
      * @returns A `Promise` representing the asynchronous operation.
-     * @remarks 
+     * @remarks
      * If the promise is successful, the result indicates whether the prompt is still
      * active after the turn has been processed by the prompt.
      */
@@ -62,6 +64,7 @@ export class ActivityPrompt extends Dialog {
 
     /**
      * Called when a prompt dialog is the active dialog and the user replied with a new activity.
+     *
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current
      * turn of conversation.
      * @returns A `Promise` representing the asynchronous operation.
@@ -110,15 +113,16 @@ export class ActivityPrompt extends Dialog {
     /**
      * Called when a prompt dialog resumes being the active dialog on the dialog stack, such as
      * when the previous active dialog on the stack completes.
+     *
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn
      * of the conversation.
-     * @param reason [DialogReason](xref:botbuilder-dialogs.DialogReason), an enum indicating why
+     * @param _reason [DialogReason](xref:botbuilder-dialogs.DialogReason), an enum indicating why
      * the dialog resumed.
-     * @param result Optional. Value returned from the previous dialog on the stack.
+     * @param _result Optional. Value returned from the previous dialog on the stack.
      * The type of the value returned is dependent on the previous dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
+    public async resumeDialog(dc: DialogContext, _reason: DialogReason, _result?: any): Promise<DialogTurnResult> {
         // Prompts are typically leaf nodes on the stack but the dev is free to push other dialogs
         // on top of the stack which will result in the prompt receiving an unexpected call to
         // resumeDialog() when the pushed on dialog ends.
@@ -131,6 +135,7 @@ export class ActivityPrompt extends Dialog {
 
     /**
      * Called when a prompt dialog has been requested to re-prompt the user for input.
+     *
      * @param context [TurnContext](xref:botbuilder-core.TurnContext), context for the current
      * turn of conversation with the user.
      * @param instance [DialogInstance](xref:botbuilder-dialogs.DialogInstance), the instance
@@ -141,9 +146,10 @@ export class ActivityPrompt extends Dialog {
         const state: ActivityPromptState = instance.state as ActivityPromptState;
         await this.onPrompt(context, state.state, state.options, false);
     }
-  
+
     /**
      * When overridden in a derived class, prompts the user for input.
+     *
      * @param context [TurnContext](xref:botbuilder-core.TurnContext), context for the current
      * turn of conversation with the user.
      * @param state Contains state for the current instance of the prompt on the dialog stack.
@@ -167,17 +173,18 @@ export class ActivityPrompt extends Dialog {
 
     /**
      * When overridden in a derived class, attempts to recognize the incoming [Activity](xref:botframework-schema.Activity).
+     *
      * @param context [TurnContext](xref:botbuilder-core.TurnContext), context for the current
      * turn of conversation with the user.
-     * @param state Contains state for the current instance of the prompt on the dialog stack.
-     * @param options A [PromptOptions](xref:botbuilder-dialogs.PromptOptions) object constructed
+     * @param _state Contains state for the current instance of the prompt on the dialog stack.
+     * @param _options A [PromptOptions](xref:botbuilder-dialogs.PromptOptions) object constructed
      * from the options initially provided in the call to Prompt.
      * @returns A `Promise` representing the asynchronous operation.
      */
     protected async onRecognize(
         context: TurnContext,
-        state: object,
-        options: PromptOptions
+        _state: object,
+        _options: PromptOptions
     ): Promise<PromptRecognizerResult<Activity>> {
         return { succeeded: true, value: context.activity };
     }

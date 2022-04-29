@@ -56,9 +56,11 @@ export class ConfirmPrompt extends Prompt<boolean> {
 
     /**
      * Creates a new ConfirmPrompt instance.
+     *
      * @param dialogId Unique ID of the dialog within its parent `DialogSet` or `ComponentDialog`.
      * @param validator (Optional) validator that will be called each time the user responds to the prompt.
      * @param defaultLocale (Optional) locale to use if `TurnContext.activity.locale` is not specified. Defaults to a value of `en-us`.
+     * @param choiceDefaults (Optional) Overrides the dictionary of Default Choices on [[PromptCultureModels.getSupportedCultures()]].
      */
     public constructor(
         dialogId: string,
@@ -91,6 +93,7 @@ export class ConfirmPrompt extends Prompt<boolean> {
 
     /**
      * Prompts the user for input.
+     *
      * @param context [TurnContext](xref:botbuilder-core.TurnContext), context for the current
      * turn of conversation with the user.
      * @param state Contains state for the current instance of the prompt on the dialog stack.
@@ -124,17 +127,18 @@ export class ConfirmPrompt extends Prompt<boolean> {
 
     /**
      * Attempts to recognize the user's input.
+     *
      * @param context [TurnContext](xref:botbuilder-core.TurnContext), context for the current
      * turn of conversation with the user.
-     * @param state Contains state for the current instance of the prompt on the dialog stack.
-     * @param options A [PromptOptions](xref:botbuilder-dialogs.PromptOptions) object constructed
+     * @param _state Contains state for the current instance of the prompt on the dialog stack.
+     * @param _options A [PromptOptions](xref:botbuilder-dialogs.PromptOptions) object constructed
      * from the options initially provided in the call to Prompt.
      * @returns A `Promise` representing the asynchronous operation.
      */
     protected async onRecognize(
         context: TurnContext,
-        state: any,
-        options: PromptOptions
+        _state,
+        _options: PromptOptions
     ): Promise<PromptRecognizerResult<boolean>> {
         const result: PromptRecognizerResult<boolean> = { succeeded: false };
         const activity = context.activity;

@@ -13,6 +13,7 @@ import { DialogContext } from '../../dialogContext';
 export abstract class MemoryScope {
     /**
      * Initializes a new instance of the [MemoryScope](xref:botbuilder-dialogs.MemoryScope) class.
+     *
      * @param name Name of the scope.
      * @param includeInSnapshot Boolean value indicating whether this memory
      * should be included in snapshot. Default value is true.
@@ -34,6 +35,7 @@ export abstract class MemoryScope {
 
     /**
      * Get the backing memory for this scope
+     *
      * @param dc Current dialog context.
      * @returns memory for the scope
      */
@@ -41,34 +43,38 @@ export abstract class MemoryScope {
 
     /**
      * Changes the backing object for the memory scope.
-     * @param dc Current dialog context
-     * @param memory memory to assign
+     *
+     * @param _dc Current dialog context
+     * @param _memory memory to assign
      */
-    public setMemory(dc: DialogContext, memory: object): void {
+    public setMemory(_dc: DialogContext, _memory: object): void {
         throw new Error(`MemoryScope.setMemory: The '${this.name}' memory scope is read-only.`);
     }
 
     /**
      * Loads a scopes backing memory at the start of a turn.
-     * @param dc Current dialog context.
+     *
+     * @param _dc Current dialog context.
      */
-    public async load(dc: DialogContext): Promise<void> {
+    public async load(_dc: DialogContext): Promise<void> {
         // No initialization by default.
     }
 
     /**
      * Saves a scopes backing memory at the end of a turn.
-     * @param dc Current dialog context.
+     *
+     * @param _dc Current dialog context.
      */
-    public async saveChanges(dc: DialogContext): Promise<void> {
+    public async saveChanges(_dc: DialogContext): Promise<void> {
         // No initialization by default.
     }
 
     /**
      * Deletes the backing memory for a scope.
-     * @param dc Current dialog context.
+     *
+     * @param _dc Current dialog context.
      */
-    public async delete(dc: DialogContext): Promise<void> {
+    public async delete(_dc: DialogContext): Promise<void> {
         throw new Error(`MemoryScope.delete: The '${this.name}' memory scope can't be deleted.`);
     }
 }

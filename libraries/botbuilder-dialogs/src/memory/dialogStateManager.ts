@@ -99,7 +99,7 @@ export class DialogStateManager {
      *
      * @remarks
      * This always returns a CLONE of the memory, any modifications to the result will not affect memory.
-     * @param T The value type to return.
+     * @template T The value type to return.
      * @param pathExpression Path expression to use.
      * @param defaultValue (Optional) default value to use if the path isn't found. May be a function that returns the default value to use.
      * @returns The found value or undefined if not found and no `defaultValue` specified.
@@ -130,6 +130,7 @@ export class DialogStateManager {
 
     /**
      * Set memory to value.
+     *
      * @param pathExpression Path to memory.
      * @param value Value to set.
      */
@@ -138,7 +139,7 @@ export class DialogStateManager {
         const tpath = this.transformPath(pathExpression);
         const segments = this.parsePath(tpath);
         if (segments.length < 1) {
-            throw new Error(`DialogStateManager.setValue: path wasn't specified.`);
+            throw new Error("DialogStateManager.setValue: path wasn't specified.");
         }
 
         // Track changes
@@ -196,7 +197,8 @@ export class DialogStateManager {
 
     /**
      * Delete property from memory
-     * @param path The leaf property to remove.
+     *
+     * @param pathExpression The leaf property to remove.
      */
     public deleteValue(pathExpression: string): void {
         // Get path segments
@@ -260,6 +262,8 @@ export class DialogStateManager {
 
     /**
      * Deletes all of the backing memory for a given scope.
+     *
+     * @param name Name of the scope.
      */
     public async deleteScopesMemory(name: string): Promise<void> {
         name = name.toLowerCase();
@@ -397,6 +401,7 @@ export class DialogStateManager {
 
     /**
      * Transform the path using the registered path transformers.
+     *
      * @param pathExpression The path to transform.
      * @returns The transformed path.
      */
@@ -412,6 +417,7 @@ export class DialogStateManager {
 
     /**
      * Gets all memory scopes suitable for logging.
+     *
      * @returns Object which represents all memory scopes.
      */
     public getMemorySnapshot(): object {
@@ -427,6 +433,7 @@ export class DialogStateManager {
 
     /**
      * Track when specific paths are changed.
+     *
      * @param paths Paths to track.
      * @returns Normalized paths to pass to [anyPathChanged()](#anypathchanged).
      */
@@ -450,6 +457,7 @@ export class DialogStateManager {
 
     /**
      * Check to see if any path has changed since watermark.
+     *
      * @param counter Time counter to compare to.
      * @param paths Paths from [trackPaths()](#trackpaths) to check.
      * @returns True if any path has changed since counter.
@@ -609,6 +617,7 @@ export class DialogStateManager {
 
     /**
      * Gets the version number.
+     *
      * @returns A string with the version number.
      */
     public version(): string {

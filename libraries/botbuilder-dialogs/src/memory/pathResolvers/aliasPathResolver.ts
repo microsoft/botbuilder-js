@@ -17,6 +17,7 @@ export class AliasPathResolver implements PathResolver {
 
     /**
      * Initializes a new instance of the [AliasPathResolver](xref:botbuilder-dialogs.AliasPathResolver) class.
+     *
      * @param alias Alias name.
      * @param prefix Prefix name.
      * @param postfix Postfix name.
@@ -29,6 +30,7 @@ export class AliasPathResolver implements PathResolver {
 
     /**
      * Transforms the path.
+     *
      * @param path Path to inspect.
      * @returns The transformed path.
      */

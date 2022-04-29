@@ -17,6 +17,7 @@ import { Prompt, PromptOptions, PromptRecognizerResult, PromptValidator } from '
 export class AttachmentPrompt extends Prompt<Attachment[]> {
     /**
      * Creates a new `AttachmentPrompt` instance.
+     *
      * @param dialogId Unique ID of the dialog within its parent `DialogSet` or `ComponentDialog`.
      * @param validator (Optional) validator that will be called each time the user responds to the prompt.
      */
@@ -26,6 +27,7 @@ export class AttachmentPrompt extends Prompt<Attachment[]> {
 
     /**
      * Prompts the user for input.
+     *
      * @param context Context for the current turn of conversation with the user.
      * @param state Contains state for the current instance of the prompt on the dialog stack.
      * @param options A prompt options object constructed from the options initially provided
@@ -49,16 +51,17 @@ export class AttachmentPrompt extends Prompt<Attachment[]> {
 
     /**
      * Attempts to recognize the user's input.
+     *
      * @param context Context for the current turn of conversation with the user.
-     * @param state Contains state for the current instance of the prompt on the dialog stack.
-     * @param options A prompt options object constructed from the options initially provided
+     * @param _state Contains state for the current instance of the prompt on the dialog stack.
+     * @param _options A prompt options object constructed from the options initially provided
      * in the call to Prompt.
      * @returns A Promise representing the asynchronous operation.
      */
     protected async onRecognize(
         context: TurnContext,
-        state: any,
-        options: PromptOptions
+        _state: any,
+        _options: PromptOptions
     ): Promise<PromptRecognizerResult<Attachment[]>> {
         const value: Attachment[] = context.activity.attachments;
 

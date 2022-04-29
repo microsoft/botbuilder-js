@@ -28,6 +28,7 @@ export class NumberPrompt extends Prompt<number> {
 
     /**
      * Creates a new NumberPrompt instance.
+     *
      * @param dialogId Unique ID of the dialog within its parent `DialogSet` or `ComponentDialog`.
      * @param validator (Optional) validator that will be called each time the user responds to the prompt.
      * @param defaultLocale (Optional) locale to use if `TurnContext.activity.locale` is not specified. Defaults to a value of `en-us`.
@@ -39,7 +40,8 @@ export class NumberPrompt extends Prompt<number> {
 
     /**
      * Prompts the user for input.
-     * @param context [TurnContext](xref:botbuilder-core.TurnContext), context for the current 
+     *
+     * @param context [TurnContext](xref:botbuilder-core.TurnContext), context for the current
      * turn of conversation with the user.
      * @param state Contains state for the current instance of the prompt on the dialog stack.
      * @param options A [PromptOptions](xref:botbuilder-dialogs.PromptOptions) object constructed
@@ -63,17 +65,18 @@ export class NumberPrompt extends Prompt<number> {
 
     /**
      * Attempts to recognize the user's input.
+     *
      * @param context [TurnContext](xref:botbuilder-core.TurnContext), context for the current
      * turn of conversation with the user.
-     * @param state Contains state for the current instance of the prompt on the dialog stack.
-     * @param options A [PromptOptions](xref:botbuilder-dialogs.PromptOptions) object constructed
+     * @param _state Contains state for the current instance of the prompt on the dialog stack.
+     * @param _options A [PromptOptions](xref:botbuilder-dialogs.PromptOptions) object constructed
      * from the options initially provided in the call to Prompt.
      * @returns A `Promise` representing the asynchronous operation.
      */
     protected async onRecognize(
         context: TurnContext,
-        state: unknown,
-        options: PromptOptions
+        _state: unknown,
+        _options: PromptOptions
     ): Promise<PromptRecognizerResult<number>> {
         const result: PromptRecognizerResult<number> = { succeeded: false };
         const activity = context.activity;
@@ -96,7 +99,7 @@ export class NumberPrompt extends Prompt<number> {
             let numberParser: (value: string) => number;
             try {
                 numberParser = parser.numberParser();
-            } catch (err) {
+            } catch {
                 numberParser = Globalize(this.getCultureFormattedForGlobalize(defaultLocale)).numberParser();
             }
 

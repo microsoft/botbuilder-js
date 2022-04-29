@@ -23,6 +23,7 @@ export class AtPathResolver extends AliasPathResolver {
 
     /**
      * Transforms the path.
+     *
      * @param path Path to inspect.
      * @returns The transformed path.
      */

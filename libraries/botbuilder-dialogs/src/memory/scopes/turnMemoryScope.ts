@@ -27,6 +27,7 @@ export class TurnMemoryScope extends MemoryScope {
 
     /**
      * Get the backing memory for this scope.
+     *
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for this turn.
      * @returns The memory for the scope.
      */
@@ -42,12 +43,13 @@ export class TurnMemoryScope extends MemoryScope {
 
     /**
      * Changes the backing object for the memory scope.
+     *
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for this turn.
      * @param memory Memory object to set for the scope.
      */
     public setMemory(dc: DialogContext, memory: object): void {
         if (memory == undefined) {
-            throw new Error(`TurnMemoryScope.setMemory: undefined memory object passed in.`);
+            throw new Error('TurnMemoryScope.setMemory: undefined memory object passed in.');
         }
 
         dc.context.turnState.set(TURN_STATE, memory);

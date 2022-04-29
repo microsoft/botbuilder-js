@@ -25,7 +25,7 @@ export class DialogClassMemoryScope extends ClassMemoryScope {
     /**
      * @protected
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) object for this turn.
-     * @retuns The current [Dialog](xref:botbuilder-dialogs.Dialog).
+     * @returns The current [Dialog](xref:botbuilder-dialogs.Dialog).
      */
     protected onFindDialog(dc: DialogContext): Dialog {
         // Is the active dialog a container?

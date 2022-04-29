@@ -3,36 +3,42 @@ import { Culture } from '@microsoft/recognizers-text-suite';
 export interface PromptCultureModel {
     /**
      * Culture Model's Locale.
+     *
      * @example
      * "en-US"
      */
     locale: string;
     /**
      * Culture Model's InlineSeparator.
+     *
      * @example
      * ", "
      */
     separator: string;
     /**
      * Culture Model's InlineOr.
+     *
      * @example
      * " or "
      */
     inlineOr: string;
     /**
      * Culture Model's InlineOrMore.
+     *
      * @example
      * ", or "
      */
     inlineOrMore: string;
     /**
      * Equivalent of "Yes" in Culture Model's Language.
+     *
      * @example
      * "Yes"
      */
     yesInLanguage: string;
     /**
      * Equivalent of "No" in Culture Model's Language.
+     *
      * @example
      * "No"
      */
@@ -133,6 +139,7 @@ export class PromptCultureModels {
 
     /**
      * Use Recognizers-Text to normalize various potential Locale strings to a standard.
+     *
      * @remarks This is mostly a copy/paste from https://github.com/microsoft/Recognizers-Text/blob/master/JavaScript/packages/recognizers-text/src/culture.ts#L39
      *          This doesn't directly use Recognizers-Text's MapToNearestLanguage because if they add language support before we do, it will break our prompts.
      * @param cultureCode Represents locale. Examples: "en-US, en-us, EN".
