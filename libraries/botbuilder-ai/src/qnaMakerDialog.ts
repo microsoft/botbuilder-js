@@ -731,12 +731,14 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         if (response?.length > 0) {
             const activity = dialogOptions.qnaDialogResponseOptions.noAnswer;
             if (response[0].id !== -1) {
-                await step.context.sendActivity(response[0].answer);
+                const message = QnACardBuilder.getQnAAnswerCard(response[0], this.displayPreciseAnswerOnly);
+                await step.context.sendActivity(message);
             } else {
                 if (activity && activity.text) {
                     await step.context.sendActivity(activity);
                 } else {
-                    await step.context.sendActivity(response[0].answer);
+                    const message = QnACardBuilder.getQnAAnswerCard(response[0], this.displayPreciseAnswerOnly);
+                    await step.context.sendActivity(message);
                 }
             }
         } else {
@@ -906,25 +908,19 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
 
         if (response?.length > 0 && response[0].id != -1) {
             const answer = response[0];
-            if (answer.answerSpan?.text || answer?.context?.prompts?.length > 0) {
-                if (answer?.context?.prompts?.length > 0) {
-                    const previousContextData: { [key: string]: number } = {};
+            if (answer?.context?.prompts?.length > 0) {
+                const previousContextData: { [key: string]: number } = {};
 
-                    answer.context.prompts.forEach((prompt) => {
-                        previousContextData[prompt.displayText] = prompt.qnaId;
-                    });
+                answer.context.prompts.forEach((prompt) => {
+                    previousContextData[prompt.displayText] = prompt.qnaId;
+                });
 
-                    step.activeDialog.state[this.qnAContextData] = previousContextData;
-                    step.activeDialog.state[this.previousQnAId] = answer.id;
-                    step.activeDialog.state[this.options] = dialogOptions;
-                    const message = QnACardBuilder.getQnAAnswerCard(answer, this.displayPreciseAnswerOnly);
-                    await step.context.sendActivity(message);
-                    return Dialog.EndOfTurn;
-                } else {
-                    const message = QnACardBuilder.getQnAAnswerCard(answer, this.displayPreciseAnswerOnly);
-                    await step.context.sendActivity(message);
-                    return step.endDialog();
-                }
+                step.activeDialog.state[this.qnAContextData] = previousContextData;
+                step.activeDialog.state[this.previousQnAId] = answer.id;
+                step.activeDialog.state[this.options] = dialogOptions;
+                const message = QnACardBuilder.getQnAAnswerCard(answer, this.displayPreciseAnswerOnly);
+                await step.context.sendActivity(message);
+                return Dialog.EndOfTurn;
             }
         }
 
