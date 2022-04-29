@@ -3874,10 +3874,10 @@ chrome-trace-event@^1.0.2:
   dependencies:
     tslib "^1.9.0"
 
-chromedriver@^98.0.0:
-  version "98.0.1"
-  resolved "https://registry.yarnpkg.com/chromedriver/-/chromedriver-98.0.1.tgz#ccb1e36a003b4c6af0b184caa00fca8370d88f2a"
-  integrity sha512-/04KkHHE/K/lfwdPTQr5fxi1dWvM83p8T/IkYbyGK2PBlH7K49Dd71A9jrS+aWgXlZYkuHhbwiy2PA2QqZ5qQw==
+chromedriver@^100.0.0:
+  version "100.0.0"
+  resolved "https://registry.yarnpkg.com/chromedriver/-/chromedriver-100.0.0.tgz#1b4bf5c89cea12c79f53bc94d8f5bb5aa79ed7be"
+  integrity sha512-oLfB0IgFEGY9qYpFQO/BNSXbPw7bgfJUN5VX8Okps9W2qNT4IqKh5hDwKWtpUIQNI6K3ToWe2/J5NdpurTY02g==
   dependencies:
     "@testim/chrome-version" "^1.1.2"
     axios "^0.24.0"
@@ -9569,10 +9569,10 @@ natural-compare@^1.4.0:
   resolved "https://registry.yarnpkg.com/natural-compare/-/natural-compare-1.4.0.tgz#4abebfeed7541f2c27acfb29bdbbd15c8d5ba4f7"
   integrity sha1-Sr6/7tdUHywnrPspvbvRXI1bpPc=
 
-nconf@0.11.2:
-  version "0.11.2"
-  resolved "https://registry.yarnpkg.com/nconf/-/nconf-0.11.2.tgz#707fa9db383e85ad7e8f1a17be1b053d1bd751c4"
-  integrity sha512-gDmn0Fgt0U0esRE8OCF72tO8AA9dtlG9eZhW4/Ex5hozNC2/LgdhWO4vKLGHNfTxcvsv6Aoxk/ROVYJD2SAdyg==
+nconf@0.11.4:
+  version "0.11.4"
+  resolved "https://registry.yarnpkg.com/nconf/-/nconf-0.11.4.tgz#7f925d27569738a2a10c3ba4b56310c8821b308b"
+  integrity sha512-YaDR846q11JnG1vTrhJ0QIlhiGY6+W1bgWtReG9SS3vkTl3AoNwFvUItdhG6/ZjGCfWpUVuRTNEBTDAQ3nWhGw==
   dependencies:
     async "^1.4.0"
     ini "^2.0.0"
