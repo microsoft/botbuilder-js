@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "botbuilder-dialogs-adaptive": "4.1.6",
-    "@microsoft/orchestrator-core": "~4.14.0",
+    "@microsoft/orchestrator-core": "~4.14.3",
     "uuid": "^8.3.2"
   },
   "peerDependencies": {
