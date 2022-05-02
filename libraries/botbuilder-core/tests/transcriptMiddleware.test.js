@@ -10,15 +10,15 @@ const {
     ActivityEventNames,
 } = require('../');
 
-describe(`TranscriptLoggerMiddleware`, function () {
+describe('TranscriptLoggerMiddleware', function () {
     this.timeout(5000);
 
-    it(`should log activities`, async function () {
+    it('should log activities', async function () {
         let conversationId = null;
         const transcriptStore = new MemoryTranscriptStore();
         const adapter = new TestAdapter(async (context) => {
             conversationId = context.activity.conversation.id;
-            var typingActivity = {
+            const typingActivity = {
                 type: ActivityTypes.Typing,
                 relatesTo: context.activity.relatesTo,
             };
@@ -49,7 +49,7 @@ describe(`TranscriptLoggerMiddleware`, function () {
         });
     });
 
-    it(`should log update activities`, async function () {
+    it('should log update activities', async function () {
         let conversationId = null;
         let activityToUpdate = null;
         const transcriptStore = new MemoryTranscriptStore();
@@ -59,7 +59,7 @@ describe(`TranscriptLoggerMiddleware`, function () {
                 activityToUpdate.text = 'new response';
                 await context.updateActivity(activityToUpdate);
             } else {
-                var activity = createReply(context.activity, 'response');
+                const activity = createReply(context.activity, 'response');
                 const response = await context.sendActivity(activity);
                 activity.id = response.id;
 
@@ -78,7 +78,7 @@ describe(`TranscriptLoggerMiddleware`, function () {
         assert(pagedResult.items[3].text, 'update');
     });
 
-    it(`should log delete activities`, async function () {
+    it('should log delete activities', async function () {
         let conversationId = null;
         let activityId = null;
         const transcriptStore = new MemoryTranscriptStore();
@@ -104,7 +104,7 @@ describe(`TranscriptLoggerMiddleware`, function () {
         assert(pagedResult.items[3].type, ActivityTypes.MessageDelete);
     });
 
-    it('should filter continueConversation events', async () => {
+    it('should filter continueConversation events', async function () {
         let conversationId;
         const transcriptStore = new MemoryTranscriptStore();
         const adapter = new TestAdapter(async (context) => {
@@ -121,7 +121,7 @@ describe(`TranscriptLoggerMiddleware`, function () {
         assert.strictEqual(pagedResult.items.length, 2, 'only the two message activities should be logged');
     });
 
-    it(`should not error for sent activities if no ResourceResponses are received`, async () => {
+    it('should not error for sent activities if no ResourceResponses are received', async function () {
         class NoResourceResponseAdapter extends TestAdapter {
             constructor(logic) {
                 super(logic);
@@ -168,14 +168,14 @@ describe(`TranscriptLoggerMiddleware`, function () {
         });
     });
 
-    it(`should not error for sent activities if another handler does not return next()`, async () => {
+    it('should not error for sent activities if another handler does not return next()', async function () {
         class NoResourceResponseMiddleware {
             async onTurn(context, next) {
                 context.onSendActivities(async (context, activities, next) => {
                     // In SendActivitiesHandlers developers are supposed to call:
                     //      return next();
                     // If this is not returned, then the next handler will not have the ResourceResponses[].
-                    const responses = await next();
+                    await next();
                 });
 
                 // Run the bot's application logic.
@@ -222,14 +222,14 @@ describe(`TranscriptLoggerMiddleware`, function () {
         });
     });
 
-    it(`should not error for sent activities if another handler does not return an array`, async () => {
+    it('should not error for sent activities if another handler does not return an array', async function () {
         class NoResourceResponseMiddleware {
             async onTurn(context, next) {
                 context.onSendActivities(async (context, activities, next) => {
                     // In SendActivitiesHandlers developers are supposed to call:
                     //      return next();
                     // If this is not returned, then the next handler will not have the ResourceResponses[].
-                    const responses = await next();
+                    await next();
 
                     return {};
                 });
@@ -262,7 +262,7 @@ describe(`TranscriptLoggerMiddleware`, function () {
         });
     });
 
-    it(`should not error when logging sent activities and return the actual value from next()`, async () => {
+    it('should not error when logging sent activities and return the actual value from next()', async function () {
         // This middleware should receive 1 from `next()`
         class AssertionMiddleware {
             async onTurn(context, next) {
@@ -282,7 +282,7 @@ describe(`TranscriptLoggerMiddleware`, function () {
                     // In SendActivitiesHandlers developers are supposed to call:
                     //      return next();
                     // If this is not returned, then the next handler will not have the ResourceResponses[].
-                    const responses = await next();
+                    await next();
 
                     return 1;
                 });
@@ -316,11 +316,11 @@ describe(`TranscriptLoggerMiddleware`, function () {
 
     describe("'s error handling", function () {
         let sandbox;
-        beforeEach(() => {
+        beforeEach(function () {
             sandbox = sinon.createSandbox();
         });
 
-        afterEach(() => {
+        afterEach(function () {
             sandbox.restore();
         });
 
@@ -375,7 +375,7 @@ describe(`TranscriptLoggerMiddleware`, function () {
         });
     });
 
-    it(`should add resource response id to activity when activity id is empty`, async function () {
+    it('should add resource response id to activity when activity id is empty', async function () {
         let conversationId = null;
         const transcriptStore = new MemoryTranscriptStore();
         const adapter = createTestAdapterWithNoResourceResponseId(async (context) => {
@@ -414,7 +414,7 @@ describe(`TranscriptLoggerMiddleware`, function () {
         });
     });
 
-    it(`should use outgoing activity's timestamp for activity id when activity id and resourceResponse is empty`, async () => {
+    it("should use outgoing activity's timestamp for activity id when activity id and resourceResponse is empty", async function () {
         let conversationId, timestamp;
         const transcriptStore = new MemoryTranscriptStore();
 
@@ -464,7 +464,7 @@ describe(`TranscriptLoggerMiddleware`, function () {
         });
     });
 
-    it(`should use current server time for activity id when activity and resourceResponse id is empty and no activity timestamp exists`, async function () {
+    it('should use current server time for activity id when activity and resourceResponse id is empty and no activity timestamp exists', async function () {
         let conversationId;
         const transcriptStore = new MemoryTranscriptStore();
 

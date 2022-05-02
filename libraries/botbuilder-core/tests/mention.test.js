@@ -1,11 +1,12 @@
 const assert = require('assert');
 const { MessageFactory, SkypeMentionNormalizeMiddleware, TurnContext } = require('../lib');
 
-describe(`Mention`, function () {
+describe('Mention', function () {
     this.timeout(5000);
 
-    it('should not change activity text when entity type is not a mention', async function() {
-        const mentionJson = '{\"mentioned\": {\"id\": \"recipientid\"},\"text\": \"<at id=\\\"28: 841caffa-9e92-425d-8d84-b503b3ded285\\\">botname</at>\"}';
+    it('should not change activity text when entity type is not a mention', async function () {
+        const mentionJson =
+            '{"mentioned": {"id": "recipientid"},"text": "<at id=\\"28: 841caffa-9e92-425d-8d84-b503b3ded285\\">botname</at>"}';
         const entity = JSON.parse(mentionJson);
         entity.type = 'test';
 
@@ -18,8 +19,8 @@ describe(`Mention`, function () {
         assert(activity.text === 'botname sometext');
     });
 
-    it('should not change activity text when mention text is empty', async function() {
-        const mentionJson = '{\"mentioned\": {\"id\": \"recipientid\"},\"text\": \""}';
+    it('should not change activity text when mention text is empty', async function () {
+        const mentionJson = '{"mentioned": {"id": "recipientid"},"text": ""}';
         const entity = JSON.parse(mentionJson);
         entity.type = 'mention';
 
@@ -32,8 +33,8 @@ describe(`Mention`, function () {
         assert(activity.text === 'botname sometext');
     });
 
-    it('should not change activity text when there is no matching mention', async function() {
-        const mentionJson = '{\"mentioned\": {\"id\": \"foo bar"},\"text\": \""}';
+    it('should not change activity text when there is no matching mention', async function () {
+        const mentionJson = '{"mentioned": {"id": "foo bar"},"text": ""}';
         const entity = JSON.parse(mentionJson);
         entity.type = 'mention';
 
@@ -46,8 +47,9 @@ describe(`Mention`, function () {
         assert(activity.text === 'botname sometext');
     });
 
-    it(`should remove skype mention`, async function () {
-        const mentionJson = '{\"mentioned\": {\"id\": \"recipientid\"},\"text\": \"<at id=\\\"28: 841caffa-9e92-425d-8d84-b503b3ded285\\\">botname</at>\"}';
+    it('should remove skype mention', async function () {
+        const mentionJson =
+            '{"mentioned": {"id": "recipientid"},"text": "<at id=\\"28: 841caffa-9e92-425d-8d84-b503b3ded285\\">botname</at>"}';
         const entity = JSON.parse(mentionJson);
         entity.type = 'mention';
 
@@ -61,8 +63,8 @@ describe(`Mention`, function () {
         assert(activity.text === 'sometext');
     });
 
-    it(`should remove teams mention`, async function () {
-        const mentionJson = '{\"mentioned\": {\"id\": \"recipientid\"},\"text\": \"<at>botname</at>\"}';
+    it('should remove teams mention', async function () {
+        const mentionJson = '{"mentioned": {"id": "recipientid"},"text": "<at>botname</at>"}';
         const entity = JSON.parse(mentionJson);
         entity.type = 'mention';
 
@@ -75,8 +77,8 @@ describe(`Mention`, function () {
         assert(activity.text === 'sometext');
     });
 
-    it(`should remove slack mention`, async function () {
-        const mentionJson = '{\"mentioned\": {\"id\": \"recipientid\"},\"text\": \"@botname\"}';
+    it('should remove slack mention', async function () {
+        const mentionJson = '{"mentioned": {"id": "recipientid"},"text": "@botname"}';
         const entity = JSON.parse(mentionJson);
         entity.type = 'mention';
 
@@ -89,8 +91,8 @@ describe(`Mention`, function () {
         assert(activity.text === 'sometext');
     });
 
-    it(`should remove GroupMe mention`, async function () {
-        const mentionJson = '{\"mentioned\": {\"id\": \"recipientid\"},\"text\": \"@bot name\"}';
+    it('should remove GroupMe mention', async function () {
+        const mentionJson = '{"mentioned": {"id": "recipientid"},"text": "@bot name"}';
         const entity = JSON.parse(mentionJson);
         entity.type = 'mention';
 
@@ -103,8 +105,8 @@ describe(`Mention`, function () {
         assert(activity.text === 'sometext');
     });
 
-    it(`should remove Telegram mention`, async function () {
-        const mentionJson = '{\"mentioned\": {\"id\": \"recipientid\"},\"text\": \"botname\"}';
+    it('should remove Telegram mention', async function () {
+        const mentionJson = '{"mentioned": {"id": "recipientid"},"text": "botname"}';
         const entity = JSON.parse(mentionJson);
         entity.type = 'mention';
 
