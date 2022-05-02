@@ -347,7 +347,7 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
      *
      * **See also**
      * - [DialogContext.continueDialog](xref:botbuilder-dialogs.DialogContext.continueDialog)
-     * @returns {Promise<DialogTurnResult>} a promise resolving to the dialog turn result.
+     * @returns {Promise<DialogTurnResult>} A promise resolving to the dialog turn result.
      */
     public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
         // By default just end the current dialog.
@@ -378,7 +378,7 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
      *
      * **See also**
      * - [DialogContext.endDialog](xref:botbuilder-dialogs.DialogContext.endDialog)
-     * @returns {Promise<DialogTurnResult>} a promise resolving to the dialog turn result.
+     * @returns {Promise<DialogTurnResult>} A promise resolving to the dialog turn result.
      */
     public async resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
         // By default just end the current dialog and return result to parent.

@@ -53,7 +53,7 @@ export type TokenizerFunction = (text: string, locale?: string) => Token[];
  * @param _locale Optional, identifies the locale of the input text.
  * @returns A list of tokens.
  * @remarks
-The only normalization done is to lowercase the tokens. Developers can wrap this tokenizer with
+ * The only normalization done is to lowercase the tokens. Developers can wrap this tokenizer with
  * their own function to perform additional normalization like [stemming](https://github.com/words/stemmer).
  *
  * ```JavaScript
@@ -61,11 +61,11 @@ The only normalization done is to lowercase the tokens. Developers can wrap this
  * const stemmer = require('stemmer');
  *
  * function customTokenizer(text, locale) {
- * const tokens = defaultTokenizer(text, locale);
- * tokens.forEach((t) => {
- * t.normalized = stemmer(t.normalized);
- * });
- * return tokens;
+ *    const tokens = defaultTokenizer(text, locale);
+ *    tokens.forEach((t) => {
+ *        t.normalized = stemmer(t.normalized);
+ *    });
+ *    return tokens;
  * }
  *
  * const choices = ['red', 'green', 'blue'];

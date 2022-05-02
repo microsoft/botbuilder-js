@@ -156,7 +156,7 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
      * of the value returned is dependent on the child dialog.
      * @returns A Promise representing the asynchronous operation.
      * @remarks
-If the task is successful, the result indicates whether this dialog is still
+     * If the task is successful, the result indicates whether this dialog is still
      * active after this dialog turn has been processed.
      * Generally, the child dialog was started with a call to
      * beginDialog(DialogContext, object) in the parent's
@@ -252,7 +252,7 @@ If the task is successful, the result indicates whether this dialog is still
      * [initialDialogId](#initialdialogid).
      * @param innerDC Dialog context for the components internal `DialogSet`.
      * @param options (Optional) options that were passed to the component by its parent.
-     * @returns {Promise<DialogTurnResult>} a promise resolving to the dialog turn result.
+     * @returns {Promise<DialogTurnResult>} A promise resolving to the dialog turn result.
      */
     protected onBeginDialog(innerDC: DialogContext, options?: O): Promise<DialogTurnResult> {
         return innerDC.beginDialog(this.initialDialogId, options);
@@ -265,7 +265,7 @@ If the task is successful, the result indicates whether this dialog is still
      * SHOULD be overridden by components that wish to perform custom interruption logic. The
      * default implementation calls `innerDC.continueDialog()`.
      * @param innerDC Dialog context for the components internal `DialogSet`.
-     * @returns {Promise<DialogTurnResult>} a promise resolving to the dialog turn result.
+     * @returns {Promise<DialogTurnResult>} A promise resolving to the dialog turn result.
      */
     protected onContinueDialog(innerDC: DialogContext): Promise<DialogTurnResult> {
         return innerDC.continueDialog();
@@ -308,7 +308,7 @@ If the task is successful, the result indicates whether this dialog is still
      * from the last active child dialog.
      * @param outerDC Dialog context for the parents `DialogSet`.
      * @param result Result returned by the last active child dialog. Can be a value of `undefined`.
-     * @returns {Promise<DialogTurnResult>} a promise resolving to the dialog turn result.
+     * @returns {Promise<DialogTurnResult>} A promise resolving to the dialog turn result.
      */
     protected endComponent(outerDC: DialogContext, result: any): Promise<DialogTurnResult> {
         return outerDC.endDialog(result);
