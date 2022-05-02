@@ -394,7 +394,7 @@ export enum DialogReason {
     replaceCalled = "replaceCalled"
 }
 
-// @public (undocumented)
+// @public
 export class DialogsBotComponent extends BotComponent {
     // (undocumented)
     configureServices(services: ServiceCollection, configuration: Configuration): void;
