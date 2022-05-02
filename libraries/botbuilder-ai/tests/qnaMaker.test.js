@@ -302,7 +302,7 @@ describe('QnAMaker', function () {
 
             const results = await qna.getAnswers(context, options);
 
-            assert.strictEqual(results.length, 0);
+            assert.strictEqual(results.length, 1);
         });
 
         it('calls qnamaker with rankerType questionOnly', async function () {
@@ -312,7 +312,7 @@ describe('QnAMaker', function () {
 
             const results = await qna.getAnswers(context, options);
 
-            assert.strictEqual(results.length, 0);
+            assert.strictEqual(results.length, 1);
         });
 
         it('returns answer with timeout option specified', async function () {
@@ -456,14 +456,14 @@ describe('QnAMaker', function () {
                     sinon.match({
                         name: 'QnaMessage',
                         properties: sinon.match({
-                            answer: sinon.match.string,
-                            articleFound: 'false',
                             knowledgeBaseId,
-                            matchedQuestion: 'No Qna Question matched',
                             question: 'where are the unicorns?',
-                            questionId: 'No Qna Question Id matched',
                             username: sinon.match.string,
+                            questionId: '-1',
+                            answer: sinon.match.string,
+                            articleFound: 'true',
                         }),
+                        metrics: { score: 0 },
                     })
                 )
                 .once();
@@ -475,7 +475,8 @@ describe('QnAMaker', function () {
 
             sandbox.verify();
             assert(qna.logPersonalInformation);
-            assert.deepStrictEqual(results, []);
+            assert.strictEqual(results.length, 1);
+            assert.strictEqual(results[0].answer, 'No good match found in KB.');
         });
 
         it('does not log telemetry pii', async function () {
