@@ -10,7 +10,7 @@ import { BotState } from './botState';
 import { Storage } from './storage';
 import { TurnContext } from './turnContext';
 
-const NO_KEY = `ConversationState: overridden getStorageKey method did not return a key.`;
+const NO_KEY = 'ConversationState: overridden getStorageKey method did not return a key.';
 
 /**
  * Reads and writes conversation state for your bot to storage.
@@ -29,6 +29,7 @@ const NO_KEY = `ConversationState: overridden getStorageKey method did not retur
 export class ConversationState extends BotState {
     /**
      * Creates a new ConversationState instance.
+     *
      * @param storage Storage provider to persist conversation state to.
      * @param namespace (Optional) namespace to append to storage keys. Defaults to an empty string.
      */
@@ -43,7 +44,9 @@ export class ConversationState extends BotState {
 
     /**
      * Returns the storage key for the current conversation state.
+     *
      * @param context Context for current turn of conversation with the user.
+     * @returns The storage key for the current conversation state.
      */
     public getStorageKey(context: TurnContext): string | undefined {
         const activity: Activity = context.activity;

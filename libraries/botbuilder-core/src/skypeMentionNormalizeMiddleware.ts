@@ -23,6 +23,7 @@ import { TurnContext } from './turnContext';
 export class SkypeMentionNormalizeMiddleware implements Middleware {
     /**
      * Performs the normalization of Skype mention Entities.
+     *
      * @param activity [Activity](xref:botframework-schema.Activity) containing the mentions to normalize.
      */
     public static normalizeSkypeMentionText(activity: Activity): void {
@@ -42,6 +43,7 @@ export class SkypeMentionNormalizeMiddleware implements Middleware {
 
     /**
      * Middleware implementation which corrects the Entity text of type [Mention](xref:botframework-schema.Mention) to a value that [removeMentionText](xref:botbuilder-core.TurnContext.removeMentionText) can work with.
+     *
      * @param turnContext [TurnContext](xref:botbuilder-core.TurnContext) for the current turn of conversation.
      * @param next Delegate to call to continue the bot middleware pipeline.
      */

@@ -71,7 +71,8 @@ export class MiddlewareSet implements Middleware {
 
     /**
      * Creates a new MiddlewareSet instance.
-     * @param middleware One or more middleware handlers(s) to register.
+     *
+     * @param {...any} middlewares One or more middleware handlers(s) to register.
      */
     constructor(...middlewares: (MiddlewareHandler | Middleware)[]) {
         this.use(...middlewares);
@@ -79,8 +80,10 @@ export class MiddlewareSet implements Middleware {
 
     /**
      * Processes an incoming activity.
+     *
      * @param context [TurnContext](xref:botbuilder-core.TurnContext) object for this turn.
      * @param next Delegate to call to continue the bot middleware pipeline.
+     * @returns {Promise<void>} A Promise representing the async operation.
      */
     public onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
         return this.run(context, next);
@@ -89,9 +92,7 @@ export class MiddlewareSet implements Middleware {
     /**
      * Registers middleware handlers(s) with the set.
      *
-     * @remarks
-     * This example adds a new piece of middleware to a set:
-     *
+     * @remarks This example adds a new piece of middleware to a set:
      * ```JavaScript
      * set.use(async (context, next) => {
      *    console.log(`Leading Edge`);
@@ -99,7 +100,8 @@ export class MiddlewareSet implements Middleware {
      *    console.log(`Trailing Edge`);
      * });
      * ```
-     * @param middleware One or more middleware handlers(s) to register.
+     * @param {...any} middlewares One or more middleware handlers(s) to register.
+     * @returns The updated middleware set.
      */
     public use(...middlewares: (MiddlewareHandler | Middleware)[]): this {
         middlewares.forEach((plugin) => {
@@ -108,7 +110,7 @@ export class MiddlewareSet implements Middleware {
             } else if (typeof plugin === 'object' && plugin.onTurn) {
                 this.middleware.push((context, next) => plugin.onTurn(context, next));
             } else {
-                throw new Error(`MiddlewareSet.use(): invalid plugin type being added.`);
+                throw new Error('MiddlewareSet.use(): invalid plugin type being added.');
             }
         });
 
@@ -117,6 +119,7 @@ export class MiddlewareSet implements Middleware {
 
     /**
      * Executes a set of middleware in series.
+     *
      * @param context Context for the current turn of conversation with the user.
      * @param next Function to invoke at the end of the middleware chain.
      * @returns A promise that resolves after the handler chain is complete.

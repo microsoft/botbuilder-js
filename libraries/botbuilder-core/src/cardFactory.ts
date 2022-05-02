@@ -242,10 +242,9 @@ export class CardFactory {
      * @param title The title for the card's sign-in button.
      * @param text Optional. Additional text to include on the card.
      * @param link Optional. The sign-in link to use.
+     * @param tokenExchangeResource optional. The resource to try to perform token exchange with.
      * @returns An [Attachment](xref:botframework-schema.Attachment).
-     *
-     * @remarks
-     * OAuth cards support the Bot Framework's single sign on (SSO) service.
+     * @remarks OAuth cards support the Bot Framework's single sign on (SSO) service.
      */
     public static oauthCard(
         connectionName: string,
@@ -267,29 +266,29 @@ export class CardFactory {
     }
 
     /**
-    * Returns an attachment for an Office 365 connector card.
-    *
-    * @param card a description of the Office 365 connector card to return.
-    * @returns An [Attachment](xref:botframework-schema.Attachment).
-    *
-    * @remarks
-    * For example:
-    * ```JavaScript
-    * const card = CardFactory.o365ConnectorCard({
-    *   "title": "card title",
-    *   "text": "card text",
-    *   "summary": "O365 card summary",
-    *   "themeColor": "#E67A9E",
-    *   "sections": [
-    *       {
-    *           "title": "**section title**",
-    *           "text": "section text",
-    *           "activityTitle": "activity title",
-    *       }
-    *   ]
-    * });
-    * ```
-    */
+     * Returns an attachment for an Office 365 connector card.
+     *
+     * @param card a description of the Office 365 connector card to return.
+     * @returns An [Attachment](xref:botframework-schema.Attachment).
+     *
+     * @remarks
+     * For example:
+     * ```JavaScript
+     * const card = CardFactory.o365ConnectorCard({
+     *   "title": "card title",
+     *   "text": "card text",
+     *   "summary": "O365 card summary",
+     *   "themeColor": "#E67A9E",
+     *   "sections": [
+     *       {
+     *           "title": "**section title**",
+     *           "text": "section text",
+     *           "activityTitle": "activity title",
+     *       }
+     *   ]
+     * });
+     * ```
+     */
     public static o365ConnectorCard(card: O365ConnectorCard): Attachment {
         return { contentType: CardFactory.contentTypes.o365ConnectorCard, content: card };
     }
@@ -446,6 +445,7 @@ export class CardFactory {
      *
      * @param actions The array of action to include on the card. Each `string` in the array
      *      is converted to an `imBack` button with a title and value set to the value of the string.
+     * @returns A properly formatted array of actions.
      */
     public static actions(actions: (CardAction | string)[] | undefined): CardAction[] {
         const list: CardAction[] = [];
@@ -470,6 +470,7 @@ export class CardFactory {
      *
      * @param images The array of images to include on the card. Each element can be a
      *      [CardImage](ref:botframework-schema.CardImage) or the URL of the image to include.
+     * @returns A properly formatted array of card images.
      */
     public static images(images: (CardImage | string)[] | undefined): CardImage[] {
         const list: CardImage[] = [];
@@ -488,6 +489,7 @@ export class CardFactory {
      * Returns a properly formatted array of media URL objects.
      *
      * @param links The media URLs. Each `string` is converted to a media URL object.
+     * @returns A properly formatted array of media URL objects.
      */
     public static media(links: (MediaUrl | string)[] | undefined): MediaUrl[] {
         const list: MediaUrl[] = [];

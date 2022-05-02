@@ -98,9 +98,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      * Registers an activity event handler for the _turn_ event, emitted for every incoming activity, regardless of type.
      *
      * @param handler The event handler.
-     *
-     * @remarks
-     * Returns a reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
+     * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
      */
     public onTurn(handler: BotHandler): this {
         return this.on('Turn', handler);
@@ -110,10 +108,8 @@ export class ActivityHandler extends ActivityHandlerBase {
      * Registers an activity event handler for the _message_ event, emitted for every incoming message activity.
      *
      * @param handler The event handler.
-     *
+     * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
      * @remarks
-     * Returns a reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
-     *
      * Message activities represent content intended to be shown within a conversational interface
      * and can contain text, speech, interactive cards, and binary or unknown attachments.
      * Not all message activities contain text, the activity's [text](xref:botframework-schema.Activity.text)
@@ -128,10 +124,8 @@ export class ActivityHandler extends ActivityHandlerBase {
      * conversation update activity.
      *
      * @param handler The event handler.
-     *
+     * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
      * @remarks
-     * Returns a reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
-     *
      * Conversation update activities describe a changes to a conversation's metadata, such as title, participants,
      * or other channel-specific information.
      *
@@ -148,10 +142,8 @@ export class ActivityHandler extends ActivityHandlerBase {
      * conversation update activity that includes members added to the conversation.
      *
      * @param handler The event handler.
-     *
+     * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
      * @remarks
-     * Returns a reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
-     *
      * The activity's [membersAdded](xref:botframework-schema.Activity.membersAdded) property
      * contains the members added to the conversation, which can include the bot.
      *
@@ -167,10 +159,8 @@ export class ActivityHandler extends ActivityHandlerBase {
      * conversation update activity that includes members removed from the conversation.
      *
      * @param handler The event handler.
-     *
+     * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
      * @remarks
-     * Returns a reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
-     *
      * The activity's [membersRemoved](xref:botframework-schema.Activity.membersRemoved) property
      * contains the members removed from the conversation, which can include the bot.
      *
@@ -186,10 +176,8 @@ export class ActivityHandler extends ActivityHandlerBase {
      * message reaction activity.
      *
      * @param handler The event handler.
-     *
+     * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
      * @remarks
-     * Returns a reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
-     *
      * Message reaction activities represent a social interaction on an existing message activity
      * within a conversation. The original activity is referred to by the message reaction activity's
      * [replyToId](xref:botframework-schema.Activity.replyToId) property. The
@@ -209,10 +197,8 @@ export class ActivityHandler extends ActivityHandlerBase {
      * message reaction activity that describes reactions added to a message.
      *
      * @param handler The event handler.
-     *
+     * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
      * @remarks
-     * Returns a reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
-     *
      * The activity's [reactionsAdded](xref:botframework-schema.Activity.reactionsAdded) property
      * includes one or more reactions that were added.
      *
@@ -228,10 +214,8 @@ export class ActivityHandler extends ActivityHandlerBase {
      * message reaction activity that describes reactions removed from a message.
      *
      * @param handler The event handler.
-     *
+     * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
      * @remarks
-     * Returns a reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
-     *
      * The activity's [reactionsRemoved](xref:botframework-schema.Activity.reactionsRemoved) property
      * includes one or more reactions that were removed.
      *
@@ -246,10 +230,8 @@ export class ActivityHandler extends ActivityHandlerBase {
      * Registers an activity event handler for the _event_ event, emitted for every incoming event activity.
      *
      * @param handler The event handler.
-     *
+     * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
      * @remarks
-     * Returns a reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
-     *
      * Event activities communicate programmatic information from a client or channel to a bot.
      * The meaning of an event activity is defined by the activity's
      * [name](xref:botframework-schema.Activity.name) property, which is meaningful within the scope
@@ -269,10 +251,8 @@ export class ActivityHandler extends ActivityHandlerBase {
      * Registers an activity event handler for the _end of conversation_ activity.
      *
      * @param handler The event handler.
-     *
+     * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
      * @remarks
-     * Returns a reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
-     *
      * This activity is typically send from a Skill to a Skill caller indicating the end of that particular child conversation.
      *
      * To handle an End of Conversation, use the
@@ -286,10 +266,8 @@ export class ActivityHandler extends ActivityHandlerBase {
      * Registers an activity event handler for the _typing_ activity.
      *
      * @param handler The event handler.
-     *
+     * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
      * @remarks
-     * Returns a reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
-     *
      * To handle a Typing event, use the
      * [onTyping](xref:botbuilder-core.ActivityHandler.onTyping) type-specific event handler.
      */
@@ -301,10 +279,8 @@ export class ActivityHandler extends ActivityHandlerBase {
      * Registers an activity event handler for the _installationupdate_ activity.
      *
      * @param handler The event handler.
-     *
+     * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
      * @remarks
-     * Returns a reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
-     *
      * To handle a InstallationUpdate event, use the
      * [onInstallationUpdate](xref:botbuilder-core.ActivityHandler.onInstallationUpdate) type-specific event handler.
      */
@@ -316,10 +292,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      * Registers an activity event handler for the _installationupdate add_ activity.
      *
      * @param handler The event handler.
-     *
-     * @remarks
-     * Returns a reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
-     *
+     * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
      * To handle a InstallationUpdateAdd event, use the
      * [onInstallationUpdateAdd](xref:botbuilder-core.ActivityHandler.onInstallationUpdateAdd) type-specific event handler.
      */
@@ -331,10 +304,8 @@ export class ActivityHandler extends ActivityHandlerBase {
      * Registers an activity event handler for the _installationupdate remove_ activity.
      *
      * @param handler The event handler.
-     *
+     * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
      * @remarks
-     * Returns a reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
-     *
      * To handle a InstallationUpdateRemove event, use the
      * [onInstallationUpdateRemove](xref:botbuilder-core.ActivityHandler.onInstallationUpdateRemove) type-specific event handler.
      */
@@ -347,10 +318,8 @@ export class ActivityHandler extends ActivityHandlerBase {
      * `tokens/response` event activity. These are generated as part of the OAuth authentication flow.
      *
      * @param handler The event handler.
-     *
+     * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
      * @remarks
-     * Returns a reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
-     *
      * The activity's [value](xref:botframework-schema.Activity.value) property contains the user token.
      *
      * If your bot handles authentication using an [OAuthPrompt](xref:botbuilder-dialogs.OAuthPrompt)
@@ -367,10 +336,8 @@ export class ActivityHandler extends ActivityHandlerBase {
      * Registers an activity event handler for the _command_ activity.
      *
      * @param handler The event handler.
-     *
+     * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
      * @remarks
-     * Returns a reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
-     *
      * To handle a Command event, use the
      * [onCommand](xref:botbuilder-core.ActivityHandler.onCommand) type-specific event handler.
      */
@@ -382,10 +349,8 @@ export class ActivityHandler extends ActivityHandlerBase {
      * Registers an activity event handler for the _CommandResult_ activity.
      *
      * @param handler The event handler.
-     *
+     * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
      * @remarks
-     * Returns a reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
-     *
      * To handle a CommandResult event, use the
      * [onCommandResult](xref:botbuilder-core.ActivityHandler.onCommandResult) type-specific event handler.
      */
@@ -399,10 +364,8 @@ export class ActivityHandler extends ActivityHandlerBase {
      * doesn't provide an event handler.
      *
      * @param handler The event handler.
-     *
+     * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
      * @remarks
-     * Returns a reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
-     *
      * The `ActivityHandler` does not define events for all activity types defined in the
      * [Bot Framework Activity schema](http://aka.ms/botSpecs-activitySchema). In addition,
      * channels and custom adapters can create [Activities](xref:botframework-schema.Activity) with
@@ -418,10 +381,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      * Registers an activity event handler for the _dialog_ event, emitted as the last event for an incoming activity.
      *
      * @param handler The event handler.
-     *
-     * @remarks
-     * Returns a reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
-     *
+     * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
      */
     public onDialog(handler: BotHandler): this {
         return this.on('Dialog', handler);
@@ -489,8 +449,9 @@ export class ActivityHandler extends ActivityHandlerBase {
 
     /**
      * Provides default behavior for invoke activities.
-     * @param context The context object for the current turn.
      *
+     * @param context The context object for the current turn.
+     * @returns {Promise<InvokeResponse>} An Invoke Response for the activity.
      * @remarks
      * Override this method to support channel-specific behavior across multiple channels.
      * The default logic is to check for a signIn invoke and handle that
@@ -537,24 +498,25 @@ export class ActivityHandler extends ActivityHandlerBase {
     /**
      * Handle _signin invoke activity type_.
      *
-     * @param context The context object for the current turn.
+     * @param _context The context object for the current turn.
      *
      * @remarks
      * Override this method to support channel-specific behavior across multiple channels.
      */
-    protected async onSignInInvoke(context: TurnContext): Promise<void> {
+    protected async onSignInInvoke(_context: TurnContext): Promise<void> {
         throw new InvokeException(StatusCodes.NOT_IMPLEMENTED);
     }
 
     /**
      * Invoked when the bot is sent an Adaptive Card Action Execute.
      *
-     * @param context the context object for the current turn
-     * @param invokeValue incoming activity value
+     * @param _context the context object for the current turn
+     * @param _invokeValue incoming activity value
+     * @returns {Promise<AdaptiveCardInvokeResponse>} An Adaptive Card Invoke Response for the activity.
      */
     protected onAdaptiveCardInvoke(
-        context: TurnContext,
-        invokeValue: AdaptiveCardInvokeValue
+        _context: TurnContext,
+        _invokeValue: AdaptiveCardInvokeValue
     ): Promise<AdaptiveCardInvokeResponse> {
         return Promise.reject(new InvokeException(StatusCodes.NOT_IMPLEMENTED));
     }
@@ -562,13 +524,11 @@ export class ActivityHandler extends ActivityHandlerBase {
     /**
      * Invoked when the bot is sent an invoke activity with name of 'application/search'.
      *
-     * @param context the context object for the current turn
-     * @param invokeValue incoming activity value
+     * @param _context the context object for the current turn.
+     * @param _invokeValue incoming activity value.
+     * @returns {Promise<SearchInvokeResponse>} A Search Invoke Response for the activity.
      */
-    protected onSearchInvoke(
-        context: TurnContext,
-        invokeValue: SearchInvokeValue
-    ): Promise<SearchInvokeResponse> {
+    protected onSearchInvoke(_context: TurnContext, _invokeValue: SearchInvokeValue): Promise<SearchInvokeResponse> {
         return Promise.reject(new InvokeException(StatusCodes.NOT_IMPLEMENTED));
     }
 
@@ -974,7 +934,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      * Called at the end of the event emission process.
      *
      * @param context The context object for the current turn.
-     *
+     * @returns {Promise<void>} A promise representing the async operation.
      * @remarks
      * Override this method to use custom logic for emitting events.
      *
@@ -995,9 +955,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      *
      * @param type The identifier for the event type.
      * @param handler The event handler to register.
-     *
-     * @remarks
-     * Returns a reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
+     * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
      */
     protected on(type: string, handler: BotHandler) {
         if (!this.handlers[type]) {
@@ -1014,7 +972,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      * @param context The context object for the current turn.
      * @param type The identifier for the event type.
      * @param onNext The continuation function to call after all registered handlers for this event complete.
-     *
+     * @returns {Promise<any>} The handler's return value.
      * @remarks
      * Runs any registered handlers for this event type and then calls the continuation function.
      *
@@ -1048,6 +1006,7 @@ export class ActivityHandler extends ActivityHandlerBase {
 
     /**
      * An [InvokeResponse](xref:botbuilder.InvokeResponse) factory that initializes the body to the parameter passed and status equal to OK.
+     *
      * @param body JSON serialized content from a POST response.
      * @returns A new [InvokeResponse](xref:botbuilder.InvokeResponse) object.
      */

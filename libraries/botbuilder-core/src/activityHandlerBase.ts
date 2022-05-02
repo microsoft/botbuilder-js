@@ -62,13 +62,14 @@ export class ActivityHandlerBase {
             case ActivityTypes.Event:
                 await this.onEventActivity(context);
                 break;
-            case ActivityTypes.Invoke:
+            case ActivityTypes.Invoke: {
                 const invokeResponse = await this.onInvokeActivity(context);
                 // If onInvokeActivity has already sent an InvokeResponse, do not send another one.
                 if (invokeResponse && !context.turnState.get(INVOKE_RESPONSE_KEY)) {
                     await context.sendActivity({ value: invokeResponse, type: 'invokeResponse' });
                 }
                 break;
+            }
             case ActivityTypes.EndOfConversation:
                 await this.onEndOfConversationActivity(context);
                 break;
@@ -94,13 +95,13 @@ export class ActivityHandlerBase {
     /**
      * Provides a hook for emitting the _message_ event.
      *
-     * @param context The context object for the current turn.
+     * @param _context The context object for the current turn.
      *
      * @remarks
      * Override this method to run registered _message_ handlers and then continue the event
      * emission process.
      */
-    protected async onMessageActivity(context: TurnContext): Promise<void> {
+    protected async onMessageActivity(_context: TurnContext): Promise<void> {
         return;
     }
 
@@ -167,51 +168,51 @@ export class ActivityHandlerBase {
     /**
      * Provides a hook for emitting the _event_ event.
      *
-     * @param context The context object for the current turn.
+     * @param _context The context object for the current turn.
      *
      * @remarks
      * Override this method to run registered _event_ handlers and then continue the event
      * emission process.
      */
-    protected async onEventActivity(context: TurnContext): Promise<void> {
+    protected async onEventActivity(_context: TurnContext): Promise<void> {
         return;
     }
 
     /**
      * Provides a hook for invoke calls.
      *
-     * @param context The context object for the current turn.
-     *
+     * @param _context The context object for the current turn.
+     * @returns {Promise<InvokeResponse>} An Invoke Response for the activity.
      * @remarks
      * Override this method to handle particular invoke calls.
      */
-    protected async onInvokeActivity(context: TurnContext): Promise<InvokeResponse> {
+    protected async onInvokeActivity(_context: TurnContext): Promise<InvokeResponse> {
         return { status: StatusCodes.NOT_IMPLEMENTED };
     }
 
     /**
      * Provides a hook for emitting the _end of conversation_ event.
      *
-     * @param context The context object for the current turn.
+     * @param _context The context object for the current turn.
      *
      * @remarks
      * Override this method to run registered _end of conversation_ handlers and then continue the event
      * emission process.
      */
-    protected async onEndOfConversationActivity(context: TurnContext): Promise<void> {
+    protected async onEndOfConversationActivity(_context: TurnContext): Promise<void> {
         return;
     }
 
     /**
      * Provides a hook for emitting the _typing_ event.
      *
-     * @param context The context object for the current turn.
+     * @param _context The context object for the current turn.
      *
      * @remarks
      * Override this method to run registered _typing_ handlers and then continue the event
      * emission process.
      */
-    protected async onTypingActivity(context: TurnContext): Promise<void> {
+    protected async onTypingActivity(_context: TurnContext): Promise<void> {
         return;
     }
 
@@ -240,39 +241,39 @@ export class ActivityHandlerBase {
     /**
      * Provides a hook for emitting the _installationupdateadd_ event.
      *
-     * @param context The context object for the current turn.
+     * @param _context The context object for the current turn.
      *
      * @remarks
      * Override this method to run registered _installationupdateadd_ handlers and then continue the event
      * emission process.
      */
-    protected async onInstallationUpdateAddActivity(context: TurnContext): Promise<void> {
+    protected async onInstallationUpdateAddActivity(_context: TurnContext): Promise<void> {
         return;
     }
 
     /**
      * Provides a hook for emitting the _installationupdateremove_ event.
      *
-     * @param context The context object for the current turn.
+     * @param _context The context object for the current turn.
      *
      * @remarks
      * Override this method to run registered _installationupdateremove_ handlers and then continue the event
      * emission process.
      */
-    protected async onInstallationUpdateRemoveActivity(context: TurnContext): Promise<void> {
+    protected async onInstallationUpdateRemoveActivity(_context: TurnContext): Promise<void> {
         return;
     }
 
     /**
      * Provides a hook for emitting the _unrecognized_ event.
      *
-     * @param context The context object for the current turn.
+     * @param _context The context object for the current turn.
      *
      * @remarks
      * Override this method to run registered _unrecognized_ handlers and then continue the event
      * emission process.
      */
-    protected async onUnrecognizedActivity(context: TurnContext): Promise<void> {
+    protected async onUnrecognizedActivity(_context: TurnContext): Promise<void> {
         return;
     }
 
@@ -280,14 +281,14 @@ export class ActivityHandlerBase {
      * Provides a hook for emitting the _members added_ event,
      * a sub-type of the _conversation update_ event.
      *
-     * @param membersAdded An array of the members added to the conversation.
-     * @param context The context object for the current turn.
+     * @param _membersAdded An array of the members added to the conversation.
+     * @param _context The context object for the current turn.
      *
      * @remarks
      * Override this method to run registered _members added_ handlers and then continue the event
      * emission process.
      */
-    protected async onMembersAddedActivity(membersAdded: ChannelAccount[], context: TurnContext): Promise<void> {
+    protected async onMembersAddedActivity(_membersAdded: ChannelAccount[], _context: TurnContext): Promise<void> {
         return;
     }
 
@@ -295,14 +296,14 @@ export class ActivityHandlerBase {
      * Provides a hook for emitting the _members removed_ event,
      * a sub-type of the _conversation update_ event.
      *
-     * @param membersRemoved An array of the members removed from the conversation.
-     * @param context The context object for the current turn.
+     * @param _membersRemoved An array of the members removed from the conversation.
+     * @param _context The context object for the current turn.
      *
      * @remarks
      * Override this method to run registered _members removed_ handlers and then continue the event
      * emission process.
      */
-    protected async onMembersRemovedActivity(membersRemoved: ChannelAccount[], context: TurnContext): Promise<void> {
+    protected async onMembersRemovedActivity(_membersRemoved: ChannelAccount[], _context: TurnContext): Promise<void> {
         return;
     }
 
@@ -310,14 +311,14 @@ export class ActivityHandlerBase {
      * Provides a hook for emitting the _reactions added_ event,
      * a sub-type of the _message reaction_ event.
      *
-     * @param reactionsAdded An array of the reactions added to a message.
-     * @param context The context object for the current turn.
+     * @param _reactionsAdded An array of the reactions added to a message.
+     * @param _context The context object for the current turn.
      *
      * @remarks
      * Override this method to run registered _reactions added_ handlers and then continue the event
      * emission process.
      */
-    protected async onReactionsAddedActivity(reactionsAdded: MessageReaction[], context: TurnContext): Promise<void> {
+    protected async onReactionsAddedActivity(_reactionsAdded: MessageReaction[], _context: TurnContext): Promise<void> {
         return;
     }
 
@@ -325,16 +326,16 @@ export class ActivityHandlerBase {
      * Provides a hook for emitting the _reactions removed_ event,
      * a sub-type of the _message reaction_ event.
      *
-     * @param reactionsRemoved An array of the reactions removed from a message.
-     * @param context The context object for the current turn.
+     * @param _reactionsRemoved An array of the reactions removed from a message.
+     * @param _context The context object for the current turn.
      *
      * @remarks
      * Override this method to run registered _reactions removed_ handlers and then continue the event
      * emission process.
      */
     protected async onReactionsRemovedActivity(
-        reactionsRemoved: MessageReaction[],
-        context: TurnContext
+        _reactionsRemoved: MessageReaction[],
+        _context: TurnContext
     ): Promise<void> {
         return;
     }
@@ -346,10 +347,10 @@ export class ActivityHandlerBase {
      * one or more commandResult activities. Receivers are also expected to explicitly
      * reject unsupported command activities.
      *
-     * @param context A context object for this turn.
+     * @param _context A context object for this turn.
      * @returns A promise that represents the work queued to execute.
      */
-    protected async onCommandActivity(context: TurnContext): Promise<void> {
+    protected async onCommandActivity(_context: TurnContext): Promise<void> {
         return;
     }
 
@@ -358,10 +359,10 @@ export class ActivityHandlerBase {
      * `onTurn()` is used.
      * CommandResult activity can be used to communicate the result of a command execution.
      *
-     * @param context A context object for this turn.
+     * @param _context A context object for this turn.
      * @returns A promise that represents the work queued to execute.
      */
-    protected async onCommandResultActivity(context: TurnContext): Promise<void> {
+    protected async onCommandResultActivity(_context: TurnContext): Promise<void> {
         return;
     }
 
@@ -390,15 +391,15 @@ export class ActivityHandlerBase {
      */
     public async run(context: TurnContext): Promise<void> {
         if (!context) {
-            throw new Error(`Missing TurnContext parameter`);
+            throw new Error('Missing TurnContext parameter');
         }
 
         if (!context.activity) {
-            throw new Error(`TurnContext does not include an activity`);
+            throw new Error('TurnContext does not include an activity');
         }
 
         if (!context.activity.type) {
-            throw new Error(`Activity is missing its type`);
+            throw new Error('Activity is missing its type');
         }
 
         // List of all Activity Types:

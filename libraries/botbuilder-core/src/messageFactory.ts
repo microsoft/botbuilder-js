@@ -48,6 +48,7 @@ export class MessageFactory {
      * @param text Text to include in the message.
      * @param speak (Optional) SSML to include in the message.
      * @param inputHint (Optional) input hint for the message. Defaults to `acceptingInput`.
+     * @returns A message activity containing the text.
      */
     public static text(text: string, speak?: string, inputHint?: InputHints | string): Partial<Activity> {
         const msg: Partial<Activity> = {
@@ -75,6 +76,7 @@ export class MessageFactory {
      * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to include with the message.
      * @param inputHint (Optional) input hint for the message. Defaults to `acceptingInput`.
+     * @returns A message activity that contains the suggested actions.
      */
     public static suggestedActions(
         actions: (CardAction | string)[],
@@ -118,6 +120,7 @@ export class MessageFactory {
      * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to include with the message.
      * @param inputHint (Optional) input hint for the message. Defaults to `acceptingInput`.
+     * @returns A message activity containing the attachment.
      */
     public static attachment(
         attachment: Attachment,
@@ -145,6 +148,7 @@ export class MessageFactory {
      * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to include with the message.
      * @param inputHint (Optional) input hint for the message.
+     * @returns A message activity that will display a set of attachments in list form.
      */
     public static list(
         attachments: Attachment[],
@@ -172,6 +176,7 @@ export class MessageFactory {
      * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to include with the message.
      * @param inputHint (Optional) input hint for the message.
+     * @returns A message activity that will display a set of attachments using a carousel layout.
      */
     public static carousel(
         attachments: Attachment[],
@@ -197,6 +202,7 @@ export class MessageFactory {
      * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to include with the message.
      * @param inputHint (Optional) input hint for the message.
+     * @returns A message activity that will display a single image or video to a user.
      */
     public static contentUrl(
         url: string,

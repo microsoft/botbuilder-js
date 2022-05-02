@@ -149,10 +149,10 @@ export abstract class BotAdapter {
      * @internal
      */
     async continueConversationAsync(
-        botAppIdOrClaimsIdentity: string | ClaimsIdentity,
-        reference: Partial<ConversationReference>,
-        logicOrAudience: ((context: TurnContext) => Promise<void>) | string,
-        maybeLogic?: (context: TurnContext) => Promise<void>
+        _botAppIdOrClaimsIdentity: string | ClaimsIdentity,
+        _reference: Partial<ConversationReference>,
+        _logicOrAudience: ((context: TurnContext) => Promise<void>) | string,
+        _maybeLogic?: (context: TurnContext) => Promise<void>
     ): Promise<void> {
         throw new Error('NotImplemented');
     }
@@ -160,13 +160,13 @@ export abstract class BotAdapter {
     /**
      * Creates a conversation on the specified channel.
      *
-     * @param botAppId The application ID of the bot.
-     * @param channelId The ID for the channel.
-     * @param serviceUrl The ID for the channel.
-     * @param audience The audience for the connector.
+     * @param _botAppId The application ID of the bot.
+     * @param _channelId The ID for the channel.
+     * @param _serviceUrl The ID for the channel.
+     * @param _audience The audience for the connector.
      * <param name="conversationParameters">
-     * @param conversationParameters The conversation information to use to create the conversation
-     * @param logic The method to call for the resulting bot turn.
+     * @param _conversationParameters The conversation information to use to create the conversation
+     * @param _logic The method to call for the resulting bot turn.
      * @returns A promise that represents the asynchronous operation
      *
      * @remarks
@@ -180,12 +180,12 @@ export abstract class BotAdapter {
      * the ID of the new conversation.
      */
     async createConversationAsync(
-        botAppId: string,
-        channelId: string,
-        serviceUrl: string,
-        audience: string,
-        conversationParameters: ConversationParameters,
-        logic: (context: TurnContext) => Promise<void>
+        _botAppId: string,
+        _channelId: string,
+        _serviceUrl: string,
+        _audience: string,
+        _conversationParameters: ConversationParameters,
+        _logic: (context: TurnContext) => Promise<void>
     ): Promise<void> {
         throw new Error('NotImplemented');
     }
@@ -200,6 +200,7 @@ export abstract class BotAdapter {
      * | :--- | :--- | :--- |
      * | `context` | [TurnContext](xref:botbuilder-core.TurnContext) | The context object for the turn. |
      * | `error` | `Error` | The Node.js error thrown. |
+     * @returns {Promise<void>} A promise representing the async operation.
      */
     public get onTurnError(): (context: TurnContext, error: Error) => Promise<void> {
         return this.turnError;
@@ -223,10 +224,9 @@ export abstract class BotAdapter {
     /**
      * Adds middleware to the adapter's pipeline.
      *
-     * @param middleware The middleware or middleware handlers to add.
-     *
-     * @remarks
-     * Middleware is added to the adapter at initialization time.
+     * @param {...any} middlewares The middleware or middleware handlers to add.
+     * @returns The updated adapter object.
+     * @remarks Middleware is added to the adapter at initialization time.
      * Each turn, the adapter calls its middleware in the order in which you added it.
      */
     public use(...middlewares: (MiddlewareHandler | Middleware)[]): this {
