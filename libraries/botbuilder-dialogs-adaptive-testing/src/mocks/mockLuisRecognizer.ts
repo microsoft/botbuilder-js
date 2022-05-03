@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-non-literal-fs-filename */
 /**
  * @module botbuilder-dialogs-adaptive-testing
  */

@@ -7,39 +7,39 @@ describe('SelectorTests', function () {
         resourceExplorer = makeResourceExplorer('SelectorTests');
     });
 
-    it('ConditionalSelector', async () => {
+    it('ConditionalSelector', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'SelectorTests_ConditionalSelector');
     });
 
-    it('FirstSelector', async () => {
+    it('FirstSelector', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'SelectorTests_FirstSelector');
     });
 
-    it('MostSpecificFirstSelector', async () => {
+    it('MostSpecificFirstSelector', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'SelectorTests_MostSpecificFirstSelector');
     });
 
-    it('MostSpecificRandomSelector', async () => {
+    it('MostSpecificRandomSelector', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'SelectorTests_MostSpecificRandomSelector');
     });
 
-    it('Priority', async () => {
+    it('Priority', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'SelectorTests_Priority');
     });
 
-    it('Priority', async () => {
+    it('Priority', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'SelectorTests_Float_Priority');
     });
 
-    it('RandomSelector', async () => {
+    it('RandomSelector', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'SelectorTests_RandomSelector');
     });
 
-    it('RunOnce', async () => {
+    it('RunOnce', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'SelectorTests_RunOnce');
     });
 
-    it('TrueSelector', async () => {
+    it('TrueSelector', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'SelectorTests_TrueSelector');
     });
 });

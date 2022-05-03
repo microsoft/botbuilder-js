@@ -32,15 +32,16 @@ export class UserConversationUpdate extends TestAction implements UserConversati
 
     /**
      * Execute the test.
+     *
      * @param testAdapter Adapter to execute against.
      * @param callback Logic for the bot to use.
-     * @param inspector Inspector for dialog context.
+     * @param _inspector Inspector for dialog context.
      * @returns A Promise that represents the work queued to execute.
      */
     public async execute(
         testAdapter: TestAdapter,
         callback: (context: TurnContext) => Promise<void>,
-        inspector?: Inspector
+        _inspector?: Inspector
     ): Promise<void> {
         const activity = testAdapter.makeActivity();
         activity.type = ActivityTypes.ConversationUpdate;

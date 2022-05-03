@@ -26,15 +26,16 @@ export class UserDelay extends TestAction implements UserDelayConfiguration {
 
     /**
      * Execute the test.
-     * @param testAdapter Adapter to execute against.
-     * @param callback Logic for the bot to use.
-     * @param inspector Inspector for dialog context.
+     *
+     * @param _testAdapter Adapter to execute against.
+     * @param _callback Logic for the bot to use.
+     * @param _inspector Inspector for dialog context.
      * @returns A Promise that represents the work queued to execute.
      */
     public async execute(
-        testAdapter: TestAdapter,
-        callback: (context: TurnContext) => Promise<any>,
-        inspector?: Inspector
+        _testAdapter: TestAdapter,
+        _callback: (context: TurnContext) => Promise<any>,
+        _inspector?: Inspector
     ): Promise<void> {
         await Promise.resolve((resolve) => setTimeout(resolve, this.timespan));
     }

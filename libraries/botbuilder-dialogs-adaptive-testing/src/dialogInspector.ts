@@ -127,7 +127,7 @@ export class DialogInspector {
         }
 
         if (!this.conversationState) {
-            throw new Error(`The bot's 'conversationState' has not been configured.`);
+            throw new Error("The bot's 'conversationState' has not been configured.");
         }
         botStateSet.add(this.conversationState);
 

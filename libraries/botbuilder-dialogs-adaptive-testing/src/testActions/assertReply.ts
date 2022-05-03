@@ -32,6 +32,7 @@ export class AssertReply extends AssertReplyActivity implements AssertReplyConfi
 
     /**
      * Gets the text to assert for an activity.
+     *
      * @returns String.
      */
     public getConditionDescription(): string {
@@ -40,9 +41,10 @@ export class AssertReply extends AssertReplyActivity implements AssertReplyConfi
 
     /**
      * Validates the reply of an activity.
+     *
      * @param activity The activity to verify.
      */
-    public validateReply(activity: Activity) {
+    public validateReply(activity: Activity): void {
         if (this.text) {
             if (this.exact) {
                 if (activity.type == ActivityTypes.Message && activity.text != this.text) {

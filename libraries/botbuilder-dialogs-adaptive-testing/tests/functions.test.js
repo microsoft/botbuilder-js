@@ -7,11 +7,11 @@ describe('ActionScopeTests', function () {
         resourceExplorer = makeResourceExplorer('FunctionsTests');
     });
 
-    it('HasPendingActions', async () => {
+    it('HasPendingActions', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'hasPendingActions');
     });
 
-    it('IsDialogActive', async () => {
+    it('IsDialogActive', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'isDialogActive');
     });
 });

@@ -13,6 +13,7 @@ const CONVERSATION_STATE = 'ConversationState';
 export class SetTestOptionsMiddleware implements Middleware {
     /**
      * Processes an incoming event activity.
+     *
      * @param context The context object for this turn.
      * @param next The delegate to call to continue the bot middleware pipeline
      */

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 /**
  * @module botbuilder-dialogs-adaptive-testing
  */
@@ -50,11 +51,12 @@ export class AssertCondition<O extends object = {}> extends Dialog<O> implements
 
     /**
      * Called when the dialog is started and pushed onto the dialog stack.
+     *
      * @param dc The DialogContext for the current turn of the conversation.
-     * @param options Additional information to pass to the prompt being started.
+     * @param _options Additional information to pass to the prompt being started.
      * @returns A Promise representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
+    public async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
         const { value } = this.condition.tryEvaluate(dc.state);
         if (!value) {
             let desc = this.description && this.description.getValue(dc.state);
@@ -68,6 +70,7 @@ export class AssertCondition<O extends object = {}> extends Dialog<O> implements
 
     /**
      * @protected
+     * @returns String of the condition which must be true.
      */
     protected onComputeId(): string {
         return `AssertCondition[${this.condition.toString()}]`;

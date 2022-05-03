@@ -50,6 +50,7 @@ export class UserTokenBasicMock extends UserTokenMock implements UserTokenBasicM
 
     /**
      * Method to setup this mock for an adapter.
+     *
      * @param adapter The test adapter to use for mocking.
      */
     public setup(adapter: TestAdapter): void {
