@@ -32,6 +32,7 @@ export abstract class ResourceProvider {
 
     /**
      * Initialize an instance of `ResourceProvider` class.
+     *
      * @param resourceExplorer Resource explorer.
      */
     public constructor(resourceExplorer: ResourceExplorer) {
@@ -40,6 +41,7 @@ export abstract class ResourceProvider {
 
     /**
      * Event which is fired if any resource managed by the resource provider detects changes to the underlining resource.
+     *
      * @param callback Callback function to be called when an event fired.
      */
     public set changed(callback: (event: ResourceChangeEvent, resources: Resource[]) => void) {
@@ -56,6 +58,8 @@ export abstract class ResourceProvider {
 
     /**
      * Gets the resource explorer.
+     *
+     * @returns The resource explorer.
      */
     public get resourceExplorer(): ResourceExplorer {
         return this._resourceExplorer;
@@ -63,6 +67,8 @@ export abstract class ResourceProvider {
 
     /**
      * Gets the ID for this resource provider.
+     *
+     * @returns The ID for this resource provider.
      */
     public get id(): string {
         return this._id;
@@ -70,12 +76,14 @@ export abstract class ResourceProvider {
 
     /**
      * Gets resource by id.
+     *
      * @param id Resource id.
      */
     public abstract getResource(id: string): Resource;
 
     /**
      * Enumerate resources.
+     *
      * @param extension Extension filter.
      */
     public abstract getResources(extension: string): Resource[];

@@ -23,6 +23,7 @@ export class FolderResourceProvider extends ResourceProvider {
 
     /**
      * Initializes a new instance of the `FolderResourceProvider` class.
+     *
      * @param resourceExplorer Resource explorer.
      * @param folder Root folder.
      * @param includeSubFolders Whether include its sub folders.
@@ -53,6 +54,8 @@ export class FolderResourceProvider extends ResourceProvider {
 
     /**
      * Gets attached file watcher.
+     *
+     * @returns The attached file watcher.
      */
     public get watcher(): FSWatcher {
         return this._watcher;
@@ -86,7 +89,9 @@ export class FolderResourceProvider extends ResourceProvider {
 
     /**
      * Gets resource by its id.
+     *
      * @param id Resource id.
+     * @returns The resource by id.
      */
     public getResource(id: string): Resource {
         return this._resources.has(id) ? this._resources.get(id) : undefined;
@@ -94,7 +99,9 @@ export class FolderResourceProvider extends ResourceProvider {
 
     /**
      * Gets resources by extension.
+     *
      * @param extension Resource extension.
+     * @returns Collection of resources.
      */
     public getResources(extension: string): Resource[] {
         extension = extension.startsWith('.') ? extension.toLowerCase() : `.${extension.toLowerCase()}`;

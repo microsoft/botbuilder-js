@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-non-literal-fs-filename */
 /**
  * @module botbuilder-dialogs-declarative
  */
@@ -15,17 +16,20 @@ import { Resource } from './resource';
 export class FileResource extends Resource {
     /**
      * Initialize a new instance of the `FileResouce` class.
+     *
      * @param path Path to file.
      */
     public constructor(path: string) {
         super();
         this._fullname = path;
         // The id will be the file name, without the path
-        this._id = this._fullname.replace(/^.*[\\\/]/, '');
+        this._id = this._fullname.replace(/^.*[\\/]/, '');
     }
 
     /**
      * Read text content of a file resource.
+     *
+     * @returns Read content text.
      */
     public readText(): string {
         const filePath = this._fullname;
