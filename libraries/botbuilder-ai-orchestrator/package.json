@@ -31,16 +31,16 @@
   "dependencies": {
     "botbuilder-dialogs-adaptive": "4.1.6",
     "@microsoft/orchestrator-core": "~4.14.3",
-    "uuid": "^8.3.2"
-  },
-  "peerDependencies": {
-    "botbuilder-dialogs-declarative": "4.1.6",
-    "botbuilder-dialogs-adaptive-runtime-core": "4.1.6"
-  },
-  "devDependencies": {
+    "uuid": "^8.3.2",
     "adaptive-expressions": "4.1.6",
     "botbuilder-core": "4.1.6",
+    "botbuilder-dialogs-declarative": "4.1.6",
+    "botbuilder-dialogs-adaptive-runtime-core": "4.1.6",
     "botbuilder-dialogs": "4.1.6"
+  },
+  "peerDependencies": {
+  },
+  "devDependencies": {
   },
   "scripts": {
     "build": "tsc -b",
