@@ -5,7 +5,7 @@ import { BotFrameworkAuthentication } from 'botframework-connector';
 import { CloudAdapter, ConversationState, UserState, useBotState } from 'botbuilder';
 
 /**
- *An adapter that implements the Core Bot and can be hosted in different cloud environments both public and private.
+ * An adapter that implements the Core Bot and can be hosted in different cloud environments both public and private.
  */
 export class CoreBotAdapter extends CloudAdapter {
     /**
