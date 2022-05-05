@@ -31,7 +31,7 @@ import { StringExpression } from 'adaptive-expressions';
 import { TestAdapter } from 'botbuilder-core';
 import { TurnContext } from 'botbuilder-core';
 
-// @public (undocumented)
+// @public
 export class AdaptiveTestBotComponent extends BotComponent {
     // (undocumented)
     configureServices(services: ServiceCollection, _configuration: Configuration): void;
@@ -44,7 +44,6 @@ export class AssertCondition<O extends object = {}> extends Dialog<O> implements
     beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult>;
     condition: Expression;
     description: StringExpression;
-    // (undocumented)
     getConverter(property: keyof AssertConditionConfiguration): Converter | ConverterFactory;
     // (undocumented)
     protected onComputeId(): string;
@@ -148,7 +147,7 @@ export interface AssertTelemetryContainsConfiguration {
     events?: string[];
 }
 
-// @public (undocumented)
+// @public
 class CustomEvent_2<T = unknown> extends TestAction implements CustomEventConfiguration {
     // (undocumented)
     static $kind: string;
@@ -229,7 +228,6 @@ export class MockLuisRecognizer extends Recognizer {
 export class MockSettingsMiddleware implements Middleware {
     // Warning: (ae-forgotten-export) The symbol "SettingMock" needs to be exported by the entry point index.d.ts
     constructor(settingMocks: SettingMock[]);
-    // (undocumented)
     onTurn(context: TurnContext, next: () => Promise<void>): Promise<void>;
 }
 
