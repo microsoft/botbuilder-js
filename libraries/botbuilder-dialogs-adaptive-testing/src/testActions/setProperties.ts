@@ -46,6 +46,10 @@ export class SetProperties extends TestAction {
      */
     public assignments: PropertyAssignment[] = [];
 
+    /**
+     * @param property The key of the conditional selector configuration.
+     * @returns The converter for the selector configuration.
+     */
     public getConverter(property: keyof SetPropertiesConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'assignments':

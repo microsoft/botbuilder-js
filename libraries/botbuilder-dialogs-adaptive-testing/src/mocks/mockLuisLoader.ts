@@ -26,6 +26,11 @@ export class MockLuisLoader implements CustomDeserializer<MockLuisRecognizer, Lu
      */
     public constructor(private _resourceExplorer: ResourceExplorer, private _configuration?: Record<string, string>) {}
 
+    /**
+     * @param config Config to recognize intents and entities in a users utterance.
+     * @param type Cached LUIS responses for testing.
+     * @returns The new object created from the object parameter.
+     */
     public load(config: LuisAdaptiveRecognizerConfiguration, type: Newable<MockLuisRecognizer>): MockLuisRecognizer {
         const recognizer = new LuisAdaptiveRecognizer().configure(config as Record<string, unknown>);
         const externalEntityRecognizer = config.externalEntityRecognizer;

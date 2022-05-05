@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-types */
 /**
  * @module botbuilder-dialogs-adaptive-testing
  */
@@ -38,6 +37,13 @@ export class AssertCondition<O extends object = {}> extends Dialog<O> implements
      */
     public description: StringExpression;
 
+    /**
+     * Description of assertion.
+     *
+     * @param property Properties that extend RecognizerConfiguration.
+     * @returns Expression converter.
+     *
+     */
     public getConverter(property: keyof AssertConditionConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'condition':

@@ -44,7 +44,7 @@ export class AssertReply extends AssertReplyActivity implements AssertReplyConfi
      *
      * @param activity The activity to verify.
      */
-    public validateReply(activity: Activity): void {
+    public validateReply(activity: Activity) {
         if (this.text) {
             if (this.exact) {
                 if (activity.type == ActivityTypes.Message && activity.text != this.text) {

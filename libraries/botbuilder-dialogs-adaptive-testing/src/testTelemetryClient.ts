@@ -17,7 +17,7 @@ export class TestTelemetryClient implements BotTelemetryClient {
      *
      * @param _settings Optional. Settings for the telemetry client.
      */
-    constructor(_settings?: unknown) {
+    constructor(_settings?: any) {
         // noop
     }
 
@@ -26,7 +26,7 @@ export class TestTelemetryClient implements BotTelemetryClient {
      *
      * @param _telemetry An object implementing [TelemetryDependency](xref:botbuilder-core.TelemetryDependency).
      */
-    trackDependency(_telemetry: TelemetryDependency): void {
+    trackDependency(_telemetry: TelemetryDependency) {
         // noop
     }
 
@@ -35,7 +35,7 @@ export class TestTelemetryClient implements BotTelemetryClient {
      *
      * @param telemetry An object implementing [TelemetryEvent](xref:botbuilder-core.TelemetryEvent).
      */
-    trackEvent(telemetry: TelemetryEvent): void {
+    trackEvent(telemetry: TelemetryEvent) {
         this.invocations.push(telemetry.name);
     }
 
@@ -44,7 +44,7 @@ export class TestTelemetryClient implements BotTelemetryClient {
      *
      * @param _telemetry An object implementing [TelemetryException](xref:botbuilder-core.TelemetryException).
      */
-    trackException(_telemetry: TelemetryException): void {
+    trackException(_telemetry: TelemetryException) {
         // noop
     }
 
@@ -53,14 +53,14 @@ export class TestTelemetryClient implements BotTelemetryClient {
      *
      * @param _telemetry An object implementing [TelemetryTrace](xref:botbuilder-core.TelemetryTrace).
      */
-    trackTrace(_telemetry: TelemetryTrace): void {
+    trackTrace(_telemetry: TelemetryTrace) {
         // noop
     }
 
     /**
      * Flushes the in-memory buffer and any metrics being pre-aggregated.
      */
-    flush(): void {
+    flush() {
         // noop
     }
 }

@@ -14,6 +14,9 @@ export interface CustomEventConfiguration {
     value?: unknown;
 }
 
+/**
+ * Action to script sending custom event to the bot.
+ */
 export class CustomEvent<T = unknown> extends TestAction implements CustomEventConfiguration {
     public static $kind = 'Microsoft.Test.CustomEvent';
     /**

@@ -9,6 +9,9 @@
 import { Configurable, Converter } from 'botbuilder-dialogs';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 
+/**
+ * Base class for all http request mocks.
+ */
 export abstract class HttpRequestMock extends Configurable {
     public abstract setup(): void;
 }
@@ -17,8 +20,15 @@ export abstract class HttpRequestMock extends Configurable {
  * The type converters for UserTokenMock.
  */
 export class HttpRequestMocksConverter implements Converter<string[], HttpRequestMock[]> {
+    /**
+     * @param _resourceExplorer The resource to access the content.
+     */
     public constructor(private readonly _resourceExplorer: ResourceExplorer) {}
 
+    /**
+     * @param value Array of strings and Setting Mock elements.
+     * @returns Array of Setting Mocks.
+     */
     public convert(value: (string | HttpRequestMock)[]): HttpRequestMock[] {
         return value.map((item: string | HttpRequestMock) => {
             if (typeof item === 'string') {

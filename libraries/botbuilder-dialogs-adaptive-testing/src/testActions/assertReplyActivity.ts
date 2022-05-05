@@ -1,4 +1,3 @@
-/* eslint-disable no-constant-condition */
 /**
  * @module botbuilder-dialogs-adaptive-testing
  */
@@ -79,6 +78,7 @@ export class AssertReplyActivity extends TestAction implements AssertReplyActivi
         _inspector?: Inspector
     ): Promise<any> {
         const start = new Date();
+        /* eslint-disable no-constant-condition */
         while (true) {
             const current = new Date();
 

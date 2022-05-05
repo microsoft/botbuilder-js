@@ -18,8 +18,15 @@ export abstract class SettingMock extends Configurable {}
  * The type converters for SettingMock.
  */
 export class SettingMocksConverter implements Converter<string[], SettingMock[]> {
+    /**
+     * @param _resourceExplorer Parameter to access content resources.
+     */
     public constructor(private readonly _resourceExplorer: ResourceExplorer) {}
 
+    /**
+     * @param value Array of strings and Setting Mock elements.
+     * @returns Array of Setting Mocks.
+     */
     public convert(value: (string | SettingMock)[]): SettingMock[] {
         return value.map((item: string | SettingMock) => {
             if (typeof item === 'string') {
