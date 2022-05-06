@@ -157,7 +157,7 @@ export class TemplateExtensions {
     }
 
     /**
-     * read line from text.
+     * Read line from text.
      *
      * @param input Text content.
      * @returns Split read line.

@@ -225,7 +225,7 @@ export class Templates implements Iterable<Template> {
     }
 
     /**
-     * parse a file and return LG file.
+     * Parse a file and return LG file.
      *
      * @param filePath LG absolute file path..
      * @param importResolver Resolver to resolve LG import id to template text.

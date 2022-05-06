@@ -66,7 +66,7 @@ export class TemplatesParser {
     public static readonly importRegex: RegExp = new RegExp(/\[([^\]]*)\]\(([^)]*)\)([\w\s]*)/);
 
     /**
-     * parse a file and return LG file.
+     * Parse a file and return LG file.
      *
      * @param filePath LG absolute file path..
      * @param importResolver Resolver to resolve LG import id to template text.
