@@ -26,7 +26,7 @@ export abstract class Resource {
     /**
      * The full path to the resource on disk
      *
-     * @returns The full to the resource.
+     * @returns The full path to the resource.
      */
     public get fullName(): string {
         return this._fullname;

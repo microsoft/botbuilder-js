@@ -44,7 +44,7 @@ export class ResourceExplorer {
      */
     public constructor(options?: ResourceExplorerOptions);
     /**
-     * @param providersOrOptions The list of [ResourceProvider](botbuilder-dialogs-declarative.ResourceProvider) or configuration options to initialize the current instance.
+     * @param providersOrOptions The list of [ResourceProvider](xref:botbuilder-dialogs-declarative.ResourceProvider) or configuration options to initialize the current instance.
      */
     public constructor(providersOrOptions: ResourceProvider[] | ResourceExplorerOptions = []) {
         if (Array.isArray(providersOrOptions)) {
