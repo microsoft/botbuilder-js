@@ -1667,13 +1667,10 @@ export class TemplateNameLineContext extends ParserRuleContext_2 {
 
 // @public
 export class Templates implements Iterable<Template> {
-    // (undocumented)
     [Symbol.iterator](): Iterator<Template>;
     constructor(items?: Template[], imports?: TemplateImport[], diagnostics?: Diagnostic[], references?: Templates[], content?: string, id?: string, expressionParser?: ExpressionParser, importResolverDelegate?: ImportResolverDelegate, options?: string[], source?: string, namedReferences?: Record<string, Templates>);
     addTemplate(templateName: string, parameters: string[], templateBody: string): Templates;
-    // (undocumented)
     readonly allDiagnostics: Diagnostic[];
-    // (undocumented)
     readonly allTemplates: Template[];
     analyzeTemplate(templateName: string, analyzerOptions?: AnalyzerOptions): AnalyzerResult;
     content: string;
@@ -1688,10 +1685,8 @@ export class Templates implements Iterable<Template> {
     importResolver: ImportResolverDelegate;
     imports: TemplateImport[];
     static readonly inlineTemplateIdPrefix: string;
-    // (undocumented)
     readonly lgOptions: EvaluationOptions;
     namedReferences: Record<string, Templates>;
-    // (undocumented)
     readonly namespace: string;
     options: string[];
     static parseFile(filePath: string, importResolver?: ImportResolverDelegate, expressionParser?: ExpressionParser): Templates;
@@ -1701,7 +1696,6 @@ export class Templates implements Iterable<Template> {
     push(...args: Template[]): void;
     references: Templates[];
     source: string;
-    // (undocumented)
     toArray(): Template[];
     toString(): string;
     updateTemplate(templateName: string, newTemplateName: string, parameters: string[], templateBody: string): Templates;
