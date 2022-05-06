@@ -87,7 +87,8 @@ export class EvaluationOptions {
                                     this.strictMode = true;
                                 }
                             } else if (key.toLowerCase() === this.replaceNullKey.toLowerCase()) {
-                                this.nullSubstitution = (_path) =>
+                                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                                this.nullSubstitution = (path) =>
                                     // eslint-disable-next-line security/detect-eval-with-expression
                                     eval('`' + value.replace(this.nullKeyReplaceStrRegex, '${path}') + '`');
                             } else if (key.toLowerCase() === this.lineBreakKey.toLowerCase()) {
