@@ -28,6 +28,7 @@ export class LGResource {
 
     /**
      * Creates a new instance of the [LGResource](xref:botbuilder-lg.LGResource) class.
+     *
      * @param id Resource id.
      * @param fullName The full path to the resource on disk.
      * @param content Resource content.

@@ -15,6 +15,7 @@ export class Position {
 
     /**
      * Creates a new instance of the [Position](xref:botbuilder-lg.Position) class.
+     *
      * @param line Line number of the current position.
      * @param character Character number of the current line.
      */

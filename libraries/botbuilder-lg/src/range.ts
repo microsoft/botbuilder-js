@@ -18,6 +18,7 @@ export class Range {
 
     /**
      * Creates a new instance of the [Range](xref:botbuilder-lg.Range) class.
+     *
      * @param start Starting [Position](xref:botbuilder-lg.Position).
      * @param end Ending [Position](xref:botbuilder-lg.Position).
      */
@@ -25,6 +26,7 @@ export class Range {
 
     /**
      * Creates a new instance of the [Range](xref:botbuilder-lg.Range) class.
+     *
      * @param x Starting line number in a file.
      * @param y Starting character number in a file.
      * @param endLine Ending line number in a file.
@@ -34,6 +36,7 @@ export class Range {
 
     /**
      * Creates a new instance of the [Range](xref:botbuilder-lg.Range) class.
+     *
      * @param x Starting line number in a file or [Position](xref:botbuilder-lg.Position).
      * @param y Starting character number in a file or [Position](xref:botbuilder-lg.Position).
      * @param endLine Optional. Ending line number in a file.

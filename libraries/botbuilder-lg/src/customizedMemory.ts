@@ -26,6 +26,7 @@ export class CustomizedMemory implements MemoryInterface {
 
     /**
      * Creates a new instance of the [CustomizedMemory](xref:botbuilder-lg.CustomizedMemory) class.
+     *
      * @param scope Optional. Scope.
      * @param localMemory Optional. Local memory.
      */
@@ -37,6 +38,7 @@ export class CustomizedMemory implements MemoryInterface {
     /**
      *  Try to get the value from a given path. Firstly, get result from global memory,
      *  if global memory does not contain, get from local memory.
+     *
      * @param path Memory path.
      * @returns Resolved value.
      */
@@ -57,6 +59,7 @@ export class CustomizedMemory implements MemoryInterface {
 
     /**
      * Set value to a given path. This method is not implemented.
+     *
      * @param _path Memory path.
      * @param _value Value to set.
      */
@@ -68,6 +71,7 @@ export class CustomizedMemory implements MemoryInterface {
     /**
      * Used to identify whether a particular memory instance has been updated or not.
      * If version is not changed, the caller may choose to use the cached result instead of recomputing everything.
+     *
      * @returns A string indicating the version.
      */
     public version(): string {

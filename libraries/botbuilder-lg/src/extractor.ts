@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
-import { keyBy } from 'lodash';
+import keyBy = require('lodash/keyBy');
 import { LGTemplateParserVisitor } from './generated/LGTemplateParserVisitor';
 import { Template } from './template';
 
@@ -33,6 +33,7 @@ export class Extractor
 
     /**
      * Creates a new instance of the [Extractor](xref:botbuilder-lg.Extractor) class.
+     *
      * @param templates Template list.
      */
     public constructor(templates: Template[]) {
@@ -43,6 +44,7 @@ export class Extractor
 
     /**
      * Extracts the templates and returns a map with their names and bodies.
+     *
      * @returns Map object with template names and bodies.
      */
     public extract(): Map<string, string[] | Map<string, string[]>>[] {
@@ -74,6 +76,7 @@ export class Extractor
 
     /**
      * Visit a parse tree produced by LGTemplateParser.normalTemplateBody.
+     *
      * @param context The parse tree.
      * @returns The result of visiting the normal template body.
      */
@@ -88,6 +91,7 @@ export class Extractor
 
     /**
      * Visit a parse tree produced by the structuredBody labeled alternative in LGTemplateParser.body.
+     *
      * @param context The parse tree.
      * @returns The result of visiting the structured body.
      */
@@ -108,6 +112,7 @@ export class Extractor
 
     /**
      * Visit a parse tree produced by the ifElseBody labeled alternative in LGTemplateParser.body.
+     *
      * @param context The parse tree.
      * @returns The result of visiting the if else body.
      */
@@ -146,6 +151,7 @@ export class Extractor
 
     /**
      * Visit a parse tree produced by the switchCaseBody labeled alternative in LGTemplateParser.body.
+     *
      * @param context The parse tree.
      * @returns The result of visiting the switch case body.
      */
@@ -185,6 +191,7 @@ export class Extractor
 
     /**
      * Gets the default value returned by visitor methods.
+     *
      * @returns Empty Map<string,  string[]>.
      */
     protected defaultResult(): Map<string, string[]> {

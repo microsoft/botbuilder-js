@@ -10,62 +10,78 @@
  * Centralized LG errors.
  */
 export class TemplateErrors {
-    public static readonly noTemplate: string = `LG file must have at least one template definition.`;
+    public static readonly noTemplate: string = 'LG file must have at least one template definition.';
 
-    public static readonly invalidTemplateBody: string = `Invalid template body. Expecting '-' prefix.`;
+    public static readonly invalidTemplateBody: string = "Invalid template body. Expecting '-' prefix.";
 
-    public static readonly missingStrucEnd: string = `Invalid structure body. Expecting ']' at the end of the body.`;
+    public static readonly missingStrucEnd: string = "Invalid structure body. Expecting ']' at the end of the body.";
 
-    public static readonly emptyStrucContent: string = `Invalid structure body. Body cannot be empty.`;
+    public static readonly emptyStrucContent: string = 'Invalid structure body. Body cannot be empty.';
 
-    public static readonly invalidWhitespaceInCondition: string = `Invalid condition: At most 1 whitespace allowed between 'IF/ELSEIF/ELSE' and ':'.`;
+    public static readonly invalidWhitespaceInCondition: string =
+        "Invalid condition: At most 1 whitespace allowed between 'IF/ELSEIF/ELSE' and ':'.";
 
-    public static readonly notStartWithIfInCondition: string = `Invalid condition: Conditions must start with 'IF/ELSEIF/ELSE' prefix.`;
+    public static readonly notStartWithIfInCondition: string =
+        "Invalid condition: Conditions must start with 'IF/ELSEIF/ELSE' prefix.";
 
-    public static readonly multipleIfInCondition: string = `Invalid template body. There cannot be more than one 'IF' condition. Expecting 'IFELSE' or 'ELSE' statement.`;
+    public static readonly multipleIfInCondition: string =
+        "Invalid template body. There cannot be more than one 'IF' condition. Expecting 'IFELSE' or 'ELSE' statement.";
 
-    public static readonly notEndWithElseInCondition: string = `Conditional response template does not end with 'ELSE' condition.`;
+    public static readonly notEndWithElseInCondition: string =
+        "Conditional response template does not end with 'ELSE' condition.";
 
-    public static readonly invalidMiddleInCondition: string = `Invalid template body. Expecting 'ELSEIF'.`;
+    public static readonly invalidMiddleInCondition: string = "Invalid template body. Expecting 'ELSEIF'.";
 
-    public static readonly invalidExpressionInCondition: string = `Invalid condition. 'IF', 'ELSEIF' definitions must include a valid expression.`;
+    public static readonly invalidExpressionInCondition: string =
+        "Invalid condition. 'IF', 'ELSEIF' definitions must include a valid expression.";
 
-    public static readonly extraExpressionInCondition: string = `Invalid condition. 'ELSE' definition cannot include an expression.`;
+    public static readonly extraExpressionInCondition: string =
+        "Invalid condition. 'ELSE' definition cannot include an expression.";
 
-    public static readonly missingTemplateBodyInCondition: string = `Invalid condition body. Conditions must include a valid body.`;
+    public static readonly missingTemplateBodyInCondition: string =
+        'Invalid condition body. Conditions must include a valid body.';
 
-    public static readonly invalidWhitespaceInSwitchCase: string = `Invalid condition: At most 1 whitespace allowed between 'SWITCH/CASE/DEFAULT' and ':'.`;
+    public static readonly invalidWhitespaceInSwitchCase: string =
+        "Invalid condition: At most 1 whitespace allowed between 'SWITCH/CASE/DEFAULT' and ':'.";
 
-    public static readonly notStartWithSwitchInSwitchCase: string = `Invalid conditional response template. Expecting a 'SWITCH' statement?`;
+    public static readonly notStartWithSwitchInSwitchCase: string =
+        "Invalid conditional response template. Expecting a 'SWITCH' statement?";
 
-    public static readonly multipleSwithStatementInSwitchCase: string = `Invalid template body. There cannot be more than one 'SWITCH' statement. Expecting 'CASE' or 'DEFAULT' statement.`;
+    public static readonly multipleSwithStatementInSwitchCase: string =
+        "Invalid template body. There cannot be more than one 'SWITCH' statement. Expecting 'CASE' or 'DEFAULT' statement.";
 
-    public static readonly invalidStatementInMiddlerOfSwitchCase: string = `Invalid template body. Expecting a 'CASE' statement.`;
+    public static readonly invalidStatementInMiddlerOfSwitchCase: string =
+        "Invalid template body. Expecting a 'CASE' statement.";
 
-    public static readonly notEndWithDefaultInSwitchCase: string = `Conditional response template does not end with 'DEFAULT' condition.`;
+    public static readonly notEndWithDefaultInSwitchCase: string =
+        "Conditional response template does not end with 'DEFAULT' condition.";
 
-    public static readonly missingCaseInSwitchCase: string = `Invalid template body. Expecting at least one 'CASE' statement.`;
+    public static readonly missingCaseInSwitchCase: string =
+        "Invalid template body. Expecting at least one 'CASE' statement.";
 
-    public static readonly invalidExpressionInSwiathCase: string = `Invalid condition. 'SWITCH' and 'CASE' statements must include a valid expression.`;
+    public static readonly invalidExpressionInSwiathCase: string =
+        "Invalid condition. 'SWITCH' and 'CASE' statements must include a valid expression.";
 
-    public static readonly extraExpressionInSwitchCase: string = `Invalid condition. 'DEFAULT' statement cannot include an expression.`;
+    public static readonly extraExpressionInSwitchCase: string =
+        "Invalid condition. 'DEFAULT' statement cannot include an expression.";
 
-    public static readonly missingTemplateBodyInSwitchCase: string = `Invalid condition body. Expecing valid body inside a 'CASE' or 'DEFAULT' block.`;
+    public static readonly missingTemplateBodyInSwitchCase: string =
+        "Invalid condition body. Expecing valid body inside a 'CASE' or 'DEFAULT' block.";
 
     public static readonly noEndingInMultiline: string = 'Expecting "```" to close the multi-line block.';
 
-    public static readonly noCloseBracket: string = `Close } is missing in Expression.`;
+    public static readonly noCloseBracket: string = 'Close } is missing in Expression.';
 
-    public static readonly loopDetected: string = `Loop detected:`;
+    public static readonly loopDetected: string = 'Loop detected:';
 
-    public static readonly invalidMemory: string = `Scope is not a LG customized memory.`;
+    public static readonly invalidMemory: string = 'Scope is not a LG customized memory.';
 
-    public static readonly staticFailure: string = `Static failure with the following error.`;
+    public static readonly staticFailure: string = 'Static failure with the following error.';
 
     public static readonly invalidTemplateNameType: string =
         'Expected string type for the parameter of template function.';
 
-    public static readonly importFormatError: string = `Import format should follow '[x](y)' or '[x](y) as z'.`;
+    public static readonly importFormatError: string = "Import format should follow '[x](y)' or '[x](y) as z'.";
 
     public static readonly invalidStrucBody = (invalidBody: string): string =>
         `Invalid structure body: '${invalidBody}'. Body can include <PropertyName> = <Value> pairs or \${reference()} template reference.`;
@@ -103,13 +119,13 @@ export class TemplateErrors {
         expectedCount: number,
         actualCount: number
     ): string =>
-        `arguments mismatch for template '` +
+        "arguments mismatch for template '" +
         `${templateName}` +
-        `'. Expecting '` +
+        "'. Expecting '" +
         `${expectedCount}` +
-        `' arguments, actual '` +
+        "' arguments, actual '" +
         `${actualCount}` +
-        `'.`;
+        "'.";
 
     public static readonly templateExist = (templateName: string): string =>
         `template '${templateName}' already exists.`;

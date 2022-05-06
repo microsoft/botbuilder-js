@@ -28,6 +28,7 @@ export class EvaluationTarget {
 
     /**
      * Creates a new instance of the [EvaluationTarget](xref:botbuilder-lg.EvaluationTarget) class.
+     *
      * @param templateName Template name.
      * @param scope Template scope.
      */
@@ -40,6 +41,7 @@ export class EvaluationTarget {
     /**
      * Get current instance id. If two target has the same Id,
      * we can say they have the same template evaluation result.
+     *
      * @returns Id.
      */
     public getId(): string {

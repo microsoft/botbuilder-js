@@ -59,6 +59,7 @@ export class EvaluationOptions {
 
     /**
      * Creates a new instance of the [EvaluationOptions](xref:botbuilder-lg.EvaluationOptions) class.
+     *
      * @param opt Instance to copy initial settings from.
      */
     public constructor(opt?: EvaluationOptions | string[]) {
@@ -86,7 +87,7 @@ export class EvaluationOptions {
                                     this.strictMode = true;
                                 }
                             } else if (key.toLowerCase() === this.replaceNullKey.toLowerCase()) {
-                                this.nullSubstitution = (path) =>
+                                this.nullSubstitution = (_path) =>
                                     // eslint-disable-next-line security/detect-eval-with-expression
                                     eval('`' + value.replace(this.nullKeyReplaceStrRegex, '${path}') + '`');
                             } else if (key.toLowerCase() === this.lineBreakKey.toLowerCase()) {
@@ -112,6 +113,7 @@ export class EvaluationOptions {
     /**
      * Merges an incoming option to current option. If a property in incoming option is not null while it is null in current
      * option, then the value of this property will be overwritten.
+     *
      * @param opt Incoming option for merging.
      * @returns Result after merging.
      */

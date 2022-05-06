@@ -6,47 +6,47 @@ function GetExceptionExampleFilePath(fileName) {
 }
 
 function GetLGFile(fileName) {
-    var filePath = GetExceptionExampleFilePath(fileName);
+    const filePath = GetExceptionExampleFilePath(fileName);
     return Templates.parseFile(filePath);
 }
 
 function GetDiagnostics(fileName) {
-    var filePath = GetExceptionExampleFilePath(fileName);
+    const filePath = GetExceptionExampleFilePath(fileName);
     return Templates.parseFile(filePath).diagnostics;
 }
 
-describe(`LGExceptionTest`, function () {
+describe('LGExceptionTest', function () {
     /**
      * Disk I/O is slow and variable, causing issues in pipeline tests, so we
      * preload all of the file reads here so that it doesn't count against individual test duration.
      */
     const preloaded = {
-        ConditionFormatError: GetDiagnostics(`ConditionFormatError.lg`),
-        DuplicatedTemplates: GetDiagnostics(`DuplicatedTemplates.lg`),
-        DuplicatedTemplatesLg: GetLGFile(`DuplicatedTemplates.lg`),
-        DuplicatedTemplatesInImportFiles: GetDiagnostics(`DuplicatedTemplatesInImportFiles.lg`),
-        EmptyTemplate: GetDiagnostics(`EmptyTemplate.lg`),
-        EmptyLGFile: GetDiagnostics(`EmptyLGFile.lg`),
-        ErrorStructuredTemplate: GetDiagnostics(`ErrorStructuredTemplate.lg`),
-        ErrorTemplateName: GetDiagnostics(`ErrorTemplateName.lg`),
-        InvalidLGFileImportPath: GetDiagnostics(`InvalidLGFileImportPath.lg`),
-        InvalidImportFormat: GetDiagnostics(`InvalidImportFormat.lg`),
-        LgTemplateFunctionError: GetDiagnostics(`LgTemplateFunctionError.lg`),
-        MultiLineVariation: GetDiagnostics(`MultiLineVariation.lg`),
-        MultiLineTemplate: GetDiagnostics(`MultiLineTemplate.lg`),
-        NoNormalTemplateBody: GetDiagnostics(`NoNormalTemplateBody.lg`),
-        NoTemplateRef: GetDiagnostics(`NoTemplateRef.lg`),
-        SwitchCaseFormatError: GetDiagnostics(`SwitchCaseFormatError.lg`),
-        LoopDetected: GetLGFile(`LoopDetected.lg`),
-        ErrorExpression: GetLGFile(`ErrorExpression.lg`),
+        ConditionFormatError: GetDiagnostics('ConditionFormatError.lg'),
+        DuplicatedTemplates: GetDiagnostics('DuplicatedTemplates.lg'),
+        DuplicatedTemplatesLg: GetLGFile('DuplicatedTemplates.lg'),
+        DuplicatedTemplatesInImportFiles: GetDiagnostics('DuplicatedTemplatesInImportFiles.lg'),
+        EmptyTemplate: GetDiagnostics('EmptyTemplate.lg'),
+        EmptyLGFile: GetDiagnostics('EmptyLGFile.lg'),
+        ErrorStructuredTemplate: GetDiagnostics('ErrorStructuredTemplate.lg'),
+        ErrorTemplateName: GetDiagnostics('ErrorTemplateName.lg'),
+        InvalidLGFileImportPath: GetDiagnostics('InvalidLGFileImportPath.lg'),
+        InvalidImportFormat: GetDiagnostics('InvalidImportFormat.lg'),
+        LgTemplateFunctionError: GetDiagnostics('LgTemplateFunctionError.lg'),
+        MultiLineVariation: GetDiagnostics('MultiLineVariation.lg'),
+        MultiLineTemplate: GetDiagnostics('MultiLineTemplate.lg'),
+        NoNormalTemplateBody: GetDiagnostics('NoNormalTemplateBody.lg'),
+        NoTemplateRef: GetDiagnostics('NoTemplateRef.lg'),
+        SwitchCaseFormatError: GetDiagnostics('SwitchCaseFormatError.lg'),
+        LoopDetected: GetLGFile('LoopDetected.lg'),
+        ErrorExpression: GetLGFile('ErrorExpression.lg'),
         RunTimeErrors: GetLGFile('RunTimeErrors.lg'),
-        ExpressionFormatError: GetDiagnostics(`ExpressionFormatError.lg`),
-        MultiLineExprError: GetDiagnostics(`MultiLineExprError.lg`),
-        ErrorLine: GetDiagnostics(`ErrorLine.lg`),
-        CycleRef1: GetDiagnostics(`CycleRef1.lg`),
+        ExpressionFormatError: GetDiagnostics('ExpressionFormatError.lg'),
+        MultiLineExprError: GetDiagnostics('MultiLineExprError.lg'),
+        ErrorLine: GetDiagnostics('ErrorLine.lg'),
+        CycleRef1: GetDiagnostics('CycleRef1.lg'),
     };
 
-    it(`TestConditionFormatError`, function () {
+    it('TestConditionFormatError', function () {
         const diagnostics = preloaded.ConditionFormatError;
         assert.strictEqual(diagnostics.length, 10);
         assert.strictEqual(diagnostics[0].severity, DiagnosticSeverity.Warning);
@@ -71,7 +71,7 @@ describe(`LGExceptionTest`, function () {
         assert(diagnostics[9].message.includes(TemplateErrors.notStartWithIfInCondition));
     });
 
-    it(`TestDuplicatedTemplates`, function () {
+    it('TestDuplicatedTemplates', function () {
         const diagnostics = preloaded.DuplicatedTemplates;
 
         assert.strictEqual(diagnostics.length, 2);
@@ -89,22 +89,22 @@ describe(`LGExceptionTest`, function () {
         assert.strictEqual(allDiagnostics[1].severity, DiagnosticSeverity.Error);
         assert(allDiagnostics[1].message.includes(TemplateErrors.duplicatedTemplateInSameTemplate('template1')));
         assert.strictEqual(allDiagnostics[2].severity, DiagnosticSeverity.Error);
-        assert(allDiagnostics[2].message.includes(`Duplicated definitions found for template: 'basicTemplate'`));
+        assert(allDiagnostics[2].message.includes("Duplicated definitions found for template: 'basicTemplate'"));
         assert.strictEqual(allDiagnostics[3].severity, DiagnosticSeverity.Error);
-        assert(allDiagnostics[3].message.includes(`Duplicated definitions found for template: 'basicTemplate2'`));
+        assert(allDiagnostics[3].message.includes("Duplicated definitions found for template: 'basicTemplate2'"));
     });
 
-    it(`TestDuplicatedTemplatesInImportFiles`, function () {
+    it('TestDuplicatedTemplatesInImportFiles', function () {
         const diagnostics = preloaded.DuplicatedTemplatesInImportFiles;
 
         assert.strictEqual(diagnostics.length, 2);
         assert.strictEqual(diagnostics[0].severity, DiagnosticSeverity.Error);
-        assert(diagnostics[0].message.includes(`Duplicated definitions found for template: 'basicTemplate'`));
+        assert(diagnostics[0].message.includes("Duplicated definitions found for template: 'basicTemplate'"));
         assert.strictEqual(diagnostics[1].severity, DiagnosticSeverity.Error);
-        assert(diagnostics[1].message.includes(`Duplicated definitions found for template: 'basicTemplate2'`));
+        assert(diagnostics[1].message.includes("Duplicated definitions found for template: 'basicTemplate2'"));
     });
 
-    it(`TestEmptyTemplate`, function () {
+    it('TestEmptyTemplate', function () {
         const diagnostics = preloaded.EmptyTemplate;
 
         assert.strictEqual(diagnostics.length, 1);
@@ -112,7 +112,7 @@ describe(`LGExceptionTest`, function () {
         assert(diagnostics[0].message.includes(TemplateErrors.noTemplateBody('template')));
     });
 
-    it(`TestEmptyLGFile`, function () {
+    it('TestEmptyLGFile', function () {
         const diagnostics = preloaded.EmptyLGFile;
 
         assert.strictEqual(diagnostics.length, 1);
@@ -120,7 +120,7 @@ describe(`LGExceptionTest`, function () {
         assert(diagnostics[0].message.includes(TemplateErrors.noTemplate));
     });
 
-    it(`TestErrorStructuredTemplate`, function () {
+    it('TestErrorStructuredTemplate', function () {
         const diagnostics = preloaded.ErrorStructuredTemplate;
 
         assert.strictEqual(diagnostics.length, 8);
@@ -131,13 +131,13 @@ describe(`LGExceptionTest`, function () {
         assert.strictEqual(diagnostics[2].severity, DiagnosticSeverity.Error);
         assert(
             diagnostics[2].message.includes(
-                `Error occurred when parsing expression 'NOTemplate()'. NOTemplate does not have an evaluator`
+                "Error occurred when parsing expression 'NOTemplate()'. NOTemplate does not have an evaluator"
             )
         );
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[3].severity);
         assert(
             diagnostics[3].message.includes(
-                `Error occurred when parsing expression 'NOTemplate()'. NOTemplate does not have an evaluator`
+                "Error occurred when parsing expression 'NOTemplate()'. NOTemplate does not have an evaluator"
             )
         );
         assert.strictEqual(diagnostics[4].severity, DiagnosticSeverity.Error);
@@ -150,7 +150,7 @@ describe(`LGExceptionTest`, function () {
         assert(diagnostics[7].message.includes(TemplateErrors.invalidStrucBody('- hi')));
     });
 
-    it(`TestErrorTemplateName`, function () {
+    it('TestErrorTemplateName', function () {
         const diagnostics = preloaded.ErrorTemplateName;
 
         assert.strictEqual(diagnostics.length, 7);
@@ -170,15 +170,15 @@ describe(`LGExceptionTest`, function () {
         assert(diagnostics[6].message.includes(TemplateErrors.invalidTemplateName('t1.1')));
     });
 
-    it(`TestInvalidLGFileImportPath`, function () {
+    it('TestInvalidLGFileImportPath', function () {
         const diagnostics = preloaded.InvalidLGFileImportPath;
 
         assert.strictEqual(diagnostics.length, 1);
         assert.strictEqual(diagnostics[0].severity, DiagnosticSeverity.Error);
-        assert(diagnostics[0].message.includes(`Could not find file`));
+        assert(diagnostics[0].message.includes('Could not find file'));
     });
 
-    it(`TestInvalidImportFormat`, function () {
+    it('TestInvalidImportFormat', function () {
         const diagnostics = preloaded.InvalidImportFormat;
 
         assert.strictEqual(diagnostics.length, 1);
@@ -186,25 +186,25 @@ describe(`LGExceptionTest`, function () {
         assert.strictEqual(diagnostics[0].message, TemplateErrors.importFormatError);
     });
 
-    it(`TestLgTemplateFunctionError`, function () {
+    it('TestLgTemplateFunctionError', function () {
         const diagnostics = preloaded.LgTemplateFunctionError;
 
         assert.strictEqual(diagnostics.length, 2);
         assert.strictEqual(diagnostics[0].severity, DiagnosticSeverity.Error);
         assert(
             diagnostics[0].message.includes(
-                `Error occurred when parsing expression 'NotExistTemplate()'. NotExistTemplate does not have an evaluator`
+                "Error occurred when parsing expression 'NotExistTemplate()'. NotExistTemplate does not have an evaluator"
             )
         );
         assert.strictEqual(diagnostics[1].severity, DiagnosticSeverity.Error);
         assert(
             diagnostics[1].message.includes(
-                `Error occurred when parsing expression 'template5('hello', 'world')'. arguments mismatch for template 'template5'. Expecting '1' arguments, actual '2'`
+                "Error occurred when parsing expression 'template5('hello', 'world')'. arguments mismatch for template 'template5'. Expecting '1' arguments, actual '2'"
             )
         );
     });
 
-    it(`TestMultiLineVariation`, function () {
+    it('TestMultiLineVariation', function () {
         const diagnostics = preloaded.MultiLineVariation;
 
         assert.strictEqual(diagnostics.length, 1);
@@ -212,7 +212,7 @@ describe(`LGExceptionTest`, function () {
         assert(diagnostics[0].message.includes(TemplateErrors.noEndingInMultiline));
     });
 
-    it(`TestMultiLineTemplate`, function () {
+    it('TestMultiLineTemplate', function () {
         const diagnostics = preloaded.MultiLineTemplate;
 
         assert.strictEqual(diagnostics.length, 1);
@@ -220,7 +220,7 @@ describe(`LGExceptionTest`, function () {
         assert.strictEqual(diagnostics[0].message.includes(TemplateErrors.noEndingInMultiline), true);
     });
 
-    it(`TestNoNormalTemplateBody`, function () {
+    it('TestNoNormalTemplateBody', function () {
         const diagnostics = preloaded.NoNormalTemplateBody;
 
         assert.strictEqual(diagnostics.length, 3);
@@ -232,7 +232,7 @@ describe(`LGExceptionTest`, function () {
         assert(diagnostics[2].message.includes(TemplateErrors.missingTemplateBodyInCondition));
     });
 
-    it(`TestNoTemplateRef`, function () {
+    it('TestNoTemplateRef', function () {
         const diagnostics = preloaded.NoTemplateRef;
 
         assert.strictEqual(diagnostics.length, 3);
@@ -240,24 +240,24 @@ describe(`LGExceptionTest`, function () {
         assert.strictEqual(diagnostics[0].severity, DiagnosticSeverity.Error);
         assert(
             diagnostics[0].message.includes(
-                `Error occurred when parsing expression 'templateRef()'. templateRef does not have an evaluator`
+                "Error occurred when parsing expression 'templateRef()'. templateRef does not have an evaluator"
             )
         );
         assert.strictEqual(diagnostics[1].severity, DiagnosticSeverity.Error);
         assert(
             diagnostics[1].message.includes(
-                `Error occurred when parsing expression 'templateRef(a)'. templateRef does not have an evaluator`
+                "Error occurred when parsing expression 'templateRef(a)'. templateRef does not have an evaluator"
             )
         );
         assert.strictEqual(diagnostics[2].severity, DiagnosticSeverity.Error);
         assert(
             diagnostics[2].message.includes(
-                `Error occurred when parsing expression 'templateRefInMultiLine()'. templateRefInMultiLine does not have an evaluator`
+                "Error occurred when parsing expression 'templateRefInMultiLine()'. templateRefInMultiLine does not have an evaluator"
             )
         );
     });
 
-    it(`TestSwitchCaseFormatError`, function () {
+    it('TestSwitchCaseFormatError', function () {
         const diagnostics = preloaded.SwitchCaseFormatError;
 
         assert.strictEqual(diagnostics.length, 14);
@@ -291,13 +291,13 @@ describe(`LGExceptionTest`, function () {
         assert(diagnostics[13].message.includes(TemplateErrors.notEndWithDefaultInSwitchCase));
     });
 
-    it(`TestLoopDetected`, function () {
+    it('TestLoopDetected', function () {
         const templates = preloaded.LoopDetected;
 
         assert.throws(
-            () => templates.evaluate(`wPhrase`),
+            () => templates.evaluate('wPhrase'),
             new Error(
-                `Loop detected: welcome_user => wPhrase [wPhrase]  Error occurred when evaluating '-\${wPhrase()}'. [welcome_user]  Error occurred when evaluating '-\${welcome_user()}'.`
+                "Loop detected: welcome_user => wPhrase [wPhrase]  Error occurred when evaluating '-${wPhrase()}'. [welcome_user]  Error occurred when evaluating '-${welcome_user()}'."
             )
         );
 
@@ -322,19 +322,19 @@ describe(`LGExceptionTest`, function () {
         );
     });
 
-    it(`AddTextWithWrongId`, function () {
-        const diagnostics = Templates.parseResource(new LGResource('a.lg', 'a.lg', `[import](xx.lg) \r\n # t \n - hi`))
+    it('AddTextWithWrongId', function () {
+        const diagnostics = Templates.parseResource(new LGResource('a.lg', 'a.lg', '[import](xx.lg) \r\n # t \n - hi'))
             .diagnostics;
         assert.strictEqual(diagnostics.length, 1);
-        assert(diagnostics[0].message.includes(`Could not find file`));
+        assert(diagnostics[0].message.includes('Could not find file'));
     });
 
-    it(`TestErrorExpression`, function () {
+    it('TestErrorExpression', function () {
         const templates = preloaded.ErrorExpression;
         assert.throws(
-            () => templates.evaluate(`template1`),
+            () => templates.evaluate('template1'),
             new Error(
-                `first(createArray(1, 2)) is neither a string nor a null object. [template1]  Error occurred when evaluating '-\${length(first(createArray(1,2)))}'.`
+                "first(createArray(1, 2)) is neither a string nor a null object. [template1]  Error occurred when evaluating '-${length(first(createArray(1,2)))}'."
             )
         );
     });
@@ -343,100 +343,100 @@ describe(`LGExceptionTest`, function () {
         const templates = preloaded.RunTimeErrors;
 
         assert.throws(
-            () => templates.evaluate(`template1`),
+            () => templates.evaluate('template1'),
             new Error(
-                `'dialog.abc' evaluated to null. [template1]  Error occurred when evaluating '-I want \${dialog.abc}'.`
+                "'dialog.abc' evaluated to null. [template1]  Error occurred when evaluating '-I want ${dialog.abc}'."
             )
         );
 
         assert.throws(
-            () => templates.evaluate(`prebuilt1`),
+            () => templates.evaluate('prebuilt1'),
             new Error(
-                `'dialog.abc' evaluated to null. [prebuilt1]  Error occurred when evaluating '-I want \${foreach(dialog.abc, item, template1())}'.`
+                "'dialog.abc' evaluated to null. [prebuilt1]  Error occurred when evaluating '-I want ${foreach(dialog.abc, item, template1())}'."
             )
         );
 
         assert.throws(
-            () => templates.evaluate(`template2`),
+            () => templates.evaluate('template2'),
             new Error(
-                `'dialog.abc' evaluated to null. [template1]  Error occurred when evaluating '-I want \${dialog.abc}'. [template2]  Error occurred when evaluating '-With composition \${template1()}'.`
+                "'dialog.abc' evaluated to null. [template1]  Error occurred when evaluating '-I want ${dialog.abc}'. [template2]  Error occurred when evaluating '-With composition ${template1()}'."
             )
         );
 
         assert.throws(
             () => templates.evaluate('conditionalTemplate1', { dialog: true }),
             new Error(
-                `'dialog.abc' evaluated to null. [template1]  Error occurred when evaluating '-I want \${dialog.abc}'. [conditionalTemplate1] Condition '\${dialog}':  Error occurred when evaluating '-I want \${template1()}'.`
+                "'dialog.abc' evaluated to null. [template1]  Error occurred when evaluating '-I want ${dialog.abc}'. [conditionalTemplate1] Condition '${dialog}':  Error occurred when evaluating '-I want ${template1()}'."
             )
         );
 
         assert.throws(
-            () => templates.evaluate(`conditionalTemplate2`),
+            () => templates.evaluate('conditionalTemplate2'),
             new Error(
-                `'dialog.abc' evaluated to null. [conditionalTemplate2] Condition '\${dialog.abc}': Error occurred when evaluating '-IF :\${dialog.abc}'.`
+                "'dialog.abc' evaluated to null. [conditionalTemplate2] Condition '${dialog.abc}': Error occurred when evaluating '-IF :${dialog.abc}'."
             )
         );
 
         assert.throws(
-            () => templates.evaluate(`structured1`),
+            () => templates.evaluate('structured1'),
             new Error(
-                `'dialog.abc' evaluated to null. [structured1] Property 'Text': Error occurred when evaluating 'Text=I want \${dialog.abc}'.`
+                "'dialog.abc' evaluated to null. [structured1] Property 'Text': Error occurred when evaluating 'Text=I want ${dialog.abc}'."
             )
         );
 
         assert.throws(
-            () => templates.evaluate(`structured2`),
+            () => templates.evaluate('structured2'),
             new Error(
-                `'dialog.abc' evaluated to null. [template1]  Error occurred when evaluating '-I want \${dialog.abc}'. [structured2] Property 'Text': Error occurred when evaluating 'Text=I want \${template1()}'.`
+                "'dialog.abc' evaluated to null. [template1]  Error occurred when evaluating '-I want ${dialog.abc}'. [structured2] Property 'Text': Error occurred when evaluating 'Text=I want ${template1()}'."
             )
         );
 
         assert.throws(
-            () => templates.evaluate(`structured3`),
+            () => templates.evaluate('structured3'),
             new Error(
-                `'dialog.abc' evaluated to null. [template1]  Error occurred when evaluating '-I want \${dialog.abc}'. [structured2] Property 'Text': Error occurred when evaluating 'Text=I want \${template1()}'. [structured3]  Error occurred when evaluating '\${structured2()}'.`
+                "'dialog.abc' evaluated to null. [template1]  Error occurred when evaluating '-I want ${dialog.abc}'. [structured2] Property 'Text': Error occurred when evaluating 'Text=I want ${template1()}'. [structured3]  Error occurred when evaluating '${structured2()}'."
             )
         );
 
         assert.throws(
-            () => templates.evaluate(`switchcase1`, { turn: { testValue: 1 } }),
+            () => templates.evaluate('switchcase1', { turn: { testValue: 1 } }),
             new Error(
-                `'dialog.abc' evaluated to null. [switchcase1] Case '\${1}': Error occurred when evaluating '-I want \${dialog.abc}'.`
+                "'dialog.abc' evaluated to null. [switchcase1] Case '${1}': Error occurred when evaluating '-I want ${dialog.abc}'."
             )
         );
 
         assert.throws(
-            () => templates.evaluate(`switchcase2`, { turn: { testValue: 0 } }),
+            () => templates.evaluate('switchcase2', { turn: { testValue: 0 } }),
             new Error(
-                `'dialog.abc' evaluated to null. [switchcase2] Case 'Default': Error occurred when evaluating '-I want \${dialog.abc}'.`
+                "'dialog.abc' evaluated to null. [switchcase2] Case 'Default': Error occurred when evaluating '-I want ${dialog.abc}'."
             )
         );
     });
 
-    it(`TestExpressionFormatError`, function () {
+    it('TestExpressionFormatError', function () {
         const diagnostics = preloaded.ExpressionFormatError;
         assert.strictEqual(diagnostics.length, 1);
-        assert(diagnostics[0].message.includes(`Close } is missing in Expression`));
+        assert(diagnostics[0].message.includes('Close } is missing in Expression'));
     });
 
-    it(`TestMultiLineExpressionInLG`, function () {
+    it('TestMultiLineExpressionInLG', function () {
         let diagnostics = preloaded.MultiLineExprError;
         assert.strictEqual(diagnostics.length, 1);
-        assert(diagnostics[0].message.includes(`Close } is missing in Expression`));
+        assert(diagnostics[0].message.includes('Close } is missing in Expression'));
 
         diagnostics = Templates.parseResource(new LGResource('', '', '#Demo2\r\n- ${createArray(1,\r\n, 2,3)'))
             .diagnostics;
         assert.strictEqual(diagnostics.length, 1);
-        assert(diagnostics[0].message.includes(`Close } is missing in Expression`));
+        assert(diagnostics[0].message.includes('Close } is missing in Expression'));
 
         diagnostics = Templates.parseResource(
             new LGResource('', '', '#Demo4\r\n- ${createArray(1,\r\n2,3)\r\n> this is a comment')
         ).diagnostics;
         assert.strictEqual(diagnostics.length, 1);
-        assert(diagnostics[0].message.includes(`Close } is missing in Expression`));
+        assert(diagnostics[0].message.includes('Close } is missing in Expression'));
     });
 
-    it(`TestErrorLine`, function () {
+    it('TestErrorLine', function () {
         const diagnostics = preloaded.ErrorLine;
         assert.strictEqual(diagnostics.length, 4);
 
@@ -450,7 +450,7 @@ describe(`LGExceptionTest`, function () {
         assert(diagnostics[3].message.includes(TemplateErrors.invalidStrucBody('- hi')));
     });
 
-    it(`TestLoopReference`, function () {
+    it('TestLoopReference', function () {
         const diagnostics = preloaded.CycleRef1;
         assert.strictEqual(diagnostics.length, 1);
 

@@ -45,6 +45,7 @@ export class Template {
 
     /**
      * Creates a new instance of the [Template](xref:botbuilder-lg.Template) class.
+     *
      * @param templatename Template name without parameters.
      * @param parameters Parameter list.
      * @param templatebody Template content.
@@ -59,6 +60,7 @@ export class Template {
 
     /**
      * Returns a string representing the current [Template](xref:botbuilder-lg.Template) object.
+     *
      * @returns A string representing the [Template](xref:botbuilder-lg.Template).
      */
     public toString(): string {

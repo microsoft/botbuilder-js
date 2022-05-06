@@ -1,4 +1,5 @@
 /* eslint-disable security/detect-object-injection */
+/* eslint-disable security/detect-non-literal-fs-filename */
 /**
  * @module botbuilder-lg
  */
@@ -18,7 +19,7 @@ import { Template } from './template';
 import { TemplateErrors } from './templateErrors';
 import { TemplateExtensions } from './templateExtensions';
 import { Templates } from './templates';
-import { keyBy } from 'lodash';
+import keyBy = require('lodash/keyBy');
 
 import {
     Constant,
@@ -104,6 +105,7 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
 
     /**
      * Creates a new instance of the [Evaluator](xref:botbuilder-lg.Evaluator) class.
+     *
      * @param templates Templates.
      * @param opt Options for LG.
      */
@@ -122,6 +124,7 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
 
     /**
      * Evaluate a template with given name and scope.
+     *
      * @param inputTemplateName Template name.
      * @param scope Scope.
      * @returns Evaluate result.
@@ -193,6 +196,7 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
 
     /**
      * Visit a parse tree produced by LGTemplateParser.structuredTemplateBody.
+     *
      * @param ctx The parse tree.
      * @returns The result of visiting the structured template body.
      */
@@ -222,7 +226,7 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
                     propertyObject[Evaluator.LGType].toString() === typeName
                 ) {
                     for (const key of Object.keys(propertyObject)) {
-                        if (propertyObject.hasOwnProperty(key) && !(key in result)) {
+                        if (Object.prototype.hasOwnProperty.call(propertyObject, key) && !(key in result)) {
                             result[key] = propertyObject[key];
                         }
                     }
@@ -249,7 +253,7 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
                 let itemStringResult = '';
                 for (const child of item.children) {
                     if (child instanceof ExpressionInStructureContext) {
-                        const errorPrefix = `Property '` + ctx.STRUCTURE_IDENTIFIER().text + `':`;
+                        const errorPrefix = "Property '" + ctx.STRUCTURE_IDENTIFIER().text + "':";
                         itemStringResult += this.evalExpression(child.text, child, ctx.text, errorPrefix);
                     } else {
                         const node = child as TerminalNode;
@@ -273,6 +277,7 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
 
     /**
      * Visit a parse tree produced by the normalBody labeled alternative in LGTemplateParser.body.
+     *
      * @param ctx The parse tree.
      * @returns The result of visiting the normal body.
      */
@@ -282,6 +287,7 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
 
     /**
      * Visit a parse tree produced by LGTemplateParser.normalTemplateBody.
+     *
      * @param ctx The parse tree.
      * @returns The result of visiting the normal template body.
      */
@@ -294,7 +300,9 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
 
     /**
      * Visit a parse tree produced by the ifElseBody labeled alternative in LGTemplateParser.body.
+     *
      * @param ctx The parse tree.
+     * @returns The visitor result.
      */
     public visitIfElseBody(ctx: IfElseBodyContext): unknown {
         const ifRules: IfConditionRuleContext[] = ctx.ifElseTemplateBody().ifConditionRule();
@@ -309,6 +317,7 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
 
     /**
      * Visit a parse tree produced by LGTemplateParser.normalTemplateString.
+     *
      * @param ctx The parse tree.
      * @returns The string result of visiting the normal template string.
      */
@@ -354,6 +363,7 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
     /**
      * Constructs the scope for mapping the values of arguments to the parameters of the template.
      * Throws errors if certain errors detected [TemplateErrors](xref:botbuilder-lg.TemplateErrors).
+     *
      * @param inputTemplateName Template name to evaluate.
      * @param args Arguments to map to the template parameters.
      * @param allTemplates All templates.
@@ -388,6 +398,7 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
 
     /**
      * Visit a parse tree produced by the switchCaseBody labeled alternative in LGTemplateParser.body.
+     *
      * @param ctx The parse tree.
      * @returns The string result of visiting the switch case body.
      */
@@ -396,7 +407,7 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
         const length: number = switchcaseNodes.length;
         const switchNode: SwitchCaseRuleContext = switchcaseNodes[0];
         const switchExprs = switchNode.switchCaseStat().expression();
-        const switchErrorPrefix = `Switch '` + switchExprs[0].text + `': `;
+        const switchErrorPrefix = "Switch '" + switchExprs[0].text + "': ";
         const switchExprResult = this.evalExpression(
             switchExprs[0].text,
             switchExprs[0],
@@ -419,7 +430,7 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
             }
 
             const caseExprs = caseNode.switchCaseStat().expression();
-            const caseErrorPrefix = `Case '` + caseExprs[0].text + `': `;
+            const caseErrorPrefix = "Case '" + caseExprs[0].text + "': ";
             const caseExprResult = this.evalExpression(
                 caseExprs[0].text,
                 caseExprs[0],
@@ -438,8 +449,10 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
 
     /**
      * Replaces an expression contained in text.
+     *
      * @param exp Expression Text.
      * @param regex Regex to select the text to replace.
+     * @returns Text with expression replaced.
      */
     public wrappedEvalTextContainsExpression(exp: string, regex: RegExp): string {
         return exp
@@ -456,6 +469,7 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
 
     /**
      * Gets the default value returned by visitor methods.
+     *
      * @returns Empty string.
      */
     protected defaultResult(): string {
@@ -464,6 +478,7 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
 
     /**
      * Concatenates two error messages.
+     *
      * @param firstError First error message to concatenate.
      * @param secondError Second error message to concatenate.
      * @returns The concatenated error messages.
@@ -482,6 +497,7 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
 
     /**
      * Checks an expression result and throws the corresponding error.
+     *
      * @param exp Expression text.
      * @param error Error message.
      * @param result Result.
@@ -536,7 +552,7 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
             return true; // no expression means it's else
         }
 
-        if (this.evalExpressionInCondition(expression, condition.text, `Condition '` + expression.text + `':`)) {
+        if (this.evalExpressionInCondition(expression, condition.text, "Condition '" + expression.text + "':")) {
             return true;
         }
 

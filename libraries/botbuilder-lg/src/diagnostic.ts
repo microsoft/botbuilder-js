@@ -31,6 +31,7 @@ export class Diagnostic {
 
     /**
      * Creates a new instance of the [Diagnostic](xref:botbuilder-lg.Diagnostic) class.
+     *
      * @param range Range where the error or warning occurred.
      * @param message Error message of the error or warning.
      * @param severity Severity of the error or warning.
@@ -53,6 +54,7 @@ export class Diagnostic {
 
     /**
      * Returns a string that represents the current [Diagnostic](xref:botbuilder-lg.Diagnostic) object.
+     *
      * @returns A string that represents the current [Diagnostic](xref:botbuilder-lg.Diagnostic).
      */
     public toString(): string {
