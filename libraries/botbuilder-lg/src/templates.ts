@@ -149,6 +149,8 @@ export class Templates implements Iterable<Template> {
     }
 
     /**
+     * Iterates over values in the template collection.
+     *
      * @returns A new iterator for the template collection.
      */
     public [Symbol.iterator](): Iterator<Template> {
@@ -165,6 +167,8 @@ export class Templates implements Iterable<Template> {
     }
 
     /**
+     * Gets the collection of templates.
+     *
      * @returns A reference to the internal list of collection templates.
      */
     public toArray(): Template[] {
@@ -181,20 +185,26 @@ export class Templates implements Iterable<Template> {
     }
 
     /**
-     * @returns A value indicating whether the options when evaluating LG templates.
+     * Gets the evluation options for the current LG file.
+     *
+     *  @returns A value indicating whether the options when evaluating LG templates.
      */
     public get lgOptions(): EvaluationOptions {
         return new EvaluationOptions(this.options);
     }
 
     /**
-     * @returns A string value representing the namespace to register for current LG file.
+     * Gets the namespace to register for the current LG file.
+     *
+     *  @returns A string value representing the namespace to register for the current LG file.
      */
     public get namespace(): string {
         return this.extractNamespace(this.options);
     }
 
     /**
+     * Gets all templates from current lg file and reference lg files.
+     *
      * @returns All templates from current lg file and reference lg files.
      */
     public get allTemplates(): Template[] {
@@ -204,6 +214,8 @@ export class Templates implements Iterable<Template> {
     }
 
     /**
+     * Gets all diagnostics from current lg file and reference lg files.
+     *
      * @returns All diagnostics from current lg file and reference lg files.
      */
     public get allDiagnostics(): Diagnostic[] {
