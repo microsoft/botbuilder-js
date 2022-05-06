@@ -16,7 +16,7 @@ export class BindToActivity implements TemplateInterface<Partial<Activity>> {
     /**
      * Initializes a new instance of the [BindToActivity](xref:botbuilder-ai.BindToActivity) class.
      *
-     *  @param activity The activity to send the user.
+     * @param activity The activity to send the user.
      * @returns Template to send the user.
      */
     constructor(private readonly activity: Partial<Activity>) {}
