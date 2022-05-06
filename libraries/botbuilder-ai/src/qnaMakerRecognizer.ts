@@ -127,6 +127,10 @@ export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizer
         '=settings.runtimeSettings.telemetry.logPersonalInformation'
     );
 
+    /**
+     * @param property Properties that extend QnAMakerRecognizerConfiguration.
+     * @returns The expression converter.
+     */
     getConverter(property: keyof QnAMakerRecognizerConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'knowledgeBaseId':

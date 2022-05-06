@@ -19,6 +19,9 @@ export class QnAMakerComponentRegistration extends ComponentRegistration {
         declarativeTypes: [],
     });
 
+    /**
+     * Create an instance of QnAMakerComponentRegistration.
+     */
     constructor() {
         super();
 

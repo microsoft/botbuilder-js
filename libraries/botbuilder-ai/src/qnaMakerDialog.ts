@@ -488,6 +488,10 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         this.addStep(this.displayQnAResult.bind(this));
     }
 
+    /**
+     * @param property Properties that extend QnAMakerDialogConfiguration.
+     * @returns The expression converter.
+     */
     getConverter(property: keyof QnAMakerDialogConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'knowledgeBaseId':

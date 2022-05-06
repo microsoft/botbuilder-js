@@ -59,9 +59,17 @@ export interface LuisAdaptivePredictionOptionsConfiguration {
      */
     slot?: string | Expression | StringExpression;
 }
-
+/**
+ * Converts optional parameters for a LUIS prediction request.
+ */
 export class LuisAdaptivePredictionOptionsConverter
     implements Converter<LuisAdaptivePredictionOptionsConfiguration, LuisAdaptivePredictionOptions> {
+    /**
+     * Converts the provided options configuration into an object of [LuisAdaptivePredictionOptions](xref:botbuilder-ai.LuisAdaptivePredictionOptions) type.
+     *
+     * @param config Options configuration for LuisAdaptivePredictionOptions.
+     * @returns The converted options configuration to the [LuisAdaptivePredictionOptions](xref:botbuilder-ai.LuisAdaptivePredictionOptions) interface.
+     */
     convert(config: LuisAdaptivePredictionOptionsConfiguration): LuisAdaptivePredictionOptions {
         const options = Object.entries(config).reduce((options: LuisAdaptivePredictionOptions, [key, value]) => {
             switch (key) {
