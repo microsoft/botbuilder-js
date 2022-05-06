@@ -94,7 +94,7 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
         this.templateMap = keyBy(templates.allTemplates, (t: Template): string => t.name);
         this.lgOptions = opt;
 
-        // generate a new customized expression parser by injecting the template as functions
+        // Generate a new customized expression parser by injecting the template as functions.
         this.expanderExpressionParser = new ExpressionParser(
             this.customizedEvaluatorLookup(templates.expressionParser.EvaluatorLookup, true)
         );
@@ -415,7 +415,7 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
      * @param inputTemplateName The template name to evaluate.
      * @param args Arguments to map to the template parameters.
      * @param allTemplates All templates.
-     * @returns The current scope if the number of arguments is 0, otherwise, returns a CustomizedMemory
+     * @returns The current scope if the number of arguments is 0, otherwise, returns a CustomizedMemory.
      * with the mapping of the parameter name to the argument value added to the scope.
      */
     public constructScope(inputTemplateName: string, args: unknown[], allTemplates: Template[]): MemoryInterface {
