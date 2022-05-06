@@ -280,7 +280,7 @@ export class StaticChecker
      * Visit a parse tree produced by the `switchCaseBody` labeled alternative in `LGTemplateParser.body`.
      *
      * @param context The parse tree.
-     * @returns The result of visiting switch-case body
+     * @returns The result of visiting switch-case body.
      */
     public visitSwitchCaseBody(context: SwitchCaseBodyContext): Diagnostic[] {
         let result: Diagnostic[] = [];
@@ -387,7 +387,7 @@ export class StaticChecker
      * Visit a parse tree produced by `LGTemplateParser.normalTemplateString`.
      *
      * @param context The parse tree.
-     * @returns The result of visiting normal template string
+     * @returns The result of visiting normal template string.
      */
     public visitNormalTemplateString(context: NormalTemplateStringContext): Diagnostic[] {
         const prefixErrorMsg = TemplateExtensions.getPrefixErrorMessage(context);
