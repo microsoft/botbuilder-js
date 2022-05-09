@@ -35,7 +35,24 @@ function getAppId(claimsIdentity: ClaimsIdentity): string | undefined {
 }
 
 // Internal
+/**
+ * Parametrized Cloud Environment used to authenticate Bot Framework Protocol network calls within this environment.
+ */
 export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthentication {
+    /**
+     * @param validateAuthority The validate authority value to use.
+     * @param toChannelFromBotLoginUrl The to Channel from bot login url.
+     * @param toChannelFromBotOAuthScope The to Channel from bot oauth scope.
+     * @param toBotFromChannelTokenIssuer The to bot from Channel Token Issuer.
+     * @param oAuthUrl The OAuth url.
+     * @param toBotFromChannelOpenIdMetadataUrl The to bot from Channel Open Id Metadata url.
+     * @param toBotFromEmulatorOpenIdMetadataUrl The to bot from Emulator Open Id Metadata url.
+     * @param callerId The callerId set on on authenticated [Activities](xref:botframework-schema.Activity).
+     * @param credentialsFactory The [ServiceClientCredentialsFactory](xref:botframework-connector.ServiceClientCredentialsFactory) to use to create credentials.
+     * @param authConfiguration The [AuthenticationConfiguration](xref:botframework-connector.AuthenticationConfiguration) to use.
+     * @param botFrameworkClientFetch The fetch to use in BotFrameworkClient.
+     * @param connectorClientOptions The [ConnectorClientOptions](xref:botframework-connector.ConnectorClientOptions) to use when creating ConnectorClients.
+     */
     constructor(
         private readonly validateAuthority: boolean,
         private readonly toChannelFromBotLoginUrl: string,
@@ -53,10 +70,19 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
         super();
     }
 
+    /**
+     * Gets the originating audience from Bot OAuth scope.
+     *
+     * @returns The originating audience.
+     */
     getOriginatingAudience(): string {
         return this.toChannelFromBotOAuthScope;
     }
 
+    /**
+     * @param authHeader The http auth header received in the skill request.
+     * @returns The identity validation result.
+     */
     async authenticateChannelRequest(authHeader: string): Promise<ClaimsIdentity> {
         if (!authHeader.trim()) {
             const isAuthDisabled = await this.credentialsFactory.isAuthenticationDisabled();
@@ -76,6 +102,13 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
         return this.JwtTokenValidation_validateAuthHeader(authHeader, 'unknown', null);
     }
 
+    /**
+     * Validate Bot Framework Protocol requests.
+     *
+     * @param activity The inbound Activity.
+     * @param authHeader The http auth header received in the skill request.
+     * @returns Promise with AuthenticateRequestResult.
+     */
     async authenticateRequest(activity: Activity, authHeader: string): Promise<AuthenticateRequestResult> {
         const claimsIdentity = await this.JwtTokenValidation_authenticateRequest(activity, authHeader);
 
@@ -101,6 +134,13 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
         };
     }
 
+    /**
+     * Validate Bot Framework Protocol requests.
+     *
+     * @param authHeader The http auth header received in the skill request.
+     * @param channelIdHeader The channel Id HTTP header.
+     * @returns Promise with AuthenticateRequestResult.
+     */
     async authenticateStreamingRequest(
         authHeader: string,
         channelIdHeader: string
@@ -118,6 +158,12 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
         return { audience: outboundAudience, callerId, claimsIdentity };
     }
 
+    /**
+     * Creates the appropriate UserTokenClient instance.
+     *
+     * @param claimsIdentity The inbound Activity's ClaimsIdentity.
+     * @returns Promise with UserTokenClient instance.
+     */
     async createUserTokenClient(claimsIdentity: ClaimsIdentity): Promise<UserTokenClient> {
         const appId = getAppId(claimsIdentity);
         const credentials = await this.credentialsFactory.createCredentials(
@@ -130,6 +176,12 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
         return new UserTokenClientImpl(appId, credentials, this.oAuthUrl, this.connectorClientOptions);
     }
 
+    /**
+     * Creates a ConnectorFactory that can be used to create IConnectorClient that use credentials from this particular cloud environment.
+     *
+     * @param claimsIdentity The inbound Activity's ClaimsIdentity.
+     * @returns A ConnectorFactory.
+     */
     createConnectorFactory(claimsIdentity: ClaimsIdentity): ConnectorFactory {
         return new ConnectorFactoryImpl(
             getAppId(claimsIdentity),
@@ -140,6 +192,11 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
         );
     }
 
+    /**
+     * Creates a BotFrameworkClient used for calling Skills.
+     *
+     * @returns A BotFrameworkClient instance to call Skills.
+     */
     createBotFrameworkClient(): BotFrameworkClient {
         return new BotFrameworkClientImpl(
             this.credentialsFactory,
