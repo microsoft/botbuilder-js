@@ -34,9 +34,8 @@ function getAppId(claimsIdentity: ClaimsIdentity): string | undefined {
     );
 }
 
-// Internal
-/**
- * Parametrized Cloud Environment used to authenticate Bot Framework Protocol network calls within this environment.
+/**@internal
+ * Parameterized [BotFrameworkAuthentication](xref:botframework-connector.BotFrameworkAuthentication) used to authenticate Bot Framework Protocol network calls within this environment.
  */
 export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthentication {
     /**
@@ -47,7 +46,7 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
      * @param oAuthUrl The OAuth url.
      * @param toBotFromChannelOpenIdMetadataUrl The to bot from Channel Open Id Metadata url.
      * @param toBotFromEmulatorOpenIdMetadataUrl The to bot from Emulator Open Id Metadata url.
-     * @param callerId The callerId set on on authenticated [Activities](xref:botframework-schema.Activity).
+     * @param callerId The callerId set on an authenticated [Activities](xref:botframework-schema.Activity).
      * @param credentialsFactory The [ServiceClientCredentialsFactory](xref:botframework-connector.ServiceClientCredentialsFactory) to use to create credentials.
      * @param authConfiguration The [AuthenticationConfiguration](xref:botframework-connector.AuthenticationConfiguration) to use.
      * @param botFrameworkClientFetch The fetch to use in BotFrameworkClient.
@@ -177,7 +176,7 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
     }
 
     /**
-     * Creates a ConnectorFactory that can be used to create IConnectorClient that use credentials from this particular cloud environment.
+     * Creates a ConnectorFactory that can be used to create ConnectorClients that can use credentials from this particular Cloud Environment.
      *
      * @param claimsIdentity The inbound Activity's ClaimsIdentity.
      * @returns A ConnectorFactory.

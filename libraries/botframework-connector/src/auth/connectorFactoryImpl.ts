@@ -13,9 +13,8 @@ export const USER_AGENT = `Microsoft-BotFramework/3.1 ${packageInfo.name}/${
     packageInfo.version
 } ${getDefaultUserAgentValue()} `;
 
-// Internal
-/**
- * Implementation of ConnectorFactory.
+/**@internal
+ * Implementation of [ConnectorFactory](xref:botframework-connector.ConnectorFactory).
  */
 export class ConnectorFactoryImpl extends ConnectorFactory {
     /**
@@ -39,7 +38,7 @@ export class ConnectorFactoryImpl extends ConnectorFactory {
 
     /**
      * @param serviceUrl The client's service URL.
-     * @param audience The audience to use for outbound communication. The will vary by cloud environment.
+     * @param audience The audience to use for outbound communication. It will vary by cloud environment.
      * @returns The new instance of the ConnectorClient class.
      */
     async create(serviceUrl: string, audience?: string): Promise<ConnectorClient> {

@@ -90,7 +90,7 @@ export class PasswordServiceClientCredentialFactory implements ServiceClientCred
      * @param appId The appId.
      * @param audience The audience.
      * @param loginEndpoint The login url.
-     * @param validateAuthority The validate authority vale to use.
+     * @param validateAuthority The validate authority value to use.
      * @returns A Promise representing the result of the operation.
      */
     async createCredentials(

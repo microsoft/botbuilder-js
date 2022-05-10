@@ -26,9 +26,8 @@ const botFrameworkClientFetchImpl: typeof fetch = async (input, init) => {
     } as Response;
 };
 
-// Internal
-/**
- * Implementation of BotFrameworkClient.
+/**@internal
+ * Implementation of [BotFrameworkClient](xref:botframework-connector.BotFrameworkClient).
  */
 export class BotFrameworkClientImpl implements BotFrameworkClient {
     /**
@@ -51,7 +50,7 @@ export class BotFrameworkClientImpl implements BotFrameworkClient {
      * @param serviceUrl The callback Url for the skill host.
      * @param conversationId A conversation ID to use for the conversation with the skill.
      * @param activity The Activity to send to forward.
-     * @returns Promise with optional invokeResponse.
+     * @returns {Promise<InvokeResponse<T>>} A promise representing the asynchronous operation.
      */
     async postActivity<T>(
         fromBotId: string,

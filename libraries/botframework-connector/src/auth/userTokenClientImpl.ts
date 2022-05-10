@@ -8,9 +8,8 @@ import { ConnectorClientOptions } from '../connectorApi/models';
 import { TokenApiClient } from '../tokenApi/tokenApiClient';
 import { UserTokenClient } from './userTokenClient';
 
-// Internal
-/**
- * Implementation of the Client for access user token service.
+/**@internal
+ * Implementation of [UserTokenClient](xref:botframework-connector.UserTokenClient) for access user token service.
  */
 export class UserTokenClientImpl extends UserTokenClient {
     private readonly client: TokenApiClient;
@@ -63,12 +62,12 @@ export class UserTokenClientImpl extends UserTokenClient {
     }
 
     /**
-     * A Task<TResult> representing the result of the asynchronous operation.
+     * Asynchronously Get the raw signin resource to be sent to the user for signin.
      *
-     * @param connectionName Name of the auth connection to use
+     * @param connectionName Name of the auth connection to use.
      * @param activity The Activity from which to derive the token exchange state.
      * @param finalRedirect The final URL that the OAuth flow will redirect to.
-     * @returns A promise representing the result of the operation.
+     * @returns The [SignInUrlResponse](xref:botframework-schema.SignInUrlResponse) resource.
      */
     async getSignInResource(
         connectionName: string,
@@ -118,7 +117,7 @@ export class UserTokenClientImpl extends UserTokenClient {
      * @param userId The user id that will be associated with the token.
      * @param channelId The channel Id that will be associated with the token.
      * @param includeFilter The includeFilter.
-     * @returns A promise of Array of TokenStatus.
+     * @returns A promise with an Array of the Token Status.
      */
     async getTokenStatus(userId: string, channelId: string, includeFilter: string): Promise<TokenStatus[]> {
         z.object({
@@ -176,7 +175,7 @@ export class UserTokenClientImpl extends UserTokenClient {
      * @param userId The user id that will be associated with the token.
      * @param connectionName Name of the auth connection to use.
      * @param channelId The channel Id that will be associated with the token.
-     * @param exchangeRequest The exchange request details, either a token to exchange or a uri to exchange
+     * @param exchangeRequest The exchange request details, either a token to exchange or a uri to exchange.
      * @returns A promise representing the result of the operation.
      */
     async exchangeToken(
