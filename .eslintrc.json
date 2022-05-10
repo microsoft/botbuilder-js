@@ -1,6 +1,7 @@
 {
   "env": {
-    "es6": true
+    "es6": true,
+    "node": true
   },
   "ignorePatterns": [
     "_ts3.4/",
@@ -44,7 +45,16 @@
   },
   "rules": {
     "@typescript-eslint/no-empty-function": "off",
-    "@typescript-eslint/no-explicit-any": "error",
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+    "@typescript-eslint/ban-types": [
+      "off",
+      {
+        "types": {
+          "object": ""
+        }
+      }
+    ],
     "@typescript-eslint/no-unused-vars": [
       "error",
       {
@@ -120,6 +130,27 @@
         "security/detect-non-literal-fs-filename": "off"
       }
     },
+    {
+      "files": [
+        "src/**/*.ts"
+      ],
+      "plugins": ["jsdoc"],
+      "rules": {
+        "jsdoc/require-jsdoc": ["warn", {
+          "require": {
+            "FunctionDeclaration": true,
+            "MethodDefinition": false,
+            "ClassDeclaration": true,
+            "ArrowFunctionExpression": false,
+            "FunctionExpression": false
+          },
+          "publicOnly": true,
+          "contexts": [
+              "MethodDefinition:not([accessibility=/(private|protected)/]) > FunctionExpression"
+          ]
+        }]
+      }
+  },
     {
       "files": [
         "*.config.js"
