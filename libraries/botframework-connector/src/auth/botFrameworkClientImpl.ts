@@ -45,6 +45,7 @@ export class BotFrameworkClientImpl implements BotFrameworkClient {
     }
 
     /**
+     * @template T The type of body in the InvokeResponse.
      * @param fromBotId The MicrosoftAppId of the bot sending the activity.
      * @param toBotId The MicrosoftAppId of the bot receiving the activity.
      * @param toUrl The URL of the bot receiving the activity.
