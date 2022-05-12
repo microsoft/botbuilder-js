@@ -47,7 +47,7 @@ export class MockHttpRequestMiddleware implements Middleware {
     }
 
     /**
-     * @param context The content oject for this turn.
+     * @param context The context object for this turn.
      * @param next The delegate to call to continue the bot middleware pipeline.
      */
     public async onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
