@@ -26,7 +26,8 @@ const botFrameworkClientFetchImpl: typeof fetch = async (input, init) => {
     } as Response;
 };
 
-/**@internal
+/**
+ * @internal
  * Implementation of [BotFrameworkClient](xref:botframework-connector.BotFrameworkClient).
  */
 export class BotFrameworkClientImpl implements BotFrameworkClient {

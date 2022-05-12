@@ -13,7 +13,8 @@ export const USER_AGENT = `Microsoft-BotFramework/3.1 ${packageInfo.name}/${
     packageInfo.version
 } ${getDefaultUserAgentValue()} `;
 
-/**@internal
+/**
+ * @internal
  * Implementation of [ConnectorFactory](xref:botframework-connector.ConnectorFactory).
  */
 export class ConnectorFactoryImpl extends ConnectorFactory {

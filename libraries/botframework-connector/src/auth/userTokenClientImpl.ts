@@ -8,7 +8,8 @@ import { ConnectorClientOptions } from '../connectorApi/models';
 import { TokenApiClient } from '../tokenApi/tokenApiClient';
 import { UserTokenClient } from './userTokenClient';
 
-/**@internal
+/**
+ * @internal
  * Implementation of [UserTokenClient](xref:botframework-connector.UserTokenClient) for access user token service.
  */
 export class UserTokenClientImpl extends UserTokenClient {

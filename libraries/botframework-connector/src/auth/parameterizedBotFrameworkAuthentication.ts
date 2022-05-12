@@ -34,7 +34,8 @@ function getAppId(claimsIdentity: ClaimsIdentity): string | undefined {
     );
 }
 
-/**@internal
+/**
+ * @internal
  * Parameterized [BotFrameworkAuthentication](xref:botframework-connector.BotFrameworkAuthentication) used to authenticate Bot Framework Protocol network calls within this environment.
  */
 export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthentication {
