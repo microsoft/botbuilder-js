@@ -157,7 +157,7 @@ describe('expressionProperty tests', function () {
         result = val.getValue(data);
         assert.strictEqual(result.age, 13);
         assert.strictEqual(result.name, 'joe');
-        assert(val.toExpression().toString().startsWith('json'));
+        assert(val.toExpression().toString().startsWith('Json'));
     });
 
     it('StringExpression', function () {

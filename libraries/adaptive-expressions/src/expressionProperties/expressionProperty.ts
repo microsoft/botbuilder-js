@@ -77,7 +77,7 @@ export class ExpressionProperty<T> {
                 } else if (this.value === null) {
                     this.expression = Expression.parse('null');
                 } else {
-                    this.expression = Expression.parse(`json(${JSON.stringify(this.value)})`);
+                    this.expression = Expression.parse(`Json(${JSON.stringify(this.value)})`);
                 }
                 break;
         }

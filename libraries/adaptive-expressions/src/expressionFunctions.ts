@@ -209,22 +209,22 @@ export class ExpressionFunctions {
         lookup.get(ExpressionType.Equal).negation = lookup.get(ExpressionType.NotEqual);
 
         // Math aliases
-        lookup.set('add', lookup.get(ExpressionType.Add)); // more than 1 param
-        lookup.set('mul', lookup.get(ExpressionType.Multiply)); // more than 1 param
-        lookup.set('div', lookup.get(ExpressionType.Divide)); // more than 1 param
-        lookup.set('sub', lookup.get(ExpressionType.Subtract)); // more than 1 param
-        lookup.set('exp', lookup.get(ExpressionType.Power)); // more than 1 param
-        lookup.set('mod', lookup.get(ExpressionType.Mod));
+        lookup.set('Add', lookup.get(ExpressionType.Add)); // more than 1 param
+        lookup.set('Mul', lookup.get(ExpressionType.Multiply)); // more than 1 param
+        lookup.set('Div', lookup.get(ExpressionType.Divide)); // more than 1 param
+        lookup.set('Sub', lookup.get(ExpressionType.Subtract)); // more than 1 param
+        lookup.set('Exp', lookup.get(ExpressionType.Power)); // more than 1 param
+        lookup.set('Mod', lookup.get(ExpressionType.Mod));
 
         // Comparison aliases
-        lookup.set('and', lookup.get(ExpressionType.And));
-        lookup.set('equals', lookup.get(ExpressionType.Equal));
-        lookup.set('greater', lookup.get(ExpressionType.GreaterThan));
-        lookup.set('greaterOrEquals', lookup.get(ExpressionType.GreaterThanOrEqual));
-        lookup.set('less', lookup.get(ExpressionType.LessThan));
-        lookup.set('lessOrEquals', lookup.get(ExpressionType.LessThanOrEqual));
-        lookup.set('not', lookup.get(ExpressionType.Not));
-        lookup.set('or', lookup.get(ExpressionType.Or));
+        lookup.set('And', lookup.get(ExpressionType.And));
+        lookup.set('Equals', lookup.get(ExpressionType.Equal));
+        lookup.set('Greater', lookup.get(ExpressionType.GreaterThan));
+        lookup.set('GreaterOrEquals', lookup.get(ExpressionType.GreaterThanOrEqual));
+        lookup.set('Less', lookup.get(ExpressionType.LessThan));
+        lookup.set('LessOrEquals', lookup.get(ExpressionType.LessThanOrEqual));
+        lookup.set('Not', lookup.get(ExpressionType.Not));
+        lookup.set('Or', lookup.get(ExpressionType.Or));
         lookup.set('&', lookup.get(ExpressionType.Concat));
         lookup.set('??', lookup.get(ExpressionType.Coalesce));
 

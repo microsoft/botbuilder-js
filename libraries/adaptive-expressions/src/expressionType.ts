@@ -15,19 +15,19 @@ export class ExpressionType {
     public static readonly Subtract: string = '-';
     public static readonly Multiply: string = '*';
     public static readonly Divide: string = '/';
-    public static readonly Min: string = 'min';
-    public static readonly Max: string = 'max';
+    public static readonly Min: string = 'Min';
+    public static readonly Max: string = 'Max';
     public static readonly Power: string = '^';
     public static readonly Mod: string = '%';
-    public static readonly Average: string = 'average';
-    public static readonly Sum: string = 'sum';
-    public static readonly Count: string = 'count';
-    public static readonly Range: string = 'range';
-    public static readonly Floor: string = 'floor';
-    public static readonly Ceiling: string = 'ceiling';
-    public static readonly Round: string = 'round';
-    public static readonly Abs: string = 'abs';
-    public static readonly Sqrt: string = 'sqrt';
+    public static readonly Average: string = 'Average';
+    public static readonly Sum: string = 'Sum';
+    public static readonly Count: string = 'Count';
+    public static readonly Range: string = 'Range';
+    public static readonly Floor: string = 'Floor';
+    public static readonly Ceiling: string = 'Ceiling';
+    public static readonly Round: string = 'Round';
+    public static readonly Abs: string = 'Abs';
+    public static readonly Sqrt: string = 'Sqrt';
 
     // Comparisons
     public static readonly LessThan: string = '<';
@@ -36,9 +36,9 @@ export class ExpressionType {
     public static readonly NotEqual: string = '!=';
     public static readonly GreaterThan: string = '>';
     public static readonly GreaterThanOrEqual: string = '>=';
-    public static readonly Exists: string = 'exists';
-    public static readonly Contains: string = 'contains';
-    public static readonly Empty: string = 'empty';
+    public static readonly Exists: string = 'Exists';
+    public static readonly Contains: string = 'Contains';
+    public static readonly Empty: string = 'Empty';
 
     // Logic
     public static readonly And: string = '&&';
@@ -46,158 +46,158 @@ export class ExpressionType {
     public static readonly Not: string = '!';
 
     // String
-    public static readonly Concat: string = 'concat';
-    public static readonly Length: string = 'length';
-    public static readonly Replace: string = 'replace';
-    public static readonly ReplaceIgnoreCase: string = 'replaceIgnoreCase';
-    public static readonly Split: string = 'split';
-    public static readonly Substring: string = 'substring';
-    public static readonly ToLower: string = 'toLower';
-    public static readonly ToUpper: string = 'toUpper';
-    public static readonly Trim: string = 'trim';
-    public static readonly Join: string = 'join';
-    public static readonly EndsWith: string = 'endsWith';
-    public static readonly StartsWith: string = 'startsWith';
-    public static readonly CountWord: string = 'countWord';
-    public static readonly AddOrdinal: string = 'addOrdinal';
-    public static readonly NewGuid: string = 'newGuid';
-    public static readonly IndexOf: string = 'indexOf';
-    public static readonly LastIndexOf: string = 'lastIndexOf';
+    public static readonly Concat: string = 'Concat';
+    public static readonly Length: string = 'Length';
+    public static readonly Replace: string = 'Replace';
+    public static readonly ReplaceIgnoreCase: string = 'ReplaceIgnoreCase';
+    public static readonly Split: string = 'Split';
+    public static readonly Substring: string = 'Substring';
+    public static readonly ToLower: string = 'ToLower';
+    public static readonly ToUpper: string = 'ToUpper';
+    public static readonly Trim: string = 'Trim';
+    public static readonly Join: string = 'Join';
+    public static readonly EndsWith: string = 'EndsWith';
+    public static readonly StartsWith: string = 'StartsWith';
+    public static readonly CountWord: string = 'CountWord';
+    public static readonly AddOrdinal: string = 'AddOrdinal';
+    public static readonly NewGuid: string = 'NewGuid';
+    public static readonly IndexOf: string = 'IndexOf';
+    public static readonly LastIndexOf: string = 'LastIndexOf';
     public static readonly EOL: string = 'EOL';
-    public static readonly SentenceCase: string = 'sentenceCase';
-    public static readonly TitleCase: string = 'titleCase';
+    public static readonly SentenceCase: string = 'SentenceCase';
+    public static readonly TitleCase: string = 'TitleCase';
 
     // DateTime
-    public static readonly AddDays: string = 'addDays';
-    public static readonly AddHours: string = 'addHours';
-    public static readonly AddMinutes: string = 'addMinutes';
-    public static readonly AddSeconds: string = 'addSeconds';
-    public static readonly DayOfMonth: string = 'dayOfMonth';
-    public static readonly DayOfWeek: string = 'dayOfWeek';
-    public static readonly DayOfYear: string = 'dayOfYear';
-    public static readonly Month: string = 'month';
-    public static readonly Date: string = 'date';
-    public static readonly Year: string = 'year';
-    public static readonly UtcNow: string = 'utcNow';
-    public static readonly FormatDateTime: string = 'formatDateTime';
-    public static readonly FormatEpoch: string = 'formatEpoch';
-    public static readonly FormatTicks: string = 'formatTicks';
-    public static readonly SubtractFromTime: string = 'subtractFromTime';
-    public static readonly DateReadBack: string = 'dateReadBack';
-    public static readonly GetTimeOfDay: string = 'getTimeOfDay';
-    public static readonly GetFutureTime: string = 'getFutureTime';
-    public static readonly GetPastTime: string = 'getPastTime';
-    public static readonly ConvertFromUTC: string = 'convertFromUTC';
-    public static readonly ConvertToUTC: string = 'convertToUTC';
-    public static readonly AddToTime: string = 'addToTime';
-    public static readonly StartOfDay: string = 'startOfDay';
-    public static readonly StartOfHour: string = 'startOfHour';
-    public static readonly StartOfMonth: string = 'startOfMonth';
-    public static readonly Ticks: string = 'ticks';
-    public static readonly TicksToDays: string = 'ticksToDays';
-    public static readonly TicksToHours: string = 'ticksToHours';
-    public static readonly TicksToMinutes: string = 'ticksToMinutes';
-    public static readonly DateTimeDiff: string = 'dateTimeDiff';
+    public static readonly AddDays: string = 'AddDays';
+    public static readonly AddHours: string = 'AddHours';
+    public static readonly AddMinutes: string = 'AddMinutes';
+    public static readonly AddSeconds: string = 'AddSeconds';
+    public static readonly DayOfMonth: string = 'DayOfMonth';
+    public static readonly DayOfWeek: string = 'DayOfWeek';
+    public static readonly DayOfYear: string = 'DayOfYear';
+    public static readonly Month: string = 'Month';
+    public static readonly Date: string = 'Date';
+    public static readonly Year: string = 'Year';
+    public static readonly UtcNow: string = 'UtcNow';
+    public static readonly FormatDateTime: string = 'FormatDateTime';
+    public static readonly FormatEpoch: string = 'FormatEpoch';
+    public static readonly FormatTicks: string = 'FormatTicks';
+    public static readonly SubtractFromTime: string = 'SubtractFromTime';
+    public static readonly DateReadBack: string = 'DateReadBack';
+    public static readonly GetTimeOfDay: string = 'GetTimeOfDay';
+    public static readonly GetFutureTime: string = 'GetFutureTime';
+    public static readonly GetPastTime: string = 'GetPastTime';
+    public static readonly ConvertFromUTC: string = 'ConvertFromUTC';
+    public static readonly ConvertToUTC: string = 'ConvertToUTC';
+    public static readonly AddToTime: string = 'AddToTime';
+    public static readonly StartOfDay: string = 'StartOfDay';
+    public static readonly StartOfHour: string = 'StartOfHour';
+    public static readonly StartOfMonth: string = 'StartOfMonth';
+    public static readonly Ticks: string = 'Ticks';
+    public static readonly TicksToDays: string = 'TicksToDays';
+    public static readonly TicksToHours: string = 'TicksToHours';
+    public static readonly TicksToMinutes: string = 'TicksToMinutes';
+    public static readonly DateTimeDiff: string = 'DateTimeDiff';
 
     // timex
-    public static readonly IsDefinite: string = 'isDefinite';
-    public static readonly IsTime: string = 'isTime';
-    public static readonly IsDuration: string = 'isDuration';
-    public static readonly IsDate: string = 'isDate';
-    public static readonly IsTimeRange: string = 'isTimeRange';
-    public static readonly IsDateRange: string = 'isDateRange';
-    public static readonly IsPresent: string = 'isPresent';
-    public static readonly GetNextViableDate: string = 'getNextViableDate';
-    public static readonly GetPreviousViableDate: string = 'getPreviousViableDate';
-    public static readonly GetNextViableTime: string = 'getNextViableTime';
-    public static readonly GetPreviousViableTime: string = 'getPreviousViableTime';
-    public static readonly TimexResolve: string = 'resolve';
+    public static readonly IsDefinite: string = 'IsDefinite';
+    public static readonly IsTime: string = 'IsTime';
+    public static readonly IsDuration: string = 'IsDuration';
+    public static readonly IsDate: string = 'IsDate';
+    public static readonly IsTimeRange: string = 'IsTimeRange';
+    public static readonly IsDateRange: string = 'IsDateRange';
+    public static readonly IsPresent: string = 'IsPresent';
+    public static readonly GetNextViableDate: string = 'GetNextViableDate';
+    public static readonly GetPreviousViableDate: string = 'GetPreviousViableDate';
+    public static readonly GetNextViableTime: string = 'GetNextViableTime';
+    public static readonly GetPreviousViableTime: string = 'GetPreviousViableTime';
+    public static readonly TimexResolve: string = 'Resolve';
 
     // Conversions
-    public static readonly Float: string = 'float';
-    public static readonly Int: string = 'int';
-    public static readonly String: string = 'string';
-    public static readonly Bool: string = 'bool';
-    public static readonly Binary: string = 'binary';
-    public static readonly Base64: string = 'base64';
-    public static readonly Base64ToBinary: string = 'base64ToBinary';
-    public static readonly Base64ToString: string = 'base64ToString';
-    public static readonly DataUri: string = 'dataUri';
-    public static readonly DataUriToBinary: string = 'dataUriToBinary';
-    public static readonly DataUriToString: string = 'dataUriToString';
-    public static readonly UriComponent: string = 'uriComponent';
-    public static readonly UriComponentToString: string = 'uriComponentToString';
-    public static readonly FormatNumber: string = 'formatNumber';
-    public static readonly JsonStringify: string = 'jsonStringify';
+    public static readonly Float: string = 'Float';
+    public static readonly Int: string = 'Int';
+    public static readonly String: string = 'String';
+    public static readonly Bool: string = 'Bool';
+    public static readonly Binary: string = 'Binary';
+    public static readonly Base64: string = 'Base64';
+    public static readonly Base64ToBinary: string = 'Base64ToBinary';
+    public static readonly Base64ToString: string = 'Base64ToString';
+    public static readonly DataUri: string = 'DataUri';
+    public static readonly DataUriToBinary: string = 'DataUriToBinary';
+    public static readonly DataUriToString: string = 'DataUriToString';
+    public static readonly UriComponent: string = 'UriComponent';
+    public static readonly UriComponentToString: string = 'UriComponentToString';
+    public static readonly FormatNumber: string = 'FormatNumber';
+    public static readonly JsonStringify: string = 'JsonStringify';
 
     // Memory
     public static readonly Accessor: string = 'Accessor';
     public static readonly Element: string = 'Element';
-    public static readonly CreateArray: string = 'createArray';
+    public static readonly CreateArray: string = 'CreateArray';
 
     // Collection
-    public static readonly First: string = 'first';
-    public static readonly Last: string = 'last';
-    public static readonly Foreach: string = 'foreach';
-    public static readonly Select: string = 'select';
-    public static readonly Where: string = 'where';
-    public static readonly Union: string = 'union';
-    public static readonly Intersection: string = 'intersection';
-    public static readonly Skip: string = 'skip';
-    public static readonly Take: string = 'take';
-    public static readonly FilterNotEqual: string = 'filterNotEqual';
-    public static readonly SubArray: string = 'subArray';
-    public static readonly SortBy: string = 'sortBy';
-    public static readonly SortByDescending: string = 'sortByDescending';
-    public static readonly IndicesAndValues: string = 'indicesAndValues';
-    public static readonly Flatten: string = 'flatten';
-    public static readonly Unique: string = 'unique';
-    public static readonly Reverse: string = 'reverse';
-    public static readonly Any: string = 'any';
-    public static readonly All: string = 'all';
+    public static readonly First: string = 'First';
+    public static readonly Last: string = 'Last';
+    public static readonly Foreach: string = 'ForEach';
+    public static readonly Select: string = 'Select';
+    public static readonly Where: string = 'Where';
+    public static readonly Union: string = 'Union';
+    public static readonly Intersection: string = 'Intersection';
+    public static readonly Skip: string = 'Skip';
+    public static readonly Take: string = 'Take';
+    public static readonly FilterNotEqual: string = 'FilterNotEqual';
+    public static readonly SubArray: string = 'SubArray';
+    public static readonly SortBy: string = 'SortBy';
+    public static readonly SortByDescending: string = 'SortByDescending';
+    public static readonly IndicesAndValues: string = 'IndicesAndValues';
+    public static readonly Flatten: string = 'Flatten';
+    public static readonly Unique: string = 'Unique';
+    public static readonly Reverse: string = 'Reverse';
+    public static readonly Any: string = 'Any';
+    public static readonly All: string = 'All';
 
     // Misc
     public static readonly Constant: string = 'Constant';
     public static readonly Lambda: string = 'Lambda';
-    public static readonly If: string = 'if';
-    public static readonly Rand: string = 'rand';
+    public static readonly If: string = 'If';
+    public static readonly Rand: string = 'Rand';
 
     // Object manipulation and construction functions
-    public static readonly Json: string = 'json';
-    public static readonly AddProperty: string = 'addProperty';
-    public static readonly RemoveProperty: string = 'removeProperty';
-    public static readonly SetProperty: string = 'setProperty';
-    public static readonly GetProperty: string = 'getProperty';
-    public static readonly Coalesce: string = 'coalesce';
-    public static readonly JPath: string = 'jPath';
-    public static readonly SetPathToValue: string = 'setPathToValue';
-    public static readonly Merge: string = 'merge';
-    public static readonly XML: string = 'xml';
-    public static readonly XPath: string = 'xPath';
+    public static readonly Json: string = 'Json';
+    public static readonly AddProperty: string = 'AddProperty';
+    public static readonly RemoveProperty: string = 'RemoveProperty';
+    public static readonly SetProperty: string = 'SetProperty';
+    public static readonly GetProperty: string = 'GetProperty';
+    public static readonly Coalesce: string = 'Coalesce';
+    public static readonly JPath: string = 'JPath';
+    public static readonly SetPathToValue: string = 'SetPathToValue';
+    public static readonly Merge: string = 'Merge';
+    public static readonly XML: string = 'Xml';
+    public static readonly XPath: string = 'XPath';
 
     // URI parsing functions
-    public static readonly UriHost: string = 'uriHost';
-    public static readonly UriPath: string = 'uriPath';
-    public static readonly UriPathAndQuery: string = 'uriPathAndQuery';
-    public static readonly UriPort: string = 'uriPort';
-    public static readonly UriQuery: string = 'uriQuery';
-    public static readonly UriScheme: string = 'uriScheme';
+    public static readonly UriHost: string = 'UriHost';
+    public static readonly UriPath: string = 'UriPath';
+    public static readonly UriPathAndQuery: string = 'UriPathAndQuery';
+    public static readonly UriPort: string = 'UriPort';
+    public static readonly UriQuery: string = 'UriQuery';
+    public static readonly UriScheme: string = 'UriScheme';
 
     // Regar expression
-    public static readonly IsMatch: string = 'isMatch';
+    public static readonly IsMatch: string = 'IsMatch';
 
     //Type Checking
-    public static readonly IsString: string = 'isString';
-    public static readonly IsInteger: string = 'isInteger';
-    public static readonly IsArray: string = 'isArray';
-    public static readonly IsObject: string = 'isObject';
-    public static readonly IsFloat: string = 'isFloat';
-    public static readonly IsDateTime: string = 'isDateTime';
-    public static readonly IsBoolean: string = 'isBoolean';
+    public static readonly IsString: string = 'IsString';
+    public static readonly IsInteger: string = 'IsInteger';
+    public static readonly IsArray: string = 'IsArray';
+    public static readonly IsObject: string = 'IsObject';
+    public static readonly IsFloat: string = 'IsFloat';
+    public static readonly IsDateTime: string = 'IsDateTime';
+    public static readonly IsBoolean: string = 'IsBoolean';
 
     // StringOrValue
-    public static readonly StringOrValue: string = 'stringOrValue';
+    public static readonly StringOrValue: string = 'StringOrValue';
 
-    public static readonly Ignore: string = 'ignore';
-    public static readonly Optional: string = 'optional';
+    public static readonly Ignore: string = 'Ignore';
+    public static readonly Optional: string = 'Optional';
 }

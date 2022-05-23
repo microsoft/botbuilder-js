@@ -471,10 +471,10 @@ describe('TriggerTree', function () {
 
     it('Test Ignore', function () {
         const tree = new TriggerTree();
-        tree.addTrigger('ignore(!exists(foo)) && exists(blah)', 1);
-        tree.addTrigger('exists(blah) && ignore(!exists(foo2)) && woof == 3', 2);
-        tree.addTrigger('exists(blah) && woof == 3', 3);
-        tree.addTrigger('exists(blah) && woof == 3 && ignore(!exists(foo2))', 2);
+        tree.addTrigger('Ignore(!Exists(foo)) && Exists(blah)', 1);
+        tree.addTrigger('Exists(blah) && Ignore(!Exists(foo2)) && woof == 3', 2);
+        tree.addTrigger('Exists(blah) && woof == 3', 3);
+        tree.addTrigger('Exists(blah) && woof == 3 && Ignore(!Exists(foo2))', 2);
         const frame = { blah: 1, woof: 3 };
         const matches = tree.matches(frame);
         assert.strictEqual(matches.length, 2);
@@ -484,9 +484,9 @@ describe('TriggerTree', function () {
 
     it('Test Or', function () {
         const tree = new TriggerTree();
-        tree.addTrigger('exists(woof) || exists(blah)', 1);
-        tree.addTrigger('exists(blah)', 2);
-        tree.addTrigger('exists(blah) && exists(foo)', 3);
+        tree.addTrigger('Exists(woof) || Exists(blah)', 1);
+        tree.addTrigger('Exists(blah)', 2);
+        tree.addTrigger('Exists(blah) && Exists(foo)', 3);
         const frame = { blah: 1, woof: 3 };
         const matches = tree.matches(frame);
         assert.strictEqual(matches.length, 2);
@@ -496,9 +496,9 @@ describe('TriggerTree', function () {
 
     it('Test TrueFalse', function () {
         const tree = new TriggerTree();
-        tree.addTrigger('exists(blah) && true', 1);
-        tree.addTrigger('exists(blah) && false', 2);
-        tree.addTrigger('exists(blah)', 3);
+        tree.addTrigger('Exists(blah) && true', 1);
+        tree.addTrigger('Exists(blah) && false', 2);
+        tree.addTrigger('Exists(blah)', 3);
         tree.addTrigger('true', 4);
         tree.addTrigger('false', 5);
         const memory = {};
