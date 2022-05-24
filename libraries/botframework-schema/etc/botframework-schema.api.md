@@ -423,7 +423,7 @@ export interface ChannelInfo {
 export enum Channels {
     // (undocumented)
     Alexa = "alexa",
-    // @deprecated (undocumented)
+    // (undocumented)
     Console = "console",
     // (undocumented)
     Directline = "directline",
@@ -446,6 +446,8 @@ export enum Channels {
     // (undocumented)
     Omni = "omnichannel",
     // (undocumented)
+    Outlook = "outlook",
+    // (undocumented)
     Skype = "skype",
     // @deprecated (undocumented)
     Skypeforbusiness = "skypeforbusiness",
@@ -455,11 +457,11 @@ export enum Channels {
     Sms = "sms",
     // (undocumented)
     Telegram = "telegram",
-    // @deprecated (undocumented)
+    // (undocumented)
     Telephony = "telephony",
     // (undocumented)
     Test = "test",
-    // (undocumented)
+    // @deprecated (undocumented)
     Twilio = "twilio-sms",
     // (undocumented)
     Webchat = "webchat"
