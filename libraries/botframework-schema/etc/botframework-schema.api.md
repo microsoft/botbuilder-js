@@ -423,7 +423,7 @@ export interface ChannelInfo {
 export enum Channels {
     // (undocumented)
     Alexa = "alexa",
-    // (undocumented)
+    // @deprecated (undocumented)
     Console = "console",
     // (undocumented)
     Directline = "directline",
@@ -437,7 +437,7 @@ export enum Channels {
     Facebook = "facebook",
     // (undocumented)
     Groupme = "groupme",
-    // (undocumented)
+    // @deprecated (undocumented)
     Kik = "kik",
     // (undocumented)
     Line = "line",
@@ -447,7 +447,7 @@ export enum Channels {
     Omni = "omnichannel",
     // (undocumented)
     Skype = "skype",
-    // (undocumented)
+    // @deprecated (undocumented)
     Skypeforbusiness = "skypeforbusiness",
     // (undocumented)
     Slack = "slack",
@@ -455,7 +455,7 @@ export enum Channels {
     Sms = "sms",
     // (undocumented)
     Telegram = "telegram",
-    // (undocumented)
+    // @deprecated (undocumented)
     Telephony = "telephony",
     // (undocumented)
     Test = "test",
