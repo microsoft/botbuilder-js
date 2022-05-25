@@ -25,6 +25,7 @@ import { BinaryOpExpContext } from "./ExpressionAntlrParser";
 import { TripleOpExpContext } from "./ExpressionAntlrParser";
 import { PrimaryExpContext } from "./ExpressionAntlrParser";
 import { FileContext } from "./ExpressionAntlrParser";
+import { ExpressionsContext } from "./ExpressionAntlrParser";
 import { ExpressionContext } from "./ExpressionAntlrParser";
 import { PrimaryExpressionContext } from "./ExpressionAntlrParser";
 import { StringInterpolationContext } from "./ExpressionAntlrParser";
@@ -233,6 +234,17 @@ export interface ExpressionAntlrParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitFile?: (ctx: FileContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `ExpressionAntlrParser.expressions`.
+	 * @param ctx the parse tree
+	 */
+	enterExpressions?: (ctx: ExpressionsContext) => void;
+	/**
+	 * Exit a parse tree produced by `ExpressionAntlrParser.expressions`.
+	 * @param ctx the parse tree
+	 */
+	exitExpressions?: (ctx: ExpressionsContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `ExpressionAntlrParser.expression`.

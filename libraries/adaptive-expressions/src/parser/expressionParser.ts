@@ -41,6 +41,21 @@ export class ExpressionParser implements ExpressionParserInterface {
 
         public transform = (context: ParseTree): Expression => this.visit(context);
 
+        public visitExpressions(context: ep.ExpressionsContext): Expression {
+            let expressions: Expression[] = [];
+            for (var child of context.children) {
+                var expression = this.visit(child);
+                if (expression != null) {
+                    expressions.push(expression);
+                }
+            }
+
+            if (expressions.length > 1) {
+                return this.makeExpression(ExpressionType.Sequence, ...expressions);
+            }
+            return expressions[0];
+        }
+
         public visitUnaryOpExp(context: ep.UnaryOpExpContext): Expression {
             const unaryOperationName: string = context.getChild(0).text;
             const operand: Expression = this.visit(context.expression());
@@ -225,6 +240,8 @@ export class ExpressionParser implements ExpressionParserInterface {
                     result.push(evalFun);
                 } else if (child instanceof ep.ExpressionContext) {
                     result.push(this.visit(child));
+                } else if (child instanceof ep.ExpressionsContext) {
+                    result.push(this.visit(child));
                 }
             }
 
@@ -296,7 +313,7 @@ export class ExpressionParser implements ExpressionParserInterface {
         let expressionContext: ParseTree;
         const file: ep.FileContext = parser.file();
         if (file !== undefined) {
-            expressionContext = file.expression();
+            expressionContext = file.expressions();
         }
         ExpressionParser.expressionDict.set(expression, expressionContext);
 

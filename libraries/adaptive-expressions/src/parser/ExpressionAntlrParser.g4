@@ -10,14 +10,16 @@ options { tokenVocab=ExpressionAntlrLexer; }
  * Licensed under the MIT License.
  */}
 
-file: expression EOF;
+file: expressions SEMICOLON* EOF;
+
+expressions: expression (SEMICOLON+ expression)*;
 
 expression
     : (NON|SUBSTRACT|PLUS) expression                                         #unaryOpExp
-    | <assoc=right> expression XOR expression                                 #binaryOpExp
+    | <assoc=right> expression XOR expression                                 #binaryOpExp 
     | expression (ASTERISK|SLASH|PERCENT) expression                          #binaryOpExp
     | expression (PLUS|SUBSTRACT) expression                                  #binaryOpExp
-    | expression (DOUBLE_EQUAL|NOT_EQUAL) expression                          #binaryOpExp
+    | expression (EQUAL|DOUBLE_EQUAL|NOT_EQUAL) expression                    #binaryOpExp
     | expression (SINGLE_AND) expression                                      #binaryOpExp
     | expression (LESS_THAN|LESS_OR_EQUAl|MORE_THAN|MORE_OR_EQUAL) expression #binaryOpExp
     | expression DOUBLE_AND expression                                        #binaryOpExp
@@ -26,8 +28,8 @@ expression
     | expression QUESTION_MARK expression COLON expression                    #tripleOpExp
     | primaryExpression                                                       #primaryExp
     ;
-
-primaryExpression
+ 
+primaryExpression 
     : OPEN_BRACKET expression CLOSE_BRACKET                                    #parenthesisExp
     | OPEN_SQUARE_BRACKET argsList? CLOSE_SQUARE_BRACKET                       #arrayCreationExp
     | OPEN_CURLY_BRACKET keyValuePairList? CLOSE_CURLY_BRACKET                 #jsonCreationExp

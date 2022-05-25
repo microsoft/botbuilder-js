@@ -131,6 +131,7 @@ export class ExpressionType {
     public static readonly JsonStringify: string = 'JsonStringify';
 
     // Memory
+    public static readonly Sequence: string = 'Sequence';
     public static readonly Accessor: string = 'Accessor';
     public static readonly Element: string = 'Element';
     public static readonly CreateArray: string = 'CreateArray';
@@ -170,7 +171,7 @@ export class ExpressionType {
     public static readonly GetProperty: string = 'GetProperty';
     public static readonly Coalesce: string = 'Coalesce';
     public static readonly JPath: string = 'JPath';
-    public static readonly SetPathToValue: string = 'SetPathToValue';
+    public static readonly SetPathToValue: string = 'Set';
     public static readonly Merge: string = 'Merge';
     public static readonly XML: string = 'Xml';
     public static readonly XPath: string = 'XPath';

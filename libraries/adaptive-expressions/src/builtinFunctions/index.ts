@@ -125,6 +125,7 @@ export * from './reverse';
 export * from './round';
 export * from './select';
 export * from './sentenceCase';
+export * from './sequence';
 export * from './setPathToValue';
 export * from './setProperty';
 export * from './skip';

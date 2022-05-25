@@ -930,13 +930,13 @@
             testCases: [['', '']],
         },
         {
-            label: 'SetPathToValue',
+            label: 'Set',
             testCases: [
-                ['SetPathToValue(path.simple, 3) + path.simple', 6],
-                ['SetPathToValue(path.simple, 5) + path.simple', 10],
-                ['SetPathToValue(path.array[0], 7) + path.array[0]', 14],
-                ['SetPathToValue(path.array[1], 9) + path.array[1]', 18],
-                ['SetPathToValue(path.x, null)', null],
+                ['Set(path.simple, 3) + path.simple', 6],
+                ['Set(path.simple, 5) + path.simple', 10],
+                ['Set(path.array[0], 7) + path.array[0]', 14],
+                ['Set(path.array[1], 9) + path.array[1]', 18],
+                ['Set(path.x, null)', null],
             ],
         },
     ];
@@ -1275,6 +1275,29 @@
             const { value, error } = Expression.parse('Math.Sum(1, 2, 3)').tryEvaluate(undefined);
             assert.strictEqual(value, 6);
             assert(error == null);
+        });
+
+        it('Sequence', function () {
+            const mockMemory = {};
+
+            const options = new Options();
+            let value;
+            let error;
+
+            // normal case null value is substituted
+            let exp = Expression.parse('Set(x, 15);\nSet(y, 99); ; ;Set(z, 1); ;');
+            ({ value, error } = exp.tryEvaluate(mockMemory, options));
+            assert.strictEqual(value, 1);
+            assert.strictEqual(mockMemory.x, 15);
+            assert.strictEqual(mockMemory.y, 99);
+            assert.strictEqual(mockMemory.z, 1);
+
+            exp = Expression.parse('RemoveProperty(bad, "foo");Set(y, 199);');
+            ({ value, error } = exp.tryEvaluate(mockMemory, options));
+            assert(!value);
+            assert.strictEqual(error, "Cannot convert undefined or null to object");
+            assert.strictEqual(mockMemory.x, 15);
+            assert.strictEqual(mockMemory.y, 99);
         });
     });
 

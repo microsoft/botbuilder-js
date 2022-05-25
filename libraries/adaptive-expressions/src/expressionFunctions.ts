@@ -153,6 +153,7 @@ export class ExpressionFunctions {
             new BuiltinFunctions.Round(),
             new BuiltinFunctions.Select(),
             new BuiltinFunctions.SentenceCase(),
+            new BuiltinFunctions.Sequence(),
             new BuiltinFunctions.SetPathToValue(),
             new BuiltinFunctions.SetProperty(),
             new BuiltinFunctions.Skip(),

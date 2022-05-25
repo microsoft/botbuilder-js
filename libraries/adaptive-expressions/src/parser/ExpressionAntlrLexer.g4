@@ -18,6 +18,10 @@ fragment DIGIT : [0-9];
 
 fragment OBJECT_DEFINITION: '{' ((WHITESPACE) | ((IDENTIFIER | STRING) ':' ( STRING | ~[{}\r\n'"`] | OBJECT_DEFINITION)+))* '}';
 
+BlockComment: '/*' .*? '*/' -> skip;
+
+LineComment: '//' ~('\n' | '\r')* -> skip;
+
 STRING_INTERPOLATION_START : '`' { this.ignoreWS = false;} -> pushMode(STRING_INTERPOLATION_MODE);
 
 // operators
@@ -34,6 +38,8 @@ ASTERISK: '*';
 SLASH: '/';
 
 PERCENT: '%';
+
+EQUAL: '=';
 
 DOUBLE_EQUAL: '==';
 
@@ -70,6 +76,8 @@ CLOSE_CURLY_BRACKET: '}';
 COMMA: ',';
 
 COLON: ':';
+
+SEMICOLON: ';';
 
 ARROW: '=>';
 

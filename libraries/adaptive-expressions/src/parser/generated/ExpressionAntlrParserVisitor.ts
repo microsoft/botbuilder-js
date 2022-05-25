@@ -25,6 +25,7 @@ import { BinaryOpExpContext } from "./ExpressionAntlrParser";
 import { TripleOpExpContext } from "./ExpressionAntlrParser";
 import { PrimaryExpContext } from "./ExpressionAntlrParser";
 import { FileContext } from "./ExpressionAntlrParser";
+import { ExpressionsContext } from "./ExpressionAntlrParser";
 import { ExpressionContext } from "./ExpressionAntlrParser";
 import { PrimaryExpressionContext } from "./ExpressionAntlrParser";
 import { StringInterpolationContext } from "./ExpressionAntlrParser";
@@ -162,6 +163,13 @@ export interface ExpressionAntlrParserVisitor<Result> extends ParseTreeVisitor<R
 	 * @return the visitor result
 	 */
 	visitFile?: (ctx: FileContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `ExpressionAntlrParser.expressions`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitExpressions?: (ctx: ExpressionsContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `ExpressionAntlrParser.expression`.
