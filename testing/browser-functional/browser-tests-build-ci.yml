@@ -30,7 +30,7 @@ steps:
 - powershell: |
     $packageName = "chromedriver";
 
-    Write-Host "Get $packageName preview version tagged 'latest' from npmjs.com";
+    Write-Host "Get $packageName version tagged 'latest' from npmjs.com";
 
     $dist = npm dist-tag ls $packageName;
     $next = $dist.Where({$_.StartsWith("latest:")});
