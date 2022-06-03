@@ -42,9 +42,8 @@ steps:
   displayName: 'Get latest chromedriver version number from npmjs.com'
 
 - powershell: |
-    # This lets the pipeline automatically update when a new chromedriver is released.
-    # Expect a 1 or 2 day delay between a new Chrome browser relase and the matching driver release.
-    # Expect the pipeline to temporarily break about every 6 weeks during the driver gap.
+    # This lets the pipeline automatically keep up with Chrome browser releases.
+    # New Chrome browser releases happen about every 4 weeks.
 
     $path = "$(System.DefaultWorkingDirectory)/testing/browser-functional/package.json";
     $package = 'chromedriver';
@@ -60,7 +59,7 @@ steps:
         $content -Replace "$find", "$replace" | Set-Content $_.FullName;
         '-------------'; get-content $_.FullName; '==================='
     }
-  displayName: 'Set chromedriver dependency to latest version'
+  displayName: 'Upgrade chromedriver reference to latest version'
 
 - task: NodeTool@0
   displayName: use node 12.x
