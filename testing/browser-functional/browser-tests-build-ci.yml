@@ -27,6 +27,41 @@ steps:
   displayName: 'Create DateTimeTag for Resource Group'
   # Get-Date on Azure DevOps returns a datetime relative to UTC-0, so "Z" is being used instead of the dynamic "K".
 
+- powershell: |
+    $packageName = "chromedriver";
+
+    Write-Host "Get $packageName preview version tagged 'latest' from npmjs.com";
+
+    $dist = npm dist-tag ls $packageName;
+    $next = $dist.Where({$_.StartsWith("latest:")});
+    [string]$latestVersion = $next.Split(':')[-1].Trim();
+
+    $packageName;
+    $latestVersion;
+    "##vso[task.setvariable variable=LatestVersion;]$latestVersion";
+  displayName: 'Get latest chromedriver version number from npmjs.com'
+
+- powershell: |
+    # This lets the pipeline automatically update when a new chromedriver is released.
+    # Expect a 1 or 2 day delay between a new Chrome browser relase and the matching driver release.
+    # Expect the pipeline to temporarily break about every 6 weeks during the driver gap.
+
+    $path = "$(System.DefaultWorkingDirectory)/testing/browser-functional/package.json";
+    $package = 'chromedriver';
+    $newVersion = "$(LatestVersion)";
+
+    $find = "$package`": `"\S*`"";
+    $replace = "$package`": `"$newVersion`"";
+
+    Get-ChildItem -Path "$path" | % {
+        $_.FullName;
+        $content = Get-Content -Raw $_.FullName;
+
+        $content -Replace "$find", "$replace" | Set-Content $_.FullName;
+        '-------------'; get-content $_.FullName; '==================='
+    }
+  displayName: 'Set chromedriver dependency to latest version'
+
 - task: NodeTool@0
   displayName: use node 12.x
   inputs:
