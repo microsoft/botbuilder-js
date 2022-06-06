@@ -316,3 +316,6 @@ coverage
 # typescript assets
 *.tsbuildinfo
 *.js.map
+
+# package assets
+*.tgz

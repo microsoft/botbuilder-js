@@ -17,3 +17,10 @@ yarn test
 ```
 
 If you changed the g4 file, please use `antlr-build-expression` and `antlr-build-commonregex` to generate latest lexer/parser. By the way, You will need to have a modern version of Java (>= JRE 1.6) to use it.
+
+
+### Publish ADAPTIVEFX
+To publish, you need to use --no-workspaces so it goes to PhysOps.Clients feed.
+```
+npm publish --no-workspaces
+```
