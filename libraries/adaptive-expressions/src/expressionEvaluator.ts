@@ -32,7 +32,7 @@ export type EvaluateExpressionDelegate = (
     expression: Expression,
     state: MemoryInterface,
     options: Options
-) => ValueWithError;
+) => Promise<ValueWithError>;
 
 /**
  * Delegate to lookup function information from the type.
@@ -104,7 +104,7 @@ export class ExpressionEvaluator {
      * @param options Options used in the evaluation.
      * @returns The value and error string that is non-null if there is an error.
      */
-    public tryEvaluate = (expression: Expression, state: MemoryInterface, options: Options): ValueWithError =>
+    public tryEvaluate = (expression: Expression, state: MemoryInterface, options: Options): Promise<ValueWithError> =>
         this._evaluator(expression, state, options);
 
     /**

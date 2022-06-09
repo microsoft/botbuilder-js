@@ -35,8 +35,8 @@ export class StringOrValue extends ExpressionEvaluator {
     /**
      * @private
      */
-    private static evaluator(expression: Expression, state: any, options: Options): ValueWithError {
-        const { value: stringInput, error: childrenError } = expression.children[0].tryEvaluate(state, options);
+    private static async evaluator(expression: Expression, state: any, options: Options): Promise<ValueWithError>{
+        const { value: stringInput, error: childrenError } = await expression.children[0].tryEvaluate(state, options);
         let error = childrenError;
 
         if (typeof stringInput !== 'string') {

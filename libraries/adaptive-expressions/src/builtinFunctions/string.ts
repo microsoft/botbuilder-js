@@ -32,7 +32,7 @@ export class String extends ExpressionEvaluator {
      */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.applyWithOptionsAndError(
-            (args: any[], options: Options): ValueWithError => {
+            async (args: any[], options: Options): Promise<ValueWithError>=> {
                 let result: any;
                 let error: string;
                 let locale = options.locale ? options.locale : Intl.DateTimeFormat().resolvedOptions().locale;

@@ -34,12 +34,12 @@ export class IndicesAndValues extends ExpressionEvaluator {
     /**
      * @private
      */
-    private static evaluator(expression: Expression, state: any, options: Options): ValueWithError {
+    private static async evaluator(expression: Expression, state: any, options: Options): Promise<ValueWithError>{
         // eslint-disable-next-line @typescript-eslint/ban-types
         let result: object = undefined;
         let error: string = undefined;
         let value: any = undefined;
-        ({ value, error } = expression.children[0].tryEvaluate(state, options));
+        ({ value, error } = await expression.children[0].tryEvaluate(state, options));
         if (error === undefined) {
             if (Array.isArray(value)) {
                 const tempList = [];

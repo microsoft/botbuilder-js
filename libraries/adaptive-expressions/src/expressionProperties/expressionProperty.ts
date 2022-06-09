@@ -93,8 +93,8 @@ export class ExpressionProperty<T> {
      * @returns The value.
      */
     // eslint-disable-next-line @typescript-eslint/ban-types
-    public getValue(data: object): T {
-        const { value, error } = this.tryGetValue(data);
+    public async getValue(data: object): Promise<T> {
+        const { value, error } = await this.tryGetValue(data);
         if (error) {
             throw error;
         }
@@ -109,7 +109,7 @@ export class ExpressionProperty<T> {
      * @returns the value or an error.
      */
     // eslint-disable-next-line @typescript-eslint/ban-types
-    public tryGetValue(data: object): { value: T; error: Error } {
+    public async tryGetValue(data: object): Promise<{ value: T; error: Error }> {
         if (!this.expression && this.expressionText) {
             try {
                 this.expression = Expression.parse(this.expressionText.replace(/^=/, ''));
@@ -119,7 +119,7 @@ export class ExpressionProperty<T> {
         }
 
         if (this.expression) {
-            return this.expression.tryEvaluate(data) as any;
+            return await this.expression.tryEvaluate(data) as any;
         }
 
         return { value: this.value, error: undefined };

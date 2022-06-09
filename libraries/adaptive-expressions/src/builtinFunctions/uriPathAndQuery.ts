@@ -34,9 +34,9 @@ export class UriPathAndQuery extends ExpressionEvaluator {
     /**
      * @private
      */
-    private static evaluator(expr: Expression, state: MemoryInterface, options: Options): ValueWithError {
+    private static async evaluator(expr: Expression, state: MemoryInterface, options: Options): Promise<ValueWithError>{
         let value: any;
-        const { args, error: childrenError } = FunctionUtils.evaluateChildren(expr, state, options);
+        const { args, error: childrenError } = await FunctionUtils.evaluateChildren(expr, state, options);
         let error = childrenError;
         if (!error) {
             if (typeof args[0] === 'string') {
@@ -52,7 +52,7 @@ export class UriPathAndQuery extends ExpressionEvaluator {
     /**
      * @private
      */
-    private static evalUriPathAndQuery(uri: string): ValueWithError {
+    private static evalUriPathAndQuery(uri: string): ValueWithError{
         let result: string;
         const { value: parsed, error: parseError } = InternalFunctionUtils.parseUri(uri);
         let error = parseError;

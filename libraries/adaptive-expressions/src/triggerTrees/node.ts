@@ -153,7 +153,7 @@ export class Node {
                 if (!found) {
                     this._allTriggers.push(trigger);
                     let add = true;
-                    for (let i = 0; i < this._triggers.length; ) {
+                    for (let i = 0; i < this._triggers.length;) {
                         const existing = this._triggers[i];
                         const reln = trigger.relationship(existing, this.tree.comparers);
                         if (reln === RelationshipType.generalizes) {
@@ -226,7 +226,7 @@ export class Node {
         return op;
     }
 
-    private _matches(state: MemoryInterface | any, matches: Set<Trigger>, matched: Map<Node, boolean>): boolean {
+    private async _matches(state: MemoryInterface | any, matches: Set<Trigger>, matched: Map<Node, boolean>): Promise<boolean> {
         let found = matched.get(this);
         if (found) {
             return true;
@@ -241,7 +241,7 @@ export class Node {
 
         // No child matched so we might
         if (!found) {
-            const { value: match, error } = this.clause.tryEvaluate(state);
+            const { value: match, error } = await this.clause.tryEvaluate(state);
             if (!error && match) {
                 for (const trigger of this.triggers) {
                     if (trigger.matches(this.clause, state)) {

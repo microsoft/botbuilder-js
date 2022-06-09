@@ -29,7 +29,7 @@ export class JPath extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError((args: any[][]): any => JPath.evalJPath(args[0], args[1].toString()));
+        return FunctionUtils.applyWithError(async (args: any[][]): Promise<any> => JPath.evalJPath(args[0], args[1].toString()));
     }
 
     /**

@@ -43,12 +43,12 @@ export class ComparisonEvaluator extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(func: (args: any[]) => boolean, verify?: VerifyExpression): EvaluateExpressionDelegate {
-        return (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => {
+        return async (expression: Expression, state: MemoryInterface, options: Options): Promise<ValueWithError> => {
             let result = false;
 
             const newOptions = new Options(options);
             newOptions.nullSubstitution = undefined;
-            const { args, error: childrenError } = FunctionUtils.evaluateChildren(
+            const { args, error: childrenError } = await FunctionUtils.evaluateChildren(
                 expression,
                 state,
                 newOptions,
@@ -66,7 +66,7 @@ export class ComparisonEvaluator extends ExpressionEvaluator {
                 error = undefined;
             }
 
-            return { value: result, error };
+            return Promise.resolve({ value: result, error });
         };
     }
 }

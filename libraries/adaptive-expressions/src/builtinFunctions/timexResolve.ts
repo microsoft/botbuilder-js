@@ -30,10 +30,10 @@ export class TimexResolve extends ExpressionEvaluator {
     /**
      * @private
      */
-    private static evaluator(expr: Expression, state: MemoryInterface, options: Options): ValueWithError {
+    private static async evaluator(expr: Expression, state: MemoryInterface, options: Options): Promise<ValueWithError> {
         let parsed: TimexProperty;
         let value = false;
-        const { args, error: childrenError } = FunctionUtils.evaluateChildren(expr, state, options);
+        const { args, error: childrenError } = await FunctionUtils.evaluateChildren(expr, state, options);
         let error = childrenError;
         if (!error) {
             ({ timexProperty: parsed, error: error } = InternalFunctionUtils.parseTimexProperty(args[0]));

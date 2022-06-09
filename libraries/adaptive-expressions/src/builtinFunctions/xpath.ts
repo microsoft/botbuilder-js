@@ -24,7 +24,7 @@ export class XPath extends ExpressionEvaluator {
     }
 
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError((args: unknown[]): { value: unknown; error: string } =>
+        return FunctionUtils.applyWithError(async (args: unknown[]): Promise<{ value: unknown; error: string }> =>
             XPath.platformSpecificXPath(args)
         );
     }

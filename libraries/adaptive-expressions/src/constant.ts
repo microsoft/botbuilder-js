@@ -57,7 +57,7 @@ export class Constant extends Expression {
             ExpressionType.Constant,
             new ExpressionEvaluator(
                 ExpressionType.Constant,
-                (expression: Expression): ValueWithError => {
+                async (expression: Expression): Promise<ValueWithError>=> {
                     return { value: (expression as Constant).value, error: undefined };
                 }
             )

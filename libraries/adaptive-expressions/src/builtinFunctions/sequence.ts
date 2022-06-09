@@ -30,10 +30,10 @@ export class Sequence extends ExpressionEvaluator {
     /**
      * @private
      */
-    private static evaluator(expressions: Expression, state: MemoryInterface, options: Options): ValueWithError {
+    private static async evaluator(expressions: Expression, state: MemoryInterface, options: Options): Promise<ValueWithError> {
         let result: ValueWithError;
         for (const expression of expressions.children) {
-            result = expression.tryEvaluate(state, options);
+            result = await expression.tryEvaluate(state, options);
             if (result.error) {
                 return result;
             }

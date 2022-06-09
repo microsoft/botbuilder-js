@@ -30,8 +30,8 @@ export class Accessor extends ExpressionEvaluator {
     /**
      * @private
      */
-    private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
-        const { path, left, error } = FunctionUtils.tryAccumulatePath(expression, state, options);
+    private static async evaluator(expression: Expression, state: MemoryInterface, options: Options): Promise<ValueWithError> {
+        const { path, left, error } = await FunctionUtils.tryAccumulatePath(expression, state, options);
         if (error) {
             return { value: undefined, error };
         }
@@ -40,7 +40,7 @@ export class Accessor extends ExpressionEvaluator {
             // fully converted to path, so we just delegate to memory scope
             return { value: InternalFunctionUtils.wrapGetValue(state, path, options), error: undefined };
         } else {
-            const { value: newScope, error: err } = left.tryEvaluate(state, options);
+            const { value: newScope, error: err } = await left.tryEvaluate(state, options);
             if (err) {
                 return { value: undefined, error: err };
             }

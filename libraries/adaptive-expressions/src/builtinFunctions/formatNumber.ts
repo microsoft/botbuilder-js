@@ -31,10 +31,7 @@ export class FormatNumber extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithOptionsAndError((args: unknown[], options: Options): {
-            value: unknown;
-            error: string;
-        } => {
+        return FunctionUtils.applyWithOptionsAndError(async (args: unknown[], options: Options): Promise<{ value: unknown; error: string; }> => {
             let value: unknown = null;
             let error: string;
             const number = args[0];

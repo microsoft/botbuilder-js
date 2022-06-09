@@ -29,13 +29,13 @@ export class UriScheme extends ExpressionEvaluator {
     /**
      * @private
      */
-    private static evaluator(expr: Expression, state: MemoryInterface, options: Options): ValueWithError {
+    private static async evaluator(expr: Expression, state: MemoryInterface, options: Options): Promise<ValueWithError>{
         let value: any;
-        const { args, error: childrenError } = FunctionUtils.evaluateChildren(expr, state, options);
+        const { args, error: childrenError } = await FunctionUtils.evaluateChildren(expr, state, options);
         let error = childrenError;
         if (!error) {
             if (typeof args[0] === 'string') {
-                ({ value, error } = UriScheme.evalUriScheme(args[0]));
+                ({ value, error } = await UriScheme.evalUriScheme(args[0]));
             } else {
                 error = `${expr} should contain a URI string.`;
             }
@@ -47,9 +47,9 @@ export class UriScheme extends ExpressionEvaluator {
     /**
      * @private
      */
-    private static evalUriScheme(uri: string): ValueWithError {
+    private static async evalUriScheme(uri: string): Promise<ValueWithError>{
         let result: string;
-        const { value: parsed, error: parseError } = InternalFunctionUtils.parseUri(uri);
+        const { value: parsed, error: parseError } = await InternalFunctionUtils.parseUri(uri);
         let error = parseError;
         if (!error) {
             try {

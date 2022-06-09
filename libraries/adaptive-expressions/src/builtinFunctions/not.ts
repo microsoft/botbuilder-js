@@ -30,12 +30,12 @@ export class Not extends ExpressionEvaluator {
     /**
      * @private
      */
-    private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
+    private static async evaluator(expression: Expression, state: MemoryInterface, options: Options): Promise<ValueWithError>{
         let result = false;
         let error: string;
         const newOptions = new Options(options);
         newOptions.nullSubstitution = undefined;
-        ({ value: result, error } = expression.children[0].tryEvaluate(state, newOptions));
+        ({ value: result, error } = await expression.children[0].tryEvaluate(state, newOptions));
         if (!error) {
             result = !InternalFunctionUtils.isLogicTrue(result);
         } else {

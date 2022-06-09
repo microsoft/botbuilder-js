@@ -28,7 +28,7 @@ export class Merge extends ExpressionEvaluator {
      */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.applyWithError(
-            (args: unknown[]): ValueWithError => {
+            async (args: unknown[]): Promise<ValueWithError>=> {
                 const result = {};
                 for (const arg of args) {
                     const objectResult = this.parseToObjectList(arg);

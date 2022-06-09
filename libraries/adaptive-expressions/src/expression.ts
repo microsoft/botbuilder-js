@@ -283,16 +283,16 @@ export class Expression {
      * @param func ambda expression to evaluate.
      * @returns New expression.
      */
-    public static lambda(func: (arg0: any) => any): Expression {
+    public static lambda(func: (arg0: any) => Promise<any>): Expression {
         return new Expression(
             ExpressionType.Lambda,
             new ExpressionEvaluator(
                 ExpressionType.Lambda,
-                (_expression: Expression, state: any, _: Options): ValueWithError => {
+                async (_expression: Expression, state: any, _: Options): Promise<ValueWithError>=> {
                     let value: any;
                     let error: string;
                     try {
-                        value = func(state);
+                        value = await func(state);
                     } catch (funcError) {
                         error = funcError;
                     }
@@ -390,7 +390,7 @@ export class Expression {
      * @param options Options used in the evaluation.
      * @returns Computed value and an error string. If the string is non-null, then there was an evaluation error.
      */
-    public tryEvaluate(state: MemoryInterface | any, options: Options = undefined): ValueWithError {
+    public tryEvaluate(state: MemoryInterface | any, options: Options = undefined): Promise<ValueWithError>{
         if (!Extensions.isMemoryInterface(state)) {
             state = SimpleObjectMemory.wrap(state);
         }

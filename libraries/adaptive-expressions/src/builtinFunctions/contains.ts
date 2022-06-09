@@ -30,9 +30,9 @@ export class Contains extends ExpressionEvaluator {
     /**
      * @private
      */
-    private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
+    private static async evaluator(expression: Expression, state: MemoryInterface, options: Options): Promise<ValueWithError>{
         let found = false;
-        const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options);
+        const { args, error: childrenError } = await FunctionUtils.evaluateChildren(expression, state, options);
         let error = childrenError;
         if (!error) {
             if (typeof args[0] === 'string' && typeof args[1] === 'string') {
@@ -46,7 +46,7 @@ export class Contains extends ExpressionEvaluator {
                 }
             } else if (typeof args[1] === 'string') {
                 let value: any;
-                ({ value, error } = InternalFunctionUtils.accessProperty(args[0], args[1]));
+                ({ value, error } = await InternalFunctionUtils.accessProperty(args[0], args[1]));
                 found = !error && value !== undefined;
             }
         }

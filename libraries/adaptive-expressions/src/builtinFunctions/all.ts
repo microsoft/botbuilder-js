@@ -28,16 +28,16 @@ export class All extends ExpressionEvaluator {
     /**
      * @private
      */
-    private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
+    private static async evaluator(expression: Expression, state: MemoryInterface, options: Options): Promise<ValueWithError>{
         let result = true;
-        const { value: instance, error: childrenError } = expression.children[0].tryEvaluate(state, options);
+        const { value: instance, error: childrenError } = await expression.children[0].tryEvaluate(state, options);
         let error = childrenError;
         if (!error) {
             const list = InternalFunctionUtils.convertToList(instance);
             if (!list) {
                 error = `${expression.children[0]} is not a collection or structure object to run Any`;
             } else {
-                InternalFunctionUtils.lambdaEvaluator(expression, state, options, list, (currentItem, r, e) => {
+                await InternalFunctionUtils.lambdaEvaluator(expression, state, options, list, (currentItem, r, e) => {
                     if (e || !InternalFunctionUtils.isLogicTrue(r)) {
                         result = false;
                         return true;

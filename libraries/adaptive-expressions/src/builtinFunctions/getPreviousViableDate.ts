@@ -41,18 +41,18 @@ export class GetPreviousViableDate extends ExpressionEvaluator {
     /**
      * @private
      */
-    private static evaluator(
+    private static async evaluator(
         expr: Expression,
         state: MemoryInterface,
         options: Options
-    ): { value: any; error: string } {
+    ): Promise<{ value: any; error: string }> {
         let parsed: TimexProperty;
         const currentTime = dayjs(new Date().toISOString());
         let validYear = 0;
         let validMonth = 0;
         let validDay = 0;
         let convertedDateTime: dayjs.Dayjs;
-        const { args, error: childrenError } = FunctionUtils.evaluateChildren(expr, state, options);
+        const { args, error: childrenError } = await FunctionUtils.evaluateChildren(expr, state, options);
         let error = childrenError;
         if (!error) {
             ({ timexProperty: parsed, error: error } = InternalFunctionUtils.parseTimexProperty(args[0]));

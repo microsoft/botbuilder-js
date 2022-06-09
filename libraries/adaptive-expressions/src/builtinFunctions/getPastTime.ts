@@ -32,11 +32,11 @@ export class GetPastTime extends ExpressionEvaluator {
     /**
      * @private
      */
-    private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
+    private static async evaluator(expression: Expression, state: MemoryInterface, options: Options): Promise<ValueWithError>{
         let value: any;
         let locale = options.locale ? options.locale : Intl.DateTimeFormat().resolvedOptions().locale;
         let format = FunctionUtils.DefaultDateTimeFormat;
-        const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options);
+        const { args, error: childrenError } = await FunctionUtils.evaluateChildren(expression, state, options);
         let error = childrenError;
         if (!error) {
             if (Number.isInteger(args[0]) && typeof args[1] === 'string') {

@@ -28,7 +28,7 @@ export class Int extends ExpressionEvaluator {
      */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.applyWithError(
-            (args: readonly unknown[]): ValueWithError => {
+            async (args: readonly unknown[]): Promise<ValueWithError>=> {
                 let error: string;
                 let value: unknown;
                 const firstChild = args[0];

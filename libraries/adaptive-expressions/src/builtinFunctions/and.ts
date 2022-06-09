@@ -29,13 +29,13 @@ export class And extends ExpressionEvaluator {
     /**
      * @private
      */
-    private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
+    private static async evaluator(expression: Expression, state: MemoryInterface, options: Options): Promise<ValueWithError>{
         let result = true;
         let error: string;
         for (const child of expression.children) {
             const newOptions = new Options(options);
             newOptions.nullSubstitution = undefined;
-            ({ value: result, error } = child.tryEvaluate(state, newOptions));
+            ({ value: result, error } = await child.tryEvaluate(state, newOptions));
             if (!error) {
                 if (InternalFunctionUtils.isLogicTrue(result)) {
                     result = true;

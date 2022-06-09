@@ -32,8 +32,8 @@ export class IntExpression extends ExpressionProperty<number> {
      * @returns Value of int number
      */
     // eslint-disable-next-line @typescript-eslint/ban-types
-    public tryGetValue(data: object): { value: number; error: Error } {
-        const result = super.tryGetValue(data);
+    public async tryGetValue(data: object): Promise<{ value: number; error: Error }> {
+        const result = await super.tryGetValue(data);
         if (FunctionUtils.isNumber(result.value)) {
             // Ensure returned value is an int.
             result.value = Math.trunc(result.value);

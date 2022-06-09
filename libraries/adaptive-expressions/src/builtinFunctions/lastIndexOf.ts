@@ -30,9 +30,9 @@ export class LastIndexOf extends ExpressionEvaluator {
     /**
      * @private
      */
-    private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
+    private static async evaluator(expression: Expression, state: MemoryInterface, options: Options): Promise<ValueWithError>{
         let value = -1;
-        const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options);
+        const { args, error: childrenError } = await FunctionUtils.evaluateChildren(expression, state, options);
         let error = childrenError;
         if (!error) {
             if (args[0] == null || typeof args[0] === 'string') {

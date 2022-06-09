@@ -30,7 +30,7 @@ export class DateReadBack extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError((args: any[]): ValueWithError => {
+        return FunctionUtils.applyWithError(async (args: any[]): Promise<ValueWithError> => {
             const dateFormat = 'YYYY-MM-DD';
             let error = InternalFunctionUtils.verifyISOTimestamp(args[0]);
             if (!error) {

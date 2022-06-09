@@ -30,12 +30,12 @@ export class GetProperty extends ExpressionEvaluator {
     /**
      * @private
      */
-    private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
+    private static async evaluator(expression: Expression, state: MemoryInterface, options: Options): Promise<ValueWithError>{
         let value: any;
         let property: any;
 
         const children: Expression[] = expression.children;
-        const { value: firstItem, error: childrenError } = children[0].tryEvaluate(state, options);
+        const { value: firstItem, error: childrenError } = await children[0].tryEvaluate(state, options);
         let error = childrenError;
         if (!error) {
             if (children.length === 1) {
@@ -47,7 +47,7 @@ export class GetProperty extends ExpressionEvaluator {
                 }
             } else {
                 // get the peoperty value from the instance
-                ({ value: property, error } = children[1].tryEvaluate(state, options));
+                ({ value: property, error } = await children[1].tryEvaluate(state, options));
 
                 if (!error) {
                     value = InternalFunctionUtils.wrapGetValue(

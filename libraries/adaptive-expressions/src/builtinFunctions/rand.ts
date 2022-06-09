@@ -26,7 +26,7 @@ export class Rand extends ExpressionEvaluator {
         super(ExpressionType.Rand, Rand.evaluator, ReturnType.Number, FunctionUtils.validateBinaryNumber);
     }
 
-    private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
+    private static async evaluator(expression: Expression, state: MemoryInterface, options: Options): Promise<ValueWithError>{
         let result;
         let minValue;
         let maxValue;
@@ -35,7 +35,7 @@ export class Rand extends ExpressionEvaluator {
         const [maybeMinValue, maybeMaxValue] = expression.children;
 
         // eslint-disable-next-line prefer-const
-        ({ value: minValue, error } = maybeMinValue.tryEvaluate(state, options));
+        ({ value: minValue, error } = await maybeMinValue.tryEvaluate(state, options));
         if (error) {
             return { value: undefined, error };
         }
@@ -44,7 +44,7 @@ export class Rand extends ExpressionEvaluator {
         }
 
         // eslint-disable-next-line prefer-const
-        ({ value: maxValue, error } = maybeMaxValue.tryEvaluate(state, options));
+        ({ value: maxValue, error } = await maybeMaxValue.tryEvaluate(state, options));
         if (error) {
             return { value: undefined, error };
         }

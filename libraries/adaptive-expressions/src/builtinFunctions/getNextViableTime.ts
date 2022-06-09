@@ -40,11 +40,11 @@ export class GetNextViableTime extends ExpressionEvaluator {
     /**
      * @private
      */
-    private static evaluator(
+    private static async evaluator(
         expr: Expression,
         state: MemoryInterface,
         options: Options
-    ): { value: any; error: string } {
+    ): Promise<{ value: any; error: string }> {
         let parsed: TimexProperty;
         const currentTime = dayjs(new Date().toISOString());
         let validHour = 0;
@@ -52,7 +52,7 @@ export class GetNextViableTime extends ExpressionEvaluator {
         let validSecond = 0;
         let convertedDateTime: dayjs.Dayjs;
         const formatRegex = /TXX:[0-5][0-9]:[0-5][0-9]/g;
-        const { args, error: childrenError } = FunctionUtils.evaluateChildren(expr, state, options);
+        const { args, error: childrenError } = await FunctionUtils.evaluateChildren(expr, state, options);
         let error = childrenError;
         if (!error) {
             if (!formatRegex.test(args[0] as string)) {

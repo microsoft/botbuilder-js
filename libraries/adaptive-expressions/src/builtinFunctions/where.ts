@@ -28,9 +28,9 @@ export class Where extends ExpressionEvaluator {
     /**
      * @private
      */
-    private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
+    private static async evaluator(expression: Expression, state: MemoryInterface, options: Options): Promise<ValueWithError>{
         let result: any;
-        const { value: instance, error: childrenError } = expression.children[0].tryEvaluate(state, options);
+        const { value: instance, error: childrenError } = await expression.children[0].tryEvaluate(state, options);
         let error = childrenError;
         if (!error) {
             const list = InternalFunctionUtils.convertToList(instance);
@@ -38,7 +38,7 @@ export class Where extends ExpressionEvaluator {
                 error = `${expression.children[0]} is not a collection or structure object to run Where`;
             } else {
                 result = [];
-                InternalFunctionUtils.lambdaEvaluator(expression, state, options, list, (currentItem, r, e) => {
+                await InternalFunctionUtils.lambdaEvaluator(expression, state, options, list, (currentItem, r, e) => {
                     if (InternalFunctionUtils.isLogicTrue(r) && !e) {
                         // add if only if it evaluates to true
                         result.push(currentItem);

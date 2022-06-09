@@ -27,9 +27,9 @@ export class SubArray extends ExpressionEvaluator {
     /**
      * @private
      */
-    private static evaluator(expression: Expression, state: any, options: Options): ValueWithError {
+    private static async evaluator(expression: Expression, state: any, options: Options): Promise<ValueWithError>{
         let result: any;
-        const { value: arr, error: childrenError } = expression.children[0].tryEvaluate(state, options);
+        const { value: arr, error: childrenError } = await expression.children[0].tryEvaluate(state, options);
         let error = childrenError;
 
         if (!error) {
@@ -37,7 +37,7 @@ export class SubArray extends ExpressionEvaluator {
                 let start: number;
 
                 const startExpr: Expression = expression.children[1];
-                ({ value: start, error } = startExpr.tryEvaluate(state, options));
+                ({ value: start, error } = await startExpr.tryEvaluate(state, options));
                 if (!error && !Number.isInteger(start)) {
                     error = `${startExpr} is not an integer.`;
                 } else if (start < 0 || start > arr.length) {
@@ -49,7 +49,7 @@ export class SubArray extends ExpressionEvaluator {
                         end = arr.length;
                     } else {
                         const endExpr: Expression = expression.children[2];
-                        ({ value: end, error } = endExpr.tryEvaluate(state, options));
+                        ({ value: end, error } = await endExpr.tryEvaluate(state, options));
                         if (!error && !Number.isInteger(end)) {
                             error = `${endExpr} is not an integer`;
                         } else if (end < 0 || end > arr.length) {

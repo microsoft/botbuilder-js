@@ -81,9 +81,8 @@ export class FunctionUtils {
             throw new Error(
                 optional.length === 0
                     ? `${expression} should have ${types.length} children.`
-                    : `${expression} should have between ${types.length} and ${
-                          types.length + optional.length
-                      } children.`
+                    : `${expression} should have between ${types.length} and ${types.length + optional.length
+                    } children.`
             );
         }
 
@@ -491,18 +490,18 @@ export class FunctionUtils {
      * @param verify Optional function to verify each child's result.
      * @returns List of child values or error message.
      */
-    public static evaluateChildren(
+    public static async evaluateChildren(
         expression: Expression,
         state: MemoryInterface,
         options: Options,
         verify?: VerifyExpression
-    ): { args: any[]; error: string } {
+    ): Promise<{ args: any[]; error: string }> {
         const args: any[] = [];
         let value: any;
         let error: string;
         let pos = 0;
         for (const child of expression.children) {
-            ({ value, error } = child.tryEvaluate(state, options));
+            ({ value, error } = await child.tryEvaluate(state, options));
             if (error) {
                 break;
             }
@@ -527,9 +526,9 @@ export class FunctionUtils {
      * @returns Delegate for evaluating an expression.
      */
     public static apply(func: (arg0: unknown[]) => unknown, verify?: VerifyExpression): EvaluateExpressionDelegate {
-        return (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => {
+        return async (expression: Expression, state: MemoryInterface, options: Options): Promise<ValueWithError> => {
             let value: any;
-            const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options, verify);
+            const { args, error: childrenError } = await FunctionUtils.evaluateChildren(expression, state, options, verify);
             let error = childrenError;
             if (!error) {
                 try {
@@ -551,16 +550,16 @@ export class FunctionUtils {
      * @returns Delegate for evaluating an expression.
      */
     public static applyWithError(
-        func: (arg0: any[]) => ValueWithError,
+        func: (arg0: any[]) => Promise<ValueWithError>,
         verify?: VerifyExpression
     ): EvaluateExpressionDelegate {
-        return (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => {
+        return async (expression: Expression, state: MemoryInterface, options: Options): Promise<ValueWithError> => {
             let value: any;
-            const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options, verify);
+            const { args, error: childrenError } = await FunctionUtils.evaluateChildren(expression, state, options, verify);
             let error = childrenError;
             if (!error) {
                 try {
-                    ({ value, error } = func(args));
+                    ({ value, error } = await func(args));
                 } catch (e) {
                     error = e.message;
                 }
@@ -578,16 +577,16 @@ export class FunctionUtils {
      * @returns Delegate for evaluating an expression.
      */
     public static applyWithOptionsAndError(
-        func: (arg0: unknown[], options: Options) => { value: unknown; error: string },
+        func: (arg0: unknown[], options: Options) => Promise<{ value: unknown; error: string }>,
         verify?: VerifyExpression
     ): EvaluateExpressionDelegate {
-        return (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => {
+        return async (expression: Expression, state: MemoryInterface, options: Options): Promise<ValueWithError> => {
             let value: unknown;
-            const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options, verify);
+            const { args, error: childrenError } = await FunctionUtils.evaluateChildren(expression, state, options, verify);
             let error = childrenError;
             if (!error) {
                 try {
-                    ({ value, error } = func(args, options));
+                    ({ value, error } = await func(args, options));
                 } catch (e) {
                     error = e.message;
                 }
@@ -608,9 +607,9 @@ export class FunctionUtils {
         func: (arg0: unknown[], options: Options) => unknown,
         verify?: VerifyExpression
     ): EvaluateExpressionDelegate {
-        return (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => {
+        return async (expression: Expression, state: MemoryInterface, options: Options): Promise<ValueWithError> => {
             let value: unknown;
-            const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options, verify);
+            const { args, error: childrenError } = await FunctionUtils.evaluateChildren(expression, state, options, verify);
             let error = childrenError;
             if (!error) {
                 try {
@@ -758,11 +757,11 @@ export class FunctionUtils {
      * @param options Options used in evaluation.
      * @returns Return the accumulated path and the expression left unable to accumulate.
      */
-    public static tryAccumulatePath(
+    public static async tryAccumulatePath(
         expression: Expression,
         state: MemoryInterface,
         options: Options
-    ): { path: string; left: any; error: string } {
+    ): Promise<{ path: string; left: any; error: string }> {
         let path = '';
         let left = expression;
         while (left !== undefined) {
@@ -770,7 +769,7 @@ export class FunctionUtils {
                 path = (left.children[0] as Constant).value + '.' + path;
                 left = left.children.length === 2 ? left.children[1] : undefined;
             } else if (left.type === ExpressionType.Element) {
-                const { value, error } = left.children[1].tryEvaluate(state, options);
+                const { value, error } = await left.children[1].tryEvaluate(state, options);
 
                 if (error !== undefined) {
                     return { path: undefined, left: undefined, error };

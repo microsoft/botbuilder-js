@@ -556,11 +556,11 @@ describe('expression functional test', function () {
         badExpressions.forEach(({ label, testCases }) => {
             describe(label, function () {
                 testCases.forEach(([expression, description]) => {
-                    it(`${expression} ${description}`, function () {
+                    it(`${expression} ${description}`, async function () {
                         let errorResult;
 
                         try {
-                            const { error } = parser.parse(expression).tryEvaluate(scope);
+                            const { error } = await parser.parse(expression).tryEvaluate(scope);
                             errorResult = error;
                         } catch (err) {
                             errorResult = err;

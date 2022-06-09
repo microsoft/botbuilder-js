@@ -31,7 +31,7 @@ export class Ignore extends ExpressionEvaluator {
     /**
      * @private
      */
-    private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
+    private static async evaluator(expression: Expression, state: MemoryInterface, options: Options): Promise<ValueWithError>{
         return expression.children[0].tryEvaluate(state, options);
     }
 }

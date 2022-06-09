@@ -27,9 +27,9 @@ export class Take extends ExpressionEvaluator {
     /**
      * @private
      */
-    private static evaluator(expression: Expression, state: any, options: Options): ValueWithError {
+    private static async evaluator(expression: Expression, state: any, options: Options): Promise<ValueWithError> {
         let result: any;
-        const { value: arr, error: childrenError } = expression.children[0].tryEvaluate(state, options);
+        const { value: arr, error: childrenError } = await expression.children[0].tryEvaluate(state, options);
         let error = childrenError;
 
         if (!error) {
@@ -37,7 +37,7 @@ export class Take extends ExpressionEvaluator {
                 let start: number;
 
                 const startExpr: Expression = expression.children[1];
-                ({ value: start, error } = startExpr.tryEvaluate(state, options));
+                ({ value: start, error } = await startExpr.tryEvaluate(state, options));
                 if (!error && !Number.isInteger(start)) {
                     error = `${startExpr} is not an integer.`;
                 }

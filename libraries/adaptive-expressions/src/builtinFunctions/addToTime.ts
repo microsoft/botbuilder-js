@@ -32,18 +32,18 @@ export class AddToTime extends ExpressionEvaluator {
     /**
      * @private
      */
-    private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
+    private static async evaluator(expression: Expression, state: MemoryInterface, options: Options): Promise<ValueWithError> {
         let value: any;
 
         let locale = options.locale ? options.locale : Intl.DateTimeFormat().resolvedOptions().locale;
         let format = FunctionUtils.DefaultDateTimeFormat;
-        const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options);
+        const { args, error: childrenError } = await FunctionUtils.evaluateChildren(expression, state, options);
         let error = childrenError;
 
         if (!error) {
             ({ format, locale } = FunctionUtils.determineFormatAndLocale(args, 5, format, locale));
             if (typeof args[0] === 'string' && Number.isInteger(args[1]) && typeof args[2] === 'string') {
-                ({ value, error } = AddToTime.evalAddToTime(args[0], args[1], args[2], format, locale));
+                ({ value, error } = await AddToTime.evalAddToTime(args[0], args[1], args[2], format, locale));
             } else {
                 error = `${expression} should contain an ISO format timestamp, a time interval integer, a string unit of time and an optional output format string.`;
             }
@@ -55,13 +55,13 @@ export class AddToTime extends ExpressionEvaluator {
     /**
      * @private
      */
-    private static evalAddToTime(
+    private static async evalAddToTime(
         timeStamp: string,
         interval: number,
         timeUnit: string,
         format?: string,
         locale?: string
-    ): ValueWithError {
+    ): Promise<ValueWithError>{
         let result: string;
         const error = InternalFunctionUtils.verifyISOTimestamp(timeStamp);
         if (!error) {

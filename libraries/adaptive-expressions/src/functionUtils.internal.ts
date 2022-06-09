@@ -65,9 +65,9 @@ export class InternalFunctionUtils {
      * @returns The sorted array.
      */
     public static sortBy(isDescending: boolean): EvaluateExpressionDelegate {
-        return (expression: Expression, state: any, options: Options): ValueWithError => {
+        return async (expression: Expression, state: any, options: Options): Promise<ValueWithError> => {
             let result: any;
-            const { value: oriArr, error: childrenError } = expression.children[0].tryEvaluate(state, options);
+            const { value: oriArr, error: childrenError } = await expression.children[0].tryEvaluate(state, options);
             let error = childrenError;
             if (!error) {
                 if (Array.isArray(oriArr)) {
@@ -81,7 +81,7 @@ export class InternalFunctionUtils {
                         }
                     } else {
                         let propertyName: string;
-                        ({ value: propertyName, error } = expression.children[1].tryEvaluate(state, options));
+                        ({ value: propertyName, error } = await expression.children[1].tryEvaluate(state, options));
 
                         if (!error) {
                             propertyName = propertyName || '';
@@ -98,7 +98,7 @@ export class InternalFunctionUtils {
                 }
             }
 
-            return { value: result, error };
+            return Promise.resolve({ value: result, error });
         };
     }
 
@@ -291,9 +291,9 @@ export class InternalFunctionUtils {
      * @param options Options.
      * @returns The evaluated list.
      */
-    public static foreach(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
+    public static async foreach(expression: Expression, state: MemoryInterface, options: Options): Promise<ValueWithError> {
         let result: any[];
-        const { value: instance, error: childrenError } = expression.children[0].tryEvaluate(state, options);
+        const { value: instance, error: childrenError } = await expression.children[0].tryEvaluate(state, options);
         let error = childrenError;
         if (!instance) {
             error = `'${expression.children[0]}' evaluated to null.`;
@@ -305,7 +305,7 @@ export class InternalFunctionUtils {
                 error = `${expression.children[0]} is not a collection or structure object to run Foreach`;
             } else {
                 result = [];
-                InternalFunctionUtils.lambdaEvaluator(expression, state, options, list, (currentItem, r, e) => {
+                await InternalFunctionUtils.lambdaEvaluator(expression, state, options, list, (currentItem, r, e) => {
                     if (e) {
                         error = e;
                         return true;
@@ -329,13 +329,13 @@ export class InternalFunctionUtils {
      * @param list item list.
      * @param callback call back. return the should break flag.
      */
-    public static lambdaEvaluator<T = unknown, U = unknown>(
+    public static async lambdaEvaluator<T = unknown, U = unknown>(
         expression: Expression,
         state: MemoryInterface,
         options: Options,
         list: T[],
         callback: (currentItem: T, result: U, error: string) => boolean
-    ): void {
+    ): Promise<void> {
         const firstChild = expression.children[1].children[0];
         if (!(firstChild instanceof Constant) || typeof firstChild.value !== 'string') {
             return;
@@ -349,7 +349,7 @@ export class InternalFunctionUtils {
 
             // the local iterator is pushed as one memory layer in the memory stack
             stackedMemory.push(SimpleObjectMemory.wrap(local));
-            const { value: r, error: e } = expression.children[2].tryEvaluate(stackedMemory, options);
+            const { value: r, error: e } = await expression.children[2].tryEvaluate(stackedMemory, options);
             stackedMemory.pop();
 
             const shouldBreak = callback(currentItem, r, e);
