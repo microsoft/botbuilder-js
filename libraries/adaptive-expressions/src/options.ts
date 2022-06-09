@@ -26,4 +26,6 @@ export class Options {
         this.nullSubstitution = opt ? opt.nullSubstitution : undefined;
         this.locale = opt ? opt.locale : undefined;
     }
+
+    
 }
