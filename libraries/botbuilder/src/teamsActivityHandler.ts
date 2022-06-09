@@ -8,7 +8,6 @@
 
 import {
     ActivityHandler,
-    AdaptiveCardInvokeResponse,
     AppBasedLinkQuery,
     ChannelInfo,
     Channels,
