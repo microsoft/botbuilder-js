@@ -7,6 +7,7 @@
 import { Activity } from 'botbuilder-core';
 import { ActivityHandler } from 'botbuilder-core';
 import { ActivityHandlerBase } from 'botbuilder-core';
+import { AdaptiveCardInvokeResponse } from 'botbuilder-core';
 import { AppBasedLinkQuery } from 'botbuilder-core';
 import { AppCredentials } from 'botframework-connector';
 import { AttachmentData } from 'botbuilder-core';
