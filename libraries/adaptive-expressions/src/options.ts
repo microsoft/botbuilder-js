@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-
+import {AbortController} from "abort-controller"
 /**
  * Options used to define evaluation behaviors.
  */
@@ -17,6 +17,8 @@ export class Options {
      */
     public locale: string;
 
+    public abort: AbortController;
+
     /**
      * Initializes a new instance of the [Options](xref:adaptive-expressions.Options) class.
      *
@@ -25,7 +27,6 @@ export class Options {
     public constructor(opt?: Options) {
         this.nullSubstitution = opt ? opt.nullSubstitution : undefined;
         this.locale = opt ? opt.locale : undefined;
+        this.abort = opt && opt.abort ? opt.abort : new AbortController();
     }
-
-    
 }
