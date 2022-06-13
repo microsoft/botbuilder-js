@@ -82,12 +82,12 @@ steps:
   inputs:
     targetType: inline
     script: |
-   # Compress Bot Source Code
-   cd $(System.DefaultWorkingDirectory)/testing/browser-functional/browser-echo-bot/dist
-   $DirToCompress = "$(System.DefaultWorkingDirectory)/testing/browser-functional/browser-echo-bot/dist"
-   $files = Get-ChildItem -Path $DirToCompress
-   $ZipFileResult="$(System.DefaultWorkingDirectory)/testing/browser-functional/browser-echo-bot/browser-echo-bot.zip"
-   Compress-Archive -Path $files -DestinationPath $ZipFileResult
+      # Compress Bot Source Code
+      cd $(System.DefaultWorkingDirectory)/testing/browser-functional/browser-echo-bot/dist
+      $DirToCompress = "$(System.DefaultWorkingDirectory)/testing/browser-functional/browser-echo-bot/dist"
+      $files = Get-ChildItem -Path $DirToCompress
+      $ZipFileResult="$(System.DefaultWorkingDirectory)/testing/browser-functional/browser-echo-bot/browser-echo-bot.zip"
+      Compress-Archive -Path $files -DestinationPath $ZipFileResult
   displayName: 'Compress Bot Source Code'
 
 - task: AzureCLI@1
