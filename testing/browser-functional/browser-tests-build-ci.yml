@@ -78,6 +78,7 @@ steps:
 - script: cd testing/browser-functional/browser-echo-bot && yarn && yarn build
   displayName: yarn install and build browser-echo-bot
 
+<<<<<<< HEAD
 - task: PowerShell@2
   inputs:
     targetType: inline
@@ -88,6 +89,15 @@ steps:
       $files = Get-ChildItem -Path $DirToCompress
       $ZipFileResult="$(System.DefaultWorkingDirectory)/testing/browser-functional/browser-echo-bot/browser-echo-bot.zip"
       Compress-Archive -Path $files -DestinationPath $ZipFileResult
+=======
+- task: PowerShell@2 |
+   # Compress Bot Source Code
+   cd $(System.DefaultWorkingDirectory)/testing/browser-functional/browser-echo-bot/dist
+   $DirToCompress = "$(System.DefaultWorkingDirectory)/testing/browser-functional/browser-echo-bot/dist"
+   $files = Get-ChildItem -Path $DirToCompress
+   $ZipFileResult="$(System.DefaultWorkingDirectory)/testing/browser-functional/browser-echo-bot/browser-echo-bot.zip"
+   Compress-Archive -Path $files -DestinationPath $ZipFileResult
+>>>>>>> main
   displayName: 'Compress Bot Source Code'
 
 - task: AzureCLI@1
