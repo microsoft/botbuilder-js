@@ -15,7 +15,7 @@ export class StringUtils {
      * @param text Text.
      * @param length Length to truncate text.
      */
-    public static ellipsis(text: string, length: number): string {
+    static ellipsis(text: string, length: number): string {
         text = text || '';
         if (text.length <= length) {
             return text;
@@ -34,7 +34,7 @@ export class StringUtils {
      *
      * @param text Text to hash.
      */
-    public static hash(text: string): string {
+    static hash(text: string): string {
         const length = text.length;
         let hash = 0;
         for (let i = 0; i < length; i++) {
@@ -50,7 +50,7 @@ export class StringUtils {
      * @param text Text to truncate.
      * @param length Length to truncate at.
      */
-    public static ellipsisHash(text: string, length: number): string {
+    static ellipsisHash(text: string, length: number): string {
         text = text || '';
         if (text.length <= length) {
             return text;

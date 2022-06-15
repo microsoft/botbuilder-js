@@ -21,7 +21,7 @@ export abstract class SkillConversationIdFactoryBase {
      * @param conversationReference The skill's caller ConversationReference.
      * @returns A unique conversation ID used to communicate with the skill.
      */
-    public createSkillConversationIdWithOptions(options: SkillConversationIdFactoryOptions): Promise<string> {
+    createSkillConversationIdWithOptions(options: SkillConversationIdFactoryOptions): Promise<string> {
         throw new Error('Not Implemented');
     }
 
@@ -33,7 +33,7 @@ export abstract class SkillConversationIdFactoryBase {
      * @param conversationReference The skill's caller ConversationReference.
      * @returns A unique conversation ID used to communicate with the skill.
      */
-    public createSkillConversationId(conversationReference: ConversationReference): Promise<string> {
+    createSkillConversationId(conversationReference: ConversationReference): Promise<string> {
         throw new Error('Not Implemented');
     }
 
@@ -43,7 +43,7 @@ export abstract class SkillConversationIdFactoryBase {
      * @param skillConversationId >A skill conversationId created using createSkillConversationId().
      * @returns The caller's ConversationReference for a skillConversationId. null if not found.
      */
-    public getConversationReference(skillConversationId: string): Promise<ConversationReference> {
+    getConversationReference(skillConversationId: string): Promise<ConversationReference> {
         throw new Error('Not Implemented');
     }
 
@@ -51,7 +51,7 @@ export abstract class SkillConversationIdFactoryBase {
      * Gets the SkillConversationReference created using createSkillConversationId() for a skillConversationId.
      * @param skillConversationId Gets the SkillConversationReference used during createSkillConversationId for a skillConversationId.
      */
-    public getSkillConversationReference(skillConversationId: string): Promise<SkillConversationReference> {
+    getSkillConversationReference(skillConversationId: string): Promise<SkillConversationReference> {
         throw new Error('Not Implemented');
     }
 
@@ -59,5 +59,5 @@ export abstract class SkillConversationIdFactoryBase {
      * Deletes a ConversationReference.
      * @param skillConversationId A skill conversationId created using createSkillConversationId().
      */
-    public abstract deleteConversationReference(skillConversationId: string): Promise<void>;
+    abstract deleteConversationReference(skillConversationId: string): Promise<void>;
 }

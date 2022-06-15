@@ -41,7 +41,7 @@ export class ShowTypingMiddleware implements Middleware {
      * @param context {TurnContext} An incoming TurnContext object.
      * @param next {function} The next delegate function.
      */
-    public async onTurn(context: TurnContext, next: () => Promise<void>) {
+    async onTurn(context: TurnContext, next: () => Promise<void>) {
         let finished = false;
         let timeout: ReturnType<typeof setTimeout>;
 

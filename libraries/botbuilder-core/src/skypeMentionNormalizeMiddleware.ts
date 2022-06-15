@@ -25,7 +25,7 @@ export class SkypeMentionNormalizeMiddleware implements Middleware {
      * Performs the normalization of Skype mention Entities.
      * @param activity [Activity](xref:botframework-schema.Activity) containing the mentions to normalize.
      */
-    public static normalizeSkypeMentionText(activity: Activity): void {
+    static normalizeSkypeMentionText(activity: Activity): void {
         if (activity.channelId === 'skype' && activity.type === 'message') {
             activity.entities.map((element): void => {
                 if (element.type === 'mention') {
@@ -45,7 +45,7 @@ export class SkypeMentionNormalizeMiddleware implements Middleware {
      * @param turnContext [TurnContext](xref:botbuilder-core.TurnContext) for the current turn of conversation.
      * @param next Delegate to call to continue the bot middleware pipeline.
      */
-    public async onTurn(turnContext: TurnContext, next: () => Promise<void>): Promise<void> {
+    async onTurn(turnContext: TurnContext, next: () => Promise<void>): Promise<void> {
         SkypeMentionNormalizeMiddleware.normalizeSkypeMentionText(turnContext.activity);
         await next();
     }

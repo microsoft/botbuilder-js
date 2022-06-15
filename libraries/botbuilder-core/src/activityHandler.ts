@@ -102,7 +102,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      * @remarks
      * Returns a reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
      */
-    public onTurn(handler: BotHandler): this {
+    onTurn(handler: BotHandler): this {
         return this.on('Turn', handler);
     }
 
@@ -119,7 +119,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      * Not all message activities contain text, the activity's [text](xref:botframework-schema.Activity.text)
      * property can be `null` or `undefined`.
      */
-    public onMessage(handler: BotHandler): this {
+    onMessage(handler: BotHandler): this {
         return this.on('Message', handler);
     }
 
@@ -139,7 +139,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      * [onMembersAdded](xref:botbuilder-core.ActivityHandler.onMembersAdded) and
      * [onMembersRemoved](xref:botbuilder-core.ActivityHandler.onMembersRemoved) sub-type event handlers.
      */
-    public onConversationUpdate(handler: BotHandler): this {
+    onConversationUpdate(handler: BotHandler): this {
         return this.on('ConversationUpdate', handler);
     }
 
@@ -158,7 +158,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      * To handle conversation update events in general, use the
      * [onConversationUpdate](xref:botbuilder-core.ActivityHandler.onConversationUpdate) type-specific event handler.
      */
-    public onMembersAdded(handler: BotHandler): this {
+    onMembersAdded(handler: BotHandler): this {
         return this.on('MembersAdded', handler);
     }
 
@@ -177,7 +177,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      * To handle conversation update events in general, use the
      * [onConversationUpdate](xref:botbuilder-core.ActivityHandler.onConversationUpdate) type-specific event handler.
      */
-    public onMembersRemoved(handler: BotHandler): this {
+    onMembersRemoved(handler: BotHandler): this {
         return this.on('MembersRemoved', handler);
     }
 
@@ -200,7 +200,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      * [onReactionsAdded](xref:botbuilder-core.ActivityHandler.onReactionsAdded) and
      * [onReactionsRemoved](xref:botbuilder-core.ActivityHandler.onReactionsRemoved) sub-type event handlers.
      */
-    public onMessageReaction(handler: BotHandler): this {
+    onMessageReaction(handler: BotHandler): this {
         return this.on('MessageReaction', handler);
     }
 
@@ -219,7 +219,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      * To handle message reaction events in general, use the
      * [onMessageReaction](xref:botbuilder-core.ActivityHandler.onMessageReaction) type-specific event handler.
      */
-    public onReactionsAdded(handler: BotHandler): this {
+    onReactionsAdded(handler: BotHandler): this {
         return this.on('ReactionsAdded', handler);
     }
 
@@ -238,7 +238,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      * To handle message reaction events in general, use the
      * [onMessageReaction](xref:botbuilder-core.ActivityHandler.onMessageReaction) type-specific event handler.
      */
-    public onReactionsRemoved(handler: BotHandler): this {
+    onReactionsRemoved(handler: BotHandler): this {
         return this.on('ReactionsRemoved', handler);
     }
 
@@ -261,7 +261,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      * [onTokenResponseEvent](xref:botbuilder-core.ActivityHandler.onTokenResponseEvent) sub-type
      * event handler. To handle other named events, add logic to this handler.
      */
-    public onEvent(handler: BotHandler): this {
+    onEvent(handler: BotHandler): this {
         return this.on('Event', handler);
     }
 
@@ -278,7 +278,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      * To handle an End of Conversation, use the
      * [onEndOfConversation](xref:botbuilder-core.ActivityHandler.onEndOfConversation) type-specific event handler.
      */
-    public onEndOfConversation(handler: BotHandler): this {
+    onEndOfConversation(handler: BotHandler): this {
         return this.on('EndOfConversation', handler);
     }
 
@@ -293,7 +293,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      * To handle a Typing event, use the
      * [onTyping](xref:botbuilder-core.ActivityHandler.onTyping) type-specific event handler.
      */
-    public onTyping(handler: BotHandler): this {
+    onTyping(handler: BotHandler): this {
         return this.on('Typing', handler);
     }
 
@@ -308,7 +308,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      * To handle a InstallationUpdate event, use the
      * [onInstallationUpdate](xref:botbuilder-core.ActivityHandler.onInstallationUpdate) type-specific event handler.
      */
-    public onInstallationUpdate(handler: BotHandler): this {
+    onInstallationUpdate(handler: BotHandler): this {
         return this.on('InstallationUpdate', handler);
     }
 
@@ -323,7 +323,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      * To handle a InstallationUpdateAdd event, use the
      * [onInstallationUpdateAdd](xref:botbuilder-core.ActivityHandler.onInstallationUpdateAdd) type-specific event handler.
      */
-    public onInstallationUpdateAdd(handler: BotHandler): this {
+    onInstallationUpdateAdd(handler: BotHandler): this {
         return this.on('InstallationUpdateAdd', handler);
     }
 
@@ -338,7 +338,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      * To handle a InstallationUpdateRemove event, use the
      * [onInstallationUpdateRemove](xref:botbuilder-core.ActivityHandler.onInstallationUpdateRemove) type-specific event handler.
      */
-    public onInstallationUpdateRemove(handler: BotHandler): this {
+    onInstallationUpdateRemove(handler: BotHandler): this {
         return this.on('InstallationUpdateRemove', handler);
     }
 
@@ -359,7 +359,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      * To handle other named events and event events in general, use the
      * [onEvent](xref:botbuilder-core.ActivityHandler.onEvent) type-specific event handler.
      */
-    public onTokenResponseEvent(handler: BotHandler): this {
+    onTokenResponseEvent(handler: BotHandler): this {
         return this.on('TokenResponseEvent', handler);
     }
 
@@ -374,7 +374,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      * To handle a Command event, use the
      * [onCommand](xref:botbuilder-core.ActivityHandler.onCommand) type-specific event handler.
      */
-    public onCommand(handler: BotHandler): this {
+    onCommand(handler: BotHandler): this {
         return this.on('Command', handler);
     }
 
@@ -389,7 +389,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      * To handle a CommandResult event, use the
      * [onCommandResult](xref:botbuilder-core.ActivityHandler.onCommandResult) type-specific event handler.
      */
-    public onCommandResult(handler: BotHandler): this {
+    onCommandResult(handler: BotHandler): this {
         return this.on('CommandResult', handler);
     }
 
@@ -410,7 +410,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      *
      * The activity's [type](xref:botframework-schema.Activity.type) property contains the activity type.
      */
-    public onUnrecognizedActivityType(handler: BotHandler): this {
+    onUnrecognizedActivityType(handler: BotHandler): this {
         return this.on('UnrecognizedActivityType', handler);
     }
 
@@ -423,7 +423,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      * Returns a reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
      *
      */
-    public onDialog(handler: BotHandler): this {
+    onDialog(handler: BotHandler): this {
         return this.on('Dialog', handler);
     }
 
@@ -450,7 +450,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      * **See also**
      * - [BotFrameworkAdapter.processActivity](xref:botbuilder.BotFrameworkAdapter.processActivity)
      */
-    public async run(context: TurnContext): Promise<void> {
+    async run(context: TurnContext): Promise<void> {
         await super.run(context);
     }
 

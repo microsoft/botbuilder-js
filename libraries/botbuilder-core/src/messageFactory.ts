@@ -49,7 +49,7 @@ export class MessageFactory {
      * @param speak (Optional) SSML to include in the message.
      * @param inputHint (Optional) input hint for the message. Defaults to `acceptingInput`.
      */
-    public static text(text: string, speak?: string, inputHint?: InputHints | string): Partial<Activity> {
+    static text(text: string, speak?: string, inputHint?: InputHints | string): Partial<Activity> {
         const msg: Partial<Activity> = {
             type: ActivityTypes.Message,
             text: text,
@@ -76,7 +76,7 @@ export class MessageFactory {
      * @param speak (Optional) SSML to include with the message.
      * @param inputHint (Optional) input hint for the message. Defaults to `acceptingInput`.
      */
-    public static suggestedActions(
+    static suggestedActions(
         actions: (CardAction | string)[],
         text?: string,
         speak?: string,
@@ -119,7 +119,7 @@ export class MessageFactory {
      * @param speak (Optional) SSML to include with the message.
      * @param inputHint (Optional) input hint for the message. Defaults to `acceptingInput`.
      */
-    public static attachment(
+    static attachment(
         attachment: Attachment,
         text?: string,
         speak?: string,
@@ -146,7 +146,7 @@ export class MessageFactory {
      * @param speak (Optional) SSML to include with the message.
      * @param inputHint (Optional) input hint for the message.
      */
-    public static list(
+    static list(
         attachments: Attachment[],
         text?: string,
         speak?: string,
@@ -173,7 +173,7 @@ export class MessageFactory {
      * @param speak (Optional) SSML to include with the message.
      * @param inputHint (Optional) input hint for the message.
      */
-    public static carousel(
+    static carousel(
         attachments: Attachment[],
         text?: string,
         speak?: string,
@@ -198,7 +198,7 @@ export class MessageFactory {
      * @param speak (Optional) SSML to include with the message.
      * @param inputHint (Optional) input hint for the message.
      */
-    public static contentUrl(
+    static contentUrl(
         url: string,
         contentType: string,
         name?: string,
