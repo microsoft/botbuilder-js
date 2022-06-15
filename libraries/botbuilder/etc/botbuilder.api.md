@@ -269,7 +269,7 @@ export class HandoffEventNames {
 
 // Warning: (ae-forgotten-export) The symbol "InterceptionMiddleware" needs to be exported by the entry point index.d.ts
 //
-// @public
+// @public @deprecated
 export class InspectionMiddleware extends InterceptionMiddleware {
     constructor(inspectionState: InspectionState, userState?: UserState, conversationState?: ConversationState, credentials?: Partial<MicrosoftAppCredentials>);
     protected inbound(turnContext: TurnContext, traceActivity: Partial<Activity>): Promise<any>;
@@ -278,7 +278,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
     protected traceState(turnContext: TurnContext): Promise<any>;
     }
 
-// @public
+// @public @deprecated
 export class InspectionState extends BotState {
     constructor(storage: Storage_2);
     protected getStorageKey(_turnContext: TurnContext): string;
