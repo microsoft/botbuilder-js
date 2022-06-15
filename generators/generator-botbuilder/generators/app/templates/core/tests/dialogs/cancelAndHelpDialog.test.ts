@@ -24,11 +24,11 @@ class TestCancelAndHelpDialog extends CancelAndHelpDialog {
         this.initialDialogId = 'WaterfallDialog';
     }
 
-    public async promptStep(stepContext) {
+    async promptStep(stepContext) {
         return await stepContext.prompt('TextPrompt', { prompt: MessageFactory.text('Hi there') });
     }
 
-    public async finalStep(stepContext) {
+    async finalStep(stepContext) {
         return await stepContext.endDialog();
     }
 }

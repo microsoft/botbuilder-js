@@ -13,12 +13,12 @@ export class CallerIdConstants {
     /**
      * The caller ID for any Bot Framework channel.
      */
-    public static readonly PublicAzureChannel: string = 'urn:botframework:azure';
+    static readonly PublicAzureChannel: string = 'urn:botframework:azure';
 
     /**
      * The caller ID for any Bot Framework US Government cloud channel.
      */
-    public static readonly USGovChannel: string = 'urn:botframework:azureusgov';
+    static readonly USGovChannel: string = 'urn:botframework:azureusgov';
 
     /**
      * The caller ID prefix when a bot initiates a request to another bot.
@@ -26,5 +26,5 @@ export class CallerIdConstants {
      * @remarks
      * This prefix will be followed by the Azure Active Directory App ID of the bot that initiated the call.
      */
-    public static readonly BotToBotPrefix: string = 'urn:botframework:aadappid:';
+    static readonly BotToBotPrefix: string = 'urn:botframework:aadappid:';
 }
