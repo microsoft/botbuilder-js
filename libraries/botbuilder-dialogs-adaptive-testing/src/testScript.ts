@@ -44,9 +44,9 @@ import { SettingMock, SettingMocksConverter } from './settingMocks/settingMock';
 import { TestTelemetryClient } from './testTelemetryClient';
 
 class DialogConverter implements Converter<string, Dialog> {
-    public constructor(private readonly _resourceExplorer: ResourceExplorer) { }
+    constructor(private readonly _resourceExplorer: ResourceExplorer) { }
 
-    public convert(value: string | Dialog): Dialog {
+    convert(value: string | Dialog): Dialog {
         if (value instanceof Dialog) {
             return value;
         }
@@ -80,59 +80,59 @@ export interface TestScriptConfiguration {
  * A mock Test Script that can be used for unit testing bot's logic.
  */
 export class TestScript extends Configurable implements TestScriptConfiguration {
-    public static $kind = 'Microsoft.Test.Script';
+    static $kind = 'Microsoft.Test.Script';
 
     /**
      * Configuration to use for the test.
      */
-    public configuration: Record<string, string>;
+    configuration: Record<string, string>;
 
     /**
      * A description of the test sequence.
      */
-    public description: string;
+    description: string;
 
     /**
      * The dialog to use for the root dialog.
      */
-    public dialog: Dialog;
+    dialog: Dialog;
 
     /**
      * The locale (default: en-us).
      */
-    public locale = 'en-us';
+    locale = 'en-us';
 
     /**
      * Language policy.
      */
-    public languagePolicy: LanguagePolicy;
+    languagePolicy: LanguagePolicy;
 
     /**
      * Gets the mock data for Microsoft.HttpRequest.
      */
-    public httpRequestMocks: HttpRequestMock[] = [];
+    httpRequestMocks: HttpRequestMock[] = [];
 
     /**
      * The mock data for Microsoft.OAuthInput.
      */
-    public userTokenMocks: UserTokenMock[] = [];
+    userTokenMocks: UserTokenMock[] = [];
 
     /**
      * The mock data for settings.
      */
-    public settingMocks: SettingMock[] = [];
+    settingMocks: SettingMock[] = [];
 
     /**
      * The sequence of test actions to perform to validate the dialog behavior.
      */
-    public script: TestAction[] = [];
+    script: TestAction[] = [];
 
     /**
      * If true then trace activities will be sent to the test script.
      */
-    public enableTrace = false;
+    enableTrace = false;
 
-    public getConverter(property: keyof TestScriptConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof TestScriptConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'dialog':
                 return DialogConverter;
@@ -156,7 +156,7 @@ export class TestScript extends Configurable implements TestScriptConfiguration 
      * @param middlewares Middlewares to be added to the adapter.
      * @returns Test adapter.
      */
-    public defaultTestAdapter(testName?: string, ...middlewares: Middleware[]): TestAdapter {
+    defaultTestAdapter(testName?: string, ...middlewares: Middleware[]): TestAdapter {
         const storage = new MemoryStorage();
         const userState = new UserState(storage);
         const convoState = new ConversationState(storage);
@@ -187,7 +187,7 @@ export class TestScript extends Configurable implements TestScriptConfiguration 
      * @param adapter Optional test adapter.
      * @param middlewares Middlewares to be added to the adapter.
      */
-    public async execute(
+    async execute(
         resourceExplorer: ResourceExplorer,
         testName?: string,
         callback?: (context: TurnContext) => Promise<void>,
