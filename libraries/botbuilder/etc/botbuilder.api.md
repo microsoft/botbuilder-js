@@ -7,7 +7,6 @@
 import { Activity } from 'botbuilder-core';
 import { ActivityHandler } from 'botbuilder-core';
 import { ActivityHandlerBase } from 'botbuilder-core';
-import { AdaptiveCardInvokeResponse } from 'botbuilder-core';
 import { AppBasedLinkQuery } from 'botbuilder-core';
 import { AppCredentials } from 'botframework-connector';
 import { AttachmentData } from 'botbuilder-core';
@@ -356,7 +355,6 @@ export class StreamingHttpClient implements HttpClient {
 export class TeamsActivityHandler extends ActivityHandler {
     protected dispatchConversationUpdateActivity(context: TurnContext): Promise<void>;
     protected dispatchEventActivity(context: TurnContext): Promise<void>;
-    protected handleAdaptiveCardAction(_context: TurnContext): Promise<AdaptiveCardInvokeResponse>;
     protected handleTeamsAppBasedLinkQuery(_context: TurnContext, _query: AppBasedLinkQuery): Promise<MessagingExtensionResponse>;
     protected handleTeamsCardActionInvoke(_context: TurnContext): Promise<InvokeResponse>;
     protected handleTeamsFileConsent(context: TurnContext, fileConsentCardResponse: FileConsentCardResponse): Promise<void>;
