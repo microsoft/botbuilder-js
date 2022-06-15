@@ -41,7 +41,7 @@ export class BotFrameworkHttpClient implements BotFrameworkClient {
      * @param credentialProvider An instance of [ICredentialProvider](xref:botframework-connector.ICredentialProvider).
      * @param channelService Optional. The channel service.
      */
-    public constructor(credentialProvider: ICredentialProvider, channelService?: string) {
+    constructor(credentialProvider: ICredentialProvider, channelService?: string) {
         if (!credentialProvider) {
             throw new Error('BotFrameworkHttpClient(): missing credentialProvider');
         }
@@ -63,7 +63,7 @@ export class BotFrameworkHttpClient implements BotFrameworkClient {
      * @param activity Activity to forward.
      * @returns {Promise<InvokeResponse<T>>} A promise representing the asynchronous operation.
      */
-    public async postActivity<T = any>(
+    async postActivity<T = any>(
         fromBotId: string,
         toBotId: string,
         toUrl: string,
