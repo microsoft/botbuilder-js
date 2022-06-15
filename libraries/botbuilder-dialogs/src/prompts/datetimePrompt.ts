@@ -41,7 +41,7 @@ export class DateTimePrompt extends Prompt<DateTimeResolution[]> {
     /**
      * The prompts default locale that should be recognized.
      */
-    public defaultLocale: string | undefined;
+    defaultLocale: string | undefined;
 
     /**
      * Creates a new DateTimePrompt instance.

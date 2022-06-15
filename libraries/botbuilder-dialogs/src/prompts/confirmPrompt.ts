@@ -33,7 +33,7 @@ export class ConfirmPrompt extends Prompt<boolean> {
     /**
      * The prompts default locale that should be recognized.
      */
-    public defaultLocale: string | undefined;
+    defaultLocale: string | undefined;
 
     /**
      * Style of the "yes" and "no" choices rendered to the user when prompting.
@@ -41,18 +41,18 @@ export class ConfirmPrompt extends Prompt<boolean> {
      * @remarks
      * Defaults to `ListStyle.auto`.
      */
-    public style: ListStyle;
+    style: ListStyle;
 
     /**
      * Additional options passed to the `ChoiceFactory` and used to tweak the style of choices
      * rendered to the user.
      */
-    public choiceOptions: ChoiceFactoryOptions | undefined;
+    choiceOptions: ChoiceFactoryOptions | undefined;
 
     /**
      * Custom list of choices to send for the prompt.
      */
-    public confirmChoices: (string | Choice)[] | undefined;
+    confirmChoices: (string | Choice)[] | undefined;
 
     /**
      * Creates a new ConfirmPrompt instance.
@@ -60,7 +60,7 @@ export class ConfirmPrompt extends Prompt<boolean> {
      * @param validator (Optional) validator that will be called each time the user responds to the prompt.
      * @param defaultLocale (Optional) locale to use if `TurnContext.activity.locale` is not specified. Defaults to a value of `en-us`.
      */
-    public constructor(
+    constructor(
         dialogId: string,
         validator?: PromptValidator<boolean>,
         defaultLocale?: string,
