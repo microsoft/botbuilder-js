@@ -93,7 +93,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
      * Gets the dialog version, composed of the ID and number of steps.
      * @returns Dialog version, composed of the ID and number of steps.
      */
-    public getVersion(): string {
+    getVersion(): string {
         // Simply return the id + number of steps to help detect when new steps have
         // been added to a given waterfall.
         return `${ this.id }:${ this.steps.length }`;
@@ -137,7 +137,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
      * ```
      * @param step Asynchronous step function to call.
      */
-    public addStep(step: WaterfallStep<O>): this {
+    addStep(step: WaterfallStep<O>): this {
         this.steps.push(step);
 
         return this;
@@ -152,7 +152,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
      * If the task is successful, the result indicates whether the [Dialog](xref:botbuilder-dialogs.Dialog) is still
      * active after the turn has been processed by the dialog.
      */
-    public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
+    async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         // Initialize waterfall state
         const state: WaterfallDialogState = dc.activeDialog.state as WaterfallDialogState;
         state.options = options || {};
@@ -184,7 +184,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
      * active after the turn has been processed by the dialog. The result may also contain a
      * return value.
      */
-    public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
+    async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
         // Don't do anything for non-message activities
         if (dc.context.activity.type !== ActivityTypes.Message) {
             return Dialog.EndOfTurn;
@@ -202,7 +202,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
      * of the value returned is dependent on the child dialog.
      * @returns A Promise representing the asynchronous operation.
      */
-    public async resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
+    async resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
         // Increment step index and run step
         const state: WaterfallDialogState = dc.activeDialog.state as WaterfallDialogState;
 
@@ -293,7 +293,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
      * @param instance The instance of the current dialog.
      * @param reason The reason the dialog is ending.
      */
-    public async endDialog(context: TurnContext, instance: DialogInstance, reason: DialogReason): Promise<void> {
+    async endDialog(context: TurnContext, instance: DialogInstance, reason: DialogReason): Promise<void> {
         const state: WaterfallDialogState = instance.state as WaterfallDialogState;
         const instanceId = state.values['instanceId'];
         if (reason === DialogReason.endCalled) {

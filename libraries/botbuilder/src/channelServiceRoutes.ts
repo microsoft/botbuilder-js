@@ -47,7 +47,7 @@ export class ChannelServiceRoutes {
      * @param server WebServer
      * @param basePath Optional basePath which is appended before the service's REST API is configured on the WebServer.
      */
-    public register(server: WebServer, basePath = ''): void {
+    register(server: WebServer, basePath = ''): void {
         server.post(basePath + RouteConstants.Activities, this.processSendToConversation.bind(this));
         server.post(basePath + RouteConstants.Activity, this.processReplyToActivity.bind(this));
         server.put(basePath + RouteConstants.Activity, this.processUpdateActivity.bind(this));

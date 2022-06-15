@@ -31,7 +31,7 @@ export abstract class ChannelServiceHandlerBase {
      * @param activity The [Activity](xref:botframework-schema.Activity) to send.
      * @returns A `Promise` representing the [ResourceResponse](xref:botframework-schema.ResourceResponse) for the operation.
      */
-    public async handleSendToConversation(
+    async handleSendToConversation(
         authHeader: string,
         conversationId: string,
         activity: Activity
@@ -49,7 +49,7 @@ export abstract class ChannelServiceHandlerBase {
      * @param activity The [Activity](xref:botframework-schema.Activity) to send.
      * @returns A `Promise` representing the [ResourceResponse](xref:botframework-schema.ResourceResponse) for the operation.
      */
-    public async handleReplyToActivity(
+    async handleReplyToActivity(
         authHeader: string,
         conversationId: string,
         activityId: string,
@@ -68,7 +68,7 @@ export abstract class ChannelServiceHandlerBase {
      * @param activity The replacement [Activity](xref:botframework-schema.Activity).
      * @returns A `Promise` representing the [ResourceResponse](xref:botframework-schema.ResourceResponse) for the operation.
      */
-    public async handleUpdateActivity(
+    async handleUpdateActivity(
         authHeader: string,
         conversationId: string,
         activityId: string,
@@ -85,7 +85,7 @@ export abstract class ChannelServiceHandlerBase {
      * @param conversationId The conversation Id.
      * @param activityId The activity Id to delete.
      */
-    public async handleDeleteActivity(authHeader: string, conversationId: string, activityId: string): Promise<void> {
+    async handleDeleteActivity(authHeader: string, conversationId: string, activityId: string): Promise<void> {
         const claimsIdentity = await this.authenticate(authHeader);
         await this.onDeleteActivity(claimsIdentity, conversationId, activityId);
     }
@@ -98,7 +98,7 @@ export abstract class ChannelServiceHandlerBase {
      * @param activityId The activity Id.
      * @returns The enumerated [ChannelAccount](xref:botframework-schema.ChannelAccount) list.
      */
-    public async handleGetActivityMembers(
+    async handleGetActivityMembers(
         authHeader: string,
         conversationId: string,
         activityId: string
@@ -114,7 +114,7 @@ export abstract class ChannelServiceHandlerBase {
      * @param parameters [ConversationParameters](xref:botbuilder-core.ConversationParameters) to create the conversation from.
      * @returns A `Promise` representation for the operation.
      */
-    public async handleCreateConversation(
+    async handleCreateConversation(
         authHeader: string,
         parameters: ConversationParameters
     ): Promise<ConversationResourceResponse> {
@@ -130,7 +130,7 @@ export abstract class ChannelServiceHandlerBase {
      * @param continuationToken A skip or continuation token.
      * @returns A `Promise` representation for the operation.
      */
-    public async handleGetConversations(
+    async handleGetConversations(
         authHeader: string,
         conversationId: string,
         continuationToken?: string /* some default */
@@ -146,7 +146,7 @@ export abstract class ChannelServiceHandlerBase {
      * @param conversationId The conversation Id.
      * @returns The enumerated [ChannelAccount](xref:botframework-schema.ChannelAccount) list.
      */
-    public async handleGetConversationMembers(authHeader: string, conversationId: string): Promise<ChannelAccount[]> {
+    async handleGetConversationMembers(authHeader: string, conversationId: string): Promise<ChannelAccount[]> {
         const claimsIdentity = await this.authenticate(authHeader);
         return this.onGetConversationMembers(claimsIdentity, conversationId);
     }
@@ -160,7 +160,7 @@ export abstract class ChannelServiceHandlerBase {
      * @param continuationToken A continuation token.
      * @returns A `Promise` representing the [PagedMembersResult](xref:botframework-schema.PagedMembersResult) for the operation.
      */
-    public async handleGetConversationPagedMembers(
+    async handleGetConversationPagedMembers(
         authHeader: string,
         conversationId: string,
         pageSize = -1,
@@ -177,7 +177,7 @@ export abstract class ChannelServiceHandlerBase {
      * @param conversationId The conversation Id.
      * @param memberId Id of the member to delete from this conversation.
      */
-    public async handleDeleteConversationMember(
+    async handleDeleteConversationMember(
         authHeader: string,
         conversationId: string,
         memberId: string
@@ -194,7 +194,7 @@ export abstract class ChannelServiceHandlerBase {
      * @param transcript [Transcript](xref:botframework-schema.Transcript) of activities.
      * @returns A `Promise` representing the [ResourceResponse](xref:botframework-schema.ResourceResponse) for the operation.
      */
-    public async handleSendConversationHistory(
+    async handleSendConversationHistory(
         authHeader: string,
         conversationId: string,
         transcript: Transcript
@@ -211,7 +211,7 @@ export abstract class ChannelServiceHandlerBase {
      * @param attachmentUpload [AttachmentData](xref:botframework-schema.AttachmentData).
      * @returns A `Promise` representing the [ResourceResponse](xref:botframework-schema.ResourceResponse) for the operation.
      */
-    public async handleUploadAttachment(
+    async handleUploadAttachment(
         authHeader: string,
         conversationId: string,
         attachmentUpload: AttachmentData

@@ -14,24 +14,24 @@ export class EvaluationTarget {
     /**
      * Template name.
      */
-    public templateName: string;
+    templateName: string;
 
     /**
      * Scope.
      */
-    public scope: MemoryInterface;
+    scope: MemoryInterface;
 
     /**
      * The children templates that this template has evaluated currently.
      */
-    public cachedEvaluatedChildren: Map<string, unknown>;
+    cachedEvaluatedChildren: Map<string, unknown>;
 
     /**
      * Creates a new instance of the [EvaluationTarget](xref:botbuilder-lg.EvaluationTarget) class.
      * @param templateName Template name.
      * @param scope Template scope.
      */
-    public constructor(templateName: string, scope: MemoryInterface) {
+    constructor(templateName: string, scope: MemoryInterface) {
         this.templateName = templateName;
         this.scope = scope;
         this.cachedEvaluatedChildren = new Map<string, unknown>();
@@ -42,7 +42,7 @@ export class EvaluationTarget {
      * we can say they have the same template evaluation result.
      * @returns Id.
      */
-    public getId(): string {
+    getId(): string {
         const scopeVersion = this.scope ? this.scope.version() : '';
         return this.templateName + scopeVersion;
     }

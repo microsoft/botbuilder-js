@@ -17,7 +17,7 @@ export class FileResource extends Resource {
      * Initialize a new instance of the `FileResouce` class.
      * @param path Path to file.
      */
-    public constructor(path: string) {
+    constructor(path: string) {
         super();
         this._fullname = path;
         // The id will be the file name, without the path
@@ -27,7 +27,7 @@ export class FileResource extends Resource {
     /**
      * Read text content of a file resource.
      */
-    public readText(): string {
+    readText(): string {
         const filePath = this._fullname;
         const text = fs.readFileSync(filePath, 'utf-8');
         return text;

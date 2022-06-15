@@ -65,14 +65,34 @@ export class PasswordServiceClientCredentialFactory implements ServiceClientCred
         this.tenantId = tenantId ?? null;
     }
 
+    /**
+     * Validates an app ID.
+     *
+     * @param appId The appId to validate.
+     * @returns Promise with the validation result.
+     */
     async isValidAppId(appId = ''): Promise<boolean> {
         return appId === this.appId;
     }
 
+    /**
+     * Checks whether bot authentication is disabled.
+     *
+     * @returns Promise with the validation result.
+     */
     async isAuthenticationDisabled(): Promise<boolean> {
         return stringExt.isNilOrEmpty(this.appId);
     }
 
+    /**
+     * A factory method for creating ServiceClientCredentials.
+     *
+     * @param appId The appId.
+     * @param audience The audience.
+     * @param loginEndpoint The login url.
+     * @param validateAuthority The validate authority value to use.
+     * @returns A Promise representing the result of the operation.
+     */
     async createCredentials(
         appId: string,
         audience: string,

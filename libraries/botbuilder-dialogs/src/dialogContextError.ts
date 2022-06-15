@@ -12,7 +12,7 @@ export class DialogContextError extends Error {
     /**
      * Represents the state of a dialog when an error occurred.
      */
-    public readonly dialogContext: {
+    readonly dialogContext: {
         activeDialog?: string;
         parent?: string;
         stack: DialogInstance[];
@@ -24,7 +24,7 @@ export class DialogContextError extends Error {
      * @param {Error | string} error Source error or error message.
      * @param {DialogContext} dialogContext Dialog context that is the source of the error.
      */
-    public constructor(public readonly error: Error | string, dialogContext: DialogContext) {
+    constructor(public readonly error: Error | string, dialogContext: DialogContext) {
         super();
 
         if (!(error instanceof Error) && typeof error !== 'string') {

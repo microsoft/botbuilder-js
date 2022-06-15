@@ -3,6 +3,9 @@
 
 import { ConnectorClient } from '../connectorApi/connectorClient';
 
+/**
+ * A factory class used to create ConnectorClients with appropriate credentials for the current appId.
+ */
 export abstract class ConnectorFactory {
     /**
      * A factory method used to create [ConnectorClient](xref:botframework-connector.ConnectorClient) instances.

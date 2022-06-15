@@ -82,7 +82,7 @@ export class MiddlewareSet implements Middleware {
      * @param context [TurnContext](xref:botbuilder-core.TurnContext) object for this turn.
      * @param next Delegate to call to continue the bot middleware pipeline.
      */
-    public onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
+    onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
         return this.run(context, next);
     }
 
@@ -101,7 +101,7 @@ export class MiddlewareSet implements Middleware {
      * ```
      * @param middleware One or more middleware handlers(s) to register.
      */
-    public use(...middlewares: (MiddlewareHandler | Middleware)[]): this {
+    use(...middlewares: (MiddlewareHandler | Middleware)[]): this {
         middlewares.forEach((plugin) => {
             if (typeof plugin === 'function') {
                 this.middleware.push(plugin);
@@ -121,7 +121,7 @@ export class MiddlewareSet implements Middleware {
      * @param next Function to invoke at the end of the middleware chain.
      * @returns A promise that resolves after the handler chain is complete.
      */
-    public run(context: TurnContext, next: () => Promise<void>): Promise<void> {
+    run(context: TurnContext, next: () => Promise<void>): Promise<void> {
         const runHandlers = ([handler, ...remaining]: MiddlewareHandler[]) => {
             try {
                 return Promise.resolve(handler ? handler(context, () => runHandlers(remaining)) : next());

@@ -10,6 +10,9 @@ import { StatusCodes } from 'botframework-schema';
  * Licensed under the MIT License.
  */
 
+/**
+ * Contains helper methods for verifying JWT endorsements.
+ */
 export class EndorsementsValidator {
     /**
      * Verify that the set of ChannelIds, which come from the incoming activities,

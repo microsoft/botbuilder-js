@@ -14,7 +14,7 @@ export class SkillConversationIdFactory extends SkillConversationIdFactoryBase {
         super();
     }
 
-    public async createSkillConversationIdWithOptions(options: SkillConversationIdFactoryOptions): Promise<string> {
+    async createSkillConversationIdWithOptions(options: SkillConversationIdFactoryOptions): Promise<string> {
         const conversationReference = TurnContext.getConversationReference(options.activity);
 
         const skillConversationId = uuid();
@@ -29,7 +29,7 @@ export class SkillConversationIdFactory extends SkillConversationIdFactoryBase {
         return skillConversationId;
     }
 
-    public async getSkillConversationReference(skillConversationId: string): Promise<SkillConversationReference> {
+    async getSkillConversationReference(skillConversationId: string): Promise<SkillConversationReference> {
         const skillConversationInfo = await this.storage.read([skillConversationId]);
         if (!skillConversationInfo) {
             return undefined!; // eslint-disable-line @typescript-eslint/no-non-null-assertion

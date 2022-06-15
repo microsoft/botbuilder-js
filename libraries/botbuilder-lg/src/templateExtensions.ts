@@ -29,7 +29,7 @@ export class TemplateExtensions {
      * @param expression Input expression string.
      * @returns Pure expression string.
      */
-    public static trimExpression(expression: string): string {
+    static trimExpression(expression: string): string {
         let result = expression.trim();
         if (result.startsWith('$')) {
             result = result.substr(1);
@@ -52,7 +52,7 @@ export class TemplateExtensions {
      * @param ambiguousPath AuthoredPath.
      * @returns Path expressed as OS path.
      */
-    public static normalizePath(ambiguousPath: string): string {
+    static normalizePath(ambiguousPath: string): string {
         if (process.platform === 'win32') {
             // map linux/mac sep -> windows
             return path.normalize(ambiguousPath.replace(/\//g, '\\'));
@@ -67,7 +67,7 @@ export class TemplateExtensions {
      * @param context Normal template sting context.
      * @returns Prefix error message.
      */
-    public static getPrefixErrorMessage(context: NormalTemplateStringContext): string {
+    static getPrefixErrorMessage(context: NormalTemplateStringContext): string {
         let errorPrefix = '';
         if (context.parent && context.parent.parent && context.parent.parent.parent) {
             if (context.parent.parent.parent instanceof IfConditionRuleContext) {
@@ -107,7 +107,7 @@ export class TemplateExtensions {
      * If a value is pure Expression.
      * @param ctx Key value structure value context.
      */
-    public static isPureExpression(ctx: KeyValueStructureValueContext): boolean {
+    static isPureExpression(ctx: KeyValueStructureValueContext): boolean {
         if (ctx.expressionInStructure() === undefined || ctx.expressionInStructure().length != 1) {
             return false;
         }
@@ -120,7 +120,7 @@ export class TemplateExtensions {
      * @param exp Input text.
      * @returns Escaped text.
      */
-    public static evalEscape(exp: string): string {
+    static evalEscape(exp: string): string {
         const validCharactersDict: Record<string, string> = {
             '\\r': '\r',
             '\\n': '\n',
@@ -144,7 +144,7 @@ export class TemplateExtensions {
     /**
      * Generate new guid string.
      */
-    public static newGuid(): string {
+    static newGuid(): string {
         return uuidv4();
     }
 
@@ -152,7 +152,7 @@ export class TemplateExtensions {
      * read line from text.
      * @param input Text content.
      */
-    public static readLine(input: string): string[] {
+    static readLine(input: string): string[] {
         if (!input) {
             return [];
         }
@@ -166,7 +166,7 @@ export class TemplateExtensions {
      * @param [lineOffset] Line offset.
      * @returns Range object.
      */
-    public static convertToRange(context: ParserRuleContext, lineOffset?: number): Range {
+    static convertToRange(context: ParserRuleContext, lineOffset?: number): Range {
         if (!lineOffset) {
             lineOffset = 0;
         }

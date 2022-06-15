@@ -33,7 +33,7 @@ export class MemoryStorage implements Storage {
      * Creates a new MemoryStorage instance.
      * @param memory (Optional) memory to use for storing items. By default it will create an empty JSON object `{}`.
      */
-    public constructor(protected memory: { [k: string]: string } = {}) {
+    constructor(protected memory: { [k: string]: string } = {}) {
         this.etag = 1;
     }
 
@@ -42,7 +42,7 @@ export class MemoryStorage implements Storage {
      * @param keys Keys of the [StoreItems](xref:botbuilder-core.StoreItems) objects to read.
      * @returns The read items.
      */
-    public read(keys: string[]): Promise<StoreItems> {
+    read(keys: string[]): Promise<StoreItems> {
         return new Promise<StoreItems>((resolve: any, reject: any): void => {
             if (!keys) {
                 throw new ReferenceError(`Keys are required when reading.`);
@@ -62,7 +62,7 @@ export class MemoryStorage implements Storage {
      * Writes storage items to storage.
      * @param changes The [StoreItems](xref:botbuilder-core.StoreItems) to write, indexed by key.
      */
-    public write(changes: StoreItems): Promise<void> {
+    write(changes: StoreItems): Promise<void> {
         const that: MemoryStorage = this;
         function saveItem(key: string, item: any): void {
             const clone: any = { ...item };
@@ -96,7 +96,7 @@ export class MemoryStorage implements Storage {
      * Deletes storage items from storage.
      * @param keys Keys of the [StoreItems](xref:botbuilder-core.StoreItems) objects to delete.
      */
-    public delete(keys: string[]): Promise<void> {
+    delete(keys: string[]): Promise<void> {
         return new Promise<void>((resolve: any, reject: any): void => {
             keys.forEach((key: string) => (this.memory[key] = <any>undefined));
             resolve();

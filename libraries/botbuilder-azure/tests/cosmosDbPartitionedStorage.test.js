@@ -8,6 +8,7 @@ const { MockMode, usingNock } = require('./mockHelper');
 const nock = require('nock');
 const https = require('https');
 const fetch = require('node-fetch');
+const pjson = require('../package.json');
 
 /**
  * READ THIS BEFORE EDITING THESE TESTS
@@ -198,9 +199,30 @@ describe('CosmosDbPartitionedStorage - Base Storage Tests', function () {
         nockDone();
     });
 
-    it('return empty object when reading unknown key', async function () {
+    it('passes cosmosClientOptions with default userAgentSuffix', async function () {
         const { nockDone } = await usingNock(this.test, mode, options);
 
+        const settingsWithClientOptions = getSettings();
+        settingsWithClientOptions.cosmosClientOptions = {
+            agent: new https.Agent({ rejectUnauthorized: false }),
+            connectionPolicy: { requestTimeout: 999 },
+        };
+
+        const client = new CosmosDbPartitionedStorage(settingsWithClientOptions);
+        await client.initialize(); // Force client to go through initialization
+
+        const userAgent = client.container.clientContext.cosmosClientOptions.defaultHeaders['User-Agent'].split(' ');
+        const length = userAgent.length;
+
+        assert.strictEqual(client.client.clientContext.connectionPolicy.requestTimeout, 999);
+        assert.strictEqual(userAgent[length - 1], pjson.version);
+        assert.strictEqual(userAgent[length - 2], pjson.name);
+
+        nockDone();
+    });
+
+    it('return empty object when reading unknown key', async function () {
+        const { nockDone } = await usingNock(this.test, mode, options);
         const testRan = await StorageBaseTests.returnEmptyObjectWhenReadingUnknownKey(storage);
 
         assert.strictEqual(testRan, true);
