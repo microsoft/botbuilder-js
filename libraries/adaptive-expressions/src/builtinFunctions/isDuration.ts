@@ -24,7 +24,7 @@ export class IsDuration extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [IsDuration](xref:adaptive-expressions.IsDuration) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.IsDuration, IsDuration.evaluator, ReturnType.Boolean, FunctionUtils.validateUnary);
     }
 

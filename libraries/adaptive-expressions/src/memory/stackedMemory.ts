@@ -19,7 +19,7 @@ export class StackedMemory extends Array<MemoryInterface> implements MemoryInter
      * @param memory An object that implements [MemoryInterface](xref:adaptive-expressions.MemoryInterface).
      * @returns A [StackedMemory](xref:adaptive-expressions.StackedMemory) object.
      */
-    public static wrap(memory: MemoryInterface): StackedMemory {
+    static wrap(memory: MemoryInterface): StackedMemory {
         if (memory instanceof StackedMemory) {
             return memory;
         } else {
@@ -35,7 +35,7 @@ export class StackedMemory extends Array<MemoryInterface> implements MemoryInter
      * @param path Given path.
      * @returns The value from the given path if found, otherwise, undefined.
      */
-    public getValue(path: string): any {
+    getValue(path: string): any {
         if (this.length === 0) {
             return undefined;
         } else {
@@ -55,7 +55,7 @@ export class StackedMemory extends Array<MemoryInterface> implements MemoryInter
      * @param _path Memory path.
      * @param _value Value to set.
      */
-    public setValue(_path: string, _value: any): void {
+    setValue(_path: string, _value: any): void {
         throw new Error(`Can't set value to ${_path}, stacked memory is read-only`);
     }
 
@@ -64,7 +64,7 @@ export class StackedMemory extends Array<MemoryInterface> implements MemoryInter
      *
      * @returns A string value representing the version.
      */
-    public version(): string {
+    version(): string {
         return '0';
     }
 }

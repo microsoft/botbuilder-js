@@ -15,22 +15,22 @@ export class TemplateImport {
     /**
      * Description of the import, what's included by '[]' in a lg file.
      */
-    public description: string;
+    description: string;
 
     /**
      * Id of this import.
      */
-    public id: string;
+    id: string;
 
     /**
      * origin root source of the import.
      */
-    public sourceRange: SourceRange;
+    sourceRange: SourceRange;
 
     /**
      * Alias for templates. For example: [import](path) as myAlias.
      */
-    public alias?: string;
+    alias?: string;
 
     /**
      * Creates a new instance of the [TemplateImport](xref:botbuilder-lg.TemplateImport) class.
@@ -39,14 +39,14 @@ export class TemplateImport {
      * @param sourceRange [SourceRange](xref:botbuilder-lg.SourceRange) of template.
      * @param alias Imports alias.
      */
-    public constructor(description: string, id: string, sourceRange: SourceRange, alias?: string) {
+    constructor(description: string, id: string, sourceRange: SourceRange, alias?: string) {
         this.description = description;
         this.sourceRange = sourceRange;
         this.id = id;
         this.alias = alias;
     }
 
-    public toString = (): string => {
+    toString = (): string => {
         let importStr = `[${this.description}](${this.id})`;
         if (this.alias) {
             importStr += ` as ${this.alias}`;

@@ -19,7 +19,7 @@ export class Float extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [Float](xref:adaptive-expressions.Float) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.Float, Float.evaluator(), ReturnType.Number, FunctionUtils.validateUnary);
     }
 

@@ -13,7 +13,7 @@ import { AdaptiveEvents } from '../adaptiveEvents';
  * Triggered when all actions and ambiguity events have been processed.
  */
 export class OnEndOfActions extends OnDialogEvent {
-    public static $kind = 'Microsoft.OnEndOfActions';
+    static $kind = 'Microsoft.OnEndOfActions';
 
     /**
      * Creates a new `OnEndOfActions` instance.
@@ -21,7 +21,7 @@ export class OnEndOfActions extends OnDialogEvent {
      * @param actions (Optional) The actions to add to the plan when the rule constraints are met.
      * @param condition (Optional) The condition which needs to be met for the actions to be executed.
      */
-    public constructor(actions: Dialog[] = [], condition?: string) {
+    constructor(actions: Dialog[] = [], condition?: string) {
         super(AdaptiveEvents.endOfActions, actions, condition);
     }
 }

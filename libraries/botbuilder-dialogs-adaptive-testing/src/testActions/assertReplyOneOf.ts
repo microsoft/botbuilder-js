@@ -18,23 +18,23 @@ export interface AssertReplyOneOfConfiguration extends AssertReplyActivityConfig
  * Assertion that reply from the bot matches one of options.
  */
 export class AssertReplyOneOf extends AssertReplyActivity implements AssertReplyOneOfConfiguration {
-    public static $kind = 'Microsoft.Test.AssertReplyOneOf';
+    static $kind = 'Microsoft.Test.AssertReplyOneOf';
 
     /**
      * The text variations.
      */
-    public text: string[] = [];
+    text: string[] = [];
 
     /**
      * A value indicating whether exact match policy should be used.
      */
-    public exact = true;
+    exact = true;
 
     /**
      * Gets the text to assert for an activity.
      * @returns String.
      */
-    public getConditionDescription(): string {
+    getConditionDescription(): string {
         return this.text.join('\n');
     }
 
@@ -42,7 +42,7 @@ export class AssertReplyOneOf extends AssertReplyActivity implements AssertReply
      * Validates the reply of an activity.
      * @param activity The activity to verify.
      */
-    public validateReply(activity: Activity): void {
+    validateReply(activity: Activity): void {
         let found = false;
 
         for (let i = 0; i < this.text.length; i++) {

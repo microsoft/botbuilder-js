@@ -19,7 +19,7 @@ export class AddOrdinal extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [AddOrdinal](xref:adaptive-expressions.AddOrdinal) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.AddOrdinal, AddOrdinal.evaluator(), ReturnType.String, AddOrdinal.validator);
     }
 

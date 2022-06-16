@@ -26,6 +26,11 @@ export class ClaimsIdentity {
      */
     constructor(public readonly claims: Claim[], private readonly authenticationType?: string | boolean) {}
 
+    /**
+     * Returns authentication status.
+     *
+     * @returns True if is authenticated.
+     */
     public get isAuthenticated(): boolean {
         if (typeof this.authenticationType === 'boolean') {
             return this.authenticationType;

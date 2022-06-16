@@ -45,7 +45,7 @@ export class BaseInvokeDialog<O extends object = {}>
      * @param dialogIdToCall The dialog id.
      * @param bindingOptions (optional) Binding options.
      */
-    public constructor(dialogIdToCall?: string, bindingOptions?: O) {
+    constructor(dialogIdToCall?: string, bindingOptions?: O) {
         super();
         if (dialogIdToCall) {
             this.dialog = new DialogExpression(dialogIdToCall);
@@ -58,23 +58,23 @@ export class BaseInvokeDialog<O extends object = {}>
     /**
      * Configurable options for the dialog.
      */
-    public options: ObjectExpression<object> = new ObjectExpression<object>();
+    options: ObjectExpression<object> = new ObjectExpression<object>();
 
     /**
      * The dialog to call.
      */
-    public dialog: DialogExpression;
+    dialog: DialogExpression;
 
     /**
      * A value indicating whether to have the new dialog should process the activity.
      */
-    public activityProcessed: BoolExpression = new BoolExpression(true);
+    activityProcessed: BoolExpression = new BoolExpression(true);
 
     /**
      * @param property The key of the conditional selector configuration.
      * @returns The converter for the selector configuration.
      */
-    public getConverter(property: keyof BaseInvokeDialogConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof BaseInvokeDialogConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'options':
                 return new ObjectExpressionConverter<object>();
@@ -94,7 +94,7 @@ export class BaseInvokeDialog<O extends object = {}>
      * @param _dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param _options Optional. Initial information to pass to the dialog.
      */
-    public beginDialog(_dc: DialogContext, _options?: O): Promise<DialogTurnResult<any>> {
+    beginDialog(_dc: DialogContext, _options?: O): Promise<DialogTurnResult<any>> {
         throw new Error('Method not implemented.');
     }
 
@@ -103,7 +103,7 @@ export class BaseInvokeDialog<O extends object = {}>
      *
      * @returns The child [Dialog](xref:botbuilder-dialogs.Dialog) dependencies.
      */
-    public getDependencies(): Dialog<{}>[] {
+    getDependencies(): Dialog<{}>[] {
         if (this.dialog && this.dialog.value) {
             return [this.dialog.value];
         }

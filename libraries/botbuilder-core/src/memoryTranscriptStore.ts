@@ -27,7 +27,7 @@ export class MemoryTranscriptStore implements TranscriptStore {
      * @param activity Activity to log.
      * @returns {Promise<void>} A promise representing the async operation.
      */
-    public logActivity(activity: Activity): void | Promise<void> {
+    logActivity(activity: Activity): void | Promise<void> {
         if (!activity) {
             throw new Error('activity cannot be null for logActivity()');
         }
@@ -64,7 +64,7 @@ export class MemoryTranscriptStore implements TranscriptStore {
      * @param startDate Earliest time to include.
      * @returns {Promise<PagedResult<Activity>>} A page of matching activities.
      */
-    public getTranscriptActivities(
+    getTranscriptActivities(
         channelId: string,
         conversationId: string,
         continuationToken?: string,
@@ -112,7 +112,7 @@ export class MemoryTranscriptStore implements TranscriptStore {
      * @param continuationToken Continuation token to page through results.
      * @returns {Promise<PagedResult<TranscriptInfo>>} A page of conversations for a channel from the store.
      */
-    public listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<TranscriptInfo>> {
+    listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<TranscriptInfo>> {
         if (!channelId) {
             throw new Error('Missing channelId');
         }
@@ -157,7 +157,7 @@ export class MemoryTranscriptStore implements TranscriptStore {
      * @param conversationId Id of the conversation to delete.
      * @returns {Promise<void>} A promise representing the async operation.
      */
-    public deleteTranscript(channelId: string, conversationId: string): Promise<void> {
+    deleteTranscript(channelId: string, conversationId: string): Promise<void> {
         if (!channelId) {
             throw new Error('Missing channelId');
         }

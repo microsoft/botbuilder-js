@@ -46,7 +46,7 @@ export class CardFactory {
     /**
      * Lists the content type schema for each card style.
      */
-    public static contentTypes: any = {
+    static contentTypes: any = {
         adaptiveCard: 'application/vnd.microsoft.card.adaptive',
         animationCard: 'application/vnd.microsoft.card.animation',
         audioCard: 'application/vnd.microsoft.card.audio',
@@ -96,7 +96,7 @@ export class CardFactory {
      * });
      * ```
      */
-    public static adaptiveCard(card: any): Attachment {
+    static adaptiveCard(card: any): Attachment {
         return { contentType: CardFactory.contentTypes.adaptiveCard, content: card };
     }
 
@@ -110,7 +110,7 @@ export class CardFactory {
      * @param other Optional. Any additional properties to include on the card.
      * @returns An [Attachment](xref:botframework-schema.Attachment).
      */
-    public static animationCard(
+    static animationCard(
         title: string,
         media: (MediaUrl | string)[],
         buttons?: (CardAction | string)[],
@@ -129,7 +129,7 @@ export class CardFactory {
      * @param other Optional. Any additional properties to include on the card.
      * @returns An [Attachment](xref:botframework-schema.Attachment).
      */
-    public static audioCard(
+    static audioCard(
         title: string,
         media: (MediaUrl | string)[],
         buttons?: (CardAction | string)[],
@@ -162,7 +162,7 @@ export class CardFactory {
      * );
      * ```
      */
-    public static heroCard(
+    static heroCard(
         title: string,
         images?: (CardImage | string)[],
         buttons?: (CardAction | string)[],
@@ -192,7 +192,7 @@ export class CardFactory {
      * );
      * ```
      */
-    public static heroCard(
+    static heroCard(
         title: string,
         text: string,
         images?: (CardImage | string)[],
@@ -223,7 +223,7 @@ export class CardFactory {
      * );
      * ```
      */
-    public static heroCard(
+    static heroCard(
         title: string,
         text?: any,
         images?: any,
@@ -246,7 +246,7 @@ export class CardFactory {
      * @returns An [Attachment](xref:botframework-schema.Attachment).
      * @remarks OAuth cards support the Bot Framework's single sign on (SSO) service.
      */
-    public static oauthCard(
+    static oauthCard(
         connectionName: string,
         title: string,
         text?: string,
@@ -289,7 +289,7 @@ export class CardFactory {
      * });
      * ```
      */
-    public static o365ConnectorCard(card: O365ConnectorCard): Attachment {
+    static o365ConnectorCard(card: O365ConnectorCard): Attachment {
         return { contentType: CardFactory.contentTypes.o365ConnectorCard, content: card };
     }
 
@@ -299,7 +299,7 @@ export class CardFactory {
      * @param card A description of the receipt card to return.
      * @returns An [Attachment](xref:botframework-schema.Attachment).
      */
-    public static receiptCard(card: ReceiptCard): Attachment {
+    static receiptCard(card: ReceiptCard): Attachment {
         return { contentType: CardFactory.contentTypes.receiptCard, content: card };
     }
 
@@ -314,7 +314,7 @@ export class CardFactory {
      * @remarks
      * For channels that don't natively support sign-in cards, an alternative message is rendered.
      */
-    public static signinCard(title: string, url: string, text?: string): Attachment {
+    static signinCard(title: string, url: string, text?: string): Attachment {
         const card: SigninCard = {
             buttons: [{ type: ActionTypes.Signin, title: title, value: url, channelData: undefined }],
         };
@@ -342,7 +342,7 @@ export class CardFactory {
      * Channels typically render the card's text to one side of the image,
      * with any buttons displayed below the card.
      */
-    public static thumbnailCard(
+    static thumbnailCard(
         title: string,
         images?: (CardImage | string)[],
         buttons?: (CardAction | string)[],
@@ -366,7 +366,7 @@ export class CardFactory {
      * Channels typically render the card's text to one side of the image,
      * with any buttons displayed below the card.
      */
-    public static thumbnailCard(
+    static thumbnailCard(
         title: string,
         text: string,
         images?: (CardImage | string)[],
@@ -391,7 +391,7 @@ export class CardFactory {
      * Channels typically render the card's text to one side of the image,
      * with any buttons displayed below the card.
      */
-    public static thumbnailCard(
+    static thumbnailCard(
         title: string,
         text?: any,
         images?: any,
@@ -431,7 +431,7 @@ export class CardFactory {
      * @param other Optional. Any additional properties to include on the card.
      * @returns An [Attachment](xref:botframework-schema.Attachment).
      */
-    public static videoCard(
+    static videoCard(
         title: string,
         media: (MediaUrl | string)[],
         buttons?: (CardAction | string)[],
@@ -447,7 +447,7 @@ export class CardFactory {
      *      is converted to an `imBack` button with a title and value set to the value of the string.
      * @returns A properly formatted array of actions.
      */
-    public static actions(actions: (CardAction | string)[] | undefined): CardAction[] {
+    static actions(actions: (CardAction | string)[] | undefined): CardAction[] {
         const list: CardAction[] = [];
         (actions || []).forEach((a: CardAction | string) => {
             if (typeof a === 'object') {
@@ -472,7 +472,7 @@ export class CardFactory {
      *      [CardImage](ref:botframework-schema.CardImage) or the URL of the image to include.
      * @returns A properly formatted array of card images.
      */
-    public static images(images: (CardImage | string)[] | undefined): CardImage[] {
+    static images(images: (CardImage | string)[] | undefined): CardImage[] {
         const list: CardImage[] = [];
         (images || []).forEach((img: CardImage | string) => {
             if (typeof img === 'object') {
@@ -491,7 +491,7 @@ export class CardFactory {
      * @param links The media URLs. Each `string` is converted to a media URL object.
      * @returns A properly formatted array of media URL objects.
      */
-    public static media(links: (MediaUrl | string)[] | undefined): MediaUrl[] {
+    static media(links: (MediaUrl | string)[] | undefined): MediaUrl[] {
         const list: MediaUrl[] = [];
         (links || []).forEach((lnk: MediaUrl | string) => {
             if (typeof lnk === 'object') {

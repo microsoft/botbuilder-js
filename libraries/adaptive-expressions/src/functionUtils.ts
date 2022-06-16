@@ -33,7 +33,7 @@ export class FunctionUtils {
     /**
      * The default date time format string.
      */
-    public static readonly DefaultDateTimeFormat: string = 'YYYY-MM-DDTHH:mm:ss.SSS[Z]';
+    static readonly DefaultDateTimeFormat: string = 'YYYY-MM-DDTHH:mm:ss.SSS[Z]';
 
     /**
      * Validate that expression has a certain number of children that are of any of the supported types.
@@ -44,7 +44,7 @@ export class FunctionUtils {
      * @param returnType Allowed return types for children.
      * If a child has a return type of Object then validation will happen at runtime.
      */
-    public static validateArityAndAnyType(
+    static validateArityAndAnyType(
         expression: Expression,
         minArity: number,
         maxArity: number,
@@ -73,7 +73,7 @@ export class FunctionUtils {
      * @param optional Optional types in order.
      * @param types Expected types in order.
      */
-    public static validateOrder(expression: Expression, optional: ReturnType[], ...types: ReturnType[]): void {
+    static validateOrder(expression: Expression, optional: ReturnType[], ...types: ReturnType[]): void {
         if (optional === undefined) {
             optional = [];
         }
@@ -121,7 +121,7 @@ export class FunctionUtils {
      *
      * @param expression Expression to validate.
      */
-    public static validateAtLeastOne(expression: Expression): void {
+    static validateAtLeastOne(expression: Expression): void {
         FunctionUtils.validateArityAndAnyType(expression, 1, Number.MAX_SAFE_INTEGER);
     }
 
@@ -130,7 +130,7 @@ export class FunctionUtils {
      *
      * @param expression Expression to validate.
      */
-    public static validateNumber(expression: Expression): void {
+    static validateNumber(expression: Expression): void {
         FunctionUtils.validateArityAndAnyType(expression, 1, Number.MAX_SAFE_INTEGER, ReturnType.Number);
     }
 
@@ -139,7 +139,7 @@ export class FunctionUtils {
      *
      * @param expression Expression to validate.
      */
-    public static validateString(expression: Expression): void {
+    static validateString(expression: Expression): void {
         FunctionUtils.validateArityAndAnyType(expression, 1, Number.MAX_SAFE_INTEGER, ReturnType.String);
     }
 
@@ -148,7 +148,7 @@ export class FunctionUtils {
      *
      * @param expression Expression to validate.
      */
-    public static validateBinary(expression: Expression): void {
+    static validateBinary(expression: Expression): void {
         FunctionUtils.validateArityAndAnyType(expression, 2, 2);
     }
 
@@ -157,7 +157,7 @@ export class FunctionUtils {
      *
      * @param expression Expression to validate.
      */
-    public static validateBinaryNumber(expression: Expression): void {
+    static validateBinaryNumber(expression: Expression): void {
         FunctionUtils.validateArityAndAnyType(expression, 2, 2, ReturnType.Number);
     }
 
@@ -166,7 +166,7 @@ export class FunctionUtils {
      *
      * @param expression Expression to validate.
      */
-    public static validateUnaryOrBinaryNumber(expression: Expression): void {
+    static validateUnaryOrBinaryNumber(expression: Expression): void {
         FunctionUtils.validateArityAndAnyType(expression, 1, 2, ReturnType.Number);
     }
 
@@ -175,7 +175,7 @@ export class FunctionUtils {
      *
      * @param expression Expression to validate.
      */
-    public static validateTwoOrMoreThanTwoNumbers(expression: Expression): void {
+    static validateTwoOrMoreThanTwoNumbers(expression: Expression): void {
         FunctionUtils.validateArityAndAnyType(expression, 2, Number.MAX_VALUE, ReturnType.Number);
     }
 
@@ -184,7 +184,7 @@ export class FunctionUtils {
      *
      * @param expression Expression to validate.
      */
-    public static validateBinaryNumberOrString(expression: Expression): void {
+    static validateBinaryNumberOrString(expression: Expression): void {
         FunctionUtils.validateArityAndAnyType(expression, 2, 2, ReturnType.Number | ReturnType.String);
     }
 
@@ -193,7 +193,7 @@ export class FunctionUtils {
      *
      * @param expression Expression to validate.
      */
-    public static validateUnary(expression: Expression): void {
+    static validateUnary(expression: Expression): void {
         FunctionUtils.validateArityAndAnyType(expression, 1, 1);
     }
 
@@ -202,7 +202,7 @@ export class FunctionUtils {
      *
      * @param expression Expression to validate.
      */
-    public static validateUnaryNumber(expression: Expression): void {
+    static validateUnaryNumber(expression: Expression): void {
         FunctionUtils.validateArityAndAnyType(expression, 1, 1, ReturnType.Number);
     }
 
@@ -211,7 +211,7 @@ export class FunctionUtils {
      *
      * @param expression Expression to validate.
      */
-    public static validateUnaryString(expression: Expression): void {
+    static validateUnaryString(expression: Expression): void {
         FunctionUtils.validateArityAndAnyType(expression, 1, 1, ReturnType.String);
     }
 
@@ -220,7 +220,7 @@ export class FunctionUtils {
      *
      * @param expression Expression to validate.
      */
-    public static validateUnaryOrBinaryString(expression: Expression): void {
+    static validateUnaryOrBinaryString(expression: Expression): void {
         FunctionUtils.validateArityAndAnyType(expression, 1, 2, ReturnType.String);
     }
 
@@ -229,7 +229,7 @@ export class FunctionUtils {
      *
      * @param expression Expression to validate.
      */
-    public static validateUnaryBoolean(expression: Expression): void {
+    static validateUnaryBoolean(expression: Expression): void {
         FunctionUtils.validateOrder(expression, undefined, ReturnType.Boolean);
     }
 
@@ -241,7 +241,7 @@ export class FunctionUtils {
      * @param _ No function.
      * @returns Error or undefined if invalid.
      */
-    public static verifyNumber(value: any, expression: Expression, _: number): string | undefined {
+    static verifyNumber(value: any, expression: Expression, _: number): string | undefined {
         let error: string;
         if (!FunctionUtils.isNumber(value)) {
             error = `${expression} is not a number.`;
@@ -258,7 +258,7 @@ export class FunctionUtils {
      * @param _ No function.
      * @returns Error or undefined if invalid.
      */
-    public static verifyNumberOrNumericList(value: any, expression: Expression, _: number): string | undefined {
+    static verifyNumberOrNumericList(value: any, expression: Expression, _: number): string | undefined {
         let error: string;
         if (FunctionUtils.isNumber(value)) {
             return error;
@@ -286,7 +286,7 @@ export class FunctionUtils {
      * @param _ No function.
      * @returns Error or undefined if invalid.
      */
-    public static verifyNumericList(value: any, expression: Expression, _: number): string | undefined {
+    static verifyNumericList(value: any, expression: Expression, _: number): string | undefined {
         let error: string;
         if (!Array.isArray(value)) {
             error = `${expression} is not a list.`;
@@ -310,7 +310,7 @@ export class FunctionUtils {
      * @param _ No function.
      * @returns Error or undefined if invalid.
      */
-    public static verifyContainer(value: any, expression: Expression, _: number): string | undefined {
+    static verifyContainer(value: any, expression: Expression, _: number): string | undefined {
         let error: string;
         if (
             !(typeof value === 'string') &&
@@ -332,7 +332,7 @@ export class FunctionUtils {
      * @param _ No function.
      * @returns Error or undefined if invalid.
      */
-    public static verifyContainerOrNull(value: unknown, expression: Expression, _: number): string | undefined {
+    static verifyContainerOrNull(value: unknown, expression: Expression, _: number): string | undefined {
         let error: string;
         if (
             value != null &&
@@ -355,7 +355,7 @@ export class FunctionUtils {
      * @param _ No function.
      * @returns Error or undefined if valid.
      */
-    public static verifyNotNull(value: any, expression: Expression, _: number): string | undefined {
+    static verifyNotNull(value: any, expression: Expression, _: number): string | undefined {
         let error: string;
         if (value == null) {
             error = `${expression} is null.`;
@@ -372,7 +372,7 @@ export class FunctionUtils {
      * @param _ No function.
      * @returns Error or undefined if invalid.
      */
-    public static verifyInteger(value: any, expression: Expression, _: number): string | undefined {
+    static verifyInteger(value: any, expression: Expression, _: number): string | undefined {
         let error: string;
         if (!Number.isInteger(value)) {
             error = `${expression} is not a integer.`;
@@ -388,7 +388,7 @@ export class FunctionUtils {
      * @param expression Expression that led to value.
      * @returns Error or undefined if invalid.
      */
-    public static verifyList(value: any, expression: Expression): string | undefined {
+    static verifyList(value: any, expression: Expression): string | undefined {
         let error: string;
         if (!Array.isArray(value)) {
             error = `${expression} is not a list or array.`;
@@ -405,7 +405,7 @@ export class FunctionUtils {
      * @param _ No function.
      * @returns Error or undefined if invalid.
      */
-    public static verifyString(value: any, expression: Expression, _: number): string | undefined {
+    static verifyString(value: any, expression: Expression, _: number): string | undefined {
         let error: string;
         if (typeof value !== 'string') {
             error = `${expression} is not a string.`;
@@ -422,7 +422,7 @@ export class FunctionUtils {
      * @param _ No function.
      * @returns Error or undefined if invalid.
      */
-    public static verifyStringOrNull(value: any, expression: Expression, _: number): string | undefined {
+    static verifyStringOrNull(value: any, expression: Expression, _: number): string | undefined {
         let error: string;
         if (typeof value !== 'string' && value !== undefined) {
             error = `${expression} is neither a string nor a null object.`;
@@ -439,7 +439,7 @@ export class FunctionUtils {
      * @param _ No function.
      * @returns Error or undefined if invalid.
      */
-    public static verifyNumberOrStringOrNull(value: any, expression: Expression, _: number): string | undefined {
+    static verifyNumberOrStringOrNull(value: any, expression: Expression, _: number): string | undefined {
         let error: string;
         if (typeof value !== 'string' && value !== undefined && !FunctionUtils.isNumber(value)) {
             error = `${expression} is neither a number nor string`;
@@ -456,7 +456,7 @@ export class FunctionUtils {
      * @param _ No function.
      * @returns Error or undefined if invalid.
      */
-    public static verifyNumberOrString(value: any, expression: Expression, _: number): string | undefined {
+    static verifyNumberOrString(value: any, expression: Expression, _: number): string | undefined {
         let error: string;
         if (value === undefined || (!FunctionUtils.isNumber(value) && typeof value !== 'string')) {
             error = `${expression} is not string or number.`;
@@ -473,7 +473,7 @@ export class FunctionUtils {
      * @param _ No function.
      * @returns Error or undefined if invalid.
      */
-    public static verifyBoolean(value: any, expression: Expression, _: number): string | undefined {
+    static verifyBoolean(value: any, expression: Expression, _: number): string | undefined {
         let error: string;
         if (typeof value !== 'boolean') {
             error = `${expression} is not a boolean.`;
@@ -491,7 +491,7 @@ export class FunctionUtils {
      * @param verify Optional function to verify each child's result.
      * @returns List of child values or error message.
      */
-    public static evaluateChildren(
+    static evaluateChildren(
         expression: Expression,
         state: MemoryInterface,
         options: Options,
@@ -526,7 +526,7 @@ export class FunctionUtils {
      * @param verify Function to check each arg for validity.
      * @returns Delegate for evaluating an expression.
      */
-    public static apply(func: (arg0: unknown[]) => unknown, verify?: VerifyExpression): EvaluateExpressionDelegate {
+    static apply(func: (arg0: unknown[]) => unknown, verify?: VerifyExpression): EvaluateExpressionDelegate {
         return (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => {
             let value: any;
             const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options, verify);
@@ -550,7 +550,7 @@ export class FunctionUtils {
      * @param verify Function to check each arg for validity.
      * @returns Delegate for evaluating an expression.
      */
-    public static applyWithError(
+    static applyWithError(
         func: (arg0: any[]) => ValueWithError,
         verify?: VerifyExpression
     ): EvaluateExpressionDelegate {
@@ -577,7 +577,7 @@ export class FunctionUtils {
      * @param verify Function to check each arg for validity.
      * @returns Delegate for evaluating an expression.
      */
-    public static applyWithOptionsAndError(
+    static applyWithOptionsAndError(
         func: (arg0: unknown[], options: Options) => { value: unknown; error: string },
         verify?: VerifyExpression
     ): EvaluateExpressionDelegate {
@@ -604,7 +604,7 @@ export class FunctionUtils {
      * @param verify Function to check each arg for validity.
      * @returns Delegate for evaluating an expression.
      */
-    public static applyWithOptions(
+    static applyWithOptions(
         func: (arg0: unknown[], options: Options) => unknown,
         verify?: VerifyExpression
     ): EvaluateExpressionDelegate {
@@ -631,7 +631,7 @@ export class FunctionUtils {
      * @param verify Function to check each arg for validity.
      * @returns Delegate for evaluating an expression.
      */
-    public static applySequence(func: (arg0: any[]) => any, verify?: VerifyExpression): EvaluateExpressionDelegate {
+    static applySequence(func: (arg0: any[]) => any, verify?: VerifyExpression): EvaluateExpressionDelegate {
         return FunctionUtils.apply((args: any[]): any => {
             const binaryArgs: any[] = [undefined, undefined];
             let soFar: any = args[0];
@@ -652,7 +652,7 @@ export class FunctionUtils {
      * @param verify Function to check each arg for validity.
      * @returns Delegate for evaluating an expression.
      */
-    public static applySequenceWithError(
+    static applySequenceWithError(
         func: (arg0: any[]) => any,
         verify?: VerifyExpression
     ): EvaluateExpressionDelegate {
@@ -683,7 +683,7 @@ export class FunctionUtils {
      * @param locale A locale string
      * @returns The last item from the args param, otherwise the locale string.
      */
-    public static determineLocale(args: unknown[], maxArgsLength: number, locale = 'en-us'): string {
+    static determineLocale(args: unknown[], maxArgsLength: number, locale = 'en-us'): string {
         if (args.length === maxArgsLength) {
             const lastArg = args[maxArgsLength - 1];
             if (typeof lastArg === 'string') {
@@ -702,7 +702,7 @@ export class FunctionUtils {
      * @param locale A locale string.
      * @returns The format and the locale from the args param, otherwise the locale and format strings.
      */
-    public static determineFormatAndLocale(
+    static determineFormatAndLocale(
         args: unknown[],
         maxArgsLength: number,
         format: string,
@@ -736,7 +736,7 @@ export class FunctionUtils {
      * @param formatter C# datetime format
      * @returns The formated datetime.
      */
-    public static timestampFormatter(formatter: string): string {
+    static timestampFormatter(formatter: string): string {
         if (!formatter) {
             return FunctionUtils.DefaultDateTimeFormat;
         }
@@ -758,7 +758,7 @@ export class FunctionUtils {
      * @param options Options used in evaluation.
      * @returns Return the accumulated path and the expression left unable to accumulate.
      */
-    public static tryAccumulatePath(
+    static tryAccumulatePath(
         expression: Expression,
         state: MemoryInterface,
         options: Options
@@ -809,7 +809,7 @@ export class FunctionUtils {
      * @param instance Input.
      * @returns True if the input is a number.
      */
-    public static isNumber(instance: any): instance is number {
+    static isNumber(instance: any): instance is number {
         return instance != null && typeof instance === 'number' && !Number.isNaN(instance);
     }
 
@@ -821,7 +821,7 @@ export class FunctionUtils {
      * @param obj2 The second value to compare.
      * @returns A boolean based on the comparison.
      */
-    public static commonEquals(obj1: unknown, obj2: unknown): boolean {
+    static commonEquals(obj1: unknown, obj2: unknown): boolean {
         if (obj1 == null || obj2 == null) {
             return obj1 == null && obj2 == null;
         }

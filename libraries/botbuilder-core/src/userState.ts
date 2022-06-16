@@ -47,7 +47,7 @@ export class UserState extends BotState {
      * @param context Context for current turn of conversation with the user.
      * @returns The storage key for the current user state.
      */
-    public getStorageKey(context: TurnContext): string | undefined {
+    getStorageKey(context: TurnContext): string | undefined {
         const activity: Activity = context.activity;
         const channelId: string = activity.channelId;
         const userId: string = activity && activity.from && activity.from.id ? activity.from.id : undefined;

@@ -24,7 +24,7 @@ export class IsDefinite extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [IsDefinite](xref:adaptive-expressions.IsDefinite) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.IsDefinite, IsDefinite.evaluator, ReturnType.Boolean, FunctionUtils.validateUnary);
     }
 

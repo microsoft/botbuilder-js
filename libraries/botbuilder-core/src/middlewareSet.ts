@@ -85,7 +85,7 @@ export class MiddlewareSet implements Middleware {
      * @param next Delegate to call to continue the bot middleware pipeline.
      * @returns {Promise<void>} A Promise representing the async operation.
      */
-    public onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
+    onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
         return this.run(context, next);
     }
 
@@ -103,7 +103,7 @@ export class MiddlewareSet implements Middleware {
      * @param {...any} middlewares One or more middleware handlers(s) to register.
      * @returns The updated middleware set.
      */
-    public use(...middlewares: (MiddlewareHandler | Middleware)[]): this {
+    use(...middlewares: (MiddlewareHandler | Middleware)[]): this {
         middlewares.forEach((plugin) => {
             if (typeof plugin === 'function') {
                 this.middleware.push(plugin);
@@ -124,7 +124,7 @@ export class MiddlewareSet implements Middleware {
      * @param next Function to invoke at the end of the middleware chain.
      * @returns A promise that resolves after the handler chain is complete.
      */
-    public run(context: TurnContext, next: () => Promise<void>): Promise<void> {
+    run(context: TurnContext, next: () => Promise<void>): Promise<void> {
         const runHandlers = ([handler, ...remaining]: MiddlewareHandler[]) => {
             try {
                 return Promise.resolve(handler ? handler(context, () => runHandlers(remaining)) : next());

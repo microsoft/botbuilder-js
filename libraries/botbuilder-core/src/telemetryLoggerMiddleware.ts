@@ -28,22 +28,22 @@ export class TelemetryLoggerMiddleware implements Middleware {
     /**
      * The name of the event when when new message is received from the user.
      */
-    public static readonly botMsgReceiveEvent: string = 'BotMessageReceived';
+    static readonly botMsgReceiveEvent: string = 'BotMessageReceived';
 
     /**
      * The name of the event when a message is updated by the bot.
      */
-    public static readonly botMsgSendEvent: string = 'BotMessageSend';
+    static readonly botMsgSendEvent: string = 'BotMessageSend';
 
     /**
      * The name of the event when a message is updated by the bot.
      */
-    public static readonly botMsgUpdateEvent: string = 'BotMessageUpdate';
+    static readonly botMsgUpdateEvent: string = 'BotMessageUpdate';
 
     /**
      * The name of the event when a message is deleted by the bot.
      */
-    public static readonly botMsgDeleteEvent: string = 'BotMessageDelete';
+    static readonly botMsgDeleteEvent: string = 'BotMessageDelete';
 
     private readonly _telemetryClient: BotTelemetryClient;
     private readonly _logPersonalInformation: boolean;
@@ -64,7 +64,7 @@ export class TelemetryLoggerMiddleware implements Middleware {
      *
      * @returns A value indicating whether to log personal information or not.
      */
-    public get logPersonalInformation(): boolean {
+    get logPersonalInformation(): boolean {
         return this._logPersonalInformation;
     }
 
@@ -73,7 +73,7 @@ export class TelemetryLoggerMiddleware implements Middleware {
      *
      * @returns The currently configured [BotTelemetryClient](xref:botbuilder-core.BotTelemetryClient) that logs the events.
      */
-    public get telemetryClient(): BotTelemetryClient {
+    get telemetryClient(): BotTelemetryClient {
         return this._telemetryClient;
     }
 
@@ -83,7 +83,7 @@ export class TelemetryLoggerMiddleware implements Middleware {
      * @param context The context object for this turn.
      * @param next The delegate to call to continue the bot middleware pipeline
      */
-    public async onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
+    async onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
         if (context === null) {
             throw new Error('context is null');
         }

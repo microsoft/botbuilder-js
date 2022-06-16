@@ -17,7 +17,7 @@ export class Exists extends ComparisonEvaluator {
     /**
      * Initializes a new instance of the [Exists](xref:adaptive-expressions.Exists) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.Exists, Exists.func, FunctionUtils.validateUnary, FunctionUtils.verifyNotNull);
     }
 

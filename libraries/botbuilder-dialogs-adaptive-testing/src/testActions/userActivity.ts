@@ -19,17 +19,17 @@ export interface UserActivityConfiguration {
  * Send an activity to the bot.
  */
 export class UserActivity extends TestAction implements UserActivityConfiguration {
-    public static $kind = 'Microsoft.Test.UserActivity';
+    static $kind = 'Microsoft.Test.UserActivity';
 
     /**
      * The activity to compare.
      */
-    public activity: Activity;
+    activity: Activity;
 
     /**
      * If user is set then the channalAccount.id and channelAccount.name will be from user.
      */
-    public user: string;
+    user: string;
 
     /**
      * Execute the test.
@@ -39,7 +39,7 @@ export class UserActivity extends TestAction implements UserActivityConfiguratio
      * @param _inspector Inspector for dialog context.
      * @returns A Promise that represents the work queued to execute.
      */
-    public async execute(
+    async execute(
         testAdapter: TestAdapter,
         callback: (context: TurnContext) => Promise<void>,
         _inspector?: Inspector

@@ -45,7 +45,7 @@ export class LanguageGeneratorExtensions {
      * @param lg LG resource id (default: main.lg) or language generator to be added.
      * @returns dialog manager with language generator.
      */
-    public static useLanguageGeneration(dialogManager: DialogManager, lg?: string | LanguageGenerator): DialogManager {
+    static useLanguageGeneration(dialogManager: DialogManager, lg?: string | LanguageGenerator): DialogManager {
         const resourceExplorer: ResourceExplorer =
             dialogManager.initialTurnState.get(resourceExplorerKey) || new ResourceExplorer();
 
@@ -78,7 +78,7 @@ export class LanguageGeneratorExtensions {
      * @param policy Policy to use.
      * @returns dialog manager with language policy.
      */
-    public static useLanguagePolicy(dialogManager: DialogManager, policy: LanguagePolicy): DialogManager {
+    static useLanguagePolicy(dialogManager: DialogManager, policy: LanguagePolicy): DialogManager {
         dialogManager.initialTurnState.set(languagePolicyKey, policy);
         return dialogManager;
     }

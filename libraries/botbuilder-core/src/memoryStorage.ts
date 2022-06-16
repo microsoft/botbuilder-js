@@ -34,7 +34,7 @@ export class MemoryStorage implements Storage {
      *
      * @param memory (Optional) memory to use for storing items. By default it will create an empty JSON object `{}`.
      */
-    public constructor(protected memory: { [k: string]: string } = {}) {
+    constructor(protected memory: { [k: string]: string } = {}) {
         this.etag = 1;
     }
 
@@ -44,7 +44,7 @@ export class MemoryStorage implements Storage {
      * @param keys Keys of the [StoreItems](xref:botbuilder-core.StoreItems) objects to read.
      * @returns The read items.
      */
-    public read(keys: string[]): Promise<StoreItems> {
+    read(keys: string[]): Promise<StoreItems> {
         return new Promise<StoreItems>((resolve: any): void => {
             if (!keys) {
                 throw new ReferenceError('Keys are required when reading.');
@@ -66,7 +66,7 @@ export class MemoryStorage implements Storage {
      * @param changes The [StoreItems](xref:botbuilder-core.StoreItems) to write, indexed by key.
      * @returns {Promise<void>} A promise representing the async operation.
      */
-    public write(changes: StoreItems): Promise<void> {
+    write(changes: StoreItems): Promise<void> {
         const saveItem = (key: string, item: any) => {
             const clone: any = { ...item };
             clone.eTag = (this.etag++).toString();
@@ -101,7 +101,7 @@ export class MemoryStorage implements Storage {
      * @param keys Keys of the [StoreItems](xref:botbuilder-core.StoreItems) objects to delete.
      * @returns {Promise<void>} A promise representing the async operation.
      */
-    public delete(keys: string[]): Promise<void> {
+    delete(keys: string[]): Promise<void> {
         return new Promise<void>((resolve: any): void => {
             keys.forEach((key: string) => (this.memory[key] = <any>undefined));
             resolve();

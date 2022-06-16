@@ -187,7 +187,7 @@ export class OAuthPrompt extends Dialog {
      * If the task is successful, the result indicates whether the prompt is still
      * active after the turn has been processed by the prompt.
      */
-    public async beginDialog(dc: DialogContext, options?: PromptOptions): Promise<DialogTurnResult> {
+    async beginDialog(dc: DialogContext, options?: PromptOptions): Promise<DialogTurnResult> {
         // Ensure prompts have input hint set
         const o: Partial<PromptOptions> = { ...options };
         if (o.prompt && typeof o.prompt === 'object' && typeof o.prompt.inputHint !== 'string') {
@@ -228,7 +228,7 @@ export class OAuthPrompt extends Dialog {
      * The prompt generally continues to receive the user's replies until it accepts the
      * user's reply as valid input for the prompt.
      */
-    public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
+    async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
         // Check for timeout
         const state: OAuthPromptState = dc.activeDialog.state as OAuthPromptState;
         const isMessage: boolean = dc.context.activity.type === ActivityTypes.Message;
@@ -288,7 +288,7 @@ export class OAuthPrompt extends Dialog {
      * @param context Context reference the user that's being looked up.
      * @param code (Optional) login code received from the user.
      */
-    public async getUserToken(context: TurnContext, code?: string): Promise<TokenResponse | undefined> {
+    async getUserToken(context: TurnContext, code?: string): Promise<TokenResponse | undefined> {
         return UserTokenAccess.getUserToken(context, this.settings, code);
     }
 
@@ -307,7 +307,7 @@ export class OAuthPrompt extends Dialog {
      * ```
      * @param context Context referencing the user that's being signed out.
      */
-    public async signOutUser(context: TurnContext): Promise<void> {
+    async signOutUser(context: TurnContext): Promise<void> {
         return UserTokenAccess.signOutUser(context, this.settings);
     }
 
@@ -318,7 +318,7 @@ export class OAuthPrompt extends Dialog {
      * @param {TurnContext} turnContext Turn context.
      * @param {string | Partial<Activity>} prompt Message activity.
      */
-    public static async sendOAuthCard(
+    static async sendOAuthCard(
         settings: OAuthPromptSettings,
         turnContext: TurnContext,
         prompt?: string | Partial<Activity>
@@ -400,7 +400,7 @@ export class OAuthPrompt extends Dialog {
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of the conversation.
      * @returns A Promise that resolves to the result
      */
-    public async recognizeToken(dc: DialogContext): Promise<PromptRecognizerResult<TokenResponse>> {
+    async recognizeToken(dc: DialogContext): Promise<PromptRecognizerResult<TokenResponse>> {
         const context = dc.context;
         let token: TokenResponse | undefined;
 

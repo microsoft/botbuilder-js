@@ -19,7 +19,7 @@ export class XPath extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [EOL](xref:adaptive-expressions.EOL) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.XPath, XPath.evaluator(), ReturnType.Object, XPath.validator);
     }
 

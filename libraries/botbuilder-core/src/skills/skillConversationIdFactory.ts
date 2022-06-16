@@ -28,7 +28,7 @@ export class SkillConversationIdFactory extends SkillConversationIdFactoryBase {
      * @param options The [SkillConversationIdFactoryOptions](xref:botbuilder-core.SkillConversationIdFactoryOptions) to use.
      * @returns {Promise<string>} A unique conversation ID used to communicate with the skill.
      */
-    public async createSkillConversationIdWithOptions(options: SkillConversationIdFactoryOptions): Promise<string> {
+    async createSkillConversationIdWithOptions(options: SkillConversationIdFactoryOptions): Promise<string> {
         const conversationReference = TurnContext.getConversationReference(options.activity);
 
         const skillConversationId = uuid();
@@ -49,7 +49,7 @@ export class SkillConversationIdFactory extends SkillConversationIdFactoryBase {
      * @param skillConversationId A skill conversationId created using createSkillConversationId().
      * @returns {Promise<SkillConversationReference>} The caller's ConversationReference for a skillConversationId. Null if not found.
      */
-    public async getSkillConversationReference(skillConversationId: string): Promise<SkillConversationReference> {
+    async getSkillConversationReference(skillConversationId: string): Promise<SkillConversationReference> {
         const skillConversationInfo = await this.storage.read([skillConversationId]);
         if (!skillConversationInfo) {
             return undefined!; // eslint-disable-line @typescript-eslint/no-non-null-assertion

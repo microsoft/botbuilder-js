@@ -17,14 +17,14 @@ export class TurnContextStateCollection extends Map<any, any> {
      *
      * @param key The values key.
      */
-    public get<T = any>(key: any): T;
+    get<T = any>(key: any): T;
 
     /**
      * Gets a value from the [TurnContextStateCollection](xref:botbuilder-core.TurnContextStateCollection).
      *
      * @param key The values key.
      */
-    public get(key: any): any;
+    get(key: any): any;
 
     /**
      * Gets a value from the [TurnContextStateCollection](xref:botbuilder-core.TurnContextStateCollection).
@@ -32,7 +32,7 @@ export class TurnContextStateCollection extends Map<any, any> {
      * @param key The values key.
      * @returns The object; or null if no service is registered by the key.
      */
-    public get(key: any): unknown {
+    get(key: any): unknown {
         return super.get(key);
     }
 
@@ -44,7 +44,7 @@ export class TurnContextStateCollection extends Map<any, any> {
      * @param key The values key.
      * @param value The new value.
      */
-    public push(key: any, value: any): void {
+    push(key: any, value: any): void {
         // Get current value and add to scope cache
         const current = this.get(key);
         const cache: Map<any, any[]> = this.get(TURN_STATE_SCOPE_CACHE) || new Map<any, any[]>();
@@ -68,7 +68,7 @@ export class TurnContextStateCollection extends Map<any, any> {
      * @param key The values key.
      * @returns The removed value.
      */
-    public pop(key: any): any {
+    pop(key: any): any {
         // Get current value
         const current = this.get(key);
 

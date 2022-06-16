@@ -95,7 +95,7 @@ export class BotStatePropertyAccessor<T = any> implements StatePropertyAccessor<
      *
      * @param context [TurnContext](xref:botbuilder-core.TurnContext) object for this turn.
      */
-    public async delete(context: TurnContext): Promise<void> {
+    async delete(context: TurnContext): Promise<void> {
         const obj: any = await this.state.load(context);
         if (Object.prototype.hasOwnProperty.call(obj, this.name)) {
             delete obj[this.name];
@@ -108,8 +108,8 @@ export class BotStatePropertyAccessor<T = any> implements StatePropertyAccessor<
      * @param context [TurnContext](xref:botbuilder-core.TurnContext) object for this turn.
      * @returns A JSON representation of the cached state.
      */
-    public async get(context: TurnContext): Promise<T | undefined>;
-    public async get(context: TurnContext, defaultValue: T): Promise<T>;
+    async get(context: TurnContext): Promise<T | undefined>;
+    async get(context: TurnContext, defaultValue: T): Promise<T>;
     /**
      * Reads a persisted property from its backing storage object.
      *
@@ -117,7 +117,7 @@ export class BotStatePropertyAccessor<T = any> implements StatePropertyAccessor<
      * @param defaultValue Optional. Default value for the property.
      * @returns A JSON representation of the cached state.
      */
-    public async get(context: TurnContext, defaultValue?: T): Promise<T> {
+    async get(context: TurnContext, defaultValue?: T): Promise<T> {
         const obj: any = await this.state.load(context);
         if (!Object.prototype.hasOwnProperty.call(obj, this.name) && defaultValue !== undefined) {
             const clone: any =
@@ -136,7 +136,7 @@ export class BotStatePropertyAccessor<T = any> implements StatePropertyAccessor<
      * @param context [TurnContext](xref:botbuilder-core.TurnContext) object for this turn.
      * @param value Value to set on the property.
      */
-    public async set(context: TurnContext, value: T): Promise<void> {
+    async set(context: TurnContext, value: T): Promise<void> {
         const obj: any = await this.state.load(context);
         obj[this.name] = value;
     }

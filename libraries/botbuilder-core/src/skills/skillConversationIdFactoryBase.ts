@@ -21,7 +21,7 @@ export abstract class SkillConversationIdFactoryBase {
      * @remarks It should be possible to use the returned string on a request URL and it should not contain special characters.
      * Returns A unique conversation ID used to communicate with the skill.
      */
-    public createSkillConversationIdWithOptions(_options: SkillConversationIdFactoryOptions): Promise<string> {
+    createSkillConversationIdWithOptions(_options: SkillConversationIdFactoryOptions): Promise<string> {
         throw new Error('Not Implemented');
     }
 
@@ -44,7 +44,7 @@ export abstract class SkillConversationIdFactoryBase {
      * @param _skillConversationId A skill conversationId created using createSkillConversationId().
      * @remarks Returns The caller's ConversationReference for a skillConversationId. null if not found.
      */
-    public getConversationReference(_skillConversationId: string): Promise<ConversationReference> {
+    getConversationReference(_skillConversationId: string): Promise<ConversationReference> {
         throw new Error('Not Implemented');
     }
 
@@ -53,7 +53,7 @@ export abstract class SkillConversationIdFactoryBase {
      *
      * @param _skillConversationId Gets the SkillConversationReference used during createSkillConversationId for a skillConversationId.
      */
-    public getSkillConversationReference(_skillConversationId: string): Promise<SkillConversationReference> {
+    getSkillConversationReference(_skillConversationId: string): Promise<SkillConversationReference> {
         throw new Error('Not Implemented');
     }
 
@@ -62,5 +62,5 @@ export abstract class SkillConversationIdFactoryBase {
      *
      * @param skillConversationId A skill conversationId created using createSkillConversationId().
      */
-    public abstract deleteConversationReference(skillConversationId: string): Promise<void>;
+    abstract deleteConversationReference(skillConversationId: string): Promise<void>;
 }

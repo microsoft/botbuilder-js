@@ -82,7 +82,7 @@
     {
         "scope": "https://localhost:8081",
         "method": "GET",
-        "path": "/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-24",
+        "path": "/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-27",
         "body": "",
         "status": 404,
         "response": {
@@ -95,7 +95,7 @@
             "Content-Type",
             "application/json",
             "Content-Location",
-            "https://localhost:8081/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-24",
+            "https://localhost:8081/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-27",
             "Server",
             "Microsoft-HTTPAPI/2.0",
             "Access-Control-Allow-Origin",
@@ -146,7 +146,7 @@
     {
         "scope": "https://localhost:8081",
         "method": "GET",
-        "path": "/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-24",
+        "path": "/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-27",
         "body": "",
         "status": 404,
         "response": {
@@ -159,7 +159,7 @@
             "Content-Type",
             "application/json",
             "Content-Location",
-            "https://localhost:8081/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-24",
+            "https://localhost:8081/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-27",
             "Server",
             "Microsoft-HTTPAPI/2.0",
             "Access-Control-Allow-Origin",
@@ -212,7 +212,7 @@
         "method": "POST",
         "path": "/dbs/CosmosPartitionedStorageTestDb/colls",
         "body": {
-            "id": "CosmosPartitionedStorageTestContainer-24",
+            "id": "CosmosPartitionedStorageTestContainer-27",
             "partitionKey": {
                 "paths": [
                     "/id"
@@ -221,7 +221,7 @@
         },
         "status": 201,
         "response": {
-            "id": "CosmosPartitionedStorageTestContainer-24",
+            "id": "CosmosPartitionedStorageTestContainer-27",
             "indexingPolicy": {
                 "indexingMode": "consistent",
                 "automatic": true,
@@ -331,11 +331,11 @@
     {
         "scope": "https://localhost:8081",
         "method": "GET",
-        "path": "/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-24",
+        "path": "/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-27",
         "body": "",
         "status": 200,
         "response": {
-            "id": "CosmosPartitionedStorageTestContainer-24",
+            "id": "CosmosPartitionedStorageTestContainer-27",
             "indexingPolicy": {
                 "indexingMode": "consistent",
                 "automatic": true,
@@ -384,7 +384,7 @@
             "Content-Type",
             "application/json",
             "Content-Location",
-            "https://localhost:8081/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-24",
+            "https://localhost:8081/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-27",
             "Server",
             "Microsoft-HTTPAPI/2.0",
             "Access-Control-Allow-Origin",
@@ -449,7 +449,7 @@
     {
         "scope": "https://localhost:8081",
         "method": "POST",
-        "path": "/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-24/docs",
+        "path": "/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-27/docs",
         "body": {
             "id": "delete1",
             "realId": "delete1",
@@ -500,7 +500,7 @@
             "x-ms-schemaversion",
             "1.9",
             "x-ms-alt-content-path",
-            "dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-24",
+            "dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-27",
             "x-ms-content-path",
             "FWVRANuELxc=",
             "x-ms-quorum-acked-lsn",
@@ -541,7 +541,7 @@
     {
         "scope": "https://localhost:8081",
         "method": "GET",
-        "path": "/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-24/docs/delete1",
+        "path": "/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-27/docs/delete1",
         "body": "",
         "status": 200,
         "response": {
@@ -567,7 +567,7 @@
             "Content-Type",
             "application/json",
             "Content-Location",
-            "https://localhost:8081/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-24/docs/delete1",
+            "https://localhost:8081/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-27/docs/delete1",
             "Server",
             "Microsoft-HTTPAPI/2.0",
             "Access-Control-Allow-Origin",
@@ -587,7 +587,7 @@
             "x-ms-schemaversion",
             "1.9",
             "x-ms-alt-content-path",
-            "dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-24",
+            "dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-27",
             "x-ms-content-path",
             "FWVRANuELxc=",
             "x-ms-quorum-acked-lsn",
@@ -632,7 +632,7 @@
     {
         "scope": "https://localhost:8081",
         "method": "DELETE",
-        "path": "/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-24/docs/delete1",
+        "path": "/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-27/docs/delete1",
         "body": "",
         "status": 204,
         "response": "",
@@ -646,7 +646,7 @@
             "Content-Type",
             "application/json",
             "Content-Location",
-            "https://localhost:8081/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-24/docs/delete1",
+            "https://localhost:8081/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-27/docs/delete1",
             "Server",
             "Microsoft-HTTPAPI/2.0",
             "Access-Control-Allow-Origin",
@@ -664,7 +664,7 @@
             "x-ms-schemaversion",
             "1.9",
             "x-ms-alt-content-path",
-            "dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-24",
+            "dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-27",
             "x-ms-content-path",
             "FWVRANuELxc=",
             "x-ms-quorum-acked-lsn",
@@ -705,7 +705,7 @@
     {
         "scope": "https://localhost:8081",
         "method": "GET",
-        "path": "/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-24/docs/delete1",
+        "path": "/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-27/docs/delete1",
         "body": "",
         "status": 404,
         "response": {
@@ -718,7 +718,7 @@
             "Content-Type",
             "application/json",
             "Content-Location",
-            "https://localhost:8081/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-24/docs/delete1",
+            "https://localhost:8081/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-27/docs/delete1",
             "Server",
             "Microsoft-HTTPAPI/2.0",
             "Access-Control-Allow-Origin",

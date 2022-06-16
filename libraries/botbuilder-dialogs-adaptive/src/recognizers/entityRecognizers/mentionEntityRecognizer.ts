@@ -14,7 +14,7 @@ import { TextEntityRecognizer } from './textEntityRecognizer';
  * Recognizes mention input.
  */
 export class MentionEntityRecognizer extends TextEntityRecognizer {
-    public static $kind = 'Microsoft.MentionEntityRecognizer';
+    static $kind = 'Microsoft.MentionEntityRecognizer';
 
     /**
      * @protected

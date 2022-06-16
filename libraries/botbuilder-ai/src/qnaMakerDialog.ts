@@ -749,8 +749,16 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
     }
 
     private resetOptions(dc: DialogContext, dialogOptions: QnAMakerDialogOptions) {
-        // Resetting context and QnAId
-        dialogOptions.qnaMakerOptions.qnaId = 0;
+        // Resetting QnAId if not present in value
+        const qnaIdFromContext = dc.context.activity.value;
+
+        if (qnaIdFromContext != null) {
+            dialogOptions.qnaMakerOptions.qnaId = qnaIdFromContext;
+        } else {
+            dialogOptions.qnaMakerOptions.qnaId = 0;
+        }
+
+        // Resetting context
         dialogOptions.qnaMakerOptions.context = { previousQnAId: 0, previousUserQuery: '' };
 
         // Check if previous context is present, if yes then put it with the query

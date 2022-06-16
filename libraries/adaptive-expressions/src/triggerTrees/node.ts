@@ -35,7 +35,7 @@ export class Node {
      * @param tree The trigger tree this node is found in.
      * @param trigger The trigger to initialize this node.
      */
-    public constructor(clause: Clause, tree: TriggerTree, trigger?: Trigger) {
+    constructor(clause: Clause, tree: TriggerTree, trigger?: Trigger) {
         this.clause = new Clause(clause);
         this.tree = tree;
         if (trigger) {
@@ -49,7 +49,7 @@ export class Node {
      *
      * @returns All of the most specific triggers that contains the `Clause` in this node.
      */
-    public get triggers(): Trigger[] {
+    get triggers(): Trigger[] {
         return this._triggers;
     }
 
@@ -58,7 +58,7 @@ export class Node {
      *
      * @returns All triggers that contain the `Clause` in this node.
      */
-    public get allTriggers(): Trigger[] {
+    get allTriggers(): Trigger[] {
         return this._allTriggers;
     }
 
@@ -67,19 +67,19 @@ export class Node {
      *
      * @returns Specialized children of this node.
      */
-    public get specializations(): Node[] {
+    get specializations(): Node[] {
         return this._specializations;
     }
 
     /**
      * Gets the logical conjunction this node represents.
      */
-    public clause: Clause;
+    clause: Clause;
 
     /**
      * Gets the tree this node is found in.
      */
-    public tree: TriggerTree;
+    tree: TriggerTree;
 
     /**
      * Gets a string that represents the current node.
@@ -88,7 +88,7 @@ export class Node {
      * @param indent An integer representing the number of spaces at the start of a line.
      * @returns A string that represents the current node.
      */
-    public toString(builder: string[] = [], indent = 0): string {
+    toString(builder: string[] = [], indent = 0): string {
         return this.clause.toString(builder, indent);
     }
 
@@ -98,7 +98,7 @@ export class Node {
      * @param other Node to compare against.
      * @returns Relationship between this node an the other.
      */
-    public relationship(other: Node): RelationshipType {
+    relationship(other: Node): RelationshipType {
         return this.clause.relationship(other.clause, this.tree.comparers);
     }
 
@@ -108,7 +108,7 @@ export class Node {
      * @param state Frame to evaluate against.
      * @returns List of the most specific matches found.
      */
-    public matches(state: MemoryInterface | any): Trigger[] {
+    matches(state: MemoryInterface | any): Trigger[] {
         const matches = new Set<Trigger>();
         this._matches(state, matches, new Map<Node, boolean>());
         return Array.from(matches);
@@ -120,7 +120,7 @@ export class Node {
      * @param triggerNode The node to be added.
      * @returns Whether adding node operation is successful.
      */
-    public addNode(triggerNode: Node): boolean {
+    addNode(triggerNode: Node): boolean {
         return this._addNode(triggerNode, new Map<Node, Operation>()) === Operation.added;
     }
 
@@ -130,7 +130,7 @@ export class Node {
      * @param trigger The trigger to be removed.
      * @returns Whether removing trigger operation is successful.
      */
-    public removeTrigger(trigger: Trigger): boolean {
+    removeTrigger(trigger: Trigger): boolean {
         return this._removeTrigger(trigger, new Set<Node>());
     }
 

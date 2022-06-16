@@ -55,7 +55,7 @@ export class BotState implements PropertyManager {
      * @param name Name of the property to add.
      * @returns An accessor for the property.
      */
-    public createProperty<T = any>(name: string): StatePropertyAccessor<T> {
+    createProperty<T = any>(name: string): StatePropertyAccessor<T> {
         const prop: BotStatePropertyAccessor<T> = new BotStatePropertyAccessor<T>(this, name);
         return prop;
     }
@@ -76,7 +76,7 @@ export class BotState implements PropertyManager {
      * @param force (Optional) If `true` the cache will be bypassed and the state will always be read in directly from storage. Defaults to `false`.
      * @returns {Promise<any>} The cached state.
      */
-    public load(context: TurnContext, force = false): Promise<any> {
+    load(context: TurnContext, force = false): Promise<any> {
         const cached: CachedBotState = context.turnState.get(this.stateKey);
         if (force || !cached || !cached.state) {
             return Promise.resolve(this.storageKey(context)).then((key: string) => {
@@ -108,7 +108,7 @@ export class BotState implements PropertyManager {
      * @param force (Optional) if `true` the state will always be written out regardless of its change state. Defaults to `false`.
      * @returns {Promise<void>} A promise representing the async operation.
      */
-    public saveChanges(context: TurnContext, force = false): Promise<void> {
+    saveChanges(context: TurnContext, force = false): Promise<void> {
         let cached: CachedBotState = context.turnState.get(this.stateKey);
         if (force || (cached && cached.hash !== calculateChangeHash(cached.state))) {
             return Promise.resolve(this.storageKey(context)).then((key: string) => {
@@ -144,7 +144,7 @@ export class BotState implements PropertyManager {
      * @param context Context for current turn of conversation with the user.
      * @returns {Promise<void>} A promise representing the async operation.
      */
-    public clear(context: TurnContext): Promise<void> {
+    clear(context: TurnContext): Promise<void> {
         // Just overwrite cached value with a new object and empty hash. The empty hash will force the
         // changes to be saved.
         context.turnState.set(this.stateKey, { state: {}, hash: '' });
@@ -164,7 +164,7 @@ export class BotState implements PropertyManager {
      * @param context Context for current turn of conversation with the user.
      * @returns {Promise<void>} A promise representing the async operation.
      */
-    public delete(context: TurnContext): Promise<void> {
+    delete(context: TurnContext): Promise<void> {
         if (context.turnState.has(this.stateKey)) {
             context.turnState.delete(this.stateKey);
         }
@@ -184,7 +184,7 @@ export class BotState implements PropertyManager {
      * @param context Context for current turn of conversation with the user.
      * @returns A cached state object or undefined if not cached.
      */
-    public get(context: TurnContext): any | undefined {
+    get(context: TurnContext): any | undefined {
         const cached: CachedBotState = context.turnState.get(this.stateKey);
 
         return typeof cached === 'object' && typeof cached.state === 'object' ? cached.state : undefined;

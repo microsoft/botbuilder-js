@@ -37,9 +37,9 @@ export interface EditActionsConfiguration extends DialogConfiguration {
 export class EditActions<O extends object = {}>
     extends Dialog<O>
     implements DialogDependencies, EditActionsConfiguration {
-    public static $kind = 'Microsoft.EditActions';
+    static $kind = 'Microsoft.EditActions';
 
-    public constructor();
+    constructor();
 
     /**
      * Initializes a new instance of the [EditActions](xref:botbuilder-dialogs-adaptive.EditActions) class.
@@ -48,7 +48,7 @@ export class EditActions<O extends object = {}>
      * @param actions Optional. Child [Dialog](xref:botbuilder-dialogs.Dialog) dependencies so they can be added to the containers dialogset.
      */
 
-    public constructor(changeType: ActionChangeType, actions?: Dialog[]);
+    constructor(changeType: ActionChangeType, actions?: Dialog[]);
 
     /**
      * Initializes a new instance of the [EditActions](xref:botbuilder-dialogs-adaptive.EditActions) class.
@@ -56,7 +56,7 @@ export class EditActions<O extends object = {}>
      * @param changeType Optional. [ActionChangeType](xref:botbuilder-dialogs-adaptive.ActionChangeType), type of change to apply to the active actions.
      * @param actions Optional. Child [Dialog](xref:botbuilder-dialogs.Dialog) dependencies so they can be added to the containers dialogset.
      */
-    public constructor(changeType?: ActionChangeType, actions?: Dialog[]) {
+    constructor(changeType?: ActionChangeType, actions?: Dialog[]) {
         super();
         if (changeType) {
             this.changeType = new EnumExpression<ActionChangeType>(changeType);
@@ -69,23 +69,23 @@ export class EditActions<O extends object = {}>
     /**
      * The actions to update the dialog with.
      */
-    public actions: Dialog[] = [];
+    actions: Dialog[] = [];
 
     /**
      * The type of change to make to the dialogs list of actions.
      */
-    public changeType: EnumExpression<ActionChangeType>;
+    changeType: EnumExpression<ActionChangeType>;
 
     /**
      * An optional expression which if is true will disable this action.
      */
-    public disabled?: BoolExpression;
+    disabled?: BoolExpression;
 
     /**
      * @param property The key of the conditional selector configuration.
      * @returns The converter for the selector configuration.
      */
-    public getConverter(property: keyof EditActionsConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof EditActionsConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'actions':
                 return DialogListConverter;
@@ -103,7 +103,7 @@ export class EditActions<O extends object = {}>
      *
      * @returns The child [Dialog](xref:botbuilder-dialogs.Dialog) dependencies.
      */
-    public getDependencies(): Dialog[] {
+    getDependencies(): Dialog[] {
         return this.actions;
     }
 
@@ -114,7 +114,7 @@ export class EditActions<O extends object = {}>
      * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
+    async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }

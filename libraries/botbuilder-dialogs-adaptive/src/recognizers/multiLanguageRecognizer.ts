@@ -23,17 +23,17 @@ export interface MultiLanguageRecognizerConfiguration extends RecognizerConfigur
  * Defines map of languages -> recognizer.
  */
 export class MultiLanguageRecognizer extends AdaptiveRecognizer implements MultiLanguageRecognizerConfiguration {
-    public static $kind = 'Microsoft.MultiLanguageRecognizer';
+    static $kind = 'Microsoft.MultiLanguageRecognizer';
 
-    public languagePolicy: LanguagePolicy;
+    languagePolicy: LanguagePolicy;
 
-    public recognizers: { [locale: string]: Recognizer };
+    recognizers: { [locale: string]: Recognizer };
 
     /**
      * @param property The key of the conditional selector configuration.
      * @returns The converter for the selector configuration.
      */
-    public getConverter(property: keyof MultiLanguageRecognizerConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof MultiLanguageRecognizerConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'languagePolicy':
                 return new LanguagePolicyConverter();
@@ -53,7 +53,7 @@ export class MultiLanguageRecognizer extends AdaptiveRecognizer implements Multi
      * @param telemetryMetrics Optional, additional metrics to be logged to telemetry with the LuisResult event.
      * @returns {Promise<RecognizerResult>} Analysis of utterance.
      */
-    public async recognize(
+    async recognize(
         dialogContext: DialogContext,
         activity: Activity,
         telemetryProperties?: { [key: string]: string },

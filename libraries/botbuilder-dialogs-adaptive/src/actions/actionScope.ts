@@ -48,7 +48,7 @@ export class ActionScope<O extends object = {}>
      *
      * @param actions The actions for the scope.
      */
-    public constructor(actions: Dialog[] = []) {
+    constructor(actions: Dialog[] = []) {
         super();
         this.actions = actions;
     }
@@ -56,13 +56,13 @@ export class ActionScope<O extends object = {}>
     /**
      * The actions to execute.
      */
-    public actions: Dialog[] = [];
+    actions: Dialog[] = [];
 
     /**
      * @param property The key of the conditional selector configuration.
      * @returns The converter for the selector configuration.
      */
-    public getConverter(property: keyof ActionScopeConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof ActionScopeConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'actions':
                 return DialogListConverter;
@@ -78,7 +78,7 @@ export class ActionScope<O extends object = {}>
      * @returns Unique `string` which should only change when dialog has changed in a
      * way that should restart the dialog.
      */
-    public getVersion(): string {
+    getVersion(): string {
         const versions = this.actions.map((action): string => action.getVersion() || '').join('');
         return StringUtils.hash(versions);
     }
@@ -88,7 +88,7 @@ export class ActionScope<O extends object = {}>
      *
      * @returns The child [Dialog](xref:botbuilder-dialogs.Dialog) dependencies.
      */
-    public getDependencies(): Dialog[] {
+    getDependencies(): Dialog[] {
         return this.actions;
     }
 
@@ -99,7 +99,7 @@ export class ActionScope<O extends object = {}>
      * @param _options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
+    async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
         if (this.actions && this.actions.length > 0) {
             return await this.beginAction(dc, 0);
         } else {
@@ -114,7 +114,7 @@ export class ActionScope<O extends object = {}>
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
+    async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
         return await this.onNextAction(dc);
     }
 
@@ -127,7 +127,7 @@ export class ActionScope<O extends object = {}>
      * of the value returned is dependent on the child dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async resumeDialog(dc: DialogContext, _reason: DialogReason, result?: any): Promise<DialogTurnResult> {
+    async resumeDialog(dc: DialogContext, _reason: DialogReason, result?: any): Promise<DialogTurnResult> {
         if (result && typeof result === 'object' && Object.hasOwnProperty.call(result, 'actionScopeCommand')) {
             return await this.onActionScopeResult(dc, result as ActionScopeResult);
         }

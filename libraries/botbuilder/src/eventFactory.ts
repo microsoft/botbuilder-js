@@ -30,7 +30,7 @@ export class EventFactory {
      * @param transcript Transcript of the conversation.
      * @returns The handoff event activity.
      */
-    public static createHandoffInitiation<T = unknown>(
+    static createHandoffInitiation<T = unknown>(
         context: TurnContext,
         handoffContext: T,
         transcript?: Transcript
@@ -71,7 +71,7 @@ export class EventFactory {
      * @param message Additional message for failed handoff.
      * @returns The handoff event activity.
      */
-    public static createHandoffStatus(conversation: ConversationAccount, state: string, message?: string): Activity {
+    static createHandoffStatus(conversation: ConversationAccount, state: string, message?: string): Activity {
         if (!conversation) {
             throw new TypeError('EventFactory.createHandoffStatus(): missing conversation.');
         }

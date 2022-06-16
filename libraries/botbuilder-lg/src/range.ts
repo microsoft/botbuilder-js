@@ -12,16 +12,16 @@ import { Position } from './position';
  * Range class
  */
 export class Range {
-    public start: Position;
-    public end: Position;
-    public static readonly DefaultRange: Range = new Range(1, 0, 1, 0);
+    start: Position;
+    end: Position;
+    static readonly DefaultRange: Range = new Range(1, 0, 1, 0);
 
     /**
      * Creates a new instance of the [Range](xref:botbuilder-lg.Range) class.
      * @param start Starting [Position](xref:botbuilder-lg.Position).
      * @param end Ending [Position](xref:botbuilder-lg.Position).
      */
-    public constructor(start: Position, end: Position);
+    constructor(start: Position, end: Position);
 
     /**
      * Creates a new instance of the [Range](xref:botbuilder-lg.Range) class.
@@ -30,7 +30,7 @@ export class Range {
      * @param endLine Ending line number in a file.
      * @param endChar Ending character number in the end line.
      */
-    public constructor(startLine: number, startChar: number, endLine: number, endChar: number);
+    constructor(startLine: number, startChar: number, endLine: number, endChar: number);
 
     /**
      * Creates a new instance of the [Range](xref:botbuilder-lg.Range) class.
@@ -39,7 +39,7 @@ export class Range {
      * @param endLine Optional. Ending line number in a file.
      * @param endChar Optional. Ending character number in the end line.
      */
-    public constructor(x: number | Position, y: number | Position, endLine?: number, endChar?: number) {
+    constructor(x: number | Position, y: number | Position, endLine?: number, endChar?: number) {
         if (typeof x === 'number' && typeof y === 'number') {
             this.start = new Position(x, y);
             this.end = new Position(endLine, endChar);
@@ -49,7 +49,7 @@ export class Range {
         }
     }
 
-    public toString = (): string => {
+    toString = (): string => {
         let result: string = this.start.toString();
         if (this.start.line <= this.end.line && this.start.character < this.end.character) {
             result += ` - ${this.end.toString()}`;

@@ -17,7 +17,7 @@ export class ComponentRegistration {
      *
      * @returns A list of ComponentRegistration objects.
      */
-    public static get components(): ComponentRegistration[] {
+    static get components(): ComponentRegistration[] {
         return Array.from(ComponentRegistration._components.values());
     }
 
@@ -26,7 +26,7 @@ export class ComponentRegistration {
      *
      * @param componentRegistration The component to be registered.
      */
-    public static add(componentRegistration: ComponentRegistration): void {
+    static add(componentRegistration: ComponentRegistration): void {
         const name = componentRegistration.constructor.name;
         ComponentRegistration._components.set(name, componentRegistration);
     }

@@ -23,7 +23,7 @@ export class Clause extends Expression {
      *
      * @param clauseOrExpression A clause, expression or an array of expressions to initialize a `Clause`.
      */
-    public constructor(clauseOrExpression?: Clause | Expression | Expression[]) {
+    constructor(clauseOrExpression?: Clause | Expression | Expression[]) {
         super(ExpressionType.And, undefined);
         if (clauseOrExpression) {
             if (Array.isArray(clauseOrExpression)) {
@@ -45,12 +45,12 @@ export class Clause extends Expression {
     /**
      * Gets or sets the anyBinding dictionary.
      */
-    public anyBindings: Map<string, string> = new Map<string, string>();
+    anyBindings: Map<string, string> = new Map<string, string>();
 
     /**
      * Gets or sets whether the clause is subsumed.
      */
-    public subsumed = false;
+    subsumed = false;
 
     /**
      * Gets a string that represents the current clause.
@@ -59,7 +59,7 @@ export class Clause extends Expression {
      * @param indent An integer represents the number of spaces at the start of a line.
      * @returns A string that represents the current clause.
      */
-    public toString(builder: string[] = [], indent = 0): string {
+    toString(builder: string[] = [], indent = 0): string {
         builder.push(' '.repeat(indent));
         if (this.subsumed) {
             builder.push('*');
@@ -96,7 +96,7 @@ export class Clause extends Expression {
      * @param comparers A comparer, which is a dictionary of `PredicateComparer` with string keys.
      * @returns A `RelationshipType` value between two `Clause` instances.
      */
-    public relationship(other: Clause, comparers: PredicateComparers): RelationshipType {
+    relationship(other: Clause, comparers: PredicateComparers): RelationshipType {
         let soFar: RelationshipType = RelationshipType.incomparable;
         let shorter = this as Clause;
         let shorterCount = shorter.children.length;
@@ -181,7 +181,7 @@ export class Clause extends Expression {
      * @param memory The scope for looking up variables.
      * @returns A boolean value indicating whether the two clauses are matches.
      */
-    public matches(clause: Clause, memory: MemoryInterface | any): boolean {
+    matches(clause: Clause, memory: MemoryInterface | any): boolean {
         let matched = false;
         if (clause.deepEquals(this)) {
             matched = true;
@@ -197,7 +197,7 @@ export class Clause extends Expression {
     /**
      * Splits ignored child expressions.
      */
-    public splitIgnores(): void {
+    splitIgnores(): void {
         const children: Expression[] = [];
         const ignores: Expression[] = [];
         for (let i = 0; i < this.children.length; i++) {
