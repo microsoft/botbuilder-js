@@ -25,7 +25,7 @@ export class SubtractFromTime extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [SubtractFromTime](xref:adaptive-expressions.SubtractFromTime) class.
      */
-    public constructor() {
+    constructor() {
         super(
             ExpressionType.SubtractFromTime,
             SubtractFromTime.evaluator,

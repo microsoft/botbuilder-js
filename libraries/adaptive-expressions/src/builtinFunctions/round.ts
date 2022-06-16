@@ -18,7 +18,7 @@ export class Round extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [Round](xref:adaptive-expressions.Round) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.Round, Round.evaluator(), ReturnType.Number, FunctionUtils.validateUnaryOrBinaryNumber);
     }
 

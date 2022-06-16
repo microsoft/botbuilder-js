@@ -20,7 +20,7 @@ export class Take extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [Take](xref:adaptive-expressions.Take) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.Take, Take.evaluator, ReturnType.Array | ReturnType.String, Take.validator);
     }
 

@@ -23,7 +23,7 @@ export class StringTransformEvaluator extends ExpressionEvaluator {
      * @param func The string transformation function, it takes a list of objects and returns an string.
      * @param validator The validation function.
      */
-    public constructor(
+    constructor(
         type: string,
         func: (arg0: any[], options: Options) => string,
         validator?: (expr: Expression) => void

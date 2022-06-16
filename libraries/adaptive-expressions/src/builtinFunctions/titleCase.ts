@@ -19,7 +19,7 @@ export class TitleCase extends StringTransformEvaluator {
     /**
      * Initializes a new instance of the [TitleCase](xref:adaptive-expressions.TitleCase) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.TitleCase, TitleCase.evaluator, FunctionUtils.validateUnaryOrBinaryString);
     }
 

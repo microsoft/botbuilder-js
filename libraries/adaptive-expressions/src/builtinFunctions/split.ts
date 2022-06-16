@@ -20,7 +20,7 @@ export class Split extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [Split](xref:adaptive-expressions.Split) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.Split, Split.evaluator(), ReturnType.Array, Split.validator);
     }
 

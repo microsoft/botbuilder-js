@@ -21,7 +21,7 @@ export class Where extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [Where](xref:adaptive-expressions.Where) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.Where, Where.evaluator, ReturnType.Array, InternalFunctionUtils.ValidateLambdaExpression);
     }
 
