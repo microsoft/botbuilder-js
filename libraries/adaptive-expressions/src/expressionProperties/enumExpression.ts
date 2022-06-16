@@ -21,7 +21,7 @@ export class EnumExpression<T> extends ExpressionProperty<T> {
      *
      * @param value An enum of `T` or a `string` expression which resolves to an `enum`.
      */
-    public constructor(value: T | string | Expression) {
+    constructor(value: T | string | Expression) {
         super(value);
     }
 
@@ -30,7 +30,7 @@ export class EnumExpression<T> extends ExpressionProperty<T> {
      *
      * @param value value to set.
      */
-    public setValue(value: T | string | Expression): void {
+    setValue(value: T | string | Expression): void {
         super.setValue(undefined);
 
         if (typeof value == 'string' && !value.startsWith('=')) {

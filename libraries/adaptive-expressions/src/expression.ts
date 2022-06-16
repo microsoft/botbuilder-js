@@ -31,7 +31,7 @@ export class Expression {
      *
      * @returns The expected result of evaluating the expression.
      */
-    public get returnType(): ReturnType {
+    get returnType(): ReturnType {
         return this.evaluator.returnType;
     }
 
@@ -40,26 +40,26 @@ export class Expression {
      *
      * @returns The type of the expression.
      */
-    public get type(): string {
+    get type(): string {
         return this.evaluator.type;
     }
 
     /**
      * Children expressions.
      */
-    public children: Expression[];
+    children: Expression[];
 
     /**
      * Evaluator of expression.
      */
-    public readonly evaluator: ExpressionEvaluator;
+    readonly evaluator: ExpressionEvaluator;
 
     /**
      * Dictionary of function => ExpressionEvaluator.
      * This is all available functions, you can add custom functions to it, but you cannot
      * replace builtin functions.  If you clear the dictionary, it will be reset to the built in functions.
      */
-    public static readonly functions: FunctionTable = new FunctionTable();
+    static readonly functions: FunctionTable = new FunctionTable();
 
     /**
      * expression constructor.
@@ -68,7 +68,7 @@ export class Expression {
      * @param evaluator Information about how to validate and evaluate expression.
      * @param children Child expressions.
      */
-    public constructor(type: string, evaluator: ExpressionEvaluator, ...children: Expression[]) {
+    constructor(type: string, evaluator: ExpressionEvaluator, ...children: Expression[]) {
         if (evaluator) {
             this.evaluator = evaluator;
             this.children = children;
@@ -88,7 +88,7 @@ export class Expression {
      * @param other Other expression.
      * @returns True if expressions are the same.
      */
-    public deepEquals(other: Expression): boolean {
+    deepEquals(other: Expression): boolean {
         let eq = false;
         if (other) {
             eq = this.type === other.type;
@@ -125,7 +125,7 @@ export class Expression {
      *
      * @returns List of the static reference paths.
      */
-    public references(): string[] {
+    references(): string[] {
         const { path, refs } = this.referenceWalk(this);
         if (path !== undefined) {
             refs.add(path);
@@ -140,7 +140,7 @@ export class Expression {
      * @param extension If present, called to override lookup for things like template expansion.
      * @returns Accessor path of expression.
      */
-    public referenceWalk(
+    referenceWalk(
         expression: Expression,
         extension?: (arg0: Expression) => boolean
     ): { path: string; refs: Set<string> } {
@@ -232,7 +232,7 @@ export class Expression {
      * @param lookup Optional. [EvaluatorLookup](xref:adaptive-expressions.EvaluatorLookup) function lookup when parsing the expression. Default is [Expression.lookup](xref:adaptive-expressions.Expression.lookup) which uses [Expression.functions](xref:adaptive-expressions.Expression.functions) table.
      * @returns The expression object.
      */
-    public static parse(expression: string, lookup?: EvaluatorLookup): Expression {
+    static parse(expression: string, lookup?: EvaluatorLookup): Expression {
         return new ExpressionParser(lookup || Expression.lookup).parse(expression.replace(/^=/, ''));
     }
 
@@ -242,7 +242,7 @@ export class Expression {
      * @param functionName Name of function to lookup.
      * @returns An [ExpressionEvaluator](xref:adaptive-expressions.ExpressionEvaluator) corresponding to the function name.
      */
-    public static lookup(functionName: string): ExpressionEvaluator {
+    static lookup(functionName: string): ExpressionEvaluator {
         const exprEvaluator = Expression.functions.get(functionName);
         if (!exprEvaluator) {
             return undefined;
@@ -259,7 +259,7 @@ export class Expression {
      * @param children Child expressions.
      * @returns The new expression.
      */
-    public static makeExpression(type: string, evaluator: ExpressionEvaluator, ...children: Expression[]): Expression {
+    static makeExpression(type: string, evaluator: ExpressionEvaluator, ...children: Expression[]): Expression {
         const expr: Expression = new Expression(type, evaluator, ...children);
         expr.validate();
 
@@ -272,7 +272,7 @@ export class Expression {
      * @param func Function to create an expression from.
      * @returns The new expression.
      */
-    public static lambaExpression(func: EvaluateExpressionDelegate): Expression {
+    static lambaExpression(func: EvaluateExpressionDelegate): Expression {
         return new Expression(ExpressionType.Lambda, new ExpressionEvaluator(ExpressionType.Lambda, func));
     }
 
@@ -283,7 +283,7 @@ export class Expression {
      * @param func ambda expression to evaluate.
      * @returns New expression.
      */
-    public static lambda(func: (arg0: any) => any): Expression {
+    static lambda(func: (arg0: any) => any): Expression {
         return new Expression(
             ExpressionType.Lambda,
             new ExpressionEvaluator(
@@ -310,7 +310,7 @@ export class Expression {
      * @param value value expression.
      * @returns New expression.
      */
-    public static setPathToValue(property: Expression, value: any): Expression {
+    static setPathToValue(property: Expression, value: any): Expression {
         if (value instanceof Expression) {
             return Expression.makeExpression(ExpressionType.SetPathToValue, undefined, property, value);
         } else {
@@ -324,7 +324,7 @@ export class Expression {
      * @param children Child clauses.
      * @returns New expression.
      */
-    public static equalsExpression(...children: Expression[]): Expression {
+    static equalsExpression(...children: Expression[]): Expression {
         return Expression.makeExpression(ExpressionType.Equal, undefined, ...children);
     }
 
@@ -334,7 +334,7 @@ export class Expression {
      * @param children Child clauses.
      * @returns New expression.
      */
-    public static andExpression(...children: Expression[]): Expression {
+    static andExpression(...children: Expression[]): Expression {
         if (children.length > 1) {
             return Expression.makeExpression(ExpressionType.And, undefined, ...children);
         } else {
@@ -348,7 +348,7 @@ export class Expression {
      * @param children Child clauses.
      * @returns New expression.
      */
-    public static orExpression(...children: Expression[]): Expression {
+    static orExpression(...children: Expression[]): Expression {
         if (children.length > 1) {
             return Expression.makeExpression(ExpressionType.Or, undefined, ...children);
         } else {
@@ -362,7 +362,7 @@ export class Expression {
      * @param child Child clauses.
      * @returns New expression.
      */
-    public static notExpression(child: Expression): Expression {
+    static notExpression(child: Expression): Expression {
         return Expression.makeExpression(ExpressionType.Not, undefined, child);
     }
 
@@ -371,12 +371,12 @@ export class Expression {
      *
      * @returns The validated expression.
      */
-    public validate = (): void => this.evaluator.validateExpression(this);
+    validate = (): void => this.evaluator.validateExpression(this);
 
     /**
      * Recursively validate the expression tree.
      */
-    public validateTree(): void {
+    validateTree(): void {
         this.validate();
         for (const child of this.children) {
             child.validateTree();
@@ -390,7 +390,7 @@ export class Expression {
      * @param options Options used in the evaluation.
      * @returns Computed value and an error string. If the string is non-null, then there was an evaluation error.
      */
-    public tryEvaluate(state: MemoryInterface | any, options: Options = undefined): ValueWithError {
+    tryEvaluate(state: MemoryInterface | any, options: Options = undefined): ValueWithError {
         if (!Extensions.isMemoryInterface(state)) {
             state = SimpleObjectMemory.wrap(state);
         }
@@ -404,7 +404,7 @@ export class Expression {
      *
      * @returns A string that represents the current [Expression](xref:adaptive-expressions.Expression) object.
      */
-    public toString(): string {
+    toString(): string {
         let builder = '';
         let valid = false;
         // Special support for memory paths

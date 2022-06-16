@@ -32,12 +32,12 @@ export class Quantifier {
      * @param type Type of quantifier.
      * @param bindings Possible bindings for variable.
      */
-    public constructor(readonly variable: string, readonly type: QuantifierType, readonly bindings: string[]) {}
+    constructor(readonly variable: string, readonly type: QuantifierType, readonly bindings: string[]) {}
 
     /**
      * @returns A string that represents the quantifier.
      */
-    public toString(): string {
+    toString(): string {
         return `${this.type} ${this.variable} ${this.bindings.length}`;
     }
 }

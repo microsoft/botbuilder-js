@@ -22,7 +22,7 @@ export class SimpleObjectMemory implements MemoryInterface {
      *
      * @param memory The object to wrap.
      */
-    public constructor(memory: any) {
+    constructor(memory: any) {
         this.memory = memory;
     }
 
@@ -32,7 +32,7 @@ export class SimpleObjectMemory implements MemoryInterface {
      * @param obj Common object.
      * @returns Simple memory instance.
      */
-    public static wrap(obj: any): MemoryInterface {
+    static wrap(obj: any): MemoryInterface {
         if (Extensions.isMemoryInterface(obj)) {
             return obj;
         }
@@ -46,7 +46,7 @@ export class SimpleObjectMemory implements MemoryInterface {
      * @param path Given path.
      * @returns The value in the given path or undefined.
      */
-    public getValue(path: string): any {
+    getValue(path: string): any {
         if (this.memory === undefined || path.length === 0) {
             return undefined;
         }
@@ -93,7 +93,7 @@ export class SimpleObjectMemory implements MemoryInterface {
      * @param path Memory path.
      * @param input Value to set.
      */
-    public setValue(path: string, input: any): void {
+    setValue(path: string, input: any): void {
         if (this.memory === undefined) {
             return;
         }
@@ -166,7 +166,7 @@ export class SimpleObjectMemory implements MemoryInterface {
      *
      * @returns A string value representing the version info.
      */
-    public version(): string {
+    version(): string {
         return this.toString();
     }
 
@@ -175,7 +175,7 @@ export class SimpleObjectMemory implements MemoryInterface {
      *
      * @returns A string value representing the current [SimpleObjectMemory](xref:adaptive-expressions.SimpleObjectMemory) object.
      */
-    public toString(): string {
+    toString(): string {
         return JSON.stringify(this.memory, this.getCircularReplacer());
     }
 

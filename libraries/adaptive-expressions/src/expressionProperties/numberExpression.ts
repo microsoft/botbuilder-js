@@ -21,7 +21,7 @@ export class NumberExpression extends ExpressionProperty<number> {
      *
      * @param value A float `number` or `string` expression which resolves to a float `number`.
      */
-    public constructor(value?: number | string | Expression) {
+    constructor(value?: number | string | Expression) {
         super(value, 0);
     }
 
@@ -30,7 +30,7 @@ export class NumberExpression extends ExpressionProperty<number> {
      *
      * @param value Value to set.
      */
-    public setValue(value: number | string | Expression): void {
+    setValue(value: number | string | Expression): void {
         if (
             value != null &&
             !FunctionUtils.isNumber(value) &&
