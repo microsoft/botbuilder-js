@@ -27,18 +27,18 @@ export interface CrossTrainedRecognizerSetConfiguration extends RecognizerConfig
  * Recognizer for selecting between cross trained recognizers.
  */
 export class CrossTrainedRecognizerSet extends AdaptiveRecognizer implements CrossTrainedRecognizerSetConfiguration {
-    public static $kind = 'Microsoft.CrossTrainedRecognizerSet';
+    static $kind = 'Microsoft.CrossTrainedRecognizerSet';
 
     /**
      * Gets or sets the input recognizers.
      */
-    public recognizers: Recognizer[] = [];
+    recognizers: Recognizer[] = [];
 
     /**
      * @param property The key of the conditional selector configuration.
      * @returns The converter for the selector configuration.
      */
-    public getConverter(property: keyof CrossTrainedRecognizerSetConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof CrossTrainedRecognizerSetConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'recognizers':
                 return RecognizerListConverter;
@@ -56,7 +56,7 @@ export class CrossTrainedRecognizerSet extends AdaptiveRecognizer implements Cro
      * @param {object} telemetryMetrics Optional. Additional metrics to be logged to telemetry with the recognizer result event.
      * @returns {Promise<RecognizerResult>} Promise of the intent recognized by the recognizer in the form of a RecognizerResult.
      */
-    public async recognize(
+    async recognize(
         dialogContext: DialogContext,
         activity: Activity,
         telemetryProperties?: Record<string, string>,

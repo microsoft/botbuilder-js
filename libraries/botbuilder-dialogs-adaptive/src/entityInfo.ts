@@ -93,7 +93,7 @@ export class EntityInfo {
      * @param source Source entity.
      * @returns A string that represents the current object.
      */
-    public static toString(source: Partial<EntityInfo>): string {
+    static toString(source: Partial<EntityInfo>): string {
         return `${source.name}:${source.value} P${source.priority} ${source.score} ${source.coverage}`;
     }
 
@@ -104,7 +104,7 @@ export class EntityInfo {
      * @param entity Entity to compare.
      * @returns True if entities share text in utterance, otherwise false.
      */
-    public static overlaps(source: Partial<EntityInfo>, entity: Partial<EntityInfo>): boolean {
+    static overlaps(source: Partial<EntityInfo>, entity: Partial<EntityInfo>): boolean {
         return source.start <= entity.end && source.end >= entity.start;
     }
 
@@ -115,7 +115,7 @@ export class EntityInfo {
      * @param entity Entity to compare.
      * @returns True if entities come from the exactly same text in utterance, otherwise false.
      */
-    public static alternative(source: Partial<EntityInfo>, entity: Partial<EntityInfo>): boolean {
+    static alternative(source: Partial<EntityInfo>, entity: Partial<EntityInfo>): boolean {
         return source.start == entity.start && source.end == entity.end;
     }
 
@@ -126,7 +126,7 @@ export class EntityInfo {
      * @param entity Entity to compare.
      * @returns True if the entity text completely includes another entity text, otherwise false.
      */
-    public static covers(source: Partial<EntityInfo>, entity: Partial<EntityInfo>): boolean {
+    static covers(source: Partial<EntityInfo>, entity: Partial<EntityInfo>): boolean {
         return (
             source.start <= entity.start &&
             source.end >= entity.end &&
@@ -141,7 +141,7 @@ export class EntityInfo {
      * @param entity Entity to compare.
      * @returns True if entities share the same root, otherwise false.
      */
-    public static sharesRoot(source: Partial<EntityInfo>, entity: Partial<EntityInfo>): boolean {
+    static sharesRoot(source: Partial<EntityInfo>, entity: Partial<EntityInfo>): boolean {
         return source.rootEntity === entity.rootEntity;
     }
 
@@ -152,7 +152,7 @@ export class EntityInfo {
      * @param entity Entity to compare.
      * @returns True if entities are the same, otherwise false.
      */
-    public static isSameEntity(source: Partial<EntityInfo>, entity: Partial<EntityInfo>): boolean {
+    static isSameEntity(source: Partial<EntityInfo>, entity: Partial<EntityInfo>): boolean {
         return EntityInfo.sharesRoot(source, entity) && EntityInfo.alternative(source, entity);
     }
 
@@ -162,7 +162,7 @@ export class EntityInfo {
      * @param source Source entity.
      * @param entities Normalized set of entities to modify.
      */
-    public static removeOverlappingEntities(source: EntityInfo, entities: NormalizedEntityInfos): void {
+    static removeOverlappingEntities(source: EntityInfo, entities: NormalizedEntityInfos): void {
         for (const name in entities) {
             const infos = entities[name];
             if (Array.isArray(infos)) {
