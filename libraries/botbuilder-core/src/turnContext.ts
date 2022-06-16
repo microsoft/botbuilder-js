@@ -792,7 +792,7 @@ export class TurnContext {
      * update the responded flag. You can call this method directly to indicate that your bot has
      * responded appropriately to the incoming activity.
      */
-    public set responded(value: boolean) {
+    set responded(value: boolean) {
         if (!value) {
             throw new Error("TurnContext: cannot set 'responded' to a value of 'false'.");
         }
