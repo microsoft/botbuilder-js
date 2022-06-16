@@ -798,7 +798,7 @@ export class TurnContext {
         }
         this._respondedRef.responded = true;
     }
-
+    
     /**
      * Gets the locale stored in the turnState.
      *
@@ -824,22 +824,6 @@ export class TurnContext {
         } else {
             this._turnState[this._turn] = { locale: value };
         }
-    }
-
-    /**
-     * Sets the response flag on the current turn context.
-     *
-     * @remarks
-     * The [sendActivity](xref:botbuilder-core.TurnContext.sendActivity) and
-     * [sendActivities](xref:botbuilder-core.TurnContext.sendActivities) methods call this method to
-     * update the responded flag. You can call this method directly to indicate that your bot has
-     * responded appropriately to the incoming activity.
-     */
-    set responded(value: boolean) {
-        if (!value) {
-            throw new Error(`TurnContext: cannot set 'responded' to a value of 'false'.`);
-        }
-        this._respondedRef.responded = true;
     }
 
     /**
