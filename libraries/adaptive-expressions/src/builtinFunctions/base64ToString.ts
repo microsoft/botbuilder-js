@@ -19,7 +19,7 @@ export class Base64ToString extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [Base64ToString](xref:adaptive-expressions.Base64ToString) class.
      */
-    public constructor() {
+    constructor() {
         super(
             ExpressionType.Base64ToString,
             Base64ToString.evaluator(),

@@ -23,7 +23,7 @@ export class Accessor extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [Accessor](xref:adaptive-expressions.Accessor) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.Accessor, Accessor.evaluator, ReturnType.Object, Accessor.validator);
     }
 

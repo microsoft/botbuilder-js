@@ -19,7 +19,7 @@ export class Add extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [Add](xref:adaptive-expressions.Add) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.Add, Add.evaluator(), ReturnType.String | ReturnType.Number, Add.validator);
     }
 

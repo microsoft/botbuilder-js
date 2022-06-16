@@ -23,7 +23,7 @@ export class Contains extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [Contains](xref:adaptive-expressions.Contains) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.Contains, Contains.evaluator, ReturnType.Boolean, FunctionUtils.validateBinary);
     }
 

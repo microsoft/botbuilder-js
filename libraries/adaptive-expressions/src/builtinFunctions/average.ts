@@ -18,7 +18,7 @@ export class Average extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [Average](xref:adaptive-expressions.Average) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.Average, Average.evaluator(), ReturnType.Number, FunctionUtils.validateUnary);
     }
 
