@@ -26,17 +26,17 @@ export interface NumberInputConfiguration extends InputDialogConfiguration {
  * Input dialog for asking for numbers.
  */
 export class NumberInput extends InputDialog implements NumberInputConfiguration {
-    public static $kind = 'Microsoft.NumberInput';
+    static $kind = 'Microsoft.NumberInput';
 
-    public defaultLocale?: StringExpression;
+    defaultLocale?: StringExpression;
 
-    public outputFormat?: NumberExpression;
+    outputFormat?: NumberExpression;
 
     /**
      * @param property The key of the conditional selector configuration.
      * @returns The converter for the selector configuration.
      */
-    public getConverter(property: keyof NumberInputConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof NumberInputConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'defaultLocale':
                 return new StringExpressionConverter();

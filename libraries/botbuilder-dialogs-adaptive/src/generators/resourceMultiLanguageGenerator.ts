@@ -27,14 +27,14 @@ export interface ResourceMultiLanguageGeneratorConfiguration extends MultiLangua
 export class ResourceMultiLanguageGenerator<T = unknown, D extends Record<string, unknown> = Record<string, unknown>>
     extends MultiLanguageGeneratorBase<T, D>
     implements ResourceMultiLanguageGeneratorConfiguration {
-    public static $kind = 'Microsoft.ResourceMultiLanguageGenerator';
+    static $kind = 'Microsoft.ResourceMultiLanguageGenerator';
 
     /**
      * Initializes a new instance of the ResourceMultiLanguageGenerator class.
      *
      * @param resourceId Resource id of LG file.
      */
-    public constructor(resourceId?: string) {
+    constructor(resourceId?: string) {
         super();
         this.resourceId = resourceId;
     }
@@ -42,7 +42,7 @@ export class ResourceMultiLanguageGenerator<T = unknown, D extends Record<string
     /**
      * Resource id of LG file.
      */
-    public resourceId: string;
+    resourceId: string;
 
     /**
      * Implementation of lookup by locale.
@@ -51,7 +51,7 @@ export class ResourceMultiLanguageGenerator<T = unknown, D extends Record<string
      * @param locale Locale to lookup.
      * @returns An object with a boolean showing existence and the language generator.
      */
-    public tryGetGenerator(
+    tryGetGenerator(
         dialogContext: DialogContext,
         locale: string
     ): { exist: boolean; result: LanguageGenerator<T, D> } {

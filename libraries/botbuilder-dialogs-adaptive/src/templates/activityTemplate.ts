@@ -29,27 +29,27 @@ export interface ActivityTemplateConguration {
  */
 export class ActivityTemplate
     implements TemplateInterface<Partial<Activity>, DialogStateManager>, ActivityTemplateConguration, Configurable {
-    public static $kind = 'Microsoft.ActivityTemplate';
+    static $kind = 'Microsoft.ActivityTemplate';
 
     /**
      * Initialize a new instance of ActivityTemplate class.
      *
      * @param template The template to evaluate to create the activity.
      */
-    public constructor(template?: string) {
+    constructor(template?: string) {
         this.template = template;
     }
 
     /**
      * Gets or sets the template to evaluate to create the activity.
      */
-    public template: string;
+    template: string;
 
     /**
      * @param _property The key of the conditional selector configuration.
      * @returns The converter for the selector configuration.
      */
-    public getConverter(_property: keyof ActivityTemplateConguration): Converter | ConverterFactory {
+    getConverter(_property: keyof ActivityTemplateConguration): Converter | ConverterFactory {
         return undefined;
     }
 
@@ -57,7 +57,7 @@ export class ActivityTemplate
      * @param config The configuration.
      * @returns A object with the given configuration.
      */
-    public configure(config: ActivityTemplateConguration): this {
+    configure(config: ActivityTemplateConguration): this {
         const { template } = config;
         this.template = template;
         return this;
@@ -70,7 +70,7 @@ export class ActivityTemplate
      * @param data Data to bind to.
      * @returns A promise representing the asynchronous operation.
      */
-    public async bind(dialogContext: DialogContext, data: DialogStateManager): Promise<Partial<Activity>> {
+    async bind(dialogContext: DialogContext, data: DialogStateManager): Promise<Partial<Activity>> {
         if (this.template) {
             let languageGenerator = dialogContext.services.get(languageGeneratorKey) as LanguageGenerator<
                 unknown,
@@ -87,7 +87,7 @@ export class ActivityTemplate
         return undefined;
     }
 
-    public toString = (): string => {
+    toString = (): string => {
         return `ActivityTemplate(${this.template})`;
     };
 }

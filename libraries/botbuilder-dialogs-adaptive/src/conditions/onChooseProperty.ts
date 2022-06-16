@@ -13,7 +13,7 @@ import { OnDialogEvent } from './onDialogEvent';
  * Triggered to choose which property an entity goes to.
  */
 export class OnChooseProperty extends OnDialogEvent {
-    public static $kind = 'Microsoft.OnChooseProperty';
+    static $kind = 'Microsoft.OnChooseProperty';
 
     /**
      * Initializes a new instance of the [OnChooseProperty](xref:botbuilder-dialogs-adaptive.OnChooseProperty) class.
@@ -21,7 +21,7 @@ export class OnChooseProperty extends OnDialogEvent {
      * @param {Dialog[]} actions Optional, actions to add to the plan when the rule constraints are met.
      * @param {string} condition Optional, condition which needs to be met for the actions to be executed.
      */
-    public constructor(actions: Dialog[] = [], condition?: string) {
+    constructor(actions: Dialog[] = [], condition?: string) {
         super(AdaptiveEvents.chooseProperty, actions, condition);
     }
 }
