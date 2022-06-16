@@ -33,9 +33,9 @@ export interface SignOutUserConfiguration extends DialogConfiguration {
  * Singns out the user and finishes the dialog.
  */
 export class SignOutUser<O extends object = {}> extends Dialog<O> implements SignOutUserConfiguration {
-    public static $kind = 'Microsoft.SignOutUser';
+    static $kind = 'Microsoft.SignOutUser';
 
-    public constructor();
+    constructor();
 
     /**
      * Initializes a new instance of the [SignOutUser](xref:botbuilder-dialogs-adaptive.SignOutUser) class.
@@ -43,7 +43,7 @@ export class SignOutUser<O extends object = {}> extends Dialog<O> implements Sig
      * @param userId Optional. The expression which resolves to the userId to sign out.
      * @param connectionName Optional. The name of the OAuth connection.
      */
-    public constructor(userId?: string, connectionName?: string) {
+    constructor(userId?: string, connectionName?: string) {
         super();
         if (userId) {
             this.userId = new StringExpression(userId);
@@ -56,23 +56,23 @@ export class SignOutUser<O extends object = {}> extends Dialog<O> implements Sig
     /**
      * The expression which resolves to the userId to sign out.
      */
-    public userId: StringExpression;
+    userId: StringExpression;
 
     /**
      * The name of the OAuth connection.
      */
-    public connectionName: StringExpression;
+    connectionName: StringExpression;
 
     /**
      * An optional expression which if is true will disable this action.
      */
-    public disabled?: BoolExpression;
+    disabled?: BoolExpression;
 
     /**
      * @param property The key of the conditional selector configuration.
      * @returns The converter for the selector configuration.
      */
-    public getConverter(property: keyof SignOutUserConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof SignOutUserConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'userId':
                 return new StringExpressionConverter();
@@ -92,7 +92,7 @@ export class SignOutUser<O extends object = {}> extends Dialog<O> implements Sig
      * @param _options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
+    async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }

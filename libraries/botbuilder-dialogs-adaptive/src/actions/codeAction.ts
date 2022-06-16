@@ -30,13 +30,13 @@ export interface CodeActionConfiguration extends DialogConfiguration {
 export class CodeAction<O extends object = {}> extends Dialog<O> {
     private codeHandler: CodeActionHandler;
 
-    public disabled?: BoolExpression;
+    disabled?: BoolExpression;
 
     /**
      * @param property The key of the conditional selector configuration.
      * @returns The converter for the selector configuration.
      */
-    public getConverter(property: keyof CodeActionConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof CodeActionConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'disabled':
                 return new BoolExpressionConverter();
@@ -50,7 +50,7 @@ export class CodeAction<O extends object = {}> extends Dialog<O> {
      *
      * @param codeHandler [CodeActionHandler](xref:botbuilder-dialogs-adaptive.CodeActionHandler), code handler for the action.
      */
-    public constructor(codeHandler: CodeActionHandler) {
+    constructor(codeHandler: CodeActionHandler) {
         super();
         this.codeHandler = codeHandler;
     }
@@ -71,7 +71,7 @@ export class CodeAction<O extends object = {}> extends Dialog<O> {
      * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, options: O): Promise<DialogTurnResult> {
+    async beginDialog(dc: DialogContext, options: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }

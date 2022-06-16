@@ -40,7 +40,7 @@ export interface CancelAllDialogsBaseConfiguration extends DialogConfiguration {
 export class CancelAllDialogsBase<O extends object = {}>
     extends Dialog<O>
     implements CancelAllDialogsBaseConfiguration {
-    public constructor();
+    constructor();
 
     /**
      * Initializes a new instance of the [CancelAllDialogsBase](xref:botbuilder-dialogs-adaptive.CancelAllDialogsBase) class.
@@ -49,7 +49,7 @@ export class CancelAllDialogsBase<O extends object = {}>
      * @param eventValue Optional. Expression for event value.
      * @param isCancelAll Set to `true` to cancel all dialogs; `false` otherwise.
      */
-    public constructor(eventName: string, eventValue?: string, isCancelAll?: boolean);
+    constructor(eventName: string, eventValue?: string, isCancelAll?: boolean);
 
     /**
      * Initializes a new instance of the [CancelAllDialogsBase](xref:botbuilder-dialogs-adaptive.CancelAllDialogsBase) class.
@@ -58,7 +58,7 @@ export class CancelAllDialogsBase<O extends object = {}>
      * @param eventValue Optional. Expression for event value.
      * @param isCancelAll Set to `true` to cancel all [Dialogs](xref:botbuilder-dialogs.Dialog); `false` otherwise.
      */
-    public constructor(eventName?: string, eventValue?: string, isCancelAll = true) {
+    constructor(eventName?: string, eventValue?: string, isCancelAll = true) {
         super();
         if (eventName) {
             this.eventName = new StringExpression(eventName);
@@ -72,22 +72,22 @@ export class CancelAllDialogsBase<O extends object = {}>
     /**
      * Expression for event name.
      */
-    public eventName: StringExpression;
+    eventName: StringExpression;
 
     /**
      * Expression for event value.
      */
-    public eventValue: ValueExpression;
+    eventValue: ValueExpression;
 
     /**
      * An optional expression which if is true will disable this action.
      */
-    public disabled: BoolExpression;
+    disabled: BoolExpression;
 
     /**
      * A value indicating whether to have the new dialog should process the activity.
      */
-    public activityProcessed: BoolExpression;
+    activityProcessed: BoolExpression;
 
     private _cancelAll: boolean;
 
@@ -95,7 +95,7 @@ export class CancelAllDialogsBase<O extends object = {}>
      * @param property The key of the conditional selector configuration.
      * @returns The converter for the selector configuration.
      */
-    public getConverter(property: keyof CancelAllDialogsBaseConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof CancelAllDialogsBaseConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'eventName':
                 return new StringExpressionConverter();
@@ -117,7 +117,7 @@ export class CancelAllDialogsBase<O extends object = {}>
      * @param _options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, _options: O): Promise<DialogTurnResult> {
+    async beginDialog(dc: DialogContext, _options: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }

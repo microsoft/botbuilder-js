@@ -26,18 +26,18 @@ export interface BreakLoopConfiguration extends DialogConfiguration {
  * Break out of a loop.
  */
 export class BreakLoop<O extends object = {}> extends Dialog<O> implements BreakLoopConfiguration {
-    public static $kind = 'Microsoft.BreakLoop';
+    static $kind = 'Microsoft.BreakLoop';
 
     /**
      * An optional expression which if is true will disable this action.
      */
-    public disabled?: BoolExpression;
+    disabled?: BoolExpression;
 
     /**
      * @param property The key of the conditional selector configuration.
      * @returns The converter for the selector configuration.
      */
-    public getConverter(property: keyof BreakLoopConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof BreakLoopConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'disabled':
                 return new BoolExpressionConverter();
@@ -53,7 +53,7 @@ export class BreakLoop<O extends object = {}> extends Dialog<O> implements Break
      * @param _options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
+    async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }

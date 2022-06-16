@@ -25,7 +25,7 @@ type AssignmentInput<T> = {
 };
 
 class PropertyAssignmentsConverter<T = unknown> implements Converter<AssignmentInput<T>[], PropertyAssignment[]> {
-    public convert(items: Array<AssignmentInput<T> | PropertyAssignment>): PropertyAssignment[] {
+    convert(items: Array<AssignmentInput<T> | PropertyAssignment>): PropertyAssignment[] {
         return items.map(({ property, value }) => ({
             property: property instanceof StringExpression ? property : new StringExpression(property),
             value: value instanceof ValueExpression ? value : new ValueExpression(value),
@@ -47,16 +47,16 @@ export interface SetPropertiesConfiguration extends DialogConfiguration {
  * Sets properties with the result of evaluating a value expression.
  */
 export class SetProperties<O extends object = {}> extends Dialog<O> implements SetPropertiesConfiguration {
-    public static $kind = 'Microsoft.SetProperties';
+    static $kind = 'Microsoft.SetProperties';
 
-    public constructor();
+    constructor();
 
     /**
      * Initializes a new instance of the [SetProperties](xref:botbuilder-dialogs-adaptive.SetProperties) class.
      *
      * @param assignments Optional. [PropertyAssignment](xref:botbuilder-dialogs-adaptive.PropertyAssignment), additional property settings as property/value pairs.
      */
-    public constructor(assignments?: PropertyAssignment[]) {
+    constructor(assignments?: PropertyAssignment[]) {
         super();
         if (assignments) {
             this.assignments = assignments;
@@ -66,18 +66,18 @@ export class SetProperties<O extends object = {}> extends Dialog<O> implements S
     /**
      * Additional property settings as property/value pairs.
      */
-    public assignments: PropertyAssignment[] = [];
+    assignments: PropertyAssignment[] = [];
 
     /**
      * An optional expression which if is true will disable this action.
      */
-    public disabled?: BoolExpression;
+    disabled?: BoolExpression;
 
     /**
      * @param property The key of the conditional selector configuration.
      * @returns The converter for the selector configuration.
      */
-    public getConverter(property: keyof SetPropertiesConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof SetPropertiesConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'assignments':
                 return new PropertyAssignmentsConverter();
@@ -95,7 +95,7 @@ export class SetProperties<O extends object = {}> extends Dialog<O> implements S
      * @param _options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
+    async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }
