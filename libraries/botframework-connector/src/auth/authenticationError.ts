@@ -28,7 +28,7 @@ export class AuthenticationError extends Error implements IStatusCodeError {
      * @returns If `err` is an [IStatusCodeError](xref:botframework-schema.IStatusCodeError), the result is true; otherwise false.
      */
     // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
-    public static isStatusCodeError(err: any): err is IStatusCodeError {
+    static isStatusCodeError(err: any): err is IStatusCodeError {
         return !!(err && typeof err.statusCode === 'number');
     }
 
@@ -39,7 +39,7 @@ export class AuthenticationError extends Error implements IStatusCodeError {
      * @returns The error message to be sent as a response.
      */
     // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
-    public static determineStatusCodeAndBuildMessage(err: any): string {
+    static determineStatusCodeAndBuildMessage(err: any): string {
         const errMessage: string = err && err.message ? err.message : 'Internal Server Error';
         const code: number = AuthenticationError.determineStatusCode(errMessage);
         const connectionHeader = "Connection: 'close'\r\n";

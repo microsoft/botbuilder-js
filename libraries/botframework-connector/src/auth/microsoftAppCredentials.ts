@@ -26,7 +26,7 @@ export class MicrosoftAppCredentials extends AppCredentials {
     /**
      * An empty set of credentials.
      */
-    public static readonly Empty = new MicrosoftAppCredentials(null, null);
+    static readonly Empty = new MicrosoftAppCredentials(null, null);
 
     /**
      * Initializes a new instance of the [MicrosoftAppCredentials](xref:botframework-connector.MicrosoftAppCredentials) class.
@@ -36,7 +36,7 @@ export class MicrosoftAppCredentials extends AppCredentials {
      * @param {string} channelAuthTenant Optional. The oauth token tenant.
      * @param {string} oAuthScope Optional. The scope for the token.
      */
-    public constructor(appId: string, public appPassword: string, channelAuthTenant?: string, oAuthScope?: string) {
+    constructor(appId: string, public appPassword: string, channelAuthTenant?: string, oAuthScope?: string) {
         super(appId, channelAuthTenant, oAuthScope);
     }
 

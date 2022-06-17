@@ -15,12 +15,12 @@ export class BlobStorageService extends AzureService implements IBlobStorageServ
     /**
      * Connection string for blob storage.
      */
-    public connectionString: string;
+    connectionString: string;
 
     /**
      * (Optional) container name.
      */
-    public container: string;
+    container: string;
 
     /**
      * Creates a new BlobStorageService instance.
@@ -35,7 +35,7 @@ export class BlobStorageService extends AzureService implements IBlobStorageServ
      * @param secret Secret to use to encrypt.
      * @param encryptString Function called to encrypt an individual value.
      */
-    public encrypt(secret: string, encryptString: (value: string, secret: string) => string): void {
+    encrypt(secret: string, encryptString: (value: string, secret: string) => string): void {
         if (this.connectionString && this.connectionString.length > 0) {
             this.connectionString = encryptString(this.connectionString, secret);
         }
@@ -46,7 +46,7 @@ export class BlobStorageService extends AzureService implements IBlobStorageServ
      * @param secret Secret to use to decrypt.
      * @param decryptString Function called to decrypt an individual value.
      */
-    public decrypt(secret: string, decryptString: (value: string, secret: string) => string): void {
+    decrypt(secret: string, decryptString: (value: string, secret: string) => string): void {
         if (this.connectionString && this.connectionString.length > 0) {
             this.connectionString = decryptString(this.connectionString, secret);
         }

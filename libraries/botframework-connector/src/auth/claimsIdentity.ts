@@ -31,7 +31,7 @@ export class ClaimsIdentity {
      *
      * @returns True if is authenticated.
      */
-    public get isAuthenticated(): boolean {
+    get isAuthenticated(): boolean {
         if (typeof this.authenticationType === 'boolean') {
             return this.authenticationType;
         }
@@ -45,7 +45,7 @@ export class ClaimsIdentity {
      * @param  {string} claimType The claim type to look for
      * @returns {string|null} The claim value or null if not found
      */
-    public getClaimValue(claimType: string): string | null {
+    getClaimValue(claimType: string): string | null {
         const claim = this.claims.find((c) => c.type === claimType);
 
         return claim?.value ?? null;
