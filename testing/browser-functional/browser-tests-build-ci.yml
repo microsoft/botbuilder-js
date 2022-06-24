@@ -30,6 +30,9 @@ steps:
   displayName: 'Create DateTimeTag for Resource Group'
   # Get-Date on Azure DevOps returns a datetime relative to UTC-0, so "Z" is being used instead of the dynamic "K".
 
+- script: yarn browser-functional-test chrome
+  displayName: run chrome tests
+
 - task: PowerShell@2
   inputs:
     targetType: inline
@@ -76,22 +79,6 @@ steps:
   displayName: use node 12.x
   inputs:
     versionSpec: 12.x
-
-- task: PowerShell@2
-  inputs:
-    targetType: inline
-    script: |
-      $registryInfo = reg query "HKEY_CURRENT_USER\Software\Google\Chrome\BLBeacon" /v version
-      $chromeVersion = ($registryInfo.Split())[-2]
-      $driverVersion = ($chromeVersion.Split("."))[0] + ".0.0";
-
-      Write-Host "Chrome registry info:" $registryInfo
-      Write-Host "chromedriver version needed:" $driverVersion
-      "##vso[task.setvariable variable=DriverVersion;]$driverVersion";
-  displayName: 'Get chromedriver version for the installed Chrome'
-  continueOnError: true
-  condition: succeededOrFailed()
-  enabled: false
 
 - script: cd testing/browser-functional/browser-echo-bot && yarn && yarn build
   displayName: yarn install and build browser-echo-bot
@@ -161,22 +148,6 @@ steps:
 - script: yarn
   displayName: yarn install
 
-- task: PowerShell@2
-  inputs:
-    targetType: inline
-    script: |
-      $registryInfo = reg query "HKEY_CURRENT_USER\Software\Google\Chrome\BLBeacon" /v version
-      $chromeVersion = ($registryInfo.Split())[-2]
-      $driverVersion = ($chromeVersion.Split("."))[0] + ".0.0";
-
-      Write-Host "Chrome registry info:" $registryInfo
-      Write-Host "chromedriver version needed:" $driverVersion
-      "##vso[task.setvariable variable=DriverVersion;]$driverVersion";
-  displayName: 'Get chromedriver version for the installed Chrome'
-  continueOnError: true
-  condition: succeededOrFailed()
-  enabled: false
-
 - script: yarn browser-functional-test chrome
   displayName: run chrome tests
 
@@ -195,6 +166,19 @@ steps:
       Write-Host "chromedriver version needed:" $driverVersion
       "##vso[task.setvariable variable=DriverVersion;]$driverVersion";
   displayName: 'Get chromedriver version for the installed Chrome'
+  continueOnError: true
+  condition: succeededOrFailed()
+
+- powershell: |
+   cd ..
+   ls -R
+  displayName: Dir workspace
+  enabled: false
+  continueOnError: true
+  condition: succeededOrFailed()
+
+- powershell: 'gci env:* | sort-object name | Format-Table -AutoSize -Wrap'
+  displayName: 'Display env vars'
   continueOnError: true
   condition: succeededOrFailed()
 

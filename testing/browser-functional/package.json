@@ -12,7 +12,7 @@
     "selenium-server": "^3.141.59"
   },
   "directories": {
-    "test": "tests"
+    "test": "."
   },
   "scripts": {
     "test": "node nightwatch.js -e"
