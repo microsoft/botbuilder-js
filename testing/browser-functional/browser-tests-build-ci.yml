@@ -30,8 +30,13 @@ steps:
   displayName: 'Create DateTimeTag for Resource Group'
   # Get-Date on Azure DevOps returns a datetime relative to UTC-0, so "Z" is being used instead of the dynamic "K".
 
+- script: yarn
+  displayName: yarn install
+  continueOnError: true
+
 - script: yarn browser-functional-test chrome
   displayName: run chrome tests
+  continueOnError: true
 
 - task: PowerShell@2
   inputs:
