@@ -76,8 +76,38 @@ steps:
   inputs:
     versionSpec: 12.x
 
+- task: PowerShell@2
+  inputs:
+    targetType: inline
+    script: |
+      $registryInfo = reg query "HKEY_CURRENT_USER\Software\Google\Chrome\BLBeacon" /v version
+      $chromeVersion = ($registryInfo.Split())[-2]
+      $driverVersion = ($chromeVersion.Split("."))[0] + ".0.0";
+
+      Write-Host "Chrome registry info:" $registryInfo
+      Write-Host "chromedriver version needed:" $driverVersion
+      "##vso[task.setvariable variable=DriverVersion;]$driverVersion";
+  displayName: 'Get chromedriver version for the installed Chrome'
+  continueOnError: true
+  condition: succeededOrFailed()
+
 - script: cd testing/browser-functional/browser-echo-bot && yarn && yarn build
   displayName: yarn install and build browser-echo-bot
+
+- task: PowerShell@2
+  inputs:
+    targetType: inline
+    script: |
+      $registryInfo = reg query "HKEY_CURRENT_USER\Software\Google\Chrome\BLBeacon" /v version
+      $chromeVersion = ($registryInfo.Split())[-2]
+      $driverVersion = ($chromeVersion.Split("."))[0] + ".0.0";
+
+      Write-Host "Chrome registry info:" $registryInfo
+      Write-Host "chromedriver version needed:" $driverVersion
+      "##vso[task.setvariable variable=DriverVersion;]$driverVersion";
+  displayName: 'Get chromedriver version for the installed Chrome'
+  continueOnError: true
+  condition: succeededOrFailed()
 
 - task: PowerShell@2
   inputs:
@@ -109,8 +139,38 @@ steps:
      echo "# Deploy source code"
      call az webapp deployment source config-zip --resource-group "$(TestResourceGroup)" --name "$(TestWebApp)" --src "$(System.DefaultWorkingDirectory)/testing/browser-functional/browser-echo-bot/browser-echo-bot.zip"
 
+- task: PowerShell@2
+  inputs:
+    targetType: inline
+    script: |
+      $registryInfo = reg query "HKEY_CURRENT_USER\Software\Google\Chrome\BLBeacon" /v version
+      $chromeVersion = ($registryInfo.Split())[-2]
+      $driverVersion = ($chromeVersion.Split("."))[0] + ".0.0";
+
+      Write-Host "Chrome registry info:" $registryInfo
+      Write-Host "chromedriver version needed:" $driverVersion
+      "##vso[task.setvariable variable=DriverVersion;]$driverVersion";
+  displayName: 'Get chromedriver version for the installed Chrome'
+  continueOnError: true
+  condition: succeededOrFailed()
+
 - script: yarn
   displayName: yarn install
+
+- task: PowerShell@2
+  inputs:
+    targetType: inline
+    script: |
+      $registryInfo = reg query "HKEY_CURRENT_USER\Software\Google\Chrome\BLBeacon" /v version
+      $chromeVersion = ($registryInfo.Split())[-2]
+      $driverVersion = ($chromeVersion.Split("."))[0] + ".0.0";
+
+      Write-Host "Chrome registry info:" $registryInfo
+      Write-Host "chromedriver version needed:" $driverVersion
+      "##vso[task.setvariable variable=DriverVersion;]$driverVersion";
+  displayName: 'Get chromedriver version for the installed Chrome'
+  continueOnError: true
+  condition: succeededOrFailed()
 
 - script: yarn browser-functional-test chrome
   displayName: run chrome tests
@@ -130,6 +190,7 @@ steps:
       Write-Host "chromedriver version needed:" $driverVersion
       "##vso[task.setvariable variable=DriverVersion;]$driverVersion";
   displayName: 'Get chromedriver version for the installed Chrome'
+  continueOnError: true
   condition: succeededOrFailed()
 
 - task: AzureCLI@1
