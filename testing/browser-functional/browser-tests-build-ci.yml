@@ -180,7 +180,6 @@ steps:
    cd ..
    ls -R
   displayName: Dir workspace
-  enabled: false
   continueOnError: true
   condition: succeededOrFailed()
 

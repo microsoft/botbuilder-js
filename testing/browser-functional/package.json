@@ -12,10 +12,10 @@
     "selenium-server": "^3.141.59"
   },
   "directories": {
-    "test": ""
+    "test": "tests"
   },
   "scripts": {
-    "test": "node nightwatch.js"
+    "test": "node nightwatch.js -e"
   },
   "author": "Microsoft Corp.",
   "license": "MIT"
