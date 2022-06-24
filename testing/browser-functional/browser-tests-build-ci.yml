@@ -30,16 +30,6 @@ steps:
   displayName: 'Create DateTimeTag for Resource Group'
   # Get-Date on Azure DevOps returns a datetime relative to UTC-0, so "Z" is being used instead of the dynamic "K".
 
-- script: yarn
-  displayName: yarn install
-  continueOnError: true
-  enabled: false
-
-- script: yarn browser-functional-test chrome
-  displayName: run chrome tests
-  continueOnError: true
-  enabled: false
-
 - task: PowerShell@2
   inputs:
     targetType: inline
@@ -51,23 +41,27 @@ steps:
       $dist = npm dist-tag ls $packageName;
       $next = $dist.Where({$_.StartsWith("latest:")});
       [string]$latestVersion = $next.Split(':')[-1].Trim();
+      Write-Host "$packageName latest = $latestVersion";
 
-      $packageName;
-      $latestVersion;
-      "##vso[task.setvariable variable=LatestVersion;]$latestVersion";
-  displayName: 'Get latest chromedriver version number from npmjs.com'
-  enabled: false
+      $splitVersion = $latestVersion.Split(".");
+      $splitVersion[0] = $splitVersion[0] - 1;
+      $secondLatestVersion = $splitVersion -Join ".";
+      Write-Host "$packageName second latest = $secondLatestVersion";
+
+      "##vso[task.setvariable variable=DriverVersion;]$secondLatestVersion";
+  displayName: 'Get second latest chromedriver version number from npmjs.com'
 
 - task: PowerShell@2
   inputs:
     targetType: inline
     script: |
-      # This lets the pipeline automatically keep up with Chrome browser releases.
-      # New Chrome browser releases happen about every 4 weeks.
+      # This lets the pipeline automatically keep up with Chrome browser upgrades.
+      # Chrome browser upgrades on ADO agents lag behind chromedriver upgrades, so
+      # if we use the second latest chromedriver, that should keep the tests working.
 
       $path = "$(System.DefaultWorkingDirectory)/testing/browser-functional/package.json";
       $package = 'chromedriver';
-      $newVersion = "$(LatestVersion)";
+      $newVersion = "$(DriverVersion)";
 
       $find = "$package`": `"\S*`"";
       $replace = "$package`": `"$newVersion`"";
@@ -79,8 +73,7 @@ steps:
           $content -Replace "$find", "$replace" | Set-Content $_.FullName;
           '-------------'; get-content $_.FullName; '==================='
       }
-  displayName: 'Upgrade chromedriver reference to latest version'
-  enabled: false
+  displayName: 'Upgrade chromedriver reference to second latest version'
 
 - task: NodeTool@0
   displayName: use node 12.x
