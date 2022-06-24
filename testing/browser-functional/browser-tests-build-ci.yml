@@ -46,6 +46,20 @@ steps:
       $latestVersion;
       "##vso[task.setvariable variable=LatestVersion;]$latestVersion";
   displayName: 'Get latest chromedriver version number from npmjs.com'
+  enabled: false
+
+- task: PowerShell@2
+  inputs:
+    targetType: inline
+    script: |
+      $registryInfo = reg query "HKEY_CURRENT_USER\Software\Google\Chrome\BLBeacon" /v version
+      $chromeVersion = ($registryInfo.Split())[-2]
+      $driverVersion = ($chromeVersion.Split("."))[0] + ".0.0";
+
+      Write-Host "Chrome registry info:" $registryInfo
+      Write-Host "chromedriver version needed:" $driverVersion
+      "##vso[task.setvariable variable=LatestVersion;]$driverVersion";
+  displayName: 'Get chromedriver version for the installed Chrome'
 
 - task: PowerShell@2
   inputs:
