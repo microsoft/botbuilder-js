@@ -46,7 +46,7 @@ steps:
       $latestVersion;
       "##vso[task.setvariable variable=LatestVersion;]$latestVersion";
   displayName: 'Get latest chromedriver version number from npmjs.com'
-  enabled: true
+  enabled: false
 
 - task: PowerShell@2
   inputs:
@@ -70,6 +70,7 @@ steps:
           '-------------'; get-content $_.FullName; '==================='
       }
   displayName: 'Upgrade chromedriver reference to latest version'
+  enabled: false
 
 - task: NodeTool@0
   displayName: use node 12.x
@@ -90,6 +91,7 @@ steps:
   displayName: 'Get chromedriver version for the installed Chrome'
   continueOnError: true
   condition: succeededOrFailed()
+  enabled: false
 
 - script: cd testing/browser-functional/browser-echo-bot && yarn && yarn build
   displayName: yarn install and build browser-echo-bot
@@ -108,6 +110,7 @@ steps:
   displayName: 'Get chromedriver version for the installed Chrome'
   continueOnError: true
   condition: succeededOrFailed()
+  enabled: false
 
 - task: PowerShell@2
   inputs:
@@ -153,6 +156,7 @@ steps:
   displayName: 'Get chromedriver version for the installed Chrome'
   continueOnError: true
   condition: succeededOrFailed()
+  enabled: false
 
 - script: yarn
   displayName: yarn install
@@ -171,6 +175,7 @@ steps:
   displayName: 'Get chromedriver version for the installed Chrome'
   continueOnError: true
   condition: succeededOrFailed()
+  enabled: false
 
 - script: yarn browser-functional-test chrome
   displayName: run chrome tests
