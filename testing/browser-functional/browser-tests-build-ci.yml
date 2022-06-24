@@ -33,10 +33,12 @@ steps:
 - script: yarn
   displayName: yarn install
   continueOnError: true
+  enabled: false
 
 - script: yarn browser-functional-test chrome
   displayName: run chrome tests
   continueOnError: true
+  enabled: false
 
 - task: PowerShell@2
   inputs:
