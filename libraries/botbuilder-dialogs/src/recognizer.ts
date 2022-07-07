@@ -64,9 +64,11 @@ export class Recognizer extends Configurable implements RecognizerConfiguration 
      */
     protected createChooseIntentResult(recognizerResults: Record<string, RecognizerResult>): RecognizerResult {
         let text: string;
+        let sentiment: Record<string, any> = null;
         type candidateType = { id: string; intent: string; score: number; result: RecognizerResult };
         const candidates = Object.entries(recognizerResults).reduce((candidates: candidateType[], [key, result]) => {
             text = result.text;
+            sentiment = result.sentiment;
             const { intent, score } = getTopScoringIntent(result);
             if (intent !== 'None') {
                 candidates.push({
@@ -95,6 +97,7 @@ export class Recognizer extends Configurable implements RecognizerConfiguration 
             text,
             intents: { None: { score: 1.0 } },
             entities: {},
+            sentiment: sentiment,
         };
         return recognizerResult;
     }

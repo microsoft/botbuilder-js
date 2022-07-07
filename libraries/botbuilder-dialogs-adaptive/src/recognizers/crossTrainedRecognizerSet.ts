@@ -137,6 +137,7 @@ export class CrossTrainedRecognizerSet extends AdaptiveRecognizer implements Cro
                     const recognizerResult: RecognizerResult = {
                         text: recognizerResults[recognizer.id].text,
                         intents: { None: { score: 1.0 } },
+                        sentiment: recognizerResults[recognizer.id].sentiment,
                     };
                     return recognizerResult;
                 }
@@ -175,12 +176,14 @@ export class CrossTrainedRecognizerSet extends AdaptiveRecognizer implements Cro
 
         //find if matched entities found when hits the none intent
         const mergedEntities = results.reduce((acc, curr) => merge(acc, curr.entities), {});
+        const sentiment = results.reduce((acc, curr) => merge(acc, curr.sentiment), {});
 
         // return none
         const recognizerResult: RecognizerResult = {
             text,
             intents: { None: { score: 1.0 } },
             entities: mergedEntities,
+            sentiment: sentiment,
         };
         return recognizerResult;
     }
