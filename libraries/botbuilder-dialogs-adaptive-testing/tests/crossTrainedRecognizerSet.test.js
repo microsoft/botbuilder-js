@@ -1,5 +1,9 @@
+const { strictEqual } = require('assert');
+const assert = require('assert');
 const { CrossTrainedRecognizerSet, RegexRecognizer, IntentPattern } = require('botbuilder-dialogs-adaptive');
 const { TestUtils } = require('../lib');
+const { ActivityTypes, TestAdapter, TurnContext } = require('botbuilder');
+const { DialogContext, DialogSet } = require('botbuilder-dialogs');
 const {
     crossTrainText,
     xIntentText,
@@ -26,6 +30,28 @@ const createRecognizer = () =>
             }),
         ],
     });
+
+const user = {
+    id: process.env['USER_ID'] || 'UK8CH2281:TKGSUQHQE',
+};
+
+const bot = {
+    id: process.env['BOT_ID'] || 'BKGSYSTFG:TKGSUQHQE',
+};
+
+const getDialogContext = (testName, text, locale = 'en-us') => {
+    return new DialogContext(
+        new DialogSet(),
+        new TurnContext(new TestAdapter(TestAdapter.createConversation(testName)), {
+            type: ActivityTypes.Message,
+            text: text,
+            recipient: user,
+            from: bot,
+            locale,
+        }),
+        {}
+    );
+};
 
 describe('CrossTrainedRecognizerSetTests', function () {
     let resourceExplorer;
@@ -59,6 +85,61 @@ describe('CrossTrainedRecognizerSetTests', function () {
 
     it('EntitiesWithNoneIntent', async () => {
         await TestUtils.runTestScript(resourceExplorer, 'CrossTrainedRecognizerSetTests_NoneIntentWithEntities');
+    });
+
+    it('NoneIntent', async function () {
+        const recognizer = new CrossTrainedRecognizerSet().configure({
+            recognizers: [
+                new RegexRecognizer().configure({
+                    id: 'duck',
+                    intents: [new IntentPattern('None', 'duck')],
+                }),
+            ],
+        });
+        const dc = getDialogContext('noneIntent', 'duck');
+        const results = await recognizer.recognize(dc, dc.context.activity);
+
+        strictEqual(Object.keys(results.intents).length, 1);
+        strictEqual(Object.keys(results.intents)[0], 'None');
+        assert(Object.keys(results.sentiment));
+    });
+
+    it('NoneIntentDeferToRecognizer', async function () {
+        const recognizer = new CrossTrainedRecognizerSet().configure({
+            recognizers: [
+                new RegexRecognizer().configure({
+                    id: 'duck',
+                    intents: [new IntentPattern('DeferToRecognizer_x', 'duck')],
+                }),
+            ],
+        });
+        const dc = getDialogContext('DeferToRecognizer', 'duck');
+        const results = await recognizer.recognize(dc, dc.context.activity);
+
+        strictEqual(Object.keys(results.intents).length, 1);
+        strictEqual(Object.keys(results.intents)[0], 'None');
+        assert(Object.keys(results.sentiment));
+    });
+
+    it('ChooseIntentAmbiguous', async function () {
+        const recognizer = new CrossTrainedRecognizerSet().configure({
+            recognizers: [
+                new RegexRecognizer().configure({
+                    id: 'duck',
+                    intents: [new IntentPattern('x', 'duck'), new IntentPattern('x', 'x')],
+                }),
+                new RegexRecognizer().configure({
+                    id: 'y',
+                    intents: [new IntentPattern('y', 'duck')],
+                }),
+            ],
+        });
+        const dc = getDialogContext('ChooseIntentAmbiguous', 'duck');
+        const results = await recognizer.recognize(dc, dc.context.activity);
+
+        strictEqual(Object.keys(results.intents).length, 1);
+        strictEqual(Object.keys(results.intents)[0], 'ChooseIntent');
+        strictEqual(results.candidates[1].id, 'y');
     });
 
     describe('Telemetry', () => {
