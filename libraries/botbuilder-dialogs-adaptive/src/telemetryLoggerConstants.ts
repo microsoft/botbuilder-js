@@ -13,80 +13,80 @@ export class TelemetryLoggerConstants {
     /**
      * The generic name of the event when a binding completes. When this event is logged, the context property will contain a more descriptive constant.
      */
-    public static readonly GeneratorResultEvent: string = 'GeneratorResult';
+    static readonly GeneratorResultEvent: string = 'GeneratorResult';
 
     /**
      * The name of the event when an adaptive dialog trigger occurs.
      */
-    public static readonly TriggerEvent: string = 'AdaptiveDialogTrigger';
+    static readonly TriggerEvent: string = 'AdaptiveDialogTrigger';
 
     /**
      * The name of the event when an adaptive dialog complete occurs.
      */
-    public static readonly CompleteEvent: string = 'AdaptiveDialogComplete';
+    static readonly CompleteEvent: string = 'AdaptiveDialogComplete';
 
     /**
      * The name of the event when an adaptive dialog cancel occurs.
      */
-    public static readonly DialogCancelEvent: string = 'AdaptiveDialogCancel';
+    static readonly DialogCancelEvent: string = 'AdaptiveDialogCancel';
 
     /**
      * The name of the event when an adaptive dialog start occurs.
      */
-    public static readonly DialogStartEvent: string = 'AdaptiveDialogStart';
+    static readonly DialogStartEvent: string = 'AdaptiveDialogStart';
 
     /**
      * The name of the event when an adaptive dialog action occurs.
      */
-    public static readonly DialogActionEvent: string = 'AdaptiveDialogAction';
+    static readonly DialogActionEvent: string = 'AdaptiveDialogAction';
 
     /**
      * The name of the event when a Log Action result occurs.
      */
-    public static readonly LogActionResultEvent: string = 'LogActionResult';
+    static readonly LogActionResultEvent: string = 'LogActionResult';
 
     /**
      * The name of the event when a Sent Activity result occurs.
      */
-    public static readonly SendActivityResultEvent: string = 'SendActivityResult';
+    static readonly SendActivityResultEvent: string = 'SendActivityResult';
 
     /**
      * The name of the event when an Update Activity result occurs.
      */
-    public static readonly UpdateActivityResultEvent: string = 'UpdateActivityResult';
+    static readonly UpdateActivityResultEvent: string = 'UpdateActivityResult';
 
     /**
      * The name of the event when an Input result occurs.
      */
-    public static readonly InputDialogResultEvent: string = 'InputDialogResult';
+    static readonly InputDialogResultEvent: string = 'InputDialogResult';
 
     /**
      * The name of the event when an OAuth Input result occurs.
      */
-    public static readonly OAuthInputResultEvent: string = 'OAuthInputResult';
+    static readonly OAuthInputResultEvent: string = 'OAuthInputResult';
 
     /**
      * The name of the event when a cross trained recognizer set result occurs.
      */
-    public static readonly CrossTrainedRecognizerSetResultEvent: string = 'CrossTrainedRecognizerSetResult';
+    static readonly CrossTrainedRecognizerSetResultEvent: string = 'CrossTrainedRecognizerSetResult';
 
     /**
      * The name of the event when a multi language recognizer result occurs.
      */
-    public static readonly MultiLanguageRecognizerResultEvent: string = 'MultiLanguageRecognizerResult';
+    static readonly MultiLanguageRecognizerResultEvent: string = 'MultiLanguageRecognizerResult';
 
     /**
      * The name of the event when a recognizer set result occurs.
      */
-    public static readonly RecognizerSetResultEvent: string = 'RecognizerSetResult';
+    static readonly RecognizerSetResultEvent: string = 'RecognizerSetResult';
 
     /**
      * The name of the event when a regex recognizer result occurs.
      */
-    public static readonly RegexRecognizerResultEvent: string = 'RegexRecognizerResult';
+    static readonly RegexRecognizerResultEvent: string = 'RegexRecognizerResult';
 
     /**
      * The name of the event when a value recognizer result occurs.
      */
-    public static readonly ValueRecognizerResultEvent: string = 'ValueRecognizerResult';
+    static readonly ValueRecognizerResultEvent: string = 'ValueRecognizerResult';
 }

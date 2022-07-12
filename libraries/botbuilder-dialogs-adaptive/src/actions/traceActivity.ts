@@ -38,9 +38,9 @@ export interface TraceActivityConfiguration extends DialogConfiguration {
  * Send an trace activity back to the transcript.
  */
 export class TraceActivity<O extends object = {}> extends Dialog<O> implements TraceActivityConfiguration {
-    public static $kind = 'Microsoft.TraceActivity';
+    static $kind = 'Microsoft.TraceActivity';
 
-    public constructor();
+    constructor();
 
     /**
      * Initializes a new instance of the [TraceActivity](xref:botbuilder-dialogs-adaptive.TraceActivity) class.
@@ -50,7 +50,7 @@ export class TraceActivity<O extends object = {}> extends Dialog<O> implements T
      * @param value Value expression to send as the value.
      * @param label Label to use when describing a trace activity.
      */
-    public constructor(name: string, valueType: string, value: any, label: string);
+    constructor(name: string, valueType: string, value: any, label: string);
 
     /**
      * Initializes a new instance of the [TraceActivity](xref:botbuilder-dialogs-adaptive.TraceActivity) class.
@@ -60,7 +60,7 @@ export class TraceActivity<O extends object = {}> extends Dialog<O> implements T
      * @param value Optional. Value expression to send as the value.
      * @param label Optional. Label to use when describing a trace activity.
      */
-    public constructor(name?: string, valueType?: string, value?: any, label?: string) {
+    constructor(name?: string, valueType?: string, value?: any, label?: string) {
         super();
         if (name) {
             this.name = new StringExpression(name);
@@ -79,33 +79,33 @@ export class TraceActivity<O extends object = {}> extends Dialog<O> implements T
     /**
      * Gets or sets name of the trace activity.
      */
-    public name?: StringExpression;
+    name?: StringExpression;
 
     /**
      * Gets or sets value type of the trace activity.
      */
-    public valueType?: StringExpression;
+    valueType?: StringExpression;
 
     /**
      * Gets or sets value expression to send as the value.
      */
-    public value?: ValueExpression;
+    value?: ValueExpression;
 
     /**
      * Gets or sets a label to use when describing a trace activity.
      */
-    public label?: StringExpression;
+    label?: StringExpression;
 
     /**
      * An optional expression which if is true will disable this action.
      */
-    public disabled?: BoolExpression;
+    disabled?: BoolExpression;
 
     /**
      * @param property The key of the conditional selector configuration.
      * @returns The converter for the selector configuration.
      */
-    public getConverter(property: keyof TraceActivityConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof TraceActivityConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'name':
                 return new StringExpressionConverter();
@@ -129,7 +129,7 @@ export class TraceActivity<O extends object = {}> extends Dialog<O> implements T
      * @param _options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
+    async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }

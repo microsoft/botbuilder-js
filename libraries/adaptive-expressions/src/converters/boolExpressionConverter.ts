@@ -21,7 +21,7 @@ export class BoolExpressionConverter {
      * @param value `any` value to convert.
      * @returns The [BoolExpression](xref:adaptive-expressions.BoolExpression).
      */
-    public convert(value: Input | BoolExpression): BoolExpression {
+    convert(value: Input | BoolExpression): BoolExpression {
         return value instanceof BoolExpression ? value : new BoolExpression(value);
     }
 }

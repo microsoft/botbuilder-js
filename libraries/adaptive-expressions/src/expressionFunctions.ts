@@ -28,7 +28,7 @@ export class ExpressionFunctions {
     /**
      * Read only Dictionary of built in functions.
      */
-    public static readonly standardFunctions: ReadonlyMap<
+    static readonly standardFunctions: ReadonlyMap<
         string,
         ExpressionEvaluator
     > = ExpressionFunctions.getStandardFunctions();

@@ -70,75 +70,75 @@ export interface InputDialogConfiguration extends DialogConfiguration {
  * Defines input dialogs.
  */
 export abstract class InputDialog extends Dialog implements InputDialogConfiguration {
-    public static OPTIONS_PROPERTY = 'this.options';
-    public static VALUE_PROPERTY = 'this.value';
-    public static TURN_COUNT_PROPERTY = 'this.turnCount';
+    static OPTIONS_PROPERTY = 'this.options';
+    static VALUE_PROPERTY = 'this.value';
+    static TURN_COUNT_PROPERTY = 'this.turnCount';
 
     /**
      * A value indicating whether the input should always prompt the user regardless of there being a value or not.
      */
-    public alwaysPrompt: BoolExpression;
+    alwaysPrompt: BoolExpression;
 
     /**
      * Interruption policy.
      */
-    public allowInterruptions: BoolExpression;
+    allowInterruptions: BoolExpression;
 
     /**
      * The value expression which the input will be bound to.
      */
-    public property: StringExpression;
+    property: StringExpression;
 
     /**
      * A value expression which can be used to initialize the input prompt.
      */
-    public value: ValueExpression;
+    value: ValueExpression;
 
     /**
      * The activity to send to the user.
      */
-    public prompt: TemplateInterface<Partial<Activity>, DialogStateManager>;
+    prompt: TemplateInterface<Partial<Activity>, DialogStateManager>;
 
     /**
      * The activity template for retrying prompt.
      */
-    public unrecognizedPrompt: TemplateInterface<Partial<Activity>, DialogStateManager>;
+    unrecognizedPrompt: TemplateInterface<Partial<Activity>, DialogStateManager>;
 
     /**
      * The activity template to send to the user whenever the value provided is invalid or not.
      */
-    public invalidPrompt: TemplateInterface<Partial<Activity>, DialogStateManager>;
+    invalidPrompt: TemplateInterface<Partial<Activity>, DialogStateManager>;
 
     /**
      * The activity template to send when maxTurnCount has be reached and the default value is used.
      */
-    public defaultValueResponse: TemplateInterface<Partial<Activity>, DialogStateManager>;
+    defaultValueResponse: TemplateInterface<Partial<Activity>, DialogStateManager>;
 
     /**
      * The expressions to run to validate the input.
      */
-    public validations: string[] = [];
+    validations: string[] = [];
 
     /**
      * Maximum number of times to ask the user for this value before the dialog gives up.
      */
-    public maxTurnCount?: IntExpression;
+    maxTurnCount?: IntExpression;
 
     /**
      * The default value for the input dialog when maxTurnCount is exceeded.
      */
-    public defaultValue?: ValueExpression;
+    defaultValue?: ValueExpression;
 
     /**
      * An optional expression which if is true will disable this action.
      */
-    public disabled?: BoolExpression;
+    disabled?: BoolExpression;
 
     /**
      * @param property The key of the conditional selector configuration.
      * @returns The converter for the selector configuration.
      */
-    public getConverter(property: keyof InputDialogConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof InputDialogConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'alwaysPrompt':
                 return new BoolExpressionConverter();
@@ -174,7 +174,7 @@ export abstract class InputDialog extends Dialog implements InputDialogConfigura
      * @param prompt Optional. The [Activity](xref:botframework-schema.Activity) to send to the user,
      * if a string is specified it will instantiates an [ActivityTemplate](xref:botbuilder-dialogs-adaptive.ActivityTemplate).
      */
-    public constructor(property?: string, prompt?: Partial<Activity> | string) {
+    constructor(property?: string, prompt?: Partial<Activity> | string) {
         super();
         if (property) {
             this.property = new StringExpression(property);
@@ -195,7 +195,7 @@ export abstract class InputDialog extends Dialog implements InputDialogConfigura
      * @param options Optional. Initial information to pass to the [Dialog](xref:botbuilder-dialogs.Dialog).
      * @returns A [DialogTurnResult](xref:botbuilder-dialogs.DialogTurnResult) `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, options?: any): Promise<DialogTurnResult> {
+    async beginDialog(dc: DialogContext, options?: any): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }
@@ -234,7 +234,7 @@ export abstract class InputDialog extends Dialog implements InputDialogConfigura
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @returns A [DialogTurnResult](xref:botbuilder-dialogs.DialogTurnResult) `Promise` representing the asynchronous operation.
      */
-    public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
+    async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
         const activity = dc.context.activity;
 
         // Interrupted dialogs reprompt so we can ignore the incoming activity.
@@ -295,7 +295,7 @@ export abstract class InputDialog extends Dialog implements InputDialogConfigura
      * The type of the value returned is dependent on the child dialog.
      * @returns A [DialogTurnResult](xref:botbuilder-dialogs.DialogTurnResult) `Promise` representing the asynchronous operation.
      */
-    public async resumeDialog(dc: DialogContext, _reason: DialogReason, _result?: any): Promise<DialogTurnResult> {
+    async resumeDialog(dc: DialogContext, _reason: DialogReason, _result?: any): Promise<DialogTurnResult> {
         // Re-send initial prompt
         return await this.promptUser(dc, InputState.missing);
     }

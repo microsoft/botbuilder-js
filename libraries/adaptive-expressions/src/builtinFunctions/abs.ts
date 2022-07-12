@@ -16,7 +16,7 @@ export class Abs extends NumberTransformEvaluator {
     /**
      * Initializes a new instance of the [Floor](xref:adaptive-expressions.Abs) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.Abs, Abs.func);
     }
 

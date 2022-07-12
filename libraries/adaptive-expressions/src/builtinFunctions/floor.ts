@@ -16,7 +16,7 @@ export class Floor extends NumberTransformEvaluator {
     /**
      * Initializes a new instance of the [Floor](xref:adaptive-expressions.Floor) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.Floor, Floor.func);
     }
 

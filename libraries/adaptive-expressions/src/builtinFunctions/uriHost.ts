@@ -22,7 +22,7 @@ export class UriHost extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [UriHost](xref:adaptive-expressions.UriHost) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.UriHost, UriHost.evaluator, ReturnType.String, FunctionUtils.validateUnary);
     }
 

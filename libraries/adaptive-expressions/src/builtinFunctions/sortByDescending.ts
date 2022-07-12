@@ -20,7 +20,7 @@ export class SortByDescending extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [SortByDescending](xref:adaptive-expressions.SortByDescending) class.
      */
-    public constructor() {
+    constructor() {
         super(
             ExpressionType.SortByDescending,
             InternalFunctionUtils.sortBy(true),

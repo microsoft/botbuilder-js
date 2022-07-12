@@ -21,7 +21,7 @@ export class StartsWith extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [StartsWith](xref:adaptive-expressions.StartsWith) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.StartsWith, StartsWith.evaluator(), ReturnType.Boolean, StartsWith.validator);
     }
 

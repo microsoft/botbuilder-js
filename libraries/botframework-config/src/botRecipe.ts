@@ -80,12 +80,12 @@ export class BotRecipe {
     /**
      * Version of the recipe.
      */
-    public version = '1.0';
+    version = '1.0';
 
     /**
      *
      */
-    public resources: IResource[] = [];
+    resources: IResource[] = [];
 
     /**
      * Creates a new BotRecipe instance.
@@ -99,7 +99,7 @@ export class BotRecipe {
      * @param source JSON object of [BotRecipe](xref:botframework-config.BotRecipe) type.
      * @returns A new [BotRecipe](xref:botframework-config.BotRecipe) instance.
      */
-    public static fromJSON(source: Partial<BotRecipe> = {}): BotRecipe {
+    static fromJSON(source: Partial<BotRecipe> = {}): BotRecipe {
         const botRecipe: BotRecipe = new BotRecipe();
         const { version, resources } = source;
         botRecipe.resources = resources ? resources : botRecipe.resources;
@@ -112,7 +112,7 @@ export class BotRecipe {
      * Creates a JSON object from `this` class instance.
      * @returns A JSON object of [BotRecipe](xref:botframework-config.BotRecipe) type;
      */
-    public toJSON(): Partial<BotRecipe> {
+    toJSON(): Partial<BotRecipe> {
         const { version, resources } = this;
 
         return { version, resources };

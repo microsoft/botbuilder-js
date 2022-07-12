@@ -18,17 +18,17 @@ export interface UserConversationUpdateConfiguration {
  * Action to script sending a conversationUpdate activity to the bot.
  */
 export class UserConversationUpdate extends TestAction implements UserConversationUpdateConfiguration {
-    public static $kind = 'Microsoft.Test.UserConversationUpdate';
+    static $kind = 'Microsoft.Test.UserConversationUpdate';
 
     /**
      * The members added names.
      */
-    public membersAdded: string[];
+    membersAdded: string[];
 
     /**
      * The members removed names.
      */
-    public membersRemoved: string[];
+    membersRemoved: string[];
 
     /**
      * Execute the test.
@@ -38,7 +38,7 @@ export class UserConversationUpdate extends TestAction implements UserConversati
      * @param _inspector Inspector for dialog context.
      * @returns A Promise that represents the work queued to execute.
      */
-    public async execute(
+    async execute(
         testAdapter: TestAdapter,
         callback: (context: TurnContext) => Promise<void>,
         _inspector?: Inspector

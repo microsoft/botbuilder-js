@@ -24,7 +24,7 @@ export class MockSettingsMiddleware implements Middleware {
      *
      * @param {SettingMock[]} settingMocks Settings to mock.
      */
-    public constructor(settingMocks: SettingMock[]) {
+    constructor(settingMocks: SettingMock[]) {
         settingMocks.forEach((property) => {
             if (property instanceof SettingStringMock) {
                 const mock = property;
@@ -43,7 +43,7 @@ export class MockSettingsMiddleware implements Middleware {
      * @param context The context object for this turn.
      * @param next The delegate to call to continue the bot middleware pipeline.
      */
-    public async onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
+    async onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
         if (!this._configured) {
             if (this._mockData.size) {
                 // We assume bot will use TurnState to store settings' configuration.

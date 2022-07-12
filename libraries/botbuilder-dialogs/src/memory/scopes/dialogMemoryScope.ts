@@ -17,7 +17,7 @@ export class DialogMemoryScope extends MemoryScope {
     /**
      * Initializes a new instance of the [DialogMemoryScope](xref:botbuilder-dialogs.DialogMemoryScope) class.
      */
-    public constructor() {
+    constructor() {
         super(ScopePath.dialog);
     }
 
@@ -26,7 +26,7 @@ export class DialogMemoryScope extends MemoryScope {
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) object for this turn.
      * @returns The memory for the scope.
      */
-    public getMemory(dc: DialogContext): object {
+    getMemory(dc: DialogContext): object {
         // If active dialog is a container dialog then "dialog" binds to it.
         // Otherwise the "dialog" will bind to the dialogs parent assuming it
         // is a container.
@@ -44,7 +44,7 @@ export class DialogMemoryScope extends MemoryScope {
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) object for this turn.
      * @param memory Memory object to set for the scope.
      */
-    public setMemory(dc: DialogContext, memory: object): void {
+    setMemory(dc: DialogContext, memory: object): void {
         if (memory == undefined) {
             throw new Error(`DialogMemoryScope.setMemory: undefined memory object passed in.`);
         }

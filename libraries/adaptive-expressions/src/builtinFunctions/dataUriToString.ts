@@ -19,7 +19,7 @@ export class DataUriToString extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [DataUriToString](xref:adaptive-expressions.DataUriToString) class.
      */
-    public constructor() {
+    constructor() {
         super(
             ExpressionType.DataUriToString,
             DataUriToString.evaluator(),

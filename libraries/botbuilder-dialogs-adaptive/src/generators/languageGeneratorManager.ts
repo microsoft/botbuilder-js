@@ -36,7 +36,7 @@ export class LanguageGeneratorManager<T = unknown, D extends Record<string, unkn
      *
      * @param resourceManager Resource explorer to manager LG files.
      */
-    public constructor(resourceManager: ResourceExplorer) {
+    constructor(resourceManager: ResourceExplorer) {
         this._resourceExporer = resourceManager;
         this._resourceExporer.changed = async (event: ResourceChangeEvent, resources: Resource[]): Promise<void> => {
             resources.forEach((resource) => {
@@ -63,7 +63,7 @@ export class LanguageGeneratorManager<T = unknown, D extends Record<string, unkn
     /**
      * Gets or sets language generators.
      */
-    public languageGenerators = new Map<string, LanguageGenerator<T, D>>();
+    languageGenerators = new Map<string, LanguageGenerator<T, D>>();
 
     /**
      * Returns the resolver to resolve LG import id to template text based on language and a template resource loader delegate.
@@ -72,7 +72,7 @@ export class LanguageGeneratorManager<T = unknown, D extends Record<string, unkn
      * @param resourceMapping Template resource loader delegate.
      * @returns The delegate to resolve the resource.
      */
-    public static resourceExplorerResolver(
+    static resourceExplorerResolver(
         locale: string,
         resourceMapping: Map<string, Resource[]>
     ): ImportResolverDelegate {

@@ -20,29 +20,29 @@ export interface AssertReplyActivityConfiguration {
  * Basic assertion TestAction, which validates assertions against a reply activity.
  */
 export class AssertReplyActivity extends TestAction implements AssertReplyActivityConfiguration {
-    public static $kind = 'Microsoft.Test.AssertReplyActivity';
+    static $kind = 'Microsoft.Test.AssertReplyActivity';
 
     /**
      * Description of what this assertion is.
      */
-    public description: string;
+    description: string;
 
     /**
      * The milliseconds to wait for a reply.
      */
-    public timeout = 3000;
+    timeout = 3000;
 
     /**
      * The expressions for assertions.
      */
-    public assertions: string[];
+    assertions: string[];
 
     /**
      * Gets the text to assert for an activity.
      *
      * @returns String.
      */
-    public getConditionDescription(): string {
+    getConditionDescription(): string {
         return this.description || this.assertions.join('\n');
     }
 
@@ -51,7 +51,7 @@ export class AssertReplyActivity extends TestAction implements AssertReplyActivi
      *
      * @param activity The activity to verify.
      */
-    public validateReply(activity: Activity): void {
+    validateReply(activity: Activity): void {
         if (this.assertions) {
             const engine = new ExpressionParser();
             for (let i = 0; i < this.assertions.length; i++) {
@@ -72,7 +72,7 @@ export class AssertReplyActivity extends TestAction implements AssertReplyActivi
      * @param _inspector Inspector for dialog context.
      * @returns A Promise that represents the work queued to execute.
      */
-    public async execute(
+    async execute(
         testAdapter: TestAdapter,
         _callback: (context: TurnContext) => Promise<any>,
         _inspector?: Inspector

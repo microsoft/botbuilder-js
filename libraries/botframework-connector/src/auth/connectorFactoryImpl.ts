@@ -13,8 +13,19 @@ export const USER_AGENT = `Microsoft-BotFramework/3.1 ${packageInfo.name}/${
     packageInfo.version
 } ${getDefaultUserAgentValue()} `;
 
-// Internal
+/**
+ * @internal
+ * Implementation of [ConnectorFactory](xref:botframework-connector.ConnectorFactory).
+ */
 export class ConnectorFactoryImpl extends ConnectorFactory {
+    /**
+     * @param appId The AppID.
+     * @param toChannelFromBotOAuthScope The to Channel from bot oauth scope.
+     * @param loginEndpoint The login url.
+     * @param validateAuthority The validate authority value to use.
+     * @param credentialFactory A ServiceClientCredentialsFactory to use.
+     * @param connectorClientOptions The [ConnectorClientOptions](xref:botframework-connector.ConnectorClientOptions) to use when creating ConnectorClients.
+     */
     constructor(
         private readonly appId: string,
         private readonly toChannelFromBotOAuthScope: string,
@@ -26,6 +37,11 @@ export class ConnectorFactoryImpl extends ConnectorFactory {
         super();
     }
 
+    /**
+     * @param serviceUrl The client's service URL.
+     * @param audience The audience to use for outbound communication. It will vary by cloud environment.
+     * @returns The new instance of the ConnectorClient class.
+     */
     async create(serviceUrl: string, audience?: string): Promise<ConnectorClient> {
         // Use the credentials factory to create credentails specific to this particular cloud environment.
         const credentials = await this.credentialFactory.createCredentials(

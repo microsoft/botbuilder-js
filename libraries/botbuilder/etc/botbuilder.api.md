@@ -7,7 +7,6 @@
 import { Activity } from 'botbuilder-core';
 import { ActivityHandler } from 'botbuilder-core';
 import { ActivityHandlerBase } from 'botbuilder-core';
-import { AdaptiveCardInvokeResponse } from 'botbuilder-core';
 import { AppBasedLinkQuery } from 'botbuilder-core';
 import { AppCredentials } from 'botframework-connector';
 import { AttachmentData } from 'botbuilder-core';
@@ -269,7 +268,7 @@ export class HandoffEventNames {
 
 // Warning: (ae-forgotten-export) The symbol "InterceptionMiddleware" needs to be exported by the entry point index.d.ts
 //
-// @public
+// @public @deprecated
 export class InspectionMiddleware extends InterceptionMiddleware {
     constructor(inspectionState: InspectionState, userState?: UserState, conversationState?: ConversationState, credentials?: Partial<MicrosoftAppCredentials>);
     protected inbound(turnContext: TurnContext, traceActivity: Partial<Activity>): Promise<any>;
@@ -278,7 +277,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
     protected traceState(turnContext: TurnContext): Promise<any>;
     }
 
-// @public
+// @public @deprecated
 export class InspectionState extends BotState {
     constructor(storage: Storage_2);
     protected getStorageKey(_turnContext: TurnContext): string;
@@ -356,7 +355,6 @@ export class StreamingHttpClient implements HttpClient {
 export class TeamsActivityHandler extends ActivityHandler {
     protected dispatchConversationUpdateActivity(context: TurnContext): Promise<void>;
     protected dispatchEventActivity(context: TurnContext): Promise<void>;
-    protected handleAdaptiveCardAction(_context: TurnContext): Promise<AdaptiveCardInvokeResponse>;
     protected handleTeamsAppBasedLinkQuery(_context: TurnContext, _query: AppBasedLinkQuery): Promise<MessagingExtensionResponse>;
     protected handleTeamsCardActionInvoke(_context: TurnContext): Promise<InvokeResponse>;
     protected handleTeamsFileConsent(context: TurnContext, fileConsentCardResponse: FileConsentCardResponse): Promise<void>;

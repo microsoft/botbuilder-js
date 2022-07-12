@@ -13,7 +13,7 @@ import { OnActivity } from './onActivity';
  * Actions triggered when a MessageDeleteActivity is received.
  */
 export class OnMessageDeleteActivity extends OnActivity {
-    public static $kind = 'Microsoft.OnMessageDeleteActivity';
+    static $kind = 'Microsoft.OnMessageDeleteActivity';
 
     /**
      * Initializes a new instance of the [OnMessageDeleteActivity](xref:botbuilder-dialogs-adaptive.OnMessageDeleteActivity) class.
@@ -21,7 +21,7 @@ export class OnMessageDeleteActivity extends OnActivity {
      * @param actions Optional. A [Dialog](xref:botbuilder-dialogs.Dialog) list containing the actions to add to the plan when the rule constraints are met.
      * @param condition Optional. Condition which needs to be met for the actions to be executed.
      */
-    public constructor(actions: Dialog[] = [], condition?: string) {
+    constructor(actions: Dialog[] = [], condition?: string) {
         super(ActivityTypes.MessageDelete, actions, condition);
     }
 }

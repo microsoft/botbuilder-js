@@ -29,7 +29,7 @@ export class GetNextViableDate extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [GetNextViableDate](xref:adaptive-expressions.GetNextViableDate) class.
      */
-    public constructor() {
+    constructor() {
         super(
             ExpressionType.GetNextViableDate,
             GetNextViableDate.evaluator,

@@ -37,19 +37,19 @@ export class PropertySchema {
      * @remarks
      * Contains `[]` for arrays and `.` for path segments.
      */
-    public readonly path: string;
+    readonly path: string;
 
     /**
      * JSON Schema object for this property.
      */
-    public readonly schema: object;
+    readonly schema: object;
 
     /**
      * Parent property schema if any.
      *
      * @returns The parent property schema if any.
      */
-    public get parent(): PropertySchema | undefined {
+    get parent(): PropertySchema | undefined {
         return this._parent;
     }
 
@@ -58,7 +58,7 @@ export class PropertySchema {
      *
      * @returns The child properties if there are any.
      */
-    public get children(): PropertySchema[] {
+    get children(): PropertySchema[] {
         return this._children;
     }
 
@@ -67,7 +67,7 @@ export class PropertySchema {
      *
      * @returns A list of entity names.
      */
-    public get entities(): string[] {
+    get entities(): string[] {
         return this._entities;
     }
 
@@ -76,7 +76,7 @@ export class PropertySchema {
      *
      * @returns A List of expected only entity names.
      */
-    public get expectedOnly(): string[] {
+    get expectedOnly(): string[] {
         return this._expectedOnly;
     }
 
@@ -87,7 +87,7 @@ export class PropertySchema {
      * Array brackets `[]` will have been removed.
      * @returns The name for this property.
      */
-    public get name(): string {
+    get name(): string {
         const segments = this.path.split('.');
         return segments[segments.length - 1].replace('[]', '');
     }
@@ -97,21 +97,21 @@ export class PropertySchema {
      *
      * @returns The JSON Schema type.
      */
-    public get type(): string {
+    get type(): string {
         return this.schema['type'];
     }
 
     /**
      * @returns `true` if the property is an array.
      */
-    public isArray(): boolean {
+    isArray(): boolean {
         return this.path.endsWith('[]');
     }
 
     /**
      * @returns `true` if the property is an enum.
      */
-    public isEnum(): boolean {
+    isEnum(): boolean {
         return !!this.schema['enum'];
     }
 }

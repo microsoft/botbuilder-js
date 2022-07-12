@@ -20,7 +20,7 @@ export class AddProperty extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [AddProperty](xref:adaptive-expressions.AddProperty) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.AddProperty, AddProperty.evaluator(), ReturnType.Object, AddProperty.validator);
     }
 

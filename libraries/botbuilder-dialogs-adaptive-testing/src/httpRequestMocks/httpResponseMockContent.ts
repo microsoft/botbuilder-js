@@ -20,7 +20,7 @@ export class HttpResponseMockContent {
      *
      * @param {HttpResponseMock} httpResponseMock The mock that provides content.
      */
-    public constructor(httpResponseMock?: HttpResponseMock) {
+    constructor(httpResponseMock?: HttpResponseMock) {
         this._contentType = httpResponseMock?.contentType ?? ResponseContentType.String;
         this._content = httpResponseMock?.content ?? '';
     }
@@ -30,7 +30,7 @@ export class HttpResponseMockContent {
      *
      * @returns {ResponseContent} A new ResponseContent.
      */
-    public getHttpContent(): ResponseContent {
+    getHttpContent(): ResponseContent {
         let content: ResponseContent = '';
         switch (this._contentType) {
             case ResponseContentType.String:

@@ -18,22 +18,22 @@ export interface UserSaysConfiguration {
  * Action to script sending text to the bot.
  */
 export class UserSays extends TestAction implements UserSaysConfiguration {
-    public static $kind = 'Microsoft.Test.UserSays';
+    static $kind = 'Microsoft.Test.UserSays';
 
     /**
      * The text to send to the bot.
      */
-    public text: string;
+    text: string;
 
     /**
      * If user is set then the channalAccount.id and channelAccount.name will be from user.
      */
-    public user: string;
+    user: string;
 
     /**
      * The locale of user.
      */
-    public locale: string;
+    locale: string;
 
     /**
      * Execute the test.
@@ -43,7 +43,7 @@ export class UserSays extends TestAction implements UserSaysConfiguration {
      * @param _inspector Inspector for dialog context.
      * @returns A Promise that represents the work queued to execute.
      */
-    public async execute(
+    async execute(
         testAdapter: TestAdapter,
         callback: (context: TurnContext) => Promise<void>,
         _inspector?: Inspector

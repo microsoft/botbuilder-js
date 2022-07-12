@@ -19,7 +19,7 @@ export type Inspector = (inspector: DialogContextInspector) => Promise<void>;
  * Abstract base class for scripted actions.
  */
 export abstract class TestAction extends Configurable {
-    public abstract execute(
+    abstract execute(
         adapter: TestAdapter,
         callback: (context: TurnContext) => Promise<void>,
         inspector?: Inspector

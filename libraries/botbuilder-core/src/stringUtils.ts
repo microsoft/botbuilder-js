@@ -12,10 +12,12 @@
 export class StringUtils {
     /**
      * Truncate string with ...
+     *
      * @param text Text.
      * @param length Length to truncate text.
+     * @returns Original string modified.
      */
-    public static ellipsis(text: string, length: number): string {
+    static ellipsis(text: string, length: number): string {
         text = text || '';
         if (text.length <= length) {
             return text;
@@ -33,8 +35,9 @@ export class StringUtils {
      * https://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
      *
      * @param text Text to hash.
+     * @returns A string which is an unique hash.
      */
-    public static hash(text: string): string {
+    static hash(text: string): string {
         const length = text.length;
         let hash = 0;
         for (let i = 0; i < length; i++) {
@@ -47,10 +50,12 @@ export class StringUtils {
 
     /**
      * EllipsisHash - create truncated string with unique hash for the truncated part.
+     *
      * @param text Text to truncate.
      * @param length Length to truncate at.
+     * @returns The truncated string with unique hash for the truncated part.
      */
-    public static ellipsisHash(text: string, length: number): string {
+    static ellipsisHash(text: string, length: number): string {
         text = text || '';
         if (text.length <= length) {
             return text;

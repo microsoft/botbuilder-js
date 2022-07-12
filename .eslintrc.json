@@ -45,6 +45,15 @@
   "rules": {
     "@typescript-eslint/no-empty-function": "off",
     "@typescript-eslint/no-explicit-any": "error",
+    "@typescript-eslint/explicit-member-accessibility": [
+      "error",
+      {
+        "accessibility": "no-public",
+        "overrides": {
+          "parameterProperties": "off"
+        }
+      }
+    ],
     "@typescript-eslint/no-unused-vars": [
       "error",
       {
@@ -129,18 +138,6 @@
       },
       "rules": {
         "@typescript-eslint/no-var-requires": "off"
-      }
-    },
-    {
-      "files": [
-        "libraries/botbuilder-ai*/**/*.ts",
-        "libraries/botbuilder-applicationinsights/**/*.ts",
-        "libraries/botbuilder-azure*/**/*.ts",
-        "libraries/botbuilder-dialogs-adaptive-runtime*/**/*.ts",
-        "libraries/botframework-streaming/**/*.ts"
-      ],
-      "rules": {
-          "@typescript-eslint/explicit-member-accessibility": ["error", { "accessibility": "no-public" }]
       }
     }
   ]

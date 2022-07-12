@@ -18,7 +18,7 @@ export class ClassMemoryScope extends MemoryScope {
      * Initializes a new instance of the [ClassMemoryScope](xref:botbuilder-dialogs.ClassMemoryScope) class.
      * @param name Name of the scope class.
      */
-    public constructor(name = ScopePath.class) {
+    constructor(name = ScopePath.class) {
         super(name, false);
     }
 
@@ -27,7 +27,7 @@ export class ClassMemoryScope extends MemoryScope {
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) object for this turn.
      * @returns The memory for the scope.
      */
-    public getMemory(dc: DialogContext): object {
+    getMemory(dc: DialogContext): object {
         // if active dialog is a container dialog then "dialog" binds to it
         if (dc.activeDialog) {
             const dialog = this.onFindDialog(dc);

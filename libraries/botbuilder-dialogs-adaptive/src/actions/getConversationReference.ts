@@ -38,18 +38,18 @@ export class GetConversationReference extends Dialog implements GetConversationR
     /**
      * Gets or sets an optional expression which if true will disable this action.
      */
-    public disabled: BoolExpression;
+    disabled: BoolExpression;
 
     /**
      * Gets or sets property path to put the value in.
      */
-    public property: StringExpression;
+    property: StringExpression;
 
     /**
      * @param property The key of the conditional selector configuration.
      * @returns The converter for the selector configuration.
      */
-    public getConverter(property: keyof GetConversationReferenceConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof GetConversationReferenceConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'disabled':
                 return new BoolExpressionConverter();
@@ -67,7 +67,7 @@ export class GetConversationReference extends Dialog implements GetConversationR
      * @param {Record<string, ?>} _options Optional, initial information to pass to the dialog.
      * @returns {Promise<DialogTurnResult>} A promise representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, _options?: Record<string, unknown>): Promise<DialogTurnResult> {
+    async beginDialog(dc: DialogContext, _options?: Record<string, unknown>): Promise<DialogTurnResult> {
         if (this.disabled?.getValue(dc.state)) {
             return dc.endDialog();
         }

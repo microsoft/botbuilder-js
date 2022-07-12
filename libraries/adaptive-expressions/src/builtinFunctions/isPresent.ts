@@ -24,7 +24,7 @@ export class IsPresent extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [IsPresent](xref:adaptive-expressions.IsPresent) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.IsPresent, IsPresent.evaluator, ReturnType.Boolean, FunctionUtils.validateUnary);
     }
 

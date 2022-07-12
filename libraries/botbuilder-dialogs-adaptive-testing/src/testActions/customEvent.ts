@@ -18,16 +18,16 @@ export interface CustomEventConfiguration {
  * Action to script sending custom event to the bot.
  */
 export class CustomEvent<T = unknown> extends TestAction implements CustomEventConfiguration {
-    public static $kind = 'Microsoft.Test.CustomEvent';
+    static $kind = 'Microsoft.Test.CustomEvent';
     /**
      * The event name.
      */
-    public name: string;
+    name: string;
 
     /**
      * Event value.
      */
-    public value?: T;
+    value?: T;
 
     /**
      * Execute the test.
@@ -37,7 +37,7 @@ export class CustomEvent<T = unknown> extends TestAction implements CustomEventC
      * @param _inspector Inspector for dialog context.
      * @returns A Promise that represents the work queued to execute.
      */
-    public async execute(
+    async execute(
         testAdapter: TestAdapter,
         callback: (context: TurnContext) => Promise<void>,
         _inspector?: Inspector

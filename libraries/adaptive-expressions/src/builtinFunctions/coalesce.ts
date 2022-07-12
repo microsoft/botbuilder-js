@@ -19,7 +19,7 @@ export class Coalesce extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [Coalesce](xref:adaptive-expressions.Coalesce) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.Coalesce, Coalesce.evaluator(), ReturnType.Object, FunctionUtils.validateAtLeastOne);
     }
 

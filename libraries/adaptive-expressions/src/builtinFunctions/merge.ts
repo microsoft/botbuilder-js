@@ -19,7 +19,7 @@ export class Merge extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [Merge](xref:adaptive-expressions.Merge) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.Merge, Merge.evaluator(), ReturnType.Object, FunctionUtils.validateAtLeastOne);
     }
 

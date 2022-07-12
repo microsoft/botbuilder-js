@@ -38,7 +38,7 @@ export class DialogInspector {
      * @param {ResourceExplorer} resourceExplorer Resource explorer for expression access to .lg templates.
      * @param {string} dialogStateProperty Alternate name for the dialogState property. (Default is "DialogState").
      */
-    public constructor(rootDialog?: Dialog, resourceExplorer?: ResourceExplorer, dialogStateProperty?: string) {
+    constructor(rootDialog?: Dialog, resourceExplorer?: ResourceExplorer, dialogStateProperty?: string) {
         if (!resourceExplorer) {
             // Add language generator for function access
             this.initialTurnState.set(languageGeneratorManagerKey, new LanguageGeneratorManager(resourceExplorer));
@@ -54,24 +54,24 @@ export class DialogInspector {
     /**
      * Gets or sets the ConversationState.
      */
-    public conversationState: ConversationState;
+    conversationState: ConversationState;
 
     /**
      * Gets or sets the UserState.
      */
-    public userState: UserState;
+    userState: UserState;
 
     /**
      * Gets initialTurnState collection to copy into the turnState on every turn.
      */
-    public readonly initialTurnState = new TurnContextStateCollection();
+    readonly initialTurnState = new TurnContextStateCollection();
 
     /**
      * Gets root dialog to use to start conversation.
      *
      * @returns {Dialog} The root dialog.
      */
-    public get rootDialog(): Dialog | undefined {
+    get rootDialog(): Dialog | undefined {
         if (this._rootDialogId) {
             return this.dialogs.find(this._rootDialogId);
         }
@@ -83,7 +83,7 @@ export class DialogInspector {
      *
      * @param {Dialog} dialog The root dialog.
      */
-    public set rootDialog(dialog: Dialog | undefined) {
+    set rootDialog(dialog: Dialog | undefined) {
         this.dialogs = new DialogSet();
         if (dialog) {
             this._rootDialogId = dialog.id;
@@ -97,12 +97,12 @@ export class DialogInspector {
     /**
      * Gets or sets global dialogs that you want to have be callable.
      */
-    public dialogs = new DialogSet();
+    dialogs = new DialogSet();
 
     /**
      * Gets or sets the DialogStateManagerConfiguration.
      */
-    public stateConfiguration: DialogStateManagerConfiguration;
+    stateConfiguration: DialogStateManagerConfiguration;
 
     /**
      * Inspects a dialogs memory.
@@ -110,7 +110,7 @@ export class DialogInspector {
      * @param {TurnContext} context Turn context.
      * @param {DialogContextInspector} inspector Inspector for analyzing/modifying dialog context.
      */
-    public async inspect(context: TurnContext, inspector: DialogContextInspector): Promise<void> {
+    async inspect(context: TurnContext, inspector: DialogContextInspector): Promise<void> {
         // This class just lets you load & save memory in parallel
         const botStateSet = new BotStateSet();
 

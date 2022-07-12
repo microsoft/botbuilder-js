@@ -19,7 +19,7 @@ export class Year extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [Year](xref:adaptive-expressions.Year) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.Year, Year.evaluator(), ReturnType.Number, FunctionUtils.validateUnaryString);
     }
 

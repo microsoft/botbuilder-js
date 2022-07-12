@@ -35,7 +35,7 @@ export class SkillHttpClient extends BotFrameworkHttpClient {
      * @param conversationIdFactory An instance of a class derived from [SkillConversationIdFactoryBase](xref:botbuilder-core.SkillConversationIdFactoryBase).
      * @param channelService Optional. The channel service.
      */
-    public constructor(
+    constructor(
         credentialProvider: ICredentialProvider,
         conversationIdFactory: SkillConversationIdFactoryBase,
         channelService?: string
@@ -58,7 +58,7 @@ export class SkillHttpClient extends BotFrameworkHttpClient {
      * @param callbackUrl The callback Url for the skill host.
      * @param activity The activity to send.
      */
-    public async postToSkill<T>(
+    async postToSkill<T>(
         originatingAudience: string,
         fromBotId: string,
         toSkill: BotFrameworkSkill,
@@ -74,7 +74,7 @@ export class SkillHttpClient extends BotFrameworkHttpClient {
      * @param callbackUrl The callback Url for the skill host.
      * @param activity The activity to send.
      */
-    public async postToSkill(
+    async postToSkill(
         fromBotId: string,
         toSkill: BotFrameworkSkill,
         callbackUrl: string,
@@ -90,7 +90,7 @@ export class SkillHttpClient extends BotFrameworkHttpClient {
      * @param activityToForward Optional. The [Activity](xref:botframework-schema.Activity) to forward.
      * @returns A `Promise` representing the [InvokeResponse](xref:botbuilder-core.InvokeResponse) for the operation.
      */
-    public async postToSkill<T = any>(
+    async postToSkill<T = any>(
         audienceOrFromBotId: string,
         fromBotIdOrSkill: string | BotFrameworkSkill,
         toSkillOrCallbackUrl: BotFrameworkSkill | string,

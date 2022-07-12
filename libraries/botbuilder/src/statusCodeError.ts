@@ -18,7 +18,7 @@ export class StatusCodeError extends Error {
      * @param statusCode The status code.
      * @param message Optional. The error message.
      */
-    public constructor(public readonly statusCode: StatusCodes, message?: string) {
+    constructor(public readonly statusCode: StatusCodes, message?: string) {
         super(message);
 
         this.name = 'StatusCodeError';
