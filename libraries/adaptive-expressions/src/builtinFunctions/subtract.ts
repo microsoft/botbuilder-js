@@ -16,7 +16,7 @@ export class Subtract extends MultivariateNumericEvaluator {
     /**
      * Initializes a new instance of the [Subtract](xref:adaptive-expressions.Subtract) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.Subtract, Subtract.func);
     }
 

@@ -20,7 +20,7 @@ export class Extensions {
      * @param obj The object to evaluate.
      * @returns True if the object implements MemoryInterface; False if it isn't.
      */
-    public static isMemoryInterface(obj: any): boolean {
+    static isMemoryInterface(obj: any): boolean {
         if (obj === undefined) {
             return false;
         }
@@ -48,7 +48,7 @@ export class Extensions {
      * @param max The exclusive upper bound of the random number returned. max must be greater than or equal to min.
      * @returns Random value.
      */
-    public static randomNext(memory: MemoryInterface, min: number, max: number): number {
+    static randomNext(memory: MemoryInterface, min: number, max: number): number {
         const randomValue = memory.getValue('Conversation.TestOptions.randomValue');
         if (randomValue !== undefined) {
             return min + (randomValue % (max - min));

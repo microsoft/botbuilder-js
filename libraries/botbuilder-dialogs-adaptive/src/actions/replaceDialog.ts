@@ -18,7 +18,7 @@ export interface ReplaceDialogConfiguration extends BaseInvokeDialogConfiguratio
  * Action which calls another [Dialog](xref:botbuilder-dialogs.Dialog), when it is done it will go to the caller's parent dialog.
  */
 export class ReplaceDialog<O extends object = {}> extends BaseInvokeDialog<O> implements ReplaceDialogConfiguration {
-    public static $kind = 'Microsoft.ReplaceDialog';
+    static $kind = 'Microsoft.ReplaceDialog';
 
     /**
      * Creates a new [ReplaceDialog](xref:botbuilder-dialogs-adaptive.ReplaceDialog) instance.
@@ -26,7 +26,7 @@ export class ReplaceDialog<O extends object = {}> extends BaseInvokeDialog<O> im
      * @param dialogId ID of the [Dialog](xref:botbuilder-dialogs.Dialog) to goto.
      * @param options Optional, static options to pass the [Dialog](xref:botbuilder-dialogs.Dialog).
      */
-    public constructor(dialogIdToCall: string, options?: O);
+    constructor(dialogIdToCall: string, options?: O);
 
     /**
      * Creates a new [ReplaceDialog](xref:botbuilder-dialogs-adaptive.ReplaceDialog) instance.
@@ -34,20 +34,20 @@ export class ReplaceDialog<O extends object = {}> extends BaseInvokeDialog<O> im
      * @param dialogIdToCall Optional. ID of the [Dialog](xref:botbuilder-dialogs.Dialog) to goto.
      * @param options Optional. Static options to pass the [Dialog](xref:botbuilder-dialogs.Dialog).
      */
-    public constructor(dialogIdToCall?: string, options?: O) {
+    constructor(dialogIdToCall?: string, options?: O) {
         super(dialogIdToCall, options);
     }
 
     /**
      * An optional expression which if is true will disable this action.
      */
-    public disabled?: BoolExpression;
+    disabled?: BoolExpression;
 
     /**
      * @param property The key of the conditional selector configuration.
      * @returns The converter for the selector configuration.
      */
-    public getConverter(property: keyof ReplaceDialogConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof ReplaceDialogConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'disabled':
                 return new BoolExpressionConverter();
@@ -63,7 +63,7 @@ export class ReplaceDialog<O extends object = {}> extends BaseInvokeDialog<O> im
      * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
+    async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return dc.endDialog();
         }

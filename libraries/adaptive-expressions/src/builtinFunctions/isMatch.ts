@@ -21,7 +21,7 @@ export class IsMatch extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [IsMatch](xref:adaptive-expressions.IsMatch) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.IsMatch, IsMatch.evaluator(), ReturnType.Boolean, IsMatch.validator);
     }
 

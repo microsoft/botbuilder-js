@@ -23,7 +23,7 @@ export class ArrayExpressionConverter<T> {
      * @param value `array` to convert.
      * @returns The [ArrayExpression](xref:adaptive-expressions.ArrayExpression).
      */
-    public convert(value: Input<T> | ArrayExpression<T>): ArrayExpression<T> {
+    convert(value: Input<T> | ArrayExpression<T>): ArrayExpression<T> {
         return value instanceof ArrayExpression ? value : new ArrayExpression<T>(value);
     }
 }

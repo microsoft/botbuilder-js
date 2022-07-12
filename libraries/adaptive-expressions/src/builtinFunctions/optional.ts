@@ -18,7 +18,7 @@ export class Optional extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [Optional](xref:adaptive-expressions.Optional) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.Optional, Optional.evaluator(), ReturnType.Boolean, FunctionUtils.validateUnaryBoolean);
         this.negation = this;
     }

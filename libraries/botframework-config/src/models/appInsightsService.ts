@@ -15,17 +15,17 @@ export class AppInsightsService extends AzureService implements IAppInsightsServ
     /**
      * Instrumentation key for logging data to appInsights.
      */
-    public instrumentationKey: string;
+    instrumentationKey: string;
 
     /**
      * (Optional) application ID used for programmatic access to AppInsights.
      */
-    public applicationId: string;
+    applicationId: string;
 
     /**
      * (Optional) named api keys for programmatic access to AppInsights.
      */
-    public apiKeys: { [key: string]: string };
+    apiKeys: { [key: string]: string };
 
     /**
      * Creates a new AppInsightService instance.
@@ -41,7 +41,7 @@ export class AppInsightsService extends AzureService implements IAppInsightsServ
      * @param secret Secret to use to encrypt.
      * @param encryptString Function called to encrypt an individual value.
      */
-    public encrypt(secret: string, encryptString: (value: string, secret: string) => string): void {
+    encrypt(secret: string, encryptString: (value: string, secret: string) => string): void {
         const that: AppInsightsService = this;
         if (this.instrumentationKey && this.instrumentationKey.length > 0) {
             this.instrumentationKey = encryptString(this.instrumentationKey, secret);
@@ -58,7 +58,7 @@ export class AppInsightsService extends AzureService implements IAppInsightsServ
      * @param secret Secret to use to decrypt.
      * @param decryptString Function called to decrypt an individual value.
      */
-    public decrypt(secret: string, decryptString: (value: string, secret: string) => string): void {
+    decrypt(secret: string, decryptString: (value: string, secret: string) => string): void {
         const that: AppInsightsService = this;
         if (this.instrumentationKey && this.instrumentationKey.length > 0) {
             this.instrumentationKey = decryptString(this.instrumentationKey, secret);

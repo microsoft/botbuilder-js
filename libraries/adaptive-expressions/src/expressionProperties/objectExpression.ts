@@ -22,7 +22,7 @@ export class ObjectExpression<T> extends ExpressionProperty<T> {
      *
      * @param value An object of type `T` or a `string` expression which resolves to a object of type `T`.
      */
-    public constructor(value?: T | string | Expression) {
+    constructor(value?: T | string | Expression) {
         super(value);
     }
 }

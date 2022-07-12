@@ -25,7 +25,7 @@ export class IsDate extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [IsDate](xref:adaptive-expressions.IsDate) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.IsDate, IsDate.evaluator, ReturnType.Boolean, FunctionUtils.validateUnary);
     }
 

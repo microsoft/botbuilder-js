@@ -19,7 +19,7 @@ export class TextTemplateConverter implements Converter<string, TextTemplate> {
      * @param value The template to evaluate to create text.
      * @returns A new [TextTemplate](xref:botbuilder-dialogs-adaptive.TextTemplate) instance.
      */
-    public convert(value: string | TextTemplate): TextTemplate {
+    convert(value: string | TextTemplate): TextTemplate {
         return typeof value === 'string' ? new TextTemplate(value) : value;
     }
 }

@@ -21,7 +21,7 @@ export class MultivariateNumericEvaluator extends ExpressionEvaluator {
      * @param func The evaluation function, it takes a list of objects and returns a number.
      * @param verify Optional. [VerifyExpression](xref:adaptive-expressions.VerifyExpression) function to verify each child's result.
      */
-    public constructor(type: string, func: (args: any[]) => number, verify?: VerifyExpression) {
+    constructor(type: string, func: (args: any[]) => number, verify?: VerifyExpression) {
         super(
             type,
             MultivariateNumericEvaluator.evaluator(func, verify),

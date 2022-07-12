@@ -20,7 +20,7 @@ export class ChoiceSet extends Array<Choice> implements TemplateInterface<Choice
      *
      * @param obj Choice values.
      */
-    public constructor(obj: any) {
+    constructor(obj: any) {
         super();
         if (typeof obj === 'string') {
             this.template = obj;
@@ -44,7 +44,7 @@ export class ChoiceSet extends Array<Choice> implements TemplateInterface<Choice
      * @param data Data to bind to.
      * @returns Data binded ChoiceSet.
      */
-    public async bind(dialogContext: DialogContext, data?: DialogStateManager): Promise<ChoiceSet> {
+    async bind(dialogContext: DialogContext, data?: DialogStateManager): Promise<ChoiceSet> {
         if (this.template == null) {
             return this;
         }

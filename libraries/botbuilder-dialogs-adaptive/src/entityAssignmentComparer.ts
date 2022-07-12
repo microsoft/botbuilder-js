@@ -10,7 +10,7 @@ import { EntityAssignment } from './entityAssignment';
 
 /**
  * Compare two entity assignments to determine their relative priority.
-
+ *
  * @remarks
  * Compare by event: assignEntity, chooseProperty, chooseEntity
  * Then by operations in order from schema (usually within assignEntity).
@@ -39,7 +39,7 @@ export class EntityAssignmentComparer {
      * @param y Second entity assigment to compare.
      * @returns Numerical value representing x's relative priority.
      */
-    public compare(x: Partial<EntityAssignment>, y: Partial<EntityAssignment>): number {
+    compare(x: Partial<EntityAssignment>, y: Partial<EntityAssignment>): number {
         // Order by event.
         let comparison: number =
             EntityAssignmentComparer.eventPreference.indexOf(x.event) -

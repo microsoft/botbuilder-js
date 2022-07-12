@@ -23,7 +23,7 @@ export class Or extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [Or](xref:adaptive-expressions.Or) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.Or, Or.evaluator, ReturnType.Boolean, FunctionUtils.validateAtLeastOne);
     }
 

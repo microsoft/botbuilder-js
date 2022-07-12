@@ -18,9 +18,9 @@ export abstract class SettingMock extends Configurable {}
  * The type converters for SettingMock.
  */
 export class SettingMocksConverter implements Converter<string[], SettingMock[]> {
-    public constructor(private readonly _resourceExplorer: ResourceExplorer) {}
+    constructor(private readonly _resourceExplorer: ResourceExplorer) {}
 
-    public convert(value: (string | SettingMock)[]): SettingMock[] {
+    convert(value: (string | SettingMock)[]): SettingMock[] {
         return value.map((item: string | SettingMock) => {
             if (typeof item === 'string') {
                 const settingMock = this._resourceExplorer.loadType<SettingMock>(`${item}.dialog`);

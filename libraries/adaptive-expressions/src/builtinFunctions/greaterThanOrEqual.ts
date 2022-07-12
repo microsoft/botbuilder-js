@@ -18,7 +18,7 @@ export class GreaterThanOrEqual extends ComparisonEvaluator {
     /**
      * Initializes a new instance of the [GreaterThanOrEqual](xref:adaptive-expressions.GreaterThanOrEqual) class.
      */
-    public constructor() {
+    constructor() {
         super(
             ExpressionType.GreaterThanOrEqual,
             GreaterThanOrEqual.func,

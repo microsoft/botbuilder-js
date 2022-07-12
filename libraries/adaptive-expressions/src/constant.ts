@@ -22,14 +22,14 @@ export class Constant extends Expression {
      *
      * @returns The value.
      */
-    public get value(): any {
+    get value(): any {
         return this._value;
     }
 
     /**
      * Sets constant value.
      */
-    public set value(theValue: any) {
+    set value(theValue: any) {
         this.evaluator.returnType =
             typeof theValue === 'string'
                 ? ReturnType.String
@@ -52,7 +52,7 @@ export class Constant extends Expression {
      *
      * @param value Constant value.
      */
-    public constructor(value: any) {
+    constructor(value: any) {
         super(
             ExpressionType.Constant,
             new ExpressionEvaluator(
@@ -71,7 +71,7 @@ export class Constant extends Expression {
      * @param other The other [Expression](xref:adaptive-expressions.Expression) instance to compare.
      * @returns A boolean value indicating whether the two expressions are deep equal (`true`) or not (`false`).
      */
-    public deepEquals(other: Expression): boolean {
+    deepEquals(other: Expression): boolean {
         let eq: boolean;
         if (!other || other.type !== this.type) {
             eq = false;
@@ -88,7 +88,7 @@ export class Constant extends Expression {
      *
      * @returns A string that represents the current constant object.
      */
-    public toString(): string {
+    toString(): string {
         if (this.value === undefined) {
             return 'undefined';
         } else if (this.value === null) {

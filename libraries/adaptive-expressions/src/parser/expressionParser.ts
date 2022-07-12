@@ -25,7 +25,7 @@ export class ExpressionParser implements ExpressionParserInterface {
     /**
      * The delegate to lookup function information from the type.
      */
-    public readonly EvaluatorLookup: EvaluatorLookup;
+    readonly EvaluatorLookup: EvaluatorLookup;
 
     private static expressionDict: Map<string, ParseTree> = new Map<string, ParseTree>();
 
@@ -34,14 +34,14 @@ export class ExpressionParser implements ExpressionParserInterface {
         implements ExpressionAntlrParserVisitor<Expression> {
         private readonly escapeRegex: RegExp = new RegExp(/\\[^\r\n]?/g);
         private readonly _lookupFunction: EvaluatorLookup = undefined;
-        public constructor(lookup: EvaluatorLookup) {
+        constructor(lookup: EvaluatorLookup) {
             super();
             this._lookupFunction = lookup;
         }
 
-        public transform = (context: ParseTree): Expression => this.visit(context);
+        transform = (context: ParseTree): Expression => this.visit(context);
 
-        public visitUnaryOpExp(context: ep.UnaryOpExpContext): Expression {
+        visitUnaryOpExp(context: ep.UnaryOpExpContext): Expression {
             const unaryOperationName: string = context.getChild(0).text;
             const operand: Expression = this.visit(context.expression());
             if (unaryOperationName === ExpressionType.Subtract || unaryOperationName === ExpressionType.Add) {
@@ -51,7 +51,7 @@ export class ExpressionParser implements ExpressionParserInterface {
             return this.makeExpression(unaryOperationName, operand);
         }
 
-        public visitBinaryOpExp(context: ep.BinaryOpExpContext): Expression {
+        visitBinaryOpExp(context: ep.BinaryOpExpContext): Expression {
             const binaryOperationName: string = context.getChild(1).text;
             const left: Expression = this.visit(context.expression(0));
             const right: Expression = this.visit(context.expression(1));
@@ -59,7 +59,7 @@ export class ExpressionParser implements ExpressionParserInterface {
             return this.makeExpression(binaryOperationName, left, right);
         }
 
-        public visitTripleOpExp(context: ep.TripleOpExpContext): Expression {
+        visitTripleOpExp(context: ep.TripleOpExpContext): Expression {
             const conditionalExpression: Expression = this.visit(context.expression(0));
             const left: Expression = this.visit(context.expression(1));
             const right: Expression = this.visit(context.expression(2));
@@ -67,7 +67,7 @@ export class ExpressionParser implements ExpressionParserInterface {
             return this.makeExpression(ExpressionType.If, conditionalExpression, left, right);
         }
 
-        public visitFuncInvokeExp(context: ep.FuncInvokeExpContext): Expression {
+        visitFuncInvokeExp(context: ep.FuncInvokeExpContext): Expression {
             const parameters: Expression[] = this.processArgsList(context.argsList());
 
             // Remove the check to check primaryExpression is just an IDENTIFIER to support "." in template name
@@ -80,7 +80,7 @@ export class ExpressionParser implements ExpressionParserInterface {
             return this.makeExpression(functionName, ...parameters);
         }
 
-        public visitIdAtom(context: ep.IdAtomContext): Expression {
+        visitIdAtom(context: ep.IdAtomContext): Expression {
             let result: Expression;
             const symbol: string = context.text;
 
@@ -99,7 +99,7 @@ export class ExpressionParser implements ExpressionParserInterface {
             return result;
         }
 
-        public visitIndexAccessExp(context: ep.IndexAccessExpContext): Expression {
+        visitIndexAccessExp(context: ep.IndexAccessExpContext): Expression {
             const property: Expression = this.visit(context.expression());
 
             const instance = this.visit(context.primaryExpression());
@@ -107,14 +107,14 @@ export class ExpressionParser implements ExpressionParserInterface {
             return this.makeExpression(ExpressionType.Element, instance, property);
         }
 
-        public visitMemberAccessExp(context: ep.MemberAccessExpContext): Expression {
+        visitMemberAccessExp(context: ep.MemberAccessExpContext): Expression {
             const property: string = context.IDENTIFIER().text;
             const instance: Expression = this.visit(context.primaryExpression());
 
             return this.makeExpression(ExpressionType.Accessor, new Constant(property), instance);
         }
 
-        public visitNumericAtom(context: ep.NumericAtomContext): Expression {
+        visitNumericAtom(context: ep.NumericAtomContext): Expression {
             const numberValue: number = parseFloat(context.text);
             if (FunctionUtils.isNumber(numberValue)) {
                 return new Constant(numberValue);
@@ -123,15 +123,15 @@ export class ExpressionParser implements ExpressionParserInterface {
             throw new Error(`${context.text} is not a number.`);
         }
 
-        public visitParenthesisExp = (context: ep.ParenthesisExpContext): Expression =>
+        visitParenthesisExp = (context: ep.ParenthesisExpContext): Expression =>
             this.visit(context.expression());
 
-        public visitArrayCreationExp(context: ep.ArrayCreationExpContext): Expression {
+        visitArrayCreationExp(context: ep.ArrayCreationExpContext): Expression {
             const parameters: Expression[] = this.processArgsList(context.argsList());
             return this.makeExpression(ExpressionType.CreateArray, ...parameters);
         }
 
-        public visitStringAtom(context: ep.StringAtomContext): Expression {
+        visitStringAtom(context: ep.StringAtomContext): Expression {
             let text: string = context.text;
             if (text.startsWith("'") && text.endsWith("'")) {
                 text = text.substr(1, text.length - 2).replace(/\\'/g, "'");
@@ -145,7 +145,7 @@ export class ExpressionParser implements ExpressionParserInterface {
             return new Constant(this.evalEscape(text));
         }
 
-        public visitJsonCreationExp(context: ep.JsonCreationExpContext): Expression {
+        visitJsonCreationExp(context: ep.JsonCreationExpContext): Expression {
             let expr: Expression = this.makeExpression(ExpressionType.Json, new Constant('{}'));
             if (context.keyValuePairList()) {
                 for (const kvPair of context.keyValuePairList().keyValuePair()) {
@@ -171,7 +171,7 @@ export class ExpressionParser implements ExpressionParserInterface {
             return expr;
         }
 
-        public visitStringInterpolationAtom(context: ep.StringInterpolationAtomContext): Expression {
+        visitStringInterpolationAtom(context: ep.StringInterpolationAtomContext): Expression {
             const children: Expression[] = [new Constant('')];
 
             for (const node of context.stringInterpolation().children) {
@@ -269,7 +269,7 @@ export class ExpressionParser implements ExpressionParserInterface {
      *
      * @param lookup [EvaluatorLookup](xref:adaptive-expressions.EvaluatorLookup) for information from type string.
      */
-    public constructor(lookup?: EvaluatorLookup) {
+    constructor(lookup?: EvaluatorLookup) {
         this.EvaluatorLookup = lookup || Expression.lookup;
     }
 
@@ -309,7 +309,7 @@ export class ExpressionParser implements ExpressionParserInterface {
      * @param expression Expression to parse.
      * @returns Expression tree.
      */
-    public parse(expression: string): Expression {
+    parse(expression: string): Expression {
         if (expression == null || expression === '') {
             return new Constant('');
         } else {

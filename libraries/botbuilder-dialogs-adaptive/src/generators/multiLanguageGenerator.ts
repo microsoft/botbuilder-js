@@ -15,12 +15,12 @@ import { LanguageGenerator } from '../languageGenerator';
  * and has a policy which controls fallback (try en-us -> en -> default).
  */
 export class MultiLanguageGenerator extends MultiLanguageGeneratorBase {
-    public static $kind = 'Microsoft.MultiLanguageGenerator';
+    static $kind = 'Microsoft.MultiLanguageGenerator';
 
     /**
      * Gets or sets the language generators for multiple languages.
      */
-    public languageGenerators: Map<string, LanguageGenerator> = new Map<string, LanguageGenerator>();
+    languageGenerators: Map<string, LanguageGenerator> = new Map<string, LanguageGenerator>();
 
     /**
      * Implementation of lookup by locale.
@@ -29,7 +29,7 @@ export class MultiLanguageGenerator extends MultiLanguageGeneratorBase {
      * @param locale Locale to lookup.
      * @returns An object with a boolean showing existence and the language generator.
      */
-    public tryGetGenerator(
+    tryGetGenerator(
         dialogContext: DialogContext,
         locale: string
     ): { exist: boolean; result: LanguageGenerator } {

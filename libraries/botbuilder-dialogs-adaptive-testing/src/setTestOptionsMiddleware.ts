@@ -16,7 +16,7 @@ export class SetTestOptionsMiddleware implements Middleware {
      * @param context The context object for this turn.
      * @param next The delegate to call to continue the bot middleware pipeline
      */
-    public async onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
+    async onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
         if (context.activity.type === ActivityTypes.Event) {
             if (context.activity.name === 'SetTestOptions') {
                 const conversationState = context.turnState.get(CONVERSATION_STATE);

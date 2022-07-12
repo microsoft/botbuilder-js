@@ -18,7 +18,7 @@ export class UriComponent extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [UriComponent](xref:adaptive-expressions.UriComponent) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.UriComponent, UriComponent.evaluator(), ReturnType.String, FunctionUtils.validateUnary);
     }
 

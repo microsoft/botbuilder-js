@@ -21,7 +21,7 @@ export class Union extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [Union](xref:adaptive-expressions.Union) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.Union, Union.evaluator(), ReturnType.Array, Union.validator);
     }
 

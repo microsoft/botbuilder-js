@@ -50,23 +50,23 @@ export class ContinueConversationLater extends Dialog implements ContinueConvers
     /**
      * Gets or sets an optional expression which if is true will disable this action.
      */
-    public disabled?: BoolExpression;
+    disabled?: BoolExpression;
 
     /**
      * Gets or sets the expression which resolves to the date/time to continue the conversation.
      */
-    public date: StringExpression;
+    date: StringExpression;
 
     /**
      * Gets or sets an optional value to use for EventActivity.Value.
      */
-    public value: ValueExpression;
+    value: ValueExpression;
 
     /**
      * @param property The key of the conditional selector configuration.
      * @returns The converter for the selector configuration.
      */
-    public getConverter(property: keyof ContinueConversationLaterConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof ContinueConversationLaterConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'disabled':
                 return new BoolExpressionConverter();
@@ -86,7 +86,7 @@ export class ContinueConversationLater extends Dialog implements ContinueConvers
      * @param {object} _options Optional. Initial information to pass to the dialog.
      * @returns {Promise<DialogTurnResult>} A `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, _options?: Record<string, unknown>): Promise<DialogTurnResult> {
+    async beginDialog(dc: DialogContext, _options?: Record<string, unknown>): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return dc.endDialog();
         }

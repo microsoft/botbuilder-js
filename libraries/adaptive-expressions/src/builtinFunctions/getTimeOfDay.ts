@@ -21,7 +21,7 @@ export class GetTimeOfDay extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [GetTimeOfDay](xref:adaptive-expressions.GetTimeOfDay) class.
      */
-    public constructor() {
+    constructor() {
         super(
             ExpressionType.GetTimeOfDay,
             GetTimeOfDay.evaluator(),

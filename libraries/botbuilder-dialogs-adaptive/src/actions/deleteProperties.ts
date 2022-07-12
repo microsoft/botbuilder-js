@@ -18,7 +18,7 @@ import {
 } from 'botbuilder-dialogs';
 
 class PropertiesConverter implements Converter<string[], StringExpression[]> {
-    public convert(items: Array<string | StringExpression>): StringExpression[] {
+    convert(items: Array<string | StringExpression>): StringExpression[] {
         return items.map((item) => (typeof item === 'string' ? new StringExpression(item) : item));
     }
 }
@@ -32,16 +32,16 @@ export interface DeletePropertiesConfiguration extends DialogConfiguration {
  * Deletes a collection of properties from memory.
  */
 export class DeleteProperties<O extends object = {}> extends Dialog<O> implements DeletePropertiesConfiguration {
-    public static $kind = 'Microsoft.DeleteProperties';
+    static $kind = 'Microsoft.DeleteProperties';
 
-    public constructor();
+    constructor();
 
     /**
      * Initializes a new instance of the [DeleteProperties](xref:botbuilder-dialogs-adaptive.DeleteProperties) class.
      *
      * @param properties Optional. Collection of property paths to remove.
      */
-    public constructor(properties?: string[]) {
+    constructor(properties?: string[]) {
         super();
         if (properties) {
             this.properties = properties.map((property): StringExpression => new StringExpression(property));
@@ -51,18 +51,18 @@ export class DeleteProperties<O extends object = {}> extends Dialog<O> implement
     /**
      * Collection of property paths to remove.
      */
-    public properties: StringExpression[] = [];
+    properties: StringExpression[] = [];
 
     /**
      * An optional expression which if is true will disable this action.
      */
-    public disabled?: BoolExpression;
+    disabled?: BoolExpression;
 
     /**
      * @param property The key of the conditional selector configuration.
      * @returns The converter for the selector configuration.
      */
-    public getConverter(property: keyof DeletePropertiesConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof DeletePropertiesConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'properties':
                 return new PropertiesConverter();
@@ -80,7 +80,7 @@ export class DeleteProperties<O extends object = {}> extends Dialog<O> implement
      * @param _options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
+    async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }

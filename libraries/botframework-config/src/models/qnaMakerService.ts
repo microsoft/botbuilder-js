@@ -16,22 +16,22 @@ export class QnaMakerService extends ConnectedService implements IQnAService {
     /**
      * Knowledge base id.
      */
-    public kbId: string;
+    kbId: string;
 
     /**
      * Subscription key for calling admin api.
      */
-    public subscriptionKey: string;
+    subscriptionKey: string;
 
     /**
      * hostname for private service endpoint Example: https://myqna.azurewebsites.net.
      */
-    public hostname: string;
+    hostname: string;
 
     /**
      * Endpoint Key for querying the kb.
      */
-    public endpointKey: string;
+    endpointKey: string;
 
     /**
      * Creates a new QnaMakerService instance.
@@ -54,7 +54,7 @@ export class QnaMakerService extends ConnectedService implements IQnAService {
      * @param secret Secret to use to encrypt.
      * @param encryptString Function called to encrypt an individual value.
      */
-    public encrypt(secret: string, encryptString: (value: string, secret: string) => string): void {
+    encrypt(secret: string, encryptString: (value: string, secret: string) => string): void {
         if (this.endpointKey && this.endpointKey.length > 0) {
             this.endpointKey = encryptString(this.endpointKey, secret);
         }
@@ -69,7 +69,7 @@ export class QnaMakerService extends ConnectedService implements IQnAService {
      * @param secret Secret to use to decrypt.
      * @param decryptString Function called to decrypt an individual value.
      */
-    public decrypt(secret: string, decryptString: (value: string, secret: string) => string): void {
+    decrypt(secret: string, decryptString: (value: string, secret: string) => string): void {
         if (this.endpointKey && this.endpointKey.length > 0) {
             this.endpointKey = decryptString(this.endpointKey, secret);
         }

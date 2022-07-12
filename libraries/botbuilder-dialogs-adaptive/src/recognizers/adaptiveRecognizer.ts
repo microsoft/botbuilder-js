@@ -21,7 +21,7 @@ export abstract class AdaptiveRecognizer extends Recognizer implements AdaptiveR
     /**
      * (Optional) Flag that designates whether personally identifiable information (PII) should log to telemetry.
      */
-    public logPersonalInformation: BoolExpression = new BoolExpression(
+    logPersonalInformation: BoolExpression = new BoolExpression(
         '=settings.runtimeSettings.telemetry.logPersonalInformation'
     );
 

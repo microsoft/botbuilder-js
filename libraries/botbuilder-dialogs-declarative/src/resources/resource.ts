@@ -17,19 +17,19 @@ export abstract class Resource {
     /**
      * Resource id.
      */
-    public get id(): string {
+    get id(): string {
         return this._id;
     }
 
     /**
      * The full path to the resource on disk
      */
-    public get fullName(): string {
+    get fullName(): string {
         return this._fullname;
     }
 
     /**
      * Get resource as text.
      */
-    public abstract readText(): string;
+    abstract readText(): string;
 }

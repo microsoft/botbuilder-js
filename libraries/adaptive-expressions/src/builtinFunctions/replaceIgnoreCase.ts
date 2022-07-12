@@ -21,7 +21,7 @@ export class ReplaceIgnoreCase extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [ReplaceIgnoreCase](xref:adaptive-expressions.ReplaceIgnoreCase) class.
      */
-    public constructor() {
+    constructor() {
         super(
             ExpressionType.ReplaceIgnoreCase,
             ReplaceIgnoreCase.evaluator(),

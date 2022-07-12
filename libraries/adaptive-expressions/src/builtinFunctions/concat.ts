@@ -19,7 +19,7 @@ export class Concat extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [Concat](xref:adaptive-expressions.Concat) class.
      */
-    public constructor() {
+    constructor() {
         super(
             ExpressionType.Concat,
             Concat.evaluator(),

@@ -28,23 +28,23 @@ export interface SendHandoffActivityConfiguration extends DialogConfiguration {
  * this.endDialog).
  */
 export class SendHandoffActivity extends Dialog implements SendHandoffActivityConfiguration {
-    public static $kind = 'Microsoft.SendHandoffActivity';
+    static $kind = 'Microsoft.SendHandoffActivity';
 
     /**
      * Context to send with handoff activity
      */
-    public context: ObjectExpression<Record<string, unknown>>;
+    context: ObjectExpression<Record<string, unknown>>;
 
     /**
      * Transcript to send with handoff activity
      */
-    public transcript: ObjectExpression<Transcript>;
+    transcript: ObjectExpression<Transcript>;
 
     /**
      * @param property The key of the conditional selector configuration.
      * @returns The converter for the selector configuration.
      */
-    public getConverter(property: keyof SendHandoffActivityConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof SendHandoffActivityConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'context':
                 return new ObjectExpressionConverter<Record<string, unknown>>();

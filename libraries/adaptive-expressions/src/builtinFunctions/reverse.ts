@@ -19,7 +19,7 @@ export class Reverse extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the `Reverse` class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.Reverse, Reverse.evaluator(), ReturnType.String | ReturnType.Array, Reverse.validator);
     }
 

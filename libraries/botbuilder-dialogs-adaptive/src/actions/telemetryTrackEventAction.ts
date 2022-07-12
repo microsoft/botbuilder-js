@@ -36,7 +36,7 @@ class TelemetryPropertiesConverter implements Converter<PropertiesInput, Propert
      * @param value The [PropertiesInput](xref:botbuilder-dialogs-adaptive.PropertiesInput) or [PropertiesOutput](xref:botbuilder-dialogs-adaptive.PropertiesOutput) to convert.
      * @returns The converted [StringExpression](xref:adaptive-expressions.StringExpression).
      */
-    public convert(value: PropertiesInput | PropertiesOutput): PropertiesOutput {
+    convert(value: PropertiesInput | PropertiesOutput): PropertiesOutput {
         return Object.entries(value).reduce((properties, [key, value]) => {
             const property = value instanceof StringExpression ? value : new StringExpression(value);
             return { ...properties, [key]: property };
@@ -56,7 +56,7 @@ export interface TelemetryTrackEventActionConfiguration extends DialogConfigurat
 export class TelemetryTrackEventAction<O extends object = {}>
     extends Dialog
     implements TelemetryTrackEventActionConfiguration {
-    public static $kind = 'Microsoft.TelemetryTrackEventAction';
+    static $kind = 'Microsoft.TelemetryTrackEventAction';
 
     /**
      * Initializes a new instance of the [TelemetryTrackEventAction](xref:botbuilder-dialogs-adaptive.TelemetryTrackEventAction) class.
@@ -64,7 +64,7 @@ export class TelemetryTrackEventAction<O extends object = {}>
      * @param eventName Name to use for the event.
      * @param properties Properties to attach to the tracked event.
      */
-    public constructor(eventName: string, properties: { [name: string]: string });
+    constructor(eventName: string, properties: { [name: string]: string });
 
     /**
      * Initializes a new instance of the [TelemetryTrackEventAction](xref:botbuilder-dialogs-adaptive.TelemetryTrackEventAction) class.
@@ -72,7 +72,7 @@ export class TelemetryTrackEventAction<O extends object = {}>
      * @param eventName Optional. Name to use for the event.
      * @param properties Optional. Properties to attach to the tracked event.
      */
-    public constructor(eventName?: string, properties?: { [name: string]: string }) {
+    constructor(eventName?: string, properties?: { [name: string]: string }) {
         super();
         if (eventName) {
             this.eventName = new StringExpression(eventName);
@@ -88,23 +88,23 @@ export class TelemetryTrackEventAction<O extends object = {}>
     /**
      * Gets or sets an optional expression which if is true will disable this action.
      */
-    public disabled: BoolExpression;
+    disabled: BoolExpression;
 
     /**
      * Gets or sets a name to use for the event.
      */
-    public eventName: StringExpression;
+    eventName: StringExpression;
 
     /**
      * Gets or sets the properties to attach to the tracked event.
      */
-    public properties: { [name: string]: StringExpression };
+    properties: { [name: string]: StringExpression };
 
     /**
      * @param property The key of the conditional selector configuration.
      * @returns The converter for the selector configuration.
      */
-    public getConverter(property: keyof TelemetryTrackEventActionConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof TelemetryTrackEventActionConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'eventName':
                 return new StringExpressionConverter();
@@ -124,7 +124,7 @@ export class TelemetryTrackEventAction<O extends object = {}>
      * @param _options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
+    async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }

@@ -13,5 +13,5 @@ export class ThisPath {
     /**
      * The options that were passed to the active dialog via options argument of BeginDialog.
      */
-    public static readonly options = 'this.options';
+    static readonly options = 'this.options';
 }

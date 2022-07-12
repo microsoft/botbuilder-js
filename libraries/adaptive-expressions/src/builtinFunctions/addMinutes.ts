@@ -16,7 +16,7 @@ export class AddMinutes extends TimeTransformEvaluator {
     /**
      * Initializes a new instance of the [AddMinutes](xref:adaptive-expressions.AddMinutes) class.
      */
-    public constructor() {
+    constructor() {
         super(
             ExpressionType.AddMinutes,
             (ts: Date, num: number): Date => {

@@ -20,7 +20,7 @@ export interface OnAssignEntityConfiguration extends OnDialogEventConfiguration 
  * Triggered to assign an entity to a property.
  */
 export class OnAssignEntity extends OnDialogEvent implements OnAssignEntityConfiguration {
-    public static $kind = 'Microsoft.OnAssignEntity';
+    static $kind = 'Microsoft.OnAssignEntity';
 
     /**
      * Initializes a new instance of the [OnAssignEntity](xref:botbuilder-dialogs-adaptive.OnAssignEntity) class.
@@ -31,7 +31,7 @@ export class OnAssignEntity extends OnDialogEvent implements OnAssignEntityConfi
      * @param actions Optional, actions to add to the plan when the rule constraints are met.
      * @param condition Optional, condition which needs to be met for the actions to be executed.
      */
-    public constructor(
+    constructor(
         property?: string,
         value?: string,
         operation?: string,
@@ -47,17 +47,17 @@ export class OnAssignEntity extends OnDialogEvent implements OnAssignEntityConfi
     /**
      * Gets or sets the property filter on events.
      */
-    public property: string;
+    property: string;
 
     /**
      * Gets or sets the value filter on events.
      */
-    public value: string;
+    value: string;
 
     /**
      * Gets or sets the operation filter on events.
      */
-    public operation: string;
+    operation: string;
 
     /**
      * Create the expression for this condition.
