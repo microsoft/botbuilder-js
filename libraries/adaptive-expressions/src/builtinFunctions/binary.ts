@@ -19,7 +19,7 @@ export class Binary extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [Binary](xref:adaptive-expressions.Binary) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.Binary, Binary.evaluator(), ReturnType.Object, FunctionUtils.validateUnary);
     }
 

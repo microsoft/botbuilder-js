@@ -22,7 +22,7 @@ export class UriQuery extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [UriQuery](xref:adaptive-expressions.UriQuery) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.UriQuery, UriQuery.evaluator, ReturnType.String, FunctionUtils.validateUnary);
     }
 

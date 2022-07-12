@@ -36,16 +36,16 @@ export interface GetConversationMembersConfiguration extends DialogConfiguration
 export class GetConversationMembers<O extends object = {}>
     extends Dialog<O>
     implements GetConversationMembersConfiguration {
-    public static $kind = 'Microsoft.GetConversationMembers';
+    static $kind = 'Microsoft.GetConversationMembers';
 
-    public constructor();
+    constructor();
 
     /**
      * Initializes a new instance of the [GetConversationMembers](xref:botbuilder-dialogs-adaptive.GetConversationMembers) class.
      *
      * @param property Property path to put the value in.
      */
-    public constructor(property?: string) {
+    constructor(property?: string) {
         super();
         if (property) {
             this.property = new StringExpression(property);
@@ -55,18 +55,18 @@ export class GetConversationMembers<O extends object = {}>
     /**
      * Property path to put the value in.
      */
-    public property: StringExpression;
+    property: StringExpression;
 
     /**
      * An optional expression which if is true will disable this action.
      */
-    public disabled?: BoolExpression;
+    disabled?: BoolExpression;
 
     /**
      * @param property The key of the conditional selector configuration.
      * @returns The converter for the selector configuration.
      */
-    public getConverter(property: keyof GetConversationMembersConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof GetConversationMembersConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'property':
                 return new StringExpressionConverter();
@@ -84,7 +84,7 @@ export class GetConversationMembers<O extends object = {}>
      * @param _options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
+    async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }

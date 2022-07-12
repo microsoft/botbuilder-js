@@ -25,7 +25,7 @@ export class IsTime extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [IsTime](xref:adaptive-expressions.IsTime) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.IsTime, IsTime.evaluator, ReturnType.Boolean, FunctionUtils.validateUnary);
     }
 

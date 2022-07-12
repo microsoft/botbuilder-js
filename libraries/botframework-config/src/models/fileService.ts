@@ -16,7 +16,7 @@ export class FileService extends ConnectedService implements IFileService {
     /**
      * File path.
      */
-    public path: string;
+    path: string;
 
     /**
      * Creates a new FileService instance.
@@ -33,7 +33,7 @@ export class FileService extends ConnectedService implements IFileService {
      * @param _secret Secret to use to encrypt.
      * @param _encryptString Function called to encrypt an individual value.
      */
-    public encrypt(_secret: string, _encryptString: (value: string, secret: string) => string): void {
+    encrypt(_secret: string, _encryptString: (value: string, secret: string) => string): void {
         return;
     }
 
@@ -43,7 +43,7 @@ export class FileService extends ConnectedService implements IFileService {
      * @param _secret Secret to use to decrypt.
      * @param _decryptString Function called to decrypt an individual value.
      */
-    public decrypt(_secret: string, _decryptString: (value: string, secret: string) => string): void {
+    decrypt(_secret: string, _decryptString: (value: string, secret: string) => string): void {
         return;
     }
 }

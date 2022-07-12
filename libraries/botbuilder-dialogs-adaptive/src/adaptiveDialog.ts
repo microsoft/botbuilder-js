@@ -78,8 +78,8 @@ export interface AdaptiveDialogConfiguration extends DialogConfiguration {
  * The Adaptive Dialog models conversation using events and events to adapt dynamically to changing conversation flow.
  */
 export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> implements AdaptiveDialogConfiguration {
-    public static $kind = 'Microsoft.AdaptiveDialog';
-    public static conditionTracker = 'dialog._tracker.conditions';
+    static $kind = 'Microsoft.AdaptiveDialog';
+    static conditionTracker = 'dialog._tracker.conditions';
 
     private readonly adaptiveKey = '_adaptive';
     private readonly defaultOperationKey = '$defaultOperation';
@@ -106,24 +106,24 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
      *
      * @param dialogId (Optional) unique ID of the component within its parents dialog set.
      */
-    public constructor(dialogId?: string) {
+    constructor(dialogId?: string) {
         super(dialogId);
     }
 
     /**
      * Optional. Recognizer used to analyze any message utterances.
      */
-    public recognizer?: Recognizer;
+    recognizer?: Recognizer;
 
     /**
      * Optional. Language Generator override.
      */
-    public generator?: LanguageGenerator;
+    generator?: LanguageGenerator;
 
     /**
      * Trigger handlers to respond to conditions which modify the executing plan.
      */
-    public triggers: OnCondition[] = [];
+    triggers: OnCondition[] = [];
 
     /**
      * Whether to end the dialog when there are no actions to execute.
@@ -133,12 +133,12 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
      * If false, when there are no actions to execute, the current dialog will simply end the turn and still be active.
      * Defaults to a value of true.
      */
-    public autoEndDialog: BoolExpression = new BoolExpression(true);
+    autoEndDialog: BoolExpression = new BoolExpression(true);
 
     /**
      * Optional. The selector for picking the possible events to execute.
      */
-    public selector: TriggerSelector;
+    selector: TriggerSelector;
 
     /**
      * The property to return as the result when the dialog ends when there are no more Actions and `AutoEndDialog = true`.
@@ -146,12 +146,12 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
      * @remarks
      * Defaults to a value of `dialog.result`.
      */
-    public defaultResultProperty = 'dialog.result';
+    defaultResultProperty = 'dialog.result';
 
     /**
      * Sets the JSON Schema for the dialog.
      */
-    public set schema(value: object) {
+    set schema(value: object) {
         this.dialogSchema = new SchemaHelper(value);
     }
 
@@ -160,7 +160,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
      *
      * @returns The dialog schema.
      */
-    public get schema(): object {
+    get schema(): object {
         return this.dialogSchema ? this.dialogSchema.schema : undefined;
     }
 
@@ -168,7 +168,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
      * @param property The key of the conditional selector configuration.
      * @returns The converter for the selector configuration.
      */
-    public getConverter(property: keyof AdaptiveDialogConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof AdaptiveDialogConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'recognizer':
                 return RecognizerConverter;
@@ -267,7 +267,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
      * @param options Optional, initial information to pass to the dialog.
      * @returns A Promise representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
+    async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         await this.checkForVersionChange(dc);
 
         // Install dependencies on first access
@@ -332,7 +332,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @returns A Promise representing the asynchronous operation.
      */
-    public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
+    async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
         await this.checkForVersionChange(dc);
 
         this.ensureDependenciesInstalled();
@@ -349,7 +349,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
      * @param reason Reason why the dialog ended.
      * @returns A Promise representing the asynchronous operation.
      */
-    public async endDialog(turnContext: TurnContext, instance: DialogInstance, reason: DialogReason): Promise<void> {
+    async endDialog(turnContext: TurnContext, instance: DialogInstance, reason: DialogReason): Promise<void> {
         const properties: { [key: string]: string } = {
             DialogId: this.id,
             Kind: 'Microsoft.AdaptiveDialog',
@@ -405,7 +405,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
      * The type of the value returned is dependent on the child dialog.
      * @returns A Promise representing the asynchronous operation.
      */
-    public async resumeDialog(dc: DialogContext, _reason?: DialogReason, _result?: any): Promise<DialogTurnResult> {
+    async resumeDialog(dc: DialogContext, _reason?: DialogReason, _result?: any): Promise<DialogTurnResult> {
         await this.checkForVersionChange(dc);
 
         // Containers are typically leaf nodes on the stack but the dev is free to push other dialogs
@@ -425,7 +425,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
      * @param instance Current state information for this dialog.
      * @returns A Promise representing the asynchronous operation.
      */
-    public async repromptDialog(context: DialogContext | TurnContext, instance: DialogInstance): Promise<void> {
+    async repromptDialog(context: DialogContext | TurnContext, instance: DialogInstance): Promise<void> {
         if (context instanceof DialogContext) {
             // Forward to current sequence action
             const state: AdaptiveDialogState = instance.state[this.adaptiveKey];
@@ -446,7 +446,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @returns The child [DialogContext](xref:botbuilder-dialogs.DialogContext) or null if no [AdaptiveDialogState.actions](xref:botbuilder-dialogs-adaptive.AdaptiveDialogState.actions) are found for the given context.
      */
-    public createChildContext(dc: DialogContext): DialogContext {
+    createChildContext(dc: DialogContext): DialogContext {
         const activeDialogState = dc.activeDialog.state;
         const state: AdaptiveDialogState = activeDialogState[this.adaptiveKey];
         if (!state) {
@@ -465,7 +465,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
      *
      * @returns [Dialog](xref:botbuilder-dialogs.Dialog)'s enumerated dependencies.
      */
-    public getDependencies(): Dialog[] {
+    getDependencies(): Dialog[] {
         this.ensureDependenciesInstalled();
         return [];
     }

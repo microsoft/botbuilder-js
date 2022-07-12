@@ -17,11 +17,11 @@ export class LanguagePolicy extends Map<string, string[]> {
      *
      * @param defaultLanguages Default languages to use.
      */
-    public constructor(...defaultLanguages: string[]) {
+    constructor(...defaultLanguages: string[]) {
         super(LanguagePolicy.defaultPolicy(defaultLanguages));
     }
 
-    public static readonly locales = [
+    static readonly locales = [
         '',
         'aa',
         'aa-dj',
@@ -883,7 +883,7 @@ export class LanguagePolicy extends Map<string, string[]> {
      * So that when we get a locale such as en-gb, we can try to resolve to "en-gb" then "en" then ""
      * See commented section for full sample of output of this function.
      */
-    public static defaultPolicy(defaultLanguages: string[] = []): Map<string, string[]> {
+    static defaultPolicy(defaultLanguages: string[] = []): Map<string, string[]> {
         const result = new Map<string, string[]>();
 
         for (const locale of LanguagePolicy.locales) {
@@ -924,7 +924,7 @@ export class LanguagePolicyConverter implements Converter<Record<string, string[
      * @param value Object.
      * @returns A new [LanguagePolicy](xref:botbuilder-dialogs-adaptive.LanguagePolicy) instance.
      */
-    public convert(value: Record<string, string[]> | LanguagePolicy): LanguagePolicy {
+    convert(value: Record<string, string[]> | LanguagePolicy): LanguagePolicy {
         if (value instanceof LanguagePolicy) {
             return value;
         }

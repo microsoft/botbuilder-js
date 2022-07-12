@@ -28,7 +28,7 @@ export class ValueExpression extends ExpressionProperty<any> {
      *
      * @param value An object of `any` kind or a `string` expression.
      */
-    public constructor(value?: any | string | Expression) {
+    constructor(value?: any | string | Expression) {
         super(value);
     }
 
@@ -37,7 +37,7 @@ export class ValueExpression extends ExpressionProperty<any> {
      *
      * @param value Value to set.
      */
-    public setValue(value: any | string | Expression): void {
+    setValue(value: any | string | Expression): void {
         super.setValue(undefined);
 
         if (typeof value == 'string') {

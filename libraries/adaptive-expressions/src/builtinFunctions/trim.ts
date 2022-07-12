@@ -17,7 +17,7 @@ export class Trim extends StringTransformEvaluator {
     /**
      * Initializes a new instance of the [Trim](xref:adaptive-expressions.Trim) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.Trim, Trim.evaluator);
     }
 

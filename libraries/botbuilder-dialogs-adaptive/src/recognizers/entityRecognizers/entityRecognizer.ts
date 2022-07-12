@@ -24,7 +24,7 @@ export class EntityRecognizer extends AdaptiveRecognizer {
      * @param {object} _telemetryMetrics Additional metrics to be logged to telemetry with event.
      * @returns {Promise<RecognizerResult>} Analysis of utterance.
      */
-    public async recognize(
+    async recognize(
         dialogContext: DialogContext,
         activity: Partial<Activity>,
         _telemetryProperties?: Record<string, string>,
@@ -105,7 +105,7 @@ export class EntityRecognizer extends AdaptiveRecognizer {
      * @param {Entity[]} _entities The [Entity](xref:botbuilder-core.Entity) list to be recognized.
      * @returns {Promise<Entity[]>} Recognized [Entity](xref:botbuilder-core.Entity) list.
      */
-    public async recognizeEntities(
+    async recognizeEntities(
         _dialogContext: DialogContext,
         _text: string,
         _locale: string,

@@ -19,34 +19,34 @@ export interface RepeatDialogConfiguration extends BaseInvokeDialogConfiguration
  * Action which repeats the active [Dialog](xref:botbuilder-dialogs.Dialog) (restarting it).
  */
 export class RepeatDialog<O extends object = {}> extends BaseInvokeDialog<O> implements RepeatDialogConfiguration {
-    public static $kind = 'Microsoft.RepeatDialog';
+    static $kind = 'Microsoft.RepeatDialog';
 
-    public constructor();
+    constructor();
 
     /**
      * Initializes a new instance of the [RepeatDialog](xref:botbuilder-dialogs-adaptive.RepeatDialog) class.
      *
      * @param options Optional. Object with additional options.
      */
-    public constructor(options?: O) {
+    constructor(options?: O) {
         super(undefined, options);
     }
 
     /**
      * An optional expression which if is true will disable this action.
      */
-    public disabled?: BoolExpression;
+    disabled?: BoolExpression;
 
     /**
      * An optional expression which if is true will allow loop of the repeated dialog.
      */
-    public allowLoop?: BoolExpression;
+    allowLoop?: BoolExpression;
 
     /**
      * @param property The key of the conditional selector configuration.
      * @returns The converter for the selector configuration.
      */
-    public getConverter(property: keyof RepeatDialogConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof RepeatDialogConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'disabled':
                 return new BoolExpressionConverter();
@@ -64,7 +64,7 @@ export class RepeatDialog<O extends object = {}> extends BaseInvokeDialog<O> imp
      * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
+    async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }

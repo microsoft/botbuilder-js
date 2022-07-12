@@ -20,7 +20,7 @@ export class ToUpper extends StringTransformEvaluator {
     /**
      * Initializes a new instance of the [ToUpper](xref:adaptive-expressions.ToUpper) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.ToUpper, ToUpper.evaluator, FunctionUtils.validateUnaryOrBinaryString);
     }
 

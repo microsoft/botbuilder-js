@@ -46,7 +46,7 @@ export const getTopScoringIntent = (result: RecognizerResult): { intent: string;
         throw new Error('result is empty');
     }
 
-    let topIntent: string = '';
+    let topIntent = '';
     let topScore = -1;
     for (const [intentName, intent] of Object.entries(result.intents)) {
         const score = intent.score ?? -1;
@@ -55,7 +55,6 @@ export const getTopScoringIntent = (result: RecognizerResult): { intent: string;
             topScore = score;
         }
     }
-
 
     return {
         intent: topIntent,

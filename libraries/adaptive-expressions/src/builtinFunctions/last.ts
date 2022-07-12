@@ -19,7 +19,7 @@ export class Last extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [Last](xref:adaptive-expressions.Last) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.Last, Last.evaluator(), ReturnType.Object, FunctionUtils.validateUnary);
     }
 

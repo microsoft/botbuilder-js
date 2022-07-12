@@ -18,7 +18,7 @@ export class Range extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [Range](xref:adaptive-expressions.Range) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.Range, Range.evaluator(), ReturnType.Array, FunctionUtils.validateBinaryNumber);
     }
 

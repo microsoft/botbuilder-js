@@ -24,7 +24,7 @@ export class MultiLanguageRecognizerConverter implements Converter<Input, Output
      *
      * @param resourceExplorer Resource explorer to use for resolving references.
      */
-    public constructor(resourceExplorer: ResourceExplorer) {
+    constructor(resourceExplorer: ResourceExplorer) {
         this._recognizerConverter = new RecognizerConverter(resourceExplorer);
     }
 
@@ -32,7 +32,7 @@ export class MultiLanguageRecognizerConverter implements Converter<Input, Output
      * @param value An [Input](xref:botbuilder-dialogs-adaptive.Input) or [Output](xref:botbuilder-dialogs-adaptive.Output).
      * @returns A new [Output](xref:botbuilder-dialogs-adaptive.Output) instance.
      */
-    public convert(value: Input | Output): Output {
+    convert(value: Input | Output): Output {
         return Object.entries(value).reduce((recognizers, [key, value]) => {
             return { ...recognizers, [key]: this._recognizerConverter.convert(value) };
         }, {});

@@ -33,7 +33,7 @@ export interface BeginDialogConfiguration extends BaseInvokeDialogConfiguration 
  * Action which begins executing another [Dialog](xref:botbuilder-dialogs.Dialog), when it is done, it will return to the caller.
  */
 export class BeginDialog<O extends object = {}> extends BaseInvokeDialog<O> implements BeginDialogConfiguration {
-    public static $kind = 'Microsoft.BeginDialog';
+    static $kind = 'Microsoft.BeginDialog';
 
     /**
      * Creates a new `BeginDialog` instance.
@@ -41,7 +41,7 @@ export class BeginDialog<O extends object = {}> extends BaseInvokeDialog<O> impl
      * @param dialogIdToCall ID of the dialog to call.
      * @param options (Optional) static options to pass the called dialog.
      */
-    public constructor(dialogIdToCall: string, options?: O);
+    constructor(dialogIdToCall: string, options?: O);
 
     /**
      * Creates a new [BeginDialog](xref:botbuilder-dialogs-adaptive.BeginDialog) instance.
@@ -49,25 +49,25 @@ export class BeginDialog<O extends object = {}> extends BaseInvokeDialog<O> impl
      * @param dialogIdToCall Optional. ID of the [Dialog](xref:botbuilder-dialogs.Dialog) to call.
      * @param options Optional. Static options to pass the called dialog.
      */
-    public constructor(dialogIdToCall?: string, options?: O) {
+    constructor(dialogIdToCall?: string, options?: O) {
         super(dialogIdToCall, options);
     }
 
     /**
      * (Optional) property path to store the dialog result in.
      */
-    public resultProperty?: StringExpression;
+    resultProperty?: StringExpression;
 
     /**
      * An optional expression which if is true will disable this action.
      */
-    public disabled?: BoolExpression;
+    disabled?: BoolExpression;
 
     /**
      * @param property The key of the conditional selector configuration.
      * @returns The converter for the selector configuration.
      */
-    public getConverter(property: keyof BeginDialogConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof BeginDialogConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'resultProperty':
                 return new StringExpressionConverter();
@@ -85,7 +85,7 @@ export class BeginDialog<O extends object = {}> extends BaseInvokeDialog<O> impl
      * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
+    async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }
@@ -109,7 +109,7 @@ export class BeginDialog<O extends object = {}> extends BaseInvokeDialog<O> impl
      * of the value returned is dependent on the child dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async resumeDialog(dc: DialogContext, reason: DialogReason, result: any = null): Promise<DialogTurnResult> {
+    async resumeDialog(dc: DialogContext, reason: DialogReason, result: any = null): Promise<DialogTurnResult> {
         if (this.resultProperty) {
             dc.state.setValue(this.resultProperty.getValue(dc.state), result);
         }

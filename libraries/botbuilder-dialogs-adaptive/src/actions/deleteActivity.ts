@@ -32,16 +32,16 @@ export interface DeleteActivityConfiguration extends DialogConfiguration {
  * Ends and deletes an activity.
  */
 export class DeleteActivity<O extends object = {}> extends Dialog<O> implements DeleteActivityConfiguration {
-    public static $kind = 'Microsoft.DeleteActivity';
+    static $kind = 'Microsoft.DeleteActivity';
 
-    public constructor();
+    constructor();
 
     /**
      * Initializes a new instance of the [DeleteActivity](xref:botbuilder-dialogs-adaptive.DeleteActivity) class.
      *
      * @param activityId ID of the activity to update.
      */
-    public constructor(activityId?: string) {
+    constructor(activityId?: string) {
         super();
         if (activityId) {
             this.activityId = new StringExpression(activityId);
@@ -51,18 +51,18 @@ export class DeleteActivity<O extends object = {}> extends Dialog<O> implements 
     /**
      * The expression which resolves to the activityId to update.
      */
-    public activityId: StringExpression;
+    activityId: StringExpression;
 
     /**
      * An optional expression which if is true will disable this action.
      */
-    public disabled?: BoolExpression;
+    disabled?: BoolExpression;
 
     /**
      * @param property The key of the conditional selector configuration.
      * @returns The converter for the selector configuration.
      */
-    public getConverter(property: keyof DeleteActivityConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof DeleteActivityConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'activityId':
                 return new StringExpressionConverter();
@@ -80,7 +80,7 @@ export class DeleteActivity<O extends object = {}> extends Dialog<O> implements 
      * @param _options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
+    async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }

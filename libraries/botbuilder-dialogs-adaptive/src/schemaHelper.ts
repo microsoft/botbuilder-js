@@ -16,7 +16,7 @@ export class SchemaHelper {
      *
      * @param schema JSON schema to parse.
      */
-    public constructor(schema: object) {
+    constructor(schema: object) {
         this.schema = schema;
         this.property = this.createProperty(schema);
     }
@@ -24,19 +24,19 @@ export class SchemaHelper {
     /**
      * JSON schema object.
      */
-    public readonly schema: object;
+    readonly schema: object;
 
     /**
      * Root object property for the schema.
      */
-    public readonly property: PropertySchema;
+    readonly property: PropertySchema;
 
     /**
      * List of required property names.
      *
      * @returns The list of required property names.
      */
-    public get required(): string[] {
+    get required(): string[] {
         return this.schema['required'] || [];
     }
 
@@ -46,7 +46,7 @@ export class SchemaHelper {
      * @param path Path of the properties schema to return.
      * @returns the schema object for a given property path.
      */
-    public pathToSchema(path: string): PropertySchema | undefined {
+    pathToSchema(path: string): PropertySchema | undefined {
         let property: PropertySchema = undefined;
         const segments = path.replace('[]', '').split('.');
         if (segments.length > 0) {

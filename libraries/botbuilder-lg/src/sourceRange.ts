@@ -17,12 +17,12 @@ export class SourceRange {
     /**
      * Range  of block.
      */
-    public range: Range;
+    range: Range;
 
     /**
      * Code source, used as the lg file path.
      */
-    public source: string;
+    source: string;
 
     /**
      * Creates a new instance of the [SourceRange](xref:botbuilder-lg.SourceRange) class.
@@ -30,14 +30,14 @@ export class SourceRange {
      * @param source Optional. Source, used as the lg file path.
      * @param offset Optional. Offset in the parse tree.
      */
-    public constructor(parseTree: ParserRuleContext, source?: string, offset?: number);
+    constructor(parseTree: ParserRuleContext, source?: string, offset?: number);
 
     /**
      * Creates a new instance of the [SourceRange](xref:botbuilder-lg.SourceRange) class.
      * @param range [Range](xref:botbuilder-lg.Range) of block.
      * @param source Optional. Source, used as the lg file path.
      */
-    public constructor(range: Range, source?: string);
+    constructor(range: Range, source?: string);
 
     /**
      * Creates a new instance of the [SourceRange](xref:botbuilder-lg.SourceRange) class.
@@ -45,7 +45,7 @@ export class SourceRange {
      * @param source Optional. Source, used as the lg file path.
      * @param offset Optional. Offset in the parse tree.
      */
-    public constructor(x: Range | ParserRuleContext, source?: string, offset?: number) {
+    constructor(x: Range | ParserRuleContext, source?: string, offset?: number) {
         this.source = source || '';
         if (x instanceof Range) {
             this.range = x;

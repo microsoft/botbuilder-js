@@ -28,7 +28,7 @@ export enum LabelType {
     Intent = 1
 }
 
-// @public (undocumented)
+// @public
 class OrchestratorBotComponent extends BotComponent {
     // (undocumented)
     configureServices(services: ServiceCollection, _configuration: Configuration): void;

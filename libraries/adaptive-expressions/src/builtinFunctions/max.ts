@@ -18,7 +18,7 @@ export class Max extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [Max](xref:adaptive-expressions.Max) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.Max, Max.evaluator(), ReturnType.Number, FunctionUtils.validateAtLeastOne);
     }
 

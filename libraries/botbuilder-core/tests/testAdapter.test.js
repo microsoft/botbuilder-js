@@ -1,31 +1,30 @@
 const assert = require('assert');
-const { TestAdapter, ActivityTypes, TestFlow, ActivityFactory, TurnContext } = require('../');
+const { TestAdapter, ActivityTypes, ActivityFactory, TurnContext } = require('../');
 
 const receivedMessage = { text: 'received', type: 'message' };
 const originalActivity = { text: 'original', type: 'message' };
 const updatedActivity = { text: 'update', type: 'message' };
-const deletedActivityId = '1234';
 
-describe(`TestAdapter`, function () {
+describe('TestAdapter', function () {
     this.timeout(5000);
 
-    it(`should call bot logic when receiveActivity() is called.`, async function () {
+    it('should call bot logic when receiveActivity() is called.', async function () {
         const adapter = new TestAdapter((context) => {
-            assert(context, `context not passed to bot logic.`);
-            assert(context.activity, `activity not passed through.`);
-            assert(context.activity.type === ActivityTypes.Message, `wrong type.`);
-            assert(context.activity.text === 'test', `wrong text.`);
-            assert(context.activity.id, `missing id.`);
-            assert(context.activity.from, `missing from.`);
-            assert(context.activity.recipient, `missing recipient.`);
-            assert(context.activity.conversation, `missing conversation.`);
-            assert(context.activity.channelId, `missing channelId.`);
-            assert(context.activity.serviceUrl, `missing serviceUrl.`);
+            assert(context, 'context not passed to bot logic.');
+            assert(context.activity, 'activity not passed through.');
+            assert(context.activity.type === ActivityTypes.Message, 'wrong type.');
+            assert(context.activity.text === 'test', 'wrong text.');
+            assert(context.activity.id, 'missing id.');
+            assert(context.activity.from, 'missing from.');
+            assert(context.activity.recipient, 'missing recipient.');
+            assert(context.activity.conversation, 'missing conversation.');
+            assert(context.activity.channelId, 'missing channelId.');
+            assert(context.activity.serviceUrl, 'missing serviceUrl.');
         });
         await adapter.receiveActivity('test');
     });
 
-    it(`should reject on unhandled error.`, async function () {
+    it('should reject on unhandled error.', async function () {
         const err = new Error('Intentional');
         const adapter = new TestAdapter(() => {
             throw err;
@@ -35,7 +34,7 @@ describe(`TestAdapter`, function () {
         }, err);
     });
 
-    it(`should call finally when no error happens`, async function () {
+    it('should call finally when no error happens', async function () {
         const adapter = new TestAdapter(async () => undefined);
         let runFinally = false;
 
@@ -45,7 +44,7 @@ describe(`TestAdapter`, function () {
         assert(runFinally, 'Finally was not called');
     });
 
-    it(`should call finally when an error happens`, async function () {
+    it('should call finally when an error happens', async function () {
         const err = new Error('Intentional');
         const adapter = new TestAdapter(() => {
             throw err;
@@ -60,34 +59,34 @@ describe(`TestAdapter`, function () {
         assert(runFinally, 'Finally was not called');
     });
 
-    it(`should support receiveActivity() called with an Activity.`, async function () {
+    it('should support receiveActivity() called with an Activity.', async function () {
         const adapter = new TestAdapter((context) => {
-            assert(context.activity.type === ActivityTypes.Message, `wrong type.`);
-            assert(context.activity.text === 'test', `wrong text.`);
+            assert(context.activity.type === ActivityTypes.Message, 'wrong type.');
+            assert(context.activity.text === 'test', 'wrong text.');
         });
         await adapter.receiveActivity({ text: 'test', type: ActivityTypes.Message });
     });
 
-    it(`should automatically set the type when receiveActivity() is called with an Activity.`, async function () {
+    it('should automatically set the type when receiveActivity() is called with an Activity.', async function () {
         const adapter = new TestAdapter((context) => {
-            assert(context.activity.type === ActivityTypes.Message, `wrong type.`);
-            assert(context.activity.text === 'test', `wrong text.`);
+            assert(context.activity.type === ActivityTypes.Message, 'wrong type.');
+            assert(context.activity.text === 'test', 'wrong text.');
         });
         await adapter.receiveActivity({ text: 'test' });
     });
 
-    it(`should support passing your own Activity.Id to receiveActivity().`, async function () {
+    it('should support passing your own Activity.Id to receiveActivity().', async function () {
         const adapter = new TestAdapter((context) => {
-            assert(context.activity.id === 'myId', `custom ID not passed through.`);
-            assert(context.activity.type === ActivityTypes.Message, `wrong type.`);
-            assert(context.activity.text === 'test', `wrong text.`);
+            assert(context.activity.id === 'myId', 'custom ID not passed through.');
+            assert(context.activity.type === ActivityTypes.Message, 'wrong type.');
+            assert(context.activity.text === 'test', 'wrong text.');
         });
         await adapter.receiveActivity({ text: 'test', type: ActivityTypes.Message, id: 'myId' });
     });
 
-    it(`should call bot logic when send() is called.`, async function () {
+    it('should call bot logic when send() is called.', async function () {
         let called = false;
-        const adapter = new TestAdapter((context) => {
+        const adapter = new TestAdapter(() => {
             called = true;
         });
 
@@ -96,14 +95,14 @@ describe(`TestAdapter`, function () {
         assert(called);
     });
 
-    it(`should return a message to assertReply().`, async function () {
+    it('should return a message to assertReply().', async function () {
         const adapter = new TestAdapter((context) => {
             return context.sendActivity(receivedMessage);
         });
         await adapter.send('test').assertReply('received').startTest();
     });
 
-    it(`async startTest().`, async function () {
+    it('async startTest().', async function () {
         const adapter = new TestAdapter((context) => {
             return context.sendActivity(receivedMessage);
         });
@@ -111,14 +110,14 @@ describe(`TestAdapter`, function () {
         await adapter.send('test').assertReply('received').startTest();
     });
 
-    it(`should send and receive when test() is called.`, async function () {
+    it('should send and receive when test() is called.', async function () {
         const adapter = new TestAdapter((context) => {
             return context.sendActivity(receivedMessage);
         });
         await adapter.test('test', 'received').startTest();
     });
 
-    it(`should support multiple calls to test().`, async function () {
+    it('should support multiple calls to test().', async function () {
         let count = 0;
         const adapter = new TestAdapter((context) => {
             count++;
@@ -134,7 +133,7 @@ describe(`TestAdapter`, function () {
         assert(count == 5, `incorrect count of "${count}".`);
     });
 
-    it(`should support context.updateActivity() calls.`, async function () {
+    it('should support context.updateActivity() calls.', async function () {
         let activityId;
         const adapter = new TestAdapter(async (context) => {
             if (context.activity.text == 'update') {
@@ -147,7 +146,7 @@ describe(`TestAdapter`, function () {
         await adapter.send('test').send('update').assertReply('update').startTest();
     });
 
-    it(`should support context.deleteActivity() calls.`, async function () {
+    it('should support context.deleteActivity() calls.', async function () {
         let activityId;
         const adapter = new TestAdapter(async (context) => {
             if (context.activity.text == 'delete') {
@@ -160,41 +159,41 @@ describe(`TestAdapter`, function () {
         await adapter.send('test').send('delete').assertNoReply().startTest();
     });
 
-    it(`should delay() before running another test.`, async function () {
+    it('should delay() before running another test.', async function () {
         const start = new Date().getTime();
         const adapter = new TestAdapter((context) => {
             return context.sendActivity(receivedMessage);
         });
         await adapter.test('test', 'received').delay(600).test('test', 'received').startTest();
         const end = new Date().getTime();
-        assert(end - start >= 500, `didn't delay before moving on.`);
+        assert(end - start >= 500, "didn't delay before moving on.");
     });
 
-    it(`should support calling assertReply() with an expected Activity.`, async function () {
+    it('should support calling assertReply() with an expected Activity.', async function () {
         const adapter = new TestAdapter((context) => {
             return context.sendActivity(receivedMessage);
         });
         await adapter.send('test').assertReply({ text: 'received' }).startTest();
     });
 
-    it(`should support calling assertReply() with a custom inspector.`, async function () {
+    it('should support calling assertReply() with a custom inspector.', async function () {
         let called = false;
         const adapter = new TestAdapter((context) => {
             return context.sendActivity(receivedMessage);
         });
         await adapter
             .send('test')
-            .assertReply((reply, description) => {
-                assert(reply, `reply not passed`);
+            .assertReply((reply) => {
+                assert(reply, 'reply not passed');
                 called = true;
             })
             .startTest();
-        assert(called, `inspector not called.`);
+        assert(called, 'inspector not called.');
     });
 
-    it(`should timeout waiting for assertReply() when a string is expected.`, async function () {
-        const adapter = new TestAdapter((context) => {
-            return new Promise((resolve, reject) => {
+    it('should timeout waiting for assertReply() when a string is expected.', async function () {
+        const adapter = new TestAdapter(() => {
+            return new Promise((resolve) => {
                 setTimeout(() => resolve(), 600);
             });
         });
@@ -204,9 +203,9 @@ describe(`TestAdapter`, function () {
         );
     });
 
-    it(`should timeout waiting for assertReply() when an Activity is expected.`, async function () {
-        const adapter = new TestAdapter((context) => {
-            return new Promise((resolve, reject) => {
+    it('should timeout waiting for assertReply() when an Activity is expected.', async function () {
+        const adapter = new TestAdapter(() => {
+            return new Promise((resolve) => {
                 setTimeout(() => resolve(), 600);
             });
         });
@@ -217,9 +216,9 @@ describe(`TestAdapter`, function () {
         );
     });
 
-    it(`should timeout waiting for assertReply() when a custom inspector is expected.`, async function () {
-        const adapter = new TestAdapter((context) => {
-            return new Promise((resolve, reject) => {
+    it('should timeout waiting for assertReply() when a custom inspector is expected.', async function () {
+        const adapter = new TestAdapter(() => {
+            return new Promise((resolve) => {
                 setTimeout(() => resolve(), 600);
             });
         });
@@ -227,15 +226,15 @@ describe(`TestAdapter`, function () {
             async () =>
                 await adapter
                     .send('test')
-                    .assertReply(() => assert(false, `inspector shouldn't be called.`), 'received failed', 500)
+                    .assertReply(() => assert(false, "inspector shouldn't be called."), 'received failed', 500)
                     .startTest(),
             /.*Timed out after.*/
         );
     });
 
-    it(`should timeout waiting for assertNoReply() when an Activity is not expected.`, async function () {
-        const adapter = new TestAdapter((context) => {
-            return new Promise((resolve, reject) => {
+    it('should timeout waiting for assertNoReply() when an Activity is not expected.', async function () {
+        const adapter = new TestAdapter(() => {
+            return new Promise((resolve) => {
                 setTimeout(() => resolve(), 600);
             });
         });
@@ -244,7 +243,7 @@ describe(`TestAdapter`, function () {
         );
     });
 
-    it(`should validate using assertNoReply() that no reply was received, when reply Activity not expected.`, async function () {
+    it('should validate using assertNoReply() that no reply was received, when reply Activity not expected.', async function () {
         const adapter = new TestAdapter((context) => {
             return context.sendActivity(receivedMessage);
         });
@@ -255,7 +254,7 @@ describe(`TestAdapter`, function () {
             .startTest();
     });
 
-    it(`should throw an error with assertNoReply() when no reply is expected, but reply Activity was received.`, async function () {
+    it('should throw an error with assertNoReply() when no reply is expected, but reply Activity was received.', async function () {
         const adapter = new TestAdapter((context) => {
             const activities = [receivedMessage, receivedMessage];
             return context.sendActivities(activities);
@@ -271,14 +270,14 @@ describe(`TestAdapter`, function () {
         );
     });
 
-    it(`should support calling assertReplyOneOf().`, async function () {
+    it('should support calling assertReplyOneOf().', async function () {
         const adapter = new TestAdapter((context) => {
             return context.sendActivity(receivedMessage);
         });
         await adapter.send('test').assertReplyOneOf(['foo', 'bar', 'received']).startTest();
     });
 
-    it(`should fail assertReplyOneOf() call for invalid response.`, async function () {
+    it('should fail assertReplyOneOf() call for invalid response.', async function () {
         const adapter = new TestAdapter((context) => {
             return context.sendActivity(receivedMessage);
         });
@@ -287,8 +286,8 @@ describe(`TestAdapter`, function () {
         });
     });
 
-    it(`should return an error from continueConversation().`, async function () {
-        const adapter = new TestAdapter((context) => {
+    it('should return an error from continueConversation().', async function () {
+        const adapter = new TestAdapter(() => {
             assert.fail("shouldn't run bot logic.");
         });
         await assert.rejects(async () => await adapter.continueConversation(), {
@@ -296,22 +295,22 @@ describe(`TestAdapter`, function () {
         });
     });
 
-    it(`should apply the user-defined Activity template.`, async function () {
+    it('should apply the user-defined Activity template.', async function () {
         const template = {
             channelId: 'foo',
             from: { id: 'foo', name: 'Foo' },
         };
         const adapter = new TestAdapter((context) => {
-            assert(context.activity.channelId === template.channelId, `activity channelId does not match template.`);
-            assert(context.activity.from.id === template.from.id, `activity from.id does not match template.`);
-            assert(context.activity.from.name === template.from.name, `activity from.name does not match template.`);
-            assert(context.activity.serviceUrl, `missing serviceUrl.`);
+            assert(context.activity.channelId === template.channelId, 'activity channelId does not match template.');
+            assert(context.activity.from.id === template.from.id, 'activity from.id does not match template.');
+            assert(context.activity.from.name === template.from.name, 'activity from.name does not match template.');
+            assert(context.activity.serviceUrl, 'missing serviceUrl.');
         }, template);
 
         await adapter.send('test');
     });
 
-    it(`should test activities that have a from.role normalized value of 'bot' via testActivities().`, async function () {
+    it("should test activities that have a from.role normalized value of 'bot' via testActivities().", async function () {
         // Counter to keep track of how many times the bot logic is run.
         let counter = 0;
         const adapter = new TestAdapter((context) => {
@@ -344,12 +343,12 @@ describe(`TestAdapter`, function () {
         ];
 
         await adapter.testActivities(activities);
-        assert(counter === 1, `should have only run bot logic once.`);
+        assert(counter === 1, 'should have only run bot logic once.');
     });
 
-    it(`should run the bot's logic to activities without a from property via testActivities().`, async function () {
+    it("should run the bot's logic to activities without a from property via testActivities().", async function () {
         let counter = 0;
-        const adapter = new TestAdapter((context) => {
+        const adapter = new TestAdapter(() => {
             counter++;
         });
 
@@ -373,10 +372,10 @@ describe(`TestAdapter`, function () {
         ];
 
         await adapter.testActivities(activities);
-        assert(counter === 3, `should have run bot logic for activities without the from property.`);
+        assert(counter === 3, 'should have run bot logic for activities without the from property.');
     });
 
-    it(`should throw error if activities is not passed to testActivities().`, async function () {
+    it('should throw error if activities is not passed to testActivities().', async function () {
         const adapter = new TestAdapter((context) => {
             return context.sendActivity(context.activity.text);
         });
@@ -385,7 +384,7 @@ describe(`TestAdapter`, function () {
         });
     });
 
-    it(`getUserToken returns null`, async function () {
+    it('getUserToken returns null', async function () {
         const adapter = new TestAdapter(async (context) => {
             const token = await context.adapter.getUserToken(context, 'myConnection');
             assert(!token);
@@ -393,7 +392,7 @@ describe(`TestAdapter`, function () {
         await adapter.send('hi');
     });
 
-    it(`getUserToken returns null with code`, async function () {
+    it('getUserToken returns null with code', async function () {
         const adapter = new TestAdapter(async (context) => {
             const token = await context.adapter.getUserToken(context, 'myConnection', '123456');
             assert(!token);
@@ -401,7 +400,7 @@ describe(`TestAdapter`, function () {
         await adapter.send('hi');
     });
 
-    it(`getUserToken returns token`, async function () {
+    it('getUserToken returns token', async function () {
         const adapter = new TestAdapter();
         const connectionName = 'myConnection';
         const channelId = 'directline';
@@ -422,7 +421,7 @@ describe(`TestAdapter`, function () {
         assert.strictEqual(tokenResponse.connectionName, connectionName);
     });
 
-    it(`getUserToken returns token with code`, async function () {
+    it('getUserToken returns token with code', async function () {
         const adapter = new TestAdapter();
         const connectionName = 'myConnection';
         const channelId = 'directline';
@@ -453,7 +452,7 @@ describe(`TestAdapter`, function () {
         assert.strictEqual(tokenResponse.token, token);
     });
 
-    it(`getSignInLink returns token with code`, async function () {
+    it('getSignInLink returns token with code', async function () {
         const adapter = new TestAdapter(async (context) => {
             const link = await context.adapter.getSignInLink(context, 'myConnection');
             assert(link);
@@ -461,14 +460,14 @@ describe(`TestAdapter`, function () {
         await adapter.send('hi');
     });
 
-    it(`signOutUser is noop`, async function () {
+    it('signOutUser is noop', async function () {
         const adapter = new TestAdapter(async (context) => {
             await context.adapter.signOutUser(context, 'myConnection');
         });
         await adapter.send('hi');
     });
 
-    it(`signOutUser logs out user`, async function () {
+    it('signOutUser logs out user', async function () {
         const adapter = new TestAdapter();
         const connectionName = 'myConnection';
         const channelId = 'directline';
@@ -492,7 +491,7 @@ describe(`TestAdapter`, function () {
         assert.equal(tokenResponse, undefined);
     });
 
-    it(`signOutUser with no connectionName signs all out`, async function () {
+    it('signOutUser with no connectionName signs all out', async function () {
         const adapter = new TestAdapter();
         const channelId = 'directline';
         const userId = 'testUser';
@@ -522,7 +521,7 @@ describe(`TestAdapter`, function () {
         assert.equal(tokenResponse, undefined);
     });
 
-    it(`should return statuses from getTokenStatus`, async function () {
+    it('should return statuses from getTokenStatus', async function () {
         const adapter = new TestAdapter(async (context) => {
             const statuses = await context.adapter.getTokenStatus(context, 'user');
             assert(statuses);
@@ -535,7 +534,7 @@ describe(`TestAdapter`, function () {
         await adapter.send('hi');
     });
 
-    it(`should throw when context parameter is not sent`, async function () {
+    it('should throw when context parameter is not sent', async function () {
         const adapter = new TestAdapter(async (context) => {
             await assert.rejects(async () => await context.adapter.getTokenStatus(), {
                 message: 'testAdapter.getTokenStatus(): context with activity is required',
@@ -546,7 +545,7 @@ describe(`TestAdapter`, function () {
         await adapter.send('hi');
     });
 
-    it(`should throw when userId parameter is not sent and context.activity.from.id is not present`, async function () {
+    it('should throw when userId parameter is not sent and context.activity.from.id is not present', async function () {
         const adapter = new TestAdapter(async (context) => {
             context.activity.from = undefined;
             await assert.rejects(async () => await context.adapter.getTokenStatus(context), {

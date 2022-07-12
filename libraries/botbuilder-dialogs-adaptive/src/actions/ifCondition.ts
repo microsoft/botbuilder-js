@@ -34,9 +34,9 @@ export interface IfConditionConfiguration extends DialogConfiguration {
 export class IfCondition<O extends object = {}>
     extends Dialog<O>
     implements DialogDependencies, IfConditionConfiguration {
-    public static $kind = 'Microsoft.IfCondition';
+    static $kind = 'Microsoft.IfCondition';
 
-    public constructor();
+    constructor();
 
     /**
      * Initializes a new instance of the [IfCondition](xref:botbuilder-dialogs-adaptive.IfCondition) class.
@@ -44,7 +44,7 @@ export class IfCondition<O extends object = {}>
      * @param condition Optional. Conditional expression to evaluate.
      * @param elseActions Optional. The actions to run if [condition](#condition) returns false.
      */
-    public constructor(condition?: string, elseActions?: Dialog[]) {
+    constructor(condition?: string, elseActions?: Dialog[]) {
         super();
         if (condition) {
             this.condition = new BoolExpression(condition);
@@ -57,28 +57,28 @@ export class IfCondition<O extends object = {}>
     /**
      * Conditional expression to evaluate.
      */
-    public condition: BoolExpression;
+    condition: BoolExpression;
 
     /**
      * The actions to run if [condition](#condition) returns true.
      */
-    public actions: Dialog[] = [];
+    actions: Dialog[] = [];
 
     /**
      * The actions to run if [condition](#condition) returns false.
      */
-    public elseActions: Dialog[] = [];
+    elseActions: Dialog[] = [];
 
     /**
      * An optional expression which if is true will disable this action.
      */
-    public disabled?: BoolExpression;
+    disabled?: BoolExpression;
 
     /**
      * @param property The key of the conditional selector configuration.
      * @returns The converter for the selector configuration.
      */
-    public getConverter(property: keyof IfConditionConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof IfConditionConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'condition':
                 return new BoolExpressionConverter();
@@ -127,7 +127,7 @@ export class IfCondition<O extends object = {}>
      *
      * @returns The child [Dialog](xref:botbuilder-dialogs.Dialog) dependencies.
      */
-    public getDependencies(): Dialog[] {
+    getDependencies(): Dialog[] {
         return [].concat(this.trueScope, this.falseScope);
     }
 
@@ -138,7 +138,7 @@ export class IfCondition<O extends object = {}>
      * @param _options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
+    async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }

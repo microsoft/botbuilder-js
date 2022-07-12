@@ -67,7 +67,7 @@ export class ActivityHandler extends ActivityHandlerBase {
         [type: string]: BotHandler[];
     };
     protected on(type: string, handler: BotHandler): this;
-    protected onAdaptiveCardInvoke(context: TurnContext, invokeValue: AdaptiveCardInvokeValue): Promise<AdaptiveCardInvokeResponse>;
+    protected onAdaptiveCardInvoke(_context: TurnContext, _invokeValue: AdaptiveCardInvokeValue): Promise<AdaptiveCardInvokeResponse>;
     onCommand(handler: BotHandler): this;
     protected onCommandActivity(context: TurnContext): Promise<void>;
     onCommandResult(handler: BotHandler): this;
@@ -96,8 +96,8 @@ export class ActivityHandler extends ActivityHandlerBase {
     protected onReactionsAddedActivity(reactionsAdded: MessageReaction[], context: TurnContext): Promise<void>;
     onReactionsRemoved(handler: BotHandler): this;
     protected onReactionsRemovedActivity(reactionsRemoved: MessageReaction[], context: TurnContext): Promise<void>;
-    protected onSearchInvoke(context: TurnContext, invokeValue: SearchInvokeValue): Promise<SearchInvokeResponse>;
-    protected onSignInInvoke(context: TurnContext): Promise<void>;
+    protected onSearchInvoke(_context: TurnContext, _invokeValue: SearchInvokeValue): Promise<SearchInvokeResponse>;
+    protected onSignInInvoke(_context: TurnContext): Promise<void>;
     onTokenResponseEvent(handler: BotHandler): this;
     onTurn(handler: BotHandler): this;
     protected onTurnActivity(context: TurnContext): Promise<void>;
@@ -110,24 +110,24 @@ export class ActivityHandler extends ActivityHandlerBase {
 
 // @public
 export class ActivityHandlerBase {
-    protected onCommandActivity(context: TurnContext): Promise<void>;
-    protected onCommandResultActivity(context: TurnContext): Promise<void>;
+    protected onCommandActivity(_context: TurnContext): Promise<void>;
+    protected onCommandResultActivity(_context: TurnContext): Promise<void>;
     protected onConversationUpdateActivity(context: TurnContext): Promise<void>;
-    protected onEndOfConversationActivity(context: TurnContext): Promise<void>;
-    protected onEventActivity(context: TurnContext): Promise<void>;
+    protected onEndOfConversationActivity(_context: TurnContext): Promise<void>;
+    protected onEventActivity(_context: TurnContext): Promise<void>;
     protected onInstallationUpdateActivity(context: TurnContext): Promise<void>;
-    protected onInstallationUpdateAddActivity(context: TurnContext): Promise<void>;
-    protected onInstallationUpdateRemoveActivity(context: TurnContext): Promise<void>;
-    protected onInvokeActivity(context: TurnContext): Promise<InvokeResponse>;
-    protected onMembersAddedActivity(membersAdded: ChannelAccount[], context: TurnContext): Promise<void>;
-    protected onMembersRemovedActivity(membersRemoved: ChannelAccount[], context: TurnContext): Promise<void>;
-    protected onMessageActivity(context: TurnContext): Promise<void>;
+    protected onInstallationUpdateAddActivity(_context: TurnContext): Promise<void>;
+    protected onInstallationUpdateRemoveActivity(_context: TurnContext): Promise<void>;
+    protected onInvokeActivity(_context: TurnContext): Promise<InvokeResponse>;
+    protected onMembersAddedActivity(_membersAdded: ChannelAccount[], _context: TurnContext): Promise<void>;
+    protected onMembersRemovedActivity(_membersRemoved: ChannelAccount[], _context: TurnContext): Promise<void>;
+    protected onMessageActivity(_context: TurnContext): Promise<void>;
     protected onMessageReactionActivity(context: TurnContext): Promise<void>;
-    protected onReactionsAddedActivity(reactionsAdded: MessageReaction[], context: TurnContext): Promise<void>;
-    protected onReactionsRemovedActivity(reactionsRemoved: MessageReaction[], context: TurnContext): Promise<void>;
+    protected onReactionsAddedActivity(_reactionsAdded: MessageReaction[], _context: TurnContext): Promise<void>;
+    protected onReactionsRemovedActivity(_reactionsRemoved: MessageReaction[], _context: TurnContext): Promise<void>;
     protected onTurnActivity(context: TurnContext): Promise<void>;
-    protected onTypingActivity(context: TurnContext): Promise<void>;
-    protected onUnrecognizedActivity(context: TurnContext): Promise<void>;
+    protected onTypingActivity(_context: TurnContext): Promise<void>;
+    protected onUnrecognizedActivity(_context: TurnContext): Promise<void>;
     run(context: TurnContext): Promise<void>;
 }
 
@@ -159,7 +159,7 @@ export abstract class BotAdapter {
     continueConversationAsync(botAppId: string, reference: Partial<ConversationReference>, logic: (context: TurnContext) => Promise<void>): Promise<void>;
     continueConversationAsync(claimsIdentity: ClaimsIdentity, reference: Partial<ConversationReference>, logic: (context: TurnContext) => Promise<void>): Promise<void>;
     continueConversationAsync(claimsIdentity: ClaimsIdentity, reference: Partial<ConversationReference>, audience: string, logic: (context: TurnContext) => Promise<void>): Promise<void>;
-    createConversationAsync(botAppId: string, channelId: string, serviceUrl: string, audience: string, conversationParameters: ConversationParameters, logic: (context: TurnContext) => Promise<void>): Promise<void>;
+    createConversationAsync(_botAppId: string, _channelId: string, _serviceUrl: string, _audience: string, _conversationParameters: ConversationParameters, _logic: (context: TurnContext) => Promise<void>): Promise<void>;
     abstract deleteActivity(context: TurnContext, reference: Partial<ConversationReference>): Promise<void>;
     // (undocumented)
     protected middleware: MiddlewareSet;
@@ -299,7 +299,7 @@ export class CardFactory {
     static videoCard(title: string, media: (MediaUrl | string)[], buttons?: (CardAction | string)[], other?: Partial<VideoCard>): Attachment;
 }
 
-// @public (undocumented)
+// @public
 export abstract class CloudAdapterBase extends BotAdapter {
     constructor(botFrameworkAuthentication: BotFrameworkAuthentication);
     // (undocumented)
@@ -307,7 +307,7 @@ export abstract class CloudAdapterBase extends BotAdapter {
     // (undocumented)
     readonly ConnectorFactoryKey: symbol;
     // @deprecated (undocumented)
-    continueConversation(reference: Partial<ConversationReference>, logic: (context: TurnContext) => Promise<void>): Promise<void>;
+    continueConversation(_reference: Partial<ConversationReference>, _logic: (context: TurnContext) => Promise<void>): Promise<void>;
     // @internal (undocumented)
     continueConversationAsync(botAppIdOrClaimsIdentity: string | ClaimsIdentity, reference: Partial<ConversationReference>, logicOrAudience: ((context: TurnContext) => Promise<void>) | string, maybeLogic?: (context: TurnContext) => Promise<void>): Promise<void>;
     protected createClaimsIdentity(botAppId?: string): ClaimsIdentity;
@@ -335,17 +335,11 @@ export class ComponentRegistration {
 // @public
 export class ConfigurationBotFrameworkAuthentication extends BotFrameworkAuthentication {
     constructor(botFrameworkAuthConfig?: ConfigurationBotFrameworkAuthenticationOptions, credentialsFactory?: ServiceClientCredentialsFactory, authConfiguration?: AuthenticationConfiguration, botFrameworkClientFetch?: (input: RequestInfo, init?: RequestInit) => Promise<Response>, connectorClientOptions?: ConnectorClientOptions);
-    // (undocumented)
     authenticateChannelRequest(authHeader: string): Promise<ClaimsIdentity>;
-    // (undocumented)
     authenticateRequest(activity: Activity, authHeader: string): Promise<AuthenticateRequestResult>;
-    // (undocumented)
     authenticateStreamingRequest(authHeader: string, channelIdHeader: string): Promise<AuthenticateRequestResult>;
-    // (undocumented)
     createBotFrameworkClient(): BotFrameworkClient;
-    // (undocumented)
     createConnectorFactory(claimsIdentity: ClaimsIdentity): ConnectorFactory;
-    // (undocumented)
     createUserTokenClient(claimsIdentity: ClaimsIdentity): Promise<UserTokenClient>;
     }
 
@@ -396,7 +390,7 @@ export function createServiceClientCredentialFactoryFromConfiguration(configurat
 // @public
 export type DeleteActivityHandler = (context: TurnContext, reference: Partial<ConversationReference>, next: () => Promise<void>) => Promise<void>;
 
-// @public
+// @public @deprecated
 export interface ExtendedUserTokenProvider extends IUserTokenProvider {
     exchangeToken(context: TurnContext, connectionName: string, userId: string, tokenExchangeRequest: TokenExchangeRequest): Promise<TokenResponse>;
     exchangeToken(context: TurnContext, connectionName: string, userId: string, tokenExchangeRequest: TokenExchangeRequest, appCredentials: CoreAppCredentials): Promise<TokenResponse>;
@@ -426,16 +420,15 @@ export interface IntentScore {
 // @public (undocumented)
 export const INVOKE_RESPONSE_KEY: unique symbol;
 
-// @public (undocumented)
+// @public
 export class InvokeException<T = unknown> extends Error {
     constructor(status: StatusCodes, response?: T);
-    // (undocumented)
     createInvokeResponse(): InvokeResponse;
     }
 
 export { InvokeResponse }
 
-// @public
+// @public @deprecated
 export interface IUserTokenProvider {
     getAadTokens(context: TurnContext, connectionName: string, resourceUrls: string[]): Promise<{
         [propertyName: string]: TokenResponse;
@@ -498,13 +491,13 @@ export class MiddlewareSet implements Middleware {
 
 // @public
 export class NullTelemetryClient implements BotTelemetryClient, BotPageViewTelemetryClient {
-    constructor(settings?: any);
+    constructor(_settings?: any);
     flush(): void;
-    trackDependency(telemetry: TelemetryDependency): void;
-    trackEvent(telemetry: TelemetryEvent): void;
-    trackException(telemetry: TelemetryException): void;
-    trackPageView(telemetry: TelemetryPageView): void;
-    trackTrace(telemetry: TelemetryTrace): void;
+    trackDependency(_telemetry: TelemetryDependency): void;
+    trackEvent(_telemetry: TelemetryEvent): void;
+    trackException(_telemetry: TelemetryException): void;
+    trackPageView(_telemetry: TelemetryPageView): void;
+    trackTrace(_telemetry: TelemetryTrace): void;
 }
 
 // @public
@@ -574,26 +567,23 @@ export class ShowTypingMiddleware implements Middleware {
     onTurn(context: TurnContext, next: () => Promise<void>): Promise<void>;
     }
 
-// @public (undocumented)
+// @public
 export class SkillConversationIdFactory extends SkillConversationIdFactoryBase {
     constructor(storage: Storage_2);
-    // (undocumented)
     createSkillConversationIdWithOptions(options: SkillConversationIdFactoryOptions): Promise<string>;
-    // (undocumented)
     deleteConversationReference(skillConversationId: string): Promise<void>;
-    // (undocumented)
     getSkillConversationReference(skillConversationId: string): Promise<SkillConversationReference>;
     }
 
 // @public
 export abstract class SkillConversationIdFactoryBase {
     // @deprecated
-    createSkillConversationId(conversationReference: ConversationReference): Promise<string>;
-    createSkillConversationIdWithOptions(options: SkillConversationIdFactoryOptions): Promise<string>;
+    createSkillConversationId(_conversationReference: ConversationReference): Promise<string>;
+    createSkillConversationIdWithOptions(_options: SkillConversationIdFactoryOptions): Promise<string>;
     abstract deleteConversationReference(skillConversationId: string): Promise<void>;
     // @deprecated
-    getConversationReference(skillConversationId: string): Promise<ConversationReference>;
-    getSkillConversationReference(skillConversationId: string): Promise<SkillConversationReference>;
+    getConversationReference(_skillConversationId: string): Promise<ConversationReference>;
+    getSkillConversationReference(_skillConversationId: string): Promise<SkillConversationReference>;
 }
 
 // @public (undocumented)
@@ -773,7 +763,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
     get activityBuffer(): Partial<Activity>[];
     addExchangeableToken(connectionName: string, channelId: string, userId: string, exchangeableItem: string, token: string): void;
     addUserToken(connectionName: string, channelId: string, userId: string, token: string, magicCode?: string): void;
-    continueConversation(reference: Partial<ConversationReference>, logic: (revocableContext: TurnContext) => Promise<void>): Promise<void>;
+    continueConversation(_reference: Partial<ConversationReference>, _logic: (revocableContext: TurnContext) => Promise<void>): Promise<void>;
     conversation: ConversationReference;
     protected createContext(request: Partial<Activity>): TurnContext;
     static createConversation(name: string, user?: string, bot?: string): ConversationReference;
@@ -782,13 +772,13 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
     // Warning: (ae-setter-with-docs) The doc comment for the property "enableTrace" must appear on the getter, not the setter.
     set enableTrace(value: boolean);
     exchangeToken(context: TurnContext, connectionName: string, userId: string, tokenExchangeRequest: TokenExchangeRequest): Promise<TokenResponse>;
-    getAadTokens(context: TurnContext, connectionName: string, resourceUrls: string[]): Promise<{
+    getAadTokens(_context: TurnContext, _connectionName: string, _resourceUrls: string[]): Promise<{
         [propertyName: string]: TokenResponse;
     }>;
     getNextReply(): Partial<Activity>;
     getSignInLink(context: TurnContext, connectionName: string): Promise<string>;
-    getSignInResource(context: TurnContext, connectionName: string, userId?: string, finalRedirect?: string): Promise<SignInUrlResponse>;
-    getTokenStatus(context: TurnContext, userId: string, includeFilter?: string, oAuthAppCredentials?: any): Promise<any[]>;
+    getSignInResource(context: TurnContext, connectionName: string, userId?: string, _finalRedirect?: string): Promise<SignInUrlResponse>;
+    getTokenStatus(context: TurnContext, userId: string, includeFilter?: string, _oAuthAppCredentials?: any): Promise<any[]>;
     getUserToken(context: TurnContext, connectionName: string, magicCode?: string): Promise<TokenResponse>;
     locale: string;
     makeActivity(text?: string): Partial<Activity>;
@@ -799,7 +789,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
     sendTextToBot(userSays: string, callback: (context: TurnContext) => Promise<any>): Promise<any>;
     signOutUser(context: TurnContext, connectionName?: string, userId?: string): Promise<void>;
     readonly template: Partial<Activity>;
-    test(userSays: string | Partial<Activity>, expected: string | Partial<Activity> | ((activity: Partial<Activity>, description?: string) => void), description?: string, timeout?: number): TestFlow;
+    test(userSays: string | Partial<Activity>, expected: string | Partial<Activity> | ((activity: Partial<Activity>, description?: string) => void), description?: string, _timeout?: number): TestFlow;
     testActivities(activities: Partial<Activity>[], description?: string, timeout?: number): TestFlow;
     throwOnExchangeRequest(connectionName: string, channelId: string, userId: string, exchangeableItem: string): void;
     updateActivity(context: TurnContext, activity: Partial<Activity>): Promise<ResourceResponse | void>;

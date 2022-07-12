@@ -22,7 +22,7 @@ export class If extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [If](xref:adaptive-expressions.If) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.If, If.evaluator, ReturnType.Object, If.validator);
     }
 

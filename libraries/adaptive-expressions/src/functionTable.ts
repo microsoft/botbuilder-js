@@ -23,7 +23,7 @@ export class FunctionTable implements Map<string, ExpressionEvaluator> {
      *
      * @returns A list of string values.
      */
-    public keys(): IterableIterator<string> {
+    keys(): IterableIterator<string> {
         const keysOfAllFunctions = Array.from(ExpressionFunctions.standardFunctions.keys()).concat(
             Array.from(this.customFunctions.keys())
         );
@@ -35,7 +35,7 @@ export class FunctionTable implements Map<string, ExpressionEvaluator> {
      *
      * @returns A list of [ExpressionEvaluator](xref:adaptive-expressions.ExpressionEvaluator).
      */
-    public values(): IterableIterator<ExpressionEvaluator> {
+    values(): IterableIterator<ExpressionEvaluator> {
         const valuesOfAllFunctions = Array.from(ExpressionFunctions.standardFunctions.values()).concat(
             Array.from(this.customFunctions.values())
         );
@@ -47,7 +47,7 @@ export class FunctionTable implements Map<string, ExpressionEvaluator> {
      *
      * @returns An integer value.
      */
-    public get size(): number {
+    get size(): number {
         return ExpressionFunctions.standardFunctions.size + this.customFunctions.size;
     }
 
@@ -56,7 +56,7 @@ export class FunctionTable implements Map<string, ExpressionEvaluator> {
      *
      * @returns A boolean value indicating whether the [FunctionTable](xref:adaptive-expressions.FunctionTable) is readonly.
      */
-    public get isReadOnly(): boolean {
+    get isReadOnly(): boolean {
         return false;
     }
 
@@ -66,7 +66,7 @@ export class FunctionTable implements Map<string, ExpressionEvaluator> {
      * @param key A string value of function name.
      * @returns An [ExpressionEvaluator](xref:adaptive-expressions.ExpressionEvaluator).
      */
-    public get(key: string): ExpressionEvaluator {
+    get(key: string): ExpressionEvaluator {
         if (ExpressionFunctions.standardFunctions.get(key)) {
             return ExpressionFunctions.standardFunctions.get(key);
         }
@@ -85,7 +85,7 @@ export class FunctionTable implements Map<string, ExpressionEvaluator> {
      * @param value The value to set for the [ExpressionEvaluator](xref:adaptive-expressions.ExpressionEvaluator).
      * @returns The value of the [ExpressionEvaluator](xref:adaptive-expressions.ExpressionEvaluator).
      */
-    public set(key: string, value: ExpressionEvaluator): this {
+    set(key: string, value: ExpressionEvaluator): this {
         if (ExpressionFunctions.standardFunctions.get(key)) {
             throw Error("You can't overwrite a built in function.");
         }
@@ -94,9 +94,9 @@ export class FunctionTable implements Map<string, ExpressionEvaluator> {
         return this;
     }
 
-    public add(item: { key: string; value: ExpressionEvaluator }): void;
-    public add(key: string, value: ExpressionEvaluator): void;
-    public add(key: string, value: customFunction): void;
+    add(item: { key: string; value: ExpressionEvaluator }): void;
+    add(key: string, value: ExpressionEvaluator): void;
+    add(key: string, value: customFunction): void;
 
     /**
      * Inserts a mapping of a string key to [ExpressionEvaluator](xref:adaptive-expressions.ExpressionEvaluator) into [FunctionTable](xref:adaptive-expressions.FunctionTable).
@@ -104,7 +104,7 @@ export class FunctionTable implements Map<string, ExpressionEvaluator> {
      * @param param1 Key-Value pair for the [ExpressionEvaluator](xref:adaptive-expressions.ExpressionEvaluator) or the function name to be added.
      * @param param2 Value of the [ExpressionEvaluator](xref:adaptive-expressions.ExpressionEvaluator) to be added or value of the user customized function to be added.
      */
-    public add(
+    add(
         param1: { key: string; value: ExpressionEvaluator } | string,
         param2?: ExpressionEvaluator | customFunction
     ): void {
@@ -126,7 +126,7 @@ export class FunctionTable implements Map<string, ExpressionEvaluator> {
     /**
      * Clears the user [customFunctions](xref:adaptive-expressions.FunctionTable.customFunctions).
      */
-    public clear(): void {
+    clear(): void {
         this.customFunctions.clear();
     }
 
@@ -136,7 +136,7 @@ export class FunctionTable implements Map<string, ExpressionEvaluator> {
      * @param key A string key.
      * @returns `True` if the key is contained, otherwise returns `False`.
      */
-    public has(key: string): boolean {
+    has(key: string): boolean {
         return ExpressionFunctions.standardFunctions.has(key) || this.customFunctions.has(key);
     }
 
@@ -146,7 +146,7 @@ export class FunctionTable implements Map<string, ExpressionEvaluator> {
      * @param key A string key of function name.
      * @returns A boolean value indicating whether the key is successfully deleted.
      */
-    public delete(key: string): boolean {
+    delete(key: string): boolean {
         return this.customFunctions.delete(key);
     }
 
@@ -157,7 +157,7 @@ export class FunctionTable implements Map<string, ExpressionEvaluator> {
      * @param _callbackfn Callback function.
      * @param _thisArg Optional. This args.
      */
-    public forEach(
+    forEach(
         _callbackfn: (value: ExpressionEvaluator, key: string, map: Map<string, ExpressionEvaluator>) => void,
         _thisArg?: any
     ): void {
@@ -168,7 +168,7 @@ export class FunctionTable implements Map<string, ExpressionEvaluator> {
      * Returns an iterable of key, value pairs for every entry in the map.
      * Not implemented.
      */
-    public entries(): IterableIterator<[string, ExpressionEvaluator]> {
+    entries(): IterableIterator<[string, ExpressionEvaluator]> {
         throw Error('entries function not implemented');
     }
 
@@ -176,7 +176,7 @@ export class FunctionTable implements Map<string, ExpressionEvaluator> {
      * Returns an iterable of key, value pairs.
      * Not implemented.
      */
-    public get [Symbol.iterator](): () => IterableIterator<[string, ExpressionEvaluator]> {
+    get [Symbol.iterator](): () => IterableIterator<[string, ExpressionEvaluator]> {
         throw Error('Symbol.iterator function not implemented');
     }
 
@@ -184,7 +184,7 @@ export class FunctionTable implements Map<string, ExpressionEvaluator> {
      * Returns a string value.
      * Not implemented.
      */
-    public get [Symbol.toStringTag](): string {
+    get [Symbol.toStringTag](): string {
         throw Error('Symbol.toStringTag function not implemented');
     }
 }

@@ -18,23 +18,23 @@ export interface AssertReplyConfiguration extends AssertReplyActivityConfigurati
  * Test Script action to assert that the bots' reply matches expectations.
  */
 export class AssertReply extends AssertReplyActivity implements AssertReplyConfiguration {
-    public static $kind = 'Microsoft.Test.AssertReply';
+    static $kind = 'Microsoft.Test.AssertReply';
 
     /**
      * The text value to look for in the reply.
      */
-    public text: string;
+    text: string;
 
     /**
      * A value indicating whether text should be an exact match.
      */
-    public exact = true;
+    exact = true;
 
     /**
      * Gets the text to assert for an activity.
      * @returns String.
      */
-    public getConditionDescription(): string {
+    getConditionDescription(): string {
         return this.text;
     }
 
@@ -42,7 +42,7 @@ export class AssertReply extends AssertReplyActivity implements AssertReplyConfi
      * Validates the reply of an activity.
      * @param activity The activity to verify.
      */
-    public validateReply(activity: Activity) {
+    validateReply(activity: Activity) {
         if (this.text) {
             if (this.exact) {
                 if (activity.type == ActivityTypes.Message && activity.text != this.text) {

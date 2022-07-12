@@ -12,7 +12,7 @@ import { ManagedIdentityAppCredentials } from './managedIdentityAppCredentials';
 import { ServiceClientCredentialsFactory } from './serviceClientCredentialsFactory';
 import { ok } from 'assert';
 
-/*
+/**
  * A Managed Identity implementation of the [ServiceClientCredentialsFactory](xref:botframework-connector.ServiceClientCredentialsFactory) abstract class.
  */
 export class ManagedIdentityServiceClientCredentialsFactory extends ServiceClientCredentialsFactory {

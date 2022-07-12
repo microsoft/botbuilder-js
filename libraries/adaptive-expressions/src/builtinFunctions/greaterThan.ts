@@ -18,7 +18,7 @@ export class GreaterThan extends ComparisonEvaluator {
     /**
      * Initializes a new instance of the [GreaterThan](xref:adaptive-expressions.GreaterThan) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.GreaterThan, GreaterThan.func, FunctionUtils.validateBinary, FunctionUtils.verifyNotNull);
     }
 

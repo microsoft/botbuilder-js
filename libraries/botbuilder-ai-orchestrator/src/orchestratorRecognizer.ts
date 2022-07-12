@@ -120,6 +120,10 @@ export class OrchestratorRecognizer extends AdaptiveRecognizer implements Orches
      */
     readonly entityProperty = 'entityResult';
 
+    /**
+     * @param property The key of the conditional selector configuration.
+     * @returns The converter for the selector configuration.
+     */
     getConverter(property: keyof OrchestratorRecognizerConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'modelFolder':

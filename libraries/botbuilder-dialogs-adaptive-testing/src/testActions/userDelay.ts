@@ -17,12 +17,12 @@ export interface UserDelayConfiguration {
  * Script action to delay test script for specified timespan.
  */
 export class UserDelay extends TestAction implements UserDelayConfiguration {
-    public static $kind = 'Microsoft.Test.UserDelay';
+    static $kind = 'Microsoft.Test.UserDelay';
 
     /**
      * The timespan in milliseconds to delay.
      */
-    public timespan: number;
+    timespan: number;
 
     /**
      * Execute the test.
@@ -31,7 +31,7 @@ export class UserDelay extends TestAction implements UserDelayConfiguration {
      * @param inspector Inspector for dialog context.
      * @returns A Promise that represents the work queued to execute.
      */
-    public async execute(
+    async execute(
         testAdapter: TestAdapter,
         callback: (context: TurnContext) => Promise<any>,
         inspector?: Inspector

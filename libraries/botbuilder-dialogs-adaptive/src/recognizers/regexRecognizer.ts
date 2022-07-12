@@ -20,7 +20,7 @@ type IntentPatternInput = {
 };
 
 class IntentPatternsConverter implements Converter<IntentPatternInput[], IntentPattern[]> {
-    public convert(items: IntentPatternInput[] | IntentPattern[]): IntentPattern[] {
+    convert(items: IntentPatternInput[] | IntentPattern[]): IntentPattern[] {
         const results: IntentPattern[] = [];
         items.forEach((item) => {
             results.push(item instanceof IntentPattern ? item : new IntentPattern(item.intent, item.pattern));
@@ -37,23 +37,23 @@ export interface RegexRecognizerConfiguration extends RecognizerSetConfiguration
  * Recognizer implementation which uses regex expressions to identify intents.
  */
 export class RegexRecognizer extends AdaptiveRecognizer implements RegexRecognizerConfiguration {
-    public static $kind = 'Microsoft.RegexRecognizer';
+    static $kind = 'Microsoft.RegexRecognizer';
 
     /**
      * Array of patterns -> intent names.
      */
-    public intents: IntentPattern[] = [];
+    intents: IntentPattern[] = [];
 
     /**
      * The entity recognizers.
      */
-    public entities: EntityRecognizer[] = [];
+    entities: EntityRecognizer[] = [];
 
     /**
      * @param property The key of the conditional selector configuration.
      * @returns The converter for the selector configuration.
      */
-    public getConverter(property: keyof RegexRecognizerConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof RegexRecognizerConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'intents':
                 return new IntentPatternsConverter();
@@ -71,7 +71,7 @@ export class RegexRecognizer extends AdaptiveRecognizer implements RegexRecogniz
      * @param telemetryMetrics Optional, additional metrics to be logged to telemetry with the LuisResult event.
      * @returns {Promise<RecognizerResult>} Analysis of utterance.
      */
-    public async recognize(
+    async recognize(
         dialogContext: DialogContext,
         activity: Activity,
         telemetryProperties?: { [key: string]: string },

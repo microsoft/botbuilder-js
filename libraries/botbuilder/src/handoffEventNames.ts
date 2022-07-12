@@ -7,7 +7,7 @@
  * Defines values for handoff event names.
  */
 export class HandoffEventNames {
-    public static readonly InitiateHandoff: string = 'handoff.initiate';
+    static readonly InitiateHandoff: string = 'handoff.initiate';
 
-    public static readonly HandoffStatus: string = 'handoff.status';
+    static readonly HandoffStatus: string = 'handoff.status';
 }

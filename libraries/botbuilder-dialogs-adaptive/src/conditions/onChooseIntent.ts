@@ -18,9 +18,9 @@ export interface OnChooseIntentConfiguration extends OnIntentConfiguration {
  * Actions triggered when an Intent of "ChooseIntent" has been emitted by a [Recognizer](xref:botbuilder-dialogs-adaptive.Recognizer).
  */
 export class OnChooseIntent extends OnIntent implements OnChooseIntentConfiguration {
-    public static $kind = 'Microsoft.OnChooseIntent';
+    static $kind = 'Microsoft.OnChooseIntent';
 
-    public intents: string[] = [];
+    intents: string[] = [];
 
     /**
      * Initializes a new instance of the [OnChooseIntent](xref:botbuilder-dialogs-adaptive.OnChooseIntent) class.
@@ -28,7 +28,7 @@ export class OnChooseIntent extends OnIntent implements OnChooseIntentConfigurat
      * @param {Dialog[]} actions Optional, actions to add to the plan when the rule constraints are met.
      * @param {string} condition Optional, condition which needs to be met for the actions to be executed.
      */
-    public constructor(actions: Dialog[] = [], condition?: string) {
+    constructor(actions: Dialog[] = [], condition?: string) {
         super('ChooseIntent', [], actions, condition);
     }
 
