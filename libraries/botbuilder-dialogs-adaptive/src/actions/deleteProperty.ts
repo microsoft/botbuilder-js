@@ -32,14 +32,14 @@ export interface DeletePropertyConfiguration extends DialogConfiguration {
  * Deletes a property from memory.
  */
 export class DeleteProperty<O extends object = {}> extends Dialog<O> implements DeletePropertyConfiguration {
-    public static $kind = 'Microsoft.DeleteProperty';
+    static $kind = 'Microsoft.DeleteProperty';
 
     /**
      * Creates a new `DeleteProperty` instance.
      *
      * @param property (Optional) property to delete.
      */
-    public constructor(property?: string) {
+    constructor(property?: string) {
         super();
         if (property) {
             this.property = new StringExpression(property);
@@ -49,18 +49,18 @@ export class DeleteProperty<O extends object = {}> extends Dialog<O> implements 
     /**
      * The property to delete.
      */
-    public property: StringExpression;
+    property: StringExpression;
 
     /**
      * An optional expression which if is true will disable this action.
      */
-    public disabled?: BoolExpression;
+    disabled?: BoolExpression;
 
     /**
      * @param property The key of the conditional selector configuration.
      * @returns The converter for the selector configuration.
      */
-    public getConverter(property: keyof DeletePropertyConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof DeletePropertyConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'property':
                 return new StringExpressionConverter();
@@ -78,7 +78,7 @@ export class DeleteProperty<O extends object = {}> extends Dialog<O> implements 
      * @param _options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
+    async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }

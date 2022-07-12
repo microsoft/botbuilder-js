@@ -203,7 +203,7 @@ describe('ActivityHandlerBase', function () {
             return activity;
         }
 
-        it(`should call onMembersAddedActivity if the id of the member added does not match the recipient's id`, async function () {
+        it("should call onMembersAddedActivity if the id of the member added does not match the recipient's id", async function () {
             const bot = new ConversationUpdateActivityHandler();
             const activity = createConvUpdateActivity('bot', { membersAdded: [{ id: 'user' }] });
 
@@ -214,7 +214,7 @@ describe('ActivityHandlerBase', function () {
             assert(onMembersAddedActivityCalled, 'onMembersAddedActivity was not called');
         });
 
-        it(`should call onMembersRemovedActivity if the id of the member removed does not match the recipient's id`, async function () {
+        it("should call onMembersRemovedActivity if the id of the member removed does not match the recipient's id", async function () {
             const bot = new ConversationUpdateActivityHandler();
             const activity = createConvUpdateActivity('bot', { membersRemoved: [{ id: 'user' }] });
 
@@ -225,7 +225,7 @@ describe('ActivityHandlerBase', function () {
             assert(onMembersRemovedActivityCalled, 'onMembersRemovedActivity was not called');
         });
 
-        it(`should not call onMembersAddedActivity if the id of the member added matches the recipient's id`, async function () {
+        it("should not call onMembersAddedActivity if the id of the member added matches the recipient's id", async function () {
             const bot = new ConversationUpdateActivityHandler();
             const activity = createConvUpdateActivity('bot', { membersAdded: [{ id: 'bot' }] }, true);
 
@@ -235,7 +235,7 @@ describe('ActivityHandlerBase', function () {
             assert(onConversationUpdateActivityCalled, 'onConversationUpdateActivity was not called');
         });
 
-        it(`should not call onMembersRemovedActivity if the id of the member removed matches the recipient's id`, async function () {
+        it("should not call onMembersRemovedActivity if the id of the member removed matches the recipient's id", async function () {
             const bot = new ConversationUpdateActivityHandler();
             const activity = createConvUpdateActivity('bot', { membersRemoved: [{ id: 'bot' }] }, true);
 
@@ -296,7 +296,7 @@ describe('ActivityHandlerBase', function () {
             return activity;
         }
 
-        it(`should call onReactionsAddedActivity if reactionsAdded exists and reactionsAdded.length > 0`, async function () {
+        it('should call onReactionsAddedActivity if reactionsAdded exists and reactionsAdded.length > 0', async function () {
             const bot = new MessageReactionActivityHandler();
             const activity = createMsgReactActivity('bot', { reactionsAdded: [{ type: 'like' }] });
 
@@ -307,7 +307,7 @@ describe('ActivityHandlerBase', function () {
             assert(onReactionsAddedActivityCalled, 'onReactionsAddedActivity was not called');
         });
 
-        it(`should call onReactionsRemovedActivity if reactionsRemoved exists and reactionsRemoved.length > 0`, async function () {
+        it('should call onReactionsRemovedActivity if reactionsRemoved exists and reactionsRemoved.length > 0', async function () {
             const bot = new MessageReactionActivityHandler();
             const activity = createMsgReactActivity('bot', { reactionsRemoved: [{ type: 'like' }] });
 
@@ -318,7 +318,7 @@ describe('ActivityHandlerBase', function () {
             assert(onReactionsRemovedActivityCalled, 'onReactionsRemovedActivity was not called');
         });
 
-        it(`should call onReactionsAddedActivity if reactionsAdded and onReactionsRemovedActivity if reactionsRemoved if they both exist and have items`, async function () {
+        it('should call onReactionsAddedActivity if reactionsAdded and onReactionsRemovedActivity if reactionsRemoved if they both exist and have items', async function () {
             const bot = new MessageReactionActivityHandler();
             const activity = createMsgReactActivity('bot', {
                 reactionsAdded: [{ type: 'laugh' }],

@@ -15,7 +15,7 @@ import { TextEntity } from './textEntity';
  * EntityRecognizerSet - Implements a workflow against a pool of [EntityRecognizer](xref:botbuilder-dialogs-adaptive.EntityRecognizer) instances, iterating until nobody has anything new to add.
  */
 export class EntityRecognizerSet extends Array<EntityRecognizer> {
-    public static $kind = 'Microsoft.EntityRecognizerSet';
+    static $kind = 'Microsoft.EntityRecognizerSet';
 
     /**
      * Implement [EntityRecognizer.recognizeEntities](xref:botbuilder-dialogs-adaptive.EntityRecognizer.recognizeEntities) by iterating against the Recognizer pool.
@@ -26,7 +26,7 @@ export class EntityRecognizerSet extends Array<EntityRecognizer> {
      * @param entities The [Entity](xref:botframework-schema.Entity) array to be recognized. If no entities are passed in, it will generate a [TextEntity](xref:botbuilder-dialogs-adaptive.TextEntity).
      * @returns Recognized [Entity](xref:botframework-schema.Entity) list Promise.
      */
-    public async recognizeEntities(
+    async recognizeEntities(
         dialogContext: DialogContext,
         text: string,
         locale: string,

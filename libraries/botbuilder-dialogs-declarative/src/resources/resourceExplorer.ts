@@ -36,17 +36,17 @@ export class ResourceExplorer {
      *
      * @param {ResourceProvider[]} providers The list of [ResourceProvider](botbuilder-dialogs-declarative.ResourceProvider) to initialize the current instance.
      */
-    public constructor(providers: ResourceProvider[]);
+    constructor(providers: ResourceProvider[]);
     /**
      * Initializes a new instance of the [ResourceExplorer](botbuilder-dialogs.declarative.ResourceExplorer) class.
      *
      * @param {ResourceExplorerOptions} options The configuration options.
      */
-    public constructor(options?: ResourceExplorerOptions);
+    constructor(options?: ResourceExplorerOptions);
     /**
      * @param providersOrOptions The list of [ResourceProvider](xref:botbuilder-dialogs-declarative.ResourceProvider) or configuration options to initialize the current instance.
      */
-    public constructor(providersOrOptions: ResourceProvider[] | ResourceExplorerOptions = []) {
+    constructor(providersOrOptions: ResourceProvider[] | ResourceExplorerOptions = []) {
         if (Array.isArray(providersOrOptions)) {
             const providers: ResourceProvider[] = providersOrOptions;
             this.resourceProviders = providers;
@@ -62,17 +62,17 @@ export class ResourceExplorer {
     /**
      * Gets resource providers.
      */
-    public readonly resourceProviders: ResourceProvider[];
+    readonly resourceProviders: ResourceProvider[];
 
     /**
      * Gets resource type id extensions managed by resource explorer.
      */
-    public readonly resourceTypes: Set<string> = new Set(['dialog', 'lu', 'lg', 'qna', 'schema', 'json']);
+    readonly resourceTypes: Set<string> = new Set(['dialog', 'lu', 'lg', 'qna', 'schema', 'json']);
 
     /**
      * Event which fires when a resource is changed.
      */
-    public set changed(callback: (event: ResourceChangeEvent, resources: Resource[]) => void) {
+    set changed(callback: (event: ResourceChangeEvent, resources: Resource[]) => void) {
         this._eventEmitter.on(ResourceChangeEvent.added, (resources: Resource[]): void => {
             callback(ResourceChangeEvent.added, resources);
         });
@@ -89,7 +89,7 @@ export class ResourceExplorer {
      *
      * @param {string} type Resource type.
      */
-    public addResourceType(type: string): void {
+    addResourceType(type: string): void {
         type = type.toLowerCase().replace(/^\./, '');
         if (!this.resourceTypes.has(type)) {
             this.resourceTypes.add(type);
@@ -100,7 +100,7 @@ export class ResourceExplorer {
     /**
      * Reload any cached data.
      */
-    public refresh(): void {
+    refresh(): void {
         this.resourceProviders.forEach((resourceProvider) => resourceProvider.refresh());
     }
 
@@ -110,7 +110,7 @@ export class ResourceExplorer {
      * @param {ResourceProvider} resourceProvider Resource provider to be added.
      * @returns {ResourceExplorer} Resource explorer so that you can fluently call multiple methods on the resource explorer.
      */
-    public addResourceProvider(resourceProvider: ResourceProvider): ResourceExplorer {
+    addResourceProvider(resourceProvider: ResourceProvider): ResourceExplorer {
         if (this.resourceProviders.some((r): boolean => r.id === resourceProvider.id)) {
             throw Error(`${resourceProvider.id} has already been added as a resource`);
         }
@@ -129,7 +129,7 @@ export class ResourceExplorer {
      * @param {boolean} monitorChanges Whether to track changes.
      * @returns {ResourceExplorer} Resource explorer so that you can fluently call multiple methods on the resource explorer.
      */
-    public addFolder(folder: string, includeSubFolders = true, monitorChanges = true): ResourceExplorer {
+    addFolder(folder: string, includeSubFolders = true, monitorChanges = true): ResourceExplorer {
         this.addResourceProvider(new FolderResourceProvider(this, folder, includeSubFolders, monitorChanges));
 
         return this;
@@ -143,7 +143,7 @@ export class ResourceExplorer {
      * @param {boolean} monitorChanges Whether to track changes.
      * @returns {ResourceExplorer} Resource explorer so that you can fluently call multiple methods on the resource explorer.
      */
-    public addFolders(folder: string, ignoreFolders?: string[], monitorChanges = true): ResourceExplorer {
+    addFolders(folder: string, ignoreFolders?: string[], monitorChanges = true): ResourceExplorer {
         if (ignoreFolders) {
             folder = normalize(folder);
             this.addFolder(folder, false, monitorChanges);
@@ -168,7 +168,7 @@ export class ResourceExplorer {
      * @param {string} fileExtension File extension filter.
      * @returns {Resource[]} The resources.
      */
-    public getResources(fileExtension: string): Resource[] {
+    getResources(fileExtension: string): Resource[] {
         const resources: Resource[] = [];
         for (const rp of this.resourceProviders) {
             for (const rpResources of rp.getResources(fileExtension)) {
@@ -185,7 +185,7 @@ export class ResourceExplorer {
      * @param {string} id Resource id.
      * @returns {Resource} The resource, or undefined if not found.
      */
-    public getResource(id: string): Resource {
+    getResource(id: string): Resource {
         for (const rp of this.resourceProviders) {
             const resource: Resource = rp.getResource(id);
             if (resource) {
@@ -205,7 +205,7 @@ export class ResourceExplorer {
      * @param {CustomDeserializer}  loader Optional custom deserializer.
      * @returns {ResourceExplorer} Resource explorer for fluent style multiple calls.
      */
-    public registerType<T>(
+    registerType<T>(
         kind: string,
         type: Newable<T>,
         loader?: CustomDeserializer<T, Record<string, unknown>>
@@ -224,7 +224,7 @@ export class ResourceExplorer {
      * @param {C} config Source configuration object.
      * @returns {T} Instantiated object.
      */
-    public buildType<T, C>(kind: string, config: C): T {
+    buildType<T, C>(kind: string, config: C): T {
         this.registerComponentTypes();
 
         const type = this._kindToType.get(kind);
@@ -242,7 +242,7 @@ export class ResourceExplorer {
      * @param {string} resourceId Resource id to bind to.
      * @returns {T} Type created from resource
      */
-    public loadType<T>(resourceId: string): T;
+    loadType<T>(resourceId: string): T;
     /**
      * Load type from resource
      *
@@ -250,12 +250,12 @@ export class ResourceExplorer {
      * @param {Resource} resource Resource id to bind to.
      * @returns {T} Type created from resource.
      */
-    public loadType<T>(resource: Resource): T;
+    loadType<T>(resource: Resource): T;
     /**
      * @param resourceOrId The resource or resource id to bind to.
      * @returns Type created from resource.
      */
-    public loadType<T>(resourceOrId: Resource | string): T {
+    loadType<T>(resourceOrId: Resource | string): T {
         this.registerComponentTypes();
 
         const resource = typeof resourceOrId === 'string' ? this.getResource(resourceOrId) : resourceOrId;

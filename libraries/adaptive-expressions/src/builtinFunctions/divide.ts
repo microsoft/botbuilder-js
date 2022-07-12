@@ -18,7 +18,7 @@ export class Divide extends MultivariateNumericEvaluator {
     /**
      * Initializes a new instance of the [Divide](xref:adaptive-expressions.Divide) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.Divide, Divide.func, Divide.verify);
     }
 

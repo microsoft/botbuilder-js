@@ -28,7 +28,7 @@ export class GetNextViableTime extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [GetNextViableTime](xref:adaptive-expressions.GetNextViableTime) class.
      */
-    public constructor() {
+    constructor() {
         super(
             ExpressionType.GetNextViableTime,
             GetNextViableTime.evaluator,

@@ -46,11 +46,11 @@ export class ExpressionEvaluator {
     /**
      * Gets the expression type for evaluator.
      */
-    public type: string;
+    type: string;
     /**
      * Type expected by evaluating the expression.
      */
-    public returnType: ReturnType;
+    returnType: ReturnType;
     private readonly _validator: ValidateExpressionDelegate;
     private readonly _evaluator: EvaluateExpressionDelegate;
     private _negation: ExpressionEvaluator;
@@ -63,7 +63,7 @@ export class ExpressionEvaluator {
      * @param returnType Type expected from evaluation.
      * @param validator Static validation of expression.
      */
-    public constructor(
+    constructor(
         type: string,
         evaluator: EvaluateExpressionDelegate,
         returnType: ReturnType = ReturnType.Object,
@@ -84,14 +84,14 @@ export class ExpressionEvaluator {
      *
      * @returns The evaluator that is a negation of this one.
      */
-    public get negation(): ExpressionEvaluator {
+    get negation(): ExpressionEvaluator {
         return this._negation;
     }
 
     /**
      * Sets the evaluator that is a negation of this one.
      */
-    public set negation(value: ExpressionEvaluator) {
+    set negation(value: ExpressionEvaluator) {
         value._negation = this;
         this._negation = value;
     }
@@ -104,7 +104,7 @@ export class ExpressionEvaluator {
      * @param options Options used in the evaluation.
      * @returns The value and error string that is non-null if there is an error.
      */
-    public tryEvaluate = (expression: Expression, state: MemoryInterface, options: Options): ValueWithError =>
+    tryEvaluate = (expression: Expression, state: MemoryInterface, options: Options): ValueWithError =>
         this._evaluator(expression, state, options);
 
     /**
@@ -113,5 +113,5 @@ export class ExpressionEvaluator {
      * @param expression Expression to validate.
      * @returns The validated expression.
      */
-    public validateExpression = (expression: Expression): void => this._validator(expression);
+    validateExpression = (expression: Expression): void => this._validator(expression);
 }

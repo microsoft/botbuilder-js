@@ -12,7 +12,7 @@ import { ANTLRErrorListener, RecognitionException, Recognizer } from 'antlr4ts';
  * Expression parser error listener.
  */
 export class ParseErrorListener implements ANTLRErrorListener<any> {
-    public static readonly Instance: ParseErrorListener = new ParseErrorListener();
+    static readonly Instance: ParseErrorListener = new ParseErrorListener();
 
     /**
      * Throws a syntax error based on the current context.
@@ -24,7 +24,7 @@ export class ParseErrorListener implements ANTLRErrorListener<any> {
      * @param _msg The error message.
      * @param _e The `RecognitionException`.
      */
-    public syntaxError<T>(
+    syntaxError<T>(
         _recognizer: Recognizer<T, any>,
         _offendingSymbol: T,
         line: number,

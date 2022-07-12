@@ -18,13 +18,13 @@ export class DialogListConverter implements Converter<string[], Dialog[]> {
      *
      * @param _resourceExplorer Resource explorer to use for resolving references.
      */
-    public constructor(private readonly _resourceExplorer: ResourceExplorer) {}
+    constructor(private readonly _resourceExplorer: ResourceExplorer) {}
 
     /**
      * @param value A list of strings representing dialogs, or a list of dialogs.
      * @returns A new list of [Dialog](xref:botbuilder-dialogs.Dialog) instance.
      */
-    public convert(value: string[] | Dialog[]): Dialog[] {
+    convert(value: string[] | Dialog[]): Dialog[] {
         const results: Dialog[] = [];
 
         value.forEach((item: string | Dialog) => {

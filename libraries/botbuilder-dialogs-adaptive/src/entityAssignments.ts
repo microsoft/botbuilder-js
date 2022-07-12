@@ -35,7 +35,7 @@ export class EntityAssignments implements EntityAssignmentsConfiguration {
      * @param actionContext Memory context.
      * @returns Entity event queue.
      */
-    public static read(actionContext: ActionContext): EntityAssignments {
+    static read(actionContext: ActionContext): EntityAssignments {
         const queuesObject = actionContext.state.getValue(events, new EntityAssignments());
 
         const assignments = queuesObject.assignments?.map((assignment) => new EntityAssignment(assignment));
@@ -48,7 +48,7 @@ export class EntityAssignments implements EntityAssignmentsConfiguration {
      *
      * @param actionContext Memory context.
      */
-    public write(actionContext: ActionContext): void {
+    write(actionContext: ActionContext): void {
         actionContext.state.setValue(events, this);
     }
 
@@ -57,7 +57,7 @@ export class EntityAssignments implements EntityAssignmentsConfiguration {
      *
      * @returns The next entity event to surface.
      */
-    public get nextAssignment(): EntityAssignment {
+    get nextAssignment(): EntityAssignment {
         if (this.assignments.length > 0) {
             return this.assignments[0];
         }
@@ -71,7 +71,7 @@ export class EntityAssignments implements EntityAssignmentsConfiguration {
      * @param actionContext Memory context.
      * @returns Removed event.
      */
-    public dequeue(actionContext: ActionContext): EntityAssignment {
+    dequeue(actionContext: ActionContext): EntityAssignment {
         const assignment = this.assignments.shift();
         this.write(actionContext);
 

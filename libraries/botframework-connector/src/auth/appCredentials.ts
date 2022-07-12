@@ -17,12 +17,12 @@ import { AuthenticationConstants } from './authenticationConstants';
 export abstract class AppCredentials implements msrest.ServiceClientCredentials {
     private static readonly cache: Map<string, adal.TokenResponse> = new Map<string, adal.TokenResponse>();
 
-    public appId: string;
+    appId: string;
 
     private _oAuthEndpoint: string;
     private _oAuthScope: string;
     private _tenant: string;
-    public tokenCacheKey: string;
+    tokenCacheKey: string;
     protected refreshingToken: Promise<adal.TokenResponse> | null = null;
     protected authenticationContext: adal.AuthenticationContext;
 
@@ -44,7 +44,7 @@ export abstract class AppCredentials implements msrest.ServiceClientCredentials 
      * @param channelAuthTenant Optional. The oauth token tenant.
      * @param oAuthScope The scope for the token.
      */
-    public constructor(
+    constructor(
         appId: string,
         channelAuthTenant?: string,
         oAuthScope: string = AuthenticationConstants.ToBotFromChannelTokenIssuer
@@ -76,14 +76,14 @@ export abstract class AppCredentials implements msrest.ServiceClientCredentials 
      *
      * @returns The OAuth scope to use.
      */
-    public get oAuthScope(): string {
+    get oAuthScope(): string {
         return this._oAuthScope;
     }
 
     /**
      * Sets the OAuth scope to use.
      */
-    public set oAuthScope(value: string) {
+    set oAuthScope(value: string) {
         this._oAuthScope = value;
         this.tokenCacheKey = `${this.appId}${this.oAuthScope}-cache`;
     }
@@ -93,14 +93,14 @@ export abstract class AppCredentials implements msrest.ServiceClientCredentials 
      *
      * @returns The OAuthEndpoint to use.
      */
-    public get oAuthEndpoint(): string {
+    get oAuthEndpoint(): string {
         return this._oAuthEndpoint;
     }
 
     /**
      * Sets the OAuth endpoint to use.
      */
-    public set oAuthEndpoint(value: string) {
+    set oAuthEndpoint(value: string) {
         // aadApiVersion is set to '1.5' to avoid the "spn:" concatenation on the audience claim
         // For more info, see https://github.com/AzureAD/azure-activedirectory-library-for-nodejs/issues/128
         this._oAuthEndpoint = value;
@@ -116,8 +116,8 @@ export abstract class AppCredentials implements msrest.ServiceClientCredentials 
      * @param  {string} serviceUrl The service url
      * @param  {Date} expiration? The expiration date after which this service url is not trusted anymore
      */
-    public static trustServiceUrl(serviceUrl: string, expiration?: Date): void;
-    public static trustServiceUrl(): void {
+    static trustServiceUrl(serviceUrl: string, expiration?: Date): void;
+    static trustServiceUrl(): void {
         // no-op
     }
 
@@ -129,8 +129,8 @@ export abstract class AppCredentials implements msrest.ServiceClientCredentials 
      * @param  {string} serviceUrl The service url
      * @returns {boolean} True if the host of the service url is trusted; False otherwise.
      */
-    public static isTrustedServiceUrl(serviceUrl: string): boolean;
-    public static isTrustedServiceUrl(): boolean {
+    static isTrustedServiceUrl(serviceUrl: string): boolean;
+    static isTrustedServiceUrl(): boolean {
         return true;
     }
 
@@ -140,7 +140,7 @@ export abstract class AppCredentials implements msrest.ServiceClientCredentials 
      * @param webResource The WebResource HTTP request.
      * @returns A Promise representing the asynchronous operation.
      */
-    public async signRequest(webResource: msrest.WebResource): Promise<msrest.WebResource> {
+    async signRequest(webResource: msrest.WebResource): Promise<msrest.WebResource> {
         if (this.shouldSetToken()) {
             return new msrest.TokenCredentials(await this.getToken()).signRequest(webResource);
         }
@@ -156,7 +156,7 @@ export abstract class AppCredentials implements msrest.ServiceClientCredentials 
      * @returns A Promise that represents the work queued to execute.
      * @remarks If the promise is successful, the result contains the access token string.
      */
-    public async getToken(forceRefresh = false): Promise<string> {
+    async getToken(forceRefresh = false): Promise<string> {
         if (!forceRefresh) {
             // check the global cache for the token. If we have it, and it's valid, we're done.
             const oAuthToken: adal.TokenResponse = AppCredentials.cache.get(this.tokenCacheKey);

@@ -166,6 +166,13 @@ export class Teams {
         options: Models.TeamsFetchMeetingParticipantOptionalParams,
         callback: msRest.ServiceCallback<TeamsMeetingParticipant>
     ): void;
+    /**
+     * @param meetingId Meeting Id.
+     * @param participantId Participant Id.
+     * @param options The optional parameters.
+     * @param callback The callback.
+     * @returns Promise with TeamsFetchMeetingParticipantResponse.
+     */
     fetchMeetingParticipant(
         meetingId: string,
         participantId: string,
@@ -213,6 +220,12 @@ export class Teams {
         options: msRest.RequestOptionsBase | msRest.ServiceCallback<TeamDetails>,
         callback: msRest.ServiceCallback<TeamsMeetingInfo>
     ): void;
+    /**
+     * @param meetingId Meeting Id.
+     * @param options The optional parameters.
+     * @param callback The callback.
+     * @returns Promise with TeamsFetchMeetingInfoResponse.
+     */
     fetchMeetingInfo(
         meetingId: string,
         options?: msRest.RequestOptionsBase | msRest.ServiceCallback<TeamDetails>,

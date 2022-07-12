@@ -18,7 +18,7 @@ export class CreateArray extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [CreateArray](xref:adaptive-expressions.CreateArray) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.CreateArray, CreateArray.evaluator(), ReturnType.Array);
     }
 

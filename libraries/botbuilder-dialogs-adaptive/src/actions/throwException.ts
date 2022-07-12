@@ -33,14 +33,14 @@ export interface ThrowExceptionConfiguration extends DialogConfiguration {
  * Action which throws an exception declaratively.
  */
 export class ThrowException extends Dialog implements ThrowExceptionConfiguration {
-    public static $kind = 'Microsoft.ThrowException';
+    static $kind = 'Microsoft.ThrowException';
 
     /**
      * Initializes a new instance of the [ThrowException](xref:botbuilder-dialogs-adaptive.ThrowException) class.
      *
      * @param errorValue Optional. Memory property path to use to get the error value to throw.
      */
-    public constructor(errorValue: unknown) {
+    constructor(errorValue: unknown) {
         super();
         if (errorValue) {
             this.errorValue = new ValueExpression(errorValue);
@@ -50,12 +50,12 @@ export class ThrowException extends Dialog implements ThrowExceptionConfiguratio
     /**
      * Gets or sets an optional expression which if is true will disable this action.
      */
-    public disabled?: BoolExpression;
+    disabled?: BoolExpression;
 
     /**
      * Gets or sets the memory property path to use to get the error value to throw.
      */
-    public errorValue?: ValueExpression;
+    errorValue?: ValueExpression;
 
     /**
      * @param property The key of the conditional selector configuration.
@@ -79,7 +79,7 @@ export class ThrowException extends Dialog implements ThrowExceptionConfiguratio
      * @param _options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, _options?: Record<string, unknown>): Promise<DialogTurnResult> {
+    async beginDialog(dc: DialogContext, _options?: Record<string, unknown>): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return dc.endDialog();
         }

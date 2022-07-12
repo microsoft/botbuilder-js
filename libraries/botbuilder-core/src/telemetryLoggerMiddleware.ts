@@ -28,28 +28,29 @@ export class TelemetryLoggerMiddleware implements Middleware {
     /**
      * The name of the event when when new message is received from the user.
      */
-    public static readonly botMsgReceiveEvent: string = 'BotMessageReceived';
+    static readonly botMsgReceiveEvent: string = 'BotMessageReceived';
 
     /**
      * The name of the event when a message is updated by the bot.
      */
-    public static readonly botMsgSendEvent: string = 'BotMessageSend';
+    static readonly botMsgSendEvent: string = 'BotMessageSend';
 
     /**
      * The name of the event when a message is updated by the bot.
      */
-    public static readonly botMsgUpdateEvent: string = 'BotMessageUpdate';
+    static readonly botMsgUpdateEvent: string = 'BotMessageUpdate';
 
     /**
      * The name of the event when a message is deleted by the bot.
      */
-    public static readonly botMsgDeleteEvent: string = 'BotMessageDelete';
+    static readonly botMsgDeleteEvent: string = 'BotMessageDelete';
 
     private readonly _telemetryClient: BotTelemetryClient;
     private readonly _logPersonalInformation: boolean;
 
     /**
      * Initializes a new instance of the TelemetryLoggerMiddleware class.
+     *
      * @param telemetryClient The BotTelemetryClient used for logging.
      * @param logPersonalInformation (Optional) Enable/Disable logging original message name within Application Insights.
      */
@@ -59,25 +60,30 @@ export class TelemetryLoggerMiddleware implements Middleware {
     }
 
     /**
-     * Gets a value indicating whether determines whether to log personal information that came from the user.
+     * Gets a value indicating whether to log personal information that came from the user.
+     *
+     * @returns A value indicating whether to log personal information or not.
      */
-    public get logPersonalInformation(): boolean {
+    get logPersonalInformation(): boolean {
         return this._logPersonalInformation;
     }
 
     /**
      * Gets the currently configured botTelemetryClient that logs the events.
+     *
+     * @returns The currently configured [BotTelemetryClient](xref:botbuilder-core.BotTelemetryClient) that logs the events.
      */
-    public get telemetryClient(): BotTelemetryClient {
+    get telemetryClient(): BotTelemetryClient {
         return this._telemetryClient;
     }
 
     /**
      * Logs events based on incoming and outgoing activities using the botTelemetryClient class.
+     *
      * @param context The context object for this turn.
      * @param next The delegate to call to continue the bot middleware pipeline
      */
-    public async onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
+    async onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
         if (context === null) {
             throw new Error('context is null');
         }
@@ -147,6 +153,7 @@ export class TelemetryLoggerMiddleware implements Middleware {
      * Invoked when a message is received from the user.
      * Performs logging of telemetry data using the IBotTelemetryClient.TrackEvent() method.
      * The event name logged is "BotMessageReceived".
+     *
      * @param activity Current activity sent from user.
      */
     protected async onReceiveActivity(activity: Activity): Promise<void> {
@@ -160,6 +167,7 @@ export class TelemetryLoggerMiddleware implements Middleware {
      * Invoked when the bot sends a message to the user.
      * Performs logging of telemetry data using the botTelemetryClient.trackEvent() method.
      * The event name logged is "BotMessageSend".
+     *
      * @param activity Last activity sent from user.
      */
     protected async onSendActivity(activity: Activity): Promise<void> {
@@ -173,7 +181,8 @@ export class TelemetryLoggerMiddleware implements Middleware {
      * Invoked when the bot updates a message.
      * Performs logging of telemetry data using the botTelemetryClient.trackEvent() method.
      * The event name used is "BotMessageUpdate".
-     * @param activity
+     *
+     * @param activity Current activity sent from user.
      */
     protected async onUpdateActivity(activity: Activity): Promise<void> {
         this.telemetryClient.trackEvent({
@@ -186,7 +195,8 @@ export class TelemetryLoggerMiddleware implements Middleware {
      * Invoked when the bot deletes a message.
      * Performs logging of telemetry data using the botTelemetryClient.trackEvent() method.
      * The event name used is "BotMessageDelete".
-     * @param activity
+     *
+     * @param activity Current activity sent from user.
      */
     protected async onDeleteActivity(activity: Activity): Promise<void> {
         this.telemetryClient.trackEvent({
@@ -198,6 +208,7 @@ export class TelemetryLoggerMiddleware implements Middleware {
     /**
      * Fills the Application Insights Custom Event properties for BotMessageReceived.
      * These properties are logged in the custom event when a new message is received from the user.
+     *
      * @param activity Last activity sent from user.
      * @param telemetryProperties Additional properties to add to the event.
      * @returns A dictionary that is sent as "Properties" to botTelemetryClient.trackEvent method.
@@ -254,6 +265,7 @@ export class TelemetryLoggerMiddleware implements Middleware {
     /**
      * Fills the Application Insights Custom Event properties for BotMessageSend.
      * These properties are logged in the custom event when a response message is sent by the Bot to the user.
+     *
      * @param activity - Last activity sent from user.
      * @param telemetryProperties Additional properties to add to the event.
      * @returns A dictionary that is sent as "Properties" to botTelemetryClient.trackEvent method.
@@ -308,6 +320,7 @@ export class TelemetryLoggerMiddleware implements Middleware {
      * These properties are logged when an activity message is updated by the Bot.
      * For example, if a card is interacted with by the use, and the card needs to be updated to reflect
      * some interaction.
+     *
      * @param activity - Last activity sent from user.
      * @param telemetryProperties Additional properties to add to the event.
      * @returns A dictionary that is sent as "Properties" to botTelemetryClient.trackEvent method.
@@ -345,6 +358,7 @@ export class TelemetryLoggerMiddleware implements Middleware {
     /**
      * Fills the Application Insights Custom Event properties for BotMessageDelete.
      * These properties are logged in the custom event when an activity message is deleted by the Bot.  This is a relatively rare case.
+     *
      * @param activity - Last activity sent from user.
      * @param telemetryProperties Additional properties to add to the event.
      * @returns A dictionary that is sent as "Properties" to botTelemetryClient.trackEvent method.

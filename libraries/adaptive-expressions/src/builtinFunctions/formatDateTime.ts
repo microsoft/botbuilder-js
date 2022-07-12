@@ -25,7 +25,7 @@ export class FormatDateTime extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [FormatDateTime](xref:adaptive-expressions.FormatDateTime) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.FormatDateTime, FormatDateTime.evaluator(), ReturnType.String, FormatDateTime.validator);
     }
 

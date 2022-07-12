@@ -94,6 +94,7 @@ export class LanguageServiceUtils {
                 queryOptions.strictFiltersJoinOperator,
                 queryOptions.filters
             ),
+            qnaId: queryOptions.qnaId,
             rankerType: queryOptions.rankerType,
             context: queryOptions.context,
             answerSpanRequest: { enable: queryOptions.enablePreciseAnswer },

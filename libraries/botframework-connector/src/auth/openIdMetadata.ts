@@ -32,7 +32,7 @@ export class OpenIdMetadata {
      * @param keyId The key ID to search for.
      * @returns A `Promise` representation for either a [IOpenIdMetadataKey](botframework-connector:module.IOpenIdMetadataKey) or `null`.
      */
-    public async getKey(keyId: string): Promise<IOpenIdMetadataKey | null> {
+    async getKey(keyId: string): Promise<IOpenIdMetadataKey | null> {
         // If keys are more than 24 hours old, refresh them
         if (this.lastUpdated < Date.now() - 1000 * 60 * 60 * 24) {
             await this.refreshCache();

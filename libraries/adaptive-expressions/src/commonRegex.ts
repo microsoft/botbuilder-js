@@ -27,7 +27,7 @@ export class CommonRegex {
      * @param pattern PCRE pattern string.
      * @returns RegExp object.
      */
-    public static CreateRegex(pattern: string): RegExp {
+    static CreateRegex(pattern: string): RegExp {
         let result: RegExp;
         if (pattern && this.regexCache.has(pattern)) {
             result = this.regexCache.get(pattern);

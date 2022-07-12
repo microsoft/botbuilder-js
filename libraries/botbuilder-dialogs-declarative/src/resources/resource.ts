@@ -19,7 +19,7 @@ export abstract class Resource {
      *
      * @returns The resource id.
      */
-    public get id(): string {
+    get id(): string {
         return this._id;
     }
 
@@ -28,12 +28,12 @@ export abstract class Resource {
      *
      * @returns The full path to the resource.
      */
-    public get fullName(): string {
+    get fullName(): string {
         return this._fullname;
     }
 
     /**
      * Get resource as text.
      */
-    public abstract readText(): string;
+    abstract readText(): string;
 }

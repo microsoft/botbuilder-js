@@ -24,7 +24,7 @@ export class NumberPrompt extends Prompt<number> {
     /**
      * The prompts default locale that should be recognized.
      */
-    public defaultLocale?: string;
+    defaultLocale?: string;
 
     /**
      * Creates a new NumberPrompt instance.
@@ -39,7 +39,7 @@ export class NumberPrompt extends Prompt<number> {
 
     /**
      * Prompts the user for input.
-     * @param context [TurnContext](xref:botbuilder-core.TurnContext), context for the current 
+     * @param context [TurnContext](xref:botbuilder-core.TurnContext), context for the current
      * turn of conversation with the user.
      * @param state Contains state for the current instance of the prompt on the dialog stack.
      * @param options A [PromptOptions](xref:botbuilder-dialogs.PromptOptions) object constructed

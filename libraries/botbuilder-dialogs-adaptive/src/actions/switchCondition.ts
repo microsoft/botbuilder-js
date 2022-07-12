@@ -37,7 +37,7 @@ type CaseInput = {
 };
 
 class CasesConverter implements Converter<Array<CaseInput | Case>, Case[]> {
-    public convert(items: Array<CaseInput | Case>): Case[] {
+    convert(items: Array<CaseInput | Case>): Case[] {
         return items.map(
             (item: CaseInput | Case): Case => (item instanceof Case ? item : new Case(item.value, item.actions))
         );
@@ -60,9 +60,9 @@ export interface SwitchConditionConfiguration extends DialogConfiguration {
 export class SwitchCondition<O extends object = {}>
     extends Dialog<O>
     implements DialogDependencies, SwitchConditionConfiguration {
-    public static $kind = 'Microsoft.SwitchCondition';
+    static $kind = 'Microsoft.SwitchCondition';
 
-    public constructor();
+    constructor();
 
     /**
      * Initializes a new instance of the [SwitchCondition](xref:botbuilder-dialogs-adaptive.SwitchCondition) class
@@ -71,7 +71,7 @@ export class SwitchCondition<O extends object = {}>
      * @param defaultDialogs Default [Dialog](xref:botbuilder-dialogs.Dialog) array.
      * @param cases Cases.
      */
-    public constructor(condition: string, defaultDialogs: Dialog[], cases: Case[]);
+    constructor(condition: string, defaultDialogs: Dialog[], cases: Case[]);
 
     /**
      * Initializes a new instance of the [SwitchCondition](xref:botbuilder-dialogs-adaptive.SwitchCondition) class
@@ -80,7 +80,7 @@ export class SwitchCondition<O extends object = {}>
      * @param defaultDialogs Optional. Default [Dialog](xref:botbuilder-dialogs.Dialog) array.
      * @param cases Optional. Cases.
      */
-    public constructor(condition?: string, defaultDialogs?: Dialog[], cases?: Case[]) {
+    constructor(condition?: string, defaultDialogs?: Dialog[], cases?: Case[]) {
         super();
         if (condition) {
             this.condition = new ExpressionParser().parse(condition);
@@ -96,28 +96,28 @@ export class SwitchCondition<O extends object = {}>
     /**
      * Condition expression against memory.
      */
-    public condition: Expression;
+    condition: Expression;
 
     /**
      * Default case.
      */
-    public default: Dialog[] = [];
+    default: Dialog[] = [];
 
     /**
      * Cases.
      */
-    public cases: Case[] = [];
+    cases: Case[] = [];
 
     /**
      * An optional expression which if is true will disable this action.
      */
-    public disabled?: BoolExpression;
+    disabled?: BoolExpression;
 
     /**
      * @param property The key of the conditional selector configuration.
      * @returns The converter for the selector configuration.
      */
-    public getConverter(property: keyof SwitchConditionConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof SwitchConditionConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'condition':
                 return new ExpressionConverter();
@@ -141,7 +141,7 @@ export class SwitchCondition<O extends object = {}>
      *
      * @returns The child [Dialog](xref:botbuilder-dialogs.Dialog) dependencies.
      */
-    public getDependencies(): Dialog[] {
+    getDependencies(): Dialog[] {
         let dialogs: Dialog[] = [];
         if (this.default) {
             dialogs = dialogs.concat(this.defaultScope);
@@ -160,7 +160,7 @@ export class SwitchCondition<O extends object = {}>
      * @param _options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
+    async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }

@@ -19,7 +19,7 @@ class TestSkillAdapter extends TestAdapter {
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-describe(`ShowTypingMiddleware`, function () {
+describe('ShowTypingMiddleware', function () {
     this.timeout(10000);
 
     const adapter = new TestAdapter(async (context) => {

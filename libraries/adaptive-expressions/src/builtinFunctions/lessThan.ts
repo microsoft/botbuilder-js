@@ -18,7 +18,7 @@ export class LessThan extends ComparisonEvaluator {
     /**
      * Initializes a new instance of the [LessThan](xref:adaptive-expressions.LessThan) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.LessThan, LessThan.func, FunctionUtils.validateBinary, FunctionUtils.verifyNotNull);
     }
 

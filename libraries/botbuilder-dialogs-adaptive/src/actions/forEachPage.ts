@@ -39,9 +39,9 @@ export interface ForEachPageConfiguration extends ActionScopeConfiguration {
  * `GotoDialog` action.
  */
 export class ForEachPage<O extends object = {}> extends ActionScope<O> implements ForEachPageConfiguration {
-    public static $kind = 'Microsoft.ForeachPage';
+    static $kind = 'Microsoft.ForeachPage';
 
-    public constructor();
+    constructor();
 
     /**
      * Initializes a new instance of the [ForeachPage](xref:botbuilder-dialogs-adaptive.ForeachPage) class.
@@ -49,7 +49,7 @@ export class ForEachPage<O extends object = {}> extends ActionScope<O> implement
      * @param itemsProperty Optional. Expression used to compute the list that should be enumerated.
      * @param pageSize Default = `10`. Page size.
      */
-    public constructor(itemsProperty?: string, pageSize = 10) {
+    constructor(itemsProperty?: string, pageSize = 10) {
         super();
         if (itemsProperty) {
             this.itemsProperty = new StringExpression(itemsProperty);
@@ -60,33 +60,33 @@ export class ForEachPage<O extends object = {}> extends ActionScope<O> implement
     /**
      * Expression used to compute the list that should be enumerated.
      */
-    public itemsProperty: StringExpression;
+    itemsProperty: StringExpression;
 
     /**
      * Expression used to compute the list that should be enumerated.
      */
-    public page: StringExpression = new StringExpression(FOREACHPAGE);
+    page: StringExpression = new StringExpression(FOREACHPAGE);
 
     /**
      * Expression used to compute the list that should be enumerated.
      */
-    public pageIndex: StringExpression = new StringExpression(FOREACHPAGEINDEX);
+    pageIndex: StringExpression = new StringExpression(FOREACHPAGEINDEX);
 
     /**
      * Page size, default to 10.
      */
-    public pageSize: IntExpression = new IntExpression(10);
+    pageSize: IntExpression = new IntExpression(10);
 
     /**
      * An optional expression which if is true will disable this action.
      */
-    public disabled?: BoolExpression;
+    disabled?: BoolExpression;
 
     /**
      * @param property The key of the conditional selector configuration.
      * @returns The converter for the selector configuration.
      */
-    public getConverter(property: keyof ForEachPageConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof ForEachPageConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'itemsProperty':
                 return new StringExpressionConverter();
@@ -108,7 +108,7 @@ export class ForEachPage<O extends object = {}> extends ActionScope<O> implement
      *
      * @returns The child [Dialog](xref:botbuilder-dialogs.Dialog) dependencies.
      */
-    public getDependencies(): Dialog[] {
+    getDependencies(): Dialog[] {
         return this.actions;
     }
 
@@ -119,7 +119,7 @@ export class ForEachPage<O extends object = {}> extends ActionScope<O> implement
      * @param _options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
+    async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }

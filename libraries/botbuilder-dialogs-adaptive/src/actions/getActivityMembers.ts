@@ -35,9 +35,9 @@ export interface GetActivityMembersConfiguration extends DialogConfiguration {
  * Calls `BotFrameworkAdapter.getActivityMembers()` and sets the result to a memory property.
  */
 export class GetActivityMembers<O extends object = {}> extends Dialog implements GetActivityMembersConfiguration {
-    public static $kind = 'Microsoft.GetActivityMembers';
+    static $kind = 'Microsoft.GetActivityMembers';
 
-    public constructor();
+    constructor();
 
     /**
      * Initializes a new instance of the [GetActivityMembers](xref:botbuilder-dialogs-adaptive.GetActivityMembers) class.
@@ -45,7 +45,7 @@ export class GetActivityMembers<O extends object = {}> extends Dialog implements
      * @param activityId Optional. The expression to get the value to put into property path.
      * @param property Optional. Property path to put the value in.
      */
-    public constructor(activityId?: string, property?: string) {
+    constructor(activityId?: string, property?: string) {
         super();
         if (activityId) {
             this.activityId = new StringExpression(activityId);
@@ -58,23 +58,23 @@ export class GetActivityMembers<O extends object = {}> extends Dialog implements
     /**
      * The expression to get the value to put into property path.
      */
-    public activityId: StringExpression;
+    activityId: StringExpression;
 
     /**
      * Property path to put the value in.
      */
-    public property: StringExpression;
+    property: StringExpression;
 
     /**
      * An optional expression which if is true will disable this action.
      */
-    public disabled?: BoolExpression;
+    disabled?: BoolExpression;
 
     /**
      * @param property The key of the conditional selector configuration.
      * @returns The converter for the selector configuration.
      */
-    public getConverter(property: keyof GetActivityMembersConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof GetActivityMembersConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'activityId':
                 return new StringExpressionConverter();
@@ -94,7 +94,7 @@ export class GetActivityMembers<O extends object = {}> extends Dialog implements
      * @param _options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
+    async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }

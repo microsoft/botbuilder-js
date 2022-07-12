@@ -437,7 +437,7 @@ export enum Channels {
     Facebook = "facebook",
     // (undocumented)
     Groupme = "groupme",
-    // (undocumented)
+    // @deprecated (undocumented)
     Kik = "kik",
     // (undocumented)
     Line = "line",
@@ -446,8 +446,10 @@ export enum Channels {
     // (undocumented)
     Omni = "omnichannel",
     // (undocumented)
-    Skype = "skype",
+    Outlook = "outlook",
     // (undocumented)
+    Skype = "skype",
+    // @deprecated (undocumented)
     Skypeforbusiness = "skypeforbusiness",
     // (undocumented)
     Slack = "slack",
@@ -459,7 +461,7 @@ export enum Channels {
     Telephony = "telephony",
     // (undocumented)
     Test = "test",
-    // (undocumented)
+    // @deprecated (undocumented)
     Twilio = "twilio-sms",
     // (undocumented)
     Webchat = "webchat"

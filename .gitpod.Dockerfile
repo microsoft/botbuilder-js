@@ -1,5 +1,5 @@
-FROM gitpod/workspace-full
-                    
+FROM mcr.microsoft.com/gitpod/workspace-full
+
 USER gitpod
 
 # Install custom tools, runtime, etc. using apt-get

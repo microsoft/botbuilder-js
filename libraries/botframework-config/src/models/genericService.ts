@@ -15,12 +15,12 @@ export class GenericService extends ConnectedService implements IGenericService 
     /**
      * Deep link to service.
      */
-    public url: string;
+    url: string;
 
     /**
      * Named/value configuration data.
      */
-    public configuration: { [key: string]: string };
+    configuration: { [key: string]: string };
 
     /**
      * Creates a new GenericService instance.
@@ -35,7 +35,7 @@ export class GenericService extends ConnectedService implements IGenericService 
      * @param secret Secret to use to encrypt.
      * @param encryptString Function called to encrypt an individual value.
      */
-    public encrypt(secret: string, encryptString: (value: string, secret: string) => string): void {
+    encrypt(secret: string, encryptString: (value: string, secret: string) => string): void {
         const that: GenericService = this;
         if (this.configuration) {
             Object.keys(this.configuration).forEach((prop: string) => {
@@ -49,7 +49,7 @@ export class GenericService extends ConnectedService implements IGenericService 
      * @param secret Secret to use to decrypt.
      * @param decryptString Function called to decrypt an individual value.
      */
-    public decrypt(secret: string, decryptString: (value: string, secret: string) => string): void {
+    decrypt(secret: string, decryptString: (value: string, secret: string) => string): void {
         const that: GenericService = this;
         if (this.configuration) {
             Object.keys(this.configuration).forEach((prop: string) => {

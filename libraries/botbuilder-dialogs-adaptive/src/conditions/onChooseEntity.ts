@@ -20,7 +20,7 @@ export interface OnChooseEntityConfiguration extends OnDialogEventConfiguration 
  * Triggered to choose between different possible entity resolutions.
  */
 export class OnChooseEntity extends OnDialogEvent implements OnChooseEntityConfiguration {
-    public static $kind = 'Microsoft.OnChooseEntity';
+    static $kind = 'Microsoft.OnChooseEntity';
 
     /**
      * Initializes a new instance of the [OnChooseEntity](xref:botbuilder-dialogs-adaptive.OnChooseEntity) class.
@@ -31,7 +31,7 @@ export class OnChooseEntity extends OnDialogEvent implements OnChooseEntityConfi
      * @param {Dialog[]} actions Optional, actions to add to the plan when the rule constraints are met.
      * @param {string} condition Optional, condition which needs to be met for the actions to be executed.
      */
-    public constructor(
+    constructor(
         property?: string,
         value?: string,
         operation?: string,
@@ -47,17 +47,17 @@ export class OnChooseEntity extends OnDialogEvent implements OnChooseEntityConfi
     /**
      * Gets or sets the property filter on event.
      */
-    public property: string;
+    property: string;
 
     /**
      * Gets or sets the value filter on event.
      */
-    public value: string;
+    value: string;
 
     /**
      * Gets or sets operation filter on event.
      */
-    public operation: string;
+    operation: string;
 
     /**
      * Create the expression for this condition.

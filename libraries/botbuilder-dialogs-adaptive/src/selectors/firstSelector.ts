@@ -13,7 +13,7 @@ import { ActionContext } from '../actionContext';
  * Select the first true rule implementation of TriggerSelector
  */
 export class FirstSelector extends TriggerSelector {
-    public static $kind = 'Microsoft.FirstSelector';
+    static $kind = 'Microsoft.FirstSelector';
 
     private _conditionals: OnCondition[];
     private _evaluate: boolean;
@@ -24,7 +24,7 @@ export class FirstSelector extends TriggerSelector {
      * @param conditionals Possible rules to match.
      * @param evaluate A boolean representing if rules should be evaluated on select.
      */
-    public initialize(conditionals: OnCondition[], evaluate: boolean): void {
+    initialize(conditionals: OnCondition[], evaluate: boolean): void {
         this._conditionals = conditionals;
         this._evaluate = evaluate;
     }
@@ -35,7 +35,7 @@ export class FirstSelector extends TriggerSelector {
      * @param actionContext Dialog context for evaluation.
      * @returns A Promise with a number array.
      */
-    public select(actionContext: ActionContext): Promise<OnCondition[]> {
+    select(actionContext: ActionContext): Promise<OnCondition[]> {
         let selection: OnCondition;
         let lowestPriority = Number.MAX_SAFE_INTEGER;
 

@@ -36,5 +36,5 @@ export class SettingStringMock extends SettingMock implements SettingStringMockC
     /**
      * Setting assignments as settings.property=value pairs. Assign the settings in sequence.
      */
-    public readonly assignments: SettingStringAssignment[] = [];
+    readonly assignments: SettingStringAssignment[] = [];
 }

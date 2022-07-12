@@ -35,7 +35,7 @@ export abstract class ResourceProvider {
      *
      * @param resourceExplorer Resource explorer.
      */
-    public constructor(resourceExplorer: ResourceExplorer) {
+    constructor(resourceExplorer: ResourceExplorer) {
         this._resourceExplorer = resourceExplorer;
     }
 
@@ -44,7 +44,7 @@ export abstract class ResourceProvider {
      *
      * @param callback Callback function to be called when an event fired.
      */
-    public set changed(callback: (event: ResourceChangeEvent, resources: Resource[]) => void) {
+    set changed(callback: (event: ResourceChangeEvent, resources: Resource[]) => void) {
         this._eventEmitter.on(ResourceChangeEvent.added, (resources: Resource[]): void => {
             callback(ResourceChangeEvent.added, resources);
         });
@@ -61,7 +61,7 @@ export abstract class ResourceProvider {
      *
      * @returns The resource explorer.
      */
-    public get resourceExplorer(): ResourceExplorer {
+    get resourceExplorer(): ResourceExplorer {
         return this._resourceExplorer;
     }
 
@@ -70,7 +70,7 @@ export abstract class ResourceProvider {
      *
      * @returns The ID for this resource provider.
      */
-    public get id(): string {
+    get id(): string {
         return this._id;
     }
 
@@ -79,19 +79,19 @@ export abstract class ResourceProvider {
      *
      * @param id Resource id.
      */
-    public abstract getResource(id: string): Resource;
+    abstract getResource(id: string): Resource;
 
     /**
      * Enumerate resources.
      *
      * @param extension Extension filter.
      */
-    public abstract getResources(extension: string): Resource[];
+    abstract getResources(extension: string): Resource[];
 
     /**
      * Refresh any cached resources.
      */
-    public abstract refresh(): void;
+    abstract refresh(): void;
 
     /**
      * @protected

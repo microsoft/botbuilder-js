@@ -19,12 +19,12 @@ export abstract class TriggerSelector extends Configurable {
      * @param conditionHandlers Possible rules to match.
      * @param evaluate True if rules should be evaluated on select.
      */
-    public abstract initialize(conditionHandlers: OnCondition[], evaluate: boolean): void;
+    abstract initialize(conditionHandlers: OnCondition[], evaluate: boolean): void;
 
     /**
      * Select the best rule to execute.
      *
      * @param actionContext Dialog context for evaluation.
      */
-    public abstract select(actionContext: ActionContext): Promise<OnCondition[]>;
+    abstract select(actionContext: ActionContext): Promise<OnCondition[]>;
 }

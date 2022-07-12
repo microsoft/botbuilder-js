@@ -25,7 +25,7 @@ export class LanguageResourceLoader {
      * @param resourceExplorer The resource explorer to use.
      * @returns The dictionary of grouped locale.
      */
-    public static groupByLocale(resourceExplorer: ResourceExplorer): Map<string, Resource[]> {
+    static groupByLocale(resourceExplorer: ResourceExplorer): Map<string, Resource[]> {
         const resourceMapping: Map<string, Resource[]> = new Map<string, Resource[]>();
         const allResouces: Resource[] = resourceExplorer.getResources(this.lgSuffix);
         const languagePolicy = new LanguagePolicy();
@@ -79,7 +79,7 @@ export class LanguageResourceLoader {
      * @param lgFileName LG input file name.
      * @returns The name and language.
      */
-    public static parseLGFileName(lgFileName: string): { prefix: string; language: string } {
+    static parseLGFileName(lgFileName: string): { prefix: string; language: string } {
         if (lgFileName === undefined || !lgFileName.endsWith('.' + this.lgSuffix)) {
             return { prefix: lgFileName, language: '' };
         }
@@ -100,7 +100,7 @@ export class LanguageResourceLoader {
      * @param optionalLocales Optional locales.
      * @returns The final locale.
      */
-    public static fallbackLocale(locale: string, optionalLocales: string[]): string {
+    static fallbackLocale(locale: string, optionalLocales: string[]): string {
         if (optionalLocales === undefined) {
             throw new TypeError('Invalid Arguments');
         }

@@ -15,24 +15,24 @@ export class EndpointService extends ConnectedService implements IEndpointServic
     /**
      * MSA App ID.
      */
-    public appId: string;
+    appId: string;
 
     /**
      * MSA app password for the bot.
      */
-    public appPassword: string;
+    appPassword: string;
 
     /**
      * Endpoint of localhost service.
      */
-    public endpoint: string;
+    endpoint: string;
 
     /**
      * The channel service (Azure or US Government Azure) for the bot.
      * A value of 'https://botframework.azure.us' means the bot will be talking to a US Government Azure data center.
      * An undefined or null value means the bot will be talking to public Azure
      */
-    public channelService: string;
+    channelService: string;
 
     /**
      * Creates a new EndpointService instance.
@@ -47,7 +47,7 @@ export class EndpointService extends ConnectedService implements IEndpointServic
      * @param secret Secret to use to encrypt.
      * @param encryptString Function called to encrypt an individual value.
      */
-    public encrypt(secret: string, encryptString: (value: string, secret: string) => string): void {
+    encrypt(secret: string, encryptString: (value: string, secret: string) => string): void {
         if (this.appPassword && this.appPassword.length > 0) {
             this.appPassword = encryptString(this.appPassword, secret);
         }
@@ -58,7 +58,7 @@ export class EndpointService extends ConnectedService implements IEndpointServic
      * @param secret Secret to use to decrypt.
      * @param decryptString Function called to decrypt an individual value.
      */
-    public decrypt(secret: string, decryptString: (value: string, secret: string) => string): void {
+    decrypt(secret: string, decryptString: (value: string, secret: string) => string): void {
         if (this.appPassword && this.appPassword.length > 0) {
             this.appPassword = decryptString(this.appPassword, secret);
         }

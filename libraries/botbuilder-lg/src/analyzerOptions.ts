@@ -10,7 +10,7 @@ export class AnalyzerOptions {
      *
      * @returns When true, throw an exception if a recursive call is detected.
      */
-    public ThrowOnRecursive?: boolean = null;
+    ThrowOnRecursive?: boolean = null;
 
     private readonly _throwOnRecursive: string = '@throwOnRecursive';
 
@@ -19,7 +19,7 @@ export class AnalyzerOptions {
      *
      * @param options Optional. Instance to copy analyzer settings from or list of strings containing the options from an LG file.
      */
-    public constructor(options?: AnalyzerOptions | string[]) {
+    constructor(options?: AnalyzerOptions | string[]) {
         if (!options) {
             this.ThrowOnRecursive = null;
         } else if (options instanceof AnalyzerOptions) {
@@ -47,7 +47,7 @@ export class AnalyzerOptions {
      * @param opt Incoming option for merging.
      * @returns Result after merging.
      */
-    public Merge(opt: AnalyzerOptions): AnalyzerOptions {
+    Merge(opt: AnalyzerOptions): AnalyzerOptions {
         const properties = Object.getOwnPropertyNames(opt);
         for (const property in properties) {
             if (this[property] && opt[property]) {

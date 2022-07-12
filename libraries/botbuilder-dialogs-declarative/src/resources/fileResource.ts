@@ -19,7 +19,7 @@ export class FileResource extends Resource {
      *
      * @param path Path to file.
      */
-    public constructor(path: string) {
+    constructor(path: string) {
         super();
         this._fullname = path;
         // The id will be the file name, without the path
@@ -31,7 +31,7 @@ export class FileResource extends Resource {
      *
      * @returns Read content text.
      */
-    public readText(): string {
+    readText(): string {
         const filePath = this._fullname;
         const text = fs.readFileSync(filePath, 'utf-8');
         return text;

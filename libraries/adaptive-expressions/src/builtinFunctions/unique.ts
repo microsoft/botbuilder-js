@@ -19,7 +19,7 @@ export class Unique extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [Unique](xref:adaptive-expressions.Unique) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.Unique, Unique.evaluator(), ReturnType.Array, Unique.validator);
     }
 

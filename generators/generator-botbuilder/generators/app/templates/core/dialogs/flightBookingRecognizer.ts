@@ -20,7 +20,7 @@ export class FlightBookingRecognizer {
         }
     }
 
-    public get isConfigured(): boolean {
+    get isConfigured(): boolean {
         return (this.recognizer !== undefined);
     }
 
@@ -28,11 +28,11 @@ export class FlightBookingRecognizer {
      * Returns an object with preformatted LUIS results for the bot's dialogs to consume.
      * @param {TurnContext} context
      */
-    public async executeLuisQuery(context: TurnContext): Promise<RecognizerResult> {
+    async executeLuisQuery(context: TurnContext): Promise<RecognizerResult> {
         return this.recognizer.recognize(context);
     }
 
-    public getFromEntities(result) {
+    getFromEntities(result) {
         let fromValue, fromAirportValue;
         if (result.entities.$instance.From) {
             fromValue = result.entities.$instance.From[0].text;
@@ -44,7 +44,7 @@ export class FlightBookingRecognizer {
         return { from: fromValue, airport: fromAirportValue };
     }
 
-    public getToEntities(result) {
+    getToEntities(result) {
         let toValue, toAirportValue;
         if (result.entities.$instance.To) {
             toValue = result.entities.$instance.To[0].text;
@@ -60,7 +60,7 @@ export class FlightBookingRecognizer {
      * This value will be a TIMEX. And we are only interested in a Date so grab the first result and drop the Time part.
      * TIMEX is a format that represents DateTime expressions that include some ambiguity. e.g. missing a Year.
      */
-    public getTravelDate(result) {
+    getTravelDate(result) {
         const datetimeEntity = result.entities.datetime;
         if (!datetimeEntity || !datetimeEntity[0]) return undefined;
 

@@ -20,7 +20,7 @@ export class BoolExpression extends ExpressionProperty<boolean> {
      *
      * @param value A `boolean` or a `string` expression which resolves to a `boolean`.
      */
-    public constructor(value?: boolean | string | Expression) {
+    constructor(value?: boolean | string | Expression) {
         super(value, false);
     }
 
@@ -29,7 +29,7 @@ export class BoolExpression extends ExpressionProperty<boolean> {
      *
      * @param value Value to set.
      */
-    public setValue(value: boolean | string | Expression): void {
+    setValue(value: boolean | string | Expression): void {
         if (
             value != null &&
             typeof value !== 'boolean' &&

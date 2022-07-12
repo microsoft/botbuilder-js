@@ -22,7 +22,7 @@ export class IndicesAndValues extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [IndicesAndValues](xref:adaptive-expressions.IndicesAndValues) class.
      */
-    public constructor() {
+    constructor() {
         super(
             ExpressionType.IndicesAndValues,
             IndicesAndValues.evaluator,
