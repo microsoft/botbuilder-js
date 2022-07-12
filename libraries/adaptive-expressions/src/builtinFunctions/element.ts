@@ -23,7 +23,7 @@ export class Element extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [Element](xref:adaptive-expressions.Element) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.Element, Element.evaluator, ReturnType.Object, FunctionUtils.validateBinary);
     }
 

@@ -50,7 +50,7 @@ export interface OnConditionConfiguration {
  * Actions triggered when condition is true.
  */
 export class OnCondition extends Configurable implements DialogDependencies, OnConditionConfiguration {
-    public static $kind = 'Microsoft.OnCondition';
+    static $kind = 'Microsoft.OnCondition';
 
     /**
      * Evaluates the rule and returns a predicted set of changes that should be applied to the
@@ -68,27 +68,27 @@ export class OnCondition extends Configurable implements DialogDependencies, OnC
     /**
      * Gets or sets the condition which needs to be met for the actions to be executed (OPTIONAL).
      */
-    public condition: BoolExpression;
+    condition: BoolExpression;
 
     /**
      * Gets or sets the actions to add to the plan when the rule constraints are met.
      */
-    public actions: Dialog[] = [];
+    actions: Dialog[] = [];
 
     /**
      * Get or sets the rule priority expression where 0 is the highest and less than 0 is ignored.
      */
-    public priority: NumberExpression = new NumberExpression(0.0);
+    priority: NumberExpression = new NumberExpression(0.0);
 
     /**
      * A value indicating whether rule should only run once per unique set of memory paths.
      */
-    public runOnce: boolean;
+    runOnce: boolean;
 
     /**
      * Id for condition.
      */
-    public id: string;
+    id: string;
 
     /**
      * @protected
@@ -109,7 +109,7 @@ export class OnCondition extends Configurable implements DialogDependencies, OnC
      * @param condition (Optional) The condition which needs to be met for the actions to be executed.
      * @param actions (Optional) The actions to add to the plan when the rule constraints are met.
      */
-    public constructor(condition?: string, actions: Dialog[] = []) {
+    constructor(condition?: string, actions: Dialog[] = []) {
         super();
         this.condition = condition ? new BoolExpression(condition) : undefined;
         this.actions = actions;
@@ -119,7 +119,7 @@ export class OnCondition extends Configurable implements DialogDependencies, OnC
      * @param property The key of the conditional selector configuration.
      * @returns The converter for the selector configuration.
      */
-    public getConverter(property: keyof OnConditionConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof OnConditionConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'condition':
                 return new BoolExpressionConverter();
@@ -137,7 +137,7 @@ export class OnCondition extends Configurable implements DialogDependencies, OnC
      *
      * @returns Cached expression used to evaluate this condition.
      */
-    public getExpression(): Expression {
+    getExpression(): Expression {
         if (!this._fullConstraint) {
             this._fullConstraint = this.createExpression();
         }
@@ -151,7 +151,7 @@ export class OnCondition extends Configurable implements DialogDependencies, OnC
      * @param actionContext Context to use for evaluation.
      * @returns Computed priority.
      */
-    public currentPriority(actionContext: ActionContext): number {
+    currentPriority(actionContext: ActionContext): number {
         const { value: priority, error } = this.priority.tryGetValue(actionContext.state);
         if (error) {
             return -1;
@@ -164,7 +164,7 @@ export class OnCondition extends Configurable implements DialogDependencies, OnC
      *
      * @param condition External constraint to add, it will be AND'ed to all other constraints.
      */
-    public addExternalCondition(condition: string): void {
+    addExternalCondition(condition: string): void {
         if (condition) {
             try {
                 const parser = new ExpressionParser();
@@ -182,7 +182,7 @@ export class OnCondition extends Configurable implements DialogDependencies, OnC
      * @param actionContext Context.
      * @returns A promise with plan change list.
      */
-    public async execute(actionContext: ActionContext): Promise<ActionChangeList[]> {
+    async execute(actionContext: ActionContext): Promise<ActionChangeList[]> {
         if (this.runOnce) {
             const count = actionContext.state.getValue(DialogPath.eventCounter);
             actionContext.state.setValue(`${AdaptiveDialog.conditionTracker}.${this.id}.lastRun`, count);
@@ -195,7 +195,7 @@ export class OnCondition extends Configurable implements DialogDependencies, OnC
      *
      * @returns A list of [Dialog](xref:botbuilder-dialogs.Dialog).
      */
-    public getDependencies(): Dialog[] {
+    getDependencies(): Dialog[] {
         return [this.actionScope];
     }
 

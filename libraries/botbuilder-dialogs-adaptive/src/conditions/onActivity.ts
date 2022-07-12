@@ -18,12 +18,12 @@ export interface OnActivityConfiguration extends OnDialogEventConfiguration {
  * Actions triggered when an [Activity](xref:botframework-schema.Activity) of a given type is received.
  */
 export class OnActivity extends OnDialogEvent implements OnActivityConfiguration {
-    public static $kind = 'Microsoft.OnActivity';
+    static $kind = 'Microsoft.OnActivity';
 
     /**
      * Gets or sets the ActivityType which must be matched for this to trigger.
      */
-    public type: string;
+    type: string;
 
     /**
      * Initializes a new instance of the [OnActivity](xref:botbuilder-dialogs-adaptive.OnActivity) class.
@@ -32,7 +32,7 @@ export class OnActivity extends OnDialogEvent implements OnActivityConfiguration
      * @param actions Optional, actions to add to the plan when the rule constraints are met.
      * @param condition Optional, condition which needs to be met for the actions to be executed.
      */
-    public constructor(type?: string, actions: Dialog[] = [], condition?: string) {
+    constructor(type?: string, actions: Dialog[] = [], condition?: string) {
         super(AdaptiveEvents.activityReceived, actions, condition);
         this.type = type;
     }

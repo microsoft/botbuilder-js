@@ -46,7 +46,7 @@ export interface ConfirmInputConfiguration extends InputDialogConfiguration {
  * Declarative input control that will gather yes/no confirmation input from a set of choices.
  */
 export class ConfirmInput extends InputDialog implements ConfirmInputConfiguration {
-    public static $kind = 'Microsoft.ConfirmInput';
+    static $kind = 'Microsoft.ConfirmInput';
 
     /**
      * Default options for rendering the choices to the user based on locale.
@@ -92,7 +92,7 @@ export class ConfirmInput extends InputDialog implements ConfirmInputConfigurati
     /**
      * The prompts default locale that should be recognized.
      */
-    public defaultLocale?: StringExpression;
+    defaultLocale?: StringExpression;
 
     /**
      * Style of the "yes" and "no" choices rendered to the user when prompting.
@@ -100,29 +100,29 @@ export class ConfirmInput extends InputDialog implements ConfirmInputConfigurati
      * @remarks
      * Defaults to `ListStyle.auto`.
      */
-    public style: EnumExpression<ListStyle> = new EnumExpression<ListStyle>(ListStyle.auto);
+    style: EnumExpression<ListStyle> = new EnumExpression<ListStyle>(ListStyle.auto);
 
     /**
      * Additional options passed to the `ChoiceFactory` and used to tweak the style of choices
      * rendered to the user.
      */
-    public choiceOptions?: ObjectExpression<ChoiceFactoryOptions> = new ObjectExpression();
+    choiceOptions?: ObjectExpression<ChoiceFactoryOptions> = new ObjectExpression();
 
     /**
      * Custom list of choices to send for the prompt.
      */
-    public confirmChoices?: ObjectExpression<ChoiceSet> = new ObjectExpression();
+    confirmChoices?: ObjectExpression<ChoiceSet> = new ObjectExpression();
 
     /**
      * The expression of output format.
      */
-    public outputFormat: StringExpression;
+    outputFormat: StringExpression;
 
     /**
      * @param property The key of the conditional selector configuration.
      * @returns The converter for the selector configuration.
      */
-    public getConverter(property: keyof ConfirmInputConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof ConfirmInputConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'defaultLocale':
                 return new StringExpressionConverter();

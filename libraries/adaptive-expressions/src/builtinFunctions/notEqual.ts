@@ -17,7 +17,7 @@ export class NotEqual extends ComparisonEvaluator {
     /**
      * Initializes a new instance of the [NotEqual](xref:adaptive-expressions.NotEqual) class.
      */
-    public constructor() {
+    constructor() {
         super(
             ExpressionType.NotEqual,
             (args) => !FunctionUtils.commonEquals(args[0], args[1]),

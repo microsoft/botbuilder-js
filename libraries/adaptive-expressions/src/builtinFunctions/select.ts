@@ -18,7 +18,7 @@ export class Select extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [Select](xref:adaptive-expressions.Select) class.
      */
-    public constructor() {
+    constructor() {
         super(
             ExpressionType.Select,
             InternalFunctionUtils.foreach,

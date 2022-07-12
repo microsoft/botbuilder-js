@@ -20,15 +20,15 @@ export interface RecognizerSetConfiguration extends RecognizerConfiguration {
  * A recognizer class whose result is the union of results from multiple recognizers into one RecognizerResult.
  */
 export class RecognizerSet extends AdaptiveRecognizer implements RecognizerSetConfiguration {
-    public static $kind = 'Microsoft.RecognizerSet';
+    static $kind = 'Microsoft.RecognizerSet';
 
-    public recognizers: Recognizer[] = [];
+    recognizers: Recognizer[] = [];
 
     /**
      * @param property The key of the conditional selector configuration.
      * @returns The converter for the selector configuration.
      */
-    public getConverter(property: keyof RecognizerSetConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof RecognizerSetConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'recognizers':
                 return RecognizerListConverter;
@@ -46,7 +46,7 @@ export class RecognizerSet extends AdaptiveRecognizer implements RecognizerSetCo
      * @param telemetryMetrics Optional, additional metrics to be logged to telemetry with the LuisResult event.
      * @returns {Promise<RecognizerResult>} Analysis of utterance.
      */
-    public async recognize(
+    async recognize(
         dialogContext: DialogContext,
         activity: Activity,
         telemetryProperties?: { [key: string]: string },

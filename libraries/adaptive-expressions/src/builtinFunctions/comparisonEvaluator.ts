@@ -30,7 +30,7 @@ export class ComparisonEvaluator extends ExpressionEvaluator {
      * @param validator [ValidateExpressionDelegate](xref:adaptive-expressions.ValidateExpressionDelegate) for input arguments.
      * @param verify Optional. [VerifyExpression](xref:adaptive-expressions.VerifyExpression) function to verify each child's result.
      */
-    public constructor(
+    constructor(
         type: string,
         func: (arg0: any[]) => boolean,
         validator: ValidateExpressionDelegate,

@@ -25,7 +25,7 @@ export class ErrorListener implements ANTLRErrorListener<void> {
      * @param errorSource String value that represents the source of the error.
      * @param lineOffset Offset of the line where the error occurred.
      */
-    public constructor(errorSource: string, lineOffset?: number) {
+    constructor(errorSource: string, lineOffset?: number) {
         this.source = errorSource;
         if (lineOffset === undefined) {
             lineOffset = 0;
@@ -43,7 +43,7 @@ export class ErrorListener implements ANTLRErrorListener<void> {
      * @param msg Message to emit.
      * @param e Exception.
      */
-    public syntaxError<T>(
+    syntaxError<T>(
         recognizer: Recognizer<T, any>,
         offendingSymbol: any,
         line: number,

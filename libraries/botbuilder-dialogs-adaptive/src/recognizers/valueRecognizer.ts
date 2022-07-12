@@ -13,7 +13,7 @@ import { TelemetryLoggerConstants } from '../telemetryLoggerConstants';
 
 /**
  * ValueRecognizer - Recognizer for mapping message activity. Value payload into intent/entities.
- * 
+ *
  * @remarks
  * This recognizer will map MessageActivity Value payloads into intents and entities.
  *      activity.Value.intent => RecognizerResult.Intents.
@@ -29,7 +29,7 @@ export class ValueRecognizer extends AdaptiveRecognizer {
      * @param telemetryMetrics Optional, additional metrics to be logged to telemetry with the LuisResult event.
      * @returns {Promise<RecognizerResult>} Analysis of utterance.
      */
-    public async recognize(
+    async recognize(
         dialogContext: DialogContext,
         activity: Activity,
         telemetryProperties?: { [key: string]: string },

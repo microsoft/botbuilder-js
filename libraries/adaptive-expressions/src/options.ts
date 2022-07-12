@@ -10,19 +10,19 @@
  * Options used to define evaluation behaviors.
  */
 export class Options {
-    public nullSubstitution: (path: string) => unknown;
+    nullSubstitution: (path: string) => unknown;
 
     /**
      * The locale info for evaluating Expressions.
      */
-    public locale: string;
+    locale: string;
 
     /**
      * Initializes a new instance of the [Options](xref:adaptive-expressions.Options) class.
      *
      * @param opt Optional. An [Options](xref:adaptive-expressions.Options) instance.
      */
-    public constructor(opt?: Options) {
+    constructor(opt?: Options) {
         this.nullSubstitution = opt ? opt.nullSubstitution : undefined;
         this.locale = opt ? opt.locale : undefined;
     }

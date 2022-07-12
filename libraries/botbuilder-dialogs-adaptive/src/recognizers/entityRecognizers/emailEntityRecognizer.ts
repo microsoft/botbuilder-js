@@ -14,7 +14,7 @@ import { TextEntityRecognizer } from './textEntityRecognizer';
  * Recognizes email input.
  */
 export class EmailEntityRecognizer extends TextEntityRecognizer {
-    public static $kind = 'Microsoft.EmailEntityRecognizer';
+    static $kind = 'Microsoft.EmailEntityRecognizer';
 
     /**
      * @protected

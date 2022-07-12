@@ -13,7 +13,7 @@ import {
 describe('expressionProperty tests', function () {
     it('ArrayExpression string', function () {
         class ArrFoo {
-            public strings: string[];
+            strings: string[];
         }
         const test: ArrFoo = { strings: ['a', 'b', 'c'] };
         const data = { test };
@@ -33,11 +33,11 @@ describe('expressionProperty tests', function () {
 
     it('ArrayExpression object', function () {
         class Foo {
-            public age: number;
-            public name: string;
+            age: number;
+            name: string;
         }
         class ArrFoo {
-            public objects: Foo[];
+            objects: Foo[];
         }
         const foo: Foo = { age: 13, name: 'joe' };
         const test: ArrFoo = { objects: [foo] };
@@ -137,8 +137,8 @@ describe('expressionProperty tests', function () {
 
     it('ObjectExpression', function () {
         class Foo {
-            public age: number;
-            public name: string;
+            age: number;
+            name: string;
         }
         const foo: Foo = { age: 13, name: 'joe' };
         const data = { test: foo };

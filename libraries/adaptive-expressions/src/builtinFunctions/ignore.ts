@@ -23,7 +23,7 @@ export class Ignore extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [Ignore](xref:adaptive-expressions.Ignore) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.Ignore, Ignore.evaluator, ReturnType.Boolean, FunctionUtils.validateUnaryBoolean);
         this.negation = this;
     }

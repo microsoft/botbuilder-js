@@ -23,7 +23,7 @@ export class GetProperty extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [GetProperty](xref:adaptive-expressions.GetProperty) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.GetProperty, GetProperty.evaluator, ReturnType.Object, GetProperty.validator);
     }
 

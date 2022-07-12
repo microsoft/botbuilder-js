@@ -13,12 +13,12 @@ export class AnalyzerResult {
     /**
      * Variables that this template contains.
      */
-    public Variables: string[];
+    Variables: string[];
 
     /**
      * template references that this template contains.
      */
-    public TemplateReferences: string[];
+    TemplateReferences: string[];
 
     /**
      * Creates a new instance of the [AnalyzerResult](xref:botbuilder-lg.AnalyzerResult) class.
@@ -26,7 +26,7 @@ export class AnalyzerResult {
      * @param variables Init varibales.
      * @param templateRefNames Init template references.
      */
-    public constructor(variables: string[] = [], templateRefNames: string[] = []) {
+    constructor(variables: string[] = [], templateRefNames: string[] = []) {
         this.Variables = Array.from(new Set(variables));
         this.TemplateReferences = Array.from(new Set(templateRefNames));
     }
@@ -37,7 +37,7 @@ export class AnalyzerResult {
      * @param outputItem Another analyzer result.
      * @returns Combined analyzer result.
      */
-    public union(outputItem: AnalyzerResult): this {
+    union(outputItem: AnalyzerResult): this {
         this.Variables = Array.from(new Set(this.Variables.concat(outputItem.Variables)));
         this.TemplateReferences = Array.from(new Set(this.TemplateReferences.concat(outputItem.TemplateReferences)));
 

@@ -20,7 +20,7 @@ export class NumericEvaluator extends ExpressionEvaluator {
      * @param type Name of the built-in function.
      * @param func The evaluation function, it takes a list of objects and returns a number.
      */
-    public constructor(type: string, func: (args: any[]) => any) {
+    constructor(type: string, func: (args: any[]) => any) {
         super(type, NumericEvaluator.evaluator(func), ReturnType.Number, FunctionUtils.validateNumber);
     }
 

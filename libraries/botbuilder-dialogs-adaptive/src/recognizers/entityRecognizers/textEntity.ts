@@ -12,16 +12,16 @@ import { Entity } from 'botbuilder';
  * Text entity base class.
  */
 export class TextEntity implements Entity {
-    public type = 'text';
+    type = 'text';
 
-    public text: string;
+    text: string;
 
     /**
      * Initializes a new instance of the [TextEntity](xref:botbuilder-dialogs-adaptive.TextEntity) class.
      *
      * @param text The text value.
      */
-    public constructor(text?: string) {
+    constructor(text?: string) {
         this.text = text;
     }
 }

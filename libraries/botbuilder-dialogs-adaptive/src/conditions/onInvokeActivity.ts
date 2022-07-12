@@ -13,7 +13,7 @@ import { OnActivity } from './onActivity';
  * Actions triggered when an InvokeActivity is received.
  */
 export class OnInvokeActivity extends OnActivity {
-    public static $kind = 'Microsoft.OnInvokeActivity';
+    static $kind = 'Microsoft.OnInvokeActivity';
 
     /**
      * Initializes a new instance of the [OnInvokeActivity](xref:botbuilder-dialogs-adaptive.OnInvokeActivity) class.
@@ -21,7 +21,7 @@ export class OnInvokeActivity extends OnActivity {
      * @param actions Optional. A [Dialog](xref:botbuilder-dialogs.Dialog) list containing the actions to add to the plan when the rule constraints are met.
      * @param condition Optional. Condition which needs to be met for the actions to be executed.
      */
-    public constructor(actions: Dialog[] = [], condition?: string) {
+    constructor(actions: Dialog[] = [], condition?: string) {
         super(ActivityTypes.Invoke, actions, condition);
     }
 }

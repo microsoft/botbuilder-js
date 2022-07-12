@@ -18,7 +18,7 @@ export class Foreach extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [Foreach](xref:adaptive-expressions.Foreach) class.
      */
-    public constructor() {
+    constructor() {
         super(
             ExpressionType.Foreach,
             InternalFunctionUtils.foreach,

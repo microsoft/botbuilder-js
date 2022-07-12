@@ -28,7 +28,7 @@ export class StringExpression extends ExpressionProperty<string> {
      *
      * @param value A `string` value or a `string` expression.
      */
-    public constructor(value?: string | Expression) {
+    constructor(value?: string | Expression) {
         super(value);
     }
 
@@ -37,7 +37,7 @@ export class StringExpression extends ExpressionProperty<string> {
      *
      * @param value Value to set.
      */
-    public setValue(value: string | Expression): void {
+    setValue(value: string | Expression): void {
         // reset state to no value or expression
         super.setValue(undefined);
 

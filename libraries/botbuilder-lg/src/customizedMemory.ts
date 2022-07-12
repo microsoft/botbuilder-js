@@ -17,12 +17,12 @@ export class CustomizedMemory implements MemoryInterface {
     /**
      * Global memory.
      */
-    public globalMemory: MemoryInterface;
+    globalMemory: MemoryInterface;
 
     /**
      * Local memory.
      */
-    public localMemory: MemoryInterface;
+    localMemory: MemoryInterface;
 
     /**
      * Creates a new instance of the [CustomizedMemory](xref:botbuilder-lg.CustomizedMemory) class.
@@ -30,7 +30,7 @@ export class CustomizedMemory implements MemoryInterface {
      * @param scope Optional. Scope.
      * @param localMemory Optional. Local memory.
      */
-    public constructor(scope?: unknown, localMemory?: MemoryInterface) {
+    constructor(scope?: unknown, localMemory?: MemoryInterface) {
         this.globalMemory = !scope ? undefined : SimpleObjectMemory.wrap(scope);
         this.localMemory = localMemory;
     }
@@ -42,7 +42,7 @@ export class CustomizedMemory implements MemoryInterface {
      * @param path Memory path.
      * @returns Resolved value.
      */
-    public getValue(path: string): any {
+    getValue(path: string): any {
         if (this.localMemory) {
             const value = this.localMemory.getValue(path);
             if (value !== undefined) {
@@ -64,7 +64,7 @@ export class CustomizedMemory implements MemoryInterface {
      * @param _value Value to set.
      */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    public setValue(_path: string, _value: any): void {
+    setValue(_path: string, _value: any): void {
         return;
     }
 
@@ -74,7 +74,7 @@ export class CustomizedMemory implements MemoryInterface {
      *
      * @returns A string indicating the version.
      */
-    public version(): string {
+    version(): string {
         let result = '';
         if (this.globalMemory) {
             const version = this.globalMemory.version();

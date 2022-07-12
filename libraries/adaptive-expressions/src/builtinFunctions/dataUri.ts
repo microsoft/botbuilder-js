@@ -19,7 +19,7 @@ export class DataUri extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [DataUri](xref:adaptive-expressions.DataUri) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.DataUri, DataUri.evaluator(), ReturnType.String, FunctionUtils.validateUnary);
     }
 

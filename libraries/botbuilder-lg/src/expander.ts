@@ -63,7 +63,7 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
     /**
      * Templates.
      */
-    public readonly templates: Templates;
+    readonly templates: Templates;
 
     /**
      * Expander expression parser
@@ -78,7 +78,7 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
     /**
      * TemplateMap.
      */
-    public readonly templateMap: { [name: string]: Template };
+    readonly templateMap: { [name: string]: Template };
     private readonly evaluationTargetStack: EvaluationTarget[] = [];
     private readonly lgOptions: EvaluationOptions;
 
@@ -88,7 +88,7 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
      * @param templates Template list.
      * @param opt Options for LG.
      */
-    public constructor(templates: Templates, opt?: EvaluationOptions) {
+    constructor(templates: Templates, opt?: EvaluationOptions) {
         super();
         this.templates = templates;
         this.templateMap = keyBy(templates.allTemplates, (t: Template): string => t.name);
@@ -110,7 +110,7 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
      * @param scope Given scope.
      * @returns All possiable results.
      */
-    public expandTemplate(templateName: string, scope: unknown): unknown[] {
+    expandTemplate(templateName: string, scope: unknown): unknown[] {
         const memory = scope instanceof CustomizedMemory ? scope : new CustomizedMemory(scope);
         if (!(templateName in this.templateMap)) {
             throw new Error(TemplateErrors.templateNotExist(templateName));
@@ -142,7 +142,7 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
      * @param ctx The parse tree.
      * @returns The result of visiting the normal body.
      */
-    public visitNormalBody(ctx: NormalBodyContext): unknown[] {
+    visitNormalBody(ctx: NormalBodyContext): unknown[] {
         return this.visit(ctx.normalTemplateBody());
     }
 
@@ -152,7 +152,7 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
      * @param ctx The parse tree.
      * @returns The result of visiting the normal template body.
      */
-    public visitNormalTemplateBody(ctx: NormalTemplateBodyContext): unknown[] {
+    visitNormalTemplateBody(ctx: NormalTemplateBodyContext): unknown[] {
         const normalTemplateStrs: TemplateStringContext[] = ctx.templateString();
         let result: unknown[] = [];
         for (const normalTemplateStr of normalTemplateStrs) {
@@ -168,7 +168,7 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
      * @param ctx The parse tree.
      * @returns The result of visiting if-else body.
      */
-    public visitIfElseBody(ctx: IfElseBodyContext): unknown[] {
+    visitIfElseBody(ctx: IfElseBodyContext): unknown[] {
         const ifRules: IfConditionRuleContext[] = ctx.ifElseTemplateBody().ifConditionRule();
         for (const ifRule of ifRules) {
             if (this.evalCondition(ifRule.ifCondition()) && ifRule.normalTemplateBody() !== undefined) {
@@ -185,7 +185,7 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
      * @param ctx The parse tree.
      * @returns The result of visiting the structured body.
      */
-    public visitStructuredBody(ctx: StructuredBodyContext): unknown[] {
+    visitStructuredBody(ctx: StructuredBodyContext): unknown[] {
         const templateRefValues: Map<string, unknown[]> = new Map<string, unknown[]>();
         const stb: StructuredTemplateBodyContext = ctx.structuredTemplateBody();
         const result: Record<string, unknown> = {};
@@ -327,7 +327,7 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
      * @param ctx The parse tree.
      * @returns The result of visiting the switch case body.
      */
-    public visitSwitchCaseBody(ctx: SwitchCaseBodyContext): unknown[] {
+    visitSwitchCaseBody(ctx: SwitchCaseBodyContext): unknown[] {
         const switchcaseNodes: SwitchCaseRuleContext[] = ctx.switchCaseTemplateBody().switchCaseRule();
         const length: number = switchcaseNodes.length;
         const switchNode: SwitchCaseRuleContext = switchcaseNodes[0];
@@ -379,7 +379,7 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
      * @param ctx The parse tree.
      * @returns The result of visiting NormalTemplateString.
      */
-    public visitNormalTemplateString(ctx: NormalTemplateStringContext): unknown[] {
+    visitNormalTemplateString(ctx: NormalTemplateStringContext): unknown[] {
         const prefixErrorMsg = TemplateExtensions.getPrefixErrorMessage(ctx);
         let result: unknown[] = [undefined];
         for (const child of ctx.children) {
@@ -418,7 +418,7 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
      * @returns The current scope if the number of arguments is 0, otherwise, returns a CustomizedMemory.
      * with the mapping of the parameter name to the argument value added to the scope.
      */
-    public constructScope(inputTemplateName: string, args: unknown[], allTemplates: Template[]): MemoryInterface {
+    constructScope(inputTemplateName: string, args: unknown[], allTemplates: Template[]): MemoryInterface {
         const templateName = this.parseTemplateName(inputTemplateName).pureTemplateName;
 
         const templateMap = keyBy(allTemplates, (t: Template): string => t.name);

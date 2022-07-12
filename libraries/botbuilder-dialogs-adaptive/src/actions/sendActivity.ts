@@ -36,14 +36,14 @@ export interface SendActivityConfiguration extends DialogConfiguration {
  * Send an activity back to the user.
  */
 export class SendActivity<O extends object = {}> extends Dialog<O> implements SendActivityConfiguration {
-    public static $kind = 'Microsoft.SendActivity';
+    static $kind = 'Microsoft.SendActivity';
 
     /**
      * Creates a new [SendActivity](xref:botbuilder-dialogs-adaptive.SendActivity) instance.
      *
      * @param activity [Activity](xref:botframework-schema.Activity) or message text to send the user.
      */
-    public constructor(activity?: Partial<Activity> | string) {
+    constructor(activity?: Partial<Activity> | string) {
         super();
         if (activity) {
             if (typeof activity === 'string') {
@@ -57,18 +57,18 @@ export class SendActivity<O extends object = {}> extends Dialog<O> implements Se
     /**
      * Gets or sets template for the activity.
      */
-    public activity: TemplateInterface<Partial<Activity>, D & O>;
+    activity: TemplateInterface<Partial<Activity>, D & O>;
 
     /**
      * An optional expression which if is true will disable this action.
      */
-    public disabled?: BoolExpression;
+    disabled?: BoolExpression;
 
     /**
      * @param property The key of the conditional selector configuration.
      * @returns The converter for the selector configuration.
      */
-    public getConverter(property: keyof SendActivityConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof SendActivityConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'activity':
                 return new ActivityTemplateConverter();
@@ -86,7 +86,7 @@ export class SendActivity<O extends object = {}> extends Dialog<O> implements Se
      * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, options: O): Promise<DialogTurnResult> {
+    async beginDialog(dc: DialogContext, options: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }

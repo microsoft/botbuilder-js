@@ -82,7 +82,7 @@
     {
         "scope": "https://localhost:8081",
         "method": "GET",
-        "path": "/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-40",
+        "path": "/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-43",
         "body": "",
         "status": 404,
         "response": {
@@ -95,7 +95,7 @@
             "Content-Type",
             "application/json",
             "Content-Location",
-            "https://localhost:8081/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-40",
+            "https://localhost:8081/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-43",
             "Server",
             "Microsoft-HTTPAPI/2.0",
             "Access-Control-Allow-Origin",
@@ -146,7 +146,7 @@
     {
         "scope": "https://localhost:8081",
         "method": "GET",
-        "path": "/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-40",
+        "path": "/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-43",
         "body": "",
         "status": 404,
         "response": {
@@ -159,7 +159,7 @@
             "Content-Type",
             "application/json",
             "Content-Location",
-            "https://localhost:8081/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-40",
+            "https://localhost:8081/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-43",
             "Server",
             "Microsoft-HTTPAPI/2.0",
             "Access-Control-Allow-Origin",
@@ -212,7 +212,7 @@
         "method": "POST",
         "path": "/dbs/CosmosPartitionedStorageTestDb/colls",
         "body": {
-            "id": "CosmosPartitionedStorageTestContainer-40",
+            "id": "CosmosPartitionedStorageTestContainer-43",
             "partitionKey": {
                 "paths": [
                     "/id"
@@ -221,7 +221,7 @@
         },
         "status": 201,
         "response": {
-            "id": "CosmosPartitionedStorageTestContainer-40",
+            "id": "CosmosPartitionedStorageTestContainer-43",
             "indexingPolicy": {
                 "indexingMode": "consistent",
                 "automatic": true,
@@ -332,11 +332,11 @@
     {
         "scope": "https://localhost:8081",
         "method": "GET",
-        "path": "/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-40",
+        "path": "/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-43",
         "body": "",
         "status": 200,
         "response": {
-            "id": "CosmosPartitionedStorageTestContainer-40",
+            "id": "CosmosPartitionedStorageTestContainer-43",
             "indexingPolicy": {
                 "indexingMode": "consistent",
                 "automatic": true,
@@ -386,7 +386,7 @@
             "Content-Type",
             "application/json",
             "Content-Location",
-            "https://localhost:8081/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-40",
+            "https://localhost:8081/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-43",
             "Server",
             "Microsoft-HTTPAPI/2.0",
             "Access-Control-Allow-Origin",
@@ -451,7 +451,7 @@
     {
         "scope": "https://localhost:8081",
         "method": "POST",
-        "path": "/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-40/docs",
+        "path": "/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-43/docs",
         "body": {
             "id": "CONTEXTKEY",
             "realId": "CONTEXTKEY",
@@ -1004,7 +1004,7 @@
             "x-ms-schemaversion",
             "1.10",
             "x-ms-alt-content-path",
-            "dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-40",
+            "dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-43",
             "x-ms-content-path",
             "agdHANKsP4A=",
             "x-ms-quorum-acked-lsn",
@@ -1045,7 +1045,7 @@
     {
         "scope": "https://localhost:8081",
         "method": "POST",
-        "path": "/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-40/docs",
+        "path": "/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-43/docs",
         "body": {
             "id": "CONTEXTKEY",
             "realId": "CONTEXTKEY",

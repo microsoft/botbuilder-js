@@ -15,7 +15,7 @@ export class DispatchService extends LuisService implements IDispatchService {
     /**
      * Service IDs that the dispatch model will dispatch across.
      */
-    public serviceIds: string[];
+    serviceIds: string[];
 
     /**
      * Creates a new DispatchService instance.

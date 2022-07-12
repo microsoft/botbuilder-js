@@ -24,7 +24,7 @@ export class TicksToMinutes extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [TicksToMinutes](xref:adaptive-expressions.TicksToMinutes) class.
      */
-    public constructor() {
+    constructor() {
         super(
             ExpressionType.TicksToMinutes,
             TicksToMinutes.evaluator,

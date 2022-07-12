@@ -21,7 +21,7 @@ export class Base64ToBinary extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [Base64ToBinary](xref:adaptive-expressions.Base64ToBinary) class.
      */
-    public constructor() {
+    constructor() {
         super(
             ExpressionType.Base64ToBinary,
             Base64ToBinary.evaluator(),

@@ -41,7 +41,7 @@ export interface AskConfiguration extends SendActivityConfiguration {
  * `DialogPath.retries` is updated as the same question is asked multiple times.
  */
 export class Ask extends SendActivity implements AskConfiguration {
-    public static $kind = 'Microsoft.Ask';
+    static $kind = 'Microsoft.Ask';
 
     /**
      *Initializes a new instance of the [Ask](xref:botbuilder-dialogs-adaptive.Ask) class.
@@ -49,7 +49,7 @@ export class Ask extends SendActivity implements AskConfiguration {
      * @param text Optional, text value.
      * @param expectedProperties Optional, [ArrayExpression](xref:adaptive-expressions.ArrayExpression) of expected properties.
      */
-    public constructor(text?: string, expectedProperties?: ArrayExpression<string>) {
+    constructor(text?: string, expectedProperties?: ArrayExpression<string>) {
         super(text);
         this.expectedProperties = expectedProperties;
     }
@@ -57,12 +57,12 @@ export class Ask extends SendActivity implements AskConfiguration {
     /**
      * Gets or sets properties expected to be filled by response.
      */
-    public expectedProperties: ArrayExpression<string>;
+    expectedProperties: ArrayExpression<string>;
 
     /**
      * Gets or sets the default operation that will be used when no operation is recognized.
      */
-    public defaultOperation: StringExpression;
+    defaultOperation: StringExpression;
 
     /**
      * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) is started and pushed onto the dialog stack.
@@ -70,7 +70,7 @@ export class Ask extends SendActivity implements AskConfiguration {
      * @param property The key of the conditional selector configuration.
      * @returns The converter for the selector configuration.
      */
-    public getConverter(property: keyof AskConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof AskConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'expectedProperties':
                 return new ArrayExpressionConverter<string>();
@@ -96,7 +96,7 @@ export class Ask extends SendActivity implements AskConfiguration {
      * @param {object} options (Optional) Initial information to pass to the dialog.
      * @returns {Promise<DialogTurnResult>} A promise resolving to the turn result
      */
-    public async beginDialog(dc: DialogContext, options?: object): Promise<DialogTurnResult> {
+    async beginDialog(dc: DialogContext, options?: object): Promise<DialogTurnResult> {
         // get number of retries from memory
         let retries: number = dc.state.getValue<number>(DialogPath.retries, 0);
 

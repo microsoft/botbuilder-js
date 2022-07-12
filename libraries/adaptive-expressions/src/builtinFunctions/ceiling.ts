@@ -16,7 +16,7 @@ export class Ceiling extends NumberTransformEvaluator {
     /**
      * Initializes a new instance of the [Ceiling](xref:adaptive-expressions.Ceiling) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.Ceiling, Ceiling.func);
     }
 

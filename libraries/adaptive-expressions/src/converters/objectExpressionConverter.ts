@@ -24,7 +24,7 @@ export class ObjectExpressionConverter<T extends object = {}> {
      * @param value Value of type `T` to convert.
      * @returns The [ObjectExpression](xref:adaptive-expressions.ObjectExpression).
      */
-    public convert(value: Input<T> | ObjectExpression<T>): ObjectExpression<T> {
+    convert(value: Input<T> | ObjectExpression<T>): ObjectExpression<T> {
         return value instanceof ObjectExpression ? value : new ObjectExpression<T>(value);
     }
 }

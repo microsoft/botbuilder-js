@@ -35,7 +35,7 @@ export class DialogTestLogger implements Middleware {
      *
      * @param logger A logger object with a `log` function.
      */
-    public constructor(private readonly logger: Logger = console) {}
+    constructor(private readonly logger: Logger = console) {}
 
     /**
      * Called each time the bot receives a new request.
@@ -44,7 +44,7 @@ export class DialogTestLogger implements Middleware {
      * @param next Function to call to continue execution to the next step in the middleware chain.
      * @returns A `Promise` that represents the work queued to execute.
      */
-    public async onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
+    async onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
         // log incoming
         if (context.activity.type == ActivityTypes.Message) {
             this.logger.log(`User: Text = ${context.activity.text}`);

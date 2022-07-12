@@ -15,7 +15,7 @@ export class BotService extends AzureService implements IBotService {
     /**
      * MSA App ID for the bot.
      */
-    public appId: string;
+    appId: string;
 
     /**
      * Creates a new BotService instance.
@@ -30,7 +30,7 @@ export class BotService extends AzureService implements IBotService {
      * @param secret Secret to use to encrypt.
      * @param encryptString Function called to encrypt an individual value.
      */
-    public encrypt(secret: string, encryptString: (value: string, secret: string) => string): void {
+    encrypt(secret: string, encryptString: (value: string, secret: string) => string): void {
         return;
     }
 
@@ -39,7 +39,7 @@ export class BotService extends AzureService implements IBotService {
      * @param secret Secret to use to decrypt.
      * @param decryptString Function called to decrypt an individual value.
      */
-    public decrypt(secret: string, decryptString: (value: string, secret: string) => string): void {
+    decrypt(secret: string, decryptString: (value: string, secret: string) => string): void {
         return;
     }
 }

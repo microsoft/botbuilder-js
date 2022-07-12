@@ -24,7 +24,7 @@ export class DayOfYear extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [DayOfYear](xref:adaptive-expressions.DayOfYear) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.DayOfYear, DayOfYear.evaluator(), ReturnType.Number, FunctionUtils.validateUnaryString);
     }
 

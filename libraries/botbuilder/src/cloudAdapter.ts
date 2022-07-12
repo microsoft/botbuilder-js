@@ -236,7 +236,7 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
  * @internal
  */
 class StreamingRequestHandler extends RequestHandler {
-    public server?: IStreamingTransportServer;
+    server?: IStreamingTransportServer;
 
     // Note: `processActivity` lambda is to work around the fact that CloudAdapterBase#processActivity
     // is protected, and we can't get around that by defining classes inside of other classes

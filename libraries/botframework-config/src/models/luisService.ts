@@ -15,33 +15,33 @@ export class LuisService extends ConnectedService implements ILuisService {
     /**
      * Luis app ID.
      */
-    public appId: string;
+    appId: string;
 
     /**
      * Authoring key for using authoring api.
      */
-    public authoringKey: string;
+    authoringKey: string;
 
     /**
      * Subscription key for using calling model api for predictions.
      */
-    public subscriptionKey: string;
+    subscriptionKey: string;
 
     /**
      * Version of the application.
      */
-    public version: string;
+    version: string;
 
     /**
      * Region for luis.
      */
-    public region: string;
+    region: string;
 
     /**
      * URL for a custom endpoint. This should only be used when the LUIS deployed via a container.
      * If a value is set, then the GetEndpoint() method will return the value for Custom Endpoint.
      */
-    public customEndpoint: string;
+    customEndpoint: string;
 
     /**
      * Creates a new LuisService instance.
@@ -56,7 +56,7 @@ export class LuisService extends ConnectedService implements ILuisService {
      * Get endpoint for the luis service. If a customEndpoint is set then this is returned
      * otherwise the endpoint is automatically generated based on the region set.
      */
-    public getEndpoint(): string {
+    getEndpoint(): string {
         // If a custom endpoint has been supplied, then we should return this instead of
         // generating an endpoint based on the region.
         if (this.customEndpoint) {
@@ -83,7 +83,7 @@ export class LuisService extends ConnectedService implements ILuisService {
      * @param secret Secret to use to encrypt.
      * @param encryptString Function called to encrypt an individual value.
      */
-    public encrypt(secret: string, encryptString: (value: string, secret: string) => string): void {
+    encrypt(secret: string, encryptString: (value: string, secret: string) => string): void {
         if (this.authoringKey && this.authoringKey.length > 0) {
             this.authoringKey = encryptString(this.authoringKey, secret);
         }
@@ -97,7 +97,7 @@ export class LuisService extends ConnectedService implements ILuisService {
      * @param secret Secret to use to decrypt.
      * @param decryptString Function called to decrypt an individual value.
      */
-    public decrypt(secret: string, decryptString: (value: string, secret: string) => string): void {
+    decrypt(secret: string, decryptString: (value: string, secret: string) => string): void {
         if (this.authoringKey && this.authoringKey.length > 0) {
             this.authoringKey = decryptString(this.authoringKey, secret);
         }

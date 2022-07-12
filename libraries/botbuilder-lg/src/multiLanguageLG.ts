@@ -13,8 +13,8 @@ import { Templates } from './templates';
  * the appropriate template using the current culture to perform template evaluation.
  */
 export class MultiLanguageLG {
-    public languagePolicy: Map<string, string[]>;
-    public lgPerLocale: Map<string, Templates>;
+    languagePolicy: Map<string, string[]>;
+    lgPerLocale: Map<string, Templates>;
 
     private readonly locales = [
         '',
@@ -874,7 +874,7 @@ export class MultiLanguageLG {
      * @param filePerLocale A map of locale and LG file.
      * @param defaultLanguage Default language.
      */
-    public constructor(
+    constructor(
         templatesPerLocale: Map<string, Templates> | undefined,
         filePerLocale: Map<string, string> | undefined,
         defaultLanguage?: string
@@ -902,7 +902,7 @@ export class MultiLanguageLG {
      * @param locale Locale info.
      * @returns The evaluated template result.
      */
-    public generate(template: string, data?: object, locale?: string): any {
+    generate(template: string, data?: object, locale?: string): any {
         if (!template) {
             throw new Error('template is empty');
         }

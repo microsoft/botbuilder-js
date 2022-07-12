@@ -25,7 +25,7 @@ export class StartOfMonth extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [StartOfMonth](xref:adaptive-expressions.StartOfMonth) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.StartOfMonth, StartOfMonth.evaluator, ReturnType.String, StartOfMonth.validator);
     }
 

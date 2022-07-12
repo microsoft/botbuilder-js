@@ -25,17 +25,17 @@ export interface OnIntentConfiguration extends OnDialogEventConfiguration {
  * Actions triggered when an Activity has been received and the recognized intents and entities match specified list of intent and entity filters.
  */
 export class OnIntent extends OnDialogEvent implements OnIntentConfiguration {
-    public static $kind = 'Microsoft.OnIntent';
+    static $kind = 'Microsoft.OnIntent';
 
     /**
      * Gets or sets intent to match on.
      */
-    public intent: string;
+    intent: string;
 
     /**
      * Gets or sets entities which must be recognized for this rule to trigger.
      */
-    public entities: string[];
+    entities: string[];
 
     /**
      * Creates a new `OnIntent` instance.
@@ -45,7 +45,7 @@ export class OnIntent extends OnDialogEvent implements OnIntentConfiguration {
      * @param actions (Optional) The actions to add to the plan when the rule constraints are met.
      * @param condition (Optional) The condition which needs to be met for the actions to be executed.
      */
-    public constructor(intent?: string, entities: string[] = [], actions: Dialog[] = [], condition?: string) {
+    constructor(intent?: string, entities: string[] = [], actions: Dialog[] = [], condition?: string) {
         super(AdaptiveEvents.recognizedIntent, actions, condition);
         this.intent = intent;
         this.entities = entities;

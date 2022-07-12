@@ -17,7 +17,7 @@ export class PathUtil {
      * Check if a path is a directory
      * @param path Path of the diretory
      */
-    public static isDirectory(path: string): boolean {
+    static isDirectory(path: string): boolean {
         return lstatSync(path).isDirectory();
     }
 
@@ -25,7 +25,7 @@ export class PathUtil {
      * Get sub folders in a directory
      * @param path Path of root directory
      */
-    public static getDirectories(path: string): string[] {
+    static getDirectories(path: string): string[] {
         return readdirSync(path)
             .map((name: string): string => join(path, name))
             .filter(PathUtil.isDirectory);
@@ -36,7 +36,7 @@ export class PathUtil {
      * @param path Path of root directory
      * @param includeSubFolders Whether include its sub folders
      */
-    public static getFiles(path: string, includeSubFolders = true): string[] {
+    static getFiles(path: string, includeSubFolders = true): string[] {
         return readdirSync(path)
             .map((name: string): string => join(path, name))
             .reduce((files: string[], file: string): string[] => {

@@ -40,21 +40,21 @@ export interface LogActionConfiguration extends DialogConfiguration {
  * Write entry into application trace logs.
  */
 export class LogAction<O extends object = {}> extends Dialog<O> implements LogActionConfiguration {
-    public static $kind = 'Microsoft.LogAction';
+    static $kind = 'Microsoft.LogAction';
 
     /**
      * Creates a new [LogAction](xref:botbuilder-dialogs-adaptive.LogAction) instance.
      *
      * @param template The text template to log.
      */
-    public constructor(text: string);
+    constructor(text: string);
 
     /**
      * Creates a new [LogAction](xref:botbuilder-dialogs-adaptive.LogAction) instance.
      *
      * @param text Optional. The text template to log.
      */
-    public constructor(text?: string) {
+    constructor(text?: string) {
         super();
         if (text) {
             this.text = new TextTemplate(text);
@@ -64,29 +64,29 @@ export class LogAction<O extends object = {}> extends Dialog<O> implements LogAc
     /**
      * The text template to log.
      */
-    public text: TemplateInterface<string, DialogStateManager>;
+    text: TemplateInterface<string, DialogStateManager>;
 
     /**
      * If true, the message will both be logged to the console and sent as a trace activity.
      * Defaults to a value of false.
      */
-    public traceActivity: BoolExpression = new BoolExpression(false);
+    traceActivity: BoolExpression = new BoolExpression(false);
 
     /**
      * A label to use when describing a trace activity.
      */
-    public label: StringExpression;
+    label: StringExpression;
 
     /**
      * An optional expression which if is true will disable this action.
      */
-    public disabled?: BoolExpression;
+    disabled?: BoolExpression;
 
     /**
      * @param property The key of the conditional selector configuration.
      * @returns The converter for the selector configuration.
      */
-    public getConverter(property: keyof LogActionConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof LogActionConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'text':
                 return new TextTemplateConverter();
@@ -108,7 +108,7 @@ export class LogAction<O extends object = {}> extends Dialog<O> implements LogAc
      * @param _options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
+    async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }

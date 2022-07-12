@@ -13,7 +13,7 @@ import { OnActivity } from './onActivity';
  * Actions triggered when EndOfConversationActivity is received.
  */
 export class OnEndOfConversationActivity extends OnActivity {
-    public static $kind = 'Microsoft.OnEndOfConversationActivity';
+    static $kind = 'Microsoft.OnEndOfConversationActivity';
 
     /**
      * Initializes a new instance of the [OnEndOfConversationActivity](xref:botbuilder-dialogs-adaptive.OnEndOfConversationActivity) class.
@@ -21,7 +21,7 @@ export class OnEndOfConversationActivity extends OnActivity {
      * @param actions Optional. A [Dialog](xref:botbuilder-dialogs.Dialog) list containing the actions to add to the plan when the rule constraints are met.
      * @param condition Optional. Condition which needs to be met for the actions to be executed.
      */
-    public constructor(actions: Dialog[] = [], condition?: string) {
+    constructor(actions: Dialog[] = [], condition?: string) {
         super(ActivityTypes.EndOfConversation, actions, condition);
     }
 }
