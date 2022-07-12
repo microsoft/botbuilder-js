@@ -25,7 +25,7 @@ export class GetFutureTime extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [GetFutureTime](xref:adaptive-expressions.GetFutureTime) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.GetFutureTime, GetFutureTime.evaluator, ReturnType.String, GetFutureTime.validator);
     }
 

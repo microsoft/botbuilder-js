@@ -16,7 +16,7 @@ export class Multiply extends MultivariateNumericEvaluator {
     /**
      * Initializes a new instance of the [Multiply](xref:adaptive-expressions.Multiply) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.Multiply, Multiply.func);
     }
 

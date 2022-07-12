@@ -18,7 +18,7 @@ export class RecognizerConverter implements Converter<string, Recognizer> {
      *
      * @param _resourceExplorer Resource explorer to use for resolving references.
      */
-    public constructor(private readonly _resourceExplorer: ResourceExplorer) {}
+    constructor(private readonly _resourceExplorer: ResourceExplorer) {}
 
     /**
      * Converts an object or string to a [Recognizer](xref:botbuilder-dialogs-adaptive.Recognizer) instance.
@@ -26,7 +26,7 @@ export class RecognizerConverter implements Converter<string, Recognizer> {
      * @param value An object or string value.
      * @returns A new [Recognizer](xref:botbuilder-dialogs-adaptive.Recognizer) instance.
      */
-    public convert(value: string | Recognizer): Recognizer {
+    convert(value: string | Recognizer): Recognizer {
         if (typeof value == 'string') {
             const recognizer = this._resourceExplorer.loadType<Recognizer>(`${value}.dialog`);
             return recognizer;
@@ -46,7 +46,7 @@ export class RecognizerListConverter implements Converter<string[], Recognizer[]
      *
      * @param resourceExplorer Resource explorer to use for resolving references.
      */
-    public constructor(resourceExplorer: ResourceExplorer) {
+    constructor(resourceExplorer: ResourceExplorer) {
         this._recognizerConverter = new RecognizerConverter(resourceExplorer);
     }
 
@@ -58,7 +58,7 @@ export class RecognizerListConverter implements Converter<string[], Recognizer[]
      * @param value A list of string or a list of [Recognizer](xref:botbuilder-dialogs.Recognizer).
      * @returns A new list of [Recognizer](xref:botbuilder-dialogs.Recognizer) instances.
      */
-    public convert(value: string[] | Recognizer[]): Recognizer[] {
+    convert(value: string[] | Recognizer[]): Recognizer[] {
         const recognizers: Recognizer[] = [];
         value.forEach((item: string | Recognizer) => {
             recognizers.push(this._recognizerConverter.convert(item));

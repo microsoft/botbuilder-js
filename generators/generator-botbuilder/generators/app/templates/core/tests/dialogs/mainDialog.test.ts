@@ -22,7 +22,7 @@ class MockFlightBookingRecognizer extends FlightBookingRecognizer {
         this.mockResult = mockResult;
     }
 
-    public async executeLuisQuery(context) {
+    async executeLuisQuery(context) {
         return this.mockResult;
     }
 
@@ -39,7 +39,7 @@ class MockBookingDialog extends BookingDialog {
         super('bookingDialog');
     }
 
-    public async beginDialog(dc, options) {
+    async beginDialog(dc, options) {
         const bookingDetails = {
             destination: 'Seattle',
             origin: 'New York',
@@ -60,7 +60,7 @@ class MockBookingDialogWithPrompt extends BookingDialog {
         super('bookingDialog');
     }
 
-    public async beginDialog(dc, options) {
+    async beginDialog(dc, options) {
         dc.dialogs.add(new TextPrompt('MockDialog'));
         return await dc.prompt('MockDialog', { prompt: `${ this.id } mock invoked` });
     }

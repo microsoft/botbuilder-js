@@ -60,7 +60,7 @@ export class WaterfallStepContext<O extends object = {}> extends DialogContext {
      * @param dc The dialog context for the current turn of conversation.
      * @param info Values to initialize the step context with.
      */
-    public constructor(dc: DialogContext, info: WaterfallStepInfo<O>) {
+    constructor(dc: DialogContext, info: WaterfallStepInfo<O>) {
         super(dc.dialogs, dc, { dialogStack: dc.stack });
         this._info = info;
         this.parent = dc.parent;
@@ -71,7 +71,7 @@ export class WaterfallStepContext<O extends object = {}> extends DialogContext {
      *
      * @returns The index of the current waterfall step being executed.
      */
-    public get index(): number {
+    get index(): number {
         return this._info.index;
     }
 
@@ -81,7 +81,7 @@ export class WaterfallStepContext<O extends object = {}> extends DialogContext {
      *
      * @returns Any options the waterfall dialog was called with.
      */
-    public get options(): O {
+    get options(): O {
         return this._info.options;
     }
 
@@ -90,7 +90,7 @@ export class WaterfallStepContext<O extends object = {}> extends DialogContext {
      *
      * @returns The reason the waterfall step is being executed.
      */
-    public get reason(): DialogReason {
+    get reason(): DialogReason {
         return this._info.reason;
     }
 
@@ -99,7 +99,7 @@ export class WaterfallStepContext<O extends object = {}> extends DialogContext {
      *
      * @returns The result from the previous waterfall step.
      */
-    public get result(): any {
+    get result(): any {
         return this._info.result;
     }
 
@@ -108,7 +108,7 @@ export class WaterfallStepContext<O extends object = {}> extends DialogContext {
      *
      * @returns A dictionary of values which will be persisted across all waterfall steps.
      */
-    public get values(): object {
+    get values(): object {
         return this._info.values;
     }
 
@@ -123,7 +123,7 @@ export class WaterfallStepContext<O extends object = {}> extends DialogContext {
      * @param result (Optional) result to pass to the next step.
      * @returns A promise with the DialogTurnResult.
      */
-    public async next(result?: any): Promise<DialogTurnResult> {
+    async next(result?: any): Promise<DialogTurnResult> {
         return await this._info.onNext(result);
     }
 }

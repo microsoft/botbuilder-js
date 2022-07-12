@@ -12,7 +12,7 @@ import { TurnContext } from './turnContext';
  * Defines methods for accessing a state property created in a
  * [BotState](xref:botbuilder-core.BotState) object.
  *
- * @typeparam T Optional. The type of the state property to access. Default type is `any`.
+ * @template T The type of the state property to access. Default type is `any`.
  *
  * @remarks
  * To create a state property in a state management objet, use the
@@ -84,6 +84,7 @@ export interface StatePropertyAccessor<T = any> {
 export class BotStatePropertyAccessor<T = any> implements StatePropertyAccessor<T> {
     /**
      * Creates a new BotStatePropertyAccessor instance.
+     *
      * @param state Parent BotState instance.
      * @param name Unique name of the property for the parent BotState.
      */
@@ -91,31 +92,34 @@ export class BotStatePropertyAccessor<T = any> implements StatePropertyAccessor<
 
     /**
      * Deletes the persisted property from its backing storage object.
+     *
      * @param context [TurnContext](xref:botbuilder-core.TurnContext) object for this turn.
      */
-    public async delete(context: TurnContext): Promise<void> {
+    async delete(context: TurnContext): Promise<void> {
         const obj: any = await this.state.load(context);
-        if (obj.hasOwnProperty(this.name)) {
+        if (Object.prototype.hasOwnProperty.call(obj, this.name)) {
             delete obj[this.name];
         }
     }
 
     /**
      * Reads a persisted property from its backing storage object.
+     *
      * @param context [TurnContext](xref:botbuilder-core.TurnContext) object for this turn.
      * @returns A JSON representation of the cached state.
      */
-    public async get(context: TurnContext): Promise<T | undefined>;
-    public async get(context: TurnContext, defaultValue: T): Promise<T>;
+    async get(context: TurnContext): Promise<T | undefined>;
+    async get(context: TurnContext, defaultValue: T): Promise<T>;
     /**
      * Reads a persisted property from its backing storage object.
+     *
      * @param context [TurnContext](xref:botbuilder-core.TurnContext) object for this turn.
      * @param defaultValue Optional. Default value for the property.
      * @returns A JSON representation of the cached state.
      */
-    public async get(context: TurnContext, defaultValue?: T): Promise<T> {
+    async get(context: TurnContext, defaultValue?: T): Promise<T> {
         const obj: any = await this.state.load(context);
-        if (!obj.hasOwnProperty(this.name) && defaultValue !== undefined) {
+        if (!Object.prototype.hasOwnProperty.call(obj, this.name) && defaultValue !== undefined) {
             const clone: any =
                 typeof defaultValue === 'object' || Array.isArray(defaultValue)
                     ? JSON.parse(JSON.stringify(defaultValue))
@@ -128,10 +132,11 @@ export class BotStatePropertyAccessor<T = any> implements StatePropertyAccessor<
 
     /**
      * Assigns a new value to the properties backing storage object.
+     *
      * @param context [TurnContext](xref:botbuilder-core.TurnContext) object for this turn.
      * @param value Value to set on the property.
      */
-    public async set(context: TurnContext, value: T): Promise<void> {
+    async set(context: TurnContext, value: T): Promise<void> {
         const obj: any = await this.state.load(context);
         obj[this.name] = value;
     }

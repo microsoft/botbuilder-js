@@ -22,7 +22,7 @@ export class Rand extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [Rand](xref:adaptive-expressions.Rand) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.Rand, Rand.evaluator, ReturnType.Number, FunctionUtils.validateBinaryNumber);
     }
 

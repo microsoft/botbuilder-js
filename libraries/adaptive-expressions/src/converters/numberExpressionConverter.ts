@@ -21,7 +21,7 @@ export class NumberExpressionConverter {
      * @param value `string` or `number` to convert.
      * @returns The [NumberExpression](xref:adaptive-expressions.NumberExpression).
      */
-    public convert(value: Input | NumberExpression): NumberExpression {
+    convert(value: Input | NumberExpression): NumberExpression {
         return value instanceof NumberExpression ? value : new NumberExpression(value);
     }
 }

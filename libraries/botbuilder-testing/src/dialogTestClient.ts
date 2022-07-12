@@ -32,12 +32,12 @@ export class DialogTestClient {
     /**
      * A DialogTurnResult instance with the result of the last turn.
      */
-    public dialogTurnResult: DialogTurnResult;
+    dialogTurnResult: DialogTurnResult;
 
     /**
      * A ConversationState instance for the current test client.
      */
-    public conversationState: ConversationState;
+    conversationState: ConversationState;
 
     /**
      * Creates a [DialogTestClient](xref:botbuilder-testing.DialogTestClient) to test a [Dialog](xref:botbuilder-dialogs.Dialog) without having to create a full-fledged adapter.
@@ -55,7 +55,7 @@ export class DialogTestClient {
      * @param middlewares Optional. A [Middleware](xref:botbuilder-core.Middleware) list to be added to the test adapter.
      * @param conversationState Optional. A [ConversationState](xref:botbuilder-core.ConversationState) instance to use in the test client.
      */
-    public constructor(
+    constructor(
         channelId: string,
         targetDialog: Dialog,
         initialDialogOptions?: unknown,
@@ -76,7 +76,7 @@ export class DialogTestClient {
      * @param middlewares Optional. A [Middleware](xref:botbuilder-core.Middleware) list to be added to the test adapter.
      * @param conversationState Optional. A [ConversationState](xref:botbuilder-core.ConversationState) instance to use in the test client.
      */
-    public constructor(
+    constructor(
         testAdapter: TestAdapter,
         targetDialog: Dialog,
         initialDialogOptions?: unknown,
@@ -92,7 +92,7 @@ export class DialogTestClient {
      * @param middlewares Optional. A [Middleware](xref:botbuilder-core.Middleware) list to be added to the test adapter.
      * @param conversationState Optional. A [ConversationState](xref:botbuilder-core.ConversationState) instance to use in the test client.
      */
-    public constructor(
+    constructor(
         channelOrAdapter: string | TestAdapter,
         targetDialog: Dialog,
         initialDialogOptions?: object,
@@ -126,7 +126,7 @@ export class DialogTestClient {
      *
      * @returns the dialog context
      */
-    public get dialogContext(): DialogContext {
+    get dialogContext(): DialogContext {
         return this._dialogContext;
     }
 
@@ -141,7 +141,7 @@ export class DialogTestClient {
      * @returns a TestFlow that can be used to assert replies etc
      */
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    public async sendActivity(activity: Partial<Activity> | string): Promise<any> {
+    async sendActivity(activity: Partial<Activity> | string): Promise<any> {
         await this._testAdapter.receiveActivity(activity);
         return this._testAdapter.activityBuffer.shift();
     }
@@ -151,7 +151,7 @@ export class DialogTestClient {
      *
      * @returns the next reply
      */
-    public getNextReply(): Partial<Activity> {
+    getNextReply(): Partial<Activity> {
         return this._testAdapter.activityBuffer.shift();
     }
 

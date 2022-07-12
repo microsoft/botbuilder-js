@@ -21,7 +21,7 @@ export class DialogExpressionConverter implements Converter<Input, DialogExpress
      *
      * @param _resourceExplorer Resource explorer to use for resolving references.
      */
-    public constructor(private readonly _resourceExplorer: ResourceExplorer) {}
+    constructor(private readonly _resourceExplorer: ResourceExplorer) {}
 
     /**
      * Converts an object or string to a [DialogExpression](xref:botbuilder-dialogs-adaptive.DialogExpression) instance.
@@ -29,7 +29,7 @@ export class DialogExpressionConverter implements Converter<Input, DialogExpress
      * @param value An object or string value.
      * @returns A new [DialogExpression](xref:botbuilder-dialogs-adaptive.DialogExpression) instance.
      */
-    public convert(value: Input | DialogExpression): DialogExpression {
+    convert(value: Input | DialogExpression): DialogExpression {
         if (value instanceof DialogExpression) {
             return value;
         }

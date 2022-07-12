@@ -37,9 +37,9 @@ export interface EmitEventConfiguration extends DialogConfiguration {
  * Action which emits an event declaratively.
  */
 export class EmitEvent<O extends object = {}> extends Dialog<O> implements EmitEventConfiguration {
-    public static $kind = 'Microsoft.EmitEvent';
+    static $kind = 'Microsoft.EmitEvent';
 
-    public constructor();
+    constructor();
 
     /**
      * Initializes a new instance of the [EmitEvent](xref:botbuilder-dialogs-adaptive.EmitEvent) class.
@@ -48,7 +48,7 @@ export class EmitEvent<O extends object = {}> extends Dialog<O> implements EmitE
      * @param eventValue Optional. Memory property path to use to get the value to send as part of the event.
      * @param bubbleEvent Default = `false`. Value indicating whether the event should bubble to parents or not.
      */
-    public constructor(eventName: string, eventValue?: string, bubbleEvent?: boolean);
+    constructor(eventName: string, eventValue?: string, bubbleEvent?: boolean);
 
     /**
      * Initializes a new instance of the [EmitEvent](xref:botbuilder-dialogs-adaptive.EmitEvent) class.
@@ -57,7 +57,7 @@ export class EmitEvent<O extends object = {}> extends Dialog<O> implements EmitE
      * @param eventValue Optional. Memory property path to use to get the value to send as part of the event.
      * @param bubbleEvent Default = `false`. Value indicating whether the event should bubble to parents or not.
      */
-    public constructor(eventName?: string, eventValue?: string, bubbleEvent = false) {
+    constructor(eventName?: string, eventValue?: string, bubbleEvent = false) {
         super();
         if (eventName) {
             this.eventName = new StringExpression(eventName);
@@ -71,33 +71,33 @@ export class EmitEvent<O extends object = {}> extends Dialog<O> implements EmitE
     /**
      * The name of the event to emit.
      */
-    public eventName: StringExpression;
+    eventName: StringExpression;
 
     /**
      * The memory property path to use to get the value to send as part of the event.
      */
-    public eventValue: ValueExpression;
+    eventValue: ValueExpression;
 
     /**
      * A value indicating whether gets or sets whether the event should bubble or not.
      */
-    public bubbleEvent: BoolExpression;
+    bubbleEvent: BoolExpression;
 
     /**
      * The property path to store whether the event was handled or not.
      */
-    public handledProperty: StringExpression = new StringExpression('turn.eventHandled');
+    handledProperty: StringExpression = new StringExpression('turn.eventHandled');
 
     /**
      * An optional expression which if is true will disable this action.
      */
-    public disabled?: BoolExpression;
+    disabled?: BoolExpression;
 
     /**
      * @param property The key of the conditional selector configuration.
      * @returns The converter for the selector configuration.
      */
-    public getConverter(property: keyof EmitEventConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof EmitEventConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'eventName':
             case 'handledProperty':
@@ -119,7 +119,7 @@ export class EmitEvent<O extends object = {}> extends Dialog<O> implements EmitE
      * @param _options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
+    async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }

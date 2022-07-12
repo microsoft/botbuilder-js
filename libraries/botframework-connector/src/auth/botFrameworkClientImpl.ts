@@ -26,8 +26,16 @@ const botFrameworkClientFetchImpl: typeof fetch = async (input, init) => {
     } as Response;
 };
 
-// Internal
+/**
+ * @internal
+ * Implementation of [BotFrameworkClient](xref:botframework-connector.BotFrameworkClient).
+ */
 export class BotFrameworkClientImpl implements BotFrameworkClient {
+    /**
+     * @param credentialsFactory A [ServiceClientCredentialsFactory](xref:botframework-connector.ServiceClientCredentialsFactory) instance.
+     * @param loginEndpoint The login url.
+     * @param botFrameworkClientFetch A custom Fetch implementation to be used in the [BotFrameworkClient](xref:botframework-connector.BotFrameworkClient).
+     */
     constructor(
         private readonly credentialsFactory: ServiceClientCredentialsFactory,
         private readonly loginEndpoint: string,
@@ -36,6 +44,16 @@ export class BotFrameworkClientImpl implements BotFrameworkClient {
         ok(typeof botFrameworkClientFetch === 'function');
     }
 
+    /**
+     * @template T The type of body in the InvokeResponse.
+     * @param fromBotId The MicrosoftAppId of the bot sending the activity.
+     * @param toBotId The MicrosoftAppId of the bot receiving the activity.
+     * @param toUrl The URL of the bot receiving the activity.
+     * @param serviceUrl The callback Url for the skill host.
+     * @param conversationId A conversation ID to use for the conversation with the skill.
+     * @param activity The Activity to send to forward.
+     * @returns {Promise<InvokeResponse<T>>} A promise representing the asynchronous operation.
+     */
     async postActivity<T>(
         fromBotId: string,
         toBotId: string,

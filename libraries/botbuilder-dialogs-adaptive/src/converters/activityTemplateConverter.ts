@@ -23,7 +23,7 @@ export class ActivityTemplateConverter implements Converter<Input, Output> {
      * @param value The template to evaluate to create the activity.
      * @returns A new instance that could be the following classes [ActivityTemplate](xref:botbuilder-dialogs-adaptive.ActivityTemplate) | [StaticActivityTemplate](xref:botbuilder-dialogs-adaptive.Static.ActivityTemplate).
      */
-    public convert(value: Input | Output): Output {
+    convert(value: Input | Output): Output {
         if (value instanceof ActivityTemplate || value instanceof StaticActivityTemplate) {
             return value;
         }

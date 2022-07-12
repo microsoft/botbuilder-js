@@ -21,7 +21,7 @@ export class StringExpressionConverter {
      * @param value `string` to convert.
      * @returns The [StringExpression](xref:adaptive-expressions.StringExpression).
      */
-    public convert(value: Input | StringExpression): StringExpression {
+    convert(value: Input | StringExpression): StringExpression {
         return value instanceof StringExpression ? value : new StringExpression(value);
     }
 }

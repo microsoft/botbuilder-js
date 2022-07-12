@@ -21,10 +21,10 @@ export class JwtTokenExtractor {
     private static openIdMetadataCache: Map<string, OpenIdMetadata> = new Map<string, OpenIdMetadata>();
 
     // Token validation parameters for this instance
-    public readonly tokenValidationParameters: VerifyOptions;
+    readonly tokenValidationParameters: VerifyOptions;
 
     // OpenIdMetadata for this instance
-    public readonly openIdMetadata: OpenIdMetadata;
+    readonly openIdMetadata: OpenIdMetadata;
 
     /**
      * Initializes a new instance of the [JwtTokenExtractor](xref:botframework-connector.JwtTokenExtractor) class. Extracts relevant data from JWT Tokens.
@@ -57,7 +57,7 @@ export class JwtTokenExtractor {
      * @param requiredEndorsements The required JWT endorsements.
      * @returns A `Promise` representation for either a [ClaimsIdentity](botframework-connector:module.ClaimsIdentity) or `null`.
      */
-    public async getIdentityFromAuthHeader(
+    async getIdentityFromAuthHeader(
         authorizationHeader: string,
         channelId: string,
         requiredEndorsements?: string[]
@@ -83,7 +83,7 @@ export class JwtTokenExtractor {
      * @param requiredEndorsements The required JWT endorsements.
      * @returns A `Promise` representation for either a [ClaimsIdentity](botframework-connector:module.ClaimsIdentity) or `null`.
      */
-    public async getIdentity(
+    async getIdentity(
         scheme: string,
         parameter: string,
         channelId: string,

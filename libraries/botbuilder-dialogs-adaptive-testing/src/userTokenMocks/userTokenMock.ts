@@ -17,16 +17,16 @@ export abstract class UserTokenMock extends Configurable {
     /**
      * Method to setup this mock for an adapter.
      */
-    public abstract setup(adapter: TestAdapter): void;
+    abstract setup(adapter: TestAdapter): void;
 }
 
 /**
  * The type converters for UserTokenMock.
  */
 export class UserTokenMocksConverter implements Converter<string[], UserTokenMock[]> {
-    public constructor(private readonly _resourceExplorer: ResourceExplorer) {}
+    constructor(private readonly _resourceExplorer: ResourceExplorer) {}
 
-    public convert(value: (string | UserTokenMock)[]): UserTokenMock[] {
+    convert(value: (string | UserTokenMock)[]): UserTokenMock[] {
         return value.map((item: string | UserTokenMock) => {
             if (typeof item === 'string') {
                 const userTokenMock = this._resourceExplorer.loadType<UserTokenMock>(`${item}.dialog`);

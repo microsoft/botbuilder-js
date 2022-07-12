@@ -79,35 +79,35 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
     /**
      * Templates.
      */
-    public readonly templates: Templates;
+    readonly templates: Templates;
 
     /**
      * Expression parser.
      */
-    public readonly expressionParser: ExpressionParser;
+    readonly expressionParser: ExpressionParser;
 
     /**
      * TemplateMap.
      */
-    public readonly templateMap: { [name: string]: Template };
+    readonly templateMap: { [name: string]: Template };
     private readonly evaluationTargetStack: EvaluationTarget[] = [];
     private readonly lgOptions: EvaluationOptions;
     private readonly cacheResult: Map<string, unknown> = new Map<string, unknown>();
 
-    public static readonly LGType = 'lgType';
-    public static readonly activityAttachmentFunctionName = 'ActivityAttachment';
-    public static readonly fromFileFunctionName = 'fromFile';
-    public static readonly templateFunctionName = 'template';
-    public static readonly isTemplateFunctionName = 'isTemplate';
-    public static readonly expandTextFunctionName = 'expandText';
-    public static readonly ReExecuteSuffix = '!';
+    static readonly LGType = 'lgType';
+    static readonly activityAttachmentFunctionName = 'ActivityAttachment';
+    static readonly fromFileFunctionName = 'fromFile';
+    static readonly templateFunctionName = 'template';
+    static readonly isTemplateFunctionName = 'isTemplate';
+    static readonly expandTextFunctionName = 'expandText';
+    static readonly ReExecuteSuffix = '!';
 
     /**
      * Creates a new instance of the [Evaluator](xref:botbuilder-lg.Evaluator) class.
      * @param templates Templates.
      * @param opt Options for LG.
      */
-    public constructor(templates: Templates, opt?: EvaluationOptions) {
+    constructor(templates: Templates, opt?: EvaluationOptions) {
         super();
         this.templates = templates;
         this.templateMap = keyBy(templates.allTemplates, (t: Template): string => t.name);
@@ -126,7 +126,7 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
      * @param scope Scope.
      * @returns Evaluate result.
      */
-    public evaluateTemplate(inputTemplateName: string, scope: unknown): unknown {
+    evaluateTemplate(inputTemplateName: string, scope: unknown): unknown {
         const memory = scope instanceof CustomizedMemory ? scope : new CustomizedMemory(scope);
         const { reExecute, pureTemplateName: templateName } = this.parseTemplateName(inputTemplateName);
 
@@ -196,7 +196,7 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
      * @param ctx The parse tree.
      * @returns The result of visiting the structured template body.
      */
-    public visitStructuredTemplateBody(ctx: StructuredTemplateBodyContext): unknown {
+    visitStructuredTemplateBody(ctx: StructuredTemplateBodyContext): unknown {
         const result: Record<string, unknown> = {};
         const typeName: string = ctx.structuredBodyNameLine().STRUCTURE_NAME().text;
         result[Evaluator.LGType] = typeName;
@@ -276,7 +276,7 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
      * @param ctx The parse tree.
      * @returns The result of visiting the normal body.
      */
-    public visitNormalBody(ctx: NormalBodyContext): unknown {
+    visitNormalBody(ctx: NormalBodyContext): unknown {
         return this.visit(ctx.normalTemplateBody());
     }
 
@@ -285,7 +285,7 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
      * @param ctx The parse tree.
      * @returns The result of visiting the normal template body.
      */
-    public visitNormalTemplateBody(ctx: NormalTemplateBodyContext): unknown {
+    visitNormalTemplateBody(ctx: NormalTemplateBodyContext): unknown {
         const normalTemplateStrs: TemplateStringContext[] = ctx.templateString();
         const randomNumber = Extensions.randomNext(this.currentTarget().scope, 0, normalTemplateStrs.length);
 
@@ -296,7 +296,7 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
      * Visit a parse tree produced by the ifElseBody labeled alternative in LGTemplateParser.body.
      * @param ctx The parse tree.
      */
-    public visitIfElseBody(ctx: IfElseBodyContext): unknown {
+    visitIfElseBody(ctx: IfElseBodyContext): unknown {
         const ifRules: IfConditionRuleContext[] = ctx.ifElseTemplateBody().ifConditionRule();
         for (const ifRule of ifRules) {
             if (this.evalCondition(ifRule.ifCondition()) && ifRule.normalTemplateBody() !== undefined) {
@@ -312,7 +312,7 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
      * @param ctx The parse tree.
      * @returns The string result of visiting the normal template string.
      */
-    public visitNormalTemplateString(ctx: NormalTemplateStringContext): unknown {
+    visitNormalTemplateString(ctx: NormalTemplateStringContext): unknown {
         const prefixErrorMsg = TemplateExtensions.getPrefixErrorMessage(ctx);
         const result: unknown[] = [];
         for (const child of ctx.children) {
@@ -360,7 +360,7 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
      * @returns The current scope if the number of arguments is 0, otherwise, returns a [CustomizedMemory](xref:botbuilder-lg.CustomizedMemory)
      * with the mapping of the parameter name to the argument value added to the scope.
      */
-    public constructScope(inputTemplateName: string, args: unknown[], allTemplates: Template[]): MemoryInterface {
+    constructScope(inputTemplateName: string, args: unknown[], allTemplates: Template[]): MemoryInterface {
         const templateName = this.parseTemplateName(inputTemplateName).pureTemplateName;
 
         const templateMap = keyBy(allTemplates, (t: Template): string => t.name);
@@ -391,7 +391,7 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
      * @param ctx The parse tree.
      * @returns The string result of visiting the switch case body.
      */
-    public visitSwitchCaseBody(ctx: SwitchCaseBodyContext): unknown {
+    visitSwitchCaseBody(ctx: SwitchCaseBodyContext): unknown {
         const switchcaseNodes: SwitchCaseRuleContext[] = ctx.switchCaseTemplateBody().switchCaseRule();
         const length: number = switchcaseNodes.length;
         const switchNode: SwitchCaseRuleContext = switchcaseNodes[0];
@@ -441,7 +441,7 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
      * @param exp Expression Text.
      * @param regex Regex to select the text to replace.
      */
-    public wrappedEvalTextContainsExpression(exp: string, regex: RegExp): string {
+    wrappedEvalTextContainsExpression(exp: string, regex: RegExp): string {
         return exp
             .split('')
             .reverse()
@@ -468,7 +468,7 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
      * @param secondError Second error message to concatenate.
      * @returns The concatenated error messages.
      */
-    public static concatErrorMsg(firstError: string, secondError: string): string {
+    static concatErrorMsg(firstError: string, secondError: string): string {
         let errorMsg: string;
         if (!firstError) {
             errorMsg = secondError;
@@ -489,7 +489,7 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
      * @param inlineContent Optional. In line content.
      * @param errorPrefix Optional. Error prefix.
      */
-    public static checkExpressionResult(
+    static checkExpressionResult(
         exp: string,
         error: string,
         result: unknown,

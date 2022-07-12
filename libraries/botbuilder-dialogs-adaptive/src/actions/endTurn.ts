@@ -26,18 +26,18 @@ export interface EndTurnConfiguration extends DialogConfiguration {
  * This command ends the current turn without ending the [Dialog](xref:botbuilder-dialogs.Dialog).
  */
 export class EndTurn<O extends object = {}> extends Dialog<O> implements EndTurnConfiguration {
-    public static $kind = 'Microsoft.EndTurn';
+    static $kind = 'Microsoft.EndTurn';
 
     /**
      * An optional expression which if is true will disable this action.
      */
-    public disabled?: BoolExpression;
+    disabled?: BoolExpression;
 
     /**
      * @param property The key of the conditional selector configuration.
      * @returns The converter for the selector configuration.
      */
-    public getConverter(property: keyof EndTurnConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof EndTurnConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'disabled':
                 return new BoolExpressionConverter();
@@ -53,7 +53,7 @@ export class EndTurn<O extends object = {}> extends Dialog<O> implements EndTurn
      * @param _options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
+    async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }
@@ -67,7 +67,7 @@ export class EndTurn<O extends object = {}> extends Dialog<O> implements EndTurn
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
+    async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
         const activity = dc.context.activity;
         if (activity.type === ActivityTypes.Message) {
             return await dc.endDialog();

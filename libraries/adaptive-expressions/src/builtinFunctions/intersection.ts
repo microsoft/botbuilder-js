@@ -22,7 +22,7 @@ export class Intersection extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [Intersection](xref:adaptive-expressions.Intersection) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.Intersection, Intersection.evaluator(), ReturnType.Array, Intersection.validator);
     }
 

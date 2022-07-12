@@ -12,6 +12,9 @@ import { CosmosDbKeyEscape } from './cosmosDbKeyEscape';
 import { DoOnce } from './doOnce';
 import { Storage, StoreItems } from 'botbuilder';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const pjson: Record<'name' | 'version', string> = require('../package.json');
+
 const _doOnce: DoOnce<Container> = new DoOnce<Container>();
 
 const maxDepthAllowed = 127;
@@ -322,6 +325,7 @@ export class CosmosDbPartitionedStorage implements Storage {
                 this.client = new CosmosClient({
                     endpoint: this.cosmosDbStorageOptions.cosmosDbEndpoint,
                     key: this.cosmosDbStorageOptions.authKey,
+                    userAgentSuffix: `${pjson.name} ${pjson.version}`,
                     ...this.cosmosDbStorageOptions.cosmosClientOptions,
                 });
             }

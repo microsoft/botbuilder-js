@@ -16,7 +16,7 @@ export class ThisMemoryScope extends MemoryScope {
     /**
      * Initializes a new instance of the [ThisMemoryScope](xref:botbuilder-dialogs.ThisMemoryScope) class.
      */
-    public constructor() {
+    constructor() {
         super(ScopePath.this);
     }
 
@@ -25,7 +25,7 @@ export class ThisMemoryScope extends MemoryScope {
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) object for this turn.
      * @returns The memory for the scope.
      */
-    public getMemory(dc: DialogContext): object {
+    getMemory(dc: DialogContext): object {
         return dc.activeDialog ? dc.activeDialog.state : undefined;
     }
 
@@ -34,7 +34,7 @@ export class ThisMemoryScope extends MemoryScope {
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) object for this turn.
      * @param memory Memory object to set for the scope.
      */
-    public setMemory(dc: DialogContext, memory: object): void {
+    setMemory(dc: DialogContext, memory: object): void {
         if (memory == undefined) {
             throw new Error(`ThisMemoryScope.setMemory: undefined memory object passed in.`);
         }

@@ -23,7 +23,7 @@ export class TimexResolve extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [TimexResolve](xref:adaptive-expressions.TimexResolve) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.TimexResolve, TimexResolve.evaluator, ReturnType.String, FunctionUtils.validateUnary);
     }
 

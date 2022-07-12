@@ -44,7 +44,7 @@ class HttpHeadersConverter implements Converter<HeadersInput, HeadersOutput> {
      * @param value [HeadersInput](xref:botbuilder-dialogs-adaptive.HeadersInput) or [HeadersOutput](xref:botbuilder-dialogs-adaptive.HeadersOutput) to convert.
      * @returns The [HttpHeader](xref:botbuilder-dialogs-adaptive.HttpHeader).
      */
-    public convert(value: HeadersInput | HeadersOutput): HeadersOutput {
+    convert(value: HeadersInput | HeadersOutput): HeadersOutput {
         return Object.entries(value).reduce((headers, [key, value]) => {
             return {
                 ...headers,
@@ -117,7 +117,7 @@ export class Result {
      *
      * @param headers Response headers.
      */
-    public constructor(headers?: Headers) {
+    constructor(headers?: Headers) {
         if (headers) {
             headers.forEach((value: string, name: string): void => {
                 this.headers[name] = value;
@@ -128,22 +128,22 @@ export class Result {
     /**
      * The status code from the response to HTTP operation.
      */
-    public statusCode?: number;
+    statusCode?: number;
 
     /**
      * The reason phrase from the response to HTTP operation.
      */
-    public reasonPhrase?: string;
+    reasonPhrase?: string;
 
     /**
      * The headers from the response to HTTP operation.
      */
-    public headers?: { [key: string]: string } = {};
+    headers?: { [key: string]: string } = {};
 
     /**
      * The content body from the response to HTTP operation.
      */
-    public content?: any;
+    content?: any;
 }
 
 export interface HttpRequestConfiguration extends DialogConfiguration {
@@ -161,9 +161,9 @@ export interface HttpRequestConfiguration extends DialogConfiguration {
  * Action for performing an `HttpRequest`.
  */
 export class HttpRequest<O extends object = {}> extends Dialog<O> implements HttpRequestConfiguration {
-    public static $kind = 'Microsoft.HttpRequest';
+    static $kind = 'Microsoft.HttpRequest';
 
-    public constructor();
+    constructor();
 
     /**
      * Initializes a new instance of the [HttpRequest](xref:botbuilder-dialogs-adaptive.HttpRequest) class.
@@ -173,7 +173,7 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Htt
      * @param headers The headers of the request.
      * @param body The raw body of the request.
      */
-    public constructor(method: HttpMethod, url: string, headers: { [key: string]: string }, body: any);
+    constructor(method: HttpMethod, url: string, headers: { [key: string]: string }, body: any);
 
     /**
      * Initializes a new instance of the [HttpRequest](xref:botbuilder-dialogs-adaptive.HttpRequest) class.
@@ -183,7 +183,7 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Htt
      * @param headers Optional. The headers of the request.
      * @param body Optional. The raw body of the request.
      */
-    public constructor(method?: HttpMethod, url?: string, headers?: { [key: string]: string }, body?: any) {
+    constructor(method?: HttpMethod, url?: string, headers?: { [key: string]: string }, body?: any) {
         super();
         this.method = method || HttpMethod.GET;
         this.url = new StringExpression(url);
@@ -199,47 +199,47 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Htt
     /**
      * Http Method
      */
-    public method?: HttpMethod = HttpMethod.GET;
+    method?: HttpMethod = HttpMethod.GET;
 
     /**
      * Content type of request body
      */
-    public contentType?: StringExpression = new StringExpression('application/json');
+    contentType?: StringExpression = new StringExpression('application/json');
 
     /**
      * Http Url
      */
-    public url?: StringExpression;
+    url?: StringExpression;
 
     /**
      * Http Headers
      */
-    public headers?: { [key: string]: StringExpression } = {};
+    headers?: { [key: string]: StringExpression } = {};
     /**
      * Http Body
      */
-    public body?: ValueExpression;
+    body?: ValueExpression;
 
     /**
      * The response type of the response
      */
-    public responseType?: EnumExpression<ResponsesTypes> = new EnumExpression<ResponsesTypes>(ResponsesTypes.Json);
+    responseType?: EnumExpression<ResponsesTypes> = new EnumExpression<ResponsesTypes>(ResponsesTypes.Json);
 
     /**
      * Gets or sets the property expression to store the HTTP response in.
      */
-    public resultProperty: StringExpression = new StringExpression('turn.results');
+    resultProperty: StringExpression = new StringExpression('turn.results');
 
     /**
      * An optional expression which if is true will disable this action.
      */
-    public disabled?: BoolExpression;
+    disabled?: BoolExpression;
 
     /**
      * @param property The key of the conditional selector configuration.
      * @returns The converter for the selector configuration.
      */
-    public getConverter(property: keyof HttpRequestConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof HttpRequestConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'contentType':
                 return new StringExpressionConverter();
@@ -267,7 +267,7 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Htt
      * @param _options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
+    async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }

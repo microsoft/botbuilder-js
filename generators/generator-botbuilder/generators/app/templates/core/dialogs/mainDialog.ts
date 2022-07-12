@@ -51,7 +51,7 @@ export class MainDialog extends ComponentDialog {
      * If no dialog is active, it will start the default dialog.
      * @param {TurnContext} context
      */
-    public async run(context: TurnContext, accessor: StatePropertyAccessor<DialogState>) {
+    async run(context: TurnContext, accessor: StatePropertyAccessor<DialogState>) {
         const dialogSet = new DialogSet(accessor);
         dialogSet.add(this);
 

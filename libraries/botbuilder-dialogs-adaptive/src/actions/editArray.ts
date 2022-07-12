@@ -47,9 +47,9 @@ export interface EditArrayConfiguration extends DialogConfiguration {
  * Lets you modify an array in memory.
  */
 export class EditArray<O extends object = {}> extends Dialog<O> implements EditArrayConfiguration {
-    public static $kind = 'Microsoft.EditArray';
+    static $kind = 'Microsoft.EditArray';
 
-    public constructor();
+    constructor();
 
     /**
      * Initializes a new instance of the [EditArray](xref:botbuilder-dialogs-adaptive.EditArray) class.
@@ -59,7 +59,7 @@ export class EditArray<O extends object = {}> extends Dialog<O> implements EditA
      * @param value Optional. Value to insert.
      * @param resultProperty Optional. Output property to put Pop/Take into.
      */
-    public constructor(changeType: ArrayChangeType, itemsProperty: string, value?: any, resultProperty?: string);
+    constructor(changeType: ArrayChangeType, itemsProperty: string, value?: any, resultProperty?: string);
 
     /**
      * Initializes a new instance of the [EditArray](xref:botbuilder-dialogs-adaptive.EditArray) class.
@@ -69,7 +69,7 @@ export class EditArray<O extends object = {}> extends Dialog<O> implements EditA
      * @param value Optional. Value to insert.
      * @param resultProperty Optional. Output property to put Pop/Take into.
      */
-    public constructor(changeType?: ArrayChangeType, itemsProperty?: string, value?: any, resultProperty?: string) {
+    constructor(changeType?: ArrayChangeType, itemsProperty?: string, value?: any, resultProperty?: string) {
         super();
         if (changeType) {
             this.changeType = new EnumExpression<ArrayChangeType>(changeType);
@@ -95,33 +95,33 @@ export class EditArray<O extends object = {}> extends Dialog<O> implements EditA
     /**
      * Type of change being applied.
      */
-    public changeType: EnumExpression<ArrayChangeType> = new EnumExpression<ArrayChangeType>(ArrayChangeType.push);
+    changeType: EnumExpression<ArrayChangeType> = new EnumExpression<ArrayChangeType>(ArrayChangeType.push);
 
     /**
      * Property path expression to the collection of items.
      */
-    public itemsProperty: StringExpression;
+    itemsProperty: StringExpression;
 
     /**
      * The path expression to store the result of action.
      */
-    public resultProperty: StringExpression;
+    resultProperty: StringExpression;
 
     /**
      * The expression of the value to put onto the array.
      */
-    public value: ValueExpression;
+    value: ValueExpression;
 
     /**
      * An optional expression which if is true will disable this action.
      */
-    public disabled?: BoolExpression;
+    disabled?: BoolExpression;
 
     /**
      * @param property The key of the conditional selector configuration.
      * @returns The converter for the selector configuration.
      */
-    public getConverter(property: keyof EditArrayConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof EditArrayConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'changeType':
                 return new EnumExpressionConverter<ArrayChangeType>(ArrayChangeType);
@@ -145,7 +145,7 @@ export class EditArray<O extends object = {}> extends Dialog<O> implements EditA
      * @param _options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
+    async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }

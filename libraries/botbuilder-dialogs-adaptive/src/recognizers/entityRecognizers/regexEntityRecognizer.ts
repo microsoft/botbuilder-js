@@ -18,16 +18,16 @@ export interface RegexEntityRecognizerConfiguration {
  * Matches input against a regular expression.
  */
 export class RegexEntityRecognizer extends TextEntityRecognizer implements RegexEntityRecognizerConfiguration {
-    public static $kind = 'Microsoft.RegexEntityRecognizer';
+    static $kind = 'Microsoft.RegexEntityRecognizer';
 
-    public constructor();
+    constructor();
     /**
      * Initializes a new instance of the [RegexEntityRecognizer](xref:botbuilder-dialogs-adaptive.RegexEntityRecognizer) class.
      *
      * @param name The name match result `typeName` value.
      * @param pattern The regular expression pattern value.
      */
-    public constructor(name?: string, pattern?: string) {
+    constructor(name?: string, pattern?: string) {
         super();
         if (name) {
             this.name = name;
@@ -37,21 +37,21 @@ export class RegexEntityRecognizer extends TextEntityRecognizer implements Regex
         }
     }
 
-    public name: string;
+    name: string;
 
     /**
      * Gets the regular expression pattern value.
      *
      * @returns The pattern.
      */
-    public get pattern(): string {
+    get pattern(): string {
         return this._pattern;
     }
 
     /**
      * Sets the pattern.
      */
-    public set pattern(value: string) {
+    set pattern(value: string) {
         if (value.startsWith('(?i)')) {
             value = value.substr(4);
         }

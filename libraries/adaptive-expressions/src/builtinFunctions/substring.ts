@@ -21,7 +21,7 @@ export class Substring extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [Substring](xref:adaptive-expressions.Substring) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.Substring, Substring.evaluator, ReturnType.String, Substring.validator);
     }
 

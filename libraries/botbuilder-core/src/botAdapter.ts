@@ -32,9 +32,9 @@ export abstract class BotAdapter {
 
     private turnError: (context: TurnContext, error: Error) => Promise<void>;
 
-    public readonly BotIdentityKey = Symbol('BotIdentity');
-    public readonly ConnectorClientKey = Symbol('ConnectorClient');
-    public readonly OAuthScopeKey = Symbol('OAuthScope');
+    readonly BotIdentityKey = Symbol('BotIdentity');
+    readonly ConnectorClientKey = Symbol('ConnectorClient');
+    readonly OAuthScopeKey = Symbol('OAuthScope');
 
     /**
      * Asynchronously sends a set of outgoing activities to a channel server.
@@ -53,7 +53,7 @@ export abstract class BotAdapter {
      * response object will be returned for each sent activity. For `message` activities this will
      * contain the ID of the delivered message.
      */
-    public abstract sendActivities(context: TurnContext, activities: Partial<Activity>[]): Promise<ResourceResponse[]>;
+    abstract sendActivities(context: TurnContext, activities: Partial<Activity>[]): Promise<ResourceResponse[]>;
 
     /**
      * Asynchronously replaces a previous activity with an updated version.
@@ -68,7 +68,7 @@ export abstract class BotAdapter {
      * @remarks
      * Not all channels support this operation. For channels that don't, this call may throw an exception.
      */
-    public abstract updateActivity(context: TurnContext, activity: Partial<Activity>): Promise<ResourceResponse | void>;
+    abstract updateActivity(context: TurnContext, activity: Partial<Activity>): Promise<ResourceResponse | void>;
 
     /**
      * Asynchronously deletes an existing activity.
@@ -83,7 +83,7 @@ export abstract class BotAdapter {
      * @remarks
      * Not all channels support this operation. For channels that don't, this call may throw an exception.
      */
-    public abstract deleteActivity(context: TurnContext, reference: Partial<ConversationReference>): Promise<void>;
+    abstract deleteActivity(context: TurnContext, reference: Partial<ConversationReference>): Promise<void>;
 
     /**
      * Asynchronously resumes a conversation with a user, possibly after some time has gone by.
@@ -96,7 +96,7 @@ export abstract class BotAdapter {
      * send a message to a conversation or user without waiting for an incoming message.
      * For example, a bot can use this method to send notifications or coupons to a user.
      */
-    public abstract continueConversation(
+    abstract continueConversation(
         reference: Partial<ConversationReference>,
         logic: (revocableContext: TurnContext) => Promise<void>
     ): Promise<void>;
@@ -149,10 +149,10 @@ export abstract class BotAdapter {
      * @internal
      */
     async continueConversationAsync(
-        botAppIdOrClaimsIdentity: string | ClaimsIdentity,
-        reference: Partial<ConversationReference>,
-        logicOrAudience: ((context: TurnContext) => Promise<void>) | string,
-        maybeLogic?: (context: TurnContext) => Promise<void>
+        _botAppIdOrClaimsIdentity: string | ClaimsIdentity,
+        _reference: Partial<ConversationReference>,
+        _logicOrAudience: ((context: TurnContext) => Promise<void>) | string,
+        _maybeLogic?: (context: TurnContext) => Promise<void>
     ): Promise<void> {
         throw new Error('NotImplemented');
     }
@@ -160,13 +160,13 @@ export abstract class BotAdapter {
     /**
      * Creates a conversation on the specified channel.
      *
-     * @param botAppId The application ID of the bot.
-     * @param channelId The ID for the channel.
-     * @param serviceUrl The ID for the channel.
-     * @param audience The audience for the connector.
+     * @param _botAppId The application ID of the bot.
+     * @param _channelId The ID for the channel.
+     * @param _serviceUrl The ID for the channel.
+     * @param _audience The audience for the connector.
      * <param name="conversationParameters">
-     * @param conversationParameters The conversation information to use to create the conversation
-     * @param logic The method to call for the resulting bot turn.
+     * @param _conversationParameters The conversation information to use to create the conversation
+     * @param _logic The method to call for the resulting bot turn.
      * @returns A promise that represents the asynchronous operation
      *
      * @remarks
@@ -180,12 +180,12 @@ export abstract class BotAdapter {
      * the ID of the new conversation.
      */
     async createConversationAsync(
-        botAppId: string,
-        channelId: string,
-        serviceUrl: string,
-        audience: string,
-        conversationParameters: ConversationParameters,
-        logic: (context: TurnContext) => Promise<void>
+        _botAppId: string,
+        _channelId: string,
+        _serviceUrl: string,
+        _audience: string,
+        _conversationParameters: ConversationParameters,
+        _logic: (context: TurnContext) => Promise<void>
     ): Promise<void> {
         throw new Error('NotImplemented');
     }
@@ -200,8 +200,9 @@ export abstract class BotAdapter {
      * | :--- | :--- | :--- |
      * | `context` | [TurnContext](xref:botbuilder-core.TurnContext) | The context object for the turn. |
      * | `error` | `Error` | The Node.js error thrown. |
+     * @returns {Promise<void>} A promise representing the async operation.
      */
-    public get onTurnError(): (context: TurnContext, error: Error) => Promise<void> {
+    get onTurnError(): (context: TurnContext, error: Error) => Promise<void> {
         return this.turnError;
     }
 
@@ -216,20 +217,19 @@ export abstract class BotAdapter {
      * | `context` | [TurnContext](xref:botbuilder-core.TurnContext) | The context object for the turn. |
      * | `error` | `Error` | The Node.js error thrown. |
      */
-    public set onTurnError(value: (context: TurnContext, error: Error) => Promise<void>) {
+    set onTurnError(value: (context: TurnContext, error: Error) => Promise<void>) {
         this.turnError = value;
     }
 
     /**
      * Adds middleware to the adapter's pipeline.
      *
-     * @param middleware The middleware or middleware handlers to add.
-     *
-     * @remarks
-     * Middleware is added to the adapter at initialization time.
+     * @param {...any} middlewares The middleware or middleware handlers to add.
+     * @returns The updated adapter object.
+     * @remarks Middleware is added to the adapter at initialization time.
      * Each turn, the adapter calls its middleware in the order in which you added it.
      */
-    public use(...middlewares: (MiddlewareHandler | Middleware)[]): this {
+    use(...middlewares: (MiddlewareHandler | Middleware)[]): this {
         this.middleware.use(...middlewares);
 
         return this;

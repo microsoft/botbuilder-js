@@ -31,10 +31,10 @@ export interface ForEachConfiguration extends ActionScopeConfiguration {
  * Executes a set of actions once for each item in an in-memory list or collection.
  */
 export class ForEach<O extends object = {}> extends ActionScope<O> implements ForEachPageConfiguration {
-    public static $kind = 'Microsoft.Foreach';
+    static $kind = 'Microsoft.Foreach';
     private currentIndex: number;
 
-    public constructor();
+    constructor();
 
     /**
      * Initializes a new instance of the [Foreach](xref:botbuilder-dialogs-adaptive.Foreach) class.
@@ -42,7 +42,7 @@ export class ForEach<O extends object = {}> extends ActionScope<O> implements Fo
      * @param itemsProperty Property path expression to the collection of items.
      * @param actions The actions to execute.
      */
-    public constructor(itemsProperty: string, actions: Dialog[]);
+    constructor(itemsProperty: string, actions: Dialog[]);
 
     /**
      * Initializes a new instance of the [Foreach](xref:botbuilder-dialogs-adaptive.Foreach) class.
@@ -50,7 +50,7 @@ export class ForEach<O extends object = {}> extends ActionScope<O> implements Fo
      * @param itemsProperty Optional. Property path expression to the collection of items.
      * @param actions Optional. The actions to execute.
      */
-    public constructor(itemsProperty?: string, actions?: Dialog[]) {
+    constructor(itemsProperty?: string, actions?: Dialog[]) {
         super();
         if (itemsProperty) {
             this.itemsProperty = new StringExpression(itemsProperty);
@@ -63,28 +63,28 @@ export class ForEach<O extends object = {}> extends ActionScope<O> implements Fo
     /**
      * Property path expression to the collection of items.
      */
-    public itemsProperty: StringExpression;
+    itemsProperty: StringExpression;
 
     /**
      * Property path expression to the item index.
      */
-    public index: StringExpression = new StringExpression(INDEX);
+    index: StringExpression = new StringExpression(INDEX);
 
     /**
      * Property path expression to the item value.
      */
-    public value: StringExpression = new StringExpression(VALUE);
+    value: StringExpression = new StringExpression(VALUE);
 
     /**
      * An optional expression which if is true will disable this action.
      */
-    public disabled?: BoolExpression;
+    disabled?: BoolExpression;
 
     /**
      * @param property The key of the conditional selector configuration.
      * @returns The converter for the selector configuration.
      */
-    public getConverter(property: keyof ForEachConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof ForEachConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'itemsProperty':
                 return new StringExpressionConverter();
@@ -104,7 +104,7 @@ export class ForEach<O extends object = {}> extends ActionScope<O> implements Fo
      *
      * @returns The child [Dialog](xref:botbuilder-dialogs.Dialog) dependencies.
      */
-    public getDependencies(): Dialog[] {
+    getDependencies(): Dialog[] {
         return this.actions;
     }
 
@@ -115,7 +115,7 @@ export class ForEach<O extends object = {}> extends ActionScope<O> implements Fo
      * @param _options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
+    async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }

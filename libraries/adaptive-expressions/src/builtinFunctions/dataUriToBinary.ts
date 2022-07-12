@@ -19,7 +19,7 @@ export class DataUriToBinary extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [DataUriToBinary](xref:adaptive-expressions.DataUriToBinary) class.
      */
-    public constructor() {
+    constructor() {
         super(
             ExpressionType.DataUriToBinary,
             DataUriToBinary.evaluator(),

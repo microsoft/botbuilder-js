@@ -21,7 +21,7 @@ export class All extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [All](xref:adaptive-expressions.All) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.All, All.evaluator, ReturnType.Boolean, InternalFunctionUtils.ValidateLambdaExpression);
     }
 

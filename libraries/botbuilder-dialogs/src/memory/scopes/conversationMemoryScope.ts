@@ -16,7 +16,7 @@ export class ConversationMemoryScope extends BotStateMemoryScope {
     /**
      * Initializes a new instance of the [ConversationMemoryScope](xref:botbuilder-dialogs.ConversationMemoryScope) class.
      */
-    public constructor() {
+    constructor() {
         super(ScopePath.conversation);
     }
 }

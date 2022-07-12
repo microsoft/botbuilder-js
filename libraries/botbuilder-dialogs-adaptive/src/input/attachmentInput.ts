@@ -24,8 +24,8 @@ export interface AttachmentInputConfiguration extends InputDialogConfiguration {
  * Input dialog which prompts the user to send a file.
  */
 export class AttachmentInput extends InputDialog implements AttachmentInputConfiguration {
-    public static $kind = 'Microsoft.AttachmentInput';
-    public outputFormat: EnumExpression<AttachmentOutputFormat> = new EnumExpression<AttachmentOutputFormat>(
+    static $kind = 'Microsoft.AttachmentInput';
+    outputFormat: EnumExpression<AttachmentOutputFormat> = new EnumExpression<AttachmentOutputFormat>(
         AttachmentOutputFormat.first
     );
 
@@ -33,7 +33,7 @@ export class AttachmentInput extends InputDialog implements AttachmentInputConfi
      * @param property The key of the conditional selector configuration.
      * @returns The converter for the selector configuration.
      */
-    public getConverter(property: keyof AttachmentInputConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof AttachmentInputConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'outputFormat':
                 return new EnumExpressionConverter<AttachmentOutputFormat>(AttachmentOutputFormat);

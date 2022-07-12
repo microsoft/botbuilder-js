@@ -21,7 +21,7 @@ export class Any extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [Any](xref:adaptive-expressions.Any) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.Any, Any.evaluator, ReturnType.Boolean, InternalFunctionUtils.ValidateLambdaExpression);
     }
 

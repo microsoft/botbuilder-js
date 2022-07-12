@@ -23,7 +23,7 @@ export class String extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [String](xref:adaptive-expressions.String) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.String, String.evaluator(), ReturnType.String, String.validator);
     }
 

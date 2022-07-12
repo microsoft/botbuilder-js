@@ -22,7 +22,7 @@ export class UriScheme extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [UriScheme](xref:adaptive-expressions.UriScheme) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.UriScheme, UriScheme.evaluator, ReturnType.String, FunctionUtils.validateUnary);
     }
 

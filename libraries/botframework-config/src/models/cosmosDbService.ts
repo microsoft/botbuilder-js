@@ -15,22 +15,22 @@ export class CosmosDbService extends AzureService implements ICosmosDBService {
     /**
      * Endpoint/uri for CosmosDB.
      */
-    public endpoint: string;
+    endpoint: string;
 
     /**
      * Key for accessing CosmosDB.
      */
-    public key: string;
+    key: string;
 
     /**
      * Database name.
      */
-    public database: string;
+    database: string;
 
     /**
      * Collection name.
      */
-    public collection: string;
+    collection: string;
 
     /**
      * Creates a new CosmosDBService instance.
@@ -45,7 +45,7 @@ export class CosmosDbService extends AzureService implements ICosmosDBService {
      * @param secret Secret to use to encrypt.
      * @param encryptString Function called to encrypt an individual value.
      */
-    public encrypt(secret: string, encryptString: (value: string, secret: string) => string): void {
+    encrypt(secret: string, encryptString: (value: string, secret: string) => string): void {
         if (this.key && this.key.length > 0) {
             this.key = encryptString(this.key, secret);
         }
@@ -56,7 +56,7 @@ export class CosmosDbService extends AzureService implements ICosmosDBService {
      * @param secret Secret to use to decrypt.
      * @param decryptString Function called to decrypt an individual value.
      */
-    public decrypt(secret: string, decryptString: (value: string, secret: string) => string): void {
+    decrypt(secret: string, decryptString: (value: string, secret: string) => string): void {
         if (this.key && this.key.length > 0) {
             this.key = decryptString(this.key, secret);
         }

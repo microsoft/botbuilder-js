@@ -36,9 +36,9 @@ export interface SetPropertyConfiguration extends DialogConfiguration {
  * Sets a property with the result of evaluating a value expression.
  */
 export class SetProperty<O extends object = {}> extends Dialog<O> implements SetPropertyConfiguration {
-    public static $kind = 'Microsoft.SetProperty';
+    static $kind = 'Microsoft.SetProperty';
 
-    public constructor();
+    constructor();
 
     /**
      * Initializes a new instance of the [SetProperty](xref:botbuilder-dialogs-adaptive.SetProperty) class.
@@ -46,7 +46,7 @@ export class SetProperty<O extends object = {}> extends Dialog<O> implements Set
      * @param property Property path to put the value in.
      * @param value The expression to get the value to put into property path.
      */
-    public constructor(property: string, value: any);
+    constructor(property: string, value: any);
 
     /**
      * Initializes a new instance of the [SetProperty](xref:botbuilder-dialogs-adaptive.SetProperty) class.
@@ -54,7 +54,7 @@ export class SetProperty<O extends object = {}> extends Dialog<O> implements Set
      * @param property Optional. Property path to put the value in.
      * @param value Optional. The expression to get the value to put into property path.
      */
-    public constructor(property?: string, value?: any) {
+    constructor(property?: string, value?: any) {
         super();
         if (property) {
             this.property = new StringExpression(property);
@@ -67,23 +67,23 @@ export class SetProperty<O extends object = {}> extends Dialog<O> implements Set
     /**
      * Property path to put the value in.
      */
-    public property: StringExpression;
+    property: StringExpression;
 
     /**
      * The expression to get the value to put into property path.
      */
-    public value: ValueExpression;
+    value: ValueExpression;
 
     /**
      * An optional expression which if is true will disable this action.
      */
-    public disabled?: BoolExpression;
+    disabled?: BoolExpression;
 
     /**
      * @param property The key of the conditional selector configuration.
      * @returns The converter for the selector configuration.
      */
-    public getConverter(property: keyof SetPropertyConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof SetPropertyConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'property':
                 return new StringExpressionConverter();
@@ -103,7 +103,7 @@ export class SetProperty<O extends object = {}> extends Dialog<O> implements Set
      * @param _options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
+    async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }

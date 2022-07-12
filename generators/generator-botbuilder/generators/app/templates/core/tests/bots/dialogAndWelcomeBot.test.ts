@@ -15,12 +15,12 @@ class MockRootDialog extends Dialog {
         super('mockRootDialog');
     }
 
-    public async beginDialog(dc, options) {
+    async beginDialog(dc, options) {
         await dc.context.sendActivity(`${ this.id } mock invoked`);
         return await dc.endDialog();
     }
 
-    public async run(turnContext, accessor) {
+    async run(turnContext, accessor) {
         const dialogSet = new DialogSet(accessor);
         dialogSet.add(this);
 

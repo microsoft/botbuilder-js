@@ -25,7 +25,7 @@ export class StartOfHour extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [StartOfHour](xref:adaptive-expressions.StartOfHour) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.StartOfHour, StartOfHour.evaluator, ReturnType.String, StartOfHour.validator);
     }
 

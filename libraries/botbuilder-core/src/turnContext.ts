@@ -133,7 +133,7 @@ function getAppropriateReplyToId(source: Partial<Activity>): string | undefined 
     return undefined;
 }
 
-// tslint:disable-next-line:no-empty-interface
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface TurnContext {}
 
 /**
@@ -192,7 +192,7 @@ export class TurnContext {
      * Use with caution; this function alters the activity's [text](xref:botframework-schema.Activity.text) property.
      *
      * @param activity The activity to remove at mentions from.
-     *
+     * @returns The updated activity's text.
      * @remarks
      * Some channels, for example Microsoft Teams, add at-mention details to the text of a message activity.
      *
@@ -207,7 +207,7 @@ export class TurnContext {
      * **See also**
      * - [removeMentionText](xref:botbuilder-core.TurnContext.removeMentionText)
      */
-    public static removeRecipientMention(activity: Partial<Activity>): string {
+    static removeRecipientMention(activity: Partial<Activity>): string {
         return TurnContext.removeMentionText(activity, activity.recipient.id);
     }
 
@@ -217,7 +217,7 @@ export class TurnContext {
      *
      * @param activity The activity to remove at mentions from.
      * @param id The ID of the user or bot to remove at mentions for.
-     *
+     * @returns The updated activity's text.
      * @remarks
      * Some channels, for example Microsoft Teams, add at mentions to the text of a message activity.
      *
@@ -241,7 +241,7 @@ export class TurnContext {
      * **See also**
      * - [removeRecipientMention](xref:botbuilder-core.TurnContext.removeRecipientMention)
      */
-    public static removeMentionText(activity: Partial<Activity>, id: string): string {
+    static removeMentionText(activity: Partial<Activity>, id: string): string {
         const mentions = TurnContext.getMentions(activity);
         const mentionsFiltered = mentions.filter((mention): boolean => mention.mentioned.id === id);
         if (mentionsFiltered.length) {
@@ -254,7 +254,7 @@ export class TurnContext {
      * Gets all at-mention entities included in an activity.
      *
      * @param activity The activity.
-     *
+     * @returns All the at-mention entities included in an activity.
      * @remarks
      * The activity's [entities](xref:botframework-schema.Activity.entities) property contains a flat
      * list of metadata objects pertaining to this activity and can contain
@@ -266,7 +266,7 @@ export class TurnContext {
      * const mentions = TurnContext.getMentions(turnContext.request);
      * ```
      */
-    public static getMentions(activity: Partial<Activity>): Mention[] {
+    static getMentions(activity: Partial<Activity>): Mention[] {
         const result: Mention[] = [];
         if (activity.entities !== undefined) {
             for (let i = 0; i < activity.entities.length; i++) {
@@ -282,7 +282,7 @@ export class TurnContext {
      * Copies conversation reference information from an activity.
      *
      * @param activity The activity to get the information from.
-     *
+     * @returns A conversation reference for the conversation that contains this activity.
      * @remarks
      * You can save the conversation reference as a JSON object and use it later to proactively message the user.
      *
@@ -295,7 +295,7 @@ export class TurnContext {
      *
      * - [BotAdapter.continueConversation](xref:botbuilder-core.BotAdapter.continueConversation)
      */
-    public static getConversationReference(activity: Partial<Activity>): Partial<ConversationReference> {
+    static getConversationReference(activity: Partial<Activity>): Partial<ConversationReference> {
         return {
             activityId: getAppropriateReplyToId(activity),
             user: shallowCopy(activity.from),
@@ -315,13 +315,13 @@ export class TurnContext {
      * @param isIncoming Optional. `true` to treat the activity as an incoming activity, where the
      *      bot is the recipient; otherwise, `false`. Default is `false`, and the activity will show
      *      the bot as the sender.
-     *
+     * @returns This activity, updated with the delivery information.
      * @remarks
      * Call the [getConversationReference](xref:botbuilder-core.TurnContext.getConversationReference)
      * method on an incoming activity to get a conversation reference that you can then use
      * to update an outgoing activity with the correct delivery information.
      */
-    public static applyConversationReference(
+    static applyConversationReference(
         activity: Partial<Activity>,
         reference: Partial<ConversationReference>,
         isIncoming = false
@@ -354,7 +354,7 @@ export class TurnContext {
      * @param reply The resource response for the activity, returned by the
      *      [sendActivity](xref:botbuilder-core.TurnContext.sendActivity) or
      *      [sendActivities](xref:botbuilder-core.TurnContext.sendActivities) method.
-     *
+     * @returns A ConversationReference that can be stored and used later to delete or update the activity.
      * @remarks
      * You can save the conversation reference as a JSON object and use it later to update or delete the message.
      *
@@ -369,7 +369,7 @@ export class TurnContext {
      * - [deleteActivity](xref:botbuilder-core.TurnContext.deleteActivity)
      * - [updateActivity](xref:botbuilder-core.TurnContext.updateActivity)
      */
-    public static getReplyConversationReference(
+    static getReplyConversationReference(
         activity: Partial<Activity>,
         reply: ResourceResponse
     ): Partial<ConversationReference> {
@@ -384,7 +384,7 @@ export class TurnContext {
     /**
      * List of activities to send when `context.activity.deliveryMode == 'expectReplies'`.
      */
-    public readonly bufferedReplyActivities: Partial<Activity>[] = [];
+    readonly bufferedReplyActivities: Partial<Activity>[] = [];
 
     /**
      * Asynchronously sends an activity to the sender of the incoming activity.
@@ -393,7 +393,7 @@ export class TurnContext {
      * @param value Optional. The text to be spoken by your bot on a speech-enabled channel.
      * @param valueType Optional. Indicates whether your bot is accepting, expecting, or ignoring user
      * @param label Optional. Indicates whether your bot is accepting, expecting, or ignoring user
-     *
+     * @returns A promise with a ResourceResponse.
      * @remarks
      * Creates and sends a Trace activity. Trace activities are only sent when the channel is the emulator.
      *
@@ -406,7 +406,7 @@ export class TurnContext {
      *
      * - [sendActivities](xref:botbuilder-core.TurnContext.sendActivities)
      */
-    public sendTraceActivity(
+    sendTraceActivity(
         name: string,
         value?: any,
         valueType?: string,
@@ -431,7 +431,7 @@ export class TurnContext {
      * @param inputHint Optional. Indicates whether your bot is accepting, expecting, or ignoring user
      *      input after the message is delivered to the client. One of: 'acceptingInput', 'ignoringInput',
      *      or 'expectingInput'. Default is 'acceptingInput'.
-     *
+     * @returns A promise with a ResourceResponse.
      * @remarks
      * If the activity is successfully sent, results in a
      * [ResourceResponse](xref:botframework-schema.ResourceResponse) object containing the ID that the
@@ -453,7 +453,7 @@ export class TurnContext {
      * - [updateActivity](xref:botbuilder-core.TurnContext.updateActivity)
      * - [deleteActivity](xref:botbuilder-core.TurnContext.deleteActivity)
      */
-    public async sendActivity(
+    async sendActivity(
         activityOrText: string | Partial<Activity>,
         speak?: string,
         inputHint?: string
@@ -476,7 +476,7 @@ export class TurnContext {
      * Asynchronously sends a set of activities to the sender of the incoming activity.
      *
      * @param activities The activities to send.
-     *
+     * @returns A promise with a ResourceResponse.
      * @remarks
      * If the activities are successfully sent, results in an array of
      * [ResourceResponse](xref:botframework-schema.ResourceResponse) objects containing the IDs that
@@ -500,7 +500,7 @@ export class TurnContext {
      * - [updateActivity](xref:botbuilder-core.TurnContext.updateActivity)
      * - [deleteActivity](xref:botbuilder-core.TurnContext.deleteActivity)
      */
-    public sendActivities(activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
+    sendActivities(activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
         let sentNonTraceActivity = false;
         const ref = TurnContext.getConversationReference(this.activity);
         const output = activities.map((activity) => {
@@ -560,7 +560,7 @@ export class TurnContext {
      * Asynchronously updates a previously sent activity.
      *
      * @param activity The replacement for the original activity.
-     *
+     * @returns A promise with a ResourceResponse.
      * @remarks
      * The [id](xref:botframework-schema.Activity.id) of the replacement activity indicates the activity
      * in the conversation to replace.
@@ -580,7 +580,7 @@ export class TurnContext {
      * - [deleteActivity](xref:botbuilder-core.TurnContext.deleteActivity)
      * - [getReplyConversationReference](xref:botbuilder-core.TurnContext.getReplyConversationReference)
      */
-    public updateActivity(activity: Partial<Activity>): Promise<ResourceResponse | void> {
+    updateActivity(activity: Partial<Activity>): Promise<ResourceResponse | void> {
         const ref: Partial<ConversationReference> = TurnContext.getConversationReference(this.activity);
         const a: Partial<Activity> = TurnContext.applyConversationReference(activity, ref);
         return this.emit(this._onUpdateActivity, a, () => this.adapter.updateActivity(this, a));
@@ -590,7 +590,7 @@ export class TurnContext {
      * Asynchronously deletes a previously sent activity.
      *
      * @param idOrReference ID or conversation reference for the activity to delete.
-     *
+     * @returns A promise representing the async operation.
      * @remarks
      * If an ID is specified, the conversation reference for the current request is used
      * to get the rest of the information needed.
@@ -610,7 +610,7 @@ export class TurnContext {
      * - [updateActivity](xref:botbuilder-core.TurnContext.updateActivity)
      * - [getReplyConversationReference](xref:botbuilder-core.TurnContext.getReplyConversationReference)
      */
-    public deleteActivity(idOrReference: string | Partial<ConversationReference>): Promise<void> {
+    deleteActivity(idOrReference: string | Partial<ConversationReference>): Promise<void> {
         let reference: Partial<ConversationReference>;
         if (typeof idOrReference === 'string') {
             reference = TurnContext.getConversationReference(this.activity);
@@ -626,7 +626,7 @@ export class TurnContext {
      * Adds a response handler for send activity operations.
      *
      * @param handler The handler to add to the context object.
-     *
+     * @returns The updated context object.
      * @remarks
      * This method returns a reference to the turn context object.
      *
@@ -647,7 +647,7 @@ export class TurnContext {
      * });
      * ```
      */
-    public onSendActivities(handler: SendActivitiesHandler): this {
+    onSendActivities(handler: SendActivitiesHandler): this {
         this._onSendActivities.push(handler);
 
         return this;
@@ -657,7 +657,7 @@ export class TurnContext {
      * Adds a response handler for update activity operations.
      *
      * @param handler The handler to add to the context object.
-     *
+     * @returns The updated context object.
      * @remarks
      * This method returns a reference to the turn context object.
      *
@@ -677,7 +677,7 @@ export class TurnContext {
      * });
      * ```
      */
-    public onUpdateActivity(handler: UpdateActivityHandler): this {
+    onUpdateActivity(handler: UpdateActivityHandler): this {
         this._onUpdateActivity.push(handler);
 
         return this;
@@ -687,7 +687,7 @@ export class TurnContext {
      * Adds a response handler for delete activity operations.
      *
      * @param handler The handler to add to the context object.
-     *
+     * @returns The updated context object.
      * @remarks
      * This method returns a reference to the turn context object.
      *
@@ -707,7 +707,7 @@ export class TurnContext {
      * });
      * ```
      */
-    public onDeleteActivity(handler: DeleteActivityHandler): this {
+    onDeleteActivity(handler: DeleteActivityHandler): this {
         this._onDeleteActivity.push(handler);
 
         return this;
@@ -739,14 +739,17 @@ export class TurnContext {
 
     /**
      * Gets the bot adapter that created this context object.
+     *
+     * @returns The bot adapter that created this context object.
      */
-    public get adapter(): BotAdapter {
+    get adapter(): BotAdapter {
         return this._adapter as BotAdapter;
     }
 
     /**
      * Gets the activity associated with this turn.
      *
+     * @returns The activity associated with this turn.
      * @remarks
      * This example shows how to get the users trimmed utterance from the activity:
      *
@@ -754,13 +757,14 @@ export class TurnContext {
      * const utterance = (context.activity.text || '').trim();
      * ```
      */
-    public get activity(): Activity {
+    get activity(): Activity {
         return this._activity as Activity;
     }
 
     /**
      * Indicates whether the bot has replied to the user this turn.
      *
+     * @returns True if at least one response was sent for the current turn; otherwise, false.
      * @remarks
      * **true** if at least one response was sent for the current turn; otherwise, **false**.
      * Use this to determine if your bot needs to run fallback logic after other normal processing.
@@ -775,14 +779,32 @@ export class TurnContext {
      * }
      * ```
      */
-    public get responded(): boolean {
+    get responded(): boolean {
         return this._respondedRef.responded;
     }
 
     /**
-     * Gets the locale stored in the turnState.
+     * Sets the response flag on the current turn context.
+     *
+     * @remarks
+     * The [sendActivity](xref:botbuilder-core.TurnContext.sendActivity) and
+     * [sendActivities](xref:botbuilder-core.TurnContext.sendActivities) methods call this method to
+     * update the responded flag. You can call this method directly to indicate that your bot has
+     * responded appropriately to the incoming activity.
      */
-    public get locale(): string | undefined {
+    set responded(value: boolean) {
+        if (!value) {
+            throw new Error("TurnContext: cannot set 'responded' to a value of 'false'.");
+        }
+        this._respondedRef.responded = true;
+    }
+    
+    /**
+     * Gets the locale stored in the turnState.
+     *
+     * @returns The locale stored in the turnState.
+     */
+    get locale(): string | undefined {
         const turnObj = this._turnState[this._turn];
         const locale = turnObj[this._locale];
         if (typeof locale === 'string') {
@@ -795,7 +817,7 @@ export class TurnContext {
     /**
      * Sets the locale stored in the turnState.
      */
-    public set locale(value: string | undefined) {
+    set locale(value: string | undefined) {
         const turnObj = this._turnState[this._turn];
         if (turnObj) {
             turnObj[this._locale] = value;
@@ -805,24 +827,9 @@ export class TurnContext {
     }
 
     /**
-     * Sets the response flag on the current turn context.
-     *
-     * @remarks
-     * The [sendActivity](xref:botbuilder-core.TurnContext.sendActivity) and
-     * [sendActivities](xref:botbuilder-core.TurnContext.sendActivities) methods call this method to
-     * update the responded flag. You can call this method directly to indicate that your bot has
-     * responded appropriately to the incoming activity.
-     */
-    public set responded(value: boolean) {
-        if (!value) {
-            throw new Error(`TurnContext: cannot set 'responded' to a value of 'false'.`);
-        }
-        this._respondedRef.responded = true;
-    }
-
-    /**
      * Gets the services registered on this context object.
      *
+     * @returns The services registered on this context object.
      * @remarks
      * Middleware, other components, and services will typically use this to cache information
      * that could be asked for by a bot multiple times during a turn. You can use this cache to
@@ -839,7 +846,7 @@ export class TurnContext {
      * > When creating middleware or a third-party component, use a unique symbol for your cache key
      * > to avoid state naming collisions with the bot or other middleware or components.
      */
-    public get turnState(): TurnContextStateCollection {
+    get turnState(): TurnContextStateCollection {
         return this._turnState;
     }
 

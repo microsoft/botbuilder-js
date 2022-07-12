@@ -18,7 +18,7 @@ export abstract class DialogContainer<O extends object = {}> extends Dialog<O> {
     /**
      * The containers dialog set.
      */
-    public readonly dialogs = new DialogSet(undefined);
+    readonly dialogs = new DialogSet(undefined);
 
     /**
      * Creates an inner dialog context for the containers active child.
@@ -26,7 +26,7 @@ export abstract class DialogContainer<O extends object = {}> extends Dialog<O> {
      * @param dc Parents dialog context.
      * @returns A new dialog context for the active child or `undefined` if there is no active child.
      */
-    public abstract createChildContext(dc: DialogContext): DialogContext | undefined;
+    abstract createChildContext(dc: DialogContext): DialogContext | undefined;
 
     /**
      * Finds a child dialog that was previously added to the container.
@@ -34,7 +34,7 @@ export abstract class DialogContainer<O extends object = {}> extends Dialog<O> {
      * @param dialogId ID of the dialog to lookup.
      * @returns The Dialog if found; otherwise null.
      */
-    public findDialog(dialogId: string): Dialog | undefined {
+    findDialog(dialogId: string): Dialog | undefined {
         return this.dialogs.find(dialogId);
     }
 
@@ -46,7 +46,7 @@ export abstract class DialogContainer<O extends object = {}> extends Dialog<O> {
      * @param e The event being raised.
      * @returns True if the event is handled by the current dialog and bubbling should stop.
      */
-    public async onDialogEvent(dc: DialogContext, e: DialogEvent): Promise<boolean> {
+    async onDialogEvent(dc: DialogContext, e: DialogEvent): Promise<boolean> {
         const handled = await super.onDialogEvent(dc, e);
         if (!handled && e.name === DialogEvents.versionChanged) {
             const traceMessage = `Unhandled dialog event: ${e.name}. Active Dialog: ${dc.activeDialog.id}`;
@@ -99,7 +99,7 @@ export abstract class DialogContainer<O extends object = {}> extends Dialog<O> {
      * Set the telemetry client, and also apply it to all child dialogs.
      * Future dialogs added to the component will also inherit this client.
      */
-    public set telemetryClient(client: BotTelemetryClient) {
+    set telemetryClient(client: BotTelemetryClient) {
         this._telemetryClient = client ?? new NullTelemetryClient();
         if (this.dialogs.telemetryClient !== this._telemetryClient) {
             this.dialogs.telemetryClient = this._telemetryClient;
@@ -111,7 +111,7 @@ export abstract class DialogContainer<O extends object = {}> extends Dialog<O> {
      *
      * @returns The [BotTelemetryClient](xref:botbuilder.BotTelemetryClient) to use for logging.
      */
-    public get telemetryClient(): BotTelemetryClient {
+    get telemetryClient(): BotTelemetryClient {
         return this._telemetryClient;
     }
 }

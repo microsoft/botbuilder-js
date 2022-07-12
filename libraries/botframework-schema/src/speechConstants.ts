@@ -10,6 +10,6 @@ export class SpeechConstants {
     /**
      * The xml tag structure to indicate an empty speak tag, to be used in the 'speak' property of an Activity. When set this indicates to the channel that speech should not be generated.
      */
-    public static readonly EmptySpeakTag: string =
+    static readonly EmptySpeakTag: string =
         '<speak version="1.0" xmlns="https://www.w3.org/2001/10/synthesis" xml:lang="en-US" />';
 }

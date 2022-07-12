@@ -23,7 +23,7 @@ export class UtcNow extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [UtcNow](xref:adaptive-expressions.UtcNow) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.UtcNow, UtcNow.evaluator(), ReturnType.String, UtcNow.validator);
     }
 

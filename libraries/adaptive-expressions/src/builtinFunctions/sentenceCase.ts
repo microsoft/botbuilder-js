@@ -19,7 +19,7 @@ export class SentenceCase extends StringTransformEvaluator {
     /**
      * Initializes a new instance of the [SentenceCase](xref:adaptive-expressions.SentenceCase) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.SentenceCase, SentenceCase.evaluator, FunctionUtils.validateUnaryOrBinaryString);
     }
 

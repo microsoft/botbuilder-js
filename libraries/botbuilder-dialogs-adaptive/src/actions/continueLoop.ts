@@ -26,18 +26,18 @@ export interface ContinueLoopConfiguration extends DialogConfiguration {
  * Continue the loop.
  */
 export class ContinueLoop<O extends object = {}> extends Dialog<O> implements ContinueLoopConfiguration {
-    public static $kind = 'Microsoft.ContinueLoop';
+    static $kind = 'Microsoft.ContinueLoop';
 
     /**
      * An optional expression which if is true will disable this action.
      */
-    public disabled?: BoolExpression;
+    disabled?: BoolExpression;
 
     /**
      * @param property The key of the conditional selector configuration.
      * @returns The converter for the selector configuration.
      */
-    public getConverter(property: keyof ContinueLoopConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof ContinueLoopConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'disabled':
                 return new BoolExpressionConverter();
@@ -53,7 +53,7 @@ export class ContinueLoop<O extends object = {}> extends Dialog<O> implements Co
      * @param _options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
+    async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }

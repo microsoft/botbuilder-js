@@ -33,7 +33,7 @@ export class SkillHandler extends ChannelServiceHandler {
      * @remarks
      * The value is the same as the SkillConversationReferenceKey exported from botbuilder-core.
      */
-    public readonly SkillConversationReferenceKey = SkillConversationReferenceKey;
+    readonly SkillConversationReferenceKey = SkillConversationReferenceKey;
 
     // Delegate that implements actual logic
     private readonly inner: SkillHandlerImpl;
@@ -48,7 +48,7 @@ export class SkillHandler extends ChannelServiceHandler {
      * @param authConfig The authentication configuration.
      * @param channelService The string indicating if the bot is working in Public Azure or in Azure Government (https://aka.ms/AzureGovDocs).
      */
-    public constructor(
+    constructor(
         adapter: BotAdapter,
         bot: ActivityHandlerBase,
         conversationIdFactory: SkillConversationIdFactoryBase,

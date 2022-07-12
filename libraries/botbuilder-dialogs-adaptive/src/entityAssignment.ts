@@ -57,42 +57,42 @@ export class EntityAssignment implements EntityAssignmentConfiguration {
     /**
      * Event name to surface
      */
-    public event: string;
+    event: string;
 
     /**
      * Name of property being assigned.
      */
-    public property: string;
+    property: string;
 
     /**
      * Operation to assign entity to property.
      */
-    public operation: string;
+    operation: string;
 
     /**
      * Recognized entity value.
      */
-    public value: Partial<EntityInfo>;
+    value: Partial<EntityInfo>;
 
     /**
      * Alternative assignment.
      */
-    public alternative: EntityAssignment;
+    alternative: EntityAssignment;
 
     /**
      * Value indicating whether this entity was in `DialogPath.ExpectedProperties`.
      */
-    public isExpected: boolean;
+    isExpected: boolean;
 
     /**
      * The number of times event has been raised.
      */
-    public raisedCount: number;
+    raisedCount: number;
 
     /**
      * The expected properties when assignment was made.
      */
-    public expectedProperties: string[];
+    expectedProperties: string[];
 
     /**
      * Initializes a new instance of the [EntityAssignment](xref:botbuilder-dialogs-adaptive.EntityAssignment) class.
@@ -121,7 +121,7 @@ export class EntityAssignment implements EntityAssignmentConfiguration {
      *
      * @returns The alternative entity assigment.
      */
-    public get alternatives(): EntityAssignment[] {
+    get alternatives(): EntityAssignment[] {
         const alternatives = [];
         // eslint-disable-next-line @typescript-eslint/no-this-alias
         let current: EntityAssignment = this;
@@ -138,7 +138,7 @@ export class EntityAssignment implements EntityAssignmentConfiguration {
      *
      * @param alternatives Alternatives to add.
      */
-    public addAlternatives(alternatives: EntityAssignment[]): void {
+    addAlternatives(alternatives: EntityAssignment[]): void {
         // eslint-disable-next-line @typescript-eslint/no-this-alias
         let current: EntityAssignment = this;
         this.alternative = undefined;
@@ -155,7 +155,7 @@ export class EntityAssignment implements EntityAssignmentConfiguration {
      *
      * @returns A string that represents the current object.
      */
-    public toString(): string {
+    toString(): string {
         return `${this.isExpected ? '+' : ''}${this.event}: ${this.property} = ${this.operation}(${EntityInfo.toString(
             this.value
         )})`;
