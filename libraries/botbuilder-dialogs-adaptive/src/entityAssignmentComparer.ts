@@ -10,7 +10,7 @@ import { EntityAssignment } from './entityAssignment';
 
 /**
  * Compare two entity assignments to determine their relative priority.
-
+ *
  * @remarks
  * Compare by event: assignEntity, chooseProperty, chooseEntity
  * Then by operations in order from schema (usually within assignEntity).
