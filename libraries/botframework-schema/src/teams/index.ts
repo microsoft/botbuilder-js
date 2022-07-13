@@ -1718,11 +1718,11 @@ export interface MeetingDetails extends MeetingDetailsBase {
     /**
      * @member {Date} [scheduledStartTime] The meeting's scheduled start time, in UTC.
      */
-    scheduledStartTime: Date;
+    scheduledStartTime?: Date;
     /**
      * @member {Date} [scheduledEndTime] The meeting's scheduled end time, in UTC.
      */
-    scheduledEndTime: Date;
+    scheduledEndTime?: Date;
     /**
      * @member {string} [type] The meeting's type.
      */
