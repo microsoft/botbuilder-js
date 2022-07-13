@@ -7,7 +7,7 @@
  */
 import { telemetryTrackDialogView, TurnContext } from 'botbuilder-core';
 import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus } from './dialog';
-import { DialogContext, DialogState } from './dialogContext';
+import { DialogContext } from './dialogContext';
 import { DialogContainer } from './dialogContainer';
 
 const PERSISTED_DIALOG_STATE = 'dialogs';
@@ -83,6 +83,7 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
      * Dialog.BeginDialogAsync(DialogContext, object, CancellationToken) method
      * of the component dialog's initial dialog, as defined by InitialDialogId.
      * Override this method in a derived class to implement interrupt logic.
+     *
      * @param outerDC The parent [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Optional, initial information to pass to the dialog.
      * @returns A Promise representing the asynchronous operation.
@@ -120,6 +121,7 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
      * Called when the dialog is _continued_, where it is the active dialog and the
      * user replies with a new [Activity](xref:botframework-schema.Activity).
      * If this method is *not* overridden, the dialog automatically ends when the user replies.
+     *
      * @param outerDC The parent [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @returns A Promise representing the asynchronous operation.
      * @remarks
@@ -147,9 +149,10 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
     /**
      * Called when a child dialog on the parent's dialog stack completed this turn, returning
      * control to this dialog component.
-     * @param outerDc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
-     * @param reason Reason why the dialog resumed.
-     * @param result Optional, value returned from the dialog that was called. The type
+     *
+     * @param outerDC The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param _reason Reason why the dialog resumed.
+     * @param _result Optional, value returned from the dialog that was called. The type
      * of the value returned is dependent on the child dialog.
      * @returns A Promise representing the asynchronous operation.
      * @remarks
@@ -162,7 +165,7 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
      * If this method is *not* overridden, the dialog automatically calls its
      * RepromptDialog(ITurnContext, DialogInstance) when the user replies.
      */
-    async resumeDialog(outerDC: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
+    async resumeDialog(outerDC: DialogContext, _reason: DialogReason, _result?: any): Promise<DialogTurnResult> {
         await this.checkForVersionChange(outerDC);
 
         // Containers are typically leaf nodes on the stack but the dev is free to push other dialogs
@@ -177,6 +180,7 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
 
     /**
      * Called when the dialog should re-prompt the user for input.
+     *
      * @param context The [TurnContext](xref:botbuilder-core.TurnContext) object for this turn.
      * @param instance State information for this dialog.
      * @returns A Promise representing the asynchronous operation.
@@ -192,6 +196,7 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
 
     /**
      * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) is ending.
+     *
      * @param context The [TurnContext](xref:botbuilder-core.TurnContext) object for this turn.
      * @param instance State information associated with the instance of this component
      * [Dialog](xref:botbuilder-dialogs.Dialog) on its parent's dialog stack.
@@ -213,7 +218,9 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
 
     /**
      * Adds a child [Dialog](xref:botbuilder-dialogs.Dialog) or prompt to the components internal [DialogSet](xref:botbuilder-dialogs.DialogSet).
+     *
      * @param dialog The child [Dialog](xref:botbuilder-dialogs.Dialog) or prompt to add.
+     * @returns The [ComponentDialog](xref:botbuilder-dialogs.ComponentDialog) after the operation is complete.
      * @remarks
      * The [Dialog.id](xref:botbuilder-dialogs.Dialog.id) of the first child added to the component will be assigned to the initialDialogId property.
      */
@@ -228,7 +235,9 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
 
     /**
      * Creates the inner dialog context
+     *
      * @param outerDC the outer dialog context
+     * @returns The created Dialog Context.
      */
     createChildContext(outerDC: DialogContext): DialogContext {
         return this.createInnerDC(outerDC, outerDC.activeDialog);
@@ -243,6 +252,7 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
      * [initialDialogId](#initialdialogid).
      * @param innerDC Dialog context for the components internal `DialogSet`.
      * @param options (Optional) options that were passed to the component by its parent.
+     * @returns {Promise<DialogTurnResult>} A promise resolving to the dialog turn result.
      */
     protected onBeginDialog(innerDC: DialogContext, options?: O): Promise<DialogTurnResult> {
         return innerDC.beginDialog(this.initialDialogId, options);
@@ -255,6 +265,7 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
      * SHOULD be overridden by components that wish to perform custom interruption logic. The
      * default implementation calls `innerDC.continueDialog()`.
      * @param innerDC Dialog context for the components internal `DialogSet`.
+     * @returns {Promise<DialogTurnResult>} A promise resolving to the dialog turn result.
      */
     protected onContinueDialog(innerDC: DialogContext): Promise<DialogTurnResult> {
         return innerDC.continueDialog();
@@ -266,11 +277,12 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
      * @remarks
      * If the `reason` code is equal to `DialogReason.cancelCalled`, then any active child dialogs
      * will be cancelled before this method is called.
-     * @param context Context for the current turn of conversation.
-     * @param instance The components instance data within its parents dialog stack.
-     * @param reason The reason the component is ending.
+     * @param _context Context for the current turn of conversation.
+     * @param _instance The components instance data within its parents dialog stack.
+     * @param _reason The reason the component is ending.
+     * @returns A promise representing the asynchronous operation.
      */
-    protected onEndDialog(context: TurnContext, instance: DialogInstance, reason: DialogReason): Promise<void> {
+    protected onEndDialog(_context: TurnContext, _instance: DialogInstance, _reason: DialogReason): Promise<void> {
         return Promise.resolve();
     }
 
@@ -279,10 +291,11 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
      *
      * @remarks
      * The active child dialog will have already been asked to reprompt before this method is called.
-     * @param context Context for the current turn of conversation.
-     * @param instance The instance of the current dialog.
+     * @param _context Context for the current turn of conversation.
+     * @param _instance The instance of the current dialog.
+     * @returns A promise representing the asynchronous operation.
      */
-    protected onRepromptDialog(context: TurnContext, instance: DialogInstance): Promise<void> {
+    protected onRepromptDialog(_context: TurnContext, _instance: DialogInstance): Promise<void> {
         return Promise.resolve();
     }
 
@@ -295,6 +308,7 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
      * from the last active child dialog.
      * @param outerDC Dialog context for the parents `DialogSet`.
      * @param result Result returned by the last active child dialog. Can be a value of `undefined`.
+     * @returns {Promise<DialogTurnResult>} A promise resolving to the dialog turn result.
      */
     protected endComponent(outerDC: DialogContext, result: any): Promise<DialogTurnResult> {
         return outerDC.endDialog(result);

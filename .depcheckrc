@@ -1,2 +1,2 @@
-ignores: ["mocha", "rimraf", "sinon"]
+ignores: ["mocha", "rimraf", "sinon", "uuid"]
 ignorePatterns: [".eslintrc.json", "lib"]
