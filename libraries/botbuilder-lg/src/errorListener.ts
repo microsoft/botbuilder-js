@@ -21,6 +21,7 @@ export class ErrorListener implements ANTLRErrorListener<void> {
 
     /**
      * Creates a new instance of the [ErrorListener](xref:botbuilder-lg.ErrorListener) class.
+     *
      * @param errorSource String value that represents the source of the error.
      * @param lineOffset Offset of the line where the error occurred.
      */
@@ -34,6 +35,7 @@ export class ErrorListener implements ANTLRErrorListener<void> {
 
     /**
      * Notifies any interested parties upon a syntax error.
+     *
      * @param recognizer What parser got the error. From this object, you can access the context as well as the input stream.
      * @param offendingSymbol Offending token in the input token stream, unless recognizer is a lexer (then it's null).
      * @param line Line number in the input where the error occurred.

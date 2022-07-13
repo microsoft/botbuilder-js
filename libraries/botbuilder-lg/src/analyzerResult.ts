@@ -22,6 +22,7 @@ export class AnalyzerResult {
 
     /**
      * Creates a new instance of the [AnalyzerResult](xref:botbuilder-lg.AnalyzerResult) class.
+     *
      * @param variables Init varibales.
      * @param templateRefNames Init template references.
      */
@@ -32,6 +33,7 @@ export class AnalyzerResult {
 
     /**
      * Combine two analyzer results.
+     *
      * @param outputItem Another analyzer result.
      * @returns Combined analyzer result.
      */

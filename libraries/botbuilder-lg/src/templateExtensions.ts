@@ -26,6 +26,7 @@ import {
 export class TemplateExtensions {
     /**
      * Trim expression. ${abc} => abc,  ${a == {}} => a == {}.
+     *
      * @param expression Input expression string.
      * @returns Pure expression string.
      */
@@ -49,6 +50,7 @@ export class TemplateExtensions {
      * path is from authored content which doesn't know what OS it is running on.
      * This method treats / and \ both as seperators regardless of OS, for windows that means / -> \ and for linux/mac \ -> /.
      * This allows author to use ../foo.lg or ..\foo.lg as equivelents for importing.
+     *
      * @param ambiguousPath AuthoredPath.
      * @returns Path expressed as OS path.
      */
@@ -64,6 +66,7 @@ export class TemplateExtensions {
 
     /**
      * Get prefix error message from normal template sting context.
+     *
      * @param context Normal template sting context.
      * @returns Prefix error message.
      */
@@ -75,14 +78,14 @@ export class TemplateExtensions {
                 let tempMsg = '';
                 if (conditionContext.ifCondition() && conditionContext.ifCondition().expression().length > 0) {
                     tempMsg = conditionContext.ifCondition().expression(0).text;
-                    errorPrefix = `Condition '` + tempMsg + `': `;
+                    errorPrefix = "Condition '" + tempMsg + "': ";
                 }
             } else {
                 if (context.parent.parent.parent instanceof SwitchCaseRuleContext) {
                     const switchCaseContext = context.parent.parent.parent;
                     const state = switchCaseContext.switchCaseStat();
                     if (state && state.DEFAULT()) {
-                        errorPrefix = `Case 'Default':`;
+                        errorPrefix = "Case 'Default':";
                     } else if (state && state.SWITCH()) {
                         let tempMsg = '';
                         if (state.expression(0)) {
@@ -105,7 +108,9 @@ export class TemplateExtensions {
 
     /**
      * If a value is pure Expression.
+     *
      * @param ctx Key value structure value context.
+     * @returns True if the value is pure Expression, false otherwise.
      */
     static isPureExpression(ctx: KeyValueStructureValueContext): boolean {
         if (ctx.expressionInStructure() === undefined || ctx.expressionInStructure().length != 1) {
@@ -117,6 +122,7 @@ export class TemplateExtensions {
 
     /**
      * Escape \ from text.
+     *
      * @param exp Input text.
      * @returns Escaped text.
      */
@@ -143,14 +149,18 @@ export class TemplateExtensions {
 
     /**
      * Generate new guid string.
+     *
+     * @returns The new guid string.
      */
     static newGuid(): string {
         return uuidv4();
     }
 
     /**
-     * read line from text.
+     * Read line from text.
+     *
      * @param input Text content.
+     * @returns Split read line.
      */
     static readLine(input: string): string[] {
         if (!input) {
@@ -162,6 +172,7 @@ export class TemplateExtensions {
 
     /**
      * Convert antlr parser into Range.
+     *
      * @param context Antlr parse context.
      * @param [lineOffset] Line offset.
      * @returns Range object.

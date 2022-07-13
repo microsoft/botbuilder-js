@@ -26,6 +26,7 @@ export class SourceRange {
 
     /**
      * Creates a new instance of the [SourceRange](xref:botbuilder-lg.SourceRange) class.
+     *
      * @param parseTree `ParserRuleContext`. Rule invocation record for parsing.
      * @param source Optional. Source, used as the lg file path.
      * @param offset Optional. Offset in the parse tree.
@@ -34,6 +35,7 @@ export class SourceRange {
 
     /**
      * Creates a new instance of the [SourceRange](xref:botbuilder-lg.SourceRange) class.
+     *
      * @param range [Range](xref:botbuilder-lg.Range) of block.
      * @param source Optional. Source, used as the lg file path.
      */
@@ -41,6 +43,7 @@ export class SourceRange {
 
     /**
      * Creates a new instance of the [SourceRange](xref:botbuilder-lg.SourceRange) class.
+     *
      * @param x [Range](xref:botbuilder-lg.Range) of block or `ParserRuleContext`, rule invocation record for parsing.
      * @param source Optional. Source, used as the lg file path.
      * @param offset Optional. Offset in the parse tree.

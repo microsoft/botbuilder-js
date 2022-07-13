@@ -1,4 +1,5 @@
 /* eslint-disable security/detect-object-injection */
+/* eslint-disable security/detect-non-literal-fs-filename */
 /**
  * @module botbuilder-lg
  */
@@ -19,7 +20,7 @@ import { Template } from './template';
 import { TemplateErrors } from './templateErrors';
 import { TemplateExtensions } from './templateExtensions';
 import { Templates } from './templates';
-import { keyBy } from 'lodash';
+import keyBy = require('lodash/keyBy');
 
 import {
     Constant,
@@ -83,8 +84,8 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
 
     /**
      * Creates a new instance of the Expander class.
+     *
      * @param templates Template list.
-     * @param expressionParser Given expression parser.
      * @param opt Options for LG.
      */
     constructor(templates: Templates, opt?: EvaluationOptions) {
@@ -93,7 +94,7 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
         this.templateMap = keyBy(templates.allTemplates, (t: Template): string => t.name);
         this.lgOptions = opt;
 
-        // generate a new customzied expression parser by injecting the template as functions
+        // Generate a new customized expression parser by injecting the template as functions.
         this.expanderExpressionParser = new ExpressionParser(
             this.customizedEvaluatorLookup(templates.expressionParser.EvaluatorLookup, true)
         );
@@ -104,6 +105,7 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
 
     /**
      * Expand the results of a template with given name and scope.
+     *
      * @param templateName Given template name.
      * @param scope Given scope.
      * @returns All possiable results.
@@ -136,6 +138,7 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
 
     /**
      * Visit a parse tree produced by the normalBody labeled alternative in LGTemplateParser.body.
+     *
      * @param ctx The parse tree.
      * @returns The result of visiting the normal body.
      */
@@ -145,6 +148,7 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
 
     /**
      * Visit a parse tree produced by LGTemplateParser.normalTemplateBody.
+     *
      * @param ctx The parse tree.
      * @returns The result of visiting the normal template body.
      */
@@ -160,7 +164,9 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
 
     /**
      * Visit a parse tree produced by the ifElseBody labeled alternative in LGTemplateParser.body.
+     *
      * @param ctx The parse tree.
+     * @returns The result of visiting if-else body.
      */
     visitIfElseBody(ctx: IfElseBodyContext): unknown[] {
         const ifRules: IfConditionRuleContext[] = ctx.ifElseTemplateBody().ifConditionRule();
@@ -175,6 +181,7 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
 
     /**
      * Visit a parse tree produced by LGTemplateParser.structuredBody.
+     *
      * @param ctx The parse tree.
      * @returns The result of visiting the structured body.
      */
@@ -236,7 +243,7 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
                             propertyObject[Evaluator.LGType].toString() === typeName
                         ) {
                             for (const key of Object.keys(propertyObject)) {
-                                if (propertyObject.hasOwnProperty(key) && !(key in tempRes)) {
+                                if (Object.prototype.hasOwnProperty.call(propertyObject, key) && !(key in tempRes)) {
                                     tempRes[key] = propertyObject[key];
                                 }
                             }
@@ -316,6 +323,7 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
 
     /**
      * Visit a parse tree produced by the switchCaseBody labeled alternative in LGTemplateParser.body.
+     *
      * @param ctx The parse tree.
      * @returns The result of visiting the switch case body.
      */
@@ -367,7 +375,9 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
 
     /**
      * Visit a parse tree produced by LGTemplateParser.normalTemplateString.
+     *
      * @param ctx The parse tree.
+     * @returns The result of visiting NormalTemplateString.
      */
     visitNormalTemplateString(ctx: NormalTemplateStringContext): unknown[] {
         const prefixErrorMsg = TemplateExtensions.getPrefixErrorMessage(ctx);
@@ -401,10 +411,11 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
 
     /**
      * Constructs the scope for mapping the values of arguments to the parameters of the template.
-     * @param templateName The template name to evaluate.
+     *
+     * @param inputTemplateName The template name to evaluate.
      * @param args Arguments to map to the template parameters.
      * @param allTemplates All templates.
-     * @returns The current scope if the number of arguments is 0, otherwise, returns a CustomizedMemory
+     * @returns The current scope if the number of arguments is 0, otherwise, returns a CustomizedMemory.
      * with the mapping of the parameter name to the argument value added to the scope.
      */
     constructScope(inputTemplateName: string, args: unknown[], allTemplates: Template[]): MemoryInterface {
@@ -435,6 +446,7 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
 
     /**
      * Gets the default value returned by visitor methods.
+     *
      * @returns Empty string array.
      */
     protected defaultResult(): string[] {
@@ -457,7 +469,7 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
             return true; // no expression means it's else
         }
 
-        if (this.evalExpressionInCondition(expression, condition.text, `Condition '` + expression.text + `':`)) {
+        if (this.evalExpressionInCondition(expression, condition.text, "Condition '" + expression.text + "':")) {
             return true;
         }
 

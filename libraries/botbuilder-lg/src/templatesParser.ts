@@ -66,7 +66,8 @@ export class TemplatesParser {
     static readonly importRegex: RegExp = new RegExp(/\[([^\]]*)\]\(([^)]*)\)([\w\s]*)/);
 
     /**
-     * parse a file and return LG file.
+     * Parse a file and return LG file.
+     *
      * @param filePath LG absolute file path..
      * @param importResolver Resolver to resolve LG import id to template text.
      * @param expressionParser Expression parser for evaluating expressions.
@@ -85,6 +86,7 @@ export class TemplatesParser {
 
     /**
      * Parser to turn lg content into a Templates.
+     *
      * @deprecated This method will soon be deprecated. Use ParseResource instead.
      * @param content Text content contains lg templates.
      * @param id Id is the identifier of content. If importResolver is undefined, id must be a full path string.
@@ -104,10 +106,10 @@ export class TemplatesParser {
 
     /**
      * Parser to turn lg content into a Templates.
+     *
      * @param resource LG resource.
      * @param importResolver Resolver to resolve LG import id to template text.
      * @param expressionParser Expression parser for evaluating expressions.
-     * @param cachedTemplates Give the file path and templates to avoid parsing and to improve performance.
      * @returns Entity.
      */
     static parseResource(
@@ -120,12 +122,14 @@ export class TemplatesParser {
 
     /**
      * Parser to turn lg content into a Templates based on the original Templates.
+     *
      * @param content Text content contains lg templates.
-     * @param originalTemplates Original templates
+     * @param originalTemplates Original templates.
+     * @returns Template containing lg content.
      */
     static parseTextWithRef(content: string, originalTemplates: Templates): Templates {
         if (!originalTemplates) {
-            throw Error(`templates is empty`);
+            throw Error('templates is empty');
         }
 
         const id = TemplatesParser.inlineContentId;
@@ -158,8 +162,10 @@ export class TemplatesParser {
     }
     /**
      * Default import resolver, using relative/absolute file path to access the file content.
+     *
      * @param resource Original Resource.
      * @param resourceId Import path.
+     * @returns Accessed lg resource.
      */
     static defaultFileResolver(resource: LGResource, resourceId: string): LGResource {
         // If the import id contains "#", we would cut it to use the left path.
@@ -184,6 +190,7 @@ export class TemplatesParser {
 
     /**
      * Parser to turn lg content into a Templates.
+     *
      * @param resource LG resource.
      * @param importResolver Resolver to resolve LG import id to template text.
      * @param expressionParser Expression parser for evaluating expressions.
@@ -234,6 +241,7 @@ export class TemplatesParser {
 
     /**
      * Parse LG content and return the AST.
+     *
      * @param resource LG resource.
      * @returns The abstract syntax tree of lg file.
      */
@@ -356,6 +364,7 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<void> impleme
 
     /**
      * Creates a new instance of the [TemplatesTransformer](xref:botbuilder-lg.TemplatesTransformer) class.
+     *
      * @param templates Templates.
      */
     constructor(templates: Templates) {
@@ -365,7 +374,9 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<void> impleme
 
     /**
      * Transform the parse tree into templates.
+     *
      * @param parseTree Input abstract syntax tree.
+     * @returns Parse tree templates.
      */
     transform(parseTree: ParseTree): Templates {
         if (parseTree) {
@@ -393,6 +404,7 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<void> impleme
 
     /**
      * Visit a parse tree produced by `LGFileParser.errorDefinition`.
+     *
      * @param context The parse tree.
      */
     visitErrorDefinition(context: ErrorDefinitionContext): void {
@@ -409,6 +421,7 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<void> impleme
 
     /**
      * Visit a parse tree produced by `LGFileParser.importDefinition`.
+     *
      * @param context The parse tree.
      */
     visitImportDefinition(context: ImportDefinitionContext): void {
@@ -444,6 +457,7 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<void> impleme
 
     /**
      * Visit a parse tree produced by `LGFileParser.optionDefinition`.
+     *
      * @param context The parse tree.
      */
     visitOptionDefinition(context: OptionDefinitionContext): void {
@@ -463,6 +477,7 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<void> impleme
 
     /**
      * Visit a parse tree produced by `LGFileParser.templateDefinition`.
+     *
      * @param context The parse tree.
      */
     visitTemplateDefinition(context: TemplateDefinitionContext): void {

@@ -46,7 +46,8 @@ export class Templates implements Iterable<Template> {
     /**
      * Indicates whether fromFile is allowed in LG templates.
      */
-    static enableFromFile: boolean = false;
+    static enableFromFile = false;
+
     private readonly newLineRegex = /(\r?\n)/g;
     private readonly newLine: string = '\r\n';
     private readonly namespaceKey = '@namespace';
@@ -108,6 +109,7 @@ export class Templates implements Iterable<Template> {
 
     /**
      * Creates a new instance of the [Templates](xref:botbuilder-lg.Templates) class.
+     *
      * @param items Optional. List of [Template](xref:botbuilder-lg.Template) instances.
      * @param imports Optional. List of [TemplateImport](xref:botbuilder-lg.TemplateImport) instances.
      * @param diagnostics Optional. List of [Diagnostic](xref:botbuilder-lg.Diagnostic) instances.
@@ -148,7 +150,9 @@ export class Templates implements Iterable<Template> {
     }
 
     /**
-     * Returns a new iterator for the template collection.
+     * Iterates over values in the template collection.
+     *
+     * @returns A new iterator for the template collection.
      */
     [Symbol.iterator](): Iterator<Template> {
         let index = 0;
@@ -164,7 +168,9 @@ export class Templates implements Iterable<Template> {
     }
 
     /**
-     * Returns a reference to the internal list of collection templates.
+     * Gets the collection of templates.
+     *
+     * @returns A reference to the internal list of collection templates.
      */
     toArray(): Template[] {
         return this.items;
@@ -172,6 +178,7 @@ export class Templates implements Iterable<Template> {
 
     /**
      * Appends 1 or more templates to the collection.
+     *
      * @param args List of templates to add.
      */
     push(...args: Template[]): void {
@@ -179,21 +186,27 @@ export class Templates implements Iterable<Template> {
     }
 
     /**
-     * A value indicating whether the options when evaluation LG templates.
+     * Gets the evluation options for the current LG file.
+     *
+     *  @returns A value indicating whether the options when evaluating LG templates.
      */
     get lgOptions(): EvaluationOptions {
         return new EvaluationOptions(this.options);
     }
 
     /**
-     * A string value represents the namespace to register for current LG file.
+     * Gets the namespace to register for the current LG file.
+     *
+     *  @returns A string value representing the namespace to register for the current LG file.
      */
     get namespace(): string {
         return this.extractNamespace(this.options);
     }
 
     /**
-     * All templates from current lg file and reference lg files.
+     * Gets all templates from current lg file and reference lg files.
+     *
+     * @returns All templates from current lg file and reference lg files.
      */
     get allTemplates(): Template[] {
         let result = this.items;
@@ -202,7 +215,9 @@ export class Templates implements Iterable<Template> {
     }
 
     /**
-     * All diagnostics from current lg file and reference lg files.
+     * Gets all diagnostics from current lg file and reference lg files.
+     *
+     * @returns All diagnostics from current lg file and reference lg files.
      */
     get allDiagnostics(): Diagnostic[] {
         let result = this.diagnostics;
@@ -211,7 +226,8 @@ export class Templates implements Iterable<Template> {
     }
 
     /**
-     * parse a file and return LG file.
+     * Parse a file and return LG file.
+     *
      * @param filePath LG absolute file path..
      * @param importResolver Resolver to resolve LG import id to template text.
      * @param expressionParser Expression parser for evaluating expressions.
@@ -227,6 +243,7 @@ export class Templates implements Iterable<Template> {
 
     /**
      * Parser to turn lg content into a Templates.
+     *
      * @deprecated This method will soon be deprecated. Use ParseResource instead.
      * @param content Text content contains lg templates.
      * @param id Id is the identifier of content. If importResolver is undefined, id must be a full path string.
@@ -245,7 +262,8 @@ export class Templates implements Iterable<Template> {
 
     /**
      * Parser to turn lg content into a Templates.
-     * @param aresource LG resource.
+     *
+     * @param resource LG resource.
      * @param importResolver Resolver to resolve LG import id to template text.
      * @param expressionParser Expression parser for evaluating expressions.
      * @returns Entity.
@@ -260,8 +278,10 @@ export class Templates implements Iterable<Template> {
 
     /**
      * Evaluate a template with given name and scope.
+     *
      * @param templateName Template name to be evaluated.
      * @param scope The state visible in the evaluation.
+     * @param opt EvaluationOptions in evaluating a template.
      * @returns Evaluate result.
      */
     evaluate(templateName: string, scope?: object, opt: EvaluationOptions = undefined): any {
@@ -280,8 +300,10 @@ export class Templates implements Iterable<Template> {
     /**
      * Expand a template with given name and scope.
      * Return all possible responses instead of random one.
+     *
      * @param templateName Template name to be evaluated.
      * @param scope The state visible in the evaluation.
+     * @param opt EvaluationOptions in expanding a template.
      * @returns Expand result.
      */
     expandTemplate(templateName: string, scope?: object, opt: EvaluationOptions = undefined): any[] {
@@ -294,7 +316,9 @@ export class Templates implements Iterable<Template> {
 
     /**
      * Analyze a template to get the static analyzer results including variables and template references.
+     *
      * @param templateName Template name to be evaluated.
+     * @param analyzerOptions Options for analyzing template.
      * @returns Analyzer result.
      */
     analyzeTemplate(templateName: string, analyzerOptions?: AnalyzerOptions): AnalyzerResult {
@@ -306,8 +330,11 @@ export class Templates implements Iterable<Template> {
 
     /**
      * Use to evaluate an inline template str.
+     *
      * @param inlineStr Inline string which will be evaluated.
      * @param scope Scope object or JToken.
+     * @param opt EvaluationOptions in evaluating a template.
+     * @returns Evaluated result object.
      */
     evaluateText(inlineStr: string, scope?: object, opt: EvaluationOptions = undefined): any {
         if (inlineStr === undefined) {
@@ -335,6 +362,7 @@ export class Templates implements Iterable<Template> {
 
     /**
      * Update a template and return LG file.
+     *
      * @param templateName Orignial template name.
      * @param newTemplateName New template name.
      * @param parameters New params.
@@ -390,6 +418,7 @@ export class Templates implements Iterable<Template> {
 
     /**
      * Add a new template and return LG file.
+     *
      * @param templateName New template name.
      * @param parameters New params.
      * @param templateBody New  template body.
@@ -442,6 +471,7 @@ export class Templates implements Iterable<Template> {
 
     /**
      * Delete an exist template.
+     *
      * @param templateName Which template should delete.
      * @returns Return the new lg file.
      */
@@ -464,6 +494,7 @@ export class Templates implements Iterable<Template> {
 
     /**
      * Returns a string representation of a [Templates](xref:botbuilder-lg.Templates) content.
+     *
      * @returns A string representation of a [Templates](xref:botbuilder-lg.Templates) content.
      */
     toString(): string {

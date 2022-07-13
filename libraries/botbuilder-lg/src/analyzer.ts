@@ -16,7 +16,7 @@ import { LGTemplateParserVisitor } from './generated/LGTemplateParserVisitor';
 import { Template } from './template';
 import { TemplateExtensions } from './templateExtensions';
 import { Templates } from './templates';
-import { keyBy } from 'lodash';
+import keyBy = require('lodash/keyBy');
 
 import {
     IfConditionRuleContext,
@@ -68,6 +68,7 @@ export class Analyzer
 
     /**
      * Analyze a template to get the static analyzer results.
+     *
      * @param templateName Template name.
      * @returns Analyze result including variables and template references.
      */
@@ -108,6 +109,7 @@ export class Analyzer
 
     /**
      * Visit a parse tree produced by the normalBody labeled alternative in LGTemplateParser.body.
+     *
      * @param ctx The parse tree.
      * @returns The [AnalyzerResult](xref:botbuilder-lg.AnalyzerResult) instance.
      */
@@ -117,6 +119,7 @@ export class Analyzer
 
     /**
      * Visit a parse tree produced by LGTemplateParser.normalTemplateBody.
+     *
      * @param ctx The parse tree.
      * @returns The [AnalyzerResult](xref:botbuilder-lg.AnalyzerResult) instance.
      */
@@ -131,6 +134,7 @@ export class Analyzer
 
     /**
      * Visit a parse tree produced by LGTemplateParser.structuredTemplateBody.
+     *
      * @param ctx The parse tree.
      * @returns The [AnalyzerResult](xref:botbuilder-lg.AnalyzerResult) instance.
      */
@@ -152,6 +156,7 @@ export class Analyzer
 
     /**
      * Visit a parse tree produced by LGTemplateParser.structuredValue.
+     *
      * @param ctx The parse tree.
      * @returns The [AnalyzerResult](xref:botbuilder-lg.AnalyzerResult) instance.
      */
@@ -175,6 +180,7 @@ export class Analyzer
 
     /**
      * Visit a parse tree produced by the ifElseBody labeled alternative in LGTemplateParser.body.
+     *
      * @param ctx The parse tree.
      * @returns The [AnalyzerResult](xref:botbuilder-lg.AnalyzerResult) instance.
      */
@@ -197,6 +203,7 @@ export class Analyzer
 
     /**
      * Visit a parse tree produced by the switchCaseBody labeled alternative in LGTemplateParser.body.
+     *
      * @param ctx The parse tree.
      * @returns The [AnalyzerResult](xref:botbuilder-lg.AnalyzerResult) instance.
      */
@@ -218,6 +225,7 @@ export class Analyzer
 
     /**
      * Visit a parse tree produced by LGTemplateParser.normalTemplateString.
+     *
      * @param ctx The parse tree.
      * @returns The [AnalyzerResult](xref:botbuilder-lg.AnalyzerResult) instance.
      */
@@ -233,7 +241,7 @@ export class Analyzer
 
     /**
      * Gets the default value returned by visitor methods.
-     * @returns An instance of the AnalyzerResult class.
+     *
      * @returns The [AnalyzerResult](xref:botbuilder-lg.AnalyzerResult) instance.
      */
     protected defaultResult(): AnalyzerResult {
