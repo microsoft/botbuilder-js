@@ -9,6 +9,7 @@ import { ConnectedService } from './connectedService';
 
 /**
  * Defines an endpoint service connection.
+ *
  * @deprecated See https://aka.ms/bot-file-basics for more information.
  */
 export class EndpointService extends ConnectedService implements IEndpointService {
@@ -36,6 +37,7 @@ export class EndpointService extends ConnectedService implements IEndpointServic
 
     /**
      * Creates a new EndpointService instance.
+     *
      * @param source JSON based service definition.
      */
     constructor(source: IEndpointService) {
@@ -44,6 +46,7 @@ export class EndpointService extends ConnectedService implements IEndpointServic
 
     /**
      * Encrypt properties on this service.
+     *
      * @param secret Secret to use to encrypt.
      * @param encryptString Function called to encrypt an individual value.
      */
@@ -55,6 +58,7 @@ export class EndpointService extends ConnectedService implements IEndpointServic
 
     /**
      * Decrypt properties on this service.
+     *
      * @param secret Secret to use to decrypt.
      * @param decryptString Function called to decrypt an individual value.
      */

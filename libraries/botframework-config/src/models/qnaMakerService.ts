@@ -10,6 +10,7 @@ import { ConnectedService } from './connectedService';
 
 /**
  * Defines a QnA Maker service connection.
+ *
  * @deprecated See https://aka.ms/bot-file-basics for more information.
  */
 export class QnaMakerService extends ConnectedService implements IQnAService {
@@ -35,6 +36,7 @@ export class QnaMakerService extends ConnectedService implements IQnAService {
 
     /**
      * Creates a new QnaMakerService instance.
+     *
      * @param source (Optional) JSON based service definition.
      */
     constructor(source: IQnAService = {} as IQnAService) {
@@ -51,6 +53,7 @@ export class QnaMakerService extends ConnectedService implements IQnAService {
 
     /**
      * Encrypt properties on this service.
+     *
      * @param secret Secret to use to encrypt.
      * @param encryptString Function called to encrypt an individual value.
      */
@@ -66,6 +69,7 @@ export class QnaMakerService extends ConnectedService implements IQnAService {
 
     /**
      * Decrypt properties on this service.
+     *
      * @param secret Secret to use to decrypt.
      * @param decryptString Function called to decrypt an individual value.
      */

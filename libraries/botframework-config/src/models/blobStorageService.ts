@@ -9,6 +9,7 @@ import { AzureService } from './azureService';
 
 /**
  * Defines an blob storage service connection.
+ *
  * @deprecated See https://aka.ms/bot-file-basics for more information.
  */
 export class BlobStorageService extends AzureService implements IBlobStorageService {
@@ -24,6 +25,7 @@ export class BlobStorageService extends AzureService implements IBlobStorageServ
 
     /**
      * Creates a new BlobStorageService instance.
+     *
      * @param source (Optional) JSON based service definition.
      */
     constructor(source: IBlobStorageService = {} as IBlobStorageService) {
@@ -32,6 +34,7 @@ export class BlobStorageService extends AzureService implements IBlobStorageServ
 
     /**
      * Encrypt properties on this service.
+     *
      * @param secret Secret to use to encrypt.
      * @param encryptString Function called to encrypt an individual value.
      */
@@ -43,6 +46,7 @@ export class BlobStorageService extends AzureService implements IBlobStorageServ
 
     /**
      * Decrypt properties on this service.
+     *
      * @param secret Secret to use to decrypt.
      * @param decryptString Function called to decrypt an individual value.
      */
