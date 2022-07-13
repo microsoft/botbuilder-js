@@ -7,11 +7,11 @@ describe('MiscTests', function () {
         resourceExplorer = makeResourceExplorer('MiscTests');
     });
 
-    it('IfCondition_EndDialog', async () => {
+    it('IfCondition_EndDialog', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'IfCondition_EndDialog');
     });
 
-    it('Rule_Reprompt', async () => {
+    it('Rule_Reprompt', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Rule_Reprompt');
     });
 });

@@ -44,7 +44,7 @@ import { SettingMock, SettingMocksConverter } from './settingMocks/settingMock';
 import { TestTelemetryClient } from './testTelemetryClient';
 
 class DialogConverter implements Converter<string, Dialog> {
-    constructor(private readonly _resourceExplorer: ResourceExplorer) { }
+    constructor(private readonly _resourceExplorer: ResourceExplorer) {}
 
     convert(value: string | Dialog): Dialog {
         if (value instanceof Dialog) {
@@ -132,6 +132,10 @@ export class TestScript extends Configurable implements TestScriptConfiguration 
      */
     enableTrace = false;
 
+    /**
+     * @param property The key of the conditional selector configuration.
+     * @returns The converter for the selector configuration.
+     */
     getConverter(property: keyof TestScriptConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'dialog':

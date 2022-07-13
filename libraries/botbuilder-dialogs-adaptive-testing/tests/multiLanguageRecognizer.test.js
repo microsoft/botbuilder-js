@@ -29,54 +29,54 @@ describe('MultiLanguageRecognizerTests', function () {
         resourceExplorer = makeResourceExplorer('MultiLanguageRecognizerTests');
     });
 
-    it('DefaultFallback', async () => {
+    it('DefaultFallback', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'MultiLanguageRecognizerTest_DefaultFallback');
     });
 
-    it('EnFallback', async () => {
+    it('EnFallback', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'MultiLanguageRecognizerTest_EnFallback');
     });
 
-    it('EnGbFallback', async () => {
+    it('EnGbFallback', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'MultiLanguageRecognizerTest_EnGbFallback');
     });
 
-    it('EnUsFallback', async () => {
+    it('EnUsFallback', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'MultiLanguageRecognizerTest_EnUsFallback');
     });
 
-    it('EnUsFallback_AcitivtyLocaleCasing', async () => {
+    it('EnUsFallback_AcitivtyLocaleCasing', async function () {
         await TestUtils.runTestScript(
             resourceExplorer,
             'MultiLanguageRecognizerTest_EnUsFallback_ActivityLocaleCasing'
         );
     });
 
-    it('LanguagePolicy', async () => {
+    it('LanguagePolicy', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'MultiLanguageRecognizerTest_LanguagePolicy');
     });
 
-    it('Locale case insensitivity', async () => {
+    it('Locale case insensitivity', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'MultiLanguageRecognizerTest_LocaleCaseInsensitivity');
     });
 
-    it('Recognizer case insensitivity', async () => {
+    it('Recognizer case insensitivity', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'MultiLanguageRecognizerTest_RecognizerCaseInsensitivity');
     });
 
-    describe('Telemetry', () => {
+    describe('Telemetry', function () {
         const recognizer = createRecognizer();
         let spy;
 
-        beforeEach(() => {
+        beforeEach(function () {
             spy = spyOnTelemetryClientTrackEvent(recognizer);
         });
 
-        afterEach(() => {
+        afterEach(function () {
             spy.restore();
         });
 
-        it('Merge - should log PII when logPersonalInformation is true', async () => {
+        it('Merge - should log PII when logPersonalInformation is true', async function () {
             recognizer.logPersonalInformation = true;
 
             await recognizeIntentAndValidateTelemetry({
@@ -87,7 +87,7 @@ describe('MultiLanguageRecognizerTests', function () {
             });
         });
 
-        it('Merge - should not log PII when logPersonalInformation is false', async () => {
+        it('Merge - should not log PII when logPersonalInformation is false', async function () {
             recognizer.logPersonalInformation = false;
 
             await recognizeIntentAndValidateTelemetry({
@@ -98,7 +98,7 @@ describe('MultiLanguageRecognizerTests', function () {
             });
         });
 
-        it('should refrain from logging PII by default', async () => {
+        it('should refrain from logging PII by default', async function () {
             const recognizerWithDefaultLogPii = createRecognizer();
             const trackEventSpy = spyOnTelemetryClientTrackEvent(recognizerWithDefaultLogPii);
 

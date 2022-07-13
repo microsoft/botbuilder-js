@@ -39,6 +39,7 @@ export class AssertReplyActivity extends TestAction implements AssertReplyActivi
 
     /**
      * Gets the text to assert for an activity.
+     *
      * @returns String.
      */
     getConditionDescription(): string {
@@ -47,6 +48,7 @@ export class AssertReplyActivity extends TestAction implements AssertReplyActivi
 
     /**
      * Validates the reply of an activity.
+     *
      * @param activity The activity to verify.
      */
     validateReply(activity: Activity): void {
@@ -64,17 +66,19 @@ export class AssertReplyActivity extends TestAction implements AssertReplyActivi
 
     /**
      * Execute the test.
+     *
      * @param testAdapter Adapter to execute against.
-     * @param callback Logic for the bot to use.
-     * @param inspector Inspector for dialog context.
+     * @param _callback Logic for the bot to use.
+     * @param _inspector Inspector for dialog context.
      * @returns A Promise that represents the work queued to execute.
      */
     async execute(
         testAdapter: TestAdapter,
-        callback: (context: TurnContext) => Promise<any>,
-        inspector?: Inspector
+        _callback: (context: TurnContext) => Promise<any>,
+        _inspector?: Inspector
     ): Promise<any> {
         const start = new Date();
+        /* eslint-disable no-constant-condition */
         while (true) {
             const current = new Date();
 

@@ -112,31 +112,31 @@ describe('ActionTests', function () {
         resourceExplorer = makeResourceExplorer('ActionTests', LanguageGenerationBotComponent);
     });
 
-    it('AttachmentInput', async () => {
+    it('AttachmentInput', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_AttachmentInput');
     });
 
-    it('BeginDialog', async () => {
+    it('BeginDialog', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_BeginDialog');
     });
 
-    it('BeginDialogWithExpr', async () => {
+    it('BeginDialogWithExpr', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_BeginDialogWithExpr');
     });
 
-    it('BeginDialogWithExpr2', async () => {
+    it('BeginDialogWithExpr2', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_BeginDialogWithExpr2');
     });
 
-    it('BeginDialogWithExpr3', async () => {
+    it('BeginDialogWithExpr3', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_BeginDialogWithExpr3');
     });
 
-    it('BeginDialogWithActivity', async () => {
+    it('BeginDialogWithActivity', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_BeginDialogWithActivity');
     });
 
-    it('BeginSkill', async () => {
+    it('BeginSkill', async function () {
         await TestUtils.runTestScript(
             resourceExplorer,
             'Action_BeginSkill',
@@ -147,7 +147,7 @@ describe('ActionTests', function () {
         );
     });
 
-    it('BeginSkillEndDialog', async () => {
+    it('BeginSkillEndDialog', async function () {
         await TestUtils.runTestScript(
             resourceExplorer,
             'Action_BeginSkillEndDialog',
@@ -158,163 +158,163 @@ describe('ActionTests', function () {
         );
     });
 
-    it('CancelAllDialogs', async () => {
+    it('CancelAllDialogs', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_CancelAllDialogs');
     });
 
-    it('CancelAllDialogs_DoubleCancel', async () => {
+    it('CancelAllDialogs_DoubleCancel', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_CancelAllDialogs_DoubleCancel');
     });
 
-    it('CancelDialog', async () => {
+    it('CancelDialog', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_CancelDialog');
     });
 
-    it('CancelDialogs_Processed', async () => {
+    it('CancelDialogs_Processed', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_CancelDialog_Processed');
     });
 
-    it('ChoiceInput', async () => {
+    it('ChoiceInput', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_ChoiceInput');
     });
 
-    it('ChoiceInputWithLocale', async () => {
+    it('ChoiceInputWithLocale', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_ChoiceInput_WithLocale');
     });
 
-    it('ChoicesInMemory', async () => {
+    it('ChoicesInMemory', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_ChoicesInMemory');
     });
 
-    it('ChoiceInputSimpleTemplate_en', async () => {
+    it('ChoiceInputSimpleTemplate_en', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_ChoiceInput_SimpleTemplate_en');
     });
 
-    it('ChoiceInputSimpleTemplate_es', async () => {
+    it('ChoiceInputSimpleTemplate_es', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_ChoiceInput_SimpleTemplate_es');
     });
 
-    it('ChoiceInputComplexTemplate_en', async () => {
+    it('ChoiceInputComplexTemplate_en', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_ChoiceInput_ComplexTemplate_en');
     });
 
-    it('ChoiceInputComplexTemplate_es', async () => {
+    it('ChoiceInputComplexTemplate_es', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_ChoiceInput_ComplexTemplate_es');
     });
 
-    it('ChoiceStringInMemory', async () => {
+    it('ChoiceStringInMemory', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_ChoiceStringInMemory');
     });
 
-    it('ConfirmInput', async () => {
+    it('ConfirmInput', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_ConfirmInput');
     });
 
-    it('DeleteActivity', async () => {
+    it('DeleteActivity', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_DeleteActivity');
     });
 
-    it('DatetimeInput', async () => {
+    it('DatetimeInput', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_DatetimeInput');
     });
 
-    it('ConfirmInputSimpleTemplate_en', async () => {
+    it('ConfirmInputSimpleTemplate_en', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_ConfirmInput_SimpleTemplate_en');
     });
 
-    it('ConfirmInputComplexTemplate_en', async () => {
+    it('ConfirmInputComplexTemplate_en', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_ConfirmInput_ComplexTemplate_en');
     });
 
-    it('ConfirmInputSimpleTemplate_es', async () => {
+    it('ConfirmInputSimpleTemplate_es', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_ConfirmInput_SimpleTemplate_es');
     });
 
-    it('ConfirmInputComplexTemplate_es', async () => {
+    it('ConfirmInputComplexTemplate_es', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_ConfirmInput_ComplexTemplate_es');
     });
 
-    it('DeleteProperties', async () => {
+    it('DeleteProperties', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_DeleteProperties');
     });
 
-    it('DeleteProperty', async () => {
+    it('DeleteProperty', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_DeleteProperty');
     });
 
-    it('DoActions', async () => {
+    it('DoActions', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_DoActions');
     });
 
-    it('DynamicBeginDialog', async () => {
+    it('DynamicBeginDialog', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_DynamicBeginDialog');
     });
 
-    it('EditActionAppendActions', async () => {
+    it('EditActionAppendActions', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_EditActionAppendActions');
     });
 
-    it('EditActionInsertActions', async () => {
+    it('EditActionInsertActions', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_EditActionInsertActions');
     });
 
-    it('EditActionReplaceSequence', async () => {
+    it('EditActionReplaceSequence', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_EditActionReplaceSequence');
     });
 
-    it('EmitEvent', async () => {
+    it('EmitEvent', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_EmitEvent');
     });
 
-    it('EndDialog', async () => {
+    it('EndDialog', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_EndDialog');
     });
 
-    it('Foreach_Nested', async () => {
+    it('Foreach_Nested', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_Foreach_Nested');
     });
 
-    it('Foreach', async () => {
+    it('Foreach', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_Foreach');
     });
 
-    it('Foreach_Empty', async () => {
+    it('Foreach_Empty', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_Foreach_Empty');
     });
 
-    it('Foreach_Object', async () => {
+    it('Foreach_Object', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_Foreach_Object');
     });
 
-    it('ForeachPage_Empty', async () => {
+    it('ForeachPage_Empty', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_ForeachPage_Empty');
     });
 
-    it('ForeachPage_Nested', async () => {
+    it('ForeachPage_Nested', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_ForeachPage_Nested');
     });
 
-    it('ForeachPage_Partial', async () => {
+    it('ForeachPage_Partial', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_ForeachPage_Partial');
     });
 
-    it('ForeachPage', async () => {
+    it('ForeachPage', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_ForeachPage');
     });
 
-    it('GetActivityMembers', async () => {
+    it('GetActivityMembers', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_GetActivityMembers');
     });
 
-    it('GetConversationMembers', async () => {
+    it('GetConversationMembers', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_GetConversationMembers');
     });
 
-    it('GotoAction', async () => {
+    it('GotoAction', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_GotoAction');
     });
 
-    it('HttpRequest', async () => {
+    it('HttpRequest', async function () {
         nock('http://foo.com').post('/', 'Joe is 52').reply(200, 'string');
         nock('http://foo.com').post('/', { text: 'Joe is 52', age: 52 }).reply(200, 'object');
         nock('http://foo.com')
@@ -332,39 +332,39 @@ describe('ActionTests', function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_HttpRequest');
     });
 
-    it('IfCondition', async () => {
+    it('IfCondition', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_IfCondition');
     });
 
-    it('InputDialog_ActivityProcessed', async () => {
+    it('InputDialog_ActivityProcessed', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'InputDialog_ActivityProcessed');
     });
 
-    it('NumerInput', async () => {
+    it('NumerInput', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_NumberInput');
     });
 
-    it('NumerInputWithDefaultValue', async () => {
+    it('NumerInputWithDefaultValue', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_NumberInputWithDefaultValue');
     });
 
-    it('NumberInputWithValueExpression', async () => {
+    it('NumberInputWithValueExpression', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_NumberInputWithValueExpression');
     });
 
-    it('RepeatDialog', async () => {
+    it('RepeatDialog', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_RepeatDialog');
     });
 
-    it('RepeatDialogLoop', async () => {
+    it('RepeatDialogLoop', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_RepeatDialogLoop');
     });
 
-    it('ReplaceDialog', async () => {
+    it('ReplaceDialog', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_ReplaceDialog');
     });
 
-    it('ReplaceDialogDifferentLevel', async () => {
+    it('ReplaceDialogDifferentLevel', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_ReplaceDialogDifferentLevel');
     });
 
@@ -374,83 +374,83 @@ describe('ActionTests', function () {
     });
     */
 
-    it('ReplaceDialogRoot', async () => {
+    it('ReplaceDialogRoot', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_ReplaceDialogRoot');
     });
 
-    it('SendActivity', async () => {
+    it('SendActivity', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_SendActivity');
     });
 
-    it('SendActivityWithLGAlias', async () => {
+    it('SendActivityWithLGAlias', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_SendActivity_LGAlias');
     });
 
-    it('SetProperties', async () => {
+    it('SetProperties', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_SetProperties');
     });
 
-    it('SetProperty', async () => {
+    it('SetProperty', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_SetProperty');
     });
 
-    it('SignOutUser', async () => {
+    it('SignOutUser', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_SignOutUser');
     });
 
-    it('Switch_Bool', async () => {
+    it('Switch_Bool', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_Switch_Bool');
     });
 
-    it('Switch_Default', async () => {
+    it('Switch_Default', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_Switch_Default');
     });
 
-    it('Switch_Number', async () => {
+    it('Switch_Number', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_Switch_Number');
     });
 
-    it('Switch', async () => {
+    it('Switch', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_Switch');
     });
 
-    it('TextInput', async () => {
+    it('TextInput', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_TextInput');
     });
 
-    it('TextInputWithEmptyPrompt', async () => {
+    it('TextInputWithEmptyPrompt', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_TextInput_WithEmptyPrompt');
     });
 
-    it('TextInputWithInvalidPrompt', async () => {
+    it('TextInputWithInvalidPrompt', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_TextInputWithInvalidPrompt');
     });
 
-    it('TextInputWithValueExpression', async () => {
+    it('TextInputWithValueExpression', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_TextInputWithValueExpression');
     });
 
-    it('TextInputWithInvalidResponse', async () => {
+    it('TextInputWithInvalidResponse', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_TextInputWithInvalidResponse');
     });
 
-    it('TextInputWithNonStringInput', async () => {
+    it('TextInputWithNonStringInput', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_TextInputWithNonStringInput');
     });
 
-    it('TraceActivity', async () => {
+    it('TraceActivity', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_TraceActivity');
     });
 
-    it('ThrowException', async () => {
+    it('ThrowException', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_ThrowException');
     });
 
-    it('UpdateActivity', async () => {
+    it('UpdateActivity', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_UpdateActivity');
     });
 
-    it('WaitForInput', async () => {
+    it('WaitForInput', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_WaitForInput');
     });
 });

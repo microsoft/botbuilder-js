@@ -28,7 +28,14 @@ import { SettingStringMock } from './settingMocks/settingStringMock';
 import { TestScript } from './testScript';
 import { UserTokenBasicMock } from './userTokenMocks';
 
+/**
+ * Adaptive Testing of BotComponent.
+ */
 export class AdaptiveTestBotComponent extends BotComponent {
+    /**
+     * @param services Services collection to mimic dependency injection.
+     * @param _configuration Configuration for the bot component.
+     */
     configureServices(services: ServiceCollection, _configuration: Configuration): void {
         services.composeFactory<ComponentDeclarativeTypes[]>('declarativeTypes', (declarativeTypes) =>
             declarativeTypes.concat({

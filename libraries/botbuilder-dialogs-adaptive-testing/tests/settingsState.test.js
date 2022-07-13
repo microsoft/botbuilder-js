@@ -11,11 +11,11 @@ describe('SettingsStateTests', function () {
     process.env['MicrosoftAppPassword'] = 'MICROSOFT_APP_PASSWORD';
     process.env['ApplicationInsights:InstrumentationKey'] = '00000000-0000-0000-0000-000000000000';
 
-    it('SettingsTest', async () => {
+    it('SettingsTest', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'SettingsStateTests_SettingsTest');
     });
 
-    it('TestTurnStateAcrossBoundaries', async () => {
+    it('TestTurnStateAcrossBoundaries', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'SettingsStateTests_TestTurnStateAcrossBoundaries');
     });
 });
