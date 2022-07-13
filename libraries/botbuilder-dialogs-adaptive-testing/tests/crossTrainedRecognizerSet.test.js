@@ -59,31 +59,31 @@ describe('CrossTrainedRecognizerSetTests', function () {
         resourceExplorer = makeResourceExplorer('CrossTrainedRecognizerSetTests');
     });
 
-    it('AllNone', async () => {
+    it('AllNone', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'CrossTrainedRecognizerSetTests_AllNone');
     });
 
-    it('CircleDefer', async () => {
+    it('CircleDefer', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'CrossTrainedRecognizerSetTests_CircleDefer');
     });
 
-    it('DoubleDefer', async () => {
+    it('DoubleDefer', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'CrossTrainedRecognizerSetTests_DoubleDefer');
     });
 
-    it('DoubleIntent', async () => {
+    it('DoubleIntent', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'CrossTrainedRecognizerSetTests_DoubleIntent');
     });
 
-    it('Empty', async () => {
+    it('Empty', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'CrossTrainedRecognizerSetTests_Empty');
     });
 
-    it('NoneWithIntent', async () => {
+    it('NoneWithIntent', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'CrossTrainedRecognizerSetTests_NoneWithIntent');
     });
 
-    it('EntitiesWithNoneIntent', async () => {
+    it('EntitiesWithNoneIntent', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'CrossTrainedRecognizerSetTests_NoneIntentWithEntities');
     });
 
@@ -142,19 +142,19 @@ describe('CrossTrainedRecognizerSetTests', function () {
         strictEqual(results.candidates[1].id, 'y');
     });
 
-    describe('Telemetry', () => {
+    describe('Telemetry', function () {
         const recognizer = createRecognizer();
         let spy;
 
-        beforeEach(() => {
+        beforeEach(function () {
             spy = spyOnTelemetryClientTrackEvent(recognizer);
         });
 
-        afterEach(() => {
+        afterEach(function () {
             spy.restore();
         });
 
-        it('should log PII when logPersonalInformation is true', async () => {
+        it('should log PII when logPersonalInformation is true', async function () {
             recognizer.logPersonalInformation = true;
 
             await recognizeIntentAndValidateTelemetry({
@@ -172,7 +172,7 @@ describe('CrossTrainedRecognizerSetTests', function () {
             });
         });
 
-        it('should not log PII when logPersonalInformation is false', async () => {
+        it('should not log PII when logPersonalInformation is false', async function () {
             recognizer.logPersonalInformation = false;
 
             await recognizeIntentAndValidateTelemetry({
@@ -190,7 +190,7 @@ describe('CrossTrainedRecognizerSetTests', function () {
             });
         });
 
-        it('should refrain from logging PII by default', async () => {
+        it('should refrain from logging PII by default', async function () {
             const recognizerWithDefaultLogPii = createRecognizer();
             const trackEventSpy = spyOnTelemetryClientTrackEvent(recognizerWithDefaultLogPii);
 

@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-non-literal-fs-filename */
 /**
  * @module botbuilder-dialogs-adaptive-testing
  */
@@ -73,6 +74,13 @@ export class MockLuisRecognizer extends Recognizer {
         }
     }
 
+    /**
+     * @param dialogContext Dialog context.
+     * @param activity Activity to recognize.
+     * @param telemetryProperties Additional properties to be logged to telemetry with the LuisResult event.
+     * @param telemetryMetrics Additional metrics to be logged to telemetry with the LuisResult event.
+     * @returns Analysis of utterance.
+     */
     async recognize(
         dialogContext: DialogContext,
         activity: Activity,

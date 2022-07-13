@@ -45,6 +45,7 @@ export class DateTimePrompt extends Prompt<DateTimeResolution[]> {
 
     /**
      * Creates a new DateTimePrompt instance.
+     *
      * @param dialogId Unique ID of the dialog within its parent `DialogSet` or `ComponentDialog`.
      * @param validator (Optional) validator that will be called each time the user responds to the prompt.
      * @param defaultLocale (Optional) locale to use if `TurnContext.activity.locale` is not specified. Defaults to a value of `en-us`.
@@ -56,6 +57,7 @@ export class DateTimePrompt extends Prompt<DateTimeResolution[]> {
 
     /**
      * Prompts the user for input.
+     *
      * @param context [TurnContext](xref:botbuilder-core.TurnContext), context for the current
      * turn of conversation with the user.
      * @param state Contains state for the current instance of the prompt on the dialog stack.
@@ -80,17 +82,18 @@ export class DateTimePrompt extends Prompt<DateTimeResolution[]> {
 
     /**
      * Attempts to recognize the user's input.
+     *
      * @param context [TurnContext](xref:botbuilder-core.TurnContext), context for the current
      * turn of conversation with the user.
-     * @param state Contains state for the current instance of the prompt on the dialog stack.
-     * @param options A [PromptOptions](xref:botbuilder-dialogs.PromptOptions) object constructed
+     * @param _state Contains state for the current instance of the prompt on the dialog stack.
+     * @param _options A [PromptOptions](xref:botbuilder-dialogs.PromptOptions) object constructed
      * from the options initially provided in the call to Prompt.
      * @returns A `Promise` representing the asynchronous operation.
      */
     protected async onRecognize(
         context: TurnContext,
-        state: any,
-        options: PromptOptions
+        _state: any,
+        _options: PromptOptions
     ): Promise<PromptRecognizerResult<DateTimeResolution[]>> {
         const result: PromptRecognizerResult<DateTimeResolution[]> = { succeeded: false };
         const activity: Activity = context.activity;

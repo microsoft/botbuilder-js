@@ -9,6 +9,7 @@
 export interface PathResolver {
     /**
      * Transform the path
+     *
      * @param path Path to inspect.
      * @returns Transformed path
      */

@@ -49,6 +49,9 @@ export type TokenizerFunction = (text: string, locale?: string) => Token[];
 /**
  * Simple tokenizer that breaks on spaces and punctuation.
  *
+ * @param text The input text.
+ * @param _locale Optional, identifies the locale of the input text.
+ * @returns A list of tokens.
  * @remarks
  * The only normalization done is to lowercase the tokens. Developers can wrap this tokenizer with
  * their own function to perform additional normalization like [stemming](https://github.com/words/stemmer).
@@ -58,11 +61,11 @@ export type TokenizerFunction = (text: string, locale?: string) => Token[];
  * const stemmer = require('stemmer');
  *
  * function customTokenizer(text, locale) {
- *     const tokens = defaultTokenizer(text, locale);
- *     tokens.forEach((t) => {
- *         t.normalized = stemmer(t.normalized);
- *     });
- *     return tokens;
+ *    const tokens = defaultTokenizer(text, locale);
+ *    tokens.forEach((t) => {
+ *        t.normalized = stemmer(t.normalized);
+ *    });
+ *    return tokens;
  * }
  *
  * const choices = ['red', 'green', 'blue'];
@@ -70,7 +73,7 @@ export type TokenizerFunction = (text: string, locale?: string) => Token[];
  * const results = recognizeChoices(utterance, choices, { tokenizer: customTokenizer });
  * ```
  */
-export function defaultTokenizer(text: string, locale?: string): Token[] {
+export function defaultTokenizer(text: string, _locale?: string): Token[] {
     const tokens: Token[] = [];
     let token: Token | undefined;
     function appendToken(end: number): void {

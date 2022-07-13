@@ -63,21 +63,21 @@ describe('findValues()', function () {
     this.timeout(5000);
 
     it('should find a simple value in an single word utterance.', function () {
-        const found = findValues(`red`, colorValues);
+        const found = findValues('red', colorValues);
         assert(found.length === 1, `Invalid token count of '${found.length}' returned.`);
         assertResult(found[0], 0, 2, 'red');
         assertValue(found[0], 'red', 0, 1.0);
     });
 
     it('should find a simple value in an utterance.', function () {
-        const found = findValues(`the red one please.`, colorValues);
+        const found = findValues('the red one please.', colorValues);
         assert(found.length === 1, `Invalid token count of '${found.length}' returned.`);
         assertResult(found[0], 4, 6, 'red');
         assertValue(found[0], 'red', 0, 1.0);
     });
 
     it('should find multiple values within an utterance.', function () {
-        const found = findValues(`the red and blue ones please.`, colorValues);
+        const found = findValues('the red and blue ones please.', colorValues);
         assert(found.length === 2, `Invalid token count of '${found.length}' returned.`);
         assertResult(found[0], 4, 6, 'red');
         assertValue(found[0], 'red', 0, 1.0);
@@ -85,7 +85,7 @@ describe('findValues()', function () {
     });
 
     it('should find multiple values that overlap.', function () {
-        const found = findValues(`the bread pudding and bread please.`, overlappingValues);
+        const found = findValues('the bread pudding and bread please.', overlappingValues);
         assert(found.length === 2, `Invalid token count of '${found.length}' returned.`);
         assertResult(found[0], 4, 16, 'bread pudding');
         assertValue(found[0], 'bread pudding', 1, 1.0);
@@ -93,7 +93,7 @@ describe('findValues()', function () {
     });
 
     it('should correctly disambiguate between very similar values.', function () {
-        const found = findValues(`option B`, similarValues, { allowPartialMatches: true });
+        const found = findValues('option B', similarValues, { allowPartialMatches: true });
         assert(found.length === 1, `Invalid token count of '${found.length}' returned.`);
         assertValue(found[0], 'option B', 1, 1.0);
     });
@@ -118,14 +118,14 @@ describe('findChoices()', function () {
     this.timeout(5000);
 
     it('should find a single choice in an utterance.', function () {
-        const found = findChoices(`the red one please.`, colorChoices);
+        const found = findChoices('the red one please.', colorChoices);
         assert(found.length === 1, `Invalid token count of '${found.length}' returned.`);
         assertResult(found[0], 4, 6, 'red');
         assertChoice(found[0], 'red', 0, 1.0, 'red');
     });
 
     it('should find multiple choices within an utterance.', function () {
-        const found = findChoices(`the red and blue ones please.`, colorChoices);
+        const found = findChoices('the red and blue ones please.', colorChoices);
         assert(found.length === 2, `Invalid token count of '${found.length}' returned.`);
         assertResult(found[0], 4, 6, 'red');
         assertChoice(found[0], 'red', 0, 1.0);
@@ -133,7 +133,7 @@ describe('findChoices()', function () {
     });
 
     it('should find multiple choices that overlap.', function () {
-        const found = findChoices(`the bread pudding and bread please.`, overlappingChoices);
+        const found = findChoices('the bread pudding and bread please.', overlappingChoices);
         assert(found.length === 2, `Invalid token count of '${found.length}' returned.`);
         assertResult(found[0], 4, 16, 'bread pudding');
         assertChoice(found[0], 'bread pudding', 1, 1.0);
@@ -149,59 +149,59 @@ describe('recognizeChoices()', function () {
     this.timeout(5000);
 
     it('should find a choice in an utterance by name.', function () {
-        const found = recognizeChoices(`the red one please.`, colorChoices);
+        const found = recognizeChoices('the red one please.', colorChoices);
         assert(found.length === 1, `Invalid token count of '${found.length}' returned.`);
         assertResult(found[0], 4, 6, 'red');
         assertChoice(found[0], 'red', 0, 1.0, 'red');
     });
 
     it('should find a choice in an utterance by ordinal position.', function () {
-        const found = recognizeChoices(`the first one please.`, colorChoices);
+        const found = recognizeChoices('the first one please.', colorChoices);
         assert(found.length === 1, `Invalid token count of '${found.length}' returned.`);
         assertResult(found[0], 4, 8, 'first');
         assertChoice(found[0], 'red', 0, 1.0);
     });
 
     it('should find multiple choices in an utterance by ordinal position.', function () {
-        const found = recognizeChoices(`the first and third one please.`, colorChoices);
+        const found = recognizeChoices('the first and third one please.', colorChoices);
         assert(found.length === 2, `Invalid token count of '${found.length}' returned.`);
         assertChoice(found[0], 'red', 0, 1.0);
         assertChoice(found[1], 'blue', 2, 1.0);
     });
 
     it('should find a choice in an utterance by numerical index (as digit.)', function () {
-        const found = recognizeChoices(`1`, colorChoices);
+        const found = recognizeChoices('1', colorChoices);
         assert(found.length === 1, `Invalid token count of '${found.length}' returned.`);
         assertResult(found[0], 0, 0, '1');
         assertChoice(found[0], 'red', 0, 1.0);
     });
 
     it('should find a choice in an utterance by numerical index (as text.)', function () {
-        const found = recognizeChoices(`one`, colorChoices);
+        const found = recognizeChoices('one', colorChoices);
         assert(found.length === 1, `Invalid token count of '${found.length}' returned.`);
         assertResult(found[0], 0, 2, 'one');
         assertChoice(found[0], 'red', 0, 1.0);
     });
 
     it('should find multiple choices in an utterance by numerical index.', function () {
-        const found = recognizeChoices(`option one and 3.`, colorChoices);
+        const found = recognizeChoices('option one and 3.', colorChoices);
         assert(found.length === 2, `Invalid token count of '${found.length}' returned.`);
         assertChoice(found[0], 'red', 0, 1.0);
         assertChoice(found[1], 'blue', 2, 1.0);
     });
 
     it('should not find a choice if recognizeOrdinals option disabled.', function () {
-        const found = recognizeChoices(`first`, colorChoices, { recognizeOrdinals: false });
+        const found = recognizeChoices('first', colorChoices, { recognizeOrdinals: false });
         assert(found.length === 0, `Invalid token count of '${found.length}' returned.`);
     });
 
     it('should not find a choice if recognizeNumbers option disabled.', function () {
-        const found = recognizeChoices(`1`, colorChoices, { recognizeNumbers: false });
+        const found = recognizeChoices('1', colorChoices, { recognizeNumbers: false });
         assert(found.length === 0, `Invalid token count of '${found.length}' returned.`);
     });
 
     it('should not find a choice if both recognizeOrdinals and recognizeNumbers options are disabled.', function () {
-        const found = recognizeChoices(`the first and third one please.`, colorChoices, {
+        const found = recognizeChoices('the first and third one please.', colorChoices, {
             recognizeOrdinals: false,
             recognizeNumbers: false,
         });

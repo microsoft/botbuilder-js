@@ -46,6 +46,10 @@ export class SetProperties extends TestAction {
      */
     assignments: PropertyAssignment[] = [];
 
+    /**
+     * @param property The key of the conditional selector configuration.
+     * @returns The converter for the selector configuration.
+     */
     getConverter(property: keyof SetPropertiesConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'assignments':
@@ -57,14 +61,15 @@ export class SetProperties extends TestAction {
 
     /**
      * Execute the test.
-     * @param testAdapter Adapter to execute against.
-     * @param callback Logic for the bot to use.
+     *
+     * @param _adapter Adapter to execute against.
+     * @param _callback Logic for the bot to use.
      * @param inspector Inspector for dialog context.
      * @returns A Promise that represents the work queued to execute.
      */
     async execute(
-        adapter: TestAdapter,
-        callback: (context: TurnContext) => Promise<void>,
+        _adapter: TestAdapter,
+        _callback: (context: TurnContext) => Promise<void>,
         inspector?: Inspector
     ): Promise<void> {
         if (inspector) {

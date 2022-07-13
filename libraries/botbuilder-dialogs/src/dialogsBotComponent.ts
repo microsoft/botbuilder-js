@@ -28,7 +28,14 @@ import {
 
 const InitialSettings = z.record(z.unknown());
 
+/**
+ * Bot component for bot Dialogs.
+ */
 export class DialogsBotComponent extends BotComponent {
+    /**
+     * @param services Services Collection to register.
+     * @param configuration Configuration for the bot component.
+     */
     configureServices(services: ServiceCollection, configuration: Configuration): void {
         services.composeFactory<MemoryScope[]>('memoryScopes', (memoryScopes) => {
             const rootConfiguration = configuration.get();

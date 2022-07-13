@@ -10,9 +10,13 @@ import { Middleware, TurnContext, ActivityTypes } from 'botbuilder-core';
 
 const CONVERSATION_STATE = 'ConversationState';
 
+/**
+ * Middleware that catch "SetTestOptions" event and save into "Conversation.TestOptions".
+ */
 export class SetTestOptionsMiddleware implements Middleware {
     /**
      * Processes an incoming event activity.
+     *
      * @param context The context object for this turn.
      * @param next The delegate to call to continue the bot middleware pipeline
      */

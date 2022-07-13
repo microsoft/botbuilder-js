@@ -87,6 +87,9 @@ export class SettingsMemoryScope extends MemoryScope {
         return settings;
     }
 
+    /**
+     * @param dc Current dialog context.
+     */
     async load(dc: DialogContext): Promise<void> {
         if (this.initialSettings) {
             // filter initialSettings

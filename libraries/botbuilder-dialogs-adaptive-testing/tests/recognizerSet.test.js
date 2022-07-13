@@ -53,27 +53,27 @@ describe('RecognizerSetTests', function () {
         resourceExplorer = makeResourceExplorer('RecognizerSetTests');
     });
 
-    it('Merge', async () => {
+    it('Merge', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'RecognizerSetTests_Merge');
     });
 
-    it('None', async () => {
+    it('None', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'RecognizerSetTests_None');
     });
 
-    describe('Telemetry', () => {
+    describe('Telemetry', function () {
         const recognizer = createRecognizer();
         let spy;
 
-        beforeEach(() => {
+        beforeEach(function () {
             spy = spyOnTelemetryClientTrackEvent(recognizer);
         });
 
-        afterEach(() => {
+        afterEach(function () {
             spy.restore();
         });
 
-        it('Merge - should log PII when logPersonalInformation is true', async () => {
+        it('Merge - should log PII when logPersonalInformation is true', async function () {
             recognizer.logPersonalInformation = true;
 
             await recognizeIntentAndValidateTelemetry({
@@ -97,7 +97,7 @@ describe('RecognizerSetTests', function () {
             });
         });
 
-        it('Merge - should not log PII when logPersonalInformation is false', async () => {
+        it('Merge - should not log PII when logPersonalInformation is false', async function () {
             recognizer.logPersonalInformation = false;
 
             await recognizeIntentAndValidateTelemetry({
@@ -121,7 +121,7 @@ describe('RecognizerSetTests', function () {
             });
         });
 
-        it('should refrain from logging PII by default', async () => {
+        it('should refrain from logging PII by default', async function () {
             const recognizerWithDefaultLogPii = createRecognizer();
             const trackEventSpy = spyOnTelemetryClientTrackEvent(recognizerWithDefaultLogPii);
 

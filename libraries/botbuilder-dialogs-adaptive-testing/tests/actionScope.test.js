@@ -7,31 +7,31 @@ describe('ActionScopeTests', function () {
         resourceExplorer = makeResourceExplorer('ActionScopeTests');
     });
 
-    it('Break', async () => {
+    it('Break', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'ActionScope_Break');
     });
 
-    it('Continue', async () => {
+    it('Continue', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'ActionScope_Continue');
     });
 
-    it('Goto_Nowhere', async () => {
+    it('Goto_Nowhere', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'ActionScope_Goto_Nowhere');
     });
 
-    it('Goto_OnIntent', async () => {
+    it('Goto_OnIntent', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'ActionScope_Goto_OnIntent');
     });
 
-    it('Goto_Parent', async () => {
+    it('Goto_Parent', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'ActionScope_Goto_Parent');
     });
 
-    it('Goto_Switch', async () => {
+    it('Goto_Switch', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'ActionScope_Goto_Switch');
     });
 
-    it('Goto', async () => {
+    it('Goto', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'ActionScope_Goto');
     });
 });

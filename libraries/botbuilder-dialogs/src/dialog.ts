@@ -9,7 +9,7 @@ import { Configurable } from './configurable';
 /**
  * Contains state information for an instance of a dialog on the stack.
  *
- * @typeparam T Optional. The type that represents state information for the dialog.
+ * @template T Optional. The type that represents state information for the dialog.
  *
  * @remarks
  * This contains information for a specific instance of a dialog on a dialog stack.
@@ -176,7 +176,7 @@ export interface DialogConfiguration {
  * Represents the result of a dialog context's attempt to begin, continue,
  * or otherwise manipulate one or more dialogs.
  *
- * @typeparam T Optional. The type that represents a result returned by the active dialog when it
+ * @template T Optional. The type that represents a result returned by the active dialog when it
  *      successfully completes.
  *
  * @remarks
@@ -260,6 +260,7 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
      *
      * @remarks
      * This will be automatically generated if not specified.
+     * @returns The Id for the dialog.
      */
     get id(): string {
         if (this._id === undefined) {
@@ -277,6 +278,8 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
 
     /**
      * Gets the telemetry client for this dialog.
+     *
+     * @returns The [BotTelemetryClient](xref:botbuilder.BotTelemetryClient) to use for logging.
      */
     get telemetryClient(): BotTelemetryClient {
         return this._telemetryClient;
@@ -299,6 +302,7 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
      * an error will be thrown resulting in the bots error handler logic being run.
      *
      * Returning an empty string will disable version tracking for the component all together.
+     * @returns Unique string which should only change when dialog has changed in a way that should restart the dialog.
      */
     getVersion(): string {
         return this.id;
@@ -343,6 +347,7 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
      *
      * **See also**
      * - [DialogContext.continueDialog](xref:botbuilder-dialogs.DialogContext.continueDialog)
+     * @returns {Promise<DialogTurnResult>} A promise resolving to the dialog turn result.
      */
     async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
         // By default just end the current dialog.
@@ -373,6 +378,7 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
      *
      * **See also**
      * - [DialogContext.endDialog](xref:botbuilder-dialogs.DialogContext.endDialog)
+     * @returns {Promise<DialogTurnResult>} A promise resolving to the dialog turn result.
      */
     async resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
         // By default just end the current dialog and return result to parent.
@@ -382,8 +388,8 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
     /**
      * When overridden in a derived class, reprompts the user for input.
      *
-     * @param context The context object for the turn.
-     * @param instance Current state information for this dialog.
+     * @param _context The context object for the turn.
+     * @param _instance Current state information for this dialog.
      *
      * @remarks
      * Derived dialogs that support validation and re-prompt logic should override this method.
@@ -396,16 +402,16 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
      * - [DialogContext.repromptDialog](xref:botbuilder-dialogs.DialogContext.repromptDialog)
      * - [Prompt](xref:botbuilder-dialogs.Prompt)
      */
-    async repromptDialog(context: TurnContext, instance: DialogInstance): Promise<void> {
+    async repromptDialog(_context: TurnContext, _instance: DialogInstance): Promise<void> {
         // No-op by default
     }
 
     /**
      * When overridden in a derived class, performs clean up for the dialog before it ends.
      *
-     * @param context The context object for the turn.
-     * @param instance Current state information for this dialog.
-     * @param reason The reason the dialog is ending.
+     * @param _context The context object for the turn.
+     * @param _instance Current state information for this dialog.
+     * @param _reason The reason the dialog is ending.
      *
      * @remarks
      * Derived dialogs that need to perform logging or cleanup before ending should override this method.
@@ -419,7 +425,7 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
      * - [DialogContext.endDialog](xref:botbuilder-dialogs.DialogContext.endDialog)
      * - [DialogContext.replaceDialog](xref:botbuilder-dialogs.DialogContext.replaceDialog)
      */
-    async endDialog(context: TurnContext, instance: DialogInstance, reason: DialogReason): Promise<void> {
+    async endDialog(_context: TurnContext, _instance: DialogInstance, _reason: DialogReason): Promise<void> {
         // No-op by default
     }
 
@@ -454,11 +460,11 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
      * This is a good place to perform interception of an event as returning `true` will prevent
      * any further bubbling of the event to the dialogs parents and will also prevent any child
      * dialogs from performing their default processing.
-     * @param dc The dialog context for the current turn of conversation.
-     * @param e The event being raised.
+     * @param _dc The dialog context for the current turn of conversation.
+     * @param _e The event being raised.
      * @returns Whether the event is handled by the current dialog and further processing should stop.
      */
-    protected async onPreBubbleEvent(dc: DialogContext, e: DialogEvent): Promise<boolean> {
+    protected async onPreBubbleEvent(_dc: DialogContext, _e: DialogEvent): Promise<boolean> {
         return false;
     }
 
@@ -468,11 +474,11 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
      * @remarks
      * This is a good place to perform default processing logic for an event. Returning `true` will
      * prevent any processing of the event by child dialogs.
-     * @param dc The dialog context for the current turn of conversation.
-     * @param e The event being raised.
+     * @param _dc The dialog context for the current turn of conversation.
+     * @param _e The event being raised.
      * @returns Whether the event is handled by the current dialog and further processing should stop.
      */
-    protected async onPostBubbleEvent(dc: DialogContext, e: DialogEvent): Promise<boolean> {
+    protected async onPostBubbleEvent(_dc: DialogContext, _e: DialogEvent): Promise<boolean> {
         return false;
     }
 
@@ -484,6 +490,6 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
      * ID's is `<dialog type>(this.hashedLabel('<dialog args>'))`.
      */
     protected onComputeId(): string {
-        throw new Error(`Dialog.onComputeId(): not implemented.`);
+        throw new Error('Dialog.onComputeId(): not implemented.');
     }
 }

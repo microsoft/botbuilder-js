@@ -9,6 +9,7 @@ import { AzureService } from './azureService';
 
 /**
  * Defines a CosmosDB service connection.
+ *
  * @deprecated See https://aka.ms/bot-file-basics for more information.
  */
 export class CosmosDbService extends AzureService implements ICosmosDBService {
@@ -34,6 +35,7 @@ export class CosmosDbService extends AzureService implements ICosmosDBService {
 
     /**
      * Creates a new CosmosDBService instance.
+     *
      * @param source (Optional) JSON based service definition.
      */
     constructor(source: ICosmosDBService = {} as ICosmosDBService) {
@@ -42,6 +44,7 @@ export class CosmosDbService extends AzureService implements ICosmosDBService {
 
     /**
      * Encrypt properties on this service.
+     *
      * @param secret Secret to use to encrypt.
      * @param encryptString Function called to encrypt an individual value.
      */
@@ -53,6 +56,7 @@ export class CosmosDbService extends AzureService implements ICosmosDBService {
 
     /**
      * Decrypt properties on this service.
+     *
      * @param secret Secret to use to decrypt.
      * @param decryptString Function called to decrypt an individual value.
      */

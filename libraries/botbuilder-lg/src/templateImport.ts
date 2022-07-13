@@ -34,6 +34,7 @@ export class TemplateImport {
 
     /**
      * Creates a new instance of the [TemplateImport](xref:botbuilder-lg.TemplateImport) class.
+     *
      * @param description Import description, which is in [].
      * @param id Import id, which is a path, in ().
      * @param sourceRange [SourceRange](xref:botbuilder-lg.SourceRange) of template.

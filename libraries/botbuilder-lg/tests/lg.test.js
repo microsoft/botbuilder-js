@@ -486,7 +486,7 @@ describe('LG', function () {
         assert.strictEqual(evaled, 2, `Evaled is ${evaled}`);
 
         evaled = templates.evaluate('compose', { property: 'Show' });
-        assert.strictEqual(evaled, `you made it!`);
+        assert.strictEqual(evaled, 'you made it!');
     });
 
     it('TestAnalyzelgTemplateFunction', function () {
@@ -529,7 +529,7 @@ describe('LG', function () {
         const resource = new LGResource(
             GetExampleFilePath('xx.lg'),
             GetExampleFilePath('xx.lg'),
-            `[import](./6.lg)\r\n# basicTemplate\r\n- Hi\r\n- Hello\r\n`
+            '[import](./6.lg)\r\n# basicTemplate\r\n- Hi\r\n- Hello\r\n'
         );
         templates = Templates.parseResource(resource);
 
@@ -1634,13 +1634,13 @@ describe('LG', function () {
         ({ value: evaled, error } = Expression.parse('common.countTotal()').tryEvaluate(scope1));
         assert.strictEqual(
             error,
-            `list1 is not a list or array. [countTotal]  Error occurred when evaluating '-\${count(union(list1,list2))}'.`
+            "list1 is not a list or array. [countTotal]  Error occurred when evaluating '-${count(union(list1,list2))}'."
         );
 
         ({ value: evaled, error } = Expression.parse('common.countTotal(a, b, c)').tryEvaluate(scope1));
         assert.strictEqual(
             error,
-            `list2 is not a list or array. [countTotal]  Error occurred when evaluating '-\${count(union(list1,list2))}'.`
+            "list2 is not a list or array. [countTotal]  Error occurred when evaluating '-${count(union(list1,list2))}'."
         );
 
         const scope2 = { i: 1, j: 2, k: 3, l: 4 };

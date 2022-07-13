@@ -19,7 +19,7 @@ function assertResourceFound(explorer, id) {
     const dialogs = explorer.getResources('dialog');
     assert(
         dialogs.some((dialog) => dialog.id == id),
-        `getResources('dialog') should return resources`
+        "getResources('dialog') should return resources"
     );
 }
 
@@ -29,7 +29,7 @@ function assertResourceNotFound(explorer, id) {
     const dialogs = explorer.getResources('dialog');
     assert(
         dialogs.every((dialog) => dialog.id != id),
-        `getResouces('dialog') should not return resources`
+        "getResouces('dialog') should not return resources"
     );
 }
 
@@ -38,14 +38,14 @@ function assertResourceContents(explorer, id, contents) {
     let text = resource.readText();
     assert.strictEqual(text, contents, `getResource(${id}) contents not the same`);
     const dialogs = explorer.getResources('dialog').filter((dialog) => dialog.id == id);
-    assert(dialogs.length == 1, `getResouces('dialog') should return resources`);
+    assert(dialogs.length == 1, "getResouces('dialog') should return resources");
     const dialog = dialogs[0];
     text = dialog.readText();
-    assert.strictEqual(text, contents, `getResouces('dialog') contents not the same`);
+    assert.strictEqual(text, contents, "getResouces('dialog') contents not the same");
 }
 
 describe('ResourceExplorer', function () {
-    it('add folders recursively', async () => {
+    it('add folders recursively', async function () {
         const explorer = new ResourceExplorer();
         explorer.addFolder(join(__dirname, 'resources'), true, false);
         assertResourceType(explorer, 'lu');
@@ -55,7 +55,7 @@ describe('ResourceExplorer', function () {
         assertResourceNotFound(explorer, 'bar.dialog');
     });
 
-    it('add root folder only', async () => {
+    it('add root folder only', async function () {
         const explorer = new ResourceExplorer();
         explorer.addFolder(join(__dirname, 'resources'), false, false);
         assertResourceFound(explorer, 'foo.dialog');
@@ -66,7 +66,7 @@ describe('ResourceExplorer', function () {
         assert(resources.length, 'should list dialog resources in root folder');
     });
 
-    it('add filtered folders', async () => {
+    it('add filtered folders', async function () {
         const explorer = new ResourceExplorer([]);
         explorer.addFolders(join(__dirname, 'resources'), ['TestFolder'], false);
         assertResourceFound(explorer, 'foo.dialog');
@@ -78,7 +78,7 @@ describe('ResourceExplorer', function () {
         assert(resources.length, 'should list dialog resources in unfilterd folders');
     });
 
-    it('add new resource type', async () => {
+    it('add new resource type', async function () {
         const explorer = new ResourceExplorer([]);
         explorer.addFolders(join(__dirname, 'resources'), [], false);
         let resources = explorer.getResources('txt');
@@ -88,7 +88,7 @@ describe('ResourceExplorer', function () {
         assert(resources.length > 0, 'should list txt resources');
     });
 
-    it('avoid adding duplicated resource folders', async () => {
+    it('avoid adding duplicated resource folders', async function () {
         const explorer = new ResourceExplorer([]);
         assert.throws(() => {
             explorer.addFolder(join(__dirname, 'resources'), true, false);
@@ -96,7 +96,7 @@ describe('ResourceExplorer', function () {
         }, 'should throw if adding duplicated resource folders');
     });
 
-    it('dialog id assignment', async () => {
+    it('dialog id assignment', async function () {
         const services = new ServiceCollection({
             declarativeTypes: [],
         });
@@ -119,7 +119,7 @@ describe('ResourceExplorer', function () {
         assert.strictEqual(dialog2.id, '1234567890', 'id in the .dialog file should be honored.');
     });
 
-    it('event fired when new file added', async () => {
+    it('event fired when new file added', async function () {
         const testPath = join(__dirname, 'resources/TestFolder/file_to_be_added.dialog');
 
         // clean the test file
@@ -152,7 +152,7 @@ describe('ResourceExplorer', function () {
         resourceProvider.watcher.close();
     });
 
-    it('event fired when file changed', async () => {
+    it('event fired when file changed', async function () {
         const testPath = join(__dirname, 'resources/TestFolder/file_to_be_changed.dialog');
 
         // clean the test file
@@ -189,7 +189,7 @@ describe('ResourceExplorer', function () {
         resourceProvider.watcher.close();
     });
 
-    it('event fired when file removed', async () => {
+    it('event fired when file removed', async function () {
         const testPath = join(__dirname, 'resources/TestFolder/file_to_be_removed.dialog');
 
         // clean the test file
@@ -225,7 +225,7 @@ describe('ResourceExplorer', function () {
         resourceProvider.watcher.close();
     });
 
-    it('watch file changes', async () => {
+    it('watch file changes', async function () {
         const testPath = join(__dirname, 'resources/TestFolder/foobar.dialog');
 
         // clean the test file
@@ -264,7 +264,7 @@ describe('ResourceExplorer', function () {
         resourceProvider.watcher.close();
     });
 
-    it('cycle reference', async () => {
+    it('cycle reference', async function () {
         const services = new ServiceCollection({
             declarativeTypes: [],
         });

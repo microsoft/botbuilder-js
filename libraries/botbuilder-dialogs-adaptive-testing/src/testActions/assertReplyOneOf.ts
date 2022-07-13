@@ -32,6 +32,7 @@ export class AssertReplyOneOf extends AssertReplyActivity implements AssertReply
 
     /**
      * Gets the text to assert for an activity.
+     *
      * @returns String.
      */
     getConditionDescription(): string {
@@ -40,6 +41,7 @@ export class AssertReplyOneOf extends AssertReplyActivity implements AssertReply
 
     /**
      * Validates the reply of an activity.
+     *
      * @param activity The activity to verify.
      */
     validateReply(activity: Activity): void {

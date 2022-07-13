@@ -179,7 +179,7 @@ class ComponentDialogWithCancellation extends ComponentDialog {
 describe('runDialog()', function () {
     this.timeout(300);
 
-    describe('parameter validation', () => {
+    describe('parameter validation', function () {
         it('should throw if missing dialog parameter', async function () {
             await assert.rejects(async () => runDialog(), {
                 message: 'runDialog(): missing dialog',
@@ -205,7 +205,7 @@ describe('runDialog()', function () {
         });
     });
 
-    describe('HandlesBotAndSkillsTestCases', () => {
+    describe('HandlesBotAndSkillsTestCases', function () {
         this.beforeEach(() => {
             _eocSent = undefined;
         });
@@ -231,25 +231,25 @@ describe('runDialog()', function () {
             }
         }
 
-        it('rootBotOnly, no sent EoC', async () => {
+        it('rootBotOnly, no sent EoC', async function () {
             await handlesBotAndSkillsTestCases(FlowTestCase.RootBotOnly, false);
         });
 
-        it('rootBotConsumingSkill, no sent EoC', async () => {
+        it('rootBotConsumingSkill, no sent EoC', async function () {
             await handlesBotAndSkillsTestCases(FlowTestCase.RootBotConsumingSkill, false);
         });
 
-        it('middleSkill, sent EoC', async () => {
+        it('middleSkill, sent EoC', async function () {
             await handlesBotAndSkillsTestCases(FlowTestCase.MiddleSkill, true);
         });
 
-        it('leafSkill, sent EoC', async () => {
+        it('leafSkill, sent EoC', async function () {
             await handlesBotAndSkillsTestCases(FlowTestCase.LeafSkill, true);
         });
     });
 
-    describe('HandlesEarlyDialogEndings', () => {
-        it('handles premature dialog ending', async () => {
+    describe('HandlesEarlyDialogEndings', function () {
+        it('handles premature dialog ending', async function () {
             const dialog = new ComponentDialogWithPrematureEnd();
             const testFlow = createTestFlow(dialog, FlowTestCase.MiddleSkill);
             await testFlow.send('Hi').startTest();
@@ -259,7 +259,7 @@ describe('runDialog()', function () {
             assert.strictEqual(_eocSent.type, ActivityTypes.EndOfConversation);
             assert.strictEqual(_eocSent.code, EndOfConversationCodes.CompletedSuccessfully);
         });
-        it('handles premature dialog cancellation', async () => {
+        it('handles premature dialog cancellation', async function () {
             const dialog = new ComponentDialogWithCancellation();
             const testFlow = createTestFlow(dialog, FlowTestCase.MiddleSkill);
             await testFlow.send('Hi').startTest();

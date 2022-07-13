@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const pick = require('lodash/pick');
 const assert = require('assert');
 const { ConversationState, UserState, MemoryStorage, TurnContext, TestAdapter } = require('botbuilder-core');
 
@@ -19,7 +19,7 @@ const {
 } = require('../..');
 
 const beginMessage = {
-    text: `begin`,
+    text: 'begin',
     type: 'message',
     channelId: 'test',
     from: { id: 'user' },
@@ -106,7 +106,7 @@ describe('Memory Scopes', function () {
         it('finds registered dialog', async function () {
             const { memory } = await initialize();
 
-            assert.deepStrictEqual(_.pick(memory, 'message', 'expression'), {
+            assert.deepStrictEqual(pick(memory, 'message', 'expression'), {
                 message: 'test message',
                 expression: 'resolved value',
             });
@@ -151,7 +151,7 @@ describe('Memory Scopes', function () {
             const dc = await dialogs.createContext(context);
             const scope = new ConversationMemoryScope();
             const memory = scope.getMemory(dc);
-            assert.deepStrictEqual(_.pick(memory, 'conversation'), { conversation: { foo: 'bar' } });
+            assert.deepStrictEqual(pick(memory, 'conversation'), { conversation: { foo: 'bar' } });
         });
     });
 
@@ -195,7 +195,7 @@ describe('Memory Scopes', function () {
 
             await scope.load(dc);
             memory = scope.getMemory(dc);
-            assert.deepStrictEqual(_.pick(memory, 'user'), { user: { foo: 'bar' } });
+            assert.deepStrictEqual(pick(memory, 'user'), { user: { foo: 'bar' } });
         });
     });
 
@@ -218,7 +218,7 @@ describe('Memory Scopes', function () {
 
         it('returns containers state', async function () {
             const { memory } = await initialize();
-            assert.deepStrictEqual(_.pick(memory, 'isContainer'), { isContainer: true });
+            assert.deepStrictEqual(pick(memory, 'isContainer'), { isContainer: true });
         });
 
         it('returns parent containers state for children', async function () {
@@ -228,12 +228,12 @@ describe('Memory Scopes', function () {
             assert(dc.child);
 
             const memory = scope.getMemory(dc.child);
-            assert.deepStrictEqual(_.pick(memory, 'isContainer'), { isContainer: true });
+            assert.deepStrictEqual(pick(memory, 'isContainer'), { isContainer: true });
         });
 
         it('returns childs state when no parent', async function () {
             const { memory } = await initialize(new TestDialog('test', 'test message'));
-            assert.deepStrictEqual(_.pick(memory, 'isDialog'), { isDialog: true });
+            assert.deepStrictEqual(pick(memory, 'isDialog'), { isDialog: true });
         });
 
         it('overwrites parents memory', async function () {
@@ -245,7 +245,7 @@ describe('Memory Scopes', function () {
             scope.setMemory(dc.child, { foo: 'bar' });
             const memory = scope.getMemory(dc);
 
-            assert.deepStrictEqual(_.pick(memory, 'foo'), { foo: 'bar' });
+            assert.deepStrictEqual(pick(memory, 'foo'), { foo: 'bar' });
         });
 
         it('overwrites active dialogs memory', async function () {
@@ -254,7 +254,7 @@ describe('Memory Scopes', function () {
             scope.setMemory(dc, { foo: 'bar' });
             const memory = scope.getMemory(dc);
 
-            assert.deepStrictEqual(_.pick(memory, 'foo'), { foo: 'bar' });
+            assert.deepStrictEqual(pick(memory, 'foo'), { foo: 'bar' });
         });
 
         it('raises error if setMemory() called without memory', async function () {
@@ -291,7 +291,7 @@ describe('Memory Scopes', function () {
                 dc.context.turnState.set('settings', require('../test.settings.json'));
             });
 
-            assert.deepStrictEqual(_.pick(memory, 'string', 'int', 'array'), {
+            assert.deepStrictEqual(pick(memory, 'string', 'int', 'array'), {
                 string: 'test',
                 int: 3,
                 array: ['zero', 'one', 'two', 'three'],
@@ -320,7 +320,7 @@ describe('Memory Scopes', function () {
             });
 
             assert.deepStrictEqual(
-                _.pick(memory, 'array', 'object', 'simple', 'MicrosoftAppPassword', 'runtimeSettings', 'BlobsStorage'),
+                pick(memory, 'array', 'object', 'simple', 'MicrosoftAppPassword', 'runtimeSettings', 'BlobsStorage'),
                 {
                     array: ['one', 'two'],
                     object: {
@@ -357,7 +357,7 @@ describe('Memory Scopes', function () {
             });
 
             assert.deepStrictEqual(
-                _.pick(
+                pick(
                     memory,
                     'array',
                     'object',
@@ -456,13 +456,13 @@ describe('Memory Scopes', function () {
 
         it('returns active dialogs state', async function () {
             const { memory } = await initialize({ dialog: new TestDialog('test', 'test message') });
-            assert(_.pick(memory, 'isDialog'), { isDialog: true });
+            assert(pick(memory, 'isDialog'), { isDialog: true });
         });
 
         it('overwrites active dialogs memory', async function () {
             const { dc, memory, scope } = await initialize();
             scope.setMemory(dc, { foo: 'bar' });
-            assert(_.pick(memory, 'foo'), { foo: 'bar' });
+            assert(pick(memory, 'foo'), { foo: 'bar' });
         });
 
         it('raises error if setMemory() called without memory', async function () {
@@ -520,7 +520,7 @@ describe('Memory Scopes', function () {
             scope.setMemory(dc, { foo: 'bar' });
 
             const memory = scope.getMemory(dc);
-            assert.deepStrictEqual(_.pick(memory, 'foo'), { foo: 'bar' });
+            assert.deepStrictEqual(pick(memory, 'foo'), { foo: 'bar' });
         });
 
         it('raises error when setMemory() called without memory', async function () {

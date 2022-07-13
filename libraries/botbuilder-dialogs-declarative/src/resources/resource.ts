@@ -16,6 +16,8 @@ export abstract class Resource {
 
     /**
      * Resource id.
+     *
+     * @returns The resource id.
      */
     get id(): string {
         return this._id;
@@ -23,6 +25,8 @@ export abstract class Resource {
 
     /**
      * The full path to the resource on disk
+     *
+     * @returns The full path to the resource.
      */
     get fullName(): string {
         return this._fullname;

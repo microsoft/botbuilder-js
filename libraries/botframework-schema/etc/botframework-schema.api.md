@@ -930,8 +930,8 @@ export interface Meeting {
 // @public
 export interface MeetingDetails extends MeetingDetailsBase {
     msGraphResourceId: string;
-    scheduledEndTime: Date;
-    scheduledStartTime: Date;
+    scheduledEndTime?: Date;
+    scheduledStartTime?: Date;
     type: string;
 }
 

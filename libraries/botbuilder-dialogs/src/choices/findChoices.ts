@@ -130,6 +130,7 @@ export interface FoundChoice {
  * @param utterance The text or user utterance to search over. For an incoming 'message' activity you can simply use `context.activity.text`.
  * @param choices List of choices to search over.
  * @param options (Optional) options used to tweak the search that's performed.
+ * @returns A list of found choices, sorted by most relevant first.
  */
 export function findChoices(
     utterance: string,
