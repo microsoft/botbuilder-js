@@ -43,6 +43,9 @@ export class ResourceExplorer {
      * @param {ResourceExplorerOptions} options The configuration options.
      */
     constructor(options?: ResourceExplorerOptions);
+    /**
+     * @param providersOrOptions The list of [ResourceProvider](xref:botbuilder-dialogs-declarative.ResourceProvider) or configuration options to initialize the current instance.
+     */
     constructor(providersOrOptions: ResourceProvider[] | ResourceExplorerOptions = []) {
         if (Array.isArray(providersOrOptions)) {
             const providers: ResourceProvider[] = providersOrOptions;
@@ -245,9 +248,13 @@ export class ResourceExplorer {
      *
      * @template T Type of object.
      * @param {Resource} resource Resource id to bind to.
-     * @returns {T} Type created from resource
+     * @returns {T} Type created from resource.
      */
     loadType<T>(resource: Resource): T;
+    /**
+     * @param resourceOrId The resource or resource id to bind to.
+     * @returns Type created from resource.
+     */
     loadType<T>(resourceOrId: Resource | string): T {
         this.registerComponentTypes();
 
