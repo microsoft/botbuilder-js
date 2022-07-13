@@ -178,12 +178,20 @@ export class CustomQuestionAnswering implements QnAMakerClient, QnAMakerTelemetr
         this._logPersonalInformation = logPersonalInformation || false;
     }
 
-    // Gets a value indicating whether determines whether to log personal information that came from the user.
+    /**
+     * Gets a value indicating whether determines whether to log personal information that came from the user.
+     *
+     * @returns True to determine whether to log personal information that came from the user; otherwise, false.
+     */
     get logPersonalInformation(): boolean {
         return this._logPersonalInformation;
     }
 
-    // Gets the currently configured botTelemetryClient that logs the events.
+    /**
+     * Gets the currently configured BotTelemetryClient that logs the events.
+     *
+     * @returns Currently configured BotTelemetryClient that logs the events.
+     */
     get telemetryClient(): BotTelemetryClient {
         return this._telemetryClient;
     }

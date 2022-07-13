@@ -105,6 +105,10 @@ export class LuisAdaptiveRecognizer extends Recognizer implements LuisAdaptiveRe
         '=settings.runtimeSettings.telemetry.logPersonalInformation'
     );
 
+    /**
+     * @param property Properties that extend RecognizerConfiguration.
+     * @returns Expression converter.
+     */
     getConverter(property: keyof LuisAdaptiveRecognizerConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'applicationId':

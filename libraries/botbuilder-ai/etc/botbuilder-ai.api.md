@@ -86,14 +86,12 @@ export class CustomQuestionAnswering implements QnAMakerClient_2, QnAMakerTeleme
         [key: string]: number;
     }): Promise<QnAMakerResults>;
     getLowScoreVariation(queryResult: QnAMakerResult[]): QnAMakerResult[];
-    // (undocumented)
     get logPersonalInformation(): boolean;
     protected onQnaResults(qnaResults: QnAMakerResult[], turnContext: TurnContext, telemetryProperties?: {
         [key: string]: string;
     }, telemetryMetrics?: {
         [key: string]: number;
     }): Promise<void>;
-    // (undocumented)
     get telemetryClient(): BotTelemetryClient;
     }
 
@@ -278,7 +276,7 @@ export interface LuisApplication {
     endpointKey: string;
 }
 
-// @public (undocumented)
+// @public
 export class LuisBotComponent extends BotComponent {
     // (undocumented)
     configureServices(services: ServiceCollection, _configuration: Configuration): void;
@@ -313,7 +311,6 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
     }): Promise<{
         [key: string]: string;
     }>;
-    // (undocumented)
     get logPersonalInformation(): boolean;
     protected onRecognizerResults(recognizerResult: RecognizerResult, turnContext: TurnContext, telemetryProperties?: {
         [key: string]: string;
@@ -326,7 +323,6 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
         intent: string;
         score: number;
     }>;
-    // (undocumented)
     get telemetryClient(): BotTelemetryClient;
     static topIntent(results?: RecognizerResult, defaultIntent?: string, minScore?: number): string;
     }
@@ -460,14 +456,12 @@ export class QnAMaker implements QnAMakerClient, QnAMakerTelemetryClient {
         [key: string]: number;
     }): Promise<QnAMakerResults>;
     getLowScoreVariation(queryResult: QnAMakerResult[]): QnAMakerResult[];
-    // (undocumented)
     get logPersonalInformation(): boolean;
     protected onQnaResults(qnaResults: QnAMakerResult[], turnContext: TurnContext, telemetryProperties?: {
         [key: string]: string;
     }, telemetryMetrics?: {
         [key: string]: number;
     }): Promise<void>;
-    // (undocumented)
     get telemetryClient(): BotTelemetryClient;
     }
 
@@ -480,7 +474,7 @@ export const QNAMAKER_TRACE_NAME = "QnAMaker";
 // @public (undocumented)
 export const QNAMAKER_TRACE_TYPE = "https://www.qnamaker.ai/schemas/trace";
 
-// @public (undocumented)
+// @public
 export class QnAMakerBotComponent extends BotComponent {
     // (undocumented)
     configureServices(services: ServiceCollection, _configuration: Configuration): void;

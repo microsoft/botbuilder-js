@@ -19,6 +19,9 @@ export class LuisComponentRegistration extends ComponentRegistration {
         declarativeTypes: [],
     });
 
+    /**
+     * Define component assets for Luis.
+     */
     constructor() {
         super();
 
