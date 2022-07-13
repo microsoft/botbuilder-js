@@ -3,7 +3,7 @@ const { Dialog, DialogReason, DialogSet, DialogTurnStatus, WaterfallDialog, Comp
 
 const assert = require('assert');
 
-const beginMessage = { text: `begin`, type: 'message' };
+const beginMessage = { text: 'begin', type: 'message' };
 
 class MyWaterfall extends WaterfallDialog {
     constructor(dialogId) {
@@ -171,7 +171,7 @@ describe('WaterfallDialog', function () {
         dialogs.add(
             new WaterfallDialog('a', [
                 async function (step) {
-                    assert(step.options && step.options.test === 'test', `step.options not found.`);
+                    assert(step.options && step.options.test === 'test', 'step.options not found.');
                     await step.context.sendActivity('bot responding.');
                     return await step.next(step.options.test);
                 },
@@ -212,8 +212,8 @@ describe('WaterfallDialog', function () {
         dialogs.add(
             new WaterfallDialog('a', [
                 async function (step) {
-                    assert(step, `step not found.`);
-                    assert(step.options, `step.options not found.`);
+                    assert(step, 'step not found.');
+                    assert(step.options, 'step.options not found.');
                     assert.strictEqual(
                         step.options.test,
                         'test',
@@ -260,8 +260,8 @@ describe('WaterfallDialog', function () {
         dialogs.add(
             new WaterfallDialog('a', [
                 async function (step) {
-                    assert(step, `step not found.`);
-                    assert(step.options, `step.options not found.`);
+                    assert(step, 'step not found.');
+                    assert(step.options, 'step.options not found.');
                     assert.strictEqual(
                         step.options.test,
                         'test1',
@@ -272,8 +272,8 @@ describe('WaterfallDialog', function () {
                     return Dialog.EndOfTurn;
                 },
                 async function (step) {
-                    assert(step, `step not found.`);
-                    assert(step.options, `step.options not found.`);
+                    assert(step, 'step not found.');
+                    assert(step.options, 'step.options not found.');
                     assert.strictEqual(
                         step.options.test,
                         'test2',
@@ -284,7 +284,7 @@ describe('WaterfallDialog', function () {
                     return Dialog.EndOfTurn;
                 },
                 async function (step) {
-                    assert(step, `step not found.`);
+                    assert(step, 'step not found.');
                     assert.strictEqual(
                         step.options.test,
                         'test3',
@@ -328,15 +328,15 @@ describe('WaterfallDialog', function () {
         dialogs.add(
             new WaterfallDialog('a', [
                 async function (step) {
-                    assert(step, `step not found.`);
-                    assert.equal(typeof step.values, 'object', `initial step.values should be an object.`);
+                    assert(step, 'step not found.');
+                    assert.equal(typeof step.values, 'object', 'initial step.values should be an object.');
                     step.values.test = 'test1';
                     await step.context.sendActivity('bot responding.');
                     return Dialog.EndOfTurn;
                 },
                 async function (step) {
-                    assert(step, `step not found.`);
-                    assert(step.values, `step.values not found.`);
+                    assert(step, 'step not found.');
+                    assert(step.values, 'step.values not found.');
                     assert.strictEqual(
                         step.values.test,
                         'test1',
@@ -347,8 +347,8 @@ describe('WaterfallDialog', function () {
                     return Dialog.EndOfTurn;
                 },
                 async function (step) {
-                    assert(step, `step not found.`);
-                    assert(step.values, `step.values not found.`);
+                    assert(step, 'step not found.');
+                    assert(step.values, 'step.values not found.');
                     assert.strictEqual(
                         step.values.test,
                         'test1',
@@ -397,15 +397,15 @@ describe('WaterfallDialog', function () {
         dialogs.add(
             new WaterfallDialog('a', [
                 async function (step) {
-                    assert(step, `step not found.`);
-                    assert.equal(typeof step.values, 'object', `initial step.values should be an object.`);
+                    assert(step, 'step not found.');
+                    assert.equal(typeof step.values, 'object', 'initial step.values should be an object.');
                     step.values.test = 'test1';
                     await step.context.sendActivity('bot responding.');
                     return await step.beginDialog('b');
                 },
                 async function (step) {
-                    assert(step, `step not found.`);
-                    assert(step.values, `step.values not found.`);
+                    assert(step, 'step not found.');
+                    assert(step.values, 'step.values not found.');
                     assert.strictEqual(
                         step.values.test,
                         'test1',
@@ -414,7 +414,7 @@ describe('WaterfallDialog', function () {
                     assert.strictEqual(
                         step.values.test_b,
                         undefined,
-                        `step.values.test_b should not be available in WaterfallDialog('a').`
+                        "step.values.test_b should not be available in WaterfallDialog('a')."
                     );
                     return await step.endDialog('ending WaterfallDialog.');
                 },
@@ -424,15 +424,15 @@ describe('WaterfallDialog', function () {
         dialogs.add(
             new WaterfallDialog('b', [
                 async function (step) {
-                    assert(step, `step not found.`);
+                    assert(step, 'step not found.');
                     assert.equal(
                         typeof step.values,
                         'object',
-                        `new step.values for second WaterfallDialog should be an object.`
+                        'new step.values for second WaterfallDialog should be an object.'
                     );
                     assert(
                         !step.values.test,
-                        `new WaterfallDialog's step.values shouldn't have values from parent dialog's step.values.`
+                        "new WaterfallDialog's step.values shouldn't have values from parent dialog's step.values."
                     );
 
                     // Add a new value to this WaterfallDialog's step.values.
@@ -441,20 +441,20 @@ describe('WaterfallDialog', function () {
                     return Dialog.EndOfTurn;
                 },
                 async function (step) {
-                    assert(step, `step not found.`);
+                    assert(step, 'step not found.');
                     assert.equal(
                         typeof step.values,
                         'object',
-                        `step.values for second WaterfallDialog should be an object.`
+                        'step.values for second WaterfallDialog should be an object.'
                     );
                     assert(
                         !step.values.test,
-                        `new WaterfallDialog's step.values shouldn't have values from parent dialog's step.values.`
+                        "new WaterfallDialog's step.values shouldn't have values from parent dialog's step.values."
                     );
                     assert.strictEqual(
                         step.values.test_b,
                         'test_b',
-                        `step.values.test_b should not be available in WaterfallDialog 'a'.`
+                        "step.values.test_b should not be available in WaterfallDialog 'a'."
                     );
 
                     return await step.endDialog();
@@ -493,8 +493,8 @@ describe('WaterfallDialog', function () {
         dialogs.add(
             new WaterfallDialog('a', [
                 async function (step) {
-                    assert(step, `step not found.`);
-                    assert(step.options, `step.options not found.`);
+                    assert(step, 'step not found.');
+                    assert(step.options, 'step.options not found.');
                     assert.strictEqual(
                         step.options.test_a,
                         'test_a',
@@ -504,8 +504,8 @@ describe('WaterfallDialog', function () {
                     return await step.beginDialog('b');
                 },
                 async function (step) {
-                    assert(step, `step not found.`);
-                    assert(step.options, `step.options not found.`);
+                    assert(step, 'step not found.');
+                    assert(step.options, 'step.options not found.');
                     assert.strictEqual(
                         step.options.test_a,
                         'test_a',
@@ -519,8 +519,8 @@ describe('WaterfallDialog', function () {
         dialogs.add(
             new WaterfallDialog('b', [
                 async function (step) {
-                    assert(step, `step not found.`);
-                    assert(step.options, `step.options not found.`);
+                    assert(step, 'step not found.');
+                    assert(step.options, 'step.options not found.');
                     assert.strictEqual(
                         step.options.test_a,
                         undefined,
@@ -530,8 +530,8 @@ describe('WaterfallDialog', function () {
                     return Dialog.EndOfTurn;
                 },
                 async function (step) {
-                    assert(step, `step not found.`);
-                    assert(step.options, `step.options not found.`);
+                    assert(step, 'step not found.');
+                    assert(step.options, 'step.options not found.');
                     assert.strictEqual(
                         step.options.test_b,
                         'test_b',
@@ -573,12 +573,12 @@ describe('WaterfallDialog', function () {
         dialogs.add(
             new WaterfallDialog('a', [
                 async function (step) {
-                    assert(step, `step not found.`);
+                    assert(step, 'step not found.');
                     await step.context.sendActivity('bot responding.');
                     return Dialog.EndOfTurn;
                 },
                 async function (step) {
-                    assert(step, `step not found.`);
+                    assert(step, 'step not found.');
                     return Dialog.EndOfTurn;
                 },
             ])
@@ -616,7 +616,7 @@ describe('WaterfallDialog', function () {
         dialogs.add(
             new WaterfallDialog('a', [
                 async function (step) {
-                    assert(step, `step not found.`);
+                    assert(step, 'step not found.');
                     await step.context.sendActivity('bot responding.');
                     try {
                         await step.next();
@@ -624,17 +624,17 @@ describe('WaterfallDialog', function () {
                     } catch (err) {
                         assert(
                             err.message ===
-                                `WaterfallStepContext.next(): method already called for dialog and step 'a[0]'.`,
+                                "WaterfallStepContext.next(): method already called for dialog and step 'a[0]'.",
                             err.message
                         );
                     }
                     return Dialog.EndOfTurn;
                 },
                 async function (step) {
-                    assert(step, `step not found.`);
+                    assert(step, 'step not found.');
                 },
                 async function (step) {
-                    assert(step, `step not found.`);
+                    assert(step, 'step not found.');
                 },
             ])
         );
@@ -664,12 +664,12 @@ describe('WaterfallDialog', function () {
         dialogs.add(
             new WaterfallDialog('a', [
                 async function (step) {
-                    assert(step, `step not found.`);
+                    assert(step, 'step not found.');
                     await step.context.sendActivity('bot responding.');
                     return Dialog.EndOfTurn;
                 },
                 async function (step) {
-                    assert(step, `step not found.`);
+                    assert(step, 'step not found.');
                     assert(
                         step.context.activity.text === 'continue.',
                         `expected "continue." not ${step.context.activity.text}`

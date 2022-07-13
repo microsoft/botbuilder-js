@@ -1,24 +1,14 @@
 const assert = require('assert');
-const { PromptCultureModels } = require('../lib')
+const { PromptCultureModels } = require('../lib');
 
-describe('Prompt Culture Models Tests', function() {
+describe('Prompt Culture Models Tests', function () {
     this.timeout(5000);
-   
-    it('should correctly map to nearest language', function() {
-        const locales = [
-            'es-es',
-            'nl-nl',
-            'en-us',
-            'fr-fr',
-            'de-de',
-            'ja-jp',
-            'it-it',
-            'pt-br',
-            'zh-cn'
-        ];
+
+    it('should correctly map to nearest language', function () {
+        const locales = ['es-es', 'nl-nl', 'en-us', 'fr-fr', 'de-de', 'ja-jp', 'it-it', 'pt-br', 'zh-cn'];
         // es-ES
         const capEnding = (locale) => {
-            return `${ locale.split('-')[0] }-${ locale.split('-')[1].toUpperCase() }`;
+            return `${locale.split('-')[0]}-${locale.split('-')[1].toUpperCase()}`;
         };
         // es-Es
         const titleEnding = (locale) => {
@@ -41,7 +31,7 @@ describe('Prompt Culture Models Tests', function() {
                 capEnding(locale),
                 titleEnding(locale),
                 capTwoLetter(locale),
-                lowerTwoLetter(locale)
+                lowerTwoLetter(locale),
             ];
             return obj;
         }, {});
@@ -52,13 +42,13 @@ describe('Prompt Culture Models Tests', function() {
             });
         });
     });
-    
-    it('should not throw when locale is null or undefined', function() {
+
+    it('should not throw when locale is null or undefined', function () {
         assert.doesNotThrow(() => PromptCultureModels.mapToNearestLanguage(null));
         assert.doesNotThrow(() => PromptCultureModels.mapToNearestLanguage(undefined));
     });
 
-    it('should return all supported cultures', function() {
+    it('should return all supported cultures', function () {
         const expected = [
             PromptCultureModels.Chinese,
             PromptCultureModels.Dutch,
@@ -68,7 +58,7 @@ describe('Prompt Culture Models Tests', function() {
             PromptCultureModels.Italian,
             PromptCultureModels.Japanese,
             PromptCultureModels.Portuguese,
-            PromptCultureModels.Spanish
+            PromptCultureModels.Spanish,
         ];
 
         const supportedCultures = PromptCultureModels.getSupportedCultures();

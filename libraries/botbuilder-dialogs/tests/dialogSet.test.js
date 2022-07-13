@@ -2,8 +2,8 @@ const { ConversationState, MemoryStorage, TestAdapter, NullTelemetryClient } = r
 const { Dialog, DialogSet, WaterfallDialog, DialogTurnStatus, ComponentDialog } = require('../');
 const assert = require('assert');
 
-const beginMessage = { text: `begin`, type: 'message' };
-const continueMessage = { text: `continue`, type: 'message' };
+const beginMessage = { text: 'begin', type: 'message' };
+const continueMessage = { text: 'continue', type: 'message' };
 
 describe('DialogSet', function () {
     this.timeout(5000);
@@ -54,8 +54,8 @@ describe('DialogSet', function () {
                     },
                 ])
             );
-        assert(dialogs.find('A'), `dialog A not found.`);
-        assert(dialogs.find('B'), `dialog B not found.`);
+        assert(dialogs.find('A'), 'dialog A not found.');
+        assert(dialogs.find('B'), 'dialog B not found.');
     });
 
     it('should increment the dialog ID when adding the same dialog twice.', function () {
@@ -65,15 +65,15 @@ describe('DialogSet', function () {
         dialogs.add(new WaterfallDialog('a', [function () {}]));
 
         assert(dialogs.find('a'));
-        assert(dialogs.find('a2'), `second dialog didn't have ID incremented`);
+        assert(dialogs.find('a2'), "second dialog didn't have ID incremented");
     });
 
     it('should find() a dialog that was added.', function () {
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new WaterfallDialog('a', [function () {}]));
 
-        assert(dialogs.find('a'), `dialog not found.`);
-        assert(!dialogs.find('b'), `dialog found that shouldn't exist.`);
+        assert(dialogs.find('a'), 'dialog not found.');
+        assert(!dialogs.find('b'), "dialog found that shouldn't exist.");
     });
 
     it('should save dialog stack state between turns.', async function () {
@@ -85,7 +85,7 @@ describe('DialogSet', function () {
             new WaterfallDialog('a', [
                 async function (step) {
                     assert(step);
-                    await step.context.sendActivity(`Greetings`);
+                    await step.context.sendActivity('Greetings');
                     return Dialog.EndOfTurn;
                 },
                 async function (step) {
@@ -117,17 +117,17 @@ describe('DialogSet', function () {
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new WaterfallDialog('A')).add(new WaterfallDialog('B'));
         const hash = dialogs.getVersion();
-        assert(hash && hash.length > 0, `no hash generated.`);
+        assert(hash && hash.length > 0, 'no hash generated.');
     });
 
     it('Generated version hash should change when dialog set changes.', function () {
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new WaterfallDialog('A')).add(new WaterfallDialog('B'));
         const hash = dialogs.getVersion();
-        assert(hash && hash.length > 0, `no hash generated.`);
+        assert(hash && hash.length > 0, 'no hash generated.');
 
         dialogs.add(new WaterfallDialog('C'));
-        assert(hash != dialogs.getVersion(), `hash not updated.`);
+        assert(hash != dialogs.getVersion(), 'hash not updated.');
     });
 
     it('Cyclical dialog structures', function () {

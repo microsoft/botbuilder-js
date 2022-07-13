@@ -3,7 +3,7 @@
 
 const assert = require('assert');
 const { spy } = require('sinon');
-const { ok, strictEqual } = require('assert');
+const { ok } = require('assert');
 const { OAuthPrompt, DialogSet, DialogTurnStatus } = require('../');
 const {
     AuthenticationConstants,
@@ -42,9 +42,9 @@ describe('OAuthPrompt', function () {
                 await dc.prompt('prompt', {});
             } else if (results.status === DialogTurnStatus.complete) {
                 if (results.result.token) {
-                    await turnContext.sendActivity(`Logged in.`);
+                    await turnContext.sendActivity('Logged in.');
                 } else {
-                    await turnContext.sendActivity(`Failed`);
+                    await turnContext.sendActivity('Failed');
                 }
             }
             await convoState.saveChanges(turnContext);
@@ -106,9 +106,9 @@ describe('OAuthPrompt', function () {
                 await dc.prompt('prompt', {});
             } else if (results.status === DialogTurnStatus.complete) {
                 if (results.result.token) {
-                    await turnContext.sendActivity(`Logged in.`);
+                    await turnContext.sendActivity('Logged in.');
                 } else {
-                    await turnContext.sendActivity(`Failed`);
+                    await turnContext.sendActivity('Failed');
                 }
             }
             await convoState.saveChanges(turnContext);
@@ -350,9 +350,9 @@ describe('OAuthPrompt', function () {
                 await dc.prompt('prompt', {});
             } else if (results.status === DialogTurnStatus.complete) {
                 if (results.result.token) {
-                    await turnContext.sendActivity(`Logged in.`);
+                    await turnContext.sendActivity('Logged in.');
                 } else {
-                    await turnContext.sendActivity(`Failed`);
+                    await turnContext.sendActivity('Failed');
                 }
             }
             await convoState.saveChanges(turnContext);
@@ -455,7 +455,7 @@ describe('OAuthPrompt', function () {
                 async exchangeToken() {}
             }
 
-            it(`should fail if adapter does not have 'getUserToken'`, async function () {
+            it("should fail if adapter does not have 'getUserToken'", async function () {
                 const fakeAdapter = {};
                 const context = new TurnContext(fakeAdapter, {
                     activity: {
@@ -869,7 +869,7 @@ describe('OAuthPrompt', function () {
                     await dc.prompt('OAuthPrompt', {});
                 } else if (results.status === DialogTurnStatus.complete) {
                     if (results.result.token) {
-                        await turnContext.sendActivity(`Logged in.`);
+                        await turnContext.sendActivity('Logged in.');
                     } else {
                         await turnContext.sendActivity('Failed');
                     }
@@ -1089,8 +1089,8 @@ class ClaimsIdentity {
     /**w
      * Each claim should be { type: 'type', value: 'value' }
      *
-     * @param {*} claims
-     * @param {*} isAuthenticated
+     * @param {*} claims The claims with which to populate the claims identity.
+     * @param {*} isAuthenticated True if the identity has been authenticated; otherwise, false.
      */
     constructor(claims = [], isAuthenticated = false) {
         this.claims = claims;

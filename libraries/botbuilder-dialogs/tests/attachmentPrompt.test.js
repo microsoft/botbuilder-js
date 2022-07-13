@@ -3,11 +3,11 @@ const { AttachmentPrompt, DialogSet, DialogTurnStatus } = require('../');
 const assert = require('assert');
 
 const answerMessage = {
-    text: `here you go`,
+    text: 'here you go',
     type: 'message',
     attachments: [{ contentType: 'test', content: 'test1' }],
 };
-const invalidMessage = { text: `what?`, type: 'message' };
+const invalidMessage = { text: 'what?', type: 'message' };
 
 describe('AttachmentPrompt', function () {
     this.timeout(5000);
