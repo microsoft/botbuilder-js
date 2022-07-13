@@ -91,7 +91,7 @@ export class Trigger {
      * @param action Action to take when a trigger matches.
      * @param quantifiers Quantifiers to dynamically expand the expression.
      */
-    public constructor(tree: TriggerTree, expression?: Expression, action?: any, ...quantifiers: Quantifier[]) {
+    constructor(tree: TriggerTree, expression?: Expression, action?: any, ...quantifiers: Quantifier[]) {
         this._tree = tree;
         this.action = action;
         this.originalExpression = expression;
@@ -113,12 +113,12 @@ export class Trigger {
     /**
      * Original trigger expression.
      */
-    public readonly originalExpression: Expression;
+    readonly originalExpression: Expression;
 
     /**
      * Action to take when trigger is true.
      */
-    public readonly action: any;
+    readonly action: any;
 
     /**
      * Gets list of expressions converted into Disjunctive Normal Form where ! is pushed to the leaves and
@@ -126,7 +126,7 @@ export class Trigger {
      *
      * @returns The list of clauses.
      */
-    public get clauses(): Clause[] {
+    get clauses(): Clause[] {
         return this._clauses;
     }
 
@@ -137,7 +137,7 @@ export class Trigger {
      * @param comparers The comparer dictionary.
      * @returns A `RelationshipType` value.
      */
-    public relationship(other: Trigger, comparers: PredicateComparers): RelationshipType {
+    relationship(other: Trigger, comparers: PredicateComparers): RelationshipType {
         let result: RelationshipType;
         const first = this._relationship(this, other, comparers);
         const second = this._relationship(other, this, comparers);
@@ -169,7 +169,7 @@ export class Trigger {
      * @param state The scope for looking up variables.
      * @returns A boolean value inidicating whether there is a member matches.
      */
-    public matches(nodeClause: Clause, state: MemoryInterface | any): boolean {
+    matches(nodeClause: Clause, state: MemoryInterface | any): boolean {
         return this.clauses.find((clause: Clause) => clause.matches(nodeClause, state)) !== undefined;
     }
 
@@ -180,7 +180,7 @@ export class Trigger {
      * @param indent An integer represents the number of spaces at the start of a line.
      * @returns A string that represents the current trigger.
      */
-    public toString(builder: string[] = [], indent = 0): string {
+    toString(builder: string[] = [], indent = 0): string {
         builder.push(' '.repeat(indent));
         if (this._clauses.length > 0) {
             let first = true;

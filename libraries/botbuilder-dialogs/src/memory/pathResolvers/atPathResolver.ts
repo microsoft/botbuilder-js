@@ -17,7 +17,7 @@ export class AtPathResolver extends AliasPathResolver {
     /**
      * Initializes a new instance of the [AtPathResolver](xref:botbuilder-dialogs.AtPathResolver) class.
      */
-    public constructor() {
+    constructor() {
         super('@', '');
     }
 
@@ -27,7 +27,7 @@ export class AtPathResolver extends AliasPathResolver {
      * @param path Path to inspect.
      * @returns The transformed path.
      */
-    public transformPath(path: string): string {
+    transformPath(path: string): string {
         path = path.trim();
         if (path.startsWith('@') && path.length > 1 && !path.startsWith('@@')) {
             let end = -1;

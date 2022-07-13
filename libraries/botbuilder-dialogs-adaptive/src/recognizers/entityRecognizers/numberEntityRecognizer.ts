@@ -14,7 +14,7 @@ import { TextEntityRecognizer } from './textEntityRecognizer';
  * Recognizes number input.
  */
 export class NumberEntityRecognizer extends TextEntityRecognizer {
-    public static $kind = 'Microsoft.NumberEntityRecognizer';
+    static $kind = 'Microsoft.NumberEntityRecognizer';
 
     /**
      * @protected

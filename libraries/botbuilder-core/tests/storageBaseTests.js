@@ -94,7 +94,7 @@ class StorageBaseTests {
     }
 
     static async handleCrazyKeys(storage) {
-        const key = `!@#$%^&*()~/\\><,.?';\"\`~`;
+        const key = '!@#$%^&*()~/\\><,.?\';"`~';
         const storeItem = { id: 1 };
         const storeItems = { [key]: storeItem };
 

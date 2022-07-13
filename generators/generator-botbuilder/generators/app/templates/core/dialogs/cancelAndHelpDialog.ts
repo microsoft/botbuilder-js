@@ -13,7 +13,7 @@ export class CancelAndHelpDialog extends ComponentDialog {
         super(id);
     }
 
-    public async onContinueDialog(innerDc: DialogContext): Promise<DialogTurnResult> {
+    async onContinueDialog(innerDc: DialogContext): Promise<DialogTurnResult> {
         const result = await this.interrupt(innerDc);
         if (result) {
             return result;

@@ -76,9 +76,11 @@ export class QnACardBuilder {
 
         result.context?.prompts?.forEach((prompt) => {
             buttonList.push({
-                value: prompt.displayText,
-                type: 'imBack',
+                value: prompt.qnaId,
+                type: 'messageBack',
                 title: prompt.displayText,
+                text: prompt.displayText,
+                displayText: prompt.displayText,
             });
         });
 

@@ -55,7 +55,7 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
      * @param dialogOptions The options to execute the skill dialog.
      * @param dialogId The id of the dialog.
      */
-    public constructor(dialogOptions: SkillDialogOptions, dialogId?: string) {
+    constructor(dialogOptions: SkillDialogOptions, dialogId?: string) {
         super(dialogId);
         if (!dialogOptions) {
             throw new TypeError('Missing dialogOptions parameter');
@@ -72,7 +72,7 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
      * @remarks
      * If the task is successful, the result indicates whether the dialog is still active after the turn has been processed by the dialog.
      */
-    public async beginDialog(dc: DialogContext, options: BeginSkillDialogOptions): Promise<DialogTurnResult> {
+    async beginDialog(dc: DialogContext, options: BeginSkillDialogOptions): Promise<DialogTurnResult> {
         const dialogArgs = this.validateBeginDialogArgs(options);
 
         // Create deep clone of the original activity to avoid altering it before forwarding it.
@@ -111,7 +111,7 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
      * active after the turn has been processed by the dialog. The result may also contain a
      * return value.
      */
-    public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
+    async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
         // with adaptive dialogs, ResumeDialog is not called directly. Instead the Interrupted flag is set, which
         // acts as the signal to the SkillDialog to resume the skill.
         if (dc.state.getValue<boolean>(TurnPath.interrupted)) {
@@ -153,7 +153,7 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
      * @param reason [Reason](xref:botbuilder-dialogs.DialogReason) why the dialog ended.
      * @returns A Promise representing the asynchronous operation.
      */
-    public async endDialog(context: TurnContext, instance: DialogInstance, reason: DialogReason): Promise<void> {
+    async endDialog(context: TurnContext, instance: DialogInstance, reason: DialogReason): Promise<void> {
         // Send of of conversation to the skill if the dialog has been cancelled.
         if (reason == DialogReason.cancelCalled || reason == DialogReason.replaceCalled) {
             const reference = TurnContext.getConversationReference(context.activity);
@@ -181,7 +181,7 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
      * @param instance State information for this dialog.
      * @returns A Promise representing the asynchronous operation.
      */
-    public async repromptDialog(context: TurnContext, instance: DialogInstance): Promise<void> {
+    async repromptDialog(context: TurnContext, instance: DialogInstance): Promise<void> {
         // Create and send an envent to the skill so it can resume the dialog.
         const repromptEvent = { type: ActivityTypes.Event, name: DialogEvents.repromptDialog };
 
@@ -204,7 +204,7 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
      * of the value returned is dependent on the child dialog.
      * @returns A Promise representing the asynchronous operation.
      */
-    public async resumeDialog(dc: DialogContext, _reason: DialogReason, _result?: any): Promise<DialogTurnResult> {
+    async resumeDialog(dc: DialogContext, _reason: DialogReason, _result?: any): Promise<DialogTurnResult> {
         await this.repromptDialog(dc.context, dc.activeDialog);
         return Dialog.EndOfTurn;
     }

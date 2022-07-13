@@ -18,7 +18,7 @@ export class DialogSetConverter implements Converter<string[] | Dialog[], Dialog
      *
      * @param _resourceExplorer Resource explorer to use for resolving references.
      */
-    public constructor(private readonly _resourceExplorer: ResourceExplorer) {}
+    constructor(private readonly _resourceExplorer: ResourceExplorer) {}
 
     /**
      * Converts an array of dialog or dialog name to a [DialogSet](xref:botbuilder-dialogs.DialogSet) instance.
@@ -26,7 +26,7 @@ export class DialogSetConverter implements Converter<string[] | Dialog[], Dialog
      * @param value An array of dialog or dialog name.
      * @returns A new [DialogSet](xref:botbuilder-dialogs.DialogSet) instance.
      */
-    public convert(value: string[] | Dialog[] | DialogSet): DialogSet {
+    convert(value: string[] | Dialog[] | DialogSet): DialogSet {
         if (value instanceof DialogSet) {
             return value;
         }

@@ -19,7 +19,7 @@ export class RemoveProperty extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [RemoveProperty](xref:adaptive-expressions.RemoveProperty) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.RemoveProperty, RemoveProperty.evaluator(), ReturnType.Object, RemoveProperty.validator);
     }
 

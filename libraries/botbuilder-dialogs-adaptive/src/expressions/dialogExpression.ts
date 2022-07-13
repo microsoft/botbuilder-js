@@ -21,7 +21,7 @@ export class DialogExpression extends ExpressionProperty<Dialog> {
      *
      * @param value Optional. A [Dialog](xref:botbuilder-dialogs.Dialog), a `string` that is interpreted as a resource Id or dialogId, or an [Expression](xref:adaptive-expressions.Expression).
      */
-    public constructor(value?: Dialog | string | Expression) {
+    constructor(value?: Dialog | string | Expression) {
         super(value);
     }
 
@@ -30,7 +30,7 @@ export class DialogExpression extends ExpressionProperty<Dialog> {
      *
      * @param value A [Dialog](xref:botbuilder-dialogs.Dialog), a `string` that is interpreted as a resource Id or dialogId, or an [Expression](xref:adaptive-expressions.Expression).
      */
-    public setValue(value: Dialog | string | Expression): void {
+    setValue(value: Dialog | string | Expression): void {
         if (typeof value == 'string' && !value.startsWith('=')) {
             // Resource Id's will be resolved to actual dialog value
             // if it's not a = then we want to convert to a constant string expressions to represent a

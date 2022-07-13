@@ -31,13 +31,13 @@ export class Recognizer extends Configurable implements RecognizerConfiguration 
     /**
      * Recognizers unique ID.
      */
-    public id: string;
+    id: string;
 
     /**
      * The telemetry client for logging events.
      * Default this to the NullTelemetryClient, which does nothing.
      */
-    public telemetryClient: BotTelemetryClient = new NullTelemetryClient();
+    telemetryClient: BotTelemetryClient = new NullTelemetryClient();
 
     /**
      * To recognize intents and entities in a users utterance.
@@ -47,7 +47,7 @@ export class Recognizer extends Configurable implements RecognizerConfiguration 
      * @param {Record<string, string>} _telemetryProperties Additional properties to be logged to telemetry with event.
      * @param {Record<string, number>} _telemetryMetrics Additional metrics to be logged to telemetry with event.
      */
-    public recognize(
+    recognize(
         _dialogContext: DialogContext,
         _activity: Partial<Activity>,
         _telemetryProperties?: Record<string, string>,

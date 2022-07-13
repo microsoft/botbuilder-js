@@ -31,6 +31,9 @@ import {
     StatusCodes,
 } from 'botframework-schema';
 
+/**
+ * An adapter that implements the Bot Framework Protocol and can be hosted in different cloud environments both public and private.
+ */
 export abstract class CloudAdapterBase extends BotAdapter {
     readonly ConnectorFactoryKey = Symbol('ConnectorFactory');
     readonly UserTokenClientKey = Symbol('UserTokenClient');
@@ -148,8 +151,8 @@ export abstract class CloudAdapterBase extends BotAdapter {
      * @deprecated
      */
     async continueConversation(
-        reference: Partial<ConversationReference>,
-        logic: (context: TurnContext) => Promise<void>
+        _reference: Partial<ConversationReference>,
+        _logic: (context: TurnContext) => Promise<void>
     ): Promise<void> {
         throw new Error(
             '`CloudAdapterBase.continueConversation` is deprecated, please use `CloudAdapterBase.continueConversationAsync`'

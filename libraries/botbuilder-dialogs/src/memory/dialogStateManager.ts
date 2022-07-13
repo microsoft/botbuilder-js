@@ -48,7 +48,7 @@ export class DialogStateManager {
      * @param dc The dialog context for the current turn of the conversation.
      * @param configuration Configuration for the dialog state manager.
      */
-    public constructor(dc: DialogContext, configuration?: DialogStateManagerConfiguration) {
+    constructor(dc: DialogContext, configuration?: DialogStateManagerConfiguration) {
         ComponentRegistration.add(new DialogsComponentRegistration());
 
         this.dialogContext = dc;
@@ -92,7 +92,7 @@ export class DialogStateManager {
      * Assigning a new configuration to any DialogStateManager within the chain will update the
      * configuration for the entire chain.
      */
-    public configuration: DialogStateManagerConfiguration;
+    configuration: DialogStateManagerConfiguration;
 
     /**
      * Get the value from memory using path expression.
@@ -104,7 +104,7 @@ export class DialogStateManager {
      * @param defaultValue (Optional) default value to use if the path isn't found. May be a function that returns the default value to use.
      * @returns The found value or undefined if not found and no `defaultValue` specified.
      */
-    public getValue<T = any>(pathExpression: string, defaultValue?: T | (() => T)): T {
+    getValue<T = any>(pathExpression: string, defaultValue?: T | (() => T)): T {
         function returnDefault(): T {
             return typeof defaultValue == 'function' ? (defaultValue as Function)() : defaultValue;
         }
@@ -134,7 +134,7 @@ export class DialogStateManager {
      * @param pathExpression Path to memory.
      * @param value Value to set.
      */
-    public setValue(pathExpression: string, value: any): void {
+    setValue(pathExpression: string, value: any): void {
         // Get path segments
         const tpath = this.transformPath(pathExpression);
         const segments = this.parsePath(tpath);
@@ -200,7 +200,7 @@ export class DialogStateManager {
      *
      * @param pathExpression The leaf property to remove.
      */
-    public deleteValue(pathExpression: string): void {
+    deleteValue(pathExpression: string): void {
         // Get path segments
         const tpath = this.transformPath(pathExpression);
         const segments = this.parsePath(tpath);
@@ -240,7 +240,7 @@ export class DialogStateManager {
      * @remarks
      * This should be called at the beginning of the turn.
      */
-    public async loadAllScopes(): Promise<void> {
+    async loadAllScopes(): Promise<void> {
         const scopes = this.configuration.memoryScopes;
         for (let i = 0; i < scopes.length; i++) {
             await scopes[i].load(this.dialogContext);
@@ -253,7 +253,7 @@ export class DialogStateManager {
      * @remarks
      * This should be called at the end of the turn.
      */
-    public async saveAllChanges(): Promise<void> {
+    async saveAllChanges(): Promise<void> {
         const scopes = this.configuration.memoryScopes;
         for (let i = 0; i < scopes.length; i++) {
             await scopes[i].saveChanges(this.dialogContext);
@@ -265,7 +265,7 @@ export class DialogStateManager {
      *
      * @param name Name of the scope.
      */
-    public async deleteScopesMemory(name: string): Promise<void> {
+    async deleteScopesMemory(name: string): Promise<void> {
         name = name.toLowerCase();
         const scopes = this.configuration.memoryScopes;
         for (let i = 0; i < scopes.length; i++) {
@@ -286,7 +286,7 @@ export class DialogStateManager {
      * @param allowNestedPaths Optional. If `false` then detection of a nested path will cause an empty path to be returned. Defaults to 'true'.
      * @returns The normalized path.
      */
-    public parsePath(pathExpression: string, allowNestedPaths = true): (string | number)[] {
+    parsePath(pathExpression: string, allowNestedPaths = true): (string | number)[] {
         // Expand path segments
         let segment = '';
         let depth = 0;
@@ -405,7 +405,7 @@ export class DialogStateManager {
      * @param pathExpression The path to transform.
      * @returns The transformed path.
      */
-    public transformPath(pathExpression: string): string {
+    transformPath(pathExpression: string): string {
         // Run path through registered resolvers.
         const resolvers = this.configuration.pathResolvers;
         for (let i = 0; i < resolvers.length; i++) {
@@ -420,7 +420,7 @@ export class DialogStateManager {
      *
      * @returns Object which represents all memory scopes.
      */
-    public getMemorySnapshot(): object {
+    getMemorySnapshot(): object {
         const output = {};
         this.configuration.memoryScopes.forEach((scope) => {
             if (scope.includeInSnapshot) {
@@ -437,7 +437,7 @@ export class DialogStateManager {
      * @param paths Paths to track.
      * @returns Normalized paths to pass to [anyPathChanged()](#anypathchanged).
      */
-    public trackPaths(paths: string[]): string[] {
+    trackPaths(paths: string[]): string[] {
         const allPaths: string[] = [];
         paths.forEach((path) => {
             const tpath = this.transformPath(path);
@@ -462,7 +462,7 @@ export class DialogStateManager {
      * @param paths Paths from [trackPaths()](#trackpaths) to check.
      * @returns True if any path has changed since counter.
      */
-    public anyPathChanged(counter: number, paths: string[]): boolean {
+    anyPathChanged(counter: number, paths: string[]): boolean {
         let found = false;
         if (paths) {
             for (let i = 0; i < paths.length; i++) {
@@ -620,7 +620,7 @@ export class DialogStateManager {
      *
      * @returns A string with the version number.
      */
-    public version(): string {
+    version(): string {
         return '0';
     }
 }

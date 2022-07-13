@@ -170,26 +170,63 @@ export class ConfigurationBotFrameworkAuthentication extends BotFrameworkAuthent
         }
     }
 
+    /**
+     * Authenticate Bot Framework Protocol requests to Skills.
+     *
+     * @param authHeader The http auth header received in the skill request.
+     * @returns  {Promise<ClaimsIdentity>} A [ClaimsIdentity](xref:botframework-connector.ClaimsIdentity).
+     */
     authenticateChannelRequest(authHeader: string): Promise<ClaimsIdentity> {
         return this.inner.authenticateChannelRequest(authHeader);
     }
 
+    /**
+     * Validate Bot Framework Protocol requests.
+     *
+     * @param activity The inbound Activity.
+     * @param authHeader The HTTP auth header.
+     * @returns {Promise<AuthenticateRequestResult>} An [AuthenticateRequestResult](xref:botframework-connector.AuthenticateRequestResult).
+     */
     authenticateRequest(activity: Activity, authHeader: string): Promise<AuthenticateRequestResult> {
         return this.inner.authenticateRequest(activity, authHeader);
     }
 
+    /**
+     * Validate Bot Framework Protocol requests.
+     *
+     * @param authHeader The HTTP auth header.
+     * @param channelIdHeader The channel ID HTTP header.
+     * @returns {Promise<AuthenticateRequestResult>} An [AuthenticateRequestResult](xref:botframework-connector.AuthenticateRequestResult).
+     */
     authenticateStreamingRequest(authHeader: string, channelIdHeader: string): Promise<AuthenticateRequestResult> {
         return this.inner.authenticateStreamingRequest(authHeader, channelIdHeader);
     }
 
+    /**
+     * Creates a BotFrameworkClient for calling Skills.
+     *
+     * @returns A [BotFrameworkClient](xref:botframework-connector.BotFrameworkClient).
+     */
     createBotFrameworkClient(): BotFrameworkClient {
         return this.inner.createBotFrameworkClient();
     }
 
+    /**
+     * Creates a ConnectorFactory that can be used to create ConnectorClients that can use credentials from this particular Cloud Environment.
+     *
+     * @param claimsIdentity The inbound Activity's ClaimsIdentity.
+     * @returns A [ConnectorFactory](xref:botframework-connector.ConnectorFactory).
+     */
     createConnectorFactory(claimsIdentity: ClaimsIdentity): ConnectorFactory {
         return this.inner.createConnectorFactory(claimsIdentity);
     }
 
+    /**
+     * Creates the appropriate UserTokenClient instance.
+     *
+     * @param claimsIdentity The inbound Activity's ClaimsIdentity.
+     * @returns {Promise<UserTokenClient>} An [UserTokenClient](xref:botframework-connector.UserTokenClient).
+     */
     createUserTokenClient(claimsIdentity: ClaimsIdentity): Promise<UserTokenClient> {
         return this.inner.createUserTokenClient(claimsIdentity);
     }

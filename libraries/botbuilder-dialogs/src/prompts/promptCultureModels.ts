@@ -49,7 +49,7 @@ export interface PromptCultureModel {
  * Class container for currently-supported Culture Models in Confirm and Choice Prompt.
  */
 export class PromptCultureModels {
-    public static Chinese: PromptCultureModel = {
+    static Chinese: PromptCultureModel = {
         locale: Culture.Chinese,
         separator: ', ',
         inlineOr: ' 要么 ',
@@ -58,7 +58,7 @@ export class PromptCultureModels {
         noInLanguage: '不',
     };
 
-    public static Dutch: PromptCultureModel = {
+    static Dutch: PromptCultureModel = {
         locale: Culture.Dutch,
         separator: ', ',
         inlineOr: ' of ',
@@ -67,7 +67,7 @@ export class PromptCultureModels {
         noInLanguage: 'Nee',
     };
 
-    public static English: PromptCultureModel = {
+    static English: PromptCultureModel = {
         locale: Culture.English,
         separator: ', ',
         inlineOr: ' or ',
@@ -76,7 +76,7 @@ export class PromptCultureModels {
         noInLanguage: 'No',
     };
 
-    public static French: PromptCultureModel = {
+    static French: PromptCultureModel = {
         locale: Culture.French,
         separator: ', ',
         inlineOr: ' ou ',
@@ -85,7 +85,7 @@ export class PromptCultureModels {
         noInLanguage: 'Non',
     };
 
-    public static German: PromptCultureModel = {
+    static German: PromptCultureModel = {
         locale: Culture.German,
         separator: ', ',
         inlineOr: ' oder ',
@@ -94,7 +94,7 @@ export class PromptCultureModels {
         noInLanguage: 'Nein',
     };
 
-    public static Italian: PromptCultureModel = {
+    static Italian: PromptCultureModel = {
         locale: Culture.Italian,
         separator: ', ',
         inlineOr: ' o ',
@@ -103,7 +103,7 @@ export class PromptCultureModels {
         noInLanguage: 'No',
     };
 
-    public static Japanese: PromptCultureModel = {
+    static Japanese: PromptCultureModel = {
         locale: Culture.Japanese,
         separator: '、 ',
         inlineOr: ' または ',
@@ -112,7 +112,7 @@ export class PromptCultureModels {
         noInLanguage: 'いいえ',
     };
 
-    public static Portuguese: PromptCultureModel = {
+    static Portuguese: PromptCultureModel = {
         locale: Culture.Portuguese,
         separator: ', ',
         inlineOr: ' ou ',
@@ -121,7 +121,7 @@ export class PromptCultureModels {
         noInLanguage: 'Não',
     };
 
-    public static Spanish: PromptCultureModel = {
+    static Spanish: PromptCultureModel = {
         locale: Culture.Spanish,
         separator: ', ',
         inlineOr: ' o ',
@@ -145,7 +145,7 @@ export class PromptCultureModels {
      * @param cultureCode Represents locale. Examples: "en-US, en-us, EN".
      * @returns Normalized locale.
      */
-    public static mapToNearestLanguage(cultureCode: string): string {
+    static mapToNearestLanguage(cultureCode: string): string {
         if (cultureCode) {
             cultureCode = cultureCode.toLowerCase();
             const supportedCultureCodes = this.getSupportedCultureCodes();
@@ -164,7 +164,7 @@ export class PromptCultureModels {
         return cultureCode;
     }
 
-    public static getSupportedCultures = (): PromptCultureModel[] => [
+    static getSupportedCultures = (): PromptCultureModel[] => [
         PromptCultureModels.Chinese,
         PromptCultureModels.Dutch,
         PromptCultureModels.English,

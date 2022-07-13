@@ -25,7 +25,7 @@ export class StartOfDay extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [StartOfDay](xref:adaptive-expressions.StartOfDay) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.StartOfDay, StartOfDay.evaluator, ReturnType.String, StartOfDay.validator);
     }
 

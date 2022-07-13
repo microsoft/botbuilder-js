@@ -91,7 +91,7 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
      * If the task is successful, the result indicates whether the dialog is still
      * active after the turn has been processed by the dialog.
      */
-    public async beginDialog(outerDC: DialogContext, options?: O): Promise<DialogTurnResult> {
+    async beginDialog(outerDC: DialogContext, options?: O): Promise<DialogTurnResult> {
         await this.checkForVersionChange(outerDC);
 
         telemetryTrackDialogView(this.telemetryClient, this.id);
@@ -129,7 +129,7 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
      * active after the turn has been processed by the dialog. The result may also contain a
      * return value.
      */
-    public async continueDialog(outerDC: DialogContext): Promise<DialogTurnResult> {
+    async continueDialog(outerDC: DialogContext): Promise<DialogTurnResult> {
         await this.checkForVersionChange(outerDC);
 
         // Continue execution of inner dialog.
@@ -165,7 +165,7 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
      * If this method is *not* overridden, the dialog automatically calls its
      * RepromptDialog(ITurnContext, DialogInstance) when the user replies.
      */
-    public async resumeDialog(outerDC: DialogContext, _reason: DialogReason, _result?: any): Promise<DialogTurnResult> {
+    async resumeDialog(outerDC: DialogContext, _reason: DialogReason, _result?: any): Promise<DialogTurnResult> {
         await this.checkForVersionChange(outerDC);
 
         // Containers are typically leaf nodes on the stack but the dev is free to push other dialogs
@@ -185,7 +185,7 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
      * @param instance State information for this dialog.
      * @returns A Promise representing the asynchronous operation.
      */
-    public async repromptDialog(context: TurnContext, instance: DialogInstance): Promise<void> {
+    async repromptDialog(context: TurnContext, instance: DialogInstance): Promise<void> {
         // Forward to inner dialogs
         const innerDC: DialogContext = this.createInnerDC(context, instance);
         await innerDC.repromptDialog();
@@ -205,7 +205,7 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
      * @remarks When this method is called from the parent dialog's context, the component [Dialog](xref:botbuilder-dialogs.Dialog)
      * cancels all of the dialogs on its inner dialog stack before ending.
      */
-    public async endDialog(context: TurnContext, instance: DialogInstance, reason: DialogReason): Promise<void> {
+    async endDialog(context: TurnContext, instance: DialogInstance, reason: DialogReason): Promise<void> {
         // Forward cancel to inner dialogs
         if (reason === DialogReason.cancelCalled) {
             const innerDC: DialogContext = this.createInnerDC(context, instance);
@@ -224,7 +224,7 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
      * @remarks
      * The [Dialog.id](xref:botbuilder-dialogs.Dialog.id) of the first child added to the component will be assigned to the initialDialogId property.
      */
-    public addDialog(dialog: Dialog): this {
+    addDialog(dialog: Dialog): this {
         this.dialogs.add(dialog);
         if (this.initialDialogId === undefined) {
             this.initialDialogId = dialog.id;
@@ -239,7 +239,7 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
      * @param outerDC the outer dialog context
      * @returns The created Dialog Context.
      */
-    public createChildContext(outerDC: DialogContext): DialogContext {
+    createChildContext(outerDC: DialogContext): DialogContext {
         return this.createInnerDC(outerDC, outerDC.activeDialog);
     }
 

@@ -15,7 +15,7 @@ export class IntentPattern {
      * @param intent The intent.
      * @param pattern The regex pattern to match..
      */
-    public constructor(intent?: string, pattern?: string) {
+    constructor(intent?: string, pattern?: string) {
         if (intent && pattern) {
             this.intent = intent;
             this.pattern = pattern;
@@ -25,7 +25,7 @@ export class IntentPattern {
     /**
      * @returns An instance of RegExp with the given pattern.
      */
-    public get regex(): RegExp {
+    get regex(): RegExp {
         // eslint-disable-next-line security/detect-non-literal-regexp
         return new RegExp(this._pattern, 'ig');
     }
@@ -35,14 +35,14 @@ export class IntentPattern {
      *
      * @returns The intent.
      */
-    public get intent(): string {
+    get intent(): string {
         return this._intent;
     }
 
     /**
      * Sets the intent.
      */
-    public set intent(value: string) {
+    set intent(value: string) {
         this._intent = value[0] == '#' ? value.substr(1) : value;
     }
 
@@ -51,14 +51,14 @@ export class IntentPattern {
      *
      * @returns The pattern.
      */
-    public get pattern(): string {
+    get pattern(): string {
         return this._pattern;
     }
 
     /**
      * Sets the pattern
      */
-    public set pattern(value: string) {
+    set pattern(value: string) {
         this._pattern = value.startsWith('(?i)') ? value.substr(4) : value;
     }
 }

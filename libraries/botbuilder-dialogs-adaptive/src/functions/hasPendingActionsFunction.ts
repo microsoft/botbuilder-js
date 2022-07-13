@@ -23,12 +23,12 @@ export class HasPendingActionsFunction extends ExpressionEvaluator {
     /**
      * Function identifier name.
      */
-    public static readonly functionName = 'hasPendingActions'; // `name` is reserved in JavaScript
+    static readonly functionName = 'hasPendingActions'; // `name` is reserved in JavaScript
 
     /**
      * Initializes a new instance of the [HasPendingActionsFunction](xref:botbuilder-dialogs-adaptive.HasPendingActionsFunction).
      */
-    public constructor() {
+    constructor() {
         super(HasPendingActionsFunction.functionName, HasPendingActionsFunction.function, ReturnType.Boolean);
     }
 

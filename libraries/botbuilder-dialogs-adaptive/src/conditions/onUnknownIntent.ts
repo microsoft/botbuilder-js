@@ -22,7 +22,7 @@ import { OnDialogEvent } from './onDialogEvent';
  * This provides the parent dialogs the opportunity to handle global commands as fallback interruption.
  */
 export class OnUnknownIntent extends OnDialogEvent {
-    public static $kind = 'Microsoft.OnUnknownIntent';
+    static $kind = 'Microsoft.OnUnknownIntent';
 
     /**
      * Creates a new `OnUnknownIntent` instance.
@@ -30,7 +30,7 @@ export class OnUnknownIntent extends OnDialogEvent {
      * @param actions (Optional) The actions to add to the plan when the rule constraints are met.
      * @param condition (Optional) The condition which needs to be met for the actions to be executed.
      */
-    public constructor(actions: Dialog[] = [], condition?: string) {
+    constructor(actions: Dialog[] = [], condition?: string) {
         super(AdaptiveEvents.unknownIntent, actions, condition);
     }
 }

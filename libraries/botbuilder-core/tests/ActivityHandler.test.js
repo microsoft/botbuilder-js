@@ -1,5 +1,12 @@
 const assert = require('assert');
-const { ActivityHandler, ActivityTypes, Channels, TestAdapter, tokenResponseEventName, TurnContext } = require('../lib');
+const {
+    ActivityHandler,
+    ActivityTypes,
+    Channels,
+    TestAdapter,
+    tokenResponseEventName,
+    TurnContext,
+} = require('../lib');
 
 describe('ActivityHandler', function () {
     const adapter = new TestAdapter();
@@ -17,7 +24,7 @@ describe('ActivityHandler', function () {
         await bot.run(context);
     }
 
-    it(`should fire onTurn for any inbound activity`, async function () {
+    it('should fire onTurn for any inbound activity', async function () {
         const bot = new ActivityHandler();
 
         let onTurnCalled = false;
@@ -30,7 +37,7 @@ describe('ActivityHandler', function () {
         assert(onTurnCalled);
     });
 
-    it(`should fire onMessage for any message activities`, async function () {
+    it('should fire onMessage for any message activities', async function () {
         const bot = new ActivityHandler();
 
         let onMessageCalled = false;
@@ -43,7 +50,7 @@ describe('ActivityHandler', function () {
         assert(onMessageCalled);
     });
 
-    it(`calling  next allows following events to firing`, async function () {
+    it('calling  next allows following events to firing', async function () {
         const bot = new ActivityHandler();
 
         let onTurnCalled = false;
@@ -63,11 +70,11 @@ describe('ActivityHandler', function () {
         assert(onMessageCalled);
     });
 
-    it(`omitting call to next prevents following events from firing`, async function () {
+    it('omitting call to next prevents following events from firing', async function () {
         const bot = new ActivityHandler();
 
         let onTurnCalled = false;
-        bot.onTurn(async (context, next) => {
+        bot.onTurn(async (_context, _next) => {
             onTurnCalled = true;
         });
 
@@ -82,19 +89,19 @@ describe('ActivityHandler', function () {
         assert(!onMessageCalled);
     });
 
-    it(`binding 2 methods to the same event both fire`, async function () {
+    it('binding 2 methods to the same event both fire', async function () {
         const bot = new ActivityHandler();
         let count = 0;
 
         let onMessageCalled = false;
-        bot.onMessage(async (context, next) => {
+        bot.onMessage(async (_context, next) => {
             onMessageCalled = true;
             count++;
             await next();
         });
 
         let onMessageCalledAgain = false;
-        bot.onMessage(async (context, next) => {
+        bot.onMessage(async (_context, next) => {
             onMessageCalledAgain = true;
             count++;
             await next();
@@ -106,7 +113,7 @@ describe('ActivityHandler', function () {
         assert(count === 2, 'all events did fire');
     });
 
-    it(`should fire onConversationUpdate`, async function () {
+    it('should fire onConversationUpdate', async function () {
         const bot = new ActivityHandler();
 
         let onConversationUpdateCalled = false;
@@ -119,7 +126,7 @@ describe('ActivityHandler', function () {
         assert(onConversationUpdateCalled);
     });
 
-    it(`should fire onMembersAdded`, async function () {
+    it('should fire onMembersAdded', async function () {
         const bot = new ActivityHandler();
 
         let onMembersAddedCalled = false;
@@ -132,7 +139,7 @@ describe('ActivityHandler', function () {
         assert(onMembersAddedCalled);
     });
 
-    it(`should fire onMembersRemoved`, async function () {
+    it('should fire onMembersRemoved', async function () {
         const bot = new ActivityHandler();
 
         let onMembersRemovedCalled = false;
@@ -145,7 +152,7 @@ describe('ActivityHandler', function () {
         assert(onMembersRemovedCalled);
     });
 
-    it(`should fire onMessageReaction`, async function () {
+    it('should fire onMessageReaction', async function () {
         const bot = new ActivityHandler();
 
         let onMessageReactionCalled = false;
@@ -158,7 +165,7 @@ describe('ActivityHandler', function () {
         assert(onMessageReactionCalled);
     });
 
-    it(`should fire onReactionsAdded`, async function () {
+    it('should fire onReactionsAdded', async function () {
         const bot = new ActivityHandler();
 
         let onReactionsAddedCalled = false;
@@ -171,7 +178,7 @@ describe('ActivityHandler', function () {
         assert(onReactionsAddedCalled);
     });
 
-    it(`should fire onReactionsRemoved`, async function () {
+    it('should fire onReactionsRemoved', async function () {
         const bot = new ActivityHandler();
 
         let onReactionsRemovedCalled = false;
@@ -184,7 +191,7 @@ describe('ActivityHandler', function () {
         assert(onReactionsRemovedCalled);
     });
 
-    it(`should fire onEvent`, async function () {
+    it('should fire onEvent', async function () {
         const bot = new ActivityHandler();
 
         let onEventCalled = false;
@@ -197,7 +204,7 @@ describe('ActivityHandler', function () {
         assert(onEventCalled);
     });
 
-    it(`should fire onEndOfConversation`, async function () {
+    it('should fire onEndOfConversation', async function () {
         const bot = new ActivityHandler();
 
         let onEndConversationCalled = false;
@@ -210,7 +217,7 @@ describe('ActivityHandler', function () {
         assert(onEndConversationCalled);
     });
 
-    it(`should fire onTyping`, async function () {
+    it('should fire onTyping', async function () {
         const bot = new ActivityHandler();
 
         let onTypingCalled = false;
@@ -223,7 +230,7 @@ describe('ActivityHandler', function () {
         assert(onTypingCalled);
     });
 
-    it(`should fire onInstallationUpdate`, async function () {
+    it('should fire onInstallationUpdate', async function () {
         const bot = new ActivityHandler();
 
         let onInstallationUpdateCalled = false;
@@ -236,7 +243,7 @@ describe('ActivityHandler', function () {
         assert(onInstallationUpdateCalled);
     });
 
-    it(`should fire onInstallationUpdateAdd`, async function () {
+    it('should fire onInstallationUpdateAdd', async function () {
         const bot = new ActivityHandler();
 
         let onInstallationUpdateAddCalled = false;
@@ -249,7 +256,7 @@ describe('ActivityHandler', function () {
         assert(onInstallationUpdateAddCalled);
     });
 
-    it(`should fire onInstallationUpdateAddUpgrade`, async function () {
+    it('should fire onInstallationUpdateAddUpgrade', async function () {
         const bot = new ActivityHandler();
 
         let onInstallationUpdateAddCalled = false;
@@ -262,7 +269,7 @@ describe('ActivityHandler', function () {
         assert(onInstallationUpdateAddCalled);
     });
 
-    it(`should fire onInstallationUpdateRemove`, async function () {
+    it('should fire onInstallationUpdateRemove', async function () {
         const bot = new ActivityHandler();
 
         let onInstallationUpdateRemoveCalled = false;
@@ -275,7 +282,7 @@ describe('ActivityHandler', function () {
         assert(onInstallationUpdateRemoveCalled);
     });
 
-    it(`should fire onInstallationUpdateRemoveUpgrade`, async function () {
+    it('should fire onInstallationUpdateRemoveUpgrade', async function () {
         const bot = new ActivityHandler();
 
         let onInstallationUpdateRemoveCalled = false;
@@ -288,7 +295,7 @@ describe('ActivityHandler', function () {
         assert(onInstallationUpdateRemoveCalled);
     });
 
-    it(`should fire onAdaptiveCardInvoke`, async function () {
+    it('should fire onAdaptiveCardInvoke', async function () {
         const bot = new ActivityHandler();
 
         let onAdpativeCardInvokeCalled = false;
@@ -312,7 +319,7 @@ describe('ActivityHandler', function () {
         assert(onAdpativeCardInvokeCalled);
     });
 
-    it(`should fire onUnrecognizedActivityType`, async function () {
+    it('should fire onUnrecognizedActivityType', async function () {
         const bot = new ActivityHandler();
 
         let onUnrecognizedActivityTypeCalled = false;
@@ -325,7 +332,7 @@ describe('ActivityHandler', function () {
         assert(onUnrecognizedActivityTypeCalled);
     });
 
-    it(`should fire onDialog`, async function () {
+    it('should fire onDialog', async function () {
         const bot = new ActivityHandler();
 
         let onDialogCalled = false;
@@ -339,7 +346,7 @@ describe('ActivityHandler', function () {
     });
 
     describe('ActivityHandler.onSearchInvoke', function () {
-        it(`should fire onSearchInvoke`, async function () {
+        it('should fire onSearchInvoke', async function () {
             const activity = {
                 type: ActivityTypes.Invoke,
                 name: 'application/search',
@@ -348,37 +355,37 @@ describe('ActivityHandler', function () {
                     queryText: 'test bot',
                     queryOptions: {
                         skip: 5,
-                        top: 10
+                        top: 10,
                     },
-                    context: "bot framework"
+                    context: 'bot framework',
                 },
             };
 
             await assertonSearchInvoke(activity, activity.value.kind);
         });
 
-        it(`should throw on onSearchInvoke activity missing value`, async function () {
+        it('should throw on onSearchInvoke activity missing value', async function () {
             const activity = {
                 type: ActivityTypes.Invoke,
-                name: 'application/search'
+                name: 'application/search',
             };
 
             await assertSearchResultError(activity, 'Missing value property for search');
         });
 
-        it(`should throw on onSearchInvoke activity missing kind`, async function () {
+        it('should throw on onSearchInvoke activity missing kind', async function () {
             const activity = {
                 type: ActivityTypes.Invoke,
                 name: 'application/search',
                 value: {
-                    queryText: 'test bot'
-                }
+                    queryText: 'test bot',
+                },
             };
 
             await assertSearchResultError(activity, 'Missing kind property for search.');
         });
 
-        it(`should not throw on onSearchInvoke activity missing kind when channel is msTeams`, async function () {
+        it('should not throw on onSearchInvoke activity missing kind when channel is msTeams', async function () {
             const activity = {
                 type: ActivityTypes.Invoke,
                 name: 'application/search',
@@ -387,21 +394,21 @@ describe('ActivityHandler', function () {
                     queryText: 'test bot',
                     queryOptions: {
                         skip: 5,
-                        top: 10
-                    }
-                }
+                        top: 10,
+                    },
+                },
             };
 
             await assertonSearchInvoke(activity, 'search');
         });
 
-        it(`should throw on onSearchInvoke activity missing queryText`, async function () {
+        it('should throw on onSearchInvoke activity missing queryText', async function () {
             const activity = {
                 type: ActivityTypes.Invoke,
                 name: 'application/search',
                 value: {
-                    kind: 'search'
-                }
+                    kind: 'search',
+                },
             };
 
             await assertSearchResultError(activity, 'Missing queryText for search.');
@@ -435,7 +442,7 @@ describe('ActivityHandler', function () {
             const testAdapter = new TestAdapter();
 
             let onSearchInvokeCalled = false;
-            bot.onSearchInvoke = async (context, invokeValue) => {
+            bot.onSearchInvoke = async (_context, _invokeValue) => {
                 onSearchInvokeCalled = true;
                 return { statusCode: 200, value: 'called' };
             };

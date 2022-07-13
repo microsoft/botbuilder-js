@@ -20,7 +20,7 @@ export class DefaultLoader implements CustomDeserializer<Configurable, Record<st
      *
      * @param {ResourceExplorer} _resourceExplorer The `ResourceExplorer` used by the loader.
      */
-    public constructor(private readonly _resourceExplorer: ResourceExplorer) {}
+    constructor(private readonly _resourceExplorer: ResourceExplorer) {}
 
     /**
      * The method that loads the configuration object to a requested type.
@@ -29,7 +29,7 @@ export class DefaultLoader implements CustomDeserializer<Configurable, Record<st
      * @param {Newable<Configurable>} type The object type that the configuration will be deserialized to.
      * @returns {Configurable} A `Configurable` object created from the configuration.
      */
-    public load(config: Record<string, unknown>, type: Newable<Configurable>): Configurable {
+    load(config: Record<string, unknown>, type: Newable<Configurable>): Configurable {
         return Object.entries(config).reduce((instance, [key, value]) => {
             let converter = instance.getConverter(key);
 

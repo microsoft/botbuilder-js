@@ -24,7 +24,7 @@ export class BrowserLocalStorage extends MemoryStorage {
     /**
      * Creates a new [BrowserLocalStorage](xref:botbuilder-core.BrowserLocalStorage) instance.
      */
-    public constructor() {
+    constructor() {
         super(localStorage as any);
     }
 }
@@ -48,7 +48,7 @@ export class BrowserSessionStorage extends MemoryStorage {
     /**
      * Creates a new [BrowserSessionStorage](xref:botbuilder-core.BrowserSessionStorage) instance.
      */
-    public constructor() {
+    constructor() {
         super(sessionStorage as any);
     }
 }

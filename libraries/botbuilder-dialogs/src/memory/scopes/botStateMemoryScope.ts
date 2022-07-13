@@ -20,7 +20,7 @@ export class BotStateMemoryScope extends MemoryScope {
      *
      * @param name name of the property.
      */
-    public constructor(name: string) {
+    constructor(name: string) {
         super(name, true);
     }
 
@@ -30,7 +30,7 @@ export class BotStateMemoryScope extends MemoryScope {
      * @param dc current dialog context.
      * @returns Memory for the scope.
      */
-    public getMemory(dc: DialogContext): object {
+    getMemory(dc: DialogContext): object {
         const botState: BotState = dc.context.turnState.get(this.stateKey);
         if (botState) {
             return botState.get(dc.context);
@@ -45,7 +45,7 @@ export class BotStateMemoryScope extends MemoryScope {
      * @param dc current dialog context
      * @param _memory memory
      */
-    public setMemory(dc: DialogContext, _memory: object): void {
+    setMemory(dc: DialogContext, _memory: object): void {
         const botState = dc.context.turnState.get(this.stateKey);
         if (!botState) {
             throw new Error(`${this.stateKey} is not available.`);
@@ -61,7 +61,7 @@ export class BotStateMemoryScope extends MemoryScope {
      * or `false` to load state from storage only if the cache doesn't already exist.
      * @returns A Promise that represents the work queued to execute.
      */
-    public async load(dc: DialogContext, force = false): Promise<void> {
+    async load(dc: DialogContext, force = false): Promise<void> {
         const botState: BotState = dc.context.turnState.get(this.stateKey);
         if (botState) {
             await botState.load(dc.context, force);
@@ -76,7 +76,7 @@ export class BotStateMemoryScope extends MemoryScope {
      * or `false` to save state to storage only if a property in the cache has changed.
      * @returns A Promise that represents the work queued to execute.
      */
-    public async saveChanges(dc: DialogContext, force = false): Promise<void> {
+    async saveChanges(dc: DialogContext, force = false): Promise<void> {
         const botState: BotState = dc.context.turnState.get(this.stateKey);
         if (botState) {
             await botState.saveChanges(dc.context, force);
@@ -89,7 +89,7 @@ export class BotStateMemoryScope extends MemoryScope {
      * @param _dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) object for this turn.
      * @returns A Promise that represents the work queued to execute.
      */
-    public async delete(_dc: DialogContext): Promise<void> {
+    async delete(_dc: DialogContext): Promise<void> {
         return Promise.resolve();
     }
 }

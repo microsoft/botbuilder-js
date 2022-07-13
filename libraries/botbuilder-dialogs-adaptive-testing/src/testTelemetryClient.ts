@@ -12,7 +12,7 @@ import {
 export class TestTelemetryClient implements BotTelemetryClient {
 
     //Trace all events happened in trackEvents method
-    public invocations: string[] = [];
+    invocations: string[] = [];
     /**
      * Creates a new instance of the [TestTelemetryClient](xref:botbuilder-dialogs-adaptive-testing.TestTelemetryClient) class.
      * @param settings Optional. Settings for the telemetry client.

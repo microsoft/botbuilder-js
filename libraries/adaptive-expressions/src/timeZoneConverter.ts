@@ -535,7 +535,7 @@ export class TimeZoneConverter {
      * @param ianaTimeZoneId IANA timezone format.
      * @returns windows timezone format.
      */
-    public static ianaToWindows(ianaTimeZoneId: string): string {
+    static ianaToWindows(ianaTimeZoneId: string): string {
         this.loadData();
         if (this.ianaToWindowsMap.has(ianaTimeZoneId)) {
             return this.ianaToWindowsMap.get(ianaTimeZoneId);
@@ -550,7 +550,7 @@ export class TimeZoneConverter {
      * @param windowsTimeZoneId Windows timezone format.
      * @returns Iana timezone format.
      */
-    public static windowsToIana(windowsTimeZoneId: string): string {
+    static windowsToIana(windowsTimeZoneId: string): string {
         this.loadData();
         if (this.windowsToIanaMap.has(`001|${windowsTimeZoneId}`)) {
             return this.windowsToIanaMap.get(`001|${windowsTimeZoneId}`);
@@ -565,7 +565,7 @@ export class TimeZoneConverter {
      * @param timezoneStr time zone string
      * @returns is the string is time zone string
      */
-    public static verifyTimeZoneStr(timezoneStr: string): boolean {
+    static verifyTimeZoneStr(timezoneStr: string): boolean {
         this.loadData();
 
         return this.validTimezonStr.includes(timezoneStr);

@@ -88,7 +88,7 @@ export class DialogSet {
      * ```
      * @param dialogState (Optional) state property used to persist the sets dialog stack.
      */
-    public constructor(dialogState?: StatePropertyAccessor<DialogState>) {
+    constructor(dialogState?: StatePropertyAccessor<DialogState>) {
         this.dialogState = dialogState;
     }
 
@@ -98,7 +98,7 @@ export class DialogSet {
      * @remarks
      * This hash is persisted to state storage and used to detect changes to a dialog set.
      */
-    public getVersion(): string {
+    getVersion(): string {
         if (!this._version) {
             let versions = '';
             for (const id in this.dialogs) {
@@ -124,7 +124,7 @@ export class DialogSet {
      * @param dialog The dialog or prompt to add.
      * If a telemetryClient is present on the dialog set, it will be added to each dialog.
      */
-    public add<T extends Dialog>(dialog: T): this {
+    add<T extends Dialog>(dialog: T): this {
         if (!(dialog instanceof Dialog)) {
             throw new Error(`DialogSet.add(): Invalid dialog being added.`);
         }
@@ -176,7 +176,7 @@ export class DialogSet {
      * Creates a dialog context which can be used to work with the dialogs in the set.
      * @param context Context for the current turn of conversation with the user.
      */
-    public async createContext(context: TurnContext): Promise<DialogContext> {
+    async createContext(context: TurnContext): Promise<DialogContext> {
         if (!this.dialogState) {
             throw new Error(
                 `DialogSet.createContext(): the dialog set was not bound to a stateProperty when constructed.`
@@ -198,14 +198,14 @@ export class DialogSet {
      * ```
      * @param dialogId ID of the dialog or prompt to lookup.
      */
-    public find(dialogId: string): Dialog | undefined {
+    find(dialogId: string): Dialog | undefined {
         return this.dialogs.hasOwnProperty(dialogId) ? this.dialogs[dialogId] : undefined;
     }
 
     /**
      * Set the telemetry client for this dialog set and apply it to all current dialogs.
      */
-    public get telemetryClient(): BotTelemetryClient {
+    get telemetryClient(): BotTelemetryClient {
         return this._telemetryClient;
     }
 
@@ -213,7 +213,7 @@ export class DialogSet {
      * Set the telemetry client for this dialog set and apply it to all current dialogs.
      * Future dialogs added to the set will also inherit this client.
      */
-    public set telemetryClient(client: BotTelemetryClient) {
+    set telemetryClient(client: BotTelemetryClient) {
         this._telemetryClient = client ?? new NullTelemetryClient();
         Object.values(this.dialogs).forEach((dialog) => (dialog.telemetryClient = this._telemetryClient));
     }
@@ -223,7 +223,7 @@ export class DialogSet {
      *
      * @returns {Dialog} An array of [Dialog](xref:botbuilder-dialogs.Dialog).
      */
-    public getDialogs(): Dialog[] {
+    getDialogs(): Dialog[] {
         return Object.values(this.dialogs);
     }
 }

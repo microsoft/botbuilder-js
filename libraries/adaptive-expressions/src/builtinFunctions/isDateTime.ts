@@ -19,7 +19,7 @@ export class IsDateTime extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [IsDateTime](xref:adaptive-expressions.IsDateTime) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.IsDateTime, IsDateTime.evaluator(), ReturnType.Boolean, FunctionUtils.validateUnary);
     }
 

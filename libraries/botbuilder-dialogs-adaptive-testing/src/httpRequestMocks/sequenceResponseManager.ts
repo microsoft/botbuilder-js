@@ -21,7 +21,7 @@ export class SequenceResponseManager {
      *
      * @param {HttpResponseMock[]} responses The list of HttpResponseMock.
      */
-    public constructor(responses?: HttpResponseMock[]) {
+    constructor(responses?: HttpResponseMock[]) {
         if (!responses?.length) {
             // Create a default message for response
             this._messages.push(new HttpResponseMockMessage());
@@ -35,7 +35,7 @@ export class SequenceResponseManager {
      *
      * @returns {HttpResponseMessage} The HttpResponseMessage.
      */
-    public getMessage(): HttpResponseMessage {
+    getMessage(): HttpResponseMessage {
         const result = this._messages[this._id];
         if (this._id < this._messages.length - 1) {
             this._id++;

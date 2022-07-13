@@ -25,7 +25,7 @@ export class GetPastTime extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [GetPastTime](xref:adaptive-expressions.GetPastTime) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.GetPastTime, GetPastTime.evaluator, ReturnType.String, GetPastTime.validator);
     }
 

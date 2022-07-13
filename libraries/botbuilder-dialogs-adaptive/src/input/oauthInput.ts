@@ -85,34 +85,34 @@ export interface OAuthInputConfiguration extends InputDialogConfiguration {
  * OAuthInput prompts user to login.
  */
 export class OAuthInput extends InputDialog implements OAuthInputConfiguration {
-    public static $kind = 'Microsoft.OAuthInput';
+    static $kind = 'Microsoft.OAuthInput';
 
     /**
      * Name of the OAuth connection being used.
      */
-    public connectionName: StringExpression;
+    connectionName: StringExpression;
 
     /**
      * Title of the cards signin button.
      */
-    public title: StringExpression;
+    title: StringExpression;
 
     /**
      * (Optional) additional text to include on the signin card.
      */
-    public text?: StringExpression;
+    text?: StringExpression;
 
     /**
      * (Optional) number of milliseconds the prompt will wait for the user to authenticate.
      * Defaults to a value `900,000` (15 minutes.)
      */
-    public timeout?: IntExpression = new IntExpression(900000);
+    timeout?: IntExpression = new IntExpression(900000);
 
     /**
      * @param property The key of the conditional selector configuration.
      * @returns The converter for the selector configuration.
      */
-    public getConverter(property: keyof OAuthInputConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof OAuthInputConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'connectionName':
                 return new StringExpressionConverter();
@@ -135,7 +135,7 @@ export class OAuthInput extends InputDialog implements OAuthInputConfiguration {
      * @param text Optional. Additional text to include on the signin card.
      * @param timeout Optional. Number of milliseconds the prompt will wait for the user to authenticate.
      */
-    public constructor(connectionName?: string, title?: string, text?: string, timeout?: number) {
+    constructor(connectionName?: string, title?: string, text?: string, timeout?: number) {
         super();
         this.connectionName = new StringExpression(connectionName);
         this.title = new StringExpression(title);
@@ -152,7 +152,7 @@ export class OAuthInput extends InputDialog implements OAuthInputConfiguration {
      * @param options Optional. Additional information to pass to the prompt being started.
      * @returns A [DialogTurnResult](xref:botbuilder-dialogs.DialogTurnResult) `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, options?: PromptOptions): Promise<DialogTurnResult> {
+    async beginDialog(dc: DialogContext, options?: PromptOptions): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }
@@ -208,7 +208,7 @@ export class OAuthInput extends InputDialog implements OAuthInputConfiguration {
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @returns A [DialogTurnResult](xref:botbuilder-dialogs.DialogTurnResult) `Promise` representing the asynchronous operation.
      */
-    public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
+    async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
         if (!dc) {
             throw new Error('Missing DialogContext');
         }
@@ -306,7 +306,7 @@ export class OAuthInput extends InputDialog implements OAuthInputConfiguration {
      * @param code (Optional) login code received from the user.
      * @returns A promise representing the asynchronous operation.
      */
-    public getUserToken(dc: DialogContext, code?: string): Promise<TokenResponse | undefined> {
+    getUserToken(dc: DialogContext, code?: string): Promise<TokenResponse | undefined> {
         return new OAuthPrompt(this.constructor.name, {
             title: undefined,
             connectionName: this.connectionName.getValue(dc.state),
@@ -329,7 +329,7 @@ export class OAuthInput extends InputDialog implements OAuthInputConfiguration {
      * @param dc Context referencing the user that's being signed out.
      * @returns A promise representing the asynchronous operation.
      */
-    public async signOutUser(dc: DialogContext): Promise<void> {
+    async signOutUser(dc: DialogContext): Promise<void> {
         return new OAuthPrompt(this.constructor.name, {
             title: undefined,
             connectionName: this.connectionName.getValue(dc.state),

@@ -19,7 +19,7 @@ export class Json extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [Json](xref:adaptive-expressions.Json) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.Json, Json.evaluator(), ReturnType.Object, Json.validator);
     }
 

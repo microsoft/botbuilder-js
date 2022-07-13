@@ -19,7 +19,7 @@ export class EOL extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [EOL](xref:adaptive-expressions.EOL) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.EOL, EOL.evaluator(), ReturnType.String, EOL.validator);
     }
 

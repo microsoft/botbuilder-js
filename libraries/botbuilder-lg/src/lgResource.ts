@@ -13,15 +13,15 @@ export class LGResource {
     /**
      * esource id.
      */
-    public id: string;
+    id: string;
     /**
      * The full path to the resource on disk.
      */
-    public fullName: string;
+    fullName: string;
     /**
      * Resource content.
      */
-    public content: string;
+    content: string;
     /**
      * Source of this template
      */
@@ -32,7 +32,7 @@ export class LGResource {
      * @param fullName The full path to the resource on disk.
      * @param content Resource content.
      */
-    public constructor(id: string, fullName: string, content: string) {
+    constructor(id: string, fullName: string, content: string) {
         this.id = id || '';
         this.fullName = fullName || '';
         this.content = content;

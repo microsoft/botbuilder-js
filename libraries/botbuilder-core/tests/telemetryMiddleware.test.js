@@ -21,13 +21,13 @@ const createReply = (activity, text, locale = null) => ({
     locale: locale || activity.locale,
 });
 
-describe(`TelemetryMiddleware`, () => {
+describe('TelemetryMiddleware', function () {
     let sandbox;
-    beforeEach(() => {
+    beforeEach(function () {
         sandbox = sinon.createSandbox();
     });
 
-    afterEach(() => {
+    afterEach(function () {
         sandbox.restore();
     });
 
@@ -89,7 +89,7 @@ describe(`TelemetryMiddleware`, () => {
             new TelemetryLoggerMiddleware(telemetryClient, logPersonalInformation),
     }) => new TestAdapter(adapterLogic).use(makeLogger());
 
-    it(`should log send and receive activities`, async () => {
+    it('should log send and receive activities', async function () {
         const { client, expectReceiveEvent, expectSendEvent } = makeTelemetryClient();
 
         expectReceiveEvent({
@@ -97,7 +97,7 @@ describe(`TelemetryMiddleware`, () => {
             fromName: sinon.match.string,
             recipientName: sinon.match.string,
             text: 'foo',
-            type: ActivityTypes.Message
+            type: ActivityTypes.Message,
         });
 
         expectSendEvent({ conversationId: sinon.match.string, type: ActivityTypes.Typing });
@@ -108,7 +108,7 @@ describe(`TelemetryMiddleware`, () => {
             fromName: sinon.match.string,
             recipientName: sinon.match.string,
             text: 'bar',
-            type: ActivityTypes.Message
+            type: ActivityTypes.Message,
         });
 
         expectSendEvent({ conversationId: sinon.match.string, type: ActivityTypes.Typing });
@@ -130,7 +130,7 @@ describe(`TelemetryMiddleware`, () => {
         sandbox.verify();
     });
 
-    it(`should work with null telemetryClient`, async () => {
+    it('should work with null telemetryClient', async function () {
         const adapter = makeAdapter({
             makeLogger: () => new TelemetryLoggerMiddleware(null, true),
         });
@@ -147,7 +147,7 @@ describe(`TelemetryMiddleware`, () => {
         sandbox.verify();
     });
 
-    it(`should not log PII properties for send and receive activities`, async () => {
+    it('should not log PII properties for send and receive activities', async function () {
         const { client, expectReceiveEvent, expectSendEvent } = makeTelemetryClient();
 
         expectReceiveEvent({ fromName: undefined, text: undefined });
@@ -167,7 +167,7 @@ describe(`TelemetryMiddleware`, () => {
         sandbox.verify();
     });
 
-    it(`telemetry should log update activities`, async () => {
+    it('telemetry should log update activities', async function () {
         const { client, expectReceiveEvent, expectSendEvent, expectTrackEvent } = makeTelemetryClient();
 
         expectReceiveEvent({ text: 'foo', type: ActivityTypes.Message });
@@ -177,7 +177,7 @@ describe(`TelemetryMiddleware`, () => {
         expectTrackEvent(TelemetryLoggerMiddleware.botMsgUpdateEvent, {
             conversationId: sinon.match.string,
             text: 'new response',
-            type: ActivityTypes.Message
+            type: ActivityTypes.Message,
         });
 
         const adapter = makeAdapter({
@@ -197,7 +197,7 @@ describe(`TelemetryMiddleware`, () => {
         sandbox.verify();
     });
 
-    it(`telemetry should log delete activities`, async () => {
+    it('telemetry should log delete activities', async function () {
         const { client, expectReceiveEvent, expectSendEvent, expectTrackEvent } = makeTelemetryClient();
 
         expectReceiveEvent({ text: 'foo', type: ActivityTypes.Message });
@@ -224,7 +224,7 @@ describe(`TelemetryMiddleware`, () => {
         sandbox.verify();
     });
 
-    it(`telemetry override RECEIVE with custom derived logger class`, async () => {
+    it('telemetry override RECEIVE with custom derived logger class', async function () {
         class OverrideLogger extends TelemetryLoggerMiddleware {
             async onReceiveActivity(activity) {
                 this.telemetryClient.trackEvent({
@@ -266,7 +266,7 @@ describe(`TelemetryMiddleware`, () => {
         sandbox.verify();
     });
 
-    it(`telemetry override SEND with custom derived logger class`, async () => {
+    it('telemetry override SEND with custom derived logger class', async function () {
         class OverrideLogger extends TelemetryLoggerMiddleware {
             async onSendActivity(activity) {
                 this.telemetryClient.trackEvent({
@@ -313,7 +313,7 @@ describe(`TelemetryMiddleware`, () => {
         sandbox.verify();
     });
 
-    it(`telemetry override UPDATE with custom derived logger class`, async () => {
+    it('telemetry override UPDATE with custom derived logger class', async function () {
         class OverrideLogger extends TelemetryLoggerMiddleware {
             async onUpdateActivity() {
                 this.telemetryClient.trackEvent({
@@ -354,7 +354,7 @@ describe(`TelemetryMiddleware`, () => {
         sandbox.verify();
     });
 
-    it(`telemetry should log channel specific properties`, async () => {
+    it('telemetry should log channel specific properties', async function () {
         const { client, expectReceiveEvent } = makeTelemetryClient();
 
         expectReceiveEvent({

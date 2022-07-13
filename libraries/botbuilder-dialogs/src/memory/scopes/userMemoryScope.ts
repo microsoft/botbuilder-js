@@ -16,7 +16,7 @@ export class UserMemoryScope extends BotStateMemoryScope {
     /**
      * Initializes a new instance of the [UserMemoryScope](xref:botbuilder-dialogs.UserMemoryScope) class.
      */
-    public constructor() {
+    constructor() {
         super(ScopePath.user);
     }
 }

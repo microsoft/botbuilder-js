@@ -17,7 +17,7 @@ export class DialogContextMemoryScope extends MemoryScope {
     /**
      * Initializes a new instance of the `DialogContextMemoryScope` class.
      */
-    public constructor() {
+    constructor() {
         super(ScopePath.dialogContext, false);
     }
 
@@ -27,7 +27,7 @@ export class DialogContextMemoryScope extends MemoryScope {
      * @param dc The `DialogContext` object for this turn.
      * @returns Memory for the scope.
      */
-    public getMemory(dc: DialogContext): Record<'stack' | 'activeDialog' | 'parent', unknown> {
+    getMemory(dc: DialogContext): Record<'stack' | 'activeDialog' | 'parent', unknown> {
         const stack = [];
         let currentDc = dc;
 

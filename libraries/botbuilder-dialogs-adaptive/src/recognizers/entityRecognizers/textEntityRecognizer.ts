@@ -25,7 +25,7 @@ export abstract class TextEntityRecognizer extends EntityRecognizer {
      * @param {Entity[]} entities The [Entity](xref:botframework-schema.Entity) array to be recognized.
      * @returns {Promise<Entity[]>} Recognized [Entity](xref:botframework-schema.Entity) list Promise.
      */
-    public async recognizeEntities(
+    async recognizeEntities(
         dialogContext: DialogContext,
         text: string,
         locale: string,

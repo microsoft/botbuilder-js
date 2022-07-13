@@ -16,32 +16,32 @@ export class Template {
     /**
      * Name of the template, what's followed by '#' in a LG file
      */
-    public name: string;
+    name: string;
 
     /**
      * Parameter list of this template
      */
-    public parameters: string[];
+    parameters: string[];
 
     /**
      * Text format of Body of this template. All content except Name and Parameters.
      */
-    public body: string;
+    body: string;
 
     /**
      * Source of this template
      */
-    public sourceRange: SourceRange;
+    sourceRange: SourceRange;
 
     /**
      * Parse tree of this template.
      */
-    public templateBodyParseTree: BodyContext;
+    templateBodyParseTree: BodyContext;
 
     /**
      * The extended properties for the object.
      */
-    public properties?: Record<string, unknown>;
+    properties?: Record<string, unknown>;
 
     /**
      * Creates a new instance of the [Template](xref:botbuilder-lg.Template) class.
@@ -50,7 +50,7 @@ export class Template {
      * @param templatebody Template content.
      * @param sourceRange [SourceRange](xref:botbuilder-lg.SourceRange) of template.
      */
-    public constructor(templatename: string, parameters: string[], templatebody: string, sourceRange: SourceRange) {
+    constructor(templatename: string, parameters: string[], templatebody: string, sourceRange: SourceRange) {
         this.name = templatename || '';
         this.parameters = parameters || [];
         this.sourceRange = sourceRange;
@@ -61,7 +61,7 @@ export class Template {
      * Returns a string representing the current [Template](xref:botbuilder-lg.Template) object.
      * @returns A string representing the [Template](xref:botbuilder-lg.Template).
      */
-    public toString(): string {
+    toString(): string {
         return `[${this.name}(${this.parameters.join(', ')})]"${this.body}"`;
     }
 }

@@ -55,6 +55,22 @@ export class BotFrameworkAuthenticationFactory {
         connectorClientOptions?: ConnectorClientOptions
     ): BotFrameworkAuthentication;
 
+    /**
+     * @param maybeChannelService The Channel Service.
+     * @param maybeValidateAuthority The validate authority value to use.
+     * @param maybeToChannelFromBotLoginUrl The to Channel from bot login url.
+     * @param maybeToChannelFromBotOAuthScope The to Channel from bot oauth scope.
+     * @param maybeToBotFromChannelTokenIssuer The to bot from Channel Token Issuer.
+     * @param maybeOAuthUrl The oAuth url.
+     * @param maybeToBotFromChannelOpenIdMetadataUrl The to bot from Channel Open Id Metadata url.
+     * @param maybeToBotFromEmulatorOpenIdMetadataUrl The to bot from Emulator Open Id Metadata url.
+     * @param maybeCallerId The callerId set on on authenticated [Activities](xref:botframework-schema.Activity).
+     * @param maybeCredentialFactory The [ServiceClientCredentialsFactory](xref:botframework-connector.ServiceClientCredentialsFactory) to use to create credentials.
+     * @param maybeAuthConfiguration The [AuthenticationConfiguration](xref:botframework-connector.AuthenticationConfiguration) to use.
+     * @param maybeBotFrameworkClientFetch The fetch to use in BotFrameworkClient.
+     * @param maybeConnectorClientOptions The [ConnectorClientOptions](xref:botframework-connector.ConnectorClientOptions) to use when creating ConnectorClients.
+     * @returns A new [BotFrameworkAuthentication](xref:botframework-connector.BotFrameworkAuthentication) instance.
+     */
     static create(
         maybeChannelService?: string,
         maybeValidateAuthority?: boolean,

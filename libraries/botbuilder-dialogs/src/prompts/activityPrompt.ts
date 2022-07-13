@@ -41,7 +41,7 @@ export class ActivityPrompt extends Dialog {
      * If the promise is successful, the result indicates whether the prompt is still
      * active after the turn has been processed by the prompt.
      */
-    public async beginDialog(dc: DialogContext, options: PromptOptions): Promise<DialogTurnResult> {
+    async beginDialog(dc: DialogContext, options: PromptOptions): Promise<DialogTurnResult> {
         // Ensure prompts have input hint set
         const opt: Partial<PromptOptions> = { ...options };
         if (opt.prompt && typeof opt.prompt === 'object' && typeof opt.prompt.inputHint !== 'string') {
@@ -74,7 +74,7 @@ export class ActivityPrompt extends Dialog {
      * The prompt generally continues to receive the user's replies until it accepts the
      * user's reply as valid input for the prompt.
      */
-    public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
+    async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
         // Perform base recognition
         const state: any = dc.activeDialog.state as ActivityPromptState;
         const recognized: PromptRecognizerResult<Activity> = await this.onRecognize(
@@ -122,7 +122,7 @@ export class ActivityPrompt extends Dialog {
      * The type of the value returned is dependent on the previous dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async resumeDialog(dc: DialogContext, _reason: DialogReason, _result?: any): Promise<DialogTurnResult> {
+    async resumeDialog(dc: DialogContext, _reason: DialogReason, _result?: any): Promise<DialogTurnResult> {
         // Prompts are typically leaf nodes on the stack but the dev is free to push other dialogs
         // on top of the stack which will result in the prompt receiving an unexpected call to
         // resumeDialog() when the pushed on dialog ends.
@@ -142,7 +142,7 @@ export class ActivityPrompt extends Dialog {
      * of the dialog on the stack.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async repromptDialog(context: TurnContext, instance: DialogInstance): Promise<void> {
+    async repromptDialog(context: TurnContext, instance: DialogInstance): Promise<void> {
         const state: ActivityPromptState = instance.state as ActivityPromptState;
         await this.onPrompt(context, state.state, state.options, false);
     }

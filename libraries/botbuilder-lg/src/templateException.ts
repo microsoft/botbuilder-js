@@ -18,7 +18,7 @@ export class TemplateException extends Error {
      * @param m Error message.
      * @param diagnostics List of [Diagnostic](xref:botbuilder-lg.Diagnostic) to throw.
      */
-    public constructor(m: string, diagnostics: Diagnostic[]) {
+    constructor(m: string, diagnostics: Diagnostic[]) {
         super(m);
         this.diagnostics = diagnostics;
         Object.setPrototypeOf(this, TemplateException.prototype);
@@ -27,7 +27,7 @@ export class TemplateException extends Error {
     /**
      * Diagnostics.
      */
-    public getDiagnostic(): Diagnostic[] {
+    getDiagnostic(): Diagnostic[] {
         return this.diagnostics;
     }
 }

@@ -24,7 +24,7 @@ export class NumberPrompt extends Prompt<number> {
     /**
      * The prompts default locale that should be recognized.
      */
-    public defaultLocale?: string;
+    defaultLocale?: string;
 
     /**
      * Creates a new NumberPrompt instance.

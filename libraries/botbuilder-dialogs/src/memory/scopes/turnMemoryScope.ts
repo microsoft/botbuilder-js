@@ -21,7 +21,7 @@ export class TurnMemoryScope extends MemoryScope {
     /**
      * Initializes a new instance of the [TurnMemoryScope](xref:botbuilder-dialogs.TurnMemoryScope) class.
      */
-    public constructor() {
+    constructor() {
         super(ScopePath.turn, true);
     }
 
@@ -31,7 +31,7 @@ export class TurnMemoryScope extends MemoryScope {
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for this turn.
      * @returns The memory for the scope.
      */
-    public getMemory(dc: DialogContext): object {
+    getMemory(dc: DialogContext): object {
         let memory = dc.context.turnState.get(TURN_STATE);
         if (typeof memory != 'object') {
             memory = {};
@@ -47,7 +47,7 @@ export class TurnMemoryScope extends MemoryScope {
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for this turn.
      * @param memory Memory object to set for the scope.
      */
-    public setMemory(dc: DialogContext, memory: object): void {
+    setMemory(dc: DialogContext, memory: object): void {
         if (memory == undefined) {
             throw new Error('TurnMemoryScope.setMemory: undefined memory object passed in.');
         }

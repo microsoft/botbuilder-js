@@ -20,19 +20,19 @@ class Node {
      *
      * @param {string} value Value of the node. If the node is not leaf, value represents the current path.
      */
-    public constructor(public value?: string) {}
+    constructor(public value?: string) {}
 
     /**
      * The child nodes of the node.
      */
-    public children: Node[] = [];
+    children: Node[] = [];
 
     /**
      * Indicates if the node is leaf node.
      *
      * @returns {boolean} If the node is leaf node or not.
      */
-    public isLeaf(): boolean {
+    isLeaf(): boolean {
         return this.children.length === 0;
     }
 }
@@ -59,7 +59,7 @@ export class SettingsMemoryScope extends MemoryScope {
      *
      * @param initialSettings initial set of settings to supply
      */
-    public constructor(private readonly initialSettings?: Record<string, unknown>) {
+    constructor(private readonly initialSettings?: Record<string, unknown>) {
         super(ScopePath.settings, false);
     }
 
@@ -69,7 +69,7 @@ export class SettingsMemoryScope extends MemoryScope {
      * @param {DialogContext} dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) object for this turn.
      * @returns {Record<string, ?>} The memory for the scope.
      */
-    public getMemory(dc: DialogContext): Record<string, unknown> {
+    getMemory(dc: DialogContext): Record<string, unknown> {
         if (dc.context.turnState.has(ScopePath.settings)) {
             return dc.context.turnState.get(ScopePath.settings) ?? {};
         }
@@ -90,7 +90,7 @@ export class SettingsMemoryScope extends MemoryScope {
     /**
      * @param dc Current dialog context.
      */
-    public async load(dc: DialogContext): Promise<void> {
+    async load(dc: DialogContext): Promise<void> {
         if (this.initialSettings) {
             // filter initialSettings
             const filteredSettings = SettingsMemoryScope.filterSettings(this.initialSettings);

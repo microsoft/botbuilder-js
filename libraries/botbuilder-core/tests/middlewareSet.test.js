@@ -11,7 +11,7 @@ const noop = () => {
     // no-op
 };
 
-describe(`MiddlewareSet`, function () {
+describe('MiddlewareSet', function () {
     // Generates middleware helper that itself generates middleware that pushes a value
     // on a stack. Returns the middleware generator function, the stack, and a clean
     // MiddlewareSet instance for testing
@@ -28,17 +28,17 @@ describe(`MiddlewareSet`, function () {
         };
     };
 
-    it(`should use() middleware individually.`, function () {
+    it('should use() middleware individually.', function () {
         const { middleware, set } = stackMiddleware();
         set.use(middleware('a')).use(middleware('b'));
     });
 
-    it(`should use() a list of middleware.`, function () {
+    it('should use() a list of middleware.', function () {
         const { middleware, set } = stackMiddleware();
         set.use(middleware('a'), middleware('b'), middleware('c'));
     });
 
-    it(`should run all middleware in order.`, async function () {
+    it('should run all middleware in order.', async function () {
         const { middleware, set, stack } = stackMiddleware();
         set.use(middleware(1), middleware(2), middleware(3));
 
@@ -47,7 +47,7 @@ describe(`MiddlewareSet`, function () {
         });
     });
 
-    it(`should run a middleware set added to another middleware set.`, async function () {
+    it('should run a middleware set added to another middleware set.', async function () {
         const { middleware, set: child, stack } = stackMiddleware();
 
         child.use(middleware(1));
@@ -58,7 +58,7 @@ describe(`MiddlewareSet`, function () {
         });
     });
 
-    it(`should run middleware with a leading and trailing edge.`, async function () {
+    it('should run middleware with a leading and trailing edge.', async function () {
         const { set, stack } = stackMiddleware();
 
         set.use(async (_, next) => {
@@ -76,7 +76,7 @@ describe(`MiddlewareSet`, function () {
         assert.deepStrictEqual(stack, [2, 3, 1]);
     });
 
-    it(`should support middleware added as an object.`, async function () {
+    it('should support middleware added as an object.', async function () {
         const { middleware, set, stack } = stackMiddleware();
 
         set.use({ onTurn: middleware(1) }).use({ onTurn: middleware(2) });
@@ -86,7 +86,7 @@ describe(`MiddlewareSet`, function () {
         });
     });
 
-    it(`not calling next() should intercept other middleware and bot logic.`, async function () {
+    it('not calling next() should intercept other middleware and bot logic.', async function () {
         const { middleware, set, stack } = stackMiddleware();
 
         set.use(middleware(1), noop, middleware(2));
@@ -96,7 +96,7 @@ describe(`MiddlewareSet`, function () {
         });
     });
 
-    it(`should map an exception within middleware to a rejection.`, async function () {
+    it('should map an exception within middleware to a rejection.', async function () {
         const { middleware, set, stack } = stackMiddleware();
 
         set.use(middleware(1), () => Promise.reject(new Error('rejected')), middleware(2));
@@ -108,11 +108,11 @@ describe(`MiddlewareSet`, function () {
         });
     });
 
-    it(`should throw an error if an invalid plugin type is added.`, function () {
+    it('should throw an error if an invalid plugin type is added.', function () {
         assert.throws(() => new MiddlewareSet().use('bogus'));
     });
 
-    it(`should support passing middleware into the constructor of the set.`, async function () {
+    it('should support passing middleware into the constructor of the set.', async function () {
         const { middleware, stack } = stackMiddleware();
 
         const set = new MiddlewareSet(middleware(1), middleware(2), middleware(3));

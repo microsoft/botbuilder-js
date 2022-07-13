@@ -23,17 +23,17 @@ export interface DateTimeInputConfiguration extends InputDialogConfiguration {
  * Input dialog to collect a datetime from the user.
  */
 export class DateTimeInput extends InputDialog implements DateTimeInputConfiguration {
-    public static $kind = 'Microsoft.DateTimeInput';
+    static $kind = 'Microsoft.DateTimeInput';
 
-    public defaultLocale: StringExpression;
+    defaultLocale: StringExpression;
 
-    public outputFormat: StringExpression;
+    outputFormat: StringExpression;
 
     /**
      * @param property The key of the conditional selector configuration.
      * @returns The converter for the selector configuration.
      */
-    public getConverter(property: keyof DateTimeInputConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof DateTimeInputConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'defaultLocale':
                 return new StringExpressionConverter();

@@ -12,11 +12,12 @@ import { TokenResponse } from 'botframework-schema';
 /**
  * Interface for User Token OAuth APIs for BotAdapters
  *
- * @obsolete Use `UserTokenClient` instead.
+ * @deprecated Use `UserTokenClient` instead.
  */
 export interface IUserTokenProvider {
     /**
      * Retrieves the OAuth token for a user that is in a sign-in flow.
+     *
      * @param context Context for the current turn of conversation with the user.
      * @param connectionName Name of the auth connection to use.
      * @param magicCode (Optional) Optional user entered code to validate.
@@ -25,6 +26,7 @@ export interface IUserTokenProvider {
 
     /**
      * Signs the user out with the token server.
+     *
      * @param context Context for the current turn of conversation with the user.
      * @param connectionName Name of the auth connection to use.
      * @param userId User id of user to sign out.
@@ -33,6 +35,7 @@ export interface IUserTokenProvider {
 
     /**
      * Retrieves the token status for each configured connection for the given user, using the bot's AppCredentials.
+     *
      * @param context Context for the current turn of conversation with the user.
      * @param userId The user Id for which token status is retrieved.
      * @param includeFilter Comma separated list of connection's to include. Blank will return token status for all configured connections.
@@ -47,6 +50,7 @@ export interface IUserTokenProvider {
 
     /**
      * Gets a signin link from the token server that can be sent as part of a SigninCard.
+     *
      * @param context Context for the current turn of conversation with the user.
      * @param connectionName Name of the auth connection to use.
      */
@@ -54,6 +58,7 @@ export interface IUserTokenProvider {
 
     /**
      * Signs the user out with the token server.
+     *
      * @param context Context for the current turn of conversation with the user.
      * @param connectionName Name of the auth connection to use.
      */

@@ -21,7 +21,7 @@ export class HttpResponseMockMessage {
      *
      * @param {HttpResponseMock} httpResponseMock The mock that provides data.
      */
-    public constructor(httpResponseMock?: HttpResponseMock) {
+    constructor(httpResponseMock?: HttpResponseMock) {
         this._mock = httpResponseMock ?? { content: '' };
         this._content = new HttpResponseMockContent(this._mock);
     }
@@ -31,7 +31,7 @@ export class HttpResponseMockMessage {
      *
      * @returns {HttpResponseMessage} A new HttpResponseMessage.
      */
-    public getMessage(): HttpResponseMessage {
+    getMessage(): HttpResponseMessage {
         let statusCode = ResponseStatusCode.OK;
         if (typeof this._mock.statusCode === 'number') {
             statusCode = this._mock.statusCode;

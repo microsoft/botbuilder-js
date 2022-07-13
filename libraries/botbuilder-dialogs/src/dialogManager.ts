@@ -75,7 +75,7 @@ export class DialogManager extends Configurable {
      * @param rootDialog Optional, root [Dialog](xref:botbuilder-dialogs.Dialog) to use.
      * @param dialogStateProperty Optional, alternate name for the dialogState property. (Default is "DialogStateProperty")
      */
-    public constructor(rootDialog?: Dialog, dialogStateProperty?: string) {
+    constructor(rootDialog?: Dialog, dialogStateProperty?: string) {
         super();
         if (rootDialog) {
             this.rootDialog = rootDialog;
@@ -87,26 +87,26 @@ export class DialogManager extends Configurable {
     /**
      * Bots persisted conversation state.
      */
-    public conversationState: ConversationState;
+    conversationState: ConversationState;
 
     /**
      * Optional. Bots persisted user state.
      */
-    public userState?: UserState;
+    userState?: UserState;
 
     /**
      * Values that will be copied to the `TurnContext.turnState` at the beginning of each turn.
      *
      * @returns The turn state collection.
      */
-    public get initialTurnState(): TurnContextStateCollection {
+    get initialTurnState(): TurnContextStateCollection {
         return this._initialTurnState;
     }
 
     /**
      * Root dialog to start from [onTurn()](#onturn) method.
      */
-    public set rootDialog(value: Dialog) {
+    set rootDialog(value: Dialog) {
         this.dialogs = new DialogSet();
         if (value) {
             this._rootDialogId = value.id;
@@ -123,24 +123,24 @@ export class DialogManager extends Configurable {
      *
      * @returns The root [Dialog](xref:botbuilder-dialogs.Dialog) ID.
      */
-    public get rootDialog(): Dialog {
+    get rootDialog(): Dialog {
         return this._rootDialogId ? this.dialogs.find(this._rootDialogId) : undefined;
     }
 
     /**
      * Global dialogs that you want to have be callable.
      */
-    public dialogs: DialogSet = new DialogSet();
+    dialogs: DialogSet = new DialogSet();
 
     /**
      * Optional. Path resolvers and memory scopes used for conversations with the bot.
      */
-    public stateConfiguration?: DialogStateManagerConfiguration;
+    stateConfiguration?: DialogStateManagerConfiguration;
 
     /**
      * Optional. Number of milliseconds to expire the bots conversation state after.
      */
-    public expireAfter?: number;
+    expireAfter?: number;
 
     /**
      * Set configuration settings.
@@ -148,7 +148,7 @@ export class DialogManager extends Configurable {
      * @param config Configuration settings to apply.
      * @returns The cofigured [DialogManager](xref:botbuilder-dialogs.DialogManager) context.
      */
-    public configure(config: Partial<DialogManagerConfiguration>): this {
+    configure(config: Partial<DialogManagerConfiguration>): this {
         return super.configure(config);
     }
 
@@ -158,7 +158,7 @@ export class DialogManager extends Configurable {
      * @param context [TurnContext](xref:botbuilder-core.TurnContext) for the current turn of conversation with the user.
      * @returns Result of running the logic against the activity.
      */
-    public async onTurn(context: TurnContext): Promise<DialogManagerResult> {
+    async onTurn(context: TurnContext): Promise<DialogManagerResult> {
         // Ensure properly configured
         if (!this._rootDialogId) {
             throw new Error("DialogManager.onTurn: the bot's 'rootDialog' has not been configured.");

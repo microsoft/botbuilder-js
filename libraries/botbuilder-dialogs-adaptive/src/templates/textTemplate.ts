@@ -21,27 +21,27 @@ export interface TextTemplateConfiguration {
  */
 export class TextTemplate<D = Record<string, unknown>>
     implements TemplateInterface<string, D>, TextTemplateConfiguration, Configurable {
-    public static $kind = 'Microsoft.TextTemplate';
+    static $kind = 'Microsoft.TextTemplate';
 
     /**
      * Initialize a new instance of TextTemplate class.
      *
      * @param template The template to evaluate to create text.
      */
-    public constructor(template?: string) {
+    constructor(template?: string) {
         this.template = template;
     }
 
     /**
      * Gets or sets the template to evaluate to create the text.
      */
-    public template: string;
+    template: string;
 
     /**
      * @param _property The key of the conditional selector configuration.
      * @returns The converter for the selector configuration.
      */
-    public getConverter(_property: keyof TextTemplateConfiguration): Converter | ConverterFactory {
+    getConverter(_property: keyof TextTemplateConfiguration): Converter | ConverterFactory {
         return undefined;
     }
 
@@ -49,7 +49,7 @@ export class TextTemplate<D = Record<string, unknown>>
      * @param config The configuration.
      * @returns A object with the given configuration.
      */
-    public configure(config: TextTemplateConfiguration): this {
+    configure(config: TextTemplateConfiguration): this {
         const { template } = config;
         this.template = template;
         return this;
@@ -62,7 +62,7 @@ export class TextTemplate<D = Record<string, unknown>>
      * @param data Data to bind to.
      * @returns A promise representing the asynchronous operation.
      */
-    public async bind(dialogContext: DialogContext, data: D): Promise<string> {
+    async bind(dialogContext: DialogContext, data: D): Promise<string> {
         if (!this.template) {
             throw new Error(`ArgumentNullException: ${this.template}`);
         }
@@ -74,7 +74,7 @@ export class TextTemplate<D = Record<string, unknown>>
         return lgResult ? lgResult.toString() : '';
     }
 
-    public toString = (): string => {
+    toString = (): string => {
         return `TextTemplate(${this.template})`;
     };
 }

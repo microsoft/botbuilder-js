@@ -17,12 +17,12 @@ export interface OnDialogEventConfiguration extends OnConditionConfiguration {
  * Actions triggered when a dialog event is emitted.
  */
 export class OnDialogEvent extends OnCondition implements OnDialogEventConfiguration {
-    public static $kind = 'Microsoft.OnDialogEvent';
+    static $kind = 'Microsoft.OnDialogEvent';
 
     /**
      * Gets or sets the event to fire on.
      */
-    public event: string;
+    event: string;
 
     /**
      * Creates a new `OnDialogEvent` instance.
@@ -31,7 +31,7 @@ export class OnDialogEvent extends OnCondition implements OnDialogEventConfigura
      * @param actions (Optional) The actions to add to the plan when the rule constraints are met.
      * @param condition (Optional) The condition which needs to be met for the actions to be executed.
      */
-    public constructor(event?: string, actions: Dialog[] = [], condition?: string) {
+    constructor(event?: string, actions: Dialog[] = [], condition?: string) {
         super(condition, actions);
         this.event = event;
     }

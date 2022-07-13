@@ -26,12 +26,12 @@ export class InternalFunctionUtils {
     /**
      * Constant for converting unix timestamp to ticks.
      */
-    public static readonly UnixMilliSecondToTicksConstant: bigInt.BigInteger = bigInt('621355968000000000');
+    static readonly UnixMilliSecondToTicksConstant: bigInt.BigInteger = bigInt('621355968000000000');
 
     /**
      * Constant to convert between ticks and ms.
      */
-    public static readonly MillisecondToTickConstant: bigInt.BigInteger = bigInt('10000');
+    static readonly MillisecondToTickConstant: bigInt.BigInteger = bigInt('10000');
 
     /**
      * Parse timex funcition.
@@ -39,7 +39,7 @@ export class InternalFunctionUtils {
      * @param timexExpr String or TimexProperty input.
      * @returns TimexProperty and error.
      */
-    public static parseTimexProperty(timexExpr: any): { timexProperty: TimexProperty; error: string } {
+    static parseTimexProperty(timexExpr: any): { timexProperty: TimexProperty; error: string } {
         let parsed: TimexProperty;
         if (timexExpr instanceof TimexProperty) {
             parsed = timexExpr;
@@ -64,7 +64,7 @@ export class InternalFunctionUtils {
      * @param isDescending Descending flag.
      * @returns The sorted array.
      */
-    public static sortBy(isDescending: boolean): EvaluateExpressionDelegate {
+    static sortBy(isDescending: boolean): EvaluateExpressionDelegate {
         return (expression: Expression, state: any, options: Options): ValueWithError => {
             let result: any;
             const { value: oriArr, error: childrenError } = expression.children[0].tryEvaluate(state, options);
@@ -109,7 +109,7 @@ export class InternalFunctionUtils {
      * @param index Property to lookup.
      * @returns Value and error information if any.
      */
-    public static accessIndex(instance: any, index: number): ValueWithError {
+    static accessIndex(instance: any, index: number): ValueWithError {
         // NOTE: This returns undefined rather than an error if instance is not present
         if (instance == null) {
             return { value: undefined, error: undefined };
@@ -137,7 +137,7 @@ export class InternalFunctionUtils {
      * @param value Timestamp string to check.
      * @returns Error or undefined if invalid.
      */
-    public static verifyTimestamp(value: any): string | undefined {
+    static verifyTimestamp(value: any): string | undefined {
         let error: string;
         try {
             const parsedData: Date = new Date(value);
@@ -157,7 +157,7 @@ export class InternalFunctionUtils {
      * @param value Timestamp string to check.
      * @returns Error or undefined if invalid.
      */
-    public static verifyISOTimestamp(value: any): string | undefined {
+    static verifyISOTimestamp(value: any): string | undefined {
         let error: string;
         try {
             const parsedData: Date = new Date(value);
@@ -179,7 +179,7 @@ export class InternalFunctionUtils {
      * @param timeStamp String timestamp input.
      * @returns The string converted in ticks.
      */
-    public static ticks(timeStamp: string): ValueWithError {
+    static ticks(timeStamp: string): ValueWithError {
         let result: bigInt.BigInteger;
         const error = this.verifyISOTimestamp(timeStamp);
         if (!error) {
@@ -199,7 +199,7 @@ export class InternalFunctionUtils {
      * @param property Property to lookup.
      * @returns Value and error information if any.
      */
-    public static accessProperty(instance: any, property: string): ValueWithError {
+    static accessProperty(instance: any, property: string): ValueWithError {
         // NOTE: This returns undefined rather than an error if property is not present
         if (!instance) {
             return { value: undefined, error: undefined };
@@ -238,7 +238,7 @@ export class InternalFunctionUtils {
      * @param options Options.
      * @returns The value of a path from a memory.
      */
-    public static wrapGetValue(state: MemoryInterface, path: string, options: Options): any {
+    static wrapGetValue(state: MemoryInterface, path: string, options: Options): any {
         const result = state.getValue(path);
         if (result !== undefined) {
             return result;
@@ -257,7 +257,7 @@ export class InternalFunctionUtils {
      * @param input Input string
      * @returns The wrapped string.
      */
-    public static parseStringOrUndefined(input: string | undefined): string {
+    static parseStringOrUndefined(input: string | undefined): string {
         if (typeof input === 'string') {
             return input;
         } else {
@@ -271,7 +271,7 @@ export class InternalFunctionUtils {
      * @param instance Computed value.
      * @returns True if boolean true or non-null.
      */
-    public static isLogicTrue(instance: any): boolean {
+    static isLogicTrue(instance: any): boolean {
         let result = true;
 
         if (typeof instance === 'boolean') {
@@ -291,7 +291,7 @@ export class InternalFunctionUtils {
      * @param options Options.
      * @returns The evaluated list.
      */
-    public static foreach(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
+    static foreach(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let result: any[];
         const { value: instance, error: childrenError } = expression.children[0].tryEvaluate(state, options);
         let error = childrenError;
@@ -329,7 +329,7 @@ export class InternalFunctionUtils {
      * @param list item list.
      * @param callback call back. return the should break flag.
      */
-    public static lambdaEvaluator<T = unknown, U = unknown>(
+    static lambdaEvaluator<T = unknown, U = unknown>(
         expression: Expression,
         state: MemoryInterface,
         options: Options,
@@ -368,7 +368,7 @@ export class InternalFunctionUtils {
      * @param instance input instance.
      * @returns The generated list.
      */
-    public static convertToList(instance: unknown): unknown[] | undefined {
+    static convertToList(instance: unknown): unknown[] | undefined {
         let arr: unknown[] | undefined;
         if (Array.isArray(instance)) {
             arr = instance;
@@ -385,7 +385,7 @@ export class InternalFunctionUtils {
      *
      * @param expression The expression to validate.
      */
-    public static ValidateLambdaExpression(expression: Expression): void {
+    static ValidateLambdaExpression(expression: Expression): void {
         if (expression.children.length !== 3) {
             throw new Error(`Lambda expression expect 3 parameters, found ${expression.children.length}`);
         }
@@ -402,7 +402,7 @@ export class InternalFunctionUtils {
      * @param uri Input string uri.
      * @returns The parsed URL object.
      */
-    public static parseUri(uri: string): ValueWithError {
+    static parseUri(uri: string): ValueWithError {
         let result: URL;
         let error: string;
         try {
@@ -421,7 +421,7 @@ export class InternalFunctionUtils {
      * @param cSharpStr C# unit.
      * @returns The transformed timeUnit.
      */
-    public static timeUnitTransformer(duration: number, cSharpStr: string): { duration: number; tsStr: OpUnitType } {
+    static timeUnitTransformer(duration: number, cSharpStr: string): { duration: number; tsStr: OpUnitType } {
         switch (cSharpStr) {
             case 'Day':
                 return { duration, tsStr: 'day' };
@@ -447,7 +447,7 @@ export class InternalFunctionUtils {
      *
      * @returns The text encoder.
      */
-    public static getTextEncoder(): TextEncoder {
+    static getTextEncoder(): TextEncoder {
         if (typeof window !== 'undefined' || typeof self !== 'undefined') {
             return new TextEncoder();
         }
@@ -460,7 +460,7 @@ export class InternalFunctionUtils {
      * @param code The encoding format.
      * @returns The text decoder.
      */
-    public static getTextDecoder(code = 'utf-8'): TextDecoder {
+    static getTextDecoder(code = 'utf-8'): TextDecoder {
         if (typeof window !== 'undefined' || typeof self !== 'undefined') {
             return new TextDecoder(code);
         }
@@ -473,7 +473,7 @@ export class InternalFunctionUtils {
      * @param input input object.
      * @returns the stringified object.
      */
-    public static commonStringify(input: unknown): string {
+    static commonStringify(input: unknown): string {
         if (input == null) {
             return '';
         }
