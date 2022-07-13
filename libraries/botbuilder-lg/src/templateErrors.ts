@@ -16,7 +16,7 @@ export class TemplateErrors {
 
     static readonly missingStrucEnd: string = "Invalid structure body. Expecting ']' at the end of the body.";
 
-    public static readonly emptyStrucContent: string = 'Invalid structure body. Body cannot be empty.';
+    static readonly emptyStrucContent: string = 'Invalid structure body. Body cannot be empty.';
 
     static readonly invalidWhitespaceInCondition: string =
         "Invalid condition: At most 1 whitespace allowed between 'IF/ELSEIF/ELSE' and ':'.";
@@ -56,8 +56,7 @@ export class TemplateErrors {
     static readonly notEndWithDefaultInSwitchCase: string =
         "Conditional response template does not end with 'DEFAULT' condition.";
 
-    static readonly missingCaseInSwitchCase: string =
-        "Invalid template body. Expecting at least one 'CASE' statement.";
+    static readonly missingCaseInSwitchCase: string = "Invalid template body. Expecting at least one 'CASE' statement.";
 
     static readonly invalidExpressionInSwiathCase: string =
         "Invalid condition. 'SWITCH' and 'CASE' statements must include a valid expression.";
@@ -78,8 +77,7 @@ export class TemplateErrors {
 
     static readonly staticFailure: string = 'Static failure with the following error.';
 
-    static readonly invalidTemplateNameType: string =
-        'Expected string type for the parameter of template function.';
+    static readonly invalidTemplateNameType: string = 'Expected string type for the parameter of template function.';
 
     static readonly importFormatError: string = "Import format should follow '[x](y)' or '[x](y) as z'.";
 
@@ -114,11 +112,7 @@ export class TemplateErrors {
 
     static readonly nullExpression = (expression: string): string => `'${expression}' evaluated to null.`;
 
-    static readonly argumentMismatch = (
-        templateName: string,
-        expectedCount: number,
-        actualCount: number
-    ): string =>
+    static readonly argumentMismatch = (templateName: string, expectedCount: number, actualCount: number): string =>
         "arguments mismatch for template '" +
         `${templateName}` +
         "'. Expecting '" +
@@ -127,9 +121,7 @@ export class TemplateErrors {
         `${actualCount}` +
         "'.";
 
-    static readonly templateExist = (templateName: string): string =>
-        `template '${templateName}' already exists.`;
+    static readonly templateExist = (templateName: string): string => `template '${templateName}' already exists.`;
 
-    static readonly expressionParseError = (exp: string): string =>
-        `Error occurred when parsing expression '${exp}'.`;
+    static readonly expressionParseError = (exp: string): string => `Error occurred when parsing expression '${exp}'.`;
 }

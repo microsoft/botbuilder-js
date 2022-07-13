@@ -94,9 +94,7 @@ export class ChoiceInput extends InputDialog implements ChoiceInputConfiguration
     /**
      * Control the format of the response (value or index of the choice).
      */
-    outputFormat: EnumExpression<ChoiceOutputFormat> = new EnumExpression<ChoiceOutputFormat>(
-        ChoiceOutputFormat.value
-    );
+    outputFormat: EnumExpression<ChoiceOutputFormat> = new EnumExpression<ChoiceOutputFormat>(ChoiceOutputFormat.value);
 
     /**
      * Additional options passed to the `ChoiceFactory` and used to tweak the style of choices

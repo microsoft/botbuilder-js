@@ -29,12 +29,7 @@ export class FolderResourceProvider extends ResourceProvider {
      * @param includeSubFolders Whether include its sub folders.
      * @param monitorChanges Whether monitor changes.
      */
-    constructor(
-        resourceExplorer: ResourceExplorer,
-        folder: string,
-        includeSubFolders = true,
-        monitorChanges = true
-    ) {
+    constructor(resourceExplorer: ResourceExplorer, folder: string, includeSubFolders = true, monitorChanges = true) {
         super(resourceExplorer);
 
         this.includeSubFolders = includeSubFolders;

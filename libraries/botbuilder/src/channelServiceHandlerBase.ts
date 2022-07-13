@@ -177,11 +177,7 @@ export abstract class ChannelServiceHandlerBase {
      * @param conversationId The conversation Id.
      * @param memberId Id of the member to delete from this conversation.
      */
-    async handleDeleteConversationMember(
-        authHeader: string,
-        conversationId: string,
-        memberId: string
-    ): Promise<void> {
+    async handleDeleteConversationMember(authHeader: string, conversationId: string, memberId: string): Promise<void> {
         const claimsIdentity = await this.authenticate(authHeader);
         await this.onDeleteConversationMember(claimsIdentity, conversationId, memberId);
     }
