@@ -42,9 +42,10 @@ export class StaticChecker
 
     /**
      * Creates a new instance of the [StaticChecker](xref:botbuilder-lg.StaticChecker) class.
+     *
      * @param templates [Templates](xref:botbuilder-lg.Templates) to be checked.
      */
-    public constructor(templates: Templates) {
+    constructor(templates: Templates) {
         super();
         this.templates = templates;
     }
@@ -65,9 +66,10 @@ export class StaticChecker
 
     /**
      * Return error messages list.
+     *
      * @returns Report result.
      */
-    public check(): Diagnostic[] {
+    check(): Diagnostic[] {
         const result: Diagnostic[] = [];
 
         if (this.templates.allTemplates.length === 0) {
@@ -115,9 +117,11 @@ export class StaticChecker
 
     /**
      * Visit a parse tree produced by `LGTemplateParser.normalTemplateBody`.
+     *
      * @param context The parse tree.
+     * @returns The result of visiting normal template body.
      */
-    public visitNormalTemplateBody(context: NormalTemplateBodyContext): Diagnostic[] {
+    visitNormalTemplateBody(context: NormalTemplateBodyContext): Diagnostic[] {
         let result: Diagnostic[] = [];
         for (const templateStr of context.templateString()) {
             const errorTemplateStr: ErrorTemplateStringContext = templateStr.errorTemplateString();
@@ -134,9 +138,11 @@ export class StaticChecker
 
     /**
      * Visit a parse tree produced by `LGTemplateParser.structuredTemplateBody`.
+     *
      * @param context The parse tree.
+     * @returns The result of visiting structured template body.
      */
-    public visitStructuredTemplateBody(context: StructuredTemplateBodyContext): Diagnostic[] {
+    visitStructuredTemplateBody(context: StructuredTemplateBodyContext): Diagnostic[] {
         let result: Diagnostic[] = [];
 
         const errorName = context.structuredBodyNameLine().errorStructuredName();
@@ -169,7 +175,7 @@ export class StaticChecker
                         result = result.concat(this.checkExpression(body.expressionInStructure()));
                     } else {
                         const structureValues = body.keyValueStructureLine().keyValueStructureValue();
-                        const errorPrefix = `Property  '` + body.keyValueStructureLine().text + `':`;
+                        const errorPrefix = "Property  '" + body.keyValueStructureLine().text + "':";
                         for (const structureValue of structureValues) {
                             for (const expr of structureValue.expressionInStructure()) {
                                 result = result.concat(this.checkExpression(expr, errorPrefix));
@@ -185,9 +191,11 @@ export class StaticChecker
 
     /**
      * Visit a parse tree produced by the `ifElseBody` labeled alternative in `LGTemplateParser.body`.
+     *
      * @param context The parse tree.
+     * @returns The result of visiting if-else body.
      */
-    public visitIfElseBody(context: IfElseBodyContext): Diagnostic[] {
+    visitIfElseBody(context: IfElseBodyContext): Diagnostic[] {
         let result: Diagnostic[] = [];
         const ifRules: IfConditionRuleContext[] = context.ifElseTemplateBody().ifConditionRule();
 
@@ -244,7 +252,7 @@ export class StaticChecker
                         this.buildLGDiagnostic(TemplateErrors.invalidExpressionInCondition, undefined, conditionNode)
                     );
                 } else {
-                    const errorPrefix = `Condition '` + conditionNode.expression(0).text + `': `;
+                    const errorPrefix = "Condition '" + conditionNode.expression(0).text + "': ";
                     result = result.concat(this.checkExpression(conditionNode.expression(0), errorPrefix));
                 }
             } else {
@@ -270,9 +278,11 @@ export class StaticChecker
 
     /**
      * Visit a parse tree produced by the `switchCaseBody` labeled alternative in `LGTemplateParser.body`.
+     *
      * @param context The parse tree.
+     * @returns The result of visiting switch-case body.
      */
-    public visitSwitchCaseBody(context: SwitchCaseBodyContext): Diagnostic[] {
+    visitSwitchCaseBody(context: SwitchCaseBodyContext): Diagnostic[] {
         let result: Diagnostic[] = [];
         const switchCaseNodes: SwitchCaseRuleContext[] = context.switchCaseTemplateBody().switchCaseRule();
         let idx = 0;
@@ -375,9 +385,11 @@ export class StaticChecker
 
     /**
      * Visit a parse tree produced by `LGTemplateParser.normalTemplateString`.
+     *
      * @param context The parse tree.
+     * @returns The result of visiting normal template string.
      */
-    public visitNormalTemplateString(context: NormalTemplateStringContext): Diagnostic[] {
+    visitNormalTemplateString(context: NormalTemplateStringContext): Diagnostic[] {
         const prefixErrorMsg = TemplateExtensions.getPrefixErrorMessage(context);
         let result: Diagnostic[] = [];
 
@@ -396,6 +408,7 @@ export class StaticChecker
 
     /**
      * Gets the default value returned by visitor methods.
+     *
      * @returns Empty [Diagnostic](xref:botbuilder-lg.Diagnostic) array.
      */
     protected defaultResult(): Diagnostic[] {

@@ -13,8 +13,8 @@ import { Templates } from './templates';
  * the appropriate template using the current culture to perform template evaluation.
  */
 export class MultiLanguageLG {
-    public languagePolicy: Map<string, string[]>;
-    public lgPerLocale: Map<string, Templates>;
+    languagePolicy: Map<string, string[]>;
+    lgPerLocale: Map<string, Templates>;
 
     private readonly locales = [
         '',
@@ -869,11 +869,12 @@ export class MultiLanguageLG {
 
     /**
      * Initializes a new instance of the MultiLanguageLG class.
+     *
      * @param templatesPerLocale A map of LG file templates per locale.
      * @param filePerLocale A map of locale and LG file.
      * @param defaultLanguage Default language.
      */
-    public constructor(
+    constructor(
         templatesPerLocale: Map<string, Templates> | undefined,
         filePerLocale: Map<string, string> | undefined,
         defaultLanguage?: string
@@ -881,7 +882,7 @@ export class MultiLanguageLG {
         if (templatesPerLocale !== undefined) {
             this.lgPerLocale = templatesPerLocale;
         } else if (filePerLocale === undefined) {
-            throw new Error(`input is empty`);
+            throw new Error('input is empty');
         } else {
             this.lgPerLocale = new Map<string, Templates>();
             for (const item of filePerLocale.entries()) {
@@ -895,11 +896,13 @@ export class MultiLanguageLG {
 
     /**
      * Generate template evaluate result.
+     *
      * @param template Template name.
      * @param data Scope data.
      * @param locale Locale info.
+     * @returns The evaluated template result.
      */
-    public generate(template: string, data?: object, locale?: string): any {
+    generate(template: string, data?: object, locale?: string): any {
         if (!template) {
             throw new Error('template is empty');
         }

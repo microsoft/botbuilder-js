@@ -12,14 +12,14 @@ describe('QnAMakerRecognizerTests', function () {
 
     const hostname = 'https://dummy-hostname.azurewebsites.net';
 
-    it('returns answer', async () => {
+    it('returns answer', async function () {
         nock(hostname)
             .post(/knowledgebases/)
             .replyWithFile(200, path.join(__dirname, 'resources/QnAMakerRecognizerTests/QnaMaker_ReturnsAnswer.json'));
         await TestUtils.runTestScript(resourceExplorer, 'QnAMakerRecognizerTests_ReturnsAnswer');
     });
 
-    it('returns answer with intent', async () => {
+    it('returns answer with intent', async function () {
         nock(hostname)
             .post(/knowledgebases/)
             .replyWithFile(
@@ -29,7 +29,7 @@ describe('QnAMakerRecognizerTests', function () {
         await TestUtils.runTestScript(resourceExplorer, 'QnAMakerRecognizerTests_ReturnsAnswerWithIntent');
     });
 
-    it('returns no answer', async () => {
+    it('returns no answer', async function () {
         nock(hostname)
             .post(/knowledgebases/)
             .replyWithFile(

@@ -26,10 +26,11 @@ import {
 export class TemplateExtensions {
     /**
      * Trim expression. ${abc} => abc,  ${a == {}} => a == {}.
+     *
      * @param expression Input expression string.
      * @returns Pure expression string.
      */
-    public static trimExpression(expression: string): string {
+    static trimExpression(expression: string): string {
         let result = expression.trim();
         if (result.startsWith('$')) {
             result = result.substr(1);
@@ -49,10 +50,11 @@ export class TemplateExtensions {
      * path is from authored content which doesn't know what OS it is running on.
      * This method treats / and \ both as seperators regardless of OS, for windows that means / -> \ and for linux/mac \ -> /.
      * This allows author to use ../foo.lg or ..\foo.lg as equivelents for importing.
+     *
      * @param ambiguousPath AuthoredPath.
      * @returns Path expressed as OS path.
      */
-    public static normalizePath(ambiguousPath: string): string {
+    static normalizePath(ambiguousPath: string): string {
         if (process.platform === 'win32') {
             // map linux/mac sep -> windows
             return path.normalize(ambiguousPath.replace(/\//g, '\\'));
@@ -64,10 +66,11 @@ export class TemplateExtensions {
 
     /**
      * Get prefix error message from normal template sting context.
+     *
      * @param context Normal template sting context.
      * @returns Prefix error message.
      */
-    public static getPrefixErrorMessage(context: NormalTemplateStringContext): string {
+    static getPrefixErrorMessage(context: NormalTemplateStringContext): string {
         let errorPrefix = '';
         if (context.parent && context.parent.parent && context.parent.parent.parent) {
             if (context.parent.parent.parent instanceof IfConditionRuleContext) {
@@ -75,14 +78,14 @@ export class TemplateExtensions {
                 let tempMsg = '';
                 if (conditionContext.ifCondition() && conditionContext.ifCondition().expression().length > 0) {
                     tempMsg = conditionContext.ifCondition().expression(0).text;
-                    errorPrefix = `Condition '` + tempMsg + `': `;
+                    errorPrefix = "Condition '" + tempMsg + "': ";
                 }
             } else {
                 if (context.parent.parent.parent instanceof SwitchCaseRuleContext) {
                     const switchCaseContext = context.parent.parent.parent;
                     const state = switchCaseContext.switchCaseStat();
                     if (state && state.DEFAULT()) {
-                        errorPrefix = `Case 'Default':`;
+                        errorPrefix = "Case 'Default':";
                     } else if (state && state.SWITCH()) {
                         let tempMsg = '';
                         if (state.expression(0)) {
@@ -105,9 +108,11 @@ export class TemplateExtensions {
 
     /**
      * If a value is pure Expression.
+     *
      * @param ctx Key value structure value context.
+     * @returns True if the value is pure Expression, false otherwise.
      */
-    public static isPureExpression(ctx: KeyValueStructureValueContext): boolean {
+    static isPureExpression(ctx: KeyValueStructureValueContext): boolean {
         if (ctx.expressionInStructure() === undefined || ctx.expressionInStructure().length != 1) {
             return false;
         }
@@ -117,10 +122,11 @@ export class TemplateExtensions {
 
     /**
      * Escape \ from text.
+     *
      * @param exp Input text.
      * @returns Escaped text.
      */
-    public static evalEscape(exp: string): string {
+    static evalEscape(exp: string): string {
         const validCharactersDict: Record<string, string> = {
             '\\r': '\r',
             '\\n': '\n',
@@ -143,16 +149,20 @@ export class TemplateExtensions {
 
     /**
      * Generate new guid string.
+     *
+     * @returns The new guid string.
      */
-    public static newGuid(): string {
+    static newGuid(): string {
         return uuidv4();
     }
 
     /**
-     * read line from text.
+     * Read line from text.
+     *
      * @param input Text content.
+     * @returns Split read line.
      */
-    public static readLine(input: string): string[] {
+    static readLine(input: string): string[] {
         if (!input) {
             return [];
         }
@@ -162,11 +172,12 @@ export class TemplateExtensions {
 
     /**
      * Convert antlr parser into Range.
+     *
      * @param context Antlr parse context.
      * @param [lineOffset] Line offset.
      * @returns Range object.
      */
-    public static convertToRange(context: ParserRuleContext, lineOffset?: number): Range {
+    static convertToRange(context: ParserRuleContext, lineOffset?: number): Range {
         if (!lineOffset) {
             lineOffset = 0;
         }

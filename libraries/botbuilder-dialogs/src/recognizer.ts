@@ -13,10 +13,11 @@ import {
     NullTelemetryClient,
     RecognizerResult,
 } from 'botbuilder-core';
-import { omit } from 'lodash';
+
 import { Configurable } from './configurable';
 import { DialogContext } from './dialogContext';
 import { DialogTurnStateConstants } from './dialogTurnStateConstants';
+import omit = require('lodash/omit');
 
 export interface RecognizerConfiguration {
     id?: string;
@@ -30,28 +31,27 @@ export class Recognizer extends Configurable implements RecognizerConfiguration 
     /**
      * Recognizers unique ID.
      */
-    public id: string;
+    id: string;
 
     /**
      * The telemetry client for logging events.
      * Default this to the NullTelemetryClient, which does nothing.
      */
-    public telemetryClient: BotTelemetryClient = new NullTelemetryClient();
+    telemetryClient: BotTelemetryClient = new NullTelemetryClient();
 
     /**
      * To recognize intents and entities in a users utterance.
      *
-     * @param {DialogContext} dialogContext Dialog Context.
-     * @param {Partial<Activity>} activity Activity.
-     * @param {Record<string, string>} telemetryProperties Additional properties to be logged to telemetry with event.
-     * @param {Record<string, number>} telemetryMetrics Additional metrics to be logged to telemetry with event.
-     * @returns {Promise<RecognizerResult>} Recognized result.
+     * @param {DialogContext} _dialogContext Dialog Context.
+     * @param {Partial<Activity>} _activity Activity.
+     * @param {Record<string, string>} _telemetryProperties Additional properties to be logged to telemetry with event.
+     * @param {Record<string, number>} _telemetryMetrics Additional metrics to be logged to telemetry with event.
      */
-    public recognize(
-        dialogContext: DialogContext,
-        activity: Partial<Activity>,
-        telemetryProperties?: Record<string, string>,
-        telemetryMetrics?: Record<string, number>
+    recognize(
+        _dialogContext: DialogContext,
+        _activity: Partial<Activity>,
+        _telemetryProperties?: Record<string, string>,
+        _telemetryMetrics?: Record<string, number>
     ): Promise<RecognizerResult> {
         throw new Error('Please implement recognize function.');
     }
@@ -64,9 +64,11 @@ export class Recognizer extends Configurable implements RecognizerConfiguration 
      */
     protected createChooseIntentResult(recognizerResults: Record<string, RecognizerResult>): RecognizerResult {
         let text: string;
+        let sentiment: Record<string, any> = null;
         type candidateType = { id: string; intent: string; score: number; result: RecognizerResult };
         const candidates = Object.entries(recognizerResults).reduce((candidates: candidateType[], [key, result]) => {
             text = result.text;
+            sentiment = result.sentiment;
             const { intent, score } = getTopScoringIntent(result);
             if (intent !== 'None') {
                 candidates.push({
@@ -95,22 +97,23 @@ export class Recognizer extends Configurable implements RecognizerConfiguration 
             text,
             intents: { None: { score: 1.0 } },
             entities: {},
+            sentiment: sentiment,
         };
         return recognizerResult;
     }
 
     /**
      * Uses the RecognizerResult to create a list of properties to be included when tracking the result in telemetry.
-     * 
+     *
      * @param {RecognizerResult} recognizerResult Recognizer Result.
      * @param {Record<string, string>} telemetryProperties A list of properties to append or override the properties created using the RecognizerResult.
-     * @param {DialogContext} dialogContext Dialog Context.
+     * @param {DialogContext} _dialogContext Dialog Context.
      * @returns {Record<string, string>} A collection of properties that can be included when calling the TrackEvent method on the TelemetryClient.
      */
     protected fillRecognizerResultTelemetryProperties(
         recognizerResult: RecognizerResult,
         telemetryProperties: Record<string, string>,
-        dialogContext?: DialogContext
+        _dialogContext?: DialogContext
     ): Record<string, string> {
         const { intent, score } = getTopScoringIntent(recognizerResult);
         const intents = Object.entries(recognizerResult.intents);
@@ -161,8 +164,9 @@ export class Recognizer extends Configurable implements RecognizerConfiguration 
         telemetryMetrics?: Record<string, number>
     ): void {
         if (this.telemetryClient instanceof NullTelemetryClient) {
-            const turnStateTelemetryClient = dialogContext.context.turnState.get<BotTelemetryClient>(DialogTurnStateConstants.telemetryClient)
-                ?? dialogContext.context.turnState.get<BotTelemetryClient>(BotTelemetryClientKey);
+            const turnStateTelemetryClient =
+                dialogContext.context.turnState.get<BotTelemetryClient>(DialogTurnStateConstants.telemetryClient) ??
+                dialogContext.context.turnState.get<BotTelemetryClient>(BotTelemetryClientKey);
             this.telemetryClient = turnStateTelemetryClient ?? this.telemetryClient;
         }
 

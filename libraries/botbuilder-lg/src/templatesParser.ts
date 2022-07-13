@@ -53,26 +53,27 @@ export class TemplatesParser {
     /**
      * Inline text id.
      */
-    public static readonly inlineContentId: string = 'inline content';
+    static readonly inlineContentId: string = 'inline content';
 
     /**
      * option regex.
      */
-    public static readonly optionRegex: RegExp = new RegExp(/>\s*!#(.*)$/);
+    static readonly optionRegex: RegExp = new RegExp(/>\s*!#(.*)$/);
 
     /**
      * Import regex.
      */
-    public static readonly importRegex: RegExp = new RegExp(/\[([^\]]*)\]\(([^)]*)\)([\w\s]*)/);
+    static readonly importRegex: RegExp = new RegExp(/\[([^\]]*)\]\(([^)]*)\)([\w\s]*)/);
 
     /**
-     * parse a file and return LG file.
+     * Parse a file and return LG file.
+     *
      * @param filePath LG absolute file path..
      * @param importResolver Resolver to resolve LG import id to template text.
      * @param expressionParser Expression parser for evaluating expressions.
      * @returns New lg file.
      */
-    public static parseFile(
+    static parseFile(
         filePath: string,
         importResolver?: ImportResolverDelegate,
         expressionParser?: ExpressionParser
@@ -85,6 +86,7 @@ export class TemplatesParser {
 
     /**
      * Parser to turn lg content into a Templates.
+     *
      * @deprecated This method will soon be deprecated. Use ParseResource instead.
      * @param content Text content contains lg templates.
      * @param id Id is the identifier of content. If importResolver is undefined, id must be a full path string.
@@ -92,7 +94,7 @@ export class TemplatesParser {
      * @param expressionParser Expression parser for evaluating expressions.
      * @returns Entity.
      */
-    public static parseText(
+    static parseText(
         content: string,
         id = '',
         importResolver?: ImportResolverDelegate,
@@ -104,13 +106,13 @@ export class TemplatesParser {
 
     /**
      * Parser to turn lg content into a Templates.
+     *
      * @param resource LG resource.
      * @param importResolver Resolver to resolve LG import id to template text.
      * @param expressionParser Expression parser for evaluating expressions.
-     * @param cachedTemplates Give the file path and templates to avoid parsing and to improve performance.
      * @returns Entity.
      */
-    public static parseResource(
+    static parseResource(
         resource: LGResource,
         importResolver?: ImportResolverDelegate,
         expressionParser?: ExpressionParser
@@ -120,12 +122,14 @@ export class TemplatesParser {
 
     /**
      * Parser to turn lg content into a Templates based on the original Templates.
+     *
      * @param content Text content contains lg templates.
-     * @param originalTemplates Original templates
+     * @param originalTemplates Original templates.
+     * @returns Template containing lg content.
      */
-    public static parseTextWithRef(content: string, originalTemplates: Templates): Templates {
+    static parseTextWithRef(content: string, originalTemplates: Templates): Templates {
         if (!originalTemplates) {
-            throw Error(`templates is empty`);
+            throw Error('templates is empty');
         }
 
         const id = TemplatesParser.inlineContentId;
@@ -158,10 +162,12 @@ export class TemplatesParser {
     }
     /**
      * Default import resolver, using relative/absolute file path to access the file content.
+     *
      * @param resource Original Resource.
      * @param resourceId Import path.
+     * @returns Accessed lg resource.
      */
-    public static defaultFileResolver(resource: LGResource, resourceId: string): LGResource {
+    static defaultFileResolver(resource: LGResource, resourceId: string): LGResource {
         // If the import id contains "#", we would cut it to use the left path.
         // for example: [import](a.b.c#d.lg), after convertion, id would be d.lg
         const hashIndex = resourceId.indexOf('#');
@@ -184,6 +190,7 @@ export class TemplatesParser {
 
     /**
      * Parser to turn lg content into a Templates.
+     *
      * @param resource LG resource.
      * @param importResolver Resolver to resolve LG import id to template text.
      * @param expressionParser Expression parser for evaluating expressions.
@@ -234,10 +241,11 @@ export class TemplatesParser {
 
     /**
      * Parse LG content and return the AST.
+     *
      * @param resource LG resource.
      * @returns The abstract syntax tree of lg file.
      */
-    public static antlrParseTemplates(resource: LGResource): FileContext {
+    static antlrParseTemplates(resource: LGResource): FileContext {
         if (!resource.content || resource.content.trim() === '') {
             return undefined;
         }
@@ -356,18 +364,21 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<void> impleme
 
     /**
      * Creates a new instance of the [TemplatesTransformer](xref:botbuilder-lg.TemplatesTransformer) class.
+     *
      * @param templates Templates.
      */
-    public constructor(templates: Templates) {
+    constructor(templates: Templates) {
         super();
         this.templates = templates;
     }
 
     /**
      * Transform the parse tree into templates.
+     *
      * @param parseTree Input abstract syntax tree.
+     * @returns Parse tree templates.
      */
-    public transform(parseTree: ParseTree): Templates {
+    transform(parseTree: ParseTree): Templates {
         if (parseTree) {
             this.visit(parseTree);
         }
@@ -393,9 +404,10 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<void> impleme
 
     /**
      * Visit a parse tree produced by `LGFileParser.errorDefinition`.
+     *
      * @param context The parse tree.
      */
-    public visitErrorDefinition(context: ErrorDefinitionContext): void {
+    visitErrorDefinition(context: ErrorDefinitionContext): void {
         const lineContent = context.INVALID_LINE().text;
         if (lineContent === undefined || lineContent.trim() === '') {
             this.templates.diagnostics.push(
@@ -409,9 +421,10 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<void> impleme
 
     /**
      * Visit a parse tree produced by `LGFileParser.importDefinition`.
+     *
      * @param context The parse tree.
      */
-    public visitImportDefinition(context: ImportDefinitionContext): void {
+    visitImportDefinition(context: ImportDefinitionContext): void {
         const importStr = context.IMPORT().text;
         const groups = importStr.match(TemplatesParser.importRegex);
         if (!groups || (groups.length !== 3 && groups.length !== 4)) {
@@ -444,9 +457,10 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<void> impleme
 
     /**
      * Visit a parse tree produced by `LGFileParser.optionDefinition`.
+     *
      * @param context The parse tree.
      */
-    public visitOptionDefinition(context: OptionDefinitionContext): void {
+    visitOptionDefinition(context: OptionDefinitionContext): void {
         const optionStr = context.OPTION().text;
         let result = '';
         if (optionStr != undefined && optionStr.trim() !== '') {
@@ -463,9 +477,10 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<void> impleme
 
     /**
      * Visit a parse tree produced by `LGFileParser.templateDefinition`.
+     *
      * @param context The parse tree.
      */
-    public visitTemplateDefinition(context: TemplateDefinitionContext): void {
+    visitTemplateDefinition(context: TemplateDefinitionContext): void {
         const startLine = context.start.line;
 
         const templateNameLine = context.templateNameLine().TEMPLATE_NAME_LINE().text;
@@ -632,12 +647,12 @@ class TemplateBodyTransformer extends AbstractParseTreeVisitor<void> implements 
 
     protected defaultResult(): void {}
 
-    public transform(): Template {
+    transform(): Template {
         this.visit(this._template.templateBodyParseTree);
         return this._template;
     }
 
-    public visitStructuredTemplateBody(context: StructuredTemplateBodyContext): void {
+    visitStructuredTemplateBody(context: StructuredTemplateBodyContext): void {
         if (
             !context.structuredBodyNameLine().errorStructuredName() &&
             context.structuredBodyEndLine() &&

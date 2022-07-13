@@ -19,7 +19,7 @@ export class LanguageGeneratorConverter implements Converter<string, ResourceMul
      * @param value Resource id of LG file.
      * @returns A new [ResourceMultiLanguageGenerator](xref:botbuilder-dialogs-adaptive.ResourceMultiLanguageGenerator) instance.
      */
-    public convert(value: string | ResourceMultiLanguageGenerator): ResourceMultiLanguageGenerator {
+    convert(value: string | ResourceMultiLanguageGenerator): ResourceMultiLanguageGenerator {
         return typeof value === 'string' ? new ResourceMultiLanguageGenerator(value) : value;
     }
 }

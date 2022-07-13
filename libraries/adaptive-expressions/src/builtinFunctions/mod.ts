@@ -18,7 +18,7 @@ export class Mod extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [Mod](xref:adaptive-expressions.Mod) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.Mod, Mod.evaluator(), ReturnType.Number, FunctionUtils.validateBinaryNumber);
     }
 

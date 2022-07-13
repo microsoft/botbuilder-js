@@ -5,7 +5,14 @@ import { Configuration } from './configuration';
 import { ComponentDeclarativeTypes, ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { ok } from 'assert';
 
+/**
+ * Class which gives access to content resources by specifying configuration and declarativeTypes.
+ */
 export class ConfigurationResourceExporer extends ResourceExplorer {
+    /**
+     * @param configuration Additional configuration methods.
+     * @param declarativeTypes Registered declarative types.
+     */
     constructor(configuration: Configuration, declarativeTypes: ComponentDeclarativeTypes[]) {
         super({ declarativeTypes });
 

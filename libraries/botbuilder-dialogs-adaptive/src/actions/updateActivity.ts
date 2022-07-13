@@ -43,9 +43,9 @@ export interface UpdateActivityConfiguration extends DialogConfiguration {
  * Update an activity with replacement.
  */
 export class UpdateActivity<O extends object = {}> extends Dialog<O> implements UpdateActivityConfiguration {
-    public static $kind = 'Microsoft.UpdateActivity';
+    static $kind = 'Microsoft.UpdateActivity';
 
-    public constructor();
+    constructor();
 
     /**
      * Initializes a new instance of the [UpdateActivity](xref:botbuilder-dialogs-adaptive.UpdateActivity) class.
@@ -53,7 +53,7 @@ export class UpdateActivity<O extends object = {}> extends Dialog<O> implements 
      * @param activityId Optional. The expression which resolves to the activityId to update.
      * @param activity Optional. Template for the [Activity](xref:botframework-schema.Activity).
      */
-    public constructor(activityId?: string, activity?: Partial<Activity> | string) {
+    constructor(activityId?: string, activity?: Partial<Activity> | string) {
         super();
         if (activityId) {
             this.activityId = new StringExpression(activityId);
@@ -70,23 +70,23 @@ export class UpdateActivity<O extends object = {}> extends Dialog<O> implements 
     /**
      * Gets or sets template for the activity.
      */
-    public activity: TemplateInterface<Partial<Activity>, D & O>;
+    activity: TemplateInterface<Partial<Activity>, D & O>;
 
     /**
      * The expression which resolves to the activityId to update.
      */
-    public activityId: StringExpression;
+    activityId: StringExpression;
 
     /**
      * An optional expression which if is true will disable this action.
      */
-    public disabled?: BoolExpression;
+    disabled?: BoolExpression;
 
     /**
      * @param property The key of the conditional selector configuration.
      * @returns The converter for the selector configuration.
      */
-    public getConverter(property: keyof UpdateActivityConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof UpdateActivityConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'activity':
                 return new ActivityTemplateConverter();
@@ -106,7 +106,7 @@ export class UpdateActivity<O extends object = {}> extends Dialog<O> implements 
      * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
+    async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }

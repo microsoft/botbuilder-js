@@ -14,7 +14,7 @@ import { AdaptiveRecognizer } from '../adaptiveRecognizer';
  * Recognizer which maps channel activity.entities of type mention into [RecognizerResult](xref:botbuilder-core.RecognizerResult) format.
  */
 export class ChannelMentionEntityRecognizer extends AdaptiveRecognizer {
-    public static $kind = 'Microsoft.ChannelMentionEntityRecognizer';
+    static $kind = 'Microsoft.ChannelMentionEntityRecognizer';
 
     /**
      * To recognize intents and entities in a users utterance.
@@ -25,7 +25,7 @@ export class ChannelMentionEntityRecognizer extends AdaptiveRecognizer {
      * @param {object} _telemetryMetrics Additional metrics to be logged to telemetry with event.
      * @returns {Promise<RecognizerResult>} Analysis of utterance.
      */
-    public async recognize(
+    async recognize(
         _dialogContext: DialogContext,
         activity: Partial<Activity>,
         _telemetryProperties?: Record<string, string>,

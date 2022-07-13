@@ -41,12 +41,16 @@ export class MockHttpRequestMiddleware implements Middleware {
      *
      * @param {HttpRequestMock[]} httpRequestMocks Mocks to use.
      */
-    public constructor(httpRequestMocks: HttpRequestMock[] = []) {
+    constructor(httpRequestMocks: HttpRequestMock[] = []) {
         httpRequestMocks.forEach((mock) => mock.setup());
         this._httpRequestMocks = httpRequestMocks;
     }
 
-    public async onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
+    /**
+     * @param context The context object for this turn.
+     * @param next The delegate to call to continue the bot middleware pipeline.
+     */
+    async onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
         context.turnState.set(MockHttpRequestMiddlewareKey, this);
         await next();
     }
@@ -56,7 +60,7 @@ export class MockHttpRequestMiddleware implements Middleware {
      *
      * @param {FallbackFunc} fallback New fallback or undefined.
      */
-    public setFallback(fallback?: FallbackFunc): void {
+    setFallback(fallback?: FallbackFunc): void {
         nock.cleanAll();
         this._httpRequestMocks.forEach((mock) => mock.setup());
 

@@ -4,7 +4,7 @@ const { MockLuisLoader, MockLuisRecognizer, TestUtils, useMockLuisSettings } = r
 const { makeResourceExplorer } = require('./utils');
 
 describe('LuisAdaptiveRecognizerTests', function () {
-    it('Dynamic lists', async () => {
+    it('Dynamic lists', async function () {
         const resourceDir = path.join(__dirname, 'resources/LuisAdaptiveRecognizerTests');
         const config = useMockLuisSettings(resourceDir);
         const explorer = makeResourceExplorer('LuisAdaptiveRecognizerTests', LuisBotComponent);
@@ -12,7 +12,7 @@ describe('LuisAdaptiveRecognizerTests', function () {
         await TestUtils.runTestScript(explorer, 'DynamicLists', undefined, config);
     });
 
-    it('Dynamic lists expression', async () => {
+    it('Dynamic lists expression', async function () {
         const resourceDir = path.join(__dirname, 'resources/LuisAdaptiveRecognizerTests');
         const config = useMockLuisSettings(resourceDir);
         const explorer = makeResourceExplorer('LuisAdaptiveRecognizerTests', LuisBotComponent);
@@ -20,7 +20,7 @@ describe('LuisAdaptiveRecognizerTests', function () {
         await TestUtils.runTestScript(explorer, 'DynamicListsExpression', undefined, config);
     });
 
-    it('ExternalEntities', async () => {
+    it('ExternalEntities', async function () {
         const resourceDir = path.join(__dirname, 'resources/LuisAdaptiveRecognizerTests');
         const config = useMockLuisSettings(resourceDir);
         const explorer = makeResourceExplorer('LuisAdaptiveRecognizerTests', LuisBotComponent);
@@ -28,7 +28,7 @@ describe('LuisAdaptiveRecognizerTests', function () {
         await TestUtils.runTestScript(explorer, 'ExternalEntities', undefined, config);
     });
 
-    it('Cached Luis Result', async () => {
+    it('Cached Luis Result', async function () {
         const resourceDir = path.join(__dirname, 'resources/LuisAdaptiveRecognizerTests');
         const config = useMockLuisSettings(resourceDir);
         const explorer = makeResourceExplorer('LuisAdaptiveRecognizerTests', LuisBotComponent);

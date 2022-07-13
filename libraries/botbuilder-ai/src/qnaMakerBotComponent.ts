@@ -7,7 +7,14 @@ import { Configuration, ServiceCollection } from 'botbuilder-dialogs-adaptive-ru
 import { QnAMakerDialog } from './qnaMakerDialog';
 import { QnAMakerRecognizer } from './qnaMakerRecognizer';
 
+/**
+ * Class which contains registration of components for QnAMaker.
+ */
 export class QnAMakerBotComponent extends BotComponent {
+    /**
+     * @param services Services collection to mimic dependency injection.
+     * @param _configuration Configuration for the bot component.
+     */
     configureServices(services: ServiceCollection, _configuration: Configuration): void {
         services.composeFactory<ComponentDeclarativeTypes[]>('declarativeTypes', (declarativeTypes) =>
             declarativeTypes.concat({

@@ -4,7 +4,15 @@
 import { BotFrameworkAuthentication } from 'botframework-connector';
 import { CloudAdapter, ConversationState, UserState, useBotState } from 'botbuilder';
 
+/**
+ * An adapter that implements the Core Bot and can be hosted in different cloud environments both public and private.
+ */
 export class CoreBotAdapter extends CloudAdapter {
+    /**
+     * @param botFrameworkAuthentication BotFrameworkAuthentication](xref:botframework-connector.BotFrameworkAuthentication) instance.
+     * @param conversationState State management object for conversation state.
+     * @param userState Stored user state.
+     */
     constructor(
         botFrameworkAuthentication: BotFrameworkAuthentication,
         private readonly conversationState: ConversationState,

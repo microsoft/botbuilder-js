@@ -140,7 +140,7 @@ export class QnAMaker implements QnAMakerClient, QnAMakerTelemetryClient {
      * @param {QnAMakerEndpoint} endpoint The endpoint of the knowledge base to query.
      * @param {QnAMakerOptions} options (Optional) additional settings used to configure the instance.
      * @param {BotTelemetryClient} telemetryClient The BotTelemetryClient used for logging telemetry events.
-     * @param {boolean} logPersonalInformation Set to true to include personally indentifiable information in telemetry events.
+     * @param {boolean} logPersonalInformation Set to true to include personally identifiable information in telemetry events.
      */
     constructor(
         private readonly endpoint: QnAMakerEndpoint,
@@ -179,12 +179,20 @@ export class QnAMaker implements QnAMakerClient, QnAMakerTelemetryClient {
         this._logPersonalInformation = logPersonalInformation || false;
     }
 
-    // Gets a value indicating whether determines whether to log personal information that came from the user.
+    /**
+     * Gets a value indicating whether determines whether to log personal information that came from the user.
+     *
+     * @returns True if will log personal information into the BotTelemetryClient.TrackEvent method; otherwise the properties will be filtered.
+     */
     get logPersonalInformation(): boolean {
         return this._logPersonalInformation;
     }
 
-    // Gets the currently configured botTelemetryClient that logs the events.
+    /**
+     * Gets the currently configured BotTelemetryClient that logs the events.
+     *
+     * @returns The currently configured BotTelemetryClient that logs the QnaMessage event.
+     */
     get telemetryClient(): BotTelemetryClient {
         return this._telemetryClient;
     }

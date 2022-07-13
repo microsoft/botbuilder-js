@@ -121,21 +121,21 @@ describe('The ChoiceFactory', function () {
     it('should render choices inline.', function () {
         const activity = ChoiceFactory.inline(colorChoices, 'select from:');
         assertActivity(activity, {
-            text: `select from: (1) red, (2) green, or (3) blue`,
+            text: 'select from: (1) red, (2) green, or (3) blue',
         });
     });
 
     it('should render choices as a list.', function () {
         const activity = ChoiceFactory.list(colorChoices, 'select from:');
         assertActivity(activity, {
-            text: `select from:\n\n   1. red\n   2. green\n   3. blue`,
+            text: 'select from:\n\n   1. red\n   2. green\n   3. blue',
         });
     });
 
     it('should render choices as suggested actions.', function () {
         const activity = ChoiceFactory.suggestedAction(colorChoices, 'select from:');
         assertActivity(activity, {
-            text: `select from:`,
+            text: 'select from:',
             suggestedActions: {
                 actions: [
                     { type: 'imBack', value: 'red', title: 'red' },
@@ -204,7 +204,7 @@ describe('The ChoiceFactory', function () {
     it('should automatically choose render style based on channel type.', function () {
         const activity = ChoiceFactory.forChannel('emulator', colorChoices, 'select from:');
         assertActivity(activity, {
-            text: `select from:`,
+            text: 'select from:',
             suggestedActions: {
                 actions: [
                     { type: 'imBack', value: 'red', title: 'red' },

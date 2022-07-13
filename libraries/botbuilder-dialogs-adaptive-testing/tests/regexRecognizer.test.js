@@ -7,7 +7,7 @@ describe('RegexRecognizerTests', function () {
         resourceExplorer = makeResourceExplorer('RegexRecognizerTests');
     });
 
-    it('Entities', async () => {
+    it('Entities', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'RegexRecognizerTests_Entities');
     });
 });

@@ -33,16 +33,16 @@ export interface GotoActionConfiguration extends DialogConfiguration {
  * Goto an action by Id.
  */
 export class GotoAction<O extends object = {}> extends Dialog<O> implements GotoActionConfiguration {
-    public static $kind = 'Microsoft.GotoAction';
+    static $kind = 'Microsoft.GotoAction';
 
-    public constructor();
+    constructor();
 
     /**
      * Initializes a new instance of the [GotoAction](xref:botbuilder-dialogs-adaptive.GotoAction) class.
      *
      * @param actionId Optional. Action's unique identifier.
      */
-    public constructor(actionId?: string) {
+    constructor(actionId?: string) {
         super();
         if (actionId) {
             this.actionId = new StringExpression(actionId);
@@ -52,18 +52,18 @@ export class GotoAction<O extends object = {}> extends Dialog<O> implements Goto
     /**
      * The action id to go.
      */
-    public actionId: StringExpression;
+    actionId: StringExpression;
 
     /**
      * An optional expression which if is true will disable this action.
      */
-    public disabled?: BoolExpression;
+    disabled?: BoolExpression;
 
     /**
      * @param property The key of the conditional selector configuration.
      * @returns The converter for the selector configuration.
      */
-    public getConverter(property: keyof GotoActionConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof GotoActionConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'actionId':
                 return new StringExpressionConverter();
@@ -81,7 +81,7 @@ export class GotoAction<O extends object = {}> extends Dialog<O> implements Goto
      * @param _options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
+    async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }

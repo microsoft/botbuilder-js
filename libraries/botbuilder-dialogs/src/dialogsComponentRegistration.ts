@@ -22,6 +22,9 @@ export class DialogsComponentRegistration
         pathResolvers: [],
     });
 
+    /**
+     * Creates an instance of the [DialogsComponentRegistration](xref:botbuilder-dialogs.DialogsComponentRegistration) class.
+     */
     constructor() {
         super();
 
@@ -33,7 +36,7 @@ export class DialogsComponentRegistration
      *
      * @returns {MemoryScope[]} A list of [MemoryScope](xref:botbuilder-dialogs.MemoryScope).
      */
-    public getMemoryScopes(): MemoryScope[] {
+    getMemoryScopes(): MemoryScope[] {
         return this.services.mustMakeInstance<MemoryScope[]>('memoryScopes');
     }
 
@@ -42,7 +45,7 @@ export class DialogsComponentRegistration
      *
      * @returns {PathResolver[]} A list of [PathResolver](xref:botbuilder-dialogs.PathResolver).
      */
-    public getPathResolvers(): PathResolver[] {
+    getPathResolvers(): PathResolver[] {
         return this.services.mustMakeInstance<PathResolver[]>('pathResolvers');
     }
 }

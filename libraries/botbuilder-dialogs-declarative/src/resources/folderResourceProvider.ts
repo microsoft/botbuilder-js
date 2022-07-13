@@ -23,12 +23,13 @@ export class FolderResourceProvider extends ResourceProvider {
 
     /**
      * Initializes a new instance of the `FolderResourceProvider` class.
+     *
      * @param resourceExplorer Resource explorer.
      * @param folder Root folder.
      * @param includeSubFolders Whether include its sub folders.
      * @param monitorChanges Whether monitor changes.
      */
-    public constructor(
+    constructor(
         resourceExplorer: ResourceExplorer,
         folder: string,
         includeSubFolders = true,
@@ -53,25 +54,27 @@ export class FolderResourceProvider extends ResourceProvider {
 
     /**
      * Gets attached file watcher.
+     *
+     * @returns The attached file watcher.
      */
-    public get watcher(): FSWatcher {
+    get watcher(): FSWatcher {
         return this._watcher;
     }
 
     /**
      * Folder to enumerate.
      */
-    public directory: string;
+    directory: string;
 
     /**
      * A value indicating whether to include subfolders.
      */
-    public includeSubFolders = true;
+    includeSubFolders = true;
 
     /**
      * Refresh any cached content and look for new content.
      */
-    public refresh(): void {
+    refresh(): void {
         this._resources.clear();
         const files: string[] = PathUtil.getFiles(this.directory, this.includeSubFolders);
         const filteredFiles: string[] = files.filter((filename): boolean =>
@@ -86,17 +89,21 @@ export class FolderResourceProvider extends ResourceProvider {
 
     /**
      * Gets resource by its id.
+     *
      * @param id Resource id.
+     * @returns The resource by id.
      */
-    public getResource(id: string): Resource {
+    getResource(id: string): Resource {
         return this._resources.has(id) ? this._resources.get(id) : undefined;
     }
 
     /**
      * Gets resources by extension.
+     *
      * @param extension Resource extension.
+     * @returns Collection of resources.
      */
-    public getResources(extension: string): Resource[] {
+    getResources(extension: string): Resource[] {
         extension = extension.startsWith('.') ? extension.toLowerCase() : `.${extension.toLowerCase()}`;
 
         const resources: Resource[] = [];

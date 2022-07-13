@@ -13,11 +13,12 @@ import { DialogContext } from '../../dialogContext';
 export abstract class MemoryScope {
     /**
      * Initializes a new instance of the [MemoryScope](xref:botbuilder-dialogs.MemoryScope) class.
+     *
      * @param name Name of the scope.
      * @param includeInSnapshot Boolean value indicating whether this memory
      * should be included in snapshot. Default value is true.
      */
-    public constructor(name: string, includeInSnapshot = true) {
+    constructor(name: string, includeInSnapshot = true) {
         this.includeInSnapshot = includeInSnapshot;
         this.name = name;
     }
@@ -25,50 +26,55 @@ export abstract class MemoryScope {
     /**
      * Gets or sets name of the scope
      */
-    public readonly name: string;
+    readonly name: string;
 
     /**
      * Gets a value indicating whether this memory should be included in snapshot.
      */
-    public readonly includeInSnapshot: boolean;
+    readonly includeInSnapshot: boolean;
 
     /**
      * Get the backing memory for this scope
+     *
      * @param dc Current dialog context.
      * @returns memory for the scope
      */
-    public abstract getMemory(dc: DialogContext): object;
+    abstract getMemory(dc: DialogContext): object;
 
     /**
      * Changes the backing object for the memory scope.
-     * @param dc Current dialog context
-     * @param memory memory to assign
+     *
+     * @param _dc Current dialog context
+     * @param _memory memory to assign
      */
-    public setMemory(dc: DialogContext, memory: object): void {
+    setMemory(_dc: DialogContext, _memory: object): void {
         throw new Error(`MemoryScope.setMemory: The '${this.name}' memory scope is read-only.`);
     }
 
     /**
      * Loads a scopes backing memory at the start of a turn.
-     * @param dc Current dialog context.
+     *
+     * @param _dc Current dialog context.
      */
-    public async load(dc: DialogContext): Promise<void> {
+    async load(_dc: DialogContext): Promise<void> {
         // No initialization by default.
     }
 
     /**
      * Saves a scopes backing memory at the end of a turn.
-     * @param dc Current dialog context.
+     *
+     * @param _dc Current dialog context.
      */
-    public async saveChanges(dc: DialogContext): Promise<void> {
+    async saveChanges(_dc: DialogContext): Promise<void> {
         // No initialization by default.
     }
 
     /**
      * Deletes the backing memory for a scope.
-     * @param dc Current dialog context.
+     *
+     * @param _dc Current dialog context.
      */
-    public async delete(dc: DialogContext): Promise<void> {
+    async delete(_dc: DialogContext): Promise<void> {
         throw new Error(`MemoryScope.delete: The '${this.name}' memory scope can't be deleted.`);
     }
 }

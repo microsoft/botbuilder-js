@@ -23,21 +23,22 @@ export enum DiagnosticSeverity {
  * Diagnostic class
  */
 export class Diagnostic {
-    public code: string;
-    public range: Range;
-    public severity: DiagnosticSeverity;
-    public source: string;
-    public message: string;
+    code: string;
+    range: Range;
+    severity: DiagnosticSeverity;
+    source: string;
+    message: string;
 
     /**
      * Creates a new instance of the [Diagnostic](xref:botbuilder-lg.Diagnostic) class.
+     *
      * @param range Range where the error or warning occurred.
      * @param message Error message of the error or warning.
      * @param severity Severity of the error or warning.
      * @param source Source of the error or warning occurred.
      * @param code Code or identifier of the error or warning.
      */
-    public constructor(
+    constructor(
         range: Range,
         message: string,
         severity: DiagnosticSeverity = DiagnosticSeverity.Error,
@@ -53,9 +54,10 @@ export class Diagnostic {
 
     /**
      * Returns a string that represents the current [Diagnostic](xref:botbuilder-lg.Diagnostic) object.
+     *
      * @returns A string that represents the current [Diagnostic](xref:botbuilder-lg.Diagnostic).
      */
-    public toString(): string {
+    toString(): string {
         // ignore error range if source is "inline content"
         if (this.source === TemplatesParser.inlineContentId) {
             return `[${DiagnosticSeverity[this.severity]}] ${this.source} ${this.message.toString()}`;

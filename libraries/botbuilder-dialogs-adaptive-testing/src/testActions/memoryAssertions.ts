@@ -19,28 +19,29 @@ export interface MemoryAssertionsConfiguration {
  * Run assertions against memory.
  */
 export class MemoryAssertions extends TestAction implements MemoryAssertionsConfiguration {
-    public static $kind = 'Microsoft.Test.MemoryAssertions';
+    static $kind = 'Microsoft.Test.MemoryAssertions';
 
     /**
      * Gets or sets the description of this assertion.
      */
-    public description: string;
+    description: string;
 
     /**
      * Gets or sets the assertions.
      */
-    public assertions: string[] = [];
+    assertions: string[] = [];
 
     /**
      * Execute the test.
-     * @param testAdapter Adapter to execute against.
-     * @param callback Logic for the bot to use.
+     *
+     * @param _adapter Adapter to execute against.
+     * @param _callback Logic for the bot to use.
      * @param inspector Inspector for dialog context.
      * @returns A Promise that represents the work queued to execute.
      */
-    public async execute(
-        adapter: TestAdapter,
-        callback: (context: TurnContext) => Promise<void>,
+    async execute(
+        _adapter: TestAdapter,
+        _callback: (context: TurnContext) => Promise<void>,
         inspector?: Inspector
     ): Promise<void> {
         if (inspector) {

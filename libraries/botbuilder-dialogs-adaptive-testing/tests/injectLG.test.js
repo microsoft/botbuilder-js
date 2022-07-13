@@ -7,7 +7,7 @@ describe('ActionScopeTests', function () {
         resourceExplorer = makeResourceExplorer('InjectLGTests');
     });
 
-    it('InjectLGTest', async () => {
+    it('InjectLGTest', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'inject');
     });
 });

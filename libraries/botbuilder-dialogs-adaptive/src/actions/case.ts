@@ -18,7 +18,7 @@ export class Case extends ActionScope {
      * @param value Optional. Case's string value.
      * @param actions Optional. Numerable list of [Dialog](xref:botbuilder-dialogs.Dialog) actions.
      */
-    public constructor(value?: string, actions: Dialog[] = []) {
+    constructor(value?: string, actions: Dialog[] = []) {
         super(actions);
         this.value = value;
     }
@@ -26,5 +26,5 @@ export class Case extends ActionScope {
     /**
      * Gets or sets value expression to be compared against condition.
      */
-    public value: string;
+    value: string;
 }

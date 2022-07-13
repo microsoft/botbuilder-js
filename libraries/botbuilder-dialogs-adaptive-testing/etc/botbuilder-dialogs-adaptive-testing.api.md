@@ -31,7 +31,7 @@ import { StringExpression } from 'adaptive-expressions';
 import { TestAdapter } from 'botbuilder-core';
 import { TurnContext } from 'botbuilder-core';
 
-// @public (undocumented)
+// @public
 export class AdaptiveTestBotComponent extends BotComponent {
     // (undocumented)
     configureServices(services: ServiceCollection, _configuration: Configuration): void;
@@ -41,10 +41,9 @@ export class AdaptiveTestBotComponent extends BotComponent {
 export class AssertCondition<O extends object = {}> extends Dialog<O> implements AssertConditionConfiguration {
     // (undocumented)
     static $kind: string;
-    beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
+    beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult>;
     condition: Expression;
     description: StringExpression;
-    // (undocumented)
     getConverter(property: keyof AssertConditionConfiguration): Converter | ConverterFactory;
     // (undocumented)
     protected onComputeId(): string;
@@ -63,7 +62,7 @@ export class AssertNoActivity extends TestAction implements AssertNoActivityConf
     // (undocumented)
     static $kind: string;
     description: string;
-    execute(adapter: TestAdapter, callback: (context: TurnContext) => Promise<void>, inspector?: Inspector): Promise<void>;
+    execute(adapter: TestAdapter, _callback: (context: TurnContext) => Promise<void>, _inspector?: Inspector): Promise<void>;
     getConditionDescription(): string;
 }
 
@@ -89,7 +88,7 @@ export class AssertReplyActivity extends TestAction implements AssertReplyActivi
     static $kind: string;
     assertions: string[];
     description: string;
-    execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<any>, inspector?: Inspector): Promise<any>;
+    execute(testAdapter: TestAdapter, _callback: (context: TurnContext) => Promise<any>, _inspector?: Inspector): Promise<any>;
     getConditionDescription(): string;
     timeout: number;
     validateReply(activity: Activity): void;
@@ -137,7 +136,7 @@ export class AssertTelemetryContains extends TestAction implements AssertTelemet
     static $kind: string;
     description: string;
     events: string[];
-    execute(adapter: TestAdapter, callback: (context: TurnContext) => Promise<void>, inspector?: Inspector): Promise<void>;
+    execute(_adapter: TestAdapter, _callback: (context: TurnContext) => Promise<void>, inspector?: Inspector): Promise<void>;
 }
 
 // @public (undocumented)
@@ -148,11 +147,11 @@ export interface AssertTelemetryContainsConfiguration {
     events?: string[];
 }
 
-// @public (undocumented)
+// @public
 class CustomEvent_2<T = unknown> extends TestAction implements CustomEventConfiguration {
     // (undocumented)
     static $kind: string;
-    execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<void>, inspector?: Inspector): Promise<void>;
+    execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<void>, _inspector?: Inspector): Promise<void>;
     name: string;
     value?: T;
 }
@@ -188,7 +187,7 @@ export class MemoryAssertions extends TestAction implements MemoryAssertionsConf
     static $kind: string;
     assertions: string[];
     description: string;
-    execute(adapter: TestAdapter, callback: (context: TurnContext) => Promise<void>, inspector?: Inspector): Promise<void>;
+    execute(_adapter: TestAdapter, _callback: (context: TurnContext) => Promise<void>, inspector?: Inspector): Promise<void>;
 }
 
 // @public (undocumented)
@@ -229,7 +228,6 @@ export class MockLuisRecognizer extends Recognizer {
 export class MockSettingsMiddleware implements Middleware {
     // Warning: (ae-forgotten-export) The symbol "SettingMock" needs to be exported by the entry point index.d.ts
     constructor(settingMocks: SettingMock[]);
-    // (undocumented)
     onTurn(context: TurnContext, next: () => Promise<void>): Promise<void>;
 }
 
@@ -238,7 +236,7 @@ export class SetProperties extends TestAction {
     // (undocumented)
     static $kind: string;
     assignments: PropertyAssignment[];
-    execute(adapter: TestAdapter, callback: (context: TurnContext) => Promise<void>, inspector?: Inspector): Promise<void>;
+    execute(_adapter: TestAdapter, _callback: (context: TurnContext) => Promise<void>, inspector?: Inspector): Promise<void>;
     // (undocumented)
     getConverter(property: keyof SetPropertiesConfiguration): Converter | ConverterFactory;
 }
@@ -329,7 +327,7 @@ export interface UserActivityConfiguration {
 export class UserConversationUpdate extends TestAction implements UserConversationUpdateConfiguration {
     // (undocumented)
     static $kind: string;
-    execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<void>, inspector?: Inspector): Promise<void>;
+    execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<void>, _inspector?: Inspector): Promise<void>;
     membersAdded: string[];
     membersRemoved: string[];
 }
@@ -346,7 +344,7 @@ export interface UserConversationUpdateConfiguration {
 export class UserDelay extends TestAction implements UserDelayConfiguration {
     // (undocumented)
     static $kind: string;
-    execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<any>, inspector?: Inspector): Promise<void>;
+    execute(_testAdapter: TestAdapter, _callback: (context: TurnContext) => Promise<any>, _inspector?: Inspector): Promise<void>;
     timespan: number;
 }
 
@@ -360,7 +358,7 @@ export interface UserDelayConfiguration {
 export class UserSays extends TestAction implements UserSaysConfiguration {
     // (undocumented)
     static $kind: string;
-    execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<void>, inspector?: Inspector): Promise<void>;
+    execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<void>, _inspector?: Inspector): Promise<void>;
     locale: string;
     text: string;
     user: string;
@@ -378,7 +376,7 @@ export interface UserSaysConfiguration {
 export class UserTyping extends Configurable implements TestAction, UserTypingConfiguration {
     // (undocumented)
     static $kind: string;
-    execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<any>, inspector?: Inspector): Promise<any>;
+    execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<any>, _inspector?: Inspector): Promise<any>;
     user: string;
 }
 

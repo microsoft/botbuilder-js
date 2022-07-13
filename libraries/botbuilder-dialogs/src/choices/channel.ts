@@ -74,9 +74,9 @@ export function hasMessageFeed(_channelId: string): boolean {
 
 /**
  * @private
- * @param channelId id of a channel
+ * @param _channelId id of a channel
  */
-export function maxActionTitleLength(channelId: string): number {
+export function maxActionTitleLength(_channelId: string): number {
     return 20;
 }
 

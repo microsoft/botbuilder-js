@@ -16,18 +16,20 @@ import { Dialog } from '../../dialog';
 export class ClassMemoryScope extends MemoryScope {
     /**
      * Initializes a new instance of the [ClassMemoryScope](xref:botbuilder-dialogs.ClassMemoryScope) class.
+     *
      * @param name Name of the scope class.
      */
-    public constructor(name = ScopePath.class) {
+    constructor(name = ScopePath.class) {
         super(name, false);
     }
 
     /**
      * Gets the backing memory for this scope.
+     *
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) object for this turn.
      * @returns The memory for the scope.
      */
-    public getMemory(dc: DialogContext): object {
+    getMemory(dc: DialogContext): object {
         // if active dialog is a container dialog then "dialog" binds to it
         if (dc.activeDialog) {
             const dialog = this.onFindDialog(dc);
@@ -36,7 +38,7 @@ export class ClassMemoryScope extends MemoryScope {
                 const clone: object = {};
                 for (const key in dialog) {
                     const prop = dialog[key];
-                    if (dialog.hasOwnProperty(key) && typeof prop != 'function') {
+                    if (Object.prototype.hasOwnProperty.call(dialog, key) && typeof prop != 'function') {
                         if (isExpression(prop)) {
                             const { value, error } = prop.tryGetValue(dc.state);
                             if (!error) {
@@ -57,7 +59,9 @@ export class ClassMemoryScope extends MemoryScope {
 
     /**
      * Override to find the dialog instance referenced by the scope.
+     *
      * @param dc Current dialog context.
+     * @returns The dialog instance referenced by the scope.
      */
     protected onFindDialog(dc: DialogContext): Dialog {
         return dc.findDialog(dc.activeDialog.id);

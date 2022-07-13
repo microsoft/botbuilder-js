@@ -3,36 +3,42 @@ import { Culture } from '@microsoft/recognizers-text-suite';
 export interface PromptCultureModel {
     /**
      * Culture Model's Locale.
+     *
      * @example
      * "en-US"
      */
     locale: string;
     /**
      * Culture Model's InlineSeparator.
+     *
      * @example
      * ", "
      */
     separator: string;
     /**
      * Culture Model's InlineOr.
+     *
      * @example
      * " or "
      */
     inlineOr: string;
     /**
      * Culture Model's InlineOrMore.
+     *
      * @example
      * ", or "
      */
     inlineOrMore: string;
     /**
      * Equivalent of "Yes" in Culture Model's Language.
+     *
      * @example
      * "Yes"
      */
     yesInLanguage: string;
     /**
      * Equivalent of "No" in Culture Model's Language.
+     *
      * @example
      * "No"
      */
@@ -43,7 +49,7 @@ export interface PromptCultureModel {
  * Class container for currently-supported Culture Models in Confirm and Choice Prompt.
  */
 export class PromptCultureModels {
-    public static Chinese: PromptCultureModel = {
+    static Chinese: PromptCultureModel = {
         locale: Culture.Chinese,
         separator: ', ',
         inlineOr: ' 要么 ',
@@ -52,7 +58,7 @@ export class PromptCultureModels {
         noInLanguage: '不',
     };
 
-    public static Dutch: PromptCultureModel = {
+    static Dutch: PromptCultureModel = {
         locale: Culture.Dutch,
         separator: ', ',
         inlineOr: ' of ',
@@ -61,7 +67,7 @@ export class PromptCultureModels {
         noInLanguage: 'Nee',
     };
 
-    public static English: PromptCultureModel = {
+    static English: PromptCultureModel = {
         locale: Culture.English,
         separator: ', ',
         inlineOr: ' or ',
@@ -70,7 +76,7 @@ export class PromptCultureModels {
         noInLanguage: 'No',
     };
 
-    public static French: PromptCultureModel = {
+    static French: PromptCultureModel = {
         locale: Culture.French,
         separator: ', ',
         inlineOr: ' ou ',
@@ -79,7 +85,7 @@ export class PromptCultureModels {
         noInLanguage: 'Non',
     };
 
-    public static German: PromptCultureModel = {
+    static German: PromptCultureModel = {
         locale: Culture.German,
         separator: ', ',
         inlineOr: ' oder ',
@@ -88,7 +94,7 @@ export class PromptCultureModels {
         noInLanguage: 'Nein',
     };
 
-    public static Italian: PromptCultureModel = {
+    static Italian: PromptCultureModel = {
         locale: Culture.Italian,
         separator: ', ',
         inlineOr: ' o ',
@@ -97,7 +103,7 @@ export class PromptCultureModels {
         noInLanguage: 'No',
     };
 
-    public static Japanese: PromptCultureModel = {
+    static Japanese: PromptCultureModel = {
         locale: Culture.Japanese,
         separator: '、 ',
         inlineOr: ' または ',
@@ -106,7 +112,7 @@ export class PromptCultureModels {
         noInLanguage: 'いいえ',
     };
 
-    public static Portuguese: PromptCultureModel = {
+    static Portuguese: PromptCultureModel = {
         locale: Culture.Portuguese,
         separator: ', ',
         inlineOr: ' ou ',
@@ -115,7 +121,7 @@ export class PromptCultureModels {
         noInLanguage: 'Não',
     };
 
-    public static Spanish: PromptCultureModel = {
+    static Spanish: PromptCultureModel = {
         locale: Culture.Spanish,
         separator: ', ',
         inlineOr: ' o ',
@@ -133,12 +139,13 @@ export class PromptCultureModels {
 
     /**
      * Use Recognizers-Text to normalize various potential Locale strings to a standard.
+     *
      * @remarks This is mostly a copy/paste from https://github.com/microsoft/Recognizers-Text/blob/master/JavaScript/packages/recognizers-text/src/culture.ts#L39
      *          This doesn't directly use Recognizers-Text's MapToNearestLanguage because if they add language support before we do, it will break our prompts.
      * @param cultureCode Represents locale. Examples: "en-US, en-us, EN".
      * @returns Normalized locale.
      */
-    public static mapToNearestLanguage(cultureCode: string): string {
+    static mapToNearestLanguage(cultureCode: string): string {
         if (cultureCode) {
             cultureCode = cultureCode.toLowerCase();
             const supportedCultureCodes = this.getSupportedCultureCodes();
@@ -157,7 +164,7 @@ export class PromptCultureModels {
         return cultureCode;
     }
 
-    public static getSupportedCultures = (): PromptCultureModel[] => [
+    static getSupportedCultures = (): PromptCultureModel[] => [
         PromptCultureModels.Chinese,
         PromptCultureModels.Dutch,
         PromptCultureModels.English,

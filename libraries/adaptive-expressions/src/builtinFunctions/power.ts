@@ -17,7 +17,7 @@ export class Power extends MultivariateNumericEvaluator {
     /**
      * Initializes a new instance of the [Power](xref:adaptive-expressions.Power) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.Power, Power.func, FunctionUtils.verifyNumberOrNumericList);
     }
 

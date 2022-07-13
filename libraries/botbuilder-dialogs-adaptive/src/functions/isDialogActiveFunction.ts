@@ -26,17 +26,17 @@ export class IsDialogActiveFunction extends ExpressionEvaluator {
     /**
      * Function identifier name.
      */
-    public static readonly functionName = 'isDialogActive'; // `name` is reserved in JavaScript.
+    static readonly functionName = 'isDialogActive'; // `name` is reserved in JavaScript.
 
     /**
      * Function identifier alias.
      */
-    public static readonly functionAlias = 'isActionActive';
+    static readonly functionAlias = 'isActionActive';
 
     /**
      * Intializes a new instance of the [IsDialogActiveFunction](xref:botbuilder-dialogs-adaptive.IsDialogActiveFunction) class.
      */
-    public constructor() {
+    constructor() {
         super(IsDialogActiveFunction.functionName, IsDialogActiveFunction.function, ReturnType.Boolean);
     }
 

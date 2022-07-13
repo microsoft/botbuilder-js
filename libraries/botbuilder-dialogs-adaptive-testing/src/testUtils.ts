@@ -15,13 +15,14 @@ import { TestScript } from './testScript';
 export class TestUtils {
     /**
      * Runs a test script with the specified name.
+     *
      * @param resourceExplorer Resource explorer used in test.
      * @param testName Test name.
      * @param adapter Test adapter.
      * @param configuration Test configuration.
      * @param middlewares Middlewares to be added in test.
      */
-    public static async runTestScript(
+    static async runTestScript(
         resourceExplorer: ResourceExplorer,
         testName?: string,
         adapter?: TestAdapter,

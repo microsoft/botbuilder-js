@@ -37,7 +37,7 @@ export class TokenResolver {
      * @param activity The [Activity](xref:botframework-schema.Activity) to be checked.
      * @param log Optional. The log to write on.
      */
-    public static checkForOAuthCards(
+    static checkForOAuthCards(
         adapter: BotFrameworkAdapter,
         context: TurnContext,
         activity: Activity,

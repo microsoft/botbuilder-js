@@ -79,6 +79,7 @@ export interface PromptOptions {
 
 /**
  * Result returned by a prompts recognizer function.
+ *
  * @param T Type of value being recognized.
  */
 export interface PromptRecognizerResult<T> {
@@ -116,6 +117,7 @@ export type PromptValidator<T> = (prompt: PromptValidatorContext<T>) => Promise<
 
 /**
  * Contextual information passed to a custom `PromptValidator`.
+ *
  * @param T Type of recognizer result being validated.
  */
 export interface PromptValidatorContext<T> {
@@ -162,11 +164,13 @@ export interface PromptValidatorContext<T> {
 
 /**
  * Base class for all prompts.
+ *
  * @param T Type of value being returned by the prompts recognizer function.
  */
 export abstract class Prompt<T> extends Dialog {
     /**
      * Creates a new Prompt instance.
+     *
      * @param dialogId Unique ID of the prompt within its parent `DialogSet` or `ComponentDialog`.
      * @param validator (Optional) custom validator used to provide additional validation and re-prompting logic for the prompt.
      */
@@ -176,6 +180,7 @@ export abstract class Prompt<T> extends Dialog {
 
     /**
      * Called when a prompt dialog is pushed onto the dialog stack and is being activated.
+     *
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current
      * turn of the conversation.
      * @param options Optional. [PromptOptions](xref:botbuilder-dialogs.PromptOptions),
@@ -185,7 +190,7 @@ export abstract class Prompt<T> extends Dialog {
      * If the task is successful, the result indicates whether the prompt is still
      * active after the turn has been processed by the prompt.
      */
-    public async beginDialog(dc: DialogContext, options: PromptOptions): Promise<DialogTurnResult> {
+    async beginDialog(dc: DialogContext, options: PromptOptions): Promise<DialogTurnResult> {
         // Ensure prompts have input hint set
         const opt: Partial<PromptOptions> = { ...options };
         if (opt.prompt && typeof opt.prompt === 'object' && typeof opt.prompt.inputHint !== 'string') {
@@ -208,6 +213,7 @@ export abstract class Prompt<T> extends Dialog {
 
     /**
      * Called when a prompt dialog is the active dialog and the user replied with a new activity.
+     *
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @returns A `Promise` representing the asynchronous operation.
      * @remarks
@@ -216,7 +222,7 @@ export abstract class Prompt<T> extends Dialog {
      * The prompt generally continues to receive the user's replies until it accepts the
      * user's reply as valid input for the prompt.
      */
-    public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
+    async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
         // Don't do anything for non-message activities
         if (dc.context.activity.type !== ActivityTypes.Message) {
             return Dialog.EndOfTurn;
@@ -267,6 +273,7 @@ export abstract class Prompt<T> extends Dialog {
 
     /**
      * Called before an event is bubbled to its parent.
+     *
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param event [DialogEvent](xref:botbuilder-dialogs.DialogEvent), the event being raised.
      * @returns Whether the event is handled by the current dialog and further processing should stop.
@@ -293,16 +300,17 @@ export abstract class Prompt<T> extends Dialog {
     /**
      * Called when a prompt dialog resumes being the active dialog on the dialog stack, such as
      * when the previous active dialog on the stack completes.
+     *
      * @param dc The DialogContext for the current turn of the conversation.
-     * @param reason An enum indicating why the dialog resumed.
-     * @param result Optional, value returned from the previous dialog on the stack.
+     * @param _reason An enum indicating why the dialog resumed.
+     * @param _result Optional, value returned from the previous dialog on the stack.
      * The type of the value returned is dependent on the previous dialog.
      * @returns A Promise representing the asynchronous operation.
      * @remarks
      * If the task is successful, the result indicates whether the dialog is still
      * active after the turn has been processed by the dialog.
      */
-    public async resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
+    async resumeDialog(dc: DialogContext, _reason: DialogReason, _result?: any): Promise<DialogTurnResult> {
         // Prompts are typically leaf nodes on the stack but the dev is free to push other dialogs
         // on top of the stack which will result in the prompt receiving an unexpected call to
         // resumeDialog() when the pushed on dialog ends.
@@ -315,19 +323,21 @@ export abstract class Prompt<T> extends Dialog {
 
     /**
      * Called when a prompt dialog has been requested to re-prompt the user for input.
+     *
      * @param context [TurnContext](xref:botbuilder-core.TurnContext), context for the current
      * turn of conversation with the user.
      * @param instance [DialogInstance](xref:botbuilder-dialogs.DialogInstance), the instance
      * of the dialog on the stack.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async repromptDialog(context: TurnContext, instance: DialogInstance): Promise<void> {
+    async repromptDialog(context: TurnContext, instance: DialogInstance): Promise<void> {
         const state: PromptState = instance.state as PromptState;
         await this.onPrompt(context, state.state, state.options, false);
     }
 
     /**
      * Called anytime the derived class should send the user a prompt.
+     *
      * @param context Context for the current turn of conversation with the user.
      * @param state Additional state being persisted for the prompt.
      * @param options Options that the prompt was started with in the call to `DialogContext.prompt()`.
@@ -358,11 +368,13 @@ export abstract class Prompt<T> extends Dialog {
 
     /**
      * Helper function to compose an output activity containing a set of choices.
+     *
      * @param prompt The prompt to append the users choices to.
      * @param channelId ID of the channel the prompt is being sent to.
      * @param choices List of choices to append.
      * @param style Configured style for the list of choices.
      * @param options (Optional) options to configure the underlying ChoiceFactory call.
+     * @returns The composed activity ready to send to the user.
      */
     protected appendChoices(
         prompt: string | Partial<Activity>,

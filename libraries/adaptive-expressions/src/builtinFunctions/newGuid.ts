@@ -20,7 +20,7 @@ export class NewGuid extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [NewGuid](xref:adaptive-expressions.NewGuid) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.NewGuid, NewGuid.evaluator(), ReturnType.String, NewGuid.validator);
     }
 

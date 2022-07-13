@@ -25,7 +25,7 @@ export class ResourceExtensions {
      * @param resourceExplorer The resource explorer to be added.
      * @returns dialog manager with resource explorer.
      */
-    public static useResourceExplorer(dialogManager: DialogManager, resourceExplorer: ResourceExplorer): DialogManager {
+    static useResourceExplorer(dialogManager: DialogManager, resourceExplorer: ResourceExplorer): DialogManager {
         dialogManager.initialTurnState.set(resourceExplorerKey, resourceExplorer);
         return dialogManager;
     }

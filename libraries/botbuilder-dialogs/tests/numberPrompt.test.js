@@ -46,7 +46,7 @@ describe('NumberPrompt', function () {
             (turnContext, result) => turnContext.sendActivity(result.toString()),
             (prompt) => {
                 assert(prompt);
-                let value = prompt.recognized.value;
+                const value = prompt.recognized.value;
                 return value !== undefined && value >= 1 && value <= 100;
             }
         );
@@ -71,7 +71,7 @@ describe('NumberPrompt', function () {
             (turnContext, result) => turnContext.sendActivity(result.toString()),
             (prompt) => {
                 assert(prompt);
-                let value = prompt.recognized.value;
+                const value = prompt.recognized.value;
                 return value !== undefined && value >= 1 && value <= 100;
             }
         );
@@ -96,7 +96,7 @@ describe('NumberPrompt', function () {
             (turnContext, result) => turnContext.sendActivity(result.toString()),
             async (prompt) => {
                 assert(prompt);
-                let value = prompt.recognized.value;
+                const value = prompt.recognized.value;
                 const valid = value !== undefined && value >= 1 && value <= 100;
                 if (!valid) {
                     await prompt.context.sendActivity('out of range');
@@ -121,7 +121,7 @@ describe('NumberPrompt', function () {
             (turnContext, result) => turnContext.sendActivity(result.toString()),
             (prompt) => {
                 assert(prompt);
-                let value = prompt.recognized.value;
+                const value = prompt.recognized.value;
                 return value !== undefined && value >= 1 && value <= 100;
             }
         );

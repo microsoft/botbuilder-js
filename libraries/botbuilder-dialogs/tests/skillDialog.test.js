@@ -41,7 +41,7 @@ describe('SkillDialog', function () {
          * @remarks
          * Port of BeginDialogShouldCallSkill from C#
          * https://github.com/microsoft/botbuilder-dotnet/blob/41120728b22c709ec2d9247393505fdc778b2de1/tests/Microsoft.Bot.Builder.Dialogs.Tests/SkillDialogTests.cs#L47-L49
-         * @param {string} deliveryMode
+         * @param {string} deliveryMode The delivery mode to test.
          */
         async function beginDialogShouldCallSkill(deliveryMode, useCreateSkillConversationId = false) {
             let activitySent; // Activity
@@ -313,7 +313,7 @@ describe('SkillDialog', function () {
     });
 
     describe('(private) sendToSkill()', function () {
-        it(`should rethrow the error if its message is not "Not Implemented" error`, async function () {
+        it('should rethrow the error if its message is not "Not Implemented" error', async function () {
             const adapter = new TestAdapter(/* logic param not required */);
             const activity = { type: ActivityTypes.Message, channelId: Channels.Directline, conversation: { id: '1' } };
             const context = new TurnContext(adapter, activity);
@@ -576,7 +576,7 @@ describe('SkillDialog', function () {
  * @remarks
  * captureAction should match the below signature:
  * `(fromBotId: string, toBotId: string, toUrl: string, serviceUrl: string, conversationId: string, activity: Activity) => void`
- * @param {Function} captureAction
+ * @param {Function} captureAction Callback to capture the parameters sent to the skill.
  * @param {StatusCodes} returnStatusCode Defaults to StatusCodes.OK
  * @returns [BotFrameworkHttpClient, postActivityStub]
  */
@@ -615,7 +615,7 @@ function createSkillClientAndStub(captureAction, returnStatusCode = StatusCodes.
 
 /**
  *
- * @param {string} uri
+ * @param {string} uri Uri for the token exchange.
  */
 function createOAuthCardAttachmentActivity(uri) {
     const oauthCard = {
@@ -635,8 +635,8 @@ function createOAuthCardAttachmentActivity(uri) {
 }
 
 /**
- * @param {*} conversationState
- * @param {*} mockSkillClient
+ * @param {*} conversationState The conversation state object.
+ * @param {*} mockSkillClient The skill client mock.
  * @returns A Skill Dialog Options object.
  */
 function createSkillDialogOptions(conversationState, mockSkillClient, connectionName, useCreateSkillConversationId) {

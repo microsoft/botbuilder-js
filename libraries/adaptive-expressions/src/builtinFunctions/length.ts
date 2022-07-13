@@ -19,7 +19,7 @@ export class Length extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [Length](xref:adaptive-expressions.Length) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.Length, Length.evaluator(), ReturnType.Number, FunctionUtils.validateUnaryString);
     }
 

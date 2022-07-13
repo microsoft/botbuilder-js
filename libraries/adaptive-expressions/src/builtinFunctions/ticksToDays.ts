@@ -24,7 +24,7 @@ export class TicksToDays extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [TicksToDays](xref:adaptive-expressions.TicksToDays) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.TicksToDays, TicksToDays.evaluator, ReturnType.Number, FunctionUtils.validateUnaryNumber);
     }
 

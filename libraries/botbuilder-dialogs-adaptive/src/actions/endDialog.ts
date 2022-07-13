@@ -33,14 +33,14 @@ export interface EndDialogConfiguration extends DialogConfiguration {
  * Command to end the current [Dialog](xref:botbuilder-dialogs.Dialog), returning the `resultProperty` as the result of the dialog.
  */
 export class EndDialog<O extends object = {}> extends Dialog<O> implements EndDialogConfiguration {
-    public static $kind = 'Microsoft.EndDialog';
+    static $kind = 'Microsoft.EndDialog';
 
     /**
      * Creates a new `EndDialog` instance.
      *
      * @param value Optional, a value expression for the result to be returned to the caller.
      */
-    public constructor(value?: any) {
+    constructor(value?: any) {
         super();
         if (value) {
             this.value = new ValueExpression(value);
@@ -50,18 +50,18 @@ export class EndDialog<O extends object = {}> extends Dialog<O> implements EndDi
     /**
      * A value expression for the result to be returned to the caller.
      */
-    public value: ValueExpression;
+    value: ValueExpression;
 
     /**
      * An optional expression which if is true will disable this action.
      */
-    public disabled?: BoolExpression;
+    disabled?: BoolExpression;
 
     /**
      * @param property The key of the conditional selector configuration.
      * @returns The converter for the selector configuration.
      */
-    public getConverter(property: keyof EndDialogConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof EndDialogConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'value':
                 return new ValueExpressionConverter();
@@ -79,7 +79,7 @@ export class EndDialog<O extends object = {}> extends Dialog<O> implements EndDi
      * @param _options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
+    async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }

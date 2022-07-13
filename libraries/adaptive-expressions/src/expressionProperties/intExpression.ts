@@ -21,7 +21,7 @@ export class IntExpression extends ExpressionProperty<number> {
      *
      * @param value An int `number` or `string` expression which resolves to an int `number`.
      */
-    public constructor(value?: number | string | Expression) {
+    constructor(value?: number | string | Expression) {
         super(value, 0);
     }
 
@@ -32,7 +32,7 @@ export class IntExpression extends ExpressionProperty<number> {
      * @returns Value of int number
      */
     // eslint-disable-next-line @typescript-eslint/ban-types
-    public tryGetValue(data: object): { value: number; error: Error } {
+    tryGetValue(data: object): { value: number; error: Error } {
         const result = super.tryGetValue(data);
         if (FunctionUtils.isNumber(result.value)) {
             // Ensure returned value is an int.
@@ -47,7 +47,7 @@ export class IntExpression extends ExpressionProperty<number> {
      *
      * @param value Value to set.
      */
-    public setValue(value: number | string | Expression): void {
+    setValue(value: number | string | Expression): void {
         if (
             value != null &&
             !FunctionUtils.isNumber(value) &&

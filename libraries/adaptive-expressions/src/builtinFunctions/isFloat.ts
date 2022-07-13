@@ -19,7 +19,7 @@ export class IsFloat extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [IsFloat](xref:adaptive-expressions.IsFloat) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.IsFloat, IsFloat.evaluator(), ReturnType.Boolean, FunctionUtils.validateUnary);
     }
 

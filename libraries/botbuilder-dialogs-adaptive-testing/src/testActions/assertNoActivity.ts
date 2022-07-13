@@ -17,33 +17,33 @@ export interface AssertNoActivityConfiguration {
  * Basic assertion TestAction, which validates assertions against a reply activity.
  */
 export class AssertNoActivity extends TestAction implements AssertNoActivityConfiguration {
-    public static $kind = 'Microsoft.Test.AssertNoActivity';
+    static $kind = 'Microsoft.Test.AssertNoActivity';
 
     /**
      * Description of this assertion.
      */
-    public description: string;
+    description: string;
 
     /**
      * Gets the text to assert for an activity.
      *
      * @returns Description.
      */
-    public getConditionDescription(): string {
+    getConditionDescription(): string {
         return this.description ?? 'No activity';
     }
 
     /**
      * Execute the test.
      *
-     * @param testAdapter Adapter to execute against.
-     * @param callback Logic for the bot to use.
-     * @param inspector Inspector for dialog context.
+     * @param adapter Adapter to execute against.
+     * @param _callback Logic for the bot to use.
+     * @param _inspector Inspector for dialog context.
      */
-    public async execute(
+    async execute(
         adapter: TestAdapter,
-        callback: (context: TurnContext) => Promise<void>,
-        inspector?: Inspector
+        _callback: (context: TurnContext) => Promise<void>,
+        _inspector?: Inspector
     ): Promise<void> {
         if (adapter.activeQueue.length > 0) {
             throw new Error(this.getConditionDescription());

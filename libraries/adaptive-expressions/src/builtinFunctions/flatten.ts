@@ -19,7 +19,7 @@ export class Flatten extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [Flatten](xref:adaptive-expressions.Flatten) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.Flatten, Flatten.evaluator(), ReturnType.Array, Flatten.validator);
     }
 

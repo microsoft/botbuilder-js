@@ -17,16 +17,17 @@ export class DialogMemoryScope extends MemoryScope {
     /**
      * Initializes a new instance of the [DialogMemoryScope](xref:botbuilder-dialogs.DialogMemoryScope) class.
      */
-    public constructor() {
+    constructor() {
         super(ScopePath.dialog);
     }
 
     /**
      * Gets the backing memory for this scope.
+     *
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) object for this turn.
      * @returns The memory for the scope.
      */
-    public getMemory(dc: DialogContext): object {
+    getMemory(dc: DialogContext): object {
         // If active dialog is a container dialog then "dialog" binds to it.
         // Otherwise the "dialog" will bind to the dialogs parent assuming it
         // is a container.
@@ -41,12 +42,13 @@ export class DialogMemoryScope extends MemoryScope {
 
     /**
      * Changes the backing object for the memory scope.
+     *
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) object for this turn.
      * @param memory Memory object to set for the scope.
      */
-    public setMemory(dc: DialogContext, memory: object): void {
+    setMemory(dc: DialogContext, memory: object): void {
         if (memory == undefined) {
-            throw new Error(`DialogMemoryScope.setMemory: undefined memory object passed in.`);
+            throw new Error('DialogMemoryScope.setMemory: undefined memory object passed in.');
         }
 
         // If active dialog is a container dialog then "dialog" binds to it.
@@ -59,7 +61,7 @@ export class DialogMemoryScope extends MemoryScope {
 
         // If there's no active dialog then throw an error.
         if (!parent.activeDialog) {
-            throw new Error(`DialogMemoryScope.setMemory: no active dialog found.`);
+            throw new Error('DialogMemoryScope.setMemory: no active dialog found.');
         }
 
         parent.activeDialog.state = memory;

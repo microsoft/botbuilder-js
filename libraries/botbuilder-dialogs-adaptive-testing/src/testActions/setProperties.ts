@@ -18,7 +18,7 @@ type AssignmentInput<T> = {
 };
 
 class PropertyAssignmentsConverter<T = unknown> implements Converter<AssignmentInput<T>[], PropertyAssignment[]> {
-    public convert(items: AssignmentInput<T>[] | PropertyAssignment[]): PropertyAssignment[] {
+    convert(items: AssignmentInput<T>[] | PropertyAssignment[]): PropertyAssignment[] {
         const assignments: PropertyAssignment[] = [];
         items.forEach((item) => {
             const { property, value } = item;
@@ -39,14 +39,18 @@ export interface SetPropertiesConfiguration {
  * Mock one or more property values.
  */
 export class SetProperties extends TestAction {
-    public static $kind = 'Microsoft.Test.SetProperties';
+    static $kind = 'Microsoft.Test.SetProperties';
 
     /**
      * Gets or sets the property assignments.
      */
-    public assignments: PropertyAssignment[] = [];
+    assignments: PropertyAssignment[] = [];
 
-    public getConverter(property: keyof SetPropertiesConfiguration): Converter | ConverterFactory {
+    /**
+     * @param property The key of the conditional selector configuration.
+     * @returns The converter for the selector configuration.
+     */
+    getConverter(property: keyof SetPropertiesConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'assignments':
                 return new PropertyAssignmentsConverter();
@@ -57,14 +61,15 @@ export class SetProperties extends TestAction {
 
     /**
      * Execute the test.
-     * @param testAdapter Adapter to execute against.
-     * @param callback Logic for the bot to use.
+     *
+     * @param _adapter Adapter to execute against.
+     * @param _callback Logic for the bot to use.
      * @param inspector Inspector for dialog context.
      * @returns A Promise that represents the work queued to execute.
      */
-    public async execute(
-        adapter: TestAdapter,
-        callback: (context: TurnContext) => Promise<void>,
+    async execute(
+        _adapter: TestAdapter,
+        _callback: (context: TurnContext) => Promise<void>,
         inspector?: Inspector
     ): Promise<void> {
         if (inspector) {

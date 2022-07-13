@@ -9,31 +9,33 @@ import { ConnectedService } from './connectedService';
 
 /**
  * Base class for all azure service definitions.
+ *
  * @deprecated See https://aka.ms/bot-file-basics for more information.
  */
 export class AzureService extends ConnectedService implements IAzureService {
     /**
      * Tenant ID for azure.
      */
-    public tenantId: string;
+    tenantId: string;
 
     /**
      * Subscription ID for azure.
      */
-    public subscriptionId: string;
+    subscriptionId: string;
 
     /**
      * Resource group for azure.
      */
-    public resourceGroup: string;
+    resourceGroup: string;
 
     /**
      * Name of the service.
      */
-    public serviceName: string;
+    serviceName: string;
 
     /**
      * Creates a new AzureService instance.
+     *
      * @param source (Optional) JSON based service definition.
      * @param type Type of service being defined.
      */

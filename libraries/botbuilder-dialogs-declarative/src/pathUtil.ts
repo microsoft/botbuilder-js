@@ -15,17 +15,21 @@ import { readdirSync, lstatSync } from 'fs';
 export class PathUtil {
     /**
      * Check if a path is a directory
-     * @param path Path of the diretory
+     *
+     * @param path Path of the directory.
+     * @returns True if the path is a directory; false otherwise.
      */
-    public static isDirectory(path: string): boolean {
+    static isDirectory(path: string): boolean {
         return lstatSync(path).isDirectory();
     }
 
     /**
      * Get sub folders in a directory
-     * @param path Path of root directory
+     *
+     * @param path Path of root directory.
+     * @returns Sub folders in the directory.
      */
-    public static getDirectories(path: string): string[] {
+    static getDirectories(path: string): string[] {
         return readdirSync(path)
             .map((name: string): string => join(path, name))
             .filter(PathUtil.isDirectory);
@@ -33,10 +37,12 @@ export class PathUtil {
 
     /**
      * Get files in a directory
-     * @param path Path of root directory
-     * @param includeSubFolders Whether include its sub folders
+     *
+     * @param path Path of root directory.
+     * @param includeSubFolders Whether include its sub folders.
+     * @returns The files in the directory.
      */
-    public static getFiles(path: string, includeSubFolders = true): string[] {
+    static getFiles(path: string, includeSubFolders = true): string[] {
         return readdirSync(path)
             .map((name: string): string => join(path, name))
             .reduce((files: string[], file: string): string[] => {

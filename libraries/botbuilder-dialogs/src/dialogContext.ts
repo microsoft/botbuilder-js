@@ -19,6 +19,7 @@ import { DialogContextError } from './dialogContextError';
  *
  * @param dialogContext source dialog context from which enriched error properties are sourced
  * @param promise a promise to await inside a try-catch for error enrichment
+ * @returns A promise representing the asynchronous operation.
  */
 const wrapErrors = async <T>(dialogContext: DialogContext, promise: Promise<T>): Promise<T> => {
     try {
@@ -75,32 +76,35 @@ export interface DialogState {
 export class DialogContext {
     /**
      * Creates an new instance of the [DialogContext](xref:botbuilder-dialogs.DialogContext) class.
+     *
      * @param dialogs The [DialogSet](xref:botbuilder-dialogs.DialogSet) for which to create the dialog context.
      * @param contextOrDC The [TurnContext](xref:botbuilder-core.TurnContext) object for the current turn of the bot.
      * @param state The state object to use to read and write [DialogState](xref:botbuilder-dialogs.DialogState) to storage.
      * @remarks
      * Passing in a [DialogContext](xref:botbuilder-dialogs.DialogContext) instance will clone the dialog context.
      */
-    public constructor(dialogs: DialogSet, contextOrDC: TurnContext, state: DialogState);
+    constructor(dialogs: DialogSet, contextOrDC: TurnContext, state: DialogState);
 
     /**
      * Creates an new instance of the [DialogContext](xref:botbuilder-dialogs.DialogContext) class.
+     *
      * @param dialogs The [DialogSet](xref:botbuilder-dialogs.DialogSet) for which to create the dialog context.
      * @param contextOrDC The [DialogContext](xref:botbuilder-dialogs.DialogContext) object for the current turn of the bot.
      * @param state The state object to use to read and write [DialogState](xref:botbuilder-dialogs.DialogState) to storage.
      * @remarks
      * Passing in a [DialogContext](xref:botbuilder-dialogs.DialogContext) instance will clone the dialog context.
      */
-    public constructor(dialogs: DialogSet, contextOrDC: DialogContext, state: DialogState);
+    constructor(dialogs: DialogSet, contextOrDC: DialogContext, state: DialogState);
 
     /**
      * Creates an new instance of the [DialogContext](xref:botbuilder-dialogs.DialogContext) class.
+     *
      * @param dialogs The [DialogSet](xref:botbuilder-dialogs.DialogSet) for which to create the dialog context.
      * @param contextOrDC The [TurnContext](xref:botbuilder-core.TurnContext) or [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of the bot.
      * @param state The state object to use to read and write [DialogState](xref:botbuilder-dialogs.DialogState) to storage.
      * @remarks Passing in a [DialogContext](xref:botbuilder-dialogs.DialogContext) instance will clone the dialog context.
      */
-    public constructor(dialogs: DialogSet, contextOrDC: TurnContext | DialogContext, state: DialogState) {
+    constructor(dialogs: DialogSet, contextOrDC: TurnContext | DialogContext, state: DialogState) {
         this.dialogs = dialogs;
         if (contextOrDC instanceof DialogContext) {
             this.context = contextOrDC.context;
@@ -124,17 +128,17 @@ export class DialogContext {
     /**
      * Gets the dialogs that can be called directly from this context.
      */
-    public dialogs: DialogSet;
+    dialogs: DialogSet;
 
     /**
      * Gets the context object for the turn.
      */
-    public context: TurnContext;
+    context: TurnContext;
 
     /**
      * Gets the current dialog stack.
      */
-    public stack: DialogInstance[];
+    stack: DialogInstance[];
 
     /**
      * The parent dialog context for this dialog context, or `undefined` if this context doesn't have a parent.
@@ -144,12 +148,12 @@ export class DialogContext {
      * in its [dialogs](xref:botbuilder-dialogs.DialogContext.dialogs). If the dialog to start is not found
      * in this dialog context, it searches in its parent dialog context, and so on.
      */
-    public parent: DialogContext | undefined;
+    parent: DialogContext | undefined;
 
     /**
-     * Returns dialog context for child if the active dialog is a container.
+     * @returns Dialog context for child if the active dialog is a container.
      */
-    public get child(): DialogContext | undefined {
+    get child(): DialogContext | undefined {
         const instance = this.activeDialog;
         if (instance != undefined) {
             // Is active dialog a container?
@@ -163,37 +167,37 @@ export class DialogContext {
     }
 
     /**
-     * Returns the state information for the dialog on the top of the dialog stack, or `undefined` if
+     * @returns The state information for the dialog on the top of the dialog stack, or `undefined` if
      * the stack is empty.
      */
-    public get activeDialog(): DialogInstance | undefined {
+    get activeDialog(): DialogInstance | undefined {
         return this.stack.length > 0 ? this.stack[this.stack.length - 1] : undefined;
     }
 
     /**
      * Gets the DialogStateManager which manages view of all memory scopes.
      */
-    public state: DialogStateManager;
+    state: DialogStateManager;
 
     /**
      * Gets the services collection which is contextual to this dialog context.
      */
-    public services: TurnContextStateCollection = new TurnContextStateCollection();
+    services: TurnContextStateCollection = new TurnContextStateCollection();
 
     /**
-     * Returns the current dialog manager instance. This property is obsolete.
-     *
-     * @obsolete This property serves no function.
+     * @deprecated This property serves no function.
+     * @returns The current dialog manager instance. This property is deprecated.
      */
-    public get dialogManager(): DialogManager {
+    get dialogManager(): DialogManager {
         return this.context.turnState.get(DialogTurnStateConstants.dialogManager);
     }
 
     /**
      * Obtain the CultureInfo in DialogContext.
+     *
      * @returns a locale string.
      */
-    public getLocale(): string {
+    getLocale(): string {
         const _turnLocaleProperty = 'turn.locale';
 
         const turnLocaleValue = this.state.getValue(_turnLocaleProperty);
@@ -215,7 +219,7 @@ export class DialogContext {
      *
      * @param dialogId ID of the dialog to start.
      * @param options Optional. Arguments to pass into the dialog when it starts.
-     *
+     * @returns {Promise<DialogTurnResult>} a promise resolving to the dialog turn result.
      * @remarks
      * If there's already an active dialog on the stack, that dialog will be paused until
      * it is again the top dialog on the stack.
@@ -237,7 +241,7 @@ export class DialogContext {
      * - [replaceDialog](xref:botbuilder-dialogs.DialogContext.replaceDialog)
      * - [Dialog.beginDialog](xref:botbuilder-dialogs.Dialog.beginDialog)
      */
-    public async beginDialog(dialogId: string, options?: object): Promise<DialogTurnResult> {
+    async beginDialog(dialogId: string, options?: object): Promise<DialogTurnResult> {
         // Lookup dialog
         const dialog: Dialog<{}> = this.findDialog(dialogId);
         if (!dialog) {
@@ -264,7 +268,7 @@ export class DialogContext {
      * @param cancelParents Optional. If `true` all parent dialogs will be cancelled as well.
      * @param eventName Optional. Name of a custom event to raise as dialogs are cancelled. This defaults to [cancelDialog](xref:botbuilder-dialogs.DialogEvents.cancelDialog).
      * @param eventValue Optional. Value to pass along with custom cancellation event.
-     *
+     * @returns {Promise<DialogTurnResult>} a promise resolving to the dialog turn result.
      * @remarks
      * This calls each dialog's [Dialog.endDialog](xref:botbuilder-dialogs.Dialog.endDialog) method before
      * removing the dialog from the stack.
@@ -282,7 +286,7 @@ export class DialogContext {
      * **See also**
      * - [endDialog](xref:botbuilder-dialogs.DialogContext.endDialog)
      */
-    public async cancelAllDialogs(
+    async cancelAllDialogs(
         cancelParents = false,
         eventName?: string,
         eventValue?: any
@@ -291,6 +295,7 @@ export class DialogContext {
         if (this.stack.length > 0 || this.parent != undefined) {
             // Cancel all local and parent dialogs while checking for interception
             let notify = false;
+            // eslint-disable-next-line @typescript-eslint/no-this-alias
             let dc: DialogContext = this;
             while (dc != undefined) {
                 if (dc.stack.length > 0) {
@@ -322,7 +327,7 @@ export class DialogContext {
      * Searches for a dialog with a given ID.
      *
      * @param dialogId ID of the dialog to search for.
-     *
+     * @returns The dialog for the provided ID.
      * @remarks
      * If the dialog to start is not found in the [DialogSet](xref:botbuilder-dialogs.DialogSet) associated
      * with this dialog context, it attempts to find the dialog in its parent dialog context.
@@ -331,7 +336,7 @@ export class DialogContext {
      * - [dialogs](xref:botbuilder-dialogs.DialogContext.dialogs)
      * - [parent](xref:botbuilder-dialogs.DialogContext.parent)
      */
-    public findDialog(dialogId: string): Dialog | undefined {
+    findDialog(dialogId: string): Dialog | undefined {
         let dialog = this.dialogs.find(dialogId);
         if (!dialog && this.parent) {
             dialog = this.parent.findDialog(dialogId);
@@ -341,6 +346,7 @@ export class DialogContext {
 
     /**
      * Helper function to simplify formatting the options for calling a prompt dialog.
+     *
      * @param dialogId ID of the prompt dialog to start.
      * @param promptOrOptions The text of the initial prompt to send the user,
      *      the activity to send as the initial prompt, or
@@ -356,13 +362,14 @@ export class DialogContext {
      * return await dc.prompt('confirmPrompt', `Are you sure you'd like to quit?`);
      * ```
      */
-    public async prompt(
+    async prompt(
         dialogId: string,
         promptOrOptions: string | Partial<Activity> | PromptOptions
     ): Promise<DialogTurnResult>;
 
     /**
      * Helper function to simplify formatting the options for calling a prompt dialog.
+     *
      * @param dialogId ID of the prompt dialog to start.
      * @param promptOrOptions The text of the initial prompt to send the user,
      * the [Activity](xref:botframework-schema.Activity) to send as the initial prompt, or
@@ -377,7 +384,7 @@ export class DialogContext {
      * return await dc.prompt('confirmPrompt', `Are you sure you'd like to quit?`);
      * ```
      */
-    public async prompt(
+    async prompt(
         dialogId: string,
         promptOrOptions: string | Partial<Activity> | PromptOptions,
         choices: (string | Choice)[]
@@ -385,11 +392,13 @@ export class DialogContext {
 
     /**
      * Helper function to simplify formatting the options for calling a prompt dialog.
+     *
      * @param dialogId ID of the prompt dialog to start.
      * @param promptOrOptions The text of the initial prompt to send the user,
      * or the [Activity](xref:botframework-schema.Activity) to send as the initial prompt.
      * @param choices Optional. Array of choices for the user to choose from,
      * for use with a [ChoicePrompt](xref:botbuilder-dialogs.ChoicePrompt).
+     * @returns {Promise<DialogTurnResult>} a promise resolving to the dialog turn result.
      * @remarks This helper method formats the object to use as the `options` parameter, and then calls
      * beginDialog to start the specified prompt dialog.
      *
@@ -397,7 +406,7 @@ export class DialogContext {
      * return await dc.prompt('confirmPrompt', `Are you sure you'd like to quit?`);
      * ```
      */
-    public async prompt(
+    async prompt(
         dialogId: string,
         promptOrOptions: string | Partial<Activity>,
         choices?: (string | Choice)[]
@@ -423,6 +432,7 @@ export class DialogContext {
      * Continues execution of the active dialog, if there is one, by passing this dialog context to its
      * [Dialog.continueDialog](xref:botbuilder-dialogs.Dialog.continueDialog) method.
      *
+     * @returns {Promise<DialogTurnResult>} a promise resolving to the dialog turn result.
      * @remarks
      * After the call completes, you can check the turn context's [responded](xref:botbuilder-core.TurnContext.responded)
      * property to determine if the dialog sent a reply to the user.
@@ -441,7 +451,7 @@ export class DialogContext {
      * }
      * ```
      */
-    public async continueDialog(): Promise<DialogTurnResult> {
+    async continueDialog(): Promise<DialogTurnResult> {
         // if we are continuing and haven't emitted the activityReceived event, emit it
         // NOTE: This is backward compatible way for activity received to be fired even if you have legacy dialog loop
         if (!this.context.turnState.has(ACTIVITY_RECEIVED_EMITTED)) {
@@ -477,7 +487,7 @@ export class DialogContext {
      * @param result Optional. A result to pass to the parent logic. This might be the next dialog
      *      on the stack, or if this was the last dialog on the stack, a parent dialog context or
      *      the bot's turn handler.
-     *
+     * @returns {Promise<DialogTurnResult>} a promise resolving to the dialog turn result.
      * @remarks
      * The _parent_ dialog is the next dialog on the dialog stack, if there is one. This method
      * calls the parent's [Dialog.resumeDialog](xref:botbuilder-dialogs.Dialog.resumeDialog) method,
@@ -502,7 +512,7 @@ export class DialogContext {
      * - [replaceDialog](xref:botbuilder-dialogs.DialogContext.replaceDialog)
      * - [Dialog.endDialog](xref:botbuilder-dialogs.Dialog.endDialog)
      */
-    public async endDialog(result?: any): Promise<DialogTurnResult> {
+    async endDialog(result?: any): Promise<DialogTurnResult> {
         // End the active dialog
         await this.endActiveDialog(DialogReason.endCalled, result);
 
@@ -531,7 +541,7 @@ export class DialogContext {
      *
      * @param dialogId ID of the dialog to start.
      * @param options Optional. Arguments to pass into the new dialog when it starts.
-     *
+     * @returns {Promise<DialogTurnResult>} a promise resolving to the dialog turn result.
      * @remarks
      * This is particularly useful for creating a loop or redirecting to another dialog.
      *
@@ -545,7 +555,7 @@ export class DialogContext {
      * - [beginDialog](xref:botbuilder-dialogs.DialogContext.beginDialog)
      * - [endDialog](xref:botbuilder-dialogs.DialogContext.endDialog)
      */
-    public async replaceDialog(dialogId: string, options?: object): Promise<DialogTurnResult> {
+    async replaceDialog(dialogId: string, options?: object): Promise<DialogTurnResult> {
         // End the active dialog
         await this.endActiveDialog(DialogReason.replaceCalled);
 
@@ -564,7 +574,7 @@ export class DialogContext {
      * await dc.repromptDialog();
      * ```
      */
-    public async repromptDialog(): Promise<void> {
+    async repromptDialog(): Promise<void> {
         // Try raising event first
         const handled = await this.emitEvent(DialogEvents.repromptDialog, undefined, false, false);
         if (!handled) {
@@ -588,6 +598,7 @@ export class DialogContext {
 
     /**
      * Searches for a dialog with a given ID.
+     *
      * @remarks
      * Emits a named event for the current dialog, or someone who started it, to handle.
      * @param name Name of the event to raise.
@@ -596,7 +607,7 @@ export class DialogContext {
      * @param fromLeaf Optional. Whether the event is emitted from a leaf node.
      * @returns `true` if the event was handled.
      */
-    public async emitEvent(name: string, value?: any, bubble = true, fromLeaf = false): Promise<boolean> {
+    async emitEvent(name: string, value?: any, bubble = true, fromLeaf = false): Promise<boolean> {
         // Initialize event
         const dialogEvent: DialogEvent = {
             bubble: bubble,
@@ -605,8 +616,10 @@ export class DialogContext {
         };
 
         // Find starting dialog
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
         let dc: DialogContext = this;
         if (fromLeaf) {
+            // eslint-disable-next-line no-constant-condition
             while (true) {
                 const childDc = dc.child;
                 if (childDc != undefined) {

@@ -1,4 +1,5 @@
 /* eslint-disable security/detect-object-injection */
+/* eslint-disable security/detect-non-literal-fs-filename */
 /**
  * @module botbuilder-lg
  */
@@ -19,7 +20,7 @@ import { Template } from './template';
 import { TemplateErrors } from './templateErrors';
 import { TemplateExtensions } from './templateExtensions';
 import { Templates } from './templates';
-import { keyBy } from 'lodash';
+import keyBy = require('lodash/keyBy');
 
 import {
     Constant,
@@ -62,7 +63,7 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
     /**
      * Templates.
      */
-    public readonly templates: Templates;
+    readonly templates: Templates;
 
     /**
      * Expander expression parser
@@ -77,23 +78,23 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
     /**
      * TemplateMap.
      */
-    public readonly templateMap: { [name: string]: Template };
+    readonly templateMap: { [name: string]: Template };
     private readonly evaluationTargetStack: EvaluationTarget[] = [];
     private readonly lgOptions: EvaluationOptions;
 
     /**
      * Creates a new instance of the Expander class.
+     *
      * @param templates Template list.
-     * @param expressionParser Given expression parser.
      * @param opt Options for LG.
      */
-    public constructor(templates: Templates, opt?: EvaluationOptions) {
+    constructor(templates: Templates, opt?: EvaluationOptions) {
         super();
         this.templates = templates;
         this.templateMap = keyBy(templates.allTemplates, (t: Template): string => t.name);
         this.lgOptions = opt;
 
-        // generate a new customzied expression parser by injecting the template as functions
+        // Generate a new customized expression parser by injecting the template as functions.
         this.expanderExpressionParser = new ExpressionParser(
             this.customizedEvaluatorLookup(templates.expressionParser.EvaluatorLookup, true)
         );
@@ -104,11 +105,12 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
 
     /**
      * Expand the results of a template with given name and scope.
+     *
      * @param templateName Given template name.
      * @param scope Given scope.
      * @returns All possiable results.
      */
-    public expandTemplate(templateName: string, scope: unknown): unknown[] {
+    expandTemplate(templateName: string, scope: unknown): unknown[] {
         const memory = scope instanceof CustomizedMemory ? scope : new CustomizedMemory(scope);
         if (!(templateName in this.templateMap)) {
             throw new Error(TemplateErrors.templateNotExist(templateName));
@@ -136,19 +138,21 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
 
     /**
      * Visit a parse tree produced by the normalBody labeled alternative in LGTemplateParser.body.
+     *
      * @param ctx The parse tree.
      * @returns The result of visiting the normal body.
      */
-    public visitNormalBody(ctx: NormalBodyContext): unknown[] {
+    visitNormalBody(ctx: NormalBodyContext): unknown[] {
         return this.visit(ctx.normalTemplateBody());
     }
 
     /**
      * Visit a parse tree produced by LGTemplateParser.normalTemplateBody.
+     *
      * @param ctx The parse tree.
      * @returns The result of visiting the normal template body.
      */
-    public visitNormalTemplateBody(ctx: NormalTemplateBodyContext): unknown[] {
+    visitNormalTemplateBody(ctx: NormalTemplateBodyContext): unknown[] {
         const normalTemplateStrs: TemplateStringContext[] = ctx.templateString();
         let result: unknown[] = [];
         for (const normalTemplateStr of normalTemplateStrs) {
@@ -160,9 +164,11 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
 
     /**
      * Visit a parse tree produced by the ifElseBody labeled alternative in LGTemplateParser.body.
+     *
      * @param ctx The parse tree.
+     * @returns The result of visiting if-else body.
      */
-    public visitIfElseBody(ctx: IfElseBodyContext): unknown[] {
+    visitIfElseBody(ctx: IfElseBodyContext): unknown[] {
         const ifRules: IfConditionRuleContext[] = ctx.ifElseTemplateBody().ifConditionRule();
         for (const ifRule of ifRules) {
             if (this.evalCondition(ifRule.ifCondition()) && ifRule.normalTemplateBody() !== undefined) {
@@ -175,10 +181,11 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
 
     /**
      * Visit a parse tree produced by LGTemplateParser.structuredBody.
+     *
      * @param ctx The parse tree.
      * @returns The result of visiting the structured body.
      */
-    public visitStructuredBody(ctx: StructuredBodyContext): unknown[] {
+    visitStructuredBody(ctx: StructuredBodyContext): unknown[] {
         const templateRefValues: Map<string, unknown[]> = new Map<string, unknown[]>();
         const stb: StructuredTemplateBodyContext = ctx.structuredTemplateBody();
         const result: Record<string, unknown> = {};
@@ -236,7 +243,7 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
                             propertyObject[Evaluator.LGType].toString() === typeName
                         ) {
                             for (const key of Object.keys(propertyObject)) {
-                                if (propertyObject.hasOwnProperty(key) && !(key in tempRes)) {
+                                if (Object.prototype.hasOwnProperty.call(propertyObject, key) && !(key in tempRes)) {
                                     tempRes[key] = propertyObject[key];
                                 }
                             }
@@ -316,10 +323,11 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
 
     /**
      * Visit a parse tree produced by the switchCaseBody labeled alternative in LGTemplateParser.body.
+     *
      * @param ctx The parse tree.
      * @returns The result of visiting the switch case body.
      */
-    public visitSwitchCaseBody(ctx: SwitchCaseBodyContext): unknown[] {
+    visitSwitchCaseBody(ctx: SwitchCaseBodyContext): unknown[] {
         const switchcaseNodes: SwitchCaseRuleContext[] = ctx.switchCaseTemplateBody().switchCaseRule();
         const length: number = switchcaseNodes.length;
         const switchNode: SwitchCaseRuleContext = switchcaseNodes[0];
@@ -367,9 +375,11 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
 
     /**
      * Visit a parse tree produced by LGTemplateParser.normalTemplateString.
+     *
      * @param ctx The parse tree.
+     * @returns The result of visiting NormalTemplateString.
      */
-    public visitNormalTemplateString(ctx: NormalTemplateStringContext): unknown[] {
+    visitNormalTemplateString(ctx: NormalTemplateStringContext): unknown[] {
         const prefixErrorMsg = TemplateExtensions.getPrefixErrorMessage(ctx);
         let result: unknown[] = [undefined];
         for (const child of ctx.children) {
@@ -401,13 +411,14 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
 
     /**
      * Constructs the scope for mapping the values of arguments to the parameters of the template.
-     * @param templateName The template name to evaluate.
+     *
+     * @param inputTemplateName The template name to evaluate.
      * @param args Arguments to map to the template parameters.
      * @param allTemplates All templates.
-     * @returns The current scope if the number of arguments is 0, otherwise, returns a CustomizedMemory
+     * @returns The current scope if the number of arguments is 0, otherwise, returns a CustomizedMemory.
      * with the mapping of the parameter name to the argument value added to the scope.
      */
-    public constructScope(inputTemplateName: string, args: unknown[], allTemplates: Template[]): MemoryInterface {
+    constructScope(inputTemplateName: string, args: unknown[], allTemplates: Template[]): MemoryInterface {
         const templateName = this.parseTemplateName(inputTemplateName).pureTemplateName;
 
         const templateMap = keyBy(allTemplates, (t: Template): string => t.name);
@@ -435,6 +446,7 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
 
     /**
      * Gets the default value returned by visitor methods.
+     *
      * @returns Empty string array.
      */
     protected defaultResult(): string[] {
@@ -457,7 +469,7 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
             return true; // no expression means it's else
         }
 
-        if (this.evalExpressionInCondition(expression, condition.text, `Condition '` + expression.text + `':`)) {
+        if (this.evalExpressionInCondition(expression, condition.text, "Condition '" + expression.text + "':")) {
             return true;
         }
 

@@ -25,19 +25,26 @@ export interface AssertConditionConfiguration extends DialogConfiguration {
  * Dialog action which allows you to add assertions into your dialog flow.
  */
 export class AssertCondition<O extends object = {}> extends Dialog<O> implements AssertConditionConfiguration {
-    public static $kind = 'Microsoft.Test.AssertCondition';
+    static $kind = 'Microsoft.Test.AssertCondition';
 
     /**
      * Condition which must be true.
      */
-    public condition: Expression;
+    condition: Expression;
 
     /**
      * Description of assertion.
      */
-    public description: StringExpression;
+    description: StringExpression;
 
-    public getConverter(property: keyof AssertConditionConfiguration): Converter | ConverterFactory {
+    /**
+     * Description of assertion.
+     *
+     * @param property Properties that extend RecognizerConfiguration.
+     * @returns Expression converter.
+     *
+     */
+    getConverter(property: keyof AssertConditionConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'condition':
                 return new ExpressionConverter();
@@ -50,11 +57,12 @@ export class AssertCondition<O extends object = {}> extends Dialog<O> implements
 
     /**
      * Called when the dialog is started and pushed onto the dialog stack.
+     *
      * @param dc The DialogContext for the current turn of the conversation.
-     * @param options Additional information to pass to the prompt being started.
+     * @param _options Additional information to pass to the prompt being started.
      * @returns A Promise representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
+    async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
         const { value } = this.condition.tryEvaluate(dc.state);
         if (!value) {
             let desc = this.description && this.description.getValue(dc.state);
@@ -68,6 +76,7 @@ export class AssertCondition<O extends object = {}> extends Dialog<O> implements
 
     /**
      * @protected
+     * @returns String of the condition which must be true.
      */
     protected onComputeId(): string {
         return `AssertCondition[${this.condition.toString()}]`;

@@ -22,7 +22,7 @@ export class ExpressionProperty<T> {
      * @param value Optional. Raw value of the expression property.
      * @param defaultValue Optional. Default value for the property.
      */
-    public constructor(value?: T | string | Expression, defaultValue?: T) {
+    constructor(value?: T | string | Expression, defaultValue?: T) {
         this.defaultValue = defaultValue;
         this.setValue(value);
     }
@@ -30,19 +30,19 @@ export class ExpressionProperty<T> {
     /**
      * Gets or sets the raw value of the expression property.
      */
-    public value: T;
+    value: T;
 
     /**
      * Getes or sets the expression text to evaluate to get the value.
      */
-    public expressionText: string;
+    expressionText: string;
 
     /**
      * Convert an expression property to string.
      *
      * @returns The converted string.
      */
-    public toString(): string {
+    toString(): string {
         if (this.expressionText) {
             return `=${this.expressionText.replace(/^=/, '')}`;
         }
@@ -54,7 +54,7 @@ export class ExpressionProperty<T> {
      *
      * @returns The existing expression if the value is non-complex type.
      */
-    public toExpression(): Expression {
+    toExpression(): Expression {
         if (this.expression) {
             return this.expression;
         }
@@ -93,7 +93,7 @@ export class ExpressionProperty<T> {
      * @returns The value.
      */
     // eslint-disable-next-line @typescript-eslint/ban-types
-    public getValue(data: object): T {
+    getValue(data: object): T {
         const { value, error } = this.tryGetValue(data);
         if (error) {
             throw error;
@@ -109,7 +109,7 @@ export class ExpressionProperty<T> {
      * @returns the value or an error.
      */
     // eslint-disable-next-line @typescript-eslint/ban-types
-    public tryGetValue(data: object): { value: T; error: Error } {
+    tryGetValue(data: object): { value: T; error: Error } {
         if (!this.expression && this.expressionText) {
             try {
                 this.expression = Expression.parse(this.expressionText.replace(/^=/, ''));
@@ -130,7 +130,7 @@ export class ExpressionProperty<T> {
      *
      * @param value Value to set.
      */
-    public setValue(value: T | string | Expression): void {
+    setValue(value: T | string | Expression): void {
         this.value = this.defaultValue;
         this.expression = undefined;
         this.expressionText = undefined;

@@ -2,7 +2,7 @@ const { ConversationState, MemoryStorage, TestAdapter } = require('botbuilder-co
 const { DialogSet, Dialog, DialogTurnStatus } = require('../');
 const assert = require('assert');
 
-const beginMessage = { text: `begin`, type: 'message' };
+const beginMessage = { text: 'begin', type: 'message' };
 
 class TestDialog extends Dialog {
     constructor(dialogId) {
@@ -20,7 +20,7 @@ class TestDialog extends Dialog {
         return Dialog.EndOfTurn;
     }
 
-    async continueDialog(dc, options) {
+    async continueDialog(dc, _options) {
         return await dc.endDialog(120);
     }
 }
@@ -45,9 +45,7 @@ describe('Dialog', function () {
         const dialog = new TestDialog('testDialog');
         dialogs.add(dialog);
 
-        await adapter.send(beginMessage)
-            .assertReply('begin called')
-            .startTest();
+        await adapter.send(beginMessage).assertReply('begin called').startTest();
     });
 
     it('should receive dialog options when beginning a dialog from a dialog set.', async function () {
@@ -64,9 +62,7 @@ describe('Dialog', function () {
         const dialog = new TestDialog('testDialog');
         dialogs.add(dialog);
 
-        await adapter.send(beginMessage)
-            .assertReply('begin called')
-            .startTest();
+        await adapter.send(beginMessage).assertReply('begin called').startTest();
     });
 
     it('should continue() a multi-turn dialog.', async function () {
@@ -75,14 +71,15 @@ describe('Dialog', function () {
 
             const results = await dc.continueDialog();
             switch (results.status) {
-                case DialogTurnStatus.empty:
+                case DialogTurnStatus.empty: {
                     await dc.beginDialog('testDialog');
                     break;
-
-                case DialogTurnStatus.complete:
+                }
+                case DialogTurnStatus.complete: {
                     const finalResult = results.result;
                     await turnContext.sendActivity(finalResult.toString());
                     break;
+                }
             }
             await convoState.saveChanges(turnContext);
         });
@@ -94,10 +91,6 @@ describe('Dialog', function () {
         const dialog = new TestDialog('testDialog');
         dialogs.add(dialog);
 
-        await adapter.send(beginMessage)
-            .assertReply('begin called')
-            .send('continue')
-            .assertReply('120')
-            .startTest();
+        await adapter.send(beginMessage).assertReply('begin called').send('continue').assertReply('120').startTest();
     });
 });

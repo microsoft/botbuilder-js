@@ -18,24 +18,25 @@ export interface UserTypingConfiguration {
  * Action to script sending typing activity to the bot.
  */
 export class UserTyping extends Configurable implements TestAction, UserTypingConfiguration {
-    public static $kind = 'Microsoft.Test.UserTyping';
+    static $kind = 'Microsoft.Test.UserTyping';
 
     /**
      * If user is set then the channalAccount.id and channelAccount.name will be from user.
      */
-    public user: string;
+    user: string;
 
     /**
      * Execute the test.
+     *
      * @param testAdapter Adapter to execute against.
      * @param callback Logic for the bot to use.
-     * @param inspector Inspector for dialog context.
+     * @param _inspector Inspector for dialog context.
      * @returns A Promise that represents the work queued to execute.
      */
-    public async execute(
+    async execute(
         testAdapter: TestAdapter,
         callback: (context: TurnContext) => Promise<any>,
-        inspector?: Inspector
+        _inspector?: Inspector
     ): Promise<any> {
         const typing = testAdapter.makeActivity();
         typing.type = ActivityTypes.Typing;

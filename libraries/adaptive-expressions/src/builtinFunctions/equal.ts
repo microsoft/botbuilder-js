@@ -18,7 +18,7 @@ export class Equal extends ComparisonEvaluator {
     /**
      * Initializes a new instance of the [Equal](xref:adaptive-expressions.Equal) class.
      */
-    public constructor() {
+    constructor() {
         super(
             ExpressionType.Equal,
             (args) => FunctionUtils.commonEquals(args[0], args[1]),

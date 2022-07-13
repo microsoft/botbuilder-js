@@ -47,9 +47,10 @@ export class AutoSaveStateMiddleware implements Middleware {
     /**
      * Set of `BotState` plugins being automatically saved.
      */
-    public botStateSet: BotStateSet;
+    botStateSet: BotStateSet;
     /**
      * Creates a new AutoSaveStateMiddleware instance.
+     *
      * @param botStates One or more BotState plugins to automatically save at the end of the turn.
      */
     constructor(...botStates: BotState[]) {
@@ -59,19 +60,22 @@ export class AutoSaveStateMiddleware implements Middleware {
 
     /**
      * Called by the adapter (for example, a `BotFrameworkAdapter`) at runtime in order to process an inbound [Activity](xref:botframework-schema.Activity).
+     *
      * @param context The context object for this turn.
      * @param next {function} The next delegate function.
      */
-    public async onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
+    async onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
         await next();
         await this.botStateSet.saveAllChanges(context, false);
     }
 
     /**
      * Adds additional `BotState` plugins to be saved.
+     *
      * @param botStates One or more BotState plugins to add.
+     * @returns The updated BotStateSet object.
      */
-    public add(...botStates: BotState[]): this {
+    add(...botStates: BotState[]): this {
         BotStateSet.prototype.add.apply(this.botStateSet, botStates);
 
         return this;

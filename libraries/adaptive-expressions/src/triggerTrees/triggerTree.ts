@@ -22,34 +22,34 @@ export class TriggerTree {
     /**
      * Intializes a new instance of the `TriggerTree` class.
      */
-    public constructor() {
+    constructor() {
         this.root = new Node(new Clause(), this);
     }
 
     /**
      * A list of `Optimizer` for optimizing claues.
      */
-    public readonly optimizers: Optimizer[] = [];
+    readonly optimizers: Optimizer[] = [];
 
     /**
      * A dictionary of `PredicateComparer` values, with string keys.
      */
-    public readonly comparers: PredicateComparers = {};
+    readonly comparers: PredicateComparers = {};
 
     /**
      * The root node instance.
      */
-    public root: Node;
+    root: Node;
 
     /**
      * The total number of triggers.
      */
-    public totalTriggers = 0;
+    totalTriggers = 0;
 
     /**
      * @returns A string the represents the current object.
      */
-    public toString(): string {
+    toString(): string {
         return `TriggerTree with ${this.totalTriggers} triggers`;
     }
 
@@ -61,7 +61,7 @@ export class TriggerTree {
      * @param quantifiers Quantifiers to use when expanding expressions.
      * @returns New trigger.
      */
-    public addTrigger(stringOrExpression: string | Expression, action: any, ...quantifiers: Quantifier[]): Trigger {
+    addTrigger(stringOrExpression: string | Expression, action: any, ...quantifiers: Quantifier[]): Trigger {
         const expression: Expression =
             typeof stringOrExpression === 'string' ? Expression.parse(stringOrExpression) : stringOrExpression;
         const trigger = new Trigger(this, expression, action, ...quantifiers);
@@ -88,7 +88,7 @@ export class TriggerTree {
      * @param trigger Trigger to remove.
      * @returns True if removed trigger.
      */
-    public removeTrigger(trigger: Trigger): boolean {
+    removeTrigger(trigger: Trigger): boolean {
         const result = this.root.removeTrigger(trigger);
         if (result) {
             --this.totalTriggers;
@@ -102,7 +102,7 @@ export class TriggerTree {
      * @param indent Current indent level.
      * @returns String describing the tree.
      */
-    public treeToString(indent = 0): string {
+    treeToString(indent = 0): string {
         const builder: string[] = [];
         this._treeToString(builder, this.root, indent);
         return builder.join('');
@@ -114,7 +114,7 @@ export class TriggerTree {
      * @param state State to evaluate against.
      * @returns List of possible matches.
      */
-    public matches(state: MemoryInterface | any): Trigger[] {
+    matches(state: MemoryInterface | any): Trigger[] {
         return this.root.matches(state);
     }
 
@@ -123,7 +123,7 @@ export class TriggerTree {
      *
      * @returns Bad node if found.
      */
-    public verifyTree(): Node {
+    verifyTree(): Node {
         return this._verifyTree(this.root, new Set<Node>());
     }
 

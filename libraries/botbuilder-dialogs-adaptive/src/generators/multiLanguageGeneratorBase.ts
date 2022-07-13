@@ -27,13 +27,13 @@ export abstract class MultiLanguageGeneratorBase<
     /**
      * Language policy required by language generator.
      */
-    public languagePolicy: LanguagePolicy;
+    languagePolicy: LanguagePolicy;
 
     /**
      * @param property The key of the conditional selector configuration.
      * @returns The converter for the selector configuration.
      */
-    public getConverter(property: keyof MultiLanguageGeneratorBaseConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof MultiLanguageGeneratorBaseConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'languagePolicy':
                 return new LanguagePolicyConverter();
@@ -48,7 +48,7 @@ export abstract class MultiLanguageGeneratorBase<
      * @param dialogContext DialogContext.
      * @param locale Locale to lookup.
      */
-    public abstract tryGetGenerator(
+    abstract tryGetGenerator(
         dialogContext: DialogContext,
         locale: string
     ): { exist: boolean; result: LanguageGenerator<T, D> };
@@ -61,7 +61,7 @@ export abstract class MultiLanguageGeneratorBase<
      * @param data Data to bind to.
      * @returns A promise representing the asynchronous operation.
      */
-    public async generate(dialogContext: DialogContext, template: string, data: D): Promise<T> {
+    async generate(dialogContext: DialogContext, template: string, data: D): Promise<T> {
         // priority
         // 1. local policy
         // 2. shared policy in turnContext
