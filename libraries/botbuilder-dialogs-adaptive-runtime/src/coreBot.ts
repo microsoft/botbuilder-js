@@ -22,7 +22,22 @@ import {
     useTelemetry,
 } from 'botbuilder-dialogs-adaptive';
 
+/**
+ * Implements an instance of CoreBot.
+ */
 export class CoreBot extends ActivityHandler {
+    /**
+     * @param resourceExplorer Services to access resources.
+     * @param userState Stored user state.
+     * @param conversationState Stored conversation state.
+     * @param botFrameworkAuthentication Cloud environment to authenticate Bot Framework Protocol network calls within this environment.
+     * @param skillConversationIdFactory Methods to create unique conversation IDs for skill conversations.
+     * @param botTelemetryClient Bot client to telemetry.
+     * @param defaultLocale The default locale used to determine language-specific behavior.
+     * @param defaultRootDialog Default bot root dialog.
+     * @param memoryScopes Named root-level objects, which can exist in the dialog context or outside the turn state.
+     * @param pathResolvers Shortcut behavior for transform paths.
+     */
     constructor(
         resourceExplorer: ResourceExplorer,
         userState: UserState,
