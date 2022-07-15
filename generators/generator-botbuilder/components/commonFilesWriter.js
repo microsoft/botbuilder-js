@@ -96,20 +96,35 @@ module.exports.commonFilesWriter = (generator, templatePath) => {
   );
 
   // gen the deployment/Templates folder
-  const deploymentFolder = 'deploymentTemplates';
+  const deploymentFolders = ['deploymentTemplates/deployUseExistResourceGroup','deploymentTemplates/deployWithNewResourceGroup'];
   const deploymentFiles = [
-    'template-with-new-rg.json',
-    'template-with-preexisting-rg.json',
-    'new-rg-parameters.json',
-    'preexisting-rg-parameters.json',
+    [
+    'parameters-for-template-AzureBot-with-rg.json',
+    'parameters-for-template-BotApp-with-rg.json',
+    'readme.md',
+    'template-AzureBot-with-rg.json',
+    'template-BotApp-with-rg.json',
+    ],
+    [
+      'parameters-for-template-AzureBot-new-rg.json',
+      'parameters-for-template-BotApp-new-rg.json',
+      'readme.md',
+      'template-AzureBot-new-rg.json',
+      'template-BotApp-new-rg.json',
+    ]
   ];
-  mkdirp.sync(deploymentFolder);
-  const sourcePath = path.join(templatePath, deploymentFolder);
-  const destinationPath = path.join(generator.destinationPath(), deploymentFolder);
-  for(let cnt = 0; cnt < deploymentFiles.length; ++cnt) {
-    generator.fs.copy(
-      path.join(sourcePath, deploymentFiles[cnt]),
-      path.join(destinationPath, deploymentFiles[cnt]),
-    );
+
+  for (let i = 0; i < deploymentFolders.length; i++) {
+    const deploymentFolder = deploymentFolders[i];
+    mkdirp.sync(deploymentFolder);
+    const sourcePath = path.join(templatePath, deploymentFolder);
+    const destinationPath = path.join(generator.destinationPath(), deploymentFolder);
+
+    for(let cnt = 0; cnt < deploymentFiles[i].length; ++cnt) {
+      generator.fs.copy(
+        path.join(sourcePath, deploymentFiles[i][cnt]),
+        path.join(destinationPath, deploymentFiles[i][cnt]),
+      );
+    }
   }
 }
