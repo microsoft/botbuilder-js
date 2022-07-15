@@ -33,7 +33,7 @@ export abstract class SkillConversationIdFactoryBase {
      * @remarks It should be possible to use the returned string on a request URL and it should not contain special characters.
      * Returns A unique conversation ID used to communicate with the skill.
      */
-    public createSkillConversationId(_conversationReference: ConversationReference): Promise<string> {
+    createSkillConversationId(_conversationReference: ConversationReference): Promise<string> {
         throw new Error('Not Implemented');
     }
 

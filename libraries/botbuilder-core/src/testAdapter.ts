@@ -523,11 +523,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
      * @param magicCode (Optional) Optional user entered code to validate.
      * @returns The OAuth token for a user that is in a sign-in flow.
      */
-    async getUserToken(
-        context: TurnContext,
-        connectionName: string,
-        magicCode?: string
-    ): Promise<TokenResponse> {
+    async getUserToken(context: TurnContext, connectionName: string, magicCode?: string): Promise<TokenResponse> {
         const key: UserToken = new UserToken();
         key.channelId = context.activity.channelId;
         key.connectionName = connectionName;
@@ -696,12 +692,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
      * @param userId The user id.
      * @param exchangeableItem The exchangeable token or resource URI.
      */
-    throwOnExchangeRequest(
-        connectionName: string,
-        channelId: string,
-        userId: string,
-        exchangeableItem: string
-    ): void {
+    throwOnExchangeRequest(connectionName: string, channelId: string, userId: string, exchangeableItem: string): void {
         const token: ExchangeableToken = new ExchangeableToken();
         token.channelId = channelId;
         token.connectionName = connectionName;

@@ -223,13 +223,7 @@ export class CardFactory {
      * );
      * ```
      */
-    static heroCard(
-        title: string,
-        text?: any,
-        images?: any,
-        buttons?: any,
-        other?: Partial<HeroCard>
-    ): Attachment {
+    static heroCard(title: string, text?: any, images?: any, buttons?: any, other?: Partial<HeroCard>): Attachment {
         const a: Attachment = CardFactory.thumbnailCard(title, text, images, buttons, other);
         a.contentType = CardFactory.contentTypes.heroCard;
         return a;

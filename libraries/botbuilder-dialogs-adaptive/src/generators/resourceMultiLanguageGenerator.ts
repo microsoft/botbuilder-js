@@ -51,10 +51,7 @@ export class ResourceMultiLanguageGenerator<T = unknown, D extends Record<string
      * @param locale Locale to lookup.
      * @returns An object with a boolean showing existence and the language generator.
      */
-    tryGetGenerator(
-        dialogContext: DialogContext,
-        locale: string
-    ): { exist: boolean; result: LanguageGenerator<T, D> } {
+    tryGetGenerator(dialogContext: DialogContext, locale: string): { exist: boolean; result: LanguageGenerator<T, D> } {
         const manager = dialogContext.services.get(languageGeneratorManagerKey) as LanguageGeneratorManager<T, D>;
 
         const resourceId =

@@ -29,10 +29,7 @@ export class MultiLanguageGenerator extends MultiLanguageGeneratorBase {
      * @param locale Locale to lookup.
      * @returns An object with a boolean showing existence and the language generator.
      */
-    tryGetGenerator(
-        dialogContext: DialogContext,
-        locale: string
-    ): { exist: boolean; result: LanguageGenerator } {
+    tryGetGenerator(dialogContext: DialogContext, locale: string): { exist: boolean; result: LanguageGenerator } {
         if (this.languageGenerators.has(locale)) {
             return { exist: true, result: this.languageGenerators.get(locale) };
         } else {

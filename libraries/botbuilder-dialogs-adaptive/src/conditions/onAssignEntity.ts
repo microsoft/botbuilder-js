@@ -31,13 +31,7 @@ export class OnAssignEntity extends OnDialogEvent implements OnAssignEntityConfi
      * @param actions Optional, actions to add to the plan when the rule constraints are met.
      * @param condition Optional, condition which needs to be met for the actions to be executed.
      */
-    constructor(
-        property?: string,
-        value?: string,
-        operation?: string,
-        actions: Dialog[] = [],
-        condition?: string
-    ) {
+    constructor(property?: string, value?: string, operation?: string, actions: Dialog[] = [], condition?: string) {
         super(AdaptiveEvents.assignEntity, actions, condition);
         this.property = property;
         this.value = value;

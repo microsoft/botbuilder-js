@@ -325,11 +325,7 @@ export class TeamsInfo {
      * @param userId ID of the Teams user.
      * @returns The [TeamsChannelAccount](xref:botframework-schema.TeamsChannelAccount) of the member.
      */
-    static async getTeamMember(
-        context: TurnContext,
-        teamId?: string,
-        userId?: string
-    ): Promise<TeamsChannelAccount> {
+    static async getTeamMember(context: TurnContext, teamId?: string, userId?: string): Promise<TeamsChannelAccount> {
         const t = teamId || this.getTeamId(context);
         if (!t) {
             throw new Error('This method is only valid within the scope of a MS Teams Team.');

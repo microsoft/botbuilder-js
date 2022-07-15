@@ -652,10 +652,7 @@ export class FunctionUtils {
      * @param verify Function to check each arg for validity.
      * @returns Delegate for evaluating an expression.
      */
-    static applySequenceWithError(
-        func: (arg0: any[]) => any,
-        verify?: VerifyExpression
-    ): EvaluateExpressionDelegate {
+    static applySequenceWithError(func: (arg0: any[]) => any, verify?: VerifyExpression): EvaluateExpressionDelegate {
         return FunctionUtils.applyWithError((args: any[]): any => {
             const binaryArgs: any[] = [undefined, undefined];
             let soFar: any = args[0];
