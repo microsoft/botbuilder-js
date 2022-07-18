@@ -30,10 +30,7 @@ export class DynamicBeginDialogDeserializer
      * @param type The object type that the configuration will be deserialized to.
      * @returns A `DynamicBeginDialog` object created from the configuration.
      */
-    load(
-        config: BeginDialogConfiguration,
-        type: { new (...args: unknown[]): DynamicBeginDialog }
-    ): DynamicBeginDialog {
+    load(config: BeginDialogConfiguration, type: { new (...args: unknown[]): DynamicBeginDialog }): DynamicBeginDialog {
         config.dialog = this._resourceExplorer.loadType<Dialog>(this._resourceId);
         return Object.entries(config).reduce((instance, [key, value]) => {
             let converter = instance.getConverter(key as keyof BeginDialogConfiguration);

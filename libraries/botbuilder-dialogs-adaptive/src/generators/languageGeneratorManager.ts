@@ -72,10 +72,7 @@ export class LanguageGeneratorManager<T = unknown, D extends Record<string, unkn
      * @param resourceMapping Template resource loader delegate.
      * @returns The delegate to resolve the resource.
      */
-    static resourceExplorerResolver(
-        locale: string,
-        resourceMapping: Map<string, Resource[]>
-    ): ImportResolverDelegate {
+    static resourceExplorerResolver(locale: string, resourceMapping: Map<string, Resource[]>): ImportResolverDelegate {
         return (lgResource: LGResource, id: string): LGResource => {
             const fallbackLocale = LanguageResourceLoader.fallbackLocale(locale, Array.from(resourceMapping.keys()));
             const resources: Resource[] = resourceMapping.get(fallbackLocale.toLowerCase());

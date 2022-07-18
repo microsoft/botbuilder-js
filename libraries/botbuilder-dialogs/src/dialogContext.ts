@@ -286,11 +286,7 @@ export class DialogContext {
      * **See also**
      * - [endDialog](xref:botbuilder-dialogs.DialogContext.endDialog)
      */
-    async cancelAllDialogs(
-        cancelParents = false,
-        eventName?: string,
-        eventValue?: any
-    ): Promise<DialogTurnResult> {
+    async cancelAllDialogs(cancelParents = false, eventName?: string, eventValue?: any): Promise<DialogTurnResult> {
         eventName = eventName || DialogEvents.cancelDialog;
         if (this.stack.length > 0 || this.parent != undefined) {
             // Cancel all local and parent dialogs while checking for interception

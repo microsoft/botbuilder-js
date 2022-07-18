@@ -798,7 +798,7 @@ export class TurnContext {
         }
         this._respondedRef.responded = true;
     }
-    
+
     /**
      * Gets the locale stored in the turnState.
      *

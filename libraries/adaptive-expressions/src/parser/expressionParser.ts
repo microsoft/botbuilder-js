@@ -123,8 +123,7 @@ export class ExpressionParser implements ExpressionParserInterface {
             throw new Error(`${context.text} is not a number.`);
         }
 
-        visitParenthesisExp = (context: ep.ParenthesisExpContext): Expression =>
-            this.visit(context.expression());
+        visitParenthesisExp = (context: ep.ParenthesisExpContext): Expression => this.visit(context.expression());
 
         visitArrayCreationExp(context: ep.ArrayCreationExpContext): Expression {
             const parameters: Expression[] = this.processArgsList(context.argsList());

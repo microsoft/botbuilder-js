@@ -1302,10 +1302,7 @@ export class BotFrameworkAdapter
      * [middleware](https://docs.microsoft.com/azure/bot-service/bot-builder-concept-middleware) articles.
      * Use the adapter's [use](xref:botbuilder-core.BotAdapter.use) method to add middleware to the adapter.
      */
-    async processActivityDirect(
-        activity: Activity,
-        logic: (context: TurnContext) => Promise<any>
-    ): Promise<void> {
+    async processActivityDirect(activity: Activity, logic: (context: TurnContext) => Promise<any>): Promise<void> {
         let processError: Error;
         try {
             // Process activity
@@ -1445,10 +1442,7 @@ export class BotFrameworkAdapter
      * @param serviceUrl The client's service URL.
      * @param identity ClaimsIdentity
      */
-    async createConnectorClientWithIdentity(
-        serviceUrl: string,
-        identity: ClaimsIdentity
-    ): Promise<ConnectorClient>;
+    async createConnectorClientWithIdentity(serviceUrl: string, identity: ClaimsIdentity): Promise<ConnectorClient>;
     /**
      * Create a ConnectorClient with a ClaimsIdentity and an explicit audience.
      *

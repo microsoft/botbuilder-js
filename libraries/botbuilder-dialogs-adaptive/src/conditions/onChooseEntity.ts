@@ -31,13 +31,7 @@ export class OnChooseEntity extends OnDialogEvent implements OnChooseEntityConfi
      * @param {Dialog[]} actions Optional, actions to add to the plan when the rule constraints are met.
      * @param {string} condition Optional, condition which needs to be met for the actions to be executed.
      */
-    constructor(
-        property?: string,
-        value?: string,
-        operation?: string,
-        actions: Dialog[] = [],
-        condition?: string
-    ) {
+    constructor(property?: string, value?: string, operation?: string, actions: Dialog[] = [], condition?: string) {
         super(AdaptiveEvents.chooseEntity, actions, condition);
         this.property = property;
         this.value = value;

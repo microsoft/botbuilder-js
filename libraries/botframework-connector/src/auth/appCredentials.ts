@@ -117,6 +117,10 @@ export abstract class AppCredentials implements msrest.ServiceClientCredentials 
      * @param  {Date} expiration? The expiration date after which this service url is not trusted anymore
      */
     static trustServiceUrl(serviceUrl: string, expiration?: Date): void;
+    /**
+     * Adds the host of service url to trusted hosts.
+     * If expiration time is not provided, the expiration date will be current (utc) date + 1 day.
+     */
     static trustServiceUrl(): void {
         // no-op
     }
@@ -130,6 +134,11 @@ export abstract class AppCredentials implements msrest.ServiceClientCredentials 
      * @returns {boolean} True if the host of the service url is trusted; False otherwise.
      */
     static isTrustedServiceUrl(serviceUrl: string): boolean;
+    /**
+     * Checks if the service url is for a trusted host or not.
+     *
+     * @returns {boolean} True if the host of the service url is trusted; False otherwise.
+     */
     static isTrustedServiceUrl(): boolean {
         return true;
     }
