@@ -5,11 +5,8 @@
 ```ts
 
 import { Activity } from 'botbuilder';
-import type { Agent } from 'http';
-import { ConnectionPolicy } from 'documentdb';
 import { CosmosClientOptions } from '@azure/cosmos';
 import { PagedResult } from 'botbuilder';
-import { RequestOptions } from 'documentdb';
 import { Storage as Storage_2 } from 'botbuilder';
 import { StoreItems } from 'botbuilder';
 import { TranscriptInfo } from 'botbuilder';
@@ -67,27 +64,6 @@ export interface CosmosDbPartitionedStorageOptions {
     cosmosDbEndpoint?: string;
     databaseId: string;
     keySuffix?: string;
-}
-
-// @public @deprecated
-export class CosmosDbStorage implements Storage_2 {
-    constructor(settings: CosmosDbStorageSettings, connectionPolicyConfigurator?: (policy: ConnectionPolicy) => void);
-    delete(keys: string[]): Promise<void>;
-    read(keys: string[]): Promise<StoreItems>;
-    write(changes: StoreItems): Promise<void>;
-}
-
-// @public @deprecated
-export interface CosmosDbStorageSettings {
-    agent?: Agent;
-    authKey: string;
-    collectionId: string;
-    databaseCreationRequestOptions?: RequestOptions;
-    databaseId: string;
-    documentCollectionRequestOptions?: RequestOptions;
-    // @deprecated
-    partitionKey?: string;
-    serviceEndpoint: string;
 }
 
 // @public (undocumented)
