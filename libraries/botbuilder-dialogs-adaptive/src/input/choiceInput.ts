@@ -34,6 +34,7 @@ import {
     TemplateInterface,
 } from 'botbuilder-dialogs';
 import { TelemetryLoggerConstants } from '../telemetryLoggerConstants';
+import { ChoiceOptionsSet } from './choiceOptionsSet';
 
 export enum ChoiceOutputFormat {
     value = 'value',
@@ -226,8 +227,8 @@ export class ChoiceInput extends InputDialog implements ChoiceInputConfiguration
         // Format prompt to send
         const prompt = await super.onRenderPrompt(dc, state);
         const channelId = dc.context.activity.channelId;
-        const choiceOptions =
-            (this.choiceOptions && this.choiceOptions.getValue(dc.state)) || ChoiceInput.defaultChoiceOptions[locale];
+        const opts = await this.getChoiceOptions(dc, locale);
+        const choiceOptions = opts ?? ChoiceInput.defaultChoiceOptions[locale];
         const style = this.style.getValue(dc.state);
         const options = dc.state.getValue(ChoiceInput.OPTIONS_PROPERTY);
         return this.appendChoices(prompt, channelId, options.choices, style, choiceOptions);
@@ -239,6 +240,24 @@ export class ChoiceInput extends InputDialog implements ChoiceInputConfiguration
      */
     protected onComputeId(): string {
         return `ChoiceInput[${this.prompt && this.prompt.toString()}]`;
+    }
+
+    private async getChoiceOptions(dc: DialogContext, locale: string): Promise<ChoiceFactoryOptions> {
+        if (!this.choiceOptions) {
+            return ChoiceInput.defaultChoiceOptions[locale];
+        }
+
+        if (
+            this.choiceOptions.expressionText != null &&
+            this.choiceOptions.expressionText.trimStart().startsWith('${')
+        ) {
+            // use TemplateInterface to bind (aka LG)
+            const choiceOptionsSet = new ChoiceOptionsSet(this.choiceOptions.expressionText);
+            return choiceOptionsSet.bind(dc);
+        } else {
+            // use Expression to bind
+            return this.choiceOptions.getValue(dc.state);
+        }
     }
 
     private getChoiceSet(dc: DialogContext): Promise<ChoiceSet> {

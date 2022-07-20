@@ -16,3 +16,4 @@ export * from './textInput';
 export * from './dateTimeInput';
 export * from './oauthInput';
 export * from './choiceSet';
+export * from './choiceOptionsSet';

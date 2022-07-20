@@ -33,6 +33,7 @@ import {
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 import * as Recognizers from '@microsoft/recognizers-text-choice';
+import { ChoiceOptionsSet } from './choiceOptionsSet';
 
 export interface ConfirmInputConfiguration extends InputDialogConfiguration {
     defaultLocale?: StringProperty;
@@ -207,11 +208,28 @@ export class ConfirmInput extends InputDialog implements ConfirmInputConfigurati
         // Format prompt to send
         const prompt = await super.onRenderPrompt(dc, state);
         const channelId = dc.context.activity.channelId;
-        const choiceOptions =
-            (this.choiceOptions && this.choiceOptions.getValue(dc.state)) ||
-            ConfirmInput.defaultChoiceOptions[locale].options;
+        const opts = await this.getChoiceOptions(dc, locale);
+        const choiceOptions = opts ?? ConfirmInput.defaultChoiceOptions[locale].options;
         const style = this.style.getValue(dc.state);
         return Promise.resolve(this.appendChoices(prompt, channelId, choices, style, choiceOptions));
+    }
+
+    private async getChoiceOptions(dc: DialogContext, locale: string): Promise<ChoiceFactoryOptions> {
+        if (!this.choiceOptions) {
+            return ConfirmInput.defaultChoiceOptions[locale].options;
+        }
+
+        if (
+            this.choiceOptions.expressionText != null &&
+            this.choiceOptions.expressionText.trimStart().startsWith('${')
+        ) {
+            // use TemplateInterface to bind (aka LG)
+            const choiceOptionsSet = new ChoiceOptionsSet(this.choiceOptions.expressionText);
+            return choiceOptionsSet.bind(dc);
+        } else {
+            // use Expression to bind
+            return this.choiceOptions.getValue(dc.state);
+        }
     }
 
     private determineCulture(dc: DialogContext): string {
