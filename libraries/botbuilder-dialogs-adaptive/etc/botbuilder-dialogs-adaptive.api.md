@@ -526,6 +526,20 @@ export interface ChoiceInputOptions {
     choices: Choice[];
 }
 
+// @public
+export class ChoiceOptionsSet implements ChoiceFactoryOptions, TemplateInterface<ChoiceFactoryOptions> {
+    constructor(obj: any);
+    bind(dialogContext: DialogContext, data?: any): Promise<ChoiceFactoryOptions>;
+    // (undocumented)
+    includeNumbers?: boolean;
+    // (undocumented)
+    inlineOr?: string;
+    // (undocumented)
+    inlineOrMore?: string;
+    // (undocumented)
+    inlineSeparator?: string;
+    }
+
 // @public (undocumented)
 export enum ChoiceOutputFormat {
     // (undocumented)
