@@ -157,7 +157,7 @@ export interface TeamsMeetingInfo {
 export interface TeamsChannelData {
     /**
      * @member {ChannelInfo} [channel] Information about the channel in which the
-     * message was sent
+     * message was sent.
      */
     channel?: ChannelInfo;
     /**
@@ -166,27 +166,27 @@ export interface TeamsChannelData {
     eventType?: string;
     /**
      * @member {TeamInfo} [team] Information about the team in which the message
-     * was sent
+     * was sent.
      */
     team?: TeamInfo;
     /**
      * @member {NotificationInfo} [notification] Notification settings for the
-     * message
+     * message.
      */
     notification?: NotificationInfo;
     /**
      * @member {TenantInfo} [tenant] Information about the tenant in which the
-     * message was sent
+     * message was sent.
      */
     tenant?: TenantInfo;
     /**
      * @member {TeamsMeetingInfo} [meeting] Information about the tenant in which the
-     * message was sent
+     * message was sent.
      */
     meeting?: TeamsMeetingInfo;
     /**
      * @member {TeamsChannelDataSettings} [settings] Information about the settings in which the
-     * message was sent
+     * message was sent.
      */
     settings?: TeamsChannelDataSettings;
 }

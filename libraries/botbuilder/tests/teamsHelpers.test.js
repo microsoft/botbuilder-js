@@ -6,10 +6,10 @@
 const assert = require('assert');
 const {
     teamsGetChannelId,
-    teamsGetTeamId,
-    teamsNotifyUser,
-    teamsGetTeamInfo,
     teamsGetSelectedChannelId,
+    teamsGetTeamId,
+    teamsGetTeamInfo,
+    teamsNotifyUser,
 } = require('../');
 
 function createActivityTeamId() {
