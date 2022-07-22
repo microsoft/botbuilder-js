@@ -427,6 +427,7 @@ describe('TeamsInfo', function () {
                 id: '19:generalChannelIdgeneralChannelId@thread.skype',
                 name: 'TeamName',
                 aadGroupId: 'Team-aadGroupId',
+                type: 'standard',
             };
 
             const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
@@ -447,6 +448,7 @@ describe('TeamsInfo', function () {
             assert(fetchedTeamDetails.id === '19:generalChannelIdgeneralChannelId@thread.skype');
             assert(fetchedTeamDetails.name === 'TeamName');
             assert(fetchedTeamDetails.aadGroupId === 'Team-aadGroupId');
+            assert(fetchedTeamDetails.type === 'standard');
         });
 
         it('should work with a teamId passed in', async function () {
