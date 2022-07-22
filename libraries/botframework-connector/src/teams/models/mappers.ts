@@ -23,6 +23,12 @@ export const ChannelInfo: msRest.CompositeMapper = {
                     name: 'String',
                 },
             },
+            type: {
+                serializedName: 'type',
+                type: {
+                    name: 'String',
+                },
+            },
         },
     },
 };
@@ -69,6 +75,12 @@ export const TeamDetails: msRest.CompositeMapper = {
             },
             aadGroupId: {
                 serializedName: 'aadGroupId',
+                type: {
+                    name: 'String',
+                },
+            },
+            type: {
+                serializedName: 'type',
                 type: {
                     name: 'String',
                 },
@@ -187,6 +199,30 @@ export const TeamsChannelData: msRest.CompositeMapper = {
                 type: {
                     name: 'Composite',
                     className: 'TenantInfo',
+                },
+            },
+            settings: {
+                serializedName: 'settings',
+                type: {
+                    name: 'Composite',
+                    className: 'TeamsChannelDataSettings',
+                },
+            },
+        },
+    },
+};
+
+export const TeamsChannelDataSettings: msRest.CompositeMapper = {
+    serializedName: 'TeamsChannelDataSettings',
+    type: {
+        name: 'Composite',
+        className: 'TeamsChannelDataSettings',
+        modelProperties: {
+            selectedChannel: {
+                serializedName: 'selectedChannel',
+                type: {
+                    name: 'Composite',
+                    className: 'ChannelInfo',
                 },
             },
         },
