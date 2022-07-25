@@ -206,6 +206,14 @@ describe('ActionTests', function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_ChoiceStringInMemory');
     });
 
+    it('ChoicesWithChoiceOptions', async function () {
+        await TestUtils.runTestScript(resourceExplorer, 'Action_ChoicesWithChoiceOptions');
+    });
+
+    it('ChoicesWithChoiceOptionsTemplate', async function () {
+        await TestUtils.runTestScript(resourceExplorer, 'Action_ChoicesWithChoiceOptionsTemplate');
+    });
+
     it('ConfirmInput', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_ConfirmInput');
     });
@@ -232,6 +240,14 @@ describe('ActionTests', function () {
 
     it('ConfirmInputComplexTemplate_es', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_ConfirmInput_ComplexTemplate_es');
+    });
+
+    it('ConfirmInputWithChoiceOptions', async function () {
+        await TestUtils.runTestScript(resourceExplorer, 'Action_ConfirmInputWithChoiceOptions');
+    });
+
+    it('ConfirmInputWithChoiceOptionsTemplate', async function () {
+        await TestUtils.runTestScript(resourceExplorer, 'Action_ConfirmInputWithChoiceOptionsTemplate');
     });
 
     it('DeleteProperties', async function () {
