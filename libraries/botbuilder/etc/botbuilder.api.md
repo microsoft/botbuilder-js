@@ -51,6 +51,7 @@ import { NodeWebSocketFactoryBase } from 'botframework-streaming';
 import { O365ConnectorCardActionQuery } from 'botbuilder-core';
 import { PagedMembersResult } from 'botbuilder-core';
 import { PagedResult } from 'botbuilder-core';
+import { ReadReceiptInfo } from 'botframework-connector';
 import { RequestHandler } from 'botframework-streaming';
 import { ResourceResponse } from 'botbuilder-core';
 import { SigninStateVerificationQuery } from 'botbuilder-core';
@@ -395,6 +396,8 @@ export class TeamsActivityHandler extends ActivityHandler {
     onTeamsMembersAddedEvent(handler: (membersAdded: TeamsChannelAccount[], teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
     protected onTeamsMembersRemoved(context: TurnContext): Promise<void>;
     onTeamsMembersRemovedEvent(handler: (membersRemoved: TeamsChannelAccount[], teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
+    protected onTeamsReadReceipt(context: TurnContext): Promise<void>;
+    onTeamsReadReceiptEvent(handler: (receiptInfo: ReadReceiptInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
     protected onTeamsTeamArchived(context: any): Promise<void>;
     onTeamsTeamArchivedEvent(handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
     protected onTeamsTeamDeleted(context: any): Promise<void>;
