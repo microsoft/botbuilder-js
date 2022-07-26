@@ -24,6 +24,10 @@ export interface ChannelInfo {
      * @member {string} [name] Name of the channel
      */
     name?: string;
+    /**
+     * @member {string} [type] The type of the channel. Valid values are standard, shared and private.
+     */
+    type?: string;
 }
 
 /**
@@ -68,6 +72,10 @@ export interface TeamDetails {
      * the team.
      */
     memberCount?: number;
+    /**
+     * @member {string} [type] The type of the team. Valid values are standard, sharedChannel and privateChannel.
+     */
+    type?: string;
 }
 
 /**
@@ -149,7 +157,7 @@ export interface TeamsMeetingInfo {
 export interface TeamsChannelData {
     /**
      * @member {ChannelInfo} [channel] Information about the channel in which the
-     * message was sent
+     * message was sent.
      */
     channel?: ChannelInfo;
     /**
@@ -158,24 +166,29 @@ export interface TeamsChannelData {
     eventType?: string;
     /**
      * @member {TeamInfo} [team] Information about the team in which the message
-     * was sent
+     * was sent.
      */
     team?: TeamInfo;
     /**
      * @member {NotificationInfo} [notification] Notification settings for the
-     * message
+     * message.
      */
     notification?: NotificationInfo;
     /**
      * @member {TenantInfo} [tenant] Information about the tenant in which the
-     * message was sent
+     * message was sent.
      */
     tenant?: TenantInfo;
     /**
      * @member {TeamsMeetingInfo} [meeting] Information about the tenant in which the
-     * message was sent
+     * message was sent.
      */
     meeting?: TeamsMeetingInfo;
+    /**
+     * @member {TeamsChannelDataSettings} [settings] Information about the settings in which the
+     * message was sent.
+     */
+    settings?: TeamsChannelDataSettings;
 }
 
 /**
@@ -210,6 +223,25 @@ export interface TeamsChannelAccount extends ChannelAccount {
      * @member {string} [userRole] User Role of the user.
      */
     userRole?: string;
+}
+
+/**
+ * @interface
+ * Settings within teams channel data specific to messages received in Microsoft Teams.
+ */
+export interface TeamsChannelDataSettings {
+    /**
+     * @member {ChannelInfo} [selectedChannel] Information about the selected Teams channel.
+     */
+    selectedChannel?: ChannelInfo;
+    /**
+     * @member {any} [any] Additional properties that are not otherwise defined by the TeamsChannelDataSettings
+     * type but that might appear in the REST JSON object.
+     * @remarks With this, properties not represented in the defined type are not dropped when
+     * the JSON object is deserialized, but are instead stored in this property. Such properties
+     * will be written to a JSON object when the instance is serialized.
+     */
+    [properties: string]: unknown;
 }
 
 /**

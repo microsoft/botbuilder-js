@@ -417,6 +417,7 @@ export interface ChannelAccount {
 export interface ChannelInfo {
     id?: string;
     name?: string;
+    type?: string;
 }
 
 // @public
@@ -1667,6 +1668,7 @@ export interface TeamDetails {
     id?: string;
     memberCount?: number;
     name?: string;
+    type?: string;
 }
 
 // @public
@@ -1698,8 +1700,15 @@ export interface TeamsChannelData {
     eventType?: string;
     meeting?: TeamsMeetingInfo;
     notification?: NotificationInfo;
+    settings?: TeamsChannelDataSettings;
     team?: TeamInfo;
     tenant?: TenantInfo;
+}
+
+// @public
+export interface TeamsChannelDataSettings {
+    [properties: string]: unknown;
+    selectedChannel?: ChannelInfo;
 }
 
 // @public

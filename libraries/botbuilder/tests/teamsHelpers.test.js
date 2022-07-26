@@ -4,7 +4,13 @@
  */
 
 const assert = require('assert');
-const { teamsGetChannelId, teamsGetTeamId, teamsNotifyUser, teamsGetTeamInfo } = require('../');
+const {
+    teamsGetChannelId,
+    teamsGetSelectedChannelId,
+    teamsGetTeamId,
+    teamsGetTeamInfo,
+    teamsNotifyUser,
+} = require('../');
 
 function createActivityTeamId() {
     return {
@@ -173,6 +179,20 @@ describe('TeamsActivityHelpers method', function () {
 
         it('should throw an error if no activity is passed in', function () {
             assert.throws(() => teamsGetTeamInfo(undefined), Error('Missing activity parameter'));
+        });
+    });
+
+    describe('teamsGetSelectedChannelId()', function () {
+        it('should return channel id', async function () {
+            const activity = { channelData: { settings: { selectedChannel: { id: 'channel123' } } } };
+            const channelId = teamsGetSelectedChannelId(activity);
+            assert.strictEqual(channelId, 'channel123');
+        });
+
+        it('should return channel id with null settings', async function () {
+            const activity = { channelData: { settings: null } };
+            const channelId = teamsGetSelectedChannelId(activity);
+            assert.strictEqual(channelId, '');
         });
     });
 });

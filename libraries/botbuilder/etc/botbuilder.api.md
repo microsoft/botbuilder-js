@@ -413,6 +413,9 @@ export class TeamsActivityHandler extends ActivityHandler {
 export function teamsGetChannelId(activity: Activity): string | null;
 
 // @public
+export function teamsGetSelectedChannelId(activity: Activity): string;
+
+// @public
 export function teamsGetTeamId(activity: Activity): string | null;
 
 // @public
