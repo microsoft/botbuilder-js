@@ -9,7 +9,6 @@ const {
     skillConversationIdFactoryKey,
     skillClientKey,
 } = require('botbuilder-dialogs-adaptive');
-
 class MockSkillConversationIdFactory extends SkillConversationIdFactoryBase {
     constructor(opts = { useCreateSkillConversationId: false }) {
         super();
@@ -339,6 +338,9 @@ describe('ActionTests', function () {
                 { text: 'text', age: 11 },
             ])
             .reply(200, 'array');
+        nock('http://foo.com')
+            .post('/', 'Joe is 52')
+            .replyWithError({ message: 'Error making the request', code: 'FetchError' });
         nock('http://foo.com').get('/image').reply(200, 'TestImage');
         nock('http://foo.com').get('/json').reply(200, { test: 'test' });
         nock('http://foo.com').get('/activity').reply(200, MessageFactory.text('testtest'));

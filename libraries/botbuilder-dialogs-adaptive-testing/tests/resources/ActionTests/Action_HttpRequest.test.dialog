@@ -72,6 +72,17 @@
 					},
 					{
 						"$kind": "Microsoft.HttpRequest",
+						"method": "POST",
+						"url": "http://foo.com/",
+						"body": "${dialog.name} is ${dialog.age}",
+						"contentType": "plain/text"
+					},
+					{
+						"$kind": "Microsoft.SendActivity",
+						"activity": "${turn.lastresult.content}"
+					},
+					{
+						"$kind": "Microsoft.HttpRequest",
 						"method": "GET",
 						"url": "http://foo.com/image",
 						"responseType": "Binary"
@@ -129,6 +140,10 @@
 		{
 			"$kind": "Microsoft.Test.AssertReply",
 			"text": "array"
+		},
+		{
+			"$kind": "Microsoft.Test.AssertReply",
+			"text": "request to http://foo.com/ failed, reason: Error making the request"
 		},
 		{
 			"$kind": "Microsoft.Test.AssertReply",

@@ -5,7 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import fetch from 'node-fetch';
+import { StatusCodes } from 'botbuilder-core';
+import fetch, { FetchError } from 'node-fetch';
 import { Activity } from 'botbuilder';
 import { BoolProperty, EnumProperty, StringProperty, UnknownProperty } from '../properties';
 import { Response, Headers } from 'node-fetch';
@@ -286,88 +287,109 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Htt
         instanceHeaders['Content-Type'] = contentType;
 
         let instanceBody: string;
-        const body = evaluateExpression(dc.state, this.body);
-        if (body) {
-            if (typeof body === 'string') {
-                instanceBody = body;
-            } else {
-                instanceBody = JSON.stringify(Object.assign({}, body));
-            }
-        }
-
-        const traceInfo = {
-            request: {
-                method: instanceMethod,
-                url: instanceUrl,
-                headers: instanceHeaders,
-                content: instanceBody,
-            },
-            response: undefined,
-        };
-
-        let response: Response;
-
-        switch (this.method) {
-            case HttpMethod.DELETE:
-            case HttpMethod.GET:
-                response = await fetch(instanceUrl, {
-                    method: instanceMethod,
-                    headers: instanceHeaders,
-                });
-                break;
-            case HttpMethod.PUT:
-            case HttpMethod.PATCH:
-            case HttpMethod.POST:
-                response = await fetch(instanceUrl, {
-                    method: instanceMethod,
-                    headers: instanceHeaders,
-                    body: instanceBody,
-                });
-                break;
-        }
-
-        const result = new Result(response.headers);
-        result.statusCode = response.status;
-        result.reasonPhrase = response.statusText;
-
-        switch (this.responseType.getValue(dc.state)) {
-            case ResponsesTypes.Activity:
-                result.content = await response.json();
-                dc.context.sendActivity(result.content as Activity);
-                break;
-            case ResponsesTypes.Activities:
-                result.content = await response.json();
-                dc.context.sendActivities(result.content as Activity[]);
-                break;
-            case ResponsesTypes.Json: {
-                const content = await response.text();
-                try {
-                    result.content = JSON.parse(content);
-                } catch {
-                    result.content = content;
+        let traceInfo;
+        try {
+            const body = evaluateExpression(dc.state, this.body);
+            if (body) {
+                if (typeof body === 'string') {
+                    instanceBody = body;
+                } else {
+                    instanceBody = JSON.stringify(Object.assign({}, body));
                 }
-                break;
             }
-            case ResponsesTypes.Binary: {
-                const buffer = await response.arrayBuffer();
-                result.content = new Uint8Array(buffer);
-                break;
+
+            traceInfo = {
+                request: {
+                    method: instanceMethod,
+                    url: instanceUrl,
+                    headers: instanceHeaders,
+                    content: instanceBody,
+                },
+                response: undefined,
+            };
+
+            let response: Response;
+
+            switch (this.method) {
+                case HttpMethod.DELETE:
+                case HttpMethod.GET:
+                    response = await fetch(instanceUrl, {
+                        method: instanceMethod,
+                        headers: instanceHeaders,
+                    });
+                    break;
+                case HttpMethod.PUT:
+                case HttpMethod.PATCH:
+                case HttpMethod.POST:
+                    response = await fetch(instanceUrl, {
+                        method: instanceMethod,
+                        headers: instanceHeaders,
+                        body: instanceBody,
+                    });
+                    break;
             }
-            case ResponsesTypes.None:
-            default:
-                break;
+
+            const result = new Result(response.headers);
+            result.statusCode = response.status;
+            result.reasonPhrase = response.statusText;
+
+            switch (this.responseType.getValue(dc.state)) {
+                case ResponsesTypes.Activity:
+                    result.content = await response.json();
+                    dc.context.sendActivity(result.content as Activity);
+                    break;
+                case ResponsesTypes.Activities:
+                    result.content = await response.json();
+                    dc.context.sendActivities(result.content as Activity[]);
+                    break;
+                case ResponsesTypes.Json: {
+                    const content = await response.text();
+                    try {
+                        result.content = JSON.parse(content);
+                    } catch {
+                        result.content = content;
+                    }
+                    break;
+                }
+                case ResponsesTypes.Binary: {
+                    const buffer = await response.arrayBuffer();
+                    result.content = new Uint8Array(buffer);
+                    break;
+                }
+                case ResponsesTypes.None:
+                default:
+                    break;
+            }
+
+            traceInfo.response = result;
+
+            // Write trace activity for http request and response values.
+            await dc.context.sendTraceActivity('HttpRequest', traceInfo, 'Microsoft.HttpRequest', this.id);
+
+            if (this.resultProperty) {
+                dc.state.setValue(this.resultProperty.getValue(dc.state), result);
+            }
+
+            return await dc.endDialog(result);
+        } catch (err) {
+            if (err instanceof FetchError) {
+                const result = new Result();
+                result.statusCode = StatusCodes.NOT_FOUND;
+                result.content = err.message;
+                traceInfo.response = result;
+
+                // Write trace activity for http request and response values.
+                await dc.context.sendTraceActivity('HttpRequest', traceInfo, 'Microsoft.HttpRequest', this.id);
+
+                if (this.resultProperty) {
+                    dc.state.setValue(this.resultProperty.getValue(dc.state), result);
+                }
+
+                return await dc.endDialog(result);
+            } else {
+                throw new Error();
+            }
         }
-
-        traceInfo.response = result;
-
-        // Write trace activity for http request and response values.
-        await dc.context.sendTraceActivity('HttpRequest', traceInfo, 'Microsoft.HttpRequest', this.id);
-
-        if (this.resultProperty) {
-            dc.state.setValue(this.resultProperty.getValue(dc.state), result);
-        }
-
-        return await dc.endDialog(result);
     }
 
     /**
