@@ -9,6 +9,7 @@ const {
     skillConversationIdFactoryKey,
     skillClientKey,
 } = require('botbuilder-dialogs-adaptive');
+
 class MockSkillConversationIdFactory extends SkillConversationIdFactoryBase {
     constructor(opts = { useCreateSkillConversationId: false }) {
         super();

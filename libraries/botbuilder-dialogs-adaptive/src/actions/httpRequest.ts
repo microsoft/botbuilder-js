@@ -361,35 +361,39 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Htt
                     break;
             }
 
-            traceInfo.response = result;
-
-            // Write trace activity for http request and response values.
-            await dc.context.sendTraceActivity('HttpRequest', traceInfo, 'Microsoft.HttpRequest', this.id);
-
-            if (this.resultProperty) {
-                dc.state.setValue(this.resultProperty.getValue(dc.state), result);
-            }
-
-            return await dc.endDialog(result);
+            return await this.endDialogWithResult(dc, result, traceInfo);
         } catch (err) {
             if (err instanceof FetchError) {
                 const result = new Result();
-                result.statusCode = StatusCodes.NOT_FOUND;
                 result.content = err.message;
-                traceInfo.response = result;
-
-                // Write trace activity for http request and response values.
-                await dc.context.sendTraceActivity('HttpRequest', traceInfo, 'Microsoft.HttpRequest', this.id);
-
-                if (this.resultProperty) {
-                    dc.state.setValue(this.resultProperty.getValue(dc.state), result);
-                }
-
-                return await dc.endDialog(result);
+                result.statusCode = StatusCodes.NOT_FOUND;
+                return await this.endDialogWithResult(dc, result, traceInfo);
             } else {
-                throw new Error();
+                throw err;
             }
         }
+    }
+
+    /**
+     * Writes Trace Activity for the http request and response values and returns the actionResult as the result of this operation.
+     *
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param result Value returned from the dialog that was called. The type
+     * of the value returned is dependent on the child dialog.
+     * @param traceInfo Trace information to be written.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
+    private async endDialogWithResult(dc: DialogContext, result: Result, traceInfo: any): Promise<DialogTurnResult> {
+        traceInfo.response = result;
+
+        // Write trace activity for http request and response values.
+        await dc.context.sendTraceActivity('HttpRequest', traceInfo, 'Microsoft.HttpRequest', this.id);
+
+        if (this.resultProperty) {
+            dc.state.setValue(this.resultProperty.getValue(dc.state), result);
+        }
+
+        return await dc.endDialog(result);
     }
 
     /**
