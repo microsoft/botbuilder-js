@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "@azure/cosmos": "^3.3.1",
-    "azure-storage": "2.10.2",
+    "azure-storage": "2.10.7",
     "botbuilder": "4.1.6",
     "lodash": "^4.17.20"
   },
