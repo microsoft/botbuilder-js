@@ -33,6 +33,7 @@ import {
     tokenExchangeOperationName,
     verifyStateOperationName,
 } from 'botbuilder-core';
+import { ReadReceiptInfo } from 'botframework-connector';
 import { TeamsInfo } from './teamsInfo';
 import * as z from 'zod';
 
@@ -1001,6 +1002,8 @@ export class TeamsActivityHandler extends ActivityHandler {
     protected async dispatchEventActivity(context: TurnContext): Promise<void> {
         if (context.activity.channelId === Channels.Msteams) {
             switch (context.activity.name) {
+                case 'application/vnd.microsoft.readReceipt':
+                    return this.onTeamsReadReceipt(context);
                 case 'application/vnd.microsoft.meetingStart':
                     return this.onTeamsMeetingStart(context);
                 case 'application/vnd.microsoft.meetingEnd':
@@ -1031,6 +1034,17 @@ export class TeamsActivityHandler extends ActivityHandler {
      */
     protected async onTeamsMeetingEnd(context: TurnContext): Promise<void> {
         await this.handle(context, 'TeamsMeetingEnd', this.defaultNextEvent(context));
+    }
+
+    /**
+     * Invoked when a read receipt for a previously sent message is received from the connector.
+     * Override this in a derived class to provide logic for when the bot receives a read receipt event.
+     *
+     * @param context The context for this turn.
+     * @returns A promise that represents the work queued.
+     */
+    protected async onTeamsReadReceipt(context: TurnContext): Promise<void> {
+        await this.handle(context, 'TeamsReadReceipt', this.defaultNextEvent(context));
     }
 
     /**
@@ -1080,6 +1094,21 @@ export class TeamsActivityHandler extends ActivityHandler {
                 context,
                 next
             );
+        });
+    }
+
+    /**
+     * Registers a handler for when a Read Receipt is sent.
+     *
+     * @param handler A callback that handles Read Receipt events.
+     * @returns A promise that represents the work queued.
+     */
+    onTeamsReadReceiptEvent(
+        handler: (receiptInfo: ReadReceiptInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>
+    ): this {
+        return this.on('TeamsReadReceipt', async (context, next) => {
+            const receiptInfo = context.activity.value;
+            await handler(new ReadReceiptInfo(receiptInfo.lastReadMessageId), context, next);
         });
     }
 }

@@ -2350,5 +2350,52 @@ describe('TeamsActivityHandler', function () {
                 })
                 .startTest();
         });
+
+        it('onTeamsReadReceipt routed activity', async function () {
+            let onTeamsReadReceiptCalled = false;
+            const bot = new TeamsActivityHandler();
+            const activity = {
+                channelId: Channels.Msteams,
+                type: 'event',
+                name: 'application/vnd.microsoft.readReceipt',
+                value: JSON.parse('{ "lastReadMessageId": 10101010}'),
+            };
+
+            bot.onEvent(async (context, next) => {
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                onEventCalled = true;
+                await next();
+            });
+
+            bot.onTeamsReadReceiptEvent(async (receiptInfo, context, next) => {
+                assert(receiptInfo, 'receiptInfo not found');
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                assert.strictEqual(receiptInfo.lastReadMessageId, activity.value.lastReadMessageId);
+                onTeamsReadReceiptCalled = true;
+                await next();
+            });
+
+            bot.onDialog(async (context, next) => {
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                onDialogCalled = true;
+                await next();
+            });
+
+            const adapter = new TestAdapter(async (context) => {
+                await bot.run(context);
+            });
+
+            await adapter
+                .send(activity)
+                .then(() => {
+                    assert(onTeamsReadReceiptCalled);
+                    assert(onEventCalled, 'onConversationUpdate handler not called');
+                    assert(onDialogCalled, 'onDialog handler not called');
+                })
+                .startTest();
+        });
     });
 });
