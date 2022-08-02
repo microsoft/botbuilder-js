@@ -22,6 +22,7 @@ const {
     BOT_TEMPLATE_NOPROMPT_CORE
     } = require('../../components/constants');
 
+_.extend(Generator.prototype, require('yeoman-generator/lib/actions/install'));
 
 /**
  * Main Generator derivative.  This is what Yeoman calls to invoke our generator
