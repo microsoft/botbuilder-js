@@ -1119,7 +1119,7 @@ export interface MessagingExtensionResult {
 }
 
 // @public
-export type MessagingExtensionResultType = 'result' | 'auth' | 'config' | 'message' | 'botMessagePreview';
+export type MessagingExtensionResultType = 'result' | 'auth' | 'config' | 'message' | 'botMessagePreview' | 'silentAuth';
 
 // @public
 export interface MessagingExtensionSuggestedAction {

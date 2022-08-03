@@ -1700,12 +1700,18 @@ export type AttachmentLayout = 'list' | 'grid';
 
 /**
  * Defines values for MessagingExtensionResultType.
- * Possible values include: 'result', 'auth', 'config', 'message', 'botMessagePreview'
+ * Possible values include: 'result', 'auth', 'config', 'message', 'botMessagePreview', 'silentAuth'.
  *
  * @readonly
  * @enum {string}
  */
-export type MessagingExtensionResultType = 'result' | 'auth' | 'config' | 'message' | 'botMessagePreview';
+export type MessagingExtensionResultType =
+    | 'result'
+    | 'auth'
+    | 'config'
+    | 'message'
+    | 'botMessagePreview'
+    | 'silentAuth';
 
 /**
  * @deprecated Use MessagingExtensionResultType instead
