@@ -176,7 +176,7 @@ export class LanguageServiceUtils {
                 answer: kbAnswer.answer,
                 score: kbAnswer.confidenceScore,
                 metadata: kbAnswer.metadata
-                    ? Array.from(kbAnswer.metadata)?.map((nv) => {
+                    ? Object.entries(kbAnswer.metadata).map((nv) => {
                           return { name: nv[0], value: nv[1] };
                       })
                     : null,
