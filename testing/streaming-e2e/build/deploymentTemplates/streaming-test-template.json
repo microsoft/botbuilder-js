@@ -63,7 +63,10 @@
                 "isStreamingSupported": false,
                 "isCmekEnabled": false,
                 "disableLocalAuth": false
-            }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites/', parameters('sites_bot_name'))]"
+            ]
         },
         {
             "type": "Microsoft.Web/serverfarms",
