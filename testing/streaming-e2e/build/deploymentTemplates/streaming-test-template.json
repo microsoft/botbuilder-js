@@ -3,11 +3,11 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "app_id": {
-            "defaultValue": " ",
+            "defaultValue": "needed",
             "type": "String"
         },
         "app_secret": {
-            "defaultValue": " ",
+            "defaultValue": "needed",
             "type": "String"
         },
         "botServices_bot_name": {
@@ -19,11 +19,11 @@
             "type": "String"
         },
         "directLine_extension_key": {
-            "defaultValue": " ",
+            "defaultValue": "needed",
             "type": "String"
         },
         "directLine_secret": {
-            "defaultValue": " ",
+            "defaultValue": "needed",
             "type": "String"
         },
         "resources_location": {
@@ -41,10 +41,49 @@
         "sites_react_app_name": {
             "defaultValue": "ash-react-app",
             "type": "String"
+        },
+        "smartdetectoralertrules_failure_anomalies___ash_react_app_name": {
+            "defaultValue": "failure anomalies - ash-react-app",
+            "type": "String"
+        },
+        "smartdetectoralertrules_failure_anomalies___ash_2nd_react_app_name": {
+            "defaultValue": "failure anomalies - ash-2nd-react-app",
+            "type": "String"
+        },
+        "components_ash_2nd_react_app_externalid": {
+            "defaultValue": "/subscriptions/68a2ddd6-f962-4cd2-8170-211d720473a4/resourceGroups/ash-streaming-js/providers/microsoft.insights/components/ash-2nd-react-app",
+            "type": "String"
+        },
+        "actiongroups_application_insights_smart_detection_externalid": {
+            "defaultValue": "/subscriptions/68a2ddd6-f962-4cd2-8170-211d720473a4/resourceGroups/ashcorebot/providers/microsoft.insights/actiongroups/application insights smart detection",
+            "type": "String"
         }
     },
     "variables": {},
     "resources": [
+        {
+            "type": "microsoft.alertsmanagement/smartdetectoralertrules",
+            "apiVersion": "2021-04-01",
+            "name": "[parameters('smartdetectoralertrules_failure_anomalies___ash_2nd_react_app_name')]",
+            "location": "global",
+            "properties": {
+                "description": "Failure Anomalies notifies you of an unusual rise in the rate of failed HTTP requests or dependency calls.",
+                "state": "Enabled",
+                "severity": "Sev3",
+                "frequency": "PT1M",
+                "detector": {
+                    "id": "FailureAnomaliesDetector"
+                },
+                "scope": [
+                    "[parameters('components_ash_2nd_react_app_externalid')]"
+                ],
+                "actionGroups": {
+                    "groupIds": [
+                        "[parameters('actiongroups_application_insights_smart_detection_externalid')]"
+                    ]
+                }
+            }
+        },
         {
             "type": "Microsoft.BotService/botServices",
             "apiVersion": "2021-05-01-preview",
@@ -104,6 +143,32 @@
                 "targetWorkerCount": 0,
                 "targetWorkerSizeId": 0,
                 "zoneRedundant": false
+            }
+        },
+        {
+            "type": "microsoft.alertsmanagement/smartdetectoralertrules",
+            "apiVersion": "2021-04-01",
+            "name": "[parameters('smartdetectoralertrules_failure_anomalies___ash_react_app_name')]",
+            "location": "global",
+            "dependsOn": [
+                "[resourceId('microsoft.insights/components', parameters('components_react_app_name'))]"
+            ],
+            "properties": {
+                "description": "Failure Anomalies notifies you of an unusual rise in the rate of failed HTTP requests or dependency calls.",
+                "state": "Enabled",
+                "severity": "Sev3",
+                "frequency": "PT1M",
+                "detector": {
+                    "id": "FailureAnomaliesDetector"
+                },
+                "scope": [
+                    "[resourceId('microsoft.insights/components', parameters('components_react_app_name'))]"
+                ],
+                "actionGroups": {
+                    "groupIds": [
+                        "[parameters('actiongroups_application_insights_smart_detection_externalid')]"
+                    ]
+                }
             }
         },
         {
@@ -673,7 +738,7 @@
                 "acrUseManagedIdentityCreds": false,
                 "logsDirectorySizeLimit": 35,
                 "detailedErrorLoggingEnabled": false,
-                "publishingUsername": "$ash-react-app",
+                "publishingUsername": "[parameters('sites_react_app_name')]",
                 "scmType": "None",
                 "use32BitWorkerProcess": true,
                 "webSocketsEnabled": false,
@@ -753,7 +818,7 @@
                 "acrUseManagedIdentityCreds": false,
                 "logsDirectorySizeLimit": 100,
                 "detailedErrorLoggingEnabled": false,
-                "publishingUsername": "$ash-streaming-bot",
+                "publishingUsername": "[parameters('sites_bot_name')]",
                 "scmType": "None",
                 "use32BitWorkerProcess": true,
                 "webSocketsEnabled": true,
@@ -1199,7 +1264,7 @@
                 "[resourceId('Microsoft.Web/sites', parameters('sites_react_app_name'))]"
             ],
             "properties": {
-                "siteName": "ash-react-app",
+                "siteName": "[parameters('sites_react_app_name')]",
                 "hostNameType": "Verified"
             }
         },
@@ -1212,7 +1277,7 @@
                 "[resourceId('Microsoft.Web/sites', parameters('sites_bot_name'))]"
             ],
             "properties": {
-                "siteName": "ash-streaming-bot",
+                "siteName": "[parameters('sites_bot_name')]",
                 "hostNameType": "Verified"
             }
         },
