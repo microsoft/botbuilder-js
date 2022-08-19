@@ -58,7 +58,7 @@
                 "displayName": "[parameters('botServices_bot_name')]",
                 "iconUrl": "https://docs.botframework.com/static/devportal/client/images/bot-framework-default.png",
                 "endpoint": "[concat('https://', parameters('botServices_bot_name'), '.azurewebsites.net/api/messages')]",
-                "msaAppId": "d02f737d-fbeb-40f2-a7da-b33f7b50cfec",
+                "msaAppId": "[parameters('app_id')]",
                 "luisAppIds": [],
                 "isStreamingSupported": false,
                 "isCmekEnabled": false,
