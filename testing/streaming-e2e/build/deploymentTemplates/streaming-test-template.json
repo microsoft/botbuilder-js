@@ -51,7 +51,7 @@
             "type": "String"
         },
         "components_ash_2nd_react_app_externalid": {
-            "defaultValue": "/subscriptions/68a2ddd6-f962-4cd2-8170-211d720473a4/resourceGroups/ash-streaming-js/providers/microsoft.insights/components/ash-2nd-react-app",
+            "defaultValue": "/subscriptions/174c5021-8109-4087-a3e2-a1de20420569/resourceGroups/ash-streaming-js/providers/microsoft.insights/components/ash-2nd-react-app",
             "type": "String"
         },
         "actiongroups_application_insights_smart_detection_externalid": {
