@@ -17,7 +17,7 @@ variables:
   TestsDir: '$(System.DefaultWorkingDirectory)/testing/streaming-e2e/tests'
   runCodesignValidationInjection: false
   # Variables defined in Azure:
-  # BotName, ConnectedServiceNameARM, MyGetPersonalAccessToken, ResourceGroup
+  # BotName, ConnectedServiceNameARM, ReactAppService, ResourceGroup
 
 jobs:
   - job: Deploy_Bot

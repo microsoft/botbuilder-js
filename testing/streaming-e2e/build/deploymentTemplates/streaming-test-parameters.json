@@ -1,0 +1,36 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "app_id": {
+            "value": null
+        },
+        "app_secret": {
+            "value": null
+        },
+        "botServices_bot_name": {
+            "value": null
+        },
+        "components_react_app_name": {
+            "value": null
+        },
+        "directLine_extension_key": {
+            "value": null
+        },
+        "directLine_secret": {
+            "value": null
+        },
+        "resources_location": {
+            "value": null
+        },
+        "serviceplan_name": {
+            "value": null
+        },
+        "sites_bot_name": {
+            "value": null
+        },
+        "sites_react_app_name": {
+            "value": null
+        }
+    }
+}
