@@ -221,6 +221,7 @@ describe('LanguageService', function () {
             const results = await qna.getAnswers(context, options);
             assert.strictEqual(results.length, 1);
         });
+
         it('returns answer without any options specified', async function () {
             const qna = new CustomQuestionAnswering(endpoint);
             const context = new TestContext({ text: 'where are the unicorns?' });
@@ -228,6 +229,18 @@ describe('LanguageService', function () {
             const results = await qna.getAnswers(context);
 
             assert.strictEqual(results.length, 1);
+        });
+
+        it('returns answer with metadata', async function () {
+            const qna = new CustomQuestionAnswering(endpoint);
+            const context = new TestContext({ text: 'where are the unicorns?' });
+
+            const results = await qna.getAnswers(context);
+
+            assert.strictEqual(results.length, 1);
+            assert.strictEqual(results[0].metadata.length, 1);
+            assert.strictEqual(results[0].metadata[0].name, 'title');
+            assert.strictEqual(results[0].metadata[0].value, 'mythical unicorns');
         });
 
         it('returns answer and active learning flag', async function () {
