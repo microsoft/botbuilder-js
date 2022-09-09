@@ -104,7 +104,7 @@ export class RegexRecognizer extends AdaptiveRecognizer implements RegexRecogniz
             const regexp = intentPattern.regex;
             while ((matched = regexp.exec(text))) {
                 matches.push(matched);
-                if (regexp.lastIndex == text.length) {
+                if (regexp.lastIndex == text.length || !regexp.lastIndex) {
                     break; // to avoid infinite loop
                 }
             }
@@ -135,8 +135,6 @@ export class RegexRecognizer extends AdaptiveRecognizer implements RegexRecogniz
                         });
                 }
             });
-
-            break;
         }
 
         if (this.entities) {
