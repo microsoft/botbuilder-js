@@ -30,6 +30,10 @@ export class Bool extends ComparisonEvaluator {
             return args[0] !== 0;
         }
 
+        if (/false/i.test(args[0])) {
+            return false;
+        }
+
         return InternalFunctionUtils.isLogicTrue(args[0]);
     }
 }

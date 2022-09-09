@@ -419,7 +419,8 @@ const testCases = [
             ['bool(0)', false],
             ['bool(null)', false],
             ['bool(hello * 5)', false],
-            ["bool('false')", true], // we make it true, because it is not empty
+            ["bool('false')", false],
+            ["bool('true')", true],
             ["bool('hi')", true],
             ['[1,2,3]', [1, 2, 3]],
             ['[1,2,3, [4,5]]', [1, 2, 3, [4, 5]]],
