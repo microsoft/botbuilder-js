@@ -206,4 +206,62 @@ describe('AdaptiveDialog', function () {
             .assertReply('passed')
             .startTest();
     });
+
+    it('Get top intent using score and priority', async function () {
+        const priorityDialog = new AdaptiveDialog('priority').configure({
+            autoEndDialog: false,
+            recognizer: new RegexRecognizer().configure({
+                intents: [
+                    {
+                        intent: 'cancel',
+                        pattern: '^(?:cancel|quit|stop|end)',
+                    },
+                    {
+                        intent: 'default',
+                        pattern: '.',
+                    },
+                    {
+                        intent: 'help',
+                        pattern: '^(?:support|advice|help|\\?)',
+                    },
+                ],
+            }),
+            triggers: [
+                new OnIntent().configure({
+                    intent: 'cancel',
+                    priority: 0,
+                    actions: [new SendActivity('Cancel intent recognized')],
+                }),
+                new OnIntent().configure({
+                    intent: 'default',
+                    priority: 999,
+                    actions: [new SendActivity('Default intent recognized')],
+                }),
+                new OnIntent().configure({
+                    intent: 'help',
+                    priority: 0,
+                    actions: [new SendActivity('Help intent recognized')],
+                }),
+            ],
+        });
+
+        const dm = new DialogManager(priorityDialog);
+
+        const adapter = new TestAdapter(async (context) => {
+            await dm.onTurn(context);
+        });
+        const storage = new MemoryStorage();
+        useBotState(adapter, new ConversationState(storage), new UserState(storage));
+
+        await adapter
+            .send('help')
+            .assertReply('Help intent recognized')
+            .send('?')
+            .assertReply('Help intent recognized')
+            .send('cancel')
+            .assertReply('Cancel intent recognized')
+            .send('random-text')
+            .assertReply('Default intent recognized')
+            .startTest();
+    });
 });
