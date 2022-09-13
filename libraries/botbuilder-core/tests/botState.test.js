@@ -159,7 +159,7 @@ describe('BotState', function () {
         delete clone.house.kitchen.chair;
         delete clone.house.bedroom.chair;
         await storage.write({ [storageKey]: clone });
-        await botState.load(context);
+        await botState.load(context, true);
 
         // Update bot state.
         const oldState = context.turnState.get(botState.stateKey);
@@ -177,7 +177,7 @@ describe('BotState', function () {
         // Hash state and storage info shouldn't have changed.
         const expectedStorage = storageState[storageKey];
         delete expectedStorage.eTag;
-        assert.deepStrictEqual(oldState.hash, updatedState.hash);
+        assert.equal(oldState.hash, updatedState.hash);
         assert.deepStrictEqual(clone, expectedStorage);
     });
 });
