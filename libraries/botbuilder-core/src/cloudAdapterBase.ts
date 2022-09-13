@@ -67,36 +67,45 @@ export abstract class CloudAdapterBase extends BotAdapter {
             throw new Error('Expecting one or more activities, but the array was empty.');
         }
 
-        return Promise.all(
-            activities.map(async (activity) => {
-                delete activity.id;
+        const responses: ResourceResponse[] = [];
+        for (const activity of activities) {
+            delete activity.id;
+            let response: ResourceResponse;
 
-                if (activity.type === 'delay') {
-                    await delay(typeof activity.value === 'number' ? activity.value : 1000);
-                } else if (activity.type === ActivityTypes.InvokeResponse) {
-                    context.turnState.set(INVOKE_RESPONSE_KEY, activity);
-                } else if (activity.type === ActivityTypes.Trace && activity.channelId !== Channels.Emulator) {
-                    // no-op
-                } else {
-                    const connectorClient = context.turnState.get<ConnectorClient>(this.ConnectorClientKey);
-                    if (!connectorClient) {
-                        throw new Error('Unable to extract ConnectorClient from turn context.');
-                    }
-
-                    if (activity.replyToId) {
-                        return connectorClient.conversations.replyToActivity(
-                            activity.conversation.id,
-                            activity.replyToId,
-                            activity
-                        );
-                    } else {
-                        return connectorClient.conversations.sendToConversation(activity.conversation.id, activity);
-                    }
+            if (activity.type === 'delay') {
+                await delay(typeof activity.value === 'number' ? activity.value : 1000);
+            } else if (activity.type === ActivityTypes.InvokeResponse) {
+                context.turnState.set(INVOKE_RESPONSE_KEY, activity);
+            } else if (activity.type === ActivityTypes.Trace && activity.channelId !== Channels.Emulator) {
+                // no-op
+            } else {
+                const connectorClient = context.turnState.get<ConnectorClient>(this.ConnectorClientKey);
+                if (!connectorClient) {
+                    throw new Error('Unable to extract ConnectorClient from turn context.');
                 }
 
-                return { id: activity.id ?? '' };
-            })
-        );
+                if (activity.replyToId) {
+                    response = await connectorClient.conversations.replyToActivity(
+                        activity.conversation.id,
+                        activity.replyToId,
+                        activity
+                    );
+                } else {
+                    response = await connectorClient.conversations.sendToConversation(
+                        activity.conversation.id,
+                        activity
+                    );
+                }
+            }
+
+            if (!response) {
+                response = { id: activity.id ?? '' };
+            }
+
+            responses.push(response);
+        }
+
+        return responses;
     }
 
     /**
