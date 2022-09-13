@@ -42,7 +42,7 @@ import isEqual from 'lodash/isEqual';
 import { ActionContext } from './actionContext';
 import { AdaptiveDialogState } from './adaptiveDialogState';
 import { AdaptiveEvents } from './adaptiveEvents';
-import { OnCondition } from './conditions';
+import { OnCondition, OnIntent } from './conditions';
 import { DialogSetConverter, LanguageGeneratorConverter, RecognizerConverter } from './converters';
 import { EntityAssignment } from './entityAssignment';
 import { EntityAssignmentComparer } from './entityAssignmentComparer';
@@ -655,11 +655,35 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
                 this._recognizerSet.recognizers.push(new ValueRecognizer());
             }
             const recognized = await this._recognizerSet.recognize(actionContext, activity);
-            const { intent } = getTopScoringIntent(recognized);
-            for (const key in recognized.intents) {
-                if (key !== intent) {
-                    delete recognized[key];
+
+            const intents = Object.entries(recognized.intents);
+
+            if (intents.length > 0) {
+                // Score
+                // Gathers all the intents with the highest Score value.
+                const scoreSorted = intents.sort(([, a], [, b]) => b.score - a.score);
+                const [[, firstItemScore]] = scoreSorted;
+                const topIntents = scoreSorted.filter(([, e]) => e.score == firstItemScore.score);
+
+                // Priority
+                // Gathers the Intent with the highest Priority (0 being the highest).
+                // Note: this functionality is based on the FirstSelector.SelectAsync method.
+                let [topIntent] = topIntents;
+
+                if (topIntents.length > 1) {
+                    let highestPriority = Number.MAX_SAFE_INTEGER;
+                    for (const [key, intent] of topIntents) {
+                        const [triggerIntent] = this.triggers.filter((x) => x instanceof OnIntent && x.intent == key);
+                        const priority = triggerIntent.currentPriority(actionContext);
+                        if (priority >= 0 && priority < highestPriority) {
+                            topIntent = [key, intent];
+                            highestPriority = priority;
+                        }
+                    }
                 }
+
+                const [key, value] = topIntent;
+                recognized.intents = { [key]: value };
             }
             return recognized;
         } else {
