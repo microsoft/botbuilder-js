@@ -1,5 +1,16 @@
+const assert = require('assert');
 const nock = require('nock');
-const { ActivityTypes, MessageFactory, SkillConversationIdFactoryBase, TurnContext } = require('botbuilder-core');
+const {
+    ActivityTypes,
+    MessageFactory,
+    SkillConversationIdFactoryBase,
+    TurnContext,
+    TestAdapter,
+    MemoryStorage,
+    ConversationState,
+    UserState,
+    useBotState,
+} = require('botbuilder-core');
 const { TestUtils } = require('..');
 const { createHash } = require('crypto');
 const { makeResourceExplorer } = require('./utils');
@@ -8,7 +19,11 @@ const {
     LanguageGenerationBotComponent,
     skillConversationIdFactoryKey,
     skillClientKey,
+    AdaptiveDialog,
+    OnBeginDialog,
+    BeginSkill,
 } = require('botbuilder-dialogs-adaptive');
+const { DialogManager } = require('botbuilder-dialogs');
 
 class MockSkillConversationIdFactory extends SkillConversationIdFactoryBase {
     constructor(opts = { useCreateSkillConversationId: false }) {
@@ -147,7 +162,52 @@ describe('ActionTests', function () {
         );
     });
 
-    it('BeginSkillEndDialog', async () => {
+    it('BeginSkill_SkipPropertiesFromBotState', async function () {
+        const beginSkillDialog = new BeginSkill({
+            botId: 'test-bot-id',
+            skill: {
+                appId: 'test-app-id',
+                skillEndpoint: 'http://localhost:39782/api/messages',
+            },
+            skillHostEndpoint: 'http://localhost:39782/api/messages',
+        });
+
+        const root = new AdaptiveDialog('root').configure({
+            autoEndDialog: false,
+            triggers: [new OnBeginDialog([beginSkillDialog])],
+        });
+
+        const dm = new DialogManager(root);
+
+        const adapter = new TestAdapter((context) => {
+            context.turnState.set(skillConversationIdFactoryKey, new MockSkillConversationIdFactory());
+            context.turnState.set(skillClientKey, new MockSkillBotFrameworkClient());
+            return dm.onTurn(context);
+        });
+        const storage = new MemoryStorage();
+        const convoState = new ConversationState(storage);
+        const userState = new UserState(storage);
+        useBotState(adapter, convoState, userState);
+
+        await adapter.send('skill').send('end').startTest();
+
+        const storageKey = 'test/conversations/Convo1/';
+        const {
+            [storageKey]: { DialogState },
+        } = await storage.read([storageKey]);
+
+        const [{ state }] = DialogState.dialogStack;
+        const [actionScope] = state._adaptive.actions;
+        const [, { state: beginSkillState }] = actionScope.dialogStack;
+        const options = beginSkillState['BeginSkill.dialogOptionsData'];
+
+        assert.equal(options.conversationIdFactory, null);
+        assert.equal(options.conversationState, null);
+        assert.notEqual(beginSkillDialog.dialogOptions.conversationIdFactory, null);
+        assert.notEqual(beginSkillDialog.dialogOptions.conversationState, null);
+    });
+
+    it('BeginSkillEndDialog', async function () {
         await TestUtils.runTestScript(
             resourceExplorer,
             'Action_BeginSkillEndDialog',
