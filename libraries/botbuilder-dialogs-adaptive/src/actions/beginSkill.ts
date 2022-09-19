@@ -5,7 +5,13 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, ActivityTypes, StringUtils, TurnContext } from 'botbuilder';
+import {
+    Activity,
+    ActivityTypes,
+    StringUtils,
+    TurnContext,
+    CACHED_BOT_STATE_SKIP_PROPERTIES_HANDLER_KEY,
+} from 'botbuilder';
 import { ActivityTemplate } from '../templates';
 import { ActivityTemplateConverter } from '../converters';
 import { AdaptiveEvents } from '../adaptiveEvents';
@@ -202,6 +208,9 @@ export class BeginSkill extends SkillDialog implements BeginSkillConfiguration {
 
         // Store the initialized dialogOptions in state so we can restore these values when the dialog is resumed.
         dc.activeDialog.state[this._dialogOptionsStateKey] = this.dialogOptions;
+        const skipProperties = dc.context.turnState.get(CACHED_BOT_STATE_SKIP_PROPERTIES_HANDLER_KEY);
+        const props: (keyof SkillDialogOptions)[] = ['conversationIdFactory', 'conversationState'];
+        skipProperties(this._dialogOptionsStateKey, props);
 
         // Get the activity to send to the skill.
         options = {} as BeginSkillDialogOptions;
