@@ -36,16 +36,11 @@ steps:
     script: |
       $packageName = "chromedriver";
 
-      Write-Host "Get $packageName version tagged 'latest' from npmjs.com";
+      Write-Host "Get $packageName second latest version from npmjs.com";
+      " "
+      $versions = npm view $packageName versions | ConvertFrom-Json;
 
-      $dist = npm dist-tag ls $packageName;
-      $next = $dist.Where({$_.StartsWith("latest:")});
-      [string]$latestVersion = $next.Split(':')[-1].Trim();
-      Write-Host "$packageName latest = $latestVersion";
-
-      $splitVersion = $latestVersion.Split(".");
-      $splitVersion[0] = $splitVersion[0] - 1;
-      $secondLatestVersion = $splitVersion -Join ".";
+      $secondLatestVersion = $versions[-2];
       Write-Host "$packageName second latest = $secondLatestVersion";
 
       "##vso[task.setvariable variable=DriverVersion;]$secondLatestVersion";
