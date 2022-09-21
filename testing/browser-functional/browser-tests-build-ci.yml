@@ -41,7 +41,6 @@ steps:
       $versions = npm view $packageName versions | ConvertFrom-Json;
 
       $secondLatestVersion = $versions[-2];
-      Write-Host "Second latest version: $secondLatestVersion";
       Write-Host "$packageName second latest = $secondLatestVersion";
 
       "##vso[task.setvariable variable=DriverVersion;]$secondLatestVersion";
