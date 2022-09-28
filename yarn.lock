@@ -2467,9 +2467,9 @@ acorn@^7.0.0, acorn@^7.1.1, acorn@^7.4.0:
   integrity sha512-nQyp0o1/mNdbTO1PO6kHkwSrmgZ0MT/jCCpNiwbUjGoRN4dlBhqJtoQuCnEOKzgTVwg0ZWiCoQy6SxMebQVh8A==
 
 acorn@^8.7.0:
-  version "8.7.0"
-  resolved "https://registry.yarnpkg.com/acorn/-/acorn-8.7.0.tgz#90951fde0f8f09df93549481e5fc141445b791cf"
-  integrity sha512-V/LGr1APy+PXIwKebEWrkZPwoeoF+w1jiOBUmuxuiUIaOHtob8Qc9BTrYo7VuI5fR8tqsy+buA2WFooR5olqvQ==
+  version "8.8.0"
+  resolved "https://registry.yarnpkg.com/acorn/-/acorn-8.8.0.tgz#88c0187620435c7f6015803f5539dae05a9dbea8"
+  integrity sha512-QOxyigPVrpZ2GXT+PFyZTl6TtOFc5egxHIP9IlQ+RbupQuX4RkT/Bee4/kQuC02Xkzg84JcT7oLYtDIQxp+v7w==
 
 adal-node@0.2.3:
   version "0.2.3"
@@ -2982,21 +2982,22 @@ axios@^0.25.0:
   dependencies:
     follow-redirects "^1.14.7"
 
-azure-storage@2.10.2:
-  version "2.10.2"
-  resolved "https://registry.yarnpkg.com/azure-storage/-/azure-storage-2.10.2.tgz#3bcabdbf10e72fd0990db81116e49023c4a675b6"
-  integrity sha512-pOyGPya9+NDpAfm5YcFfklo57HfjDbYLXxs4lomPwvRxmb0Di/A+a+RkUmEFzaQ8S13CqxK40bRRB0sjj2ZQxA==
+azure-storage@2.10.7:
+  version "2.10.7"
+  resolved "https://registry.yarnpkg.com/azure-storage/-/azure-storage-2.10.7.tgz#50290ac638d1b709b89d961f333cc1c1a6722a05"
+  integrity sha512-4oeFGtn3Ziw/fGs/zkoIpKKtygnCVIcZwzJ7UQzKTxhkGQqVCByOFbYqMGYR3L+wOsunX9lNfD0jc51SQuKSSA==
   dependencies:
-    browserify-mime "~1.2.9"
+    browserify-mime "^1.2.9"
     extend "^3.0.2"
-    json-edm-parser "0.1.2"
-    md5.js "1.3.4"
-    readable-stream "~2.0.0"
+    json-edm-parser "~0.1.2"
+    json-schema "~0.4.0"
+    md5.js "^1.3.4"
+    readable-stream "^2.0.0"
     request "^2.86.0"
-    underscore "~1.8.3"
+    underscore "^1.12.1"
     uuid "^3.0.0"
-    validator "~9.4.1"
-    xml2js "0.2.8"
+    validator "^13.7.0"
+    xml2js "~0.2.8"
     xmlbuilder "^9.0.7"
 
 babel-code-frame@^6.26.0:
@@ -3364,10 +3365,10 @@ browserify-des@^1.0.0:
     inherits "^2.0.1"
     safe-buffer "^5.1.2"
 
-browserify-mime@~1.2.9:
+browserify-mime@^1.2.9:
   version "1.2.9"
   resolved "https://registry.yarnpkg.com/browserify-mime/-/browserify-mime-1.2.9.tgz#aeb1af28de6c0d7a6a2ce40adb68ff18422af31f"
-  integrity sha1-rrGvKN5sDXpqLOQK22j/GEIq8x8=
+  integrity sha512-uz+ItyJXBLb6wgon1ELEiVowJBEsy03PUWGRQU7cxxx9S+DW2hujPp+DaMYEOClRPzsn7NB99NtJ6pGnt8y+CQ==
 
 browserify-rsa@^4.0.0, browserify-rsa@^4.0.1:
   version "4.0.1"
@@ -8095,10 +8096,10 @@ json-buffer@3.0.0:
   resolved "https://registry.yarnpkg.com/json-buffer/-/json-buffer-3.0.0.tgz#5b1f397afc75d677bde8bcfc0e47e1f9a3d9a898"
   integrity sha1-Wx85evx11ne96Lz8Dkfh+aPZqJg=
 
-json-edm-parser@0.1.2:
+json-edm-parser@~0.1.2:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/json-edm-parser/-/json-edm-parser-0.1.2.tgz#1e60b0fef1bc0af67bc0d146dfdde5486cd615b4"
-  integrity sha1-HmCw/vG8CvZ7wNFG393lSGzWFbQ=
+  integrity sha512-J1U9mk6lf8dPULcaMwALXB6yel3cJyyhk9Z8FQ4sMwiazNwjaUhegIcpZyZFNMvLRtnXwh+TkCjX9uYUObBBYA==
   dependencies:
     jsonparse "~1.2.0"
 
@@ -8126,6 +8127,11 @@ json-schema@0.2.3:
   version "0.2.3"
   resolved "https://registry.yarnpkg.com/json-schema/-/json-schema-0.2.3.tgz#b480c892e59a2f05954ce727bd3f2a4e882f9e13"
   integrity sha1-tIDIkuWaLwWVTOcnvT8qTogvnhM=
+
+json-schema@~0.4.0:
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/json-schema/-/json-schema-0.4.0.tgz#f7de4cf6efab838ebaeb3236474cbba5a1930ab5"
+  integrity sha512-es94M3nTIfsEPisRafak+HDLfHXnKBhV3vU5eqPcS3flIWqcxJWgXHXiey3YrpaNsanY5ei1VoYEbOzijuq9BA==
 
 json-stable-stringify-without-jsonify@^1.0.1:
   version "1.0.1"
@@ -8884,14 +8890,6 @@ md5-o-matic@^0.1.1:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/md5-o-matic/-/md5-o-matic-0.1.1.tgz#822bccd65e117c514fab176b25945d54100a03c3"
   integrity sha1-givM1l4RfFFPqxdrJZRdVBAKA8M=
-
-md5.js@1.3.4:
-  version "1.3.4"
-  resolved "https://registry.yarnpkg.com/md5.js/-/md5.js-1.3.4.tgz#e9bdbde94a20a5ac18b04340fc5764d5b09d901d"
-  integrity sha1-6b296UogpawYsENA/Fdk1bCdkB0=
-  dependencies:
-    hash-base "^3.0.0"
-    inherits "^2.0.1"
 
 md5.js@^1.3.4:
   version "1.3.5"
@@ -10720,11 +10718,6 @@ priorityqueuejs@^1.0.0:
   resolved "https://registry.yarnpkg.com/priorityqueuejs/-/priorityqueuejs-1.0.0.tgz#2ee4f23c2560913e08c07ce5ccdd6de3df2c5af8"
   integrity sha1-LuTyPCVgkT4IwHzlzN1t498sWvg=
 
-process-nextick-args@~1.0.6:
-  version "1.0.7"
-  resolved "https://registry.yarnpkg.com/process-nextick-args/-/process-nextick-args-1.0.7.tgz#150e20b756590ad3f91093f25a4f2ad8bff30ba3"
-  integrity sha1-FQ4gt1ZZCtP5EJPyWk8q2L/zC6M=
-
 process-nextick-args@~2.0.0:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/process-nextick-args/-/process-nextick-args-2.0.1.tgz#7820d9b16120cc55ca9ae7792680ae7dba6d7fe2"
@@ -11104,18 +11097,6 @@ readable-stream@1.1.x, readable-stream@~1.1.9:
     inherits "~2.0.1"
     isarray "0.0.1"
     string_decoder "~0.10.x"
-
-readable-stream@~2.0.0:
-  version "2.0.6"
-  resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-2.0.6.tgz#8f90341e68a53ccc928788dacfcd11b36eb9b78e"
-  integrity sha1-j5A0HmilPMySh4jaz80Rs265t44=
-  dependencies:
-    core-util-is "~1.0.0"
-    inherits "~2.0.1"
-    isarray "~1.0.0"
-    process-nextick-args "~1.0.6"
-    string_decoder "~0.10.x"
-    util-deprecate "~1.0.1"
 
 readdirp@^2.2.1:
   version "2.2.1"
@@ -13287,7 +13268,7 @@ undeclared-identifiers@^1.1.2:
     simple-concat "^1.0.0"
     xtend "^4.0.1"
 
-underscore@1.13.1, "underscore@>= 1.3.1", underscore@^1.13.1, underscore@~1.8.3:
+underscore@1.13.1, "underscore@>= 1.3.1", underscore@^1.12.1, underscore@^1.13.1:
   version "1.13.1"
   resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.13.1.tgz#0c1c6bd2df54b6b69f2314066d65b6cde6fcf9d1"
   integrity sha512-hzSoAVtJF+3ZtiFX0VgfFPHEDRm7Y/QPjGyNo4TVdnDTdft3tr8hEkD25a1jC+TjTuE7tkHGKkhwCgs9dgBB2g==
@@ -13526,15 +13507,15 @@ validate-npm-package-license@^3.0.1:
     spdx-correct "^3.0.0"
     spdx-expression-parse "^3.0.0"
 
+validator@^13.7.0:
+  version "13.7.0"
+  resolved "https://registry.yarnpkg.com/validator/-/validator-13.7.0.tgz#4f9658ba13ba8f3d82ee881d3516489ea85c0857"
+  integrity sha512-nYXQLCBkpJ8X6ltALua9dRrZDHVYxjJ1wgskNt1lH9fzGjs3tgojGSCBjmEPwkWS1y29+DrizMTW19Pr9uB2nw==
+
 validator@^8.0.0:
   version "8.2.0"
   resolved "https://registry.yarnpkg.com/validator/-/validator-8.2.0.tgz#3c1237290e37092355344fef78c231249dab77b9"
   integrity sha512-Yw5wW34fSv5spzTXNkokD6S6/Oq92d8q/t14TqsS3fAiA1RYnxSFSIZ+CY3n6PGGRCq5HhJTSepQvFUS2QUDxA==
-
-validator@~9.4.1:
-  version "9.4.1"
-  resolved "https://registry.yarnpkg.com/validator/-/validator-9.4.1.tgz#abf466d398b561cd243050112c6ff1de6cc12663"
-  integrity sha512-YV5KjzvRmSyJ1ee/Dm5UED0G+1L4GZnLN3w6/T+zZm8scVua4sOhYKWTUrKa0H/tMiJyO9QLHMPN+9mB/aMunA==
 
 vary@~1.1.2:
   version "1.1.2"
@@ -13594,9 +13575,9 @@ vm-browserify@^1.0.0, vm-browserify@^1.0.1:
   integrity sha512-2ham8XPWTONajOR0ohOKOHXkm3+gaBmGut3SRuu75xLd/RRaY6vqgh8NBYYk7+RW3u5AtzPQZG8F10LHkl0lAQ==
 
 vm2@^3.9.3:
-  version "3.9.8"
-  resolved "https://registry.yarnpkg.com/vm2/-/vm2-3.9.8.tgz#e99c000db042735cd2f94d8db6c42163a17be04e"
-  integrity sha512-/1PYg/BwdKzMPo8maOZ0heT7DLI0DAFTm7YQaz/Lim9oIaFZsJs3EdtalvXuBfZwczNwsYhju75NW4d6E+4q+w==
+  version "3.9.11"
+  resolved "https://registry.yarnpkg.com/vm2/-/vm2-3.9.11.tgz#a880f510a606481719ec3f9803b940c5805a06fe"
+  integrity sha512-PFG8iJRSjvvBdisowQ7iVF580DXb1uCIiGaXgm7tynMR1uTBlv7UJlB1zdv5KJ+Tmq1f0Upnj3fayoEOPpCBKg==
   dependencies:
     acorn "^8.7.0"
     acorn-walk "^8.2.0"
@@ -13857,13 +13838,6 @@ wsrun@^5.2.4:
     throat "^4.1.0"
     yargs "^13.0.0"
 
-xml2js@0.2.8:
-  version "0.2.8"
-  resolved "https://registry.yarnpkg.com/xml2js/-/xml2js-0.2.8.tgz#9b81690931631ff09d1957549faf54f4f980b3c2"
-  integrity sha1-m4FpCTFjH/CdGVdUn69U9PmAs8I=
-  dependencies:
-    sax "0.5.x"
-
 xml2js@^0.4.19:
   version "0.4.23"
   resolved "https://registry.yarnpkg.com/xml2js/-/xml2js-0.4.23.tgz#a0c69516752421eb2ac758ee4d4ccf58843eac66"
@@ -13871,6 +13845,13 @@ xml2js@^0.4.19:
   dependencies:
     sax ">=0.6.0"
     xmlbuilder "~11.0.0"
+
+xml2js@~0.2.8:
+  version "0.2.8"
+  resolved "https://registry.yarnpkg.com/xml2js/-/xml2js-0.2.8.tgz#9b81690931631ff09d1957549faf54f4f980b3c2"
+  integrity sha512-ZHZBIAO55GHCn2jBYByVPHvHS+o3j8/a/qmpEe6kxO3cTnTCWC3Htq9RYJ5G4XMwMMClD2QkXA9SNdPadLyn3Q==
+  dependencies:
+    sax "0.5.x"
 
 xml@^1.0.0:
   version "1.0.1"
