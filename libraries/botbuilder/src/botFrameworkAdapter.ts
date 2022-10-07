@@ -1876,7 +1876,7 @@ export class BotFrameworkAdapter
      * Process a web request by applying a logic function.
      *
      * @param req An incoming HTTP [Request](xref:botbuilder.Request)
-     * @param req The corresponding HTTP [Response](xref:botbuilder.Response)
+     * @param res The corresponding HTTP [Response](xref:botbuilder.Response)
      * @param logic The logic function to apply
      * @returns a promise representing the asynchronous operation.
      */
