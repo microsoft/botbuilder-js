@@ -99,13 +99,7 @@ export class JwtTokenExtractor {
             return null;
         }
 
-        try {
-            return await this.validateToken(parameter, channelId, requiredEndorsements);
-        } catch (err) {
-            // tslint:disable-next-line:no-console
-            console.error('JwtTokenExtractor.getIdentity:err!', err);
-            throw err;
-        }
+        return await this.validateToken(parameter, channelId, requiredEndorsements);
     }
 
     /**
