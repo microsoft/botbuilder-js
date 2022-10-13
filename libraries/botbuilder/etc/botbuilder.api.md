@@ -196,6 +196,7 @@ export abstract class ChannelServiceHandlerBase {
     handleDeleteActivity(authHeader: string, conversationId: string, activityId: string): Promise<void>;
     handleDeleteConversationMember(authHeader: string, conversationId: string, memberId: string): Promise<void>;
     handleGetActivityMembers(authHeader: string, conversationId: string, activityId: string): Promise<ChannelAccount[]>;
+    handleGetConversationMember(authHeader: string, userId: string, conversationId: string): Promise<ChannelAccount>;
     handleGetConversationMembers(authHeader: string, conversationId: string): Promise<ChannelAccount[]>;
     handleGetConversationPagedMembers(authHeader: string, conversationId: string, pageSize?: number, continuationToken?: string): Promise<PagedMembersResult>;
     handleGetConversations(authHeader: string, conversationId: string, continuationToken?: string): Promise<ConversationsResult>;
@@ -208,6 +209,7 @@ export abstract class ChannelServiceHandlerBase {
     protected onDeleteActivity(_claimsIdentity: ClaimsIdentity, _conversationId: string, _activityId: string): Promise<void>;
     protected onDeleteConversationMember(_claimsIdentity: ClaimsIdentity, _conversationId: string, _memberId: string): Promise<void>;
     protected onGetActivityMembers(_claimsIdentity: ClaimsIdentity, _conversationId: string, _activityId: string): Promise<ChannelAccount[]>;
+    protected onGetConversationMember(_claimsIdentity: ClaimsIdentity, _userId: string, _conversationId: string): Promise<ChannelAccount>;
     protected onGetConversationMembers(_claimsIdentity: ClaimsIdentity, _conversationId: string): Promise<ChannelAccount[]>;
     protected onGetConversationPagedMembers(_claimsIdentity: ClaimsIdentity, _conversationId: string, _pageSize?: number, _continuationToken?: string): Promise<PagedMembersResult>;
     protected onGetConversations(_claimsIdentity: ClaimsIdentity, _conversationId: string, _continuationToken?: string): Promise<ConversationsResult>;
@@ -238,6 +240,7 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
 export class CloudSkillHandler extends CloudChannelServiceHandler {
     constructor(adapter: BotAdapter, logic: (context: TurnContext) => Promise<void>, conversationIdFactory: SkillConversationIdFactoryBase, auth: BotFrameworkAuthentication);
     protected onDeleteActivity(claimsIdentity: ClaimsIdentity, conversationId: string, activityId: string): Promise<void>;
+    protected onGetConversationMember(claimsIdentity: ClaimsIdentity, userId: string, conversationId: string): Promise<ChannelAccount>;
     protected onReplyToActivity(claimsIdentity: ClaimsIdentity, conversationId: string, activityId: string, activity: Activity): Promise<ResourceResponse>;
     protected onSendToConversation(claimsIdentity: ClaimsIdentity, conversationId: string, activity: Activity): Promise<ResourceResponse>;
     protected onUpdateActivity(claimsIdentity: ClaimsIdentity, conversationId: string, activityId: string, activity: Activity): Promise<ResourceResponse>;
