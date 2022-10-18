@@ -9,6 +9,7 @@ import {
     ActivityTypes,
     BotAdapter,
     CallerIdConstants,
+    ChannelAccount,
     ResourceResponse,
     SkillConversationIdFactoryBase,
     SkillConversationReference,
@@ -85,6 +86,21 @@ export class SkillHandlerImpl {
         return this.continueConversation(claimsIdentity, conversationId, (context) =>
             context.deleteActivity(activityId)
         );
+    }
+
+    /**
+     * @internal
+     */
+    async onGetMember(claimsIdentity: ClaimsIdentity, userId: string, conversationId: string): Promise<ChannelAccount> {
+        let member: ChannelAccount = null;
+
+        await this.continueConversation(claimsIdentity, conversationId, async (context) => {
+            const client = context.turnState.get(context.adapter.ConnectorClientKey);
+            const conversationId = context.activity.conversation.id;
+            member = await client.conversations.getConversationMember(conversationId, userId);
+        });
+
+        return member;
     }
 
     private async getSkillConversationReference(conversationId: string): Promise<SkillConversationReference> {
