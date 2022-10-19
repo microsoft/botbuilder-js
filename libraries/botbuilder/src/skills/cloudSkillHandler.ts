@@ -8,6 +8,7 @@ import { SkillHandlerImpl } from './skillHandlerImpl';
 import {
     Activity,
     BotAdapter,
+    ChannelAccount,
     ResourceResponse,
     SkillConversationIdFactoryBase,
     SkillConversationReferenceKey,
@@ -170,5 +171,27 @@ export class CloudSkillHandler extends CloudChannelServiceHandler {
         activityId: string
     ): Promise<void> {
         return this.inner.onDeleteActivity(claimsIdentity, conversationId, activityId);
+    }
+
+    /**
+     * getConversationMember() API for Skill.
+     *
+     * @remarks
+     * Get the account of a single conversation member.
+     *
+     * This REST API takes a ConversationId and UserId and returns the ChannelAccount
+     * object representing the member of the conversation.
+     * @param claimsIdentity ClaimsIdentity for the bot, should have AudienceClaim, AppIdClaim and ServiceUrlClaim.
+     * @param userId User ID.
+     * @param conversationId Conversation ID.
+     *
+     * @returns The ChannelAccount object representing the member of the conversation.
+     */
+    protected async onGetConversationMember(
+        claimsIdentity: ClaimsIdentity,
+        userId: string,
+        conversationId: string
+    ): Promise<ChannelAccount> {
+        return this.inner.onGetMember(claimsIdentity, userId, conversationId);
     }
 }

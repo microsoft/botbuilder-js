@@ -55,6 +55,7 @@ export class ChannelServiceRoutes {
         server.post(basePath + RouteConstants.Conversations, this.processCreateConversation.bind(this));
         server.get(basePath + RouteConstants.Conversations, this.processGetConversations.bind(this));
         server.get(basePath + RouteConstants.ConversationMembers, this.processGetConversationMembers.bind(this));
+        server.get(basePath + RouteConstants.ConversationMember, this.processGetConversationMember.bind(this));
         server.get(
             basePath + RouteConstants.ConversationPagedMembers,
             this.processGetConversationPagedMembers.bind(this)
@@ -237,6 +238,25 @@ export class ChannelServiceRoutes {
                 res.status(200);
                 if (channelAccounts) {
                     res.send(channelAccounts);
+                }
+                res.end();
+            })
+            .catch((err) => {
+                ChannelServiceRoutes.handleError(err, res);
+            });
+    }
+
+    /**
+     * @private
+     */
+    private processGetConversationMember(req: WebRequest, res: WebResponse): void {
+        const authHeader = req.headers.authorization || req.headers.Authorization || '';
+        this.channelServiceHandler
+            .handleGetConversationMember(authHeader, req.params.memberId, req.params.conversationId)
+            .then((channelAccount) => {
+                res.status(200);
+                if (channelAccount) {
+                    res.send(channelAccount);
                 }
                 res.end();
             })

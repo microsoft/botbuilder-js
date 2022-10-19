@@ -895,6 +895,8 @@ const testCases = [
             ['isMatch("1", "\\\\d{1}")', true], // "\d" (match [0-9])
             ['isMatch("12.5", "[0-9]+(\\\\.5)")', true], // "\." (match .)
             ['isMatch("12x5", "[0-9]+(\\\\.5)")', false], // "\." (match .)
+            ["isMatch('', '[0-9]')", false], // empty string
+            ["isMatch(nullObj, '[0-9]')", false], // null object
         ],
     },
     {
