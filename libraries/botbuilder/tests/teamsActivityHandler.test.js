@@ -73,6 +73,8 @@ describe('TeamsActivityHandler', function () {
 
             handleTeamsAppBasedLinkQuery() {}
 
+            handleTeamsAnonymousAppBasedLinkQuery() {}
+
             handleTeamsMessagingExtensionQuery() {}
 
             handleTeamsMessagingExtensionSelectItem() {}
@@ -120,7 +122,24 @@ describe('TeamsActivityHandler', function () {
                 .startTest();
         });
 
-        it('activity.name is "composeExtension/queryLink". should return status code [200] when handleTeamsAppBasedLinkQuery method is overridden.', async function () {
+        it('activity.name is "composeExtension/anonymousQueryLink". should return status code [200] when handleTeamsAppBasedLinkQuery method is overridden.', async function () {
+            const bot = new InvokeActivityEmptyHandlers();
+
+            const adapter = new TestAdapter(async (context) => {
+                await bot.run(context);
+            });
+
+            const activity = createInvokeActivity('composeExtension/anonymousQueryLink');
+
+            await adapter
+                .send(activity)
+                .assertReply((activity) => {
+                    assert.strictEqual(activity.value.status, 200, 'should be status code 200.');
+                })
+                .startTest();
+        });
+
+        it('activity.name is "composeExtension/queryLink". should return status code [200] when handleTeamsAnonymousAppBasedLinkQuery method is overridden.', async function () {
             const bot = new InvokeActivityEmptyHandlers();
 
             const adapter = new TestAdapter(async (context) => {
