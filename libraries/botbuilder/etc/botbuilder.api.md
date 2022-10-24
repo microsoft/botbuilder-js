@@ -51,6 +51,7 @@ import { NodeWebSocketFactoryBase } from 'botframework-streaming';
 import { O365ConnectorCardActionQuery } from 'botbuilder-core';
 import { PagedMembersResult } from 'botbuilder-core';
 import { PagedResult } from 'botbuilder-core';
+import { ReadReceiptInfo } from 'botframework-connector';
 import { RequestHandler } from 'botframework-streaming';
 import { ResourceResponse } from 'botbuilder-core';
 import { SigninStateVerificationQuery } from 'botbuilder-core';
@@ -195,6 +196,7 @@ export abstract class ChannelServiceHandlerBase {
     handleDeleteActivity(authHeader: string, conversationId: string, activityId: string): Promise<void>;
     handleDeleteConversationMember(authHeader: string, conversationId: string, memberId: string): Promise<void>;
     handleGetActivityMembers(authHeader: string, conversationId: string, activityId: string): Promise<ChannelAccount[]>;
+    handleGetConversationMember(authHeader: string, userId: string, conversationId: string): Promise<ChannelAccount>;
     handleGetConversationMembers(authHeader: string, conversationId: string): Promise<ChannelAccount[]>;
     handleGetConversationPagedMembers(authHeader: string, conversationId: string, pageSize?: number, continuationToken?: string): Promise<PagedMembersResult>;
     handleGetConversations(authHeader: string, conversationId: string, continuationToken?: string): Promise<ConversationsResult>;
@@ -207,6 +209,7 @@ export abstract class ChannelServiceHandlerBase {
     protected onDeleteActivity(_claimsIdentity: ClaimsIdentity, _conversationId: string, _activityId: string): Promise<void>;
     protected onDeleteConversationMember(_claimsIdentity: ClaimsIdentity, _conversationId: string, _memberId: string): Promise<void>;
     protected onGetActivityMembers(_claimsIdentity: ClaimsIdentity, _conversationId: string, _activityId: string): Promise<ChannelAccount[]>;
+    protected onGetConversationMember(_claimsIdentity: ClaimsIdentity, _userId: string, _conversationId: string): Promise<ChannelAccount>;
     protected onGetConversationMembers(_claimsIdentity: ClaimsIdentity, _conversationId: string): Promise<ChannelAccount[]>;
     protected onGetConversationPagedMembers(_claimsIdentity: ClaimsIdentity, _conversationId: string, _pageSize?: number, _continuationToken?: string): Promise<PagedMembersResult>;
     protected onGetConversations(_claimsIdentity: ClaimsIdentity, _conversationId: string, _continuationToken?: string): Promise<ConversationsResult>;
@@ -237,6 +240,7 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
 export class CloudSkillHandler extends CloudChannelServiceHandler {
     constructor(adapter: BotAdapter, logic: (context: TurnContext) => Promise<void>, conversationIdFactory: SkillConversationIdFactoryBase, auth: BotFrameworkAuthentication);
     protected onDeleteActivity(claimsIdentity: ClaimsIdentity, conversationId: string, activityId: string): Promise<void>;
+    protected onGetConversationMember(claimsIdentity: ClaimsIdentity, userId: string, conversationId: string): Promise<ChannelAccount>;
     protected onReplyToActivity(claimsIdentity: ClaimsIdentity, conversationId: string, activityId: string, activity: Activity): Promise<ResourceResponse>;
     protected onSendToConversation(claimsIdentity: ClaimsIdentity, conversationId: string, activity: Activity): Promise<ResourceResponse>;
     protected onUpdateActivity(claimsIdentity: ClaimsIdentity, conversationId: string, activityId: string, activity: Activity): Promise<ResourceResponse>;
@@ -355,6 +359,7 @@ export class StreamingHttpClient implements HttpClient {
 export class TeamsActivityHandler extends ActivityHandler {
     protected dispatchConversationUpdateActivity(context: TurnContext): Promise<void>;
     protected dispatchEventActivity(context: TurnContext): Promise<void>;
+    protected handleTeamsAnonymousAppBasedLinkQuery(_context: TurnContext, _query: AppBasedLinkQuery): Promise<MessagingExtensionResponse>;
     protected handleTeamsAppBasedLinkQuery(_context: TurnContext, _query: AppBasedLinkQuery): Promise<MessagingExtensionResponse>;
     protected handleTeamsCardActionInvoke(_context: TurnContext): Promise<InvokeResponse>;
     protected handleTeamsFileConsent(context: TurnContext, fileConsentCardResponse: FileConsentCardResponse): Promise<void>;
@@ -395,6 +400,8 @@ export class TeamsActivityHandler extends ActivityHandler {
     onTeamsMembersAddedEvent(handler: (membersAdded: TeamsChannelAccount[], teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
     protected onTeamsMembersRemoved(context: TurnContext): Promise<void>;
     onTeamsMembersRemovedEvent(handler: (membersRemoved: TeamsChannelAccount[], teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
+    protected onTeamsReadReceipt(context: TurnContext): Promise<void>;
+    onTeamsReadReceiptEvent(handler: (receiptInfo: ReadReceiptInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
     protected onTeamsTeamArchived(context: any): Promise<void>;
     onTeamsTeamArchivedEvent(handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
     protected onTeamsTeamDeleted(context: any): Promise<void>;
@@ -411,6 +418,9 @@ export class TeamsActivityHandler extends ActivityHandler {
 
 // @public
 export function teamsGetChannelId(activity: Activity): string | null;
+
+// @public
+export function teamsGetSelectedChannelId(activity: Activity): string;
 
 // @public
 export function teamsGetTeamId(activity: Activity): string | null;
