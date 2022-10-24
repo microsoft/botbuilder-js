@@ -100,6 +100,11 @@ export class TeamsActivityHandler extends ActivityHandler {
                             await this.handleTeamsAppBasedLinkQuery(context, context.activity.value)
                         );
 
+                    case 'composeExtension/anonymousQueryLink':
+                        return ActivityHandler.createInvokeResponse(
+                            await this.handleTeamsAnonymousAppBasedLinkQuery(context, context.activity.value)
+                        );
+
                     case 'composeExtension/query':
                         return ActivityHandler.createInvokeResponse(
                             await this.handleTeamsMessagingExtensionQuery(context, context.activity.value)
@@ -375,6 +380,22 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @returns The Messaging Extension Response for the query.
      */
     protected async handleTeamsAppBasedLinkQuery(
+        _context: TurnContext,
+        _query: AppBasedLinkQuery
+    ): Promise<MessagingExtensionResponse> {
+        throw new Error('NotImplemented');
+    }
+
+    /**
+     * Receives invoke activities with Activity name of 'composeExtension/anonymousQueryLink'
+     *
+     * @remarks
+     * Used in creating a Search-based Message Extension.
+     * @param _context A context object for this turn.
+     * @param _query he invoke request body type for app-based link query.
+     * @returns The Messaging Extension Response for the query.
+     */
+    protected async handleTeamsAnonymousAppBasedLinkQuery(
         _context: TurnContext,
         _query: AppBasedLinkQuery
     ): Promise<MessagingExtensionResponse> {
