@@ -401,7 +401,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     ): Promise<MessagingExtensionResponse> {
         throw new Error('NotImplemented');
     }
-    
+
     /**
      * Receives invoke activities with the name 'composeExtension/query'.
      *
