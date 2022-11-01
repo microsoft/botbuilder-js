@@ -55,7 +55,7 @@ args.push('200000');
 files.forEach(function (file) {
   if (file.length > 0 && file.trim()[0] !== '#') {
     // trim trailing \r if it exists
-    file = file.replace('\r', '');
+    file = file.replaceAll('\r', '');
 
     if (root) {
       args.push('test/' + file);
