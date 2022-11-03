@@ -709,12 +709,12 @@ describe('LG', function () {
         const evaled = templates.expandTemplate('ExpanderT1BackSlash');
         assert.strictEqual(evaled.length, 2);
         const expectedResults = [
-            '{"lgType":"MyStruct","text":"Hi \\"backslash\\" allowed","speak":"how old are you?"}',
-            '{"lgType":"MyStruct","text":"Hi \\"backslash\\" allowed","speak":"what\'s your age?"}',
+            '{"lgType":"MyStruct","text":"Hi \\\\backslash\\\\ allowed","speak":"how old are you?"}',
+            '{"lgType":"MyStruct","text":"Hi \\\\backslash\\\\ allowed","speak":"what\'s your age?"}',
         ];
 
         expectedResults.forEach((value, index) => {
-            assert.strictEqual(JSON.stringify(evaled[index]), JSON.stringify(JSON.parse(value)));
+            assert.strictEqual(JSON.stringify(evaled[index]), value);
         });
     });
 
