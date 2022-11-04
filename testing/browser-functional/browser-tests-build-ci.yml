@@ -37,7 +37,7 @@ steps:
     script: |
       if ($(ChromeDriverVersionOverride)) {
         $secondLatestVersion = $(ChromeDriverVersionOverride);
-        Write-Host "$packageName version override = $secondLatestVersion";
+        Write-Host "Using ChromeDriverVersionOverride = $secondLatestVersion";
       } else {
         $packageName = "chromedriver";
 
