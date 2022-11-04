@@ -36,7 +36,7 @@ steps:
     targetType: inline
     script: |
       if ($null -ne $Env:ChromeDriverVersionOverride -and $Env:ChromeDriverVersionOverride.Trim() -ne '') {
-        $secondLatestVersion = $(ChromeDriverVersionOverride);
+        $secondLatestVersion = $Env:ChromeDriverVersionOverride;
         Write-Host "Using var ChromeDriverVersionOverride = $secondLatestVersion";
       } else {
         $packageName = "chromedriver";
