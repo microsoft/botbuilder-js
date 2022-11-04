@@ -35,7 +35,7 @@ steps:
   inputs:
     targetType: inline
     script: |
-      if ($(ChromeDriverVersionOverride)) {
+      if ($null -ne $Env:ChromeDriverVersionOverride -and $Env:ChromeDriverVersionOverride.Trim() -ne '') {
         $secondLatestVersion = $(ChromeDriverVersionOverride);
         Write-Host "Using var ChromeDriverVersionOverride = $secondLatestVersion";
       } else {
