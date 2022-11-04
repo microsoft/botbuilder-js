@@ -17,6 +17,7 @@ variables:
   TestWebApp: 'BrowserBotWebApp$(Build.BuildId)'
   TESTURI: 'https://$(TestWebApp).azurewebsites.net/'
 #  AzureSubscription: define this in Azure
+#  ChromeDriverVersionOverride: define this in Azure. Sample values: '107.0.1' No override = ''.
 
 steps:
 
@@ -34,14 +35,19 @@ steps:
   inputs:
     targetType: inline
     script: |
-      $packageName = "chromedriver";
+      if ($(ChromeDriverVersionOverride)) {
+        $secondLatestVersion = $(ChromeDriverVersionOverride);
+        Write-Host "$packageName version override = $secondLatestVersion";
+      } else {
+        $packageName = "chromedriver";
 
-      Write-Host "Get $packageName second latest version from npmjs.com";
-      " "
-      $versions = npm view $packageName versions | ConvertFrom-Json;
+        Write-Host "Get $packageName second latest version from npmjs.com";
+        " "
+        $versions = npm view $packageName versions | ConvertFrom-Json;
 
-      $secondLatestVersion = $versions[-2];
-      Write-Host "$packageName second latest = $secondLatestVersion";
+        $secondLatestVersion = $versions[-2];
+        Write-Host "$packageName second latest = $secondLatestVersion";
+      }
 
       "##vso[task.setvariable variable=DriverVersion;]$secondLatestVersion";
   displayName: 'Get second latest chromedriver version number from npmjs.com'
