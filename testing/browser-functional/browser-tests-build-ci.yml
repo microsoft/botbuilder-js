@@ -36,12 +36,14 @@ steps:
     targetType: inline
     script: |
       if ($null -ne $Env:ChromeDriverVersionOverride -and $Env:ChromeDriverVersionOverride.Trim() -ne '') {
+        Write-Host "Pipeline var ChromeDriverVersionOverride is set.";
         $secondLatestVersion = $Env:ChromeDriverVersionOverride;
         Write-Host "Using var ChromeDriverVersionOverride = $secondLatestVersion";
       } else {
+        Write-Host "Pipeline var ChromeDriverVersionOverride is not set.";
         $packageName = "chromedriver";
 
-        Write-Host "Get $packageName second latest version from npmjs.com";
+        Write-Host "Getting $packageName second latest version from npmjs.com";
         " "
         $versions = npm view $packageName versions | ConvertFrom-Json;
 
