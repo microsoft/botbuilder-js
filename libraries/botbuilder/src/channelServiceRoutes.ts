@@ -402,7 +402,8 @@ export class ChannelServiceRoutes {
                 }
             } else {
                 let requestData = '';
-                req.on('data', (chunk) => {
+                // eslint-disable-next-line prettier/prettier
+                req.on('data', (chunk) => { // lgtm[js/stack-trace-exposure]
                     requestData += chunk;
                 });
                 req.on('end', () => {
