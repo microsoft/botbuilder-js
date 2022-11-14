@@ -46,7 +46,7 @@
     "node-fetch": "2.6.7",
     "underscore": "1.13.1",
     "json-schema": "0.4.0",
-    "@xmldom/xmldom": "0.8.4"
+    "@xmldom/xmldom": "0.8.5"
   },
   "devDependencies": {
     "@azure/logger": "^1.0.2",

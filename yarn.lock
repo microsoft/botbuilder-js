@@ -2370,10 +2370,10 @@
     "@webassemblyjs/wast-parser" "1.9.0"
     "@xtuc/long" "4.2.2"
 
-"@xmldom/xmldom@0.8.4", "@xmldom/xmldom@^0.7.0", "@xmldom/xmldom@^0.8.4":
-  version "0.8.4"
-  resolved "https://pkgs.dev.azure.com/FuseLabs/_packaging/SDK_JS_org/npm/registry/@xmldom/xmldom/-/xmldom-0.8.4.tgz#05b76034d3e09d4b9d309d9b862994de23e7687d"
-  integrity sha1-BbdgNNPgnUudMJ2bhimU3iPnaH0=
+"@xmldom/xmldom@0.8.5", "@xmldom/xmldom@^0.7.0", "@xmldom/xmldom@^0.8.5":
+  version "0.8.5"
+  resolved "https://pkgs.dev.azure.com/FuseLabs/_packaging/SDK_JS_org/npm/registry/@xmldom/xmldom/-/xmldom-0.8.5.tgz#7f4b797cfda39355b512b4cfcc66b49b5d93d5f3"
+  integrity sha1-f0t5fP2jk1W1ErTPzGa0m12T1fM=
 
 "@xtuc/ieee754@^1.2.0":
   version "1.2.0"
