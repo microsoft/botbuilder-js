@@ -13863,10 +13863,10 @@ xmlbuilder@~11.0.0:
   resolved "https://registry.yarnpkg.com/xmlbuilder/-/xmlbuilder-11.0.1.tgz#be9bae1c8a046e76b31127726347d0ad7002beb3"
   integrity sha512-fDlsI/kFEx7gLvbecc0/ohLG50fugQp8ryHzMTuW9vSa1GJ0XYWKnhsUx7oie3G98+r56aTQIUB4kht42R3JvA==
 
-"xmldom@>= 0.1.x":
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/xmldom/-/xmldom-0.4.0.tgz#8771e482a333af44587e30ce026f0998c23f3830"
-  integrity sha512-2E93k08T30Ugs+34HBSTQLVtpi6mCddaY8uO+pMNk1pqSjV5vElzn4mmh6KLxN3hki8rNcHSYzILoh3TEWORvA==
+xmldom@0.5.0, "xmldom@>= 0.1.x":
+  version "0.5.0"
+  resolved "https://pkgs.dev.azure.com/FuseLabs/_packaging/SDK_JS_org/npm/registry/xmldom/-/xmldom-0.5.0.tgz#193cb96b84aa3486127ea6272c4596354cb4962e"
+  integrity sha1-GTy5a4SqNIYSfqYnLEWWNUy0li4=
 
 xpath.js@~1.1.0:
   version "1.1.0"
