@@ -2370,10 +2370,10 @@
     "@webassemblyjs/wast-parser" "1.9.0"
     "@xtuc/long" "4.2.2"
 
-"@xmldom/xmldom@0.8.5", "@xmldom/xmldom@^0.7.0", "@xmldom/xmldom@^0.8.5":
-  version "0.8.5"
-  resolved "https://pkgs.dev.azure.com/FuseLabs/_packaging/SDK_JS_org/npm/registry/@xmldom/xmldom/-/xmldom-0.8.5.tgz#7f4b797cfda39355b512b4cfcc66b49b5d93d5f3"
-  integrity sha1-f0t5fP2jk1W1ErTPzGa0m12T1fM=
+"@xmldom/xmldom@0.8.6", "@xmldom/xmldom@^0.7.0", "@xmldom/xmldom@^0.8.6":
+  version "0.8.6"
+  resolved "https://pkgs.dev.azure.com/FuseLabs/_packaging/SDK_JS_org/npm/registry/@xmldom/xmldom/-/xmldom-0.8.6.tgz#8a1524eb5bd5e965c1e3735476f0262469f71440"
+  integrity sha1-ihUk61vV6WXB43NUdvAmJGn3FEA=
 
 "@xtuc/ieee754@^1.2.0":
   version "1.2.0"
@@ -13863,7 +13863,7 @@ xmlbuilder@~11.0.0:
   resolved "https://registry.yarnpkg.com/xmlbuilder/-/xmlbuilder-11.0.1.tgz#be9bae1c8a046e76b31127726347d0ad7002beb3"
   integrity sha512-fDlsI/kFEx7gLvbecc0/ohLG50fugQp8ryHzMTuW9vSa1GJ0XYWKnhsUx7oie3G98+r56aTQIUB4kht42R3JvA==
 
-xmldom@0.5.0, "xmldom@>= 0.1.x":
+"xmldom@>= 0.1.x":
   version "0.5.0"
   resolved "https://pkgs.dev.azure.com/FuseLabs/_packaging/SDK_JS_org/npm/registry/xmldom/-/xmldom-0.5.0.tgz#193cb96b84aa3486127ea6272c4596354cb4962e"
   integrity sha1-GTy5a4SqNIYSfqYnLEWWNUy0li4=
