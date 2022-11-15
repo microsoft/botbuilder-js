@@ -264,14 +264,10 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
             const tempRes: Record<string, unknown>[] = [];
             for (const res of finalResult) {
                 for (const refValue of templateRefValues.get(templateRefValueKey)) {
-                    tempRes.push(
-                        JSON.parse(
-                            JSON.stringify(res).replace(templateRefValueKey, refValue.toString().replace(/"/g, '\\"'))
-                        )
-                    );
+                    const currentRefValue = refValue.toString().replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+                    tempRes.push(JSON.parse(JSON.stringify(res).replace(templateRefValueKey, currentRefValue)));
                 }
             }
-
             finalResult = tempRes;
         }
 

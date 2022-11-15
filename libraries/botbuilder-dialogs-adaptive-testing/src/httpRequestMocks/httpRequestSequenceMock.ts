@@ -85,7 +85,7 @@ export class HttpRequestSequenceMock extends HttpRequestMock implements HttpRequ
         path = path.startsWith('/') ? path : '/' + path;
         if (path.includes('*')) {
             // eslint-disable-next-line security/detect-non-literal-regexp
-            path = new RegExp(path.replace('*', '.*'));
+            path = new RegExp(path.split('*').join('.*'));
         }
         if (this.method) {
             nock(url.origin)
