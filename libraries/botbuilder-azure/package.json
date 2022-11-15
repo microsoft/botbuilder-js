@@ -31,7 +31,9 @@
     "@azure/cosmos": "^3.3.1",
     "azure-storage": "2.10.7",
     "botbuilder": "4.1.6",
-    "lodash": "^4.17.20"
+    "lodash": "^4.17.20",
+    "bcrypt": "^5.0.1",
+    "@types/bcrypt": "^5.0.0"
   },
   "devDependencies": {
     "fs-extra": "^7.0.1",
