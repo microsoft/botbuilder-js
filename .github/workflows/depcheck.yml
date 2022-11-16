@@ -35,6 +35,8 @@ jobs:
           path: ${{ steps.yarn-cache-dir.outputs.dir }}
           key: ${{ runner.os }}-node16.x-yarn-${{ hashFiles('**/yarn.lock') }}
           auth-token: ${{ secrets.AZURE_DEVOPS_TOKEN }}
+        env:
+          YARN_NPM_AUTH_TOKEN: ${{ secrets.AZURE_DEVOPS_TOKEN }}
 
       - name: yarn
         run: yarn --frozen-lockfile
