@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import * as crypto from 'crypto';
+import { hashSync } from 'bcrypt';
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace CosmosDbKeyEscape {
@@ -73,11 +73,8 @@ export namespace CosmosDbKeyEscape {
             }
 
             if (key.length > maxKeyLength) {
-                const hash = crypto.createHash('sha256');
-                hash.update(key);
-                // combine truncated key with hash of self for extra uniqueness
-                const hex = hash.digest('hex');
-                key = key.substr(0, maxKeyLength - hex.length) + hex;
+                const saltRounds = 10;
+                key = hashSync(key, saltRounds);
             }
             return key;
         }

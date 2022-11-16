@@ -96,6 +96,12 @@ They are ${ShowAlarm(alarms[1])}
     ${ExpanderT2()}
 ]
 
+# ExpanderT1BackSlash
+[MyStruct
+    Text = Hi \backslash\ allowed
+    ${ExpanderT2()}
+]
+
 # ExpanderT2
 [MyStruct
     Speak = ${GetAge()}
