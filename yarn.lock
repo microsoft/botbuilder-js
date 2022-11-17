@@ -9430,8 +9430,8 @@ move-concurrently@^1.0.1:
 
 ms-rest-azure@2.6.2, ms-rest-azure@^2.5.7, ms-rest-azure@^2.6.2:
   version "2.6.2"
-  resolved "https://registry.yarnpkg.com/ms-rest-azure/-/ms-rest-azure-2.6.2.tgz#65a08799adb417678ce5722669bc15ca740b429e"
-  integrity sha512-h74ezkiMQ1y8tD0kf0MK2kdCONAP70i032Dt8kBrFsvj3ZqGRj+DHHNRCGLDfkBkSXhILGMeiF8Ji/iSCUJLJg==
+  resolved "https://pkgs.dev.azure.com/FuseLabs/_packaging/SDK_JS_org/npm/registry/ms-rest-azure/-/ms-rest-azure-2.6.2.tgz#65a08799adb417678ce5722669bc15ca740b429e"
+  integrity sha1-ZaCHma20F2eM5XImabwVynQLQp4=
   dependencies:
     adal-node "^0.2.2"
     async "^2.6.4"
