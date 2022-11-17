@@ -37,9 +37,6 @@ jobs:
 
       - name: yarn
         run: yarn --frozen-lockfile
-        env:
-          YARN_NPM_AUTH_TOKEN: ${{ secrets.AZURE_DEVOPS_TOKEN }}
-          NUGET_AUTH_TOKEN: ${{ secrets.AZURE_DEVOPS_TOKEN }}
 
       - name: yarn depcheck
         run: yarn depcheck
