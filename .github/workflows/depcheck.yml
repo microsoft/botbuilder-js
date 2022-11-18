@@ -37,8 +37,8 @@ jobs:
           path: ${{ steps.yarn-cache-dir.outputs.dir }}
           key: ${{ runner.os }}-node16.x-yarn-${{ hashFiles('**/yarn.lock') }}
 
-      - name: auth setup
-        run: echo "//pkgs.dev.azure.com/FuseLabs/_packaging/SDK_JS_org/npm/registry/:_authToken=${{ secrets.AZURE_DEVOPS_TOKEN }}" >> .npmrc
+      # - name: auth setup
+      #   run: echo "//pkgs.dev.azure.com/FuseLabs/_packaging/SDK_JS_org/npm/registry/:_authToken=${{ secrets.AZURE_DEVOPS_TOKEN }}" >> .npmrc
 
       - name: yarn
         run: yarn --frozen-lockfile
