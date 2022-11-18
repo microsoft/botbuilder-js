@@ -25,7 +25,7 @@ jobs:
         with:
           node-version: 16.x
           token: ${{ secrets.AZURE_DEVOPS_TOKEN }}
-          registry-url: pkgs.dev.azure.com/FuseLabs/_packaging/SDK_JS_org/npm/registry/
+          registry-url: https://pkgs.dev.azure.com/FuseLabs/_packaging/SDK_JS_org/npm/registry/
 
       - name: yarn cache dir
         id: yarn-cache-dir
