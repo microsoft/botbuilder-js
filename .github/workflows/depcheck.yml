@@ -24,6 +24,9 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16.x
+          auth-token: ${{ secrets.AZURE_DEVOPS_TOKEN }}
+          token: ${{ secrets.AZURE_DEVOPS_TOKEN }}
+          registry-url: pkgs.dev.azure.com/FuseLabs/_packaging/SDK_JS_org/npm/registry
 
       - name: yarn cache dir
         id: yarn-cache-dir
