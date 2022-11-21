@@ -79,9 +79,9 @@ steps:
   displayName: 'Upgrade chromedriver reference to second latest version'
 
 - task: NodeTool@0
-  displayName: use node 12.x
+  displayName: use node 16.x
   inputs:
-    versionSpec: 12.x
+    versionSpec: 16.x
 
 - script: cd testing/browser-functional/browser-echo-bot && yarn && yarn build
   displayName: yarn install and build browser-echo-bot
