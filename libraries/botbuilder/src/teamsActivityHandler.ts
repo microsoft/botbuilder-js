@@ -73,39 +73,6 @@ const TeamsMeetingEndT = z
  * Developers wanting to handle Invoke activities *must* override methods starting with `handle...()` (e.g. `handleTeamsTaskModuleFetch()`).
  */
 export class TeamsActivityHandler extends ActivityHandler {
-    
-    /**
-     * Called at the start of the event emission process.
-     *
-     * @param context The context object for the current turn.
-     *
-     * @remarks
-     * Override this method to use custom logic for emitting events.
-     *
-     * The default logic is to call any type-specific and sub-type handlers registered via
-     * the various _on event_ methods. Type-specific events are defined for:
-     * - Message activities
-     * - Message update activities
-     * - Message delete activities
-     * - Conversation update activities
-     * - Message reaction activities
-     * - Event activities
-     * - Invoke activities
-     * - _Unrecognized_ activities, ones that this class has not otherwise defined an _on event_ method for.
-     */
-    protected async onTurnActivity(context: TurnContext): Promise<void> {
-        switch (context.activity.type) {
-            case ActivityTypes.MessageUpdate:
-                await this.onMessageUpdateActivity(context);
-                break;
-            case ActivityTypes.MessageDelete:
-                await this.onMessageDeleteActivity(context);
-                break;
-        }
-
-        await super.onTurnActivity(context);
-    }
-
     /**
      * Invoked when an invoke activity is received from the connector.
      * Invoke activities can be used to communicate many different things.
@@ -646,7 +613,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param context A context object for this turn.
      * @returns A promise that represents the work queued.
      */
-     protected async onMessageUpdateActivity(context: TurnContext): Promise<void> {
+     protected async dispatchMessageUpdateActivity(context: TurnContext): Promise<void> {
         if (context.activity.channelId == 'msteams') {
             const channelData = context.activity.channelData as TeamsChannelData;
 
@@ -658,10 +625,10 @@ export class TeamsActivityHandler extends ActivityHandler {
                     return await this.onTeamsEditMessage(context);
 
                 default:
-                    return this.defaultNextEvent(context)();
+                    return this.dispatchMessageUpdateActivity(context);
             }
         } else {
-            return await this.defaultNextEvent(context)();
+            return await this.dispatchMessageUpdateActivity(context);
         }
     }
 
@@ -671,7 +638,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param context A context object for this turn.
      * @returns A promise that represents the work queued.
      */
-     protected async onMessageDeleteActivity(context: TurnContext): Promise<void> {
+     protected async dispatchMessageDeleteActivity(context: TurnContext): Promise<void> {
         if (context.activity.channelId == 'msteams') {
             const channelData = context.activity.channelData as TeamsChannelData;
 
@@ -680,10 +647,10 @@ export class TeamsActivityHandler extends ActivityHandler {
                     return await this.onTeamsSoftDeleteMessage(context);
 
                 default:
-                    return this.defaultNextEvent(context)();
+                    return this.dispatchMessageDeleteActivity(context);
             }
         } else {
-            return await this.defaultNextEvent(context)();
+            return await this.dispatchMessageDeleteActivity(context);
         }
     }
 

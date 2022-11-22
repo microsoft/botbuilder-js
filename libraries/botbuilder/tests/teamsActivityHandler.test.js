@@ -109,7 +109,7 @@ describe('TeamsActivityHandler', function () {
         });
     });
 
-    describe.only('onMessageUpdateActivity', function () {
+    describe.only('dispatchMessageUpdateActivity', function () {
         function createMessageUpdateActivity(channelDataEventType) {
             const activity = {
                 type: ActivityTypes.MessageUpdate,
@@ -228,32 +228,9 @@ describe('TeamsActivityHandler', function () {
                     .startTest();
             })    
         })
-
-        it('should route to defaultNextEvent if it is a non-existent subtype', async function () {
-            var routedToDefaultNextEvent = false;
-
-            class TestActivityHandler extends TeamsActivityHandler {
-                defaultNextEvent(context){
-                    return () => { routedToDefaultNextEvent = true };
-                }
-            }
-            
-            const bot = new TestActivityHandler();
-
-            const adapter = new TestAdapter(async (context) => {
-                await bot.run(context);
-            })
-
-            await adapter
-                .send(createMessageUpdateActivity("nonexistent-subtype"))
-                .then(() => {
-                    assert(routedToDefaultNextEvent, "did not route to the default next event not called");
-                })
-                .startTest();
-        })
     })
 
-    describe.only('onMessageDeleteActivity', function () {
+    describe.only('dispatchMessageDeleteActivity', function () {
         function createMessageDeleteActivity(channelDataEventType) {
             const activity = {
                 type: ActivityTypes.MessageDelete,
@@ -317,28 +294,6 @@ describe('TeamsActivityHandler', function () {
                     .startTest();
             })    
 
-        })
-
-        it('should route to defaultNextEvent if it is a non-existent subtype', async function () {
-            var routedToDefaultNextEvent = false;
-            class TestActivityHandler extends TeamsActivityHandler {
-                defaultNextEvent(context){
-                    return () => { routedToDefaultNextEvent = true };
-                }
-            }
-            
-            const bot = new TestActivityHandler();
-
-            const adapter = new TestAdapter(async (context) => {
-                await bot.run(context);
-            })
-
-            await adapter
-                .send(createMessageDeleteActivity("nonexistent-subtype"))
-                .then(() => {
-                    assert(routedToDefaultNextEvent, "did not route to the default next event not called");
-                })
-                .startTest();
         })
     })
 
