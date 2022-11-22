@@ -383,6 +383,8 @@ export class TeamsActivityHandler extends ActivityHandler {
     protected handleTeamsTaskModuleFetch(_context: TurnContext, _taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse>;
     protected handleTeamsTaskModuleSubmit(_context: TurnContext, _taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse>;
     protected onInvokeActivity(context: TurnContext): Promise<InvokeResponse>;
+    protected onMessageDeleteActivity(context: TurnContext): Promise<void>;
+    protected onMessageUpdateActivity(context: TurnContext): Promise<void>;
     protected onSignInInvoke(context: TurnContext): Promise<void>;
     protected onTeamsChannelCreated(context: any): Promise<void>;
     onTeamsChannelCreatedEvent(handler: (channelInfo: ChannelInfo, teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
@@ -392,6 +394,8 @@ export class TeamsActivityHandler extends ActivityHandler {
     onTeamsChannelRenamedEvent(handler: (channelInfo: ChannelInfo, teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
     protected onTeamsChannelRestored(context: any): Promise<void>;
     onTeamsChannelRestoredEvent(handler: (channelInfo: ChannelInfo, teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
+    protected onTeamsEditMessage(context: TurnContext): Promise<void>;
+    onTeamsEditMessageEvent(handler: (context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
     protected onTeamsMeetingEnd(context: TurnContext): Promise<void>;
     onTeamsMeetingEndEvent(handler: (meeting: MeetingEndEventDetails, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
     protected onTeamsMeetingStart(context: TurnContext): Promise<void>;
@@ -402,6 +406,8 @@ export class TeamsActivityHandler extends ActivityHandler {
     onTeamsMembersRemovedEvent(handler: (membersRemoved: TeamsChannelAccount[], teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
     protected onTeamsReadReceipt(context: TurnContext): Promise<void>;
     onTeamsReadReceiptEvent(handler: (receiptInfo: ReadReceiptInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
+    protected onTeamsSoftDeleteMessage(context: TurnContext): Promise<void>;
+    onTeamsSoftDeleteMessageEvent(handler: (context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
     protected onTeamsTeamArchived(context: any): Promise<void>;
     onTeamsTeamArchivedEvent(handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
     protected onTeamsTeamDeleted(context: any): Promise<void>;
@@ -414,6 +420,9 @@ export class TeamsActivityHandler extends ActivityHandler {
     onTeamsTeamRestoredEvent(handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
     protected onTeamsTeamUnarchived(context: any): Promise<void>;
     onTeamsTeamUnarchivedEvent(handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
+    protected onTeamsUndeleteMessage(context: TurnContext): Promise<void>;
+    onTeamsUndeleteMessageEvent(handler: (context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
+    protected onTurnActivity(context: TurnContext): Promise<void>;
 }
 
 // @public

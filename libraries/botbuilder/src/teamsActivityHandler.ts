@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import {
+ import {
     ActivityHandler,
     AppBasedLinkQuery,
     ChannelInfo,
@@ -32,6 +32,7 @@ import {
     TurnContext,
     tokenExchangeOperationName,
     verifyStateOperationName,
+    ActivityTypes,
 } from 'botbuilder-core';
 import { ReadReceiptInfo } from 'botframework-connector';
 import { TeamsInfo } from './teamsInfo';
@@ -72,6 +73,39 @@ const TeamsMeetingEndT = z
  * Developers wanting to handle Invoke activities *must* override methods starting with `handle...()` (e.g. `handleTeamsTaskModuleFetch()`).
  */
 export class TeamsActivityHandler extends ActivityHandler {
+    
+    /**
+     * Called at the start of the event emission process.
+     *
+     * @param context The context object for the current turn.
+     *
+     * @remarks
+     * Override this method to use custom logic for emitting events.
+     *
+     * The default logic is to call any type-specific and sub-type handlers registered via
+     * the various _on event_ methods. Type-specific events are defined for:
+     * - Message activities
+     * - Message update activities
+     * - Message delete activities
+     * - Conversation update activities
+     * - Message reaction activities
+     * - Event activities
+     * - Invoke activities
+     * - _Unrecognized_ activities, ones that this class has not otherwise defined an _on event_ method for.
+     */
+    protected async onTurnActivity(context: TurnContext): Promise<void> {
+        switch (context.activity.type) {
+            case ActivityTypes.MessageUpdate:
+                await this.onMessageUpdateActivity(context);
+                break;
+            case ActivityTypes.MessageDelete:
+                await this.onMessageDeleteActivity(context);
+                break;
+        }
+
+        await super.onTurnActivity(context);
+    }
+
     /**
      * Invoked when an invoke activity is received from the connector.
      * Invoke activities can be used to communicate many different things.
@@ -607,6 +641,89 @@ export class TeamsActivityHandler extends ActivityHandler {
     }
 
     /**
+     * Override this method to change the dispatching of MessageUpdate activities.
+     *
+     * @param context A context object for this turn.
+     * @returns A promise that represents the work queued.
+     */
+     protected async onMessageUpdateActivity(context: TurnContext): Promise<void> {
+        if (context.activity.channelId == 'msteams') {
+            const channelData = context.activity.channelData as TeamsChannelData;
+
+            switch (channelData.eventType) {
+                case 'undeleteMessage':
+                    return await this.onTeamsUndeleteMessage(context);
+
+                case 'editMessage':
+                    return await this.onTeamsEditMessage(context);
+
+                default:
+                    return this.defaultNextEvent(context)();
+            }
+        } else {
+            return await this.defaultNextEvent(context)();
+        }
+    }
+
+    /**
+     * Override this method to change the dispatching of MessageDelete activities.
+     *
+     * @param context A context object for this turn.
+     * @returns A promise that represents the work queued.
+     */
+     protected async onMessageDeleteActivity(context: TurnContext): Promise<void> {
+        if (context.activity.channelId == 'msteams') {
+            const channelData = context.activity.channelData as TeamsChannelData;
+
+            switch (channelData.eventType) {
+                case 'softDeleteMessage':
+                    return await this.onTeamsSoftDeleteMessage(context);
+
+                default:
+                    return this.defaultNextEvent(context)();
+            }
+        } else {
+            return await this.defaultNextEvent(context)();
+        }
+    }
+
+    /**
+     * Called in `dispatchMessageUpdateActivity()` to trigger the `'TeamsUndeleteMessage'` handlers.
+     * Override this in a derived class to provide logic for when a message in a conversation that is
+     * observed by the bot goes from a soft delete state to the normal state.
+     *
+     * @param context A context object for this turn.
+     * @returns A promise that represents the work queued.
+     */
+     protected async onTeamsUndeleteMessage(context: TurnContext): Promise<void> {
+        await this.handle(context, 'TeamsUndeleteMessage', this.defaultNextEvent(context));
+    }
+
+    /**
+     * Called in `dispatchMessageUpdateActivity()` to trigger the `'TeamsEditMessage'` handlers.
+     * Override this in a derived class to provide logic for when a message in a conversation that is
+     * observed by the bot is edited.
+     *
+     * @param context A context object for this turn.
+     * @returns A promise that represents the work queued.
+     */
+    protected async onTeamsEditMessage(context: TurnContext): Promise<void> {
+        await this.handle(context, 'TeamsEditMessage', this.defaultNextEvent(context));
+    }
+
+    /**
+         * Called in `dispatchMessageUpdateActivity()` to trigger the `'TeamsEditMessage'` handlers.
+         * Override this in a derived class to provide logic for when a message in a conversation that is
+         * observed by the bot is edited.
+         *
+         * @param context A context object for this turn.
+         * @returns A promise that represents the work queued.
+         */
+    protected async onTeamsSoftDeleteMessage(context: TurnContext): Promise<void> {
+        await this.handle(context, 'onTeamsSoftDeleteMessage', this.defaultNextEvent(context));
+    }
+
+    /**
      * Called in `dispatchConversationUpdateActivity()` to trigger the `'TeamsMembersAdded'` handlers.
      * Override this in a derived class to provide logic for when members other than the bot
      * join the channel, such as your bot's welcome logic.
@@ -797,7 +914,62 @@ export class TeamsActivityHandler extends ActivityHandler {
     protected async onTeamsTeamUnarchived(context): Promise<void> {
         await this.handle(context, 'TeamsTeamUnarchived', this.defaultNextEvent(context));
     }
+    
+    /**
+     * Registers a handler for TeamsUndeleteMessage events, such as for when a message in a conversation that is
+     * observed by the bot goes from a soft delete state to the normal state.
+     *
+     * @param handler A callback to handle the teams undelete message event.
+     * @returns A promise that represents the work queued.
+     */
+     onTeamsUndeleteMessageEvent(
+        handler: (
+            context: TurnContext,
+            next: () => Promise<void>
+        ) => Promise<void>
+    ): this {
+        return this.on('TeamsUndeleteMessage', async (context, next) => {
+            await handler(context, next);
+        });
+    }
 
+    /**
+     * Registers a handler for TeamsEditMessage events, such as for when a message in a conversation that is
+     * observed by the bot is edited.
+     *
+     * @param handler A callback to handle the teams edit message event.
+     * @returns A promise that represents the work queued.
+     */
+    onTeamsEditMessageEvent(
+        handler: (
+            context: TurnContext,
+            next: () => Promise<void>
+        ) => Promise<void>
+    ): this {
+        return this.on('TeamsEditMessage', async (context, next) => {
+            await handler(context, next);
+        });
+    }
+    
+    /**
+     * Registers a handler for TeamsSoftDeleteMessage events, such as for when a message in a conversation that is
+     * observed by the bot is soft deleted. This means that the deleted message, up to a certain time period, 
+     * can be undoed.
+     *
+     * @param handler A callback to handle the teams edit message event.
+     * @returns A promise that represents the work queued.
+     */
+    onTeamsSoftDeleteMessageEvent(
+        handler: (
+            context: TurnContext,
+            next: () => Promise<void>
+        ) => Promise<void>
+    ): this {
+        return this.on('onTeamsSoftDeleteMessage', async (context, next) => {
+            await handler(context, next);
+        });
+    }
+    
     /**
      * Registers a handler for TeamsMembersAdded events, such as for when members other than the bot
      * join the channel, such as your bot's welcome logic.
