@@ -688,9 +688,9 @@ export class TeamsActivityHandler extends ActivityHandler {
     }
 
     /**
-     * Called in `dispatchMessageUpdateActivity()` to trigger the `'TeamsUndeleteMessage'` handlers.
-     * Override this in a derived class to provide logic for when a message in a conversation that is
-     * observed by the bot goes from a soft delete state to the normal state.
+     * Called in `onMessageUpdateActivity()` to trigger the `'TeamsUndeleteMessage'` handlers.
+     * Override this in a derived class to provide logic for when a deleted message in a conversation is undeleted.
+     * For example, when the user decides to "undo" a deleted message.
      *
      * @param context A context object for this turn.
      * @returns A promise that represents the work queued.
@@ -700,9 +700,8 @@ export class TeamsActivityHandler extends ActivityHandler {
     }
 
     /**
-     * Called in `dispatchMessageUpdateActivity()` to trigger the `'TeamsEditMessage'` handlers.
-     * Override this in a derived class to provide logic for when a message in a conversation that is
-     * observed by the bot is edited.
+     * Called in `onMessageUpdateActivity()` to trigger the `'TeamsEditMessage'` handlers.
+     * Override this in a derived class to provide logic for when a message in a conversation is edited.
      *
      * @param context A context object for this turn.
      * @returns A promise that represents the work queued.
@@ -712,13 +711,13 @@ export class TeamsActivityHandler extends ActivityHandler {
     }
 
     /**
-         * Called in `dispatchMessageUpdateActivity()` to trigger the `'TeamsEditMessage'` handlers.
-         * Override this in a derived class to provide logic for when a message in a conversation that is
-         * observed by the bot is edited.
-         *
-         * @param context A context object for this turn.
-         * @returns A promise that represents the work queued.
-         */
+     * Called in `onMessageDeleteActivity()` to trigger the `'TeamsEditMessage'` handlers.
+     * Override this in a derived class to provide logic for when a message in a conversation is soft deleted.
+     * This means that the message as the option of being undeleted.
+     * 
+     * @param context A context object for this turn.
+     * @returns A promise that represents the work queued.
+     */
     protected async onTeamsSoftDeleteMessage(context: TurnContext): Promise<void> {
         await this.handle(context, 'onTeamsSoftDeleteMessage', this.defaultNextEvent(context));
     }
