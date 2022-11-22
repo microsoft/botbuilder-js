@@ -113,6 +113,32 @@ describe('ActivityHandler', function () {
         assert(count === 2, 'all events did fire');
     });
 
+    it('should fire onMessageUpdate', async function () {
+        const bot = new ActivityHandler();
+
+        let onMessageUpdate = false;
+        bot.onMessageUpdate(async (context, next) => {
+            onMessageUpdate = true;
+            await next();
+        });
+
+        await processActivity({ type: ActivityTypes.MessageUpdate }, bot);
+        assert(onMessageUpdate);
+    });
+
+    it('should fire onMessageDelete', async function () {
+        const bot = new ActivityHandler();
+
+        let onMessageDelete = false;
+        bot.onMessageDelete(async (context, next) => {
+            onMessageDelete = true;
+            await next();
+        });
+
+        await processActivity({ type: ActivityTypes.MessageDelete }, bot);
+        assert(onMessageDelete);
+    });
+
     it('should fire onConversationUpdate', async function () {
         const bot = new ActivityHandler();
 
@@ -462,6 +488,8 @@ describe('ActivityHandler', function () {
     describe('should by default', function () {
         let onTurnCalled = false;
         let onMessageCalled = false;
+        let onMessageUpdateCalled = false;
+        let onMessageDeleteCalled = false;
         let onCommandActivityCalled = false;
         let onCommandResultActivityCalled = false;
         let onConversationUpdateCalled = false;
@@ -478,6 +506,8 @@ describe('ActivityHandler', function () {
         afterEach(function () {
             onTurnCalled = false;
             onMessageCalled = false;
+            onMessageUpdateCalled = false;
+            onMessageDeleteCalled = false;
             onCommandActivityCalled = false;
             onCommandResultActivityCalled = false;
             onConversationUpdateCalled = false;
@@ -573,6 +603,100 @@ describe('ActivityHandler', function () {
             await processActivity({ type: ActivityTypes.CommandResult }, bot);
             assertTrueFlag(onTurnCalled, 'onTurn');
             assertTrueFlag(onCommandResultActivityCalled, 'onCommandResultActivity');
+        });
+
+        it('call "onTurn" handlers then dispatch by Activity Type "MessageUpdate"', async function () {
+            const bot = new ActivityHandler();
+            bot.onTurn(async (context, next) => {
+                assertContextAndNext(context, next);
+                assertFalseFlag(onTurnCalled, 'onTurn');
+                onTurnCalled = true;
+                assertFalseFlag(onMessageUpdateCalled, 'onMessageUpdate', 'onTurn');
+                await next();
+            });
+
+            bot.onMessageUpdate(async (context, next) => {
+                assertContextAndNext(context, next);
+                assertTrueFlag(onTurnCalled, 'onTurn');
+                assertFalseFlag(onMessageUpdateCalled, 'onMessageUpdate', 'onTurn');
+                onMessageUpdateCalled = true;
+                await next();
+            });
+
+            await processActivity({ type: ActivityTypes.MessageUpdate }, bot);
+            assertTrueFlag(onTurnCalled, 'onTurn');
+            assertTrueFlag(onMessageUpdateCalled, 'onMessageUpdate');
+        });
+
+        it('call "MessageUpdate" then dispatch the its respective subtypes', async function () {
+            dispatchMessageUpdateActivityCalled = false;
+            class MessageUpdateActivityHandler extends ActivityHandler {
+                dispatchMessageUpdateActivity(context) {
+                    assertTrueFlag(onMessageUpdateCalled, 'onMessageUpdate');
+                    assertFalseFlag(dispatchMessageUpdateActivityCalled, 'dispatchMessageUpdateActivity', 'onMessageUpdate')
+                    dispatchMessageUpdateActivityCalled = true;
+                }
+            }
+            
+            const bot = new MessageUpdateActivityHandler();
+
+            bot.onMessageUpdate(async (context, next) => {
+                assertContextAndNext(context, next);
+                assertFalseFlag(onMessageUpdateCalled, 'onMessageUpdate', 'onTurn');
+                onMessageUpdateCalled = true;
+                await next();
+            });
+
+            await processActivity({ type: ActivityTypes.MessageUpdate }, bot);
+            assertTrueFlag(onMessageUpdateCalled, 'onMessageUpdate');
+            assertTrueFlag(dispatchMessageUpdateActivityCalled, 'dispatchMessageUpdateActivity');
+        });
+
+        it('call "onTurn" handlers then dispatch by Activity Type "MessageDelete"', async function () {
+            const bot = new ActivityHandler();
+            bot.onTurn(async (context, next) => {
+                assertContextAndNext(context, next);
+                assertFalseFlag(onTurnCalled, 'onTurn');
+                onTurnCalled = true;
+                assertFalseFlag(onMessageDeleteCalled, 'onMessageDelete', 'onTurn');
+                await next();
+            });
+
+            bot.onMessageDelete(async (context, next) => {
+                assertContextAndNext(context, next);
+                assertTrueFlag(onTurnCalled, 'onTurn');
+                assertFalseFlag(onMessageDeleteCalled, 'onMessageDelete', 'onTurn');
+                onMessageDeleteCalled = true;
+                await next();
+            });
+
+            await processActivity({ type: ActivityTypes.MessageDelete }, bot);
+            assertTrueFlag(onTurnCalled, 'onTurn');
+            assertTrueFlag(onMessageDeleteCalled, 'onMessageDelete');
+        });
+
+        it('call "MessageDelete" then dispatch the its respective subtypes', async function () {
+            dispatchMessageDeleteActivityCalled = false;
+            class MessageDeleteActivityHandler extends ActivityHandler {
+                dispatchMessageDeleteActivity(context) {
+                    assertTrueFlag(onMessageDeleteCalled, 'onMessageDelete');
+                    assertFalseFlag(dispatchMessageDeleteActivityCalled, 'dispatchMessageDeleteActivity', 'onMessageDelete')
+                    dispatchMessageDeleteActivityCalled = true;
+                }
+            }
+            
+            const bot = new MessageDeleteActivityHandler();
+
+            bot.onMessageDelete(async (context, next) => {
+                assertContextAndNext(context, next);
+                assertFalseFlag(onMessageDeleteCalled, 'onMessageDelete', 'onTurn');
+                onMessageDeleteCalled = true;
+                await next();
+            });
+
+            await processActivity({ type: ActivityTypes.MessageDelete }, bot);
+            assertTrueFlag(onMessageDeleteCalled, 'onMessageDelete');
+            assertTrueFlag(dispatchMessageDeleteActivityCalled, 'dispatchMessageDeleteActivity');
         });
 
         it('call "onTurn" handlers then dispatch by Activity Type "ConversationUpdate"', async function () {
