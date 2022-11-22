@@ -62,7 +62,7 @@ describe('TeamsActivityHandler', function () {
                 .startTest();
         });
 
-        it.only('should call onMessageUpdateActivity when the activity type is messageUpdate', async function (){
+        it('should call onMessageUpdateActivity when the activity type is messageUpdate', async function (){
             const msg = "hi";
             class TestActivityHandler extends TeamsActivityHandler {
                 async onMessageUpdateActivity(context) {
@@ -85,7 +85,7 @@ describe('TeamsActivityHandler', function () {
                 .startTest();
         });
 
-        it.only('should call onMessageDeleteActivity when the activity type is messageDelete', async function (){
+        it('should call onMessageDeleteActivity when the activity type is messageDelete', async function (){
             const msg = "hi";
             class TestActivityHandler extends TeamsActivityHandler {
                 async onMessageDeleteActivity(context) {
@@ -109,7 +109,7 @@ describe('TeamsActivityHandler', function () {
         });
     });
 
-    describe.only('dispatchMessageUpdateActivity', function () {
+    describe('dispatchMessageUpdateActivity', function () {
         function createMessageUpdateActivity(channelDataEventType) {
             const activity = {
                 type: ActivityTypes.MessageUpdate,
@@ -230,7 +230,7 @@ describe('TeamsActivityHandler', function () {
         })
     })
 
-    describe.only('dispatchMessageDeleteActivity', function () {
+    describe('dispatchMessageDeleteActivity', function () {
         function createMessageDeleteActivity(channelDataEventType) {
             const activity = {
                 type: ActivityTypes.MessageDelete,
