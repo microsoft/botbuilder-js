@@ -75,7 +75,7 @@ steps:
           $content -Replace "$find", "$replace" | Set-Content $_.FullName;
           '-------------'; get-content $_.FullName; '==================='
       }
-  displayName: 'Upgrade chromedriver reference to second latest version'
+  displayName: 'Upgrade chromedriver version reference'
 
 - task: NodeTool@0
   displayName: use node 16.x
