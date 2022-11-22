@@ -38,20 +38,21 @@ steps:
       $packageName = "chromedriver";
       Write-Host "Get $packageName second latest version from npmjs.com";
       $versions = npm view $packageName versions | ConvertFrom-Json;
-      $secondLatestVersion = $versions[-2];
-      Write-Host "$packageName second latest = $secondLatestVersion";
+      $versionToUse = $versions[-2];
+      Write-Host "$packageName second latest = $versionToUse";
       " "
 
       if ($null -ne $Env:ChromeDriverVersionOverride -and $Env:ChromeDriverVersionOverride.Trim() -ne '') {
         Write-Host "Pipeline var ChromeDriverVersionOverride is set.";
-        $secondLatestVersion = $Env:ChromeDriverVersionOverride;
-        Write-Host "Use override value = $secondLatestVersion";
+        $versionToUse = $Env:ChromeDriverVersionOverride;
+        Write-Host "Use override value = $versionToUse";
       } else {
         Write-Host "Pipeline var ChromeDriverVersionOverride is not set.";
+        Write-Host "Use value = $versionToUse";
       }
 
-      "##vso[task.setvariable variable=DriverVersion;]$secondLatestVersion";
-  displayName: 'Get second latest chromedriver version number from npmjs.com'
+      "##vso[task.setvariable variable=DriverVersion;]$versionToUse";
+  displayName: 'Get chromedriver version number to use'
 
 - task: PowerShell@2
   inputs:
