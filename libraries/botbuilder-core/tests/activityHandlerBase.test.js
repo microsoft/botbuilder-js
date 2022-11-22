@@ -136,7 +136,7 @@ describe('ActivityHandlerBase', function () {
         }
     }
 
-    it.only('should dispatch by ActivityType in onTurnActivity()', async function () {
+    it('should dispatch by ActivityType in onTurnActivity()', async function () {
         const bot = new UpdatedActivityHandler();
 
         await processActivity({ type: ActivityTypes.Message }, bot);
