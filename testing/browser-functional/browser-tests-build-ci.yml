@@ -37,10 +37,10 @@ steps:
     script: |
       $packageName = "chromedriver";
       Write-Host "Get $packageName second latest version from npmjs.com";
-      " "
       $versions = npm view $packageName versions | ConvertFrom-Json;
       $secondLatestVersion = $versions[-2];
       Write-Host "$packageName second latest = $secondLatestVersion";
+      " "
 
       if ($null -ne $Env:ChromeDriverVersionOverride -and $Env:ChromeDriverVersionOverride.Trim() -ne '') {
         Write-Host "Pipeline var ChromeDriverVersionOverride is set.";
