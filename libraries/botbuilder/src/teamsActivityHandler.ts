@@ -654,7 +654,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     }
 
     /**
-     * Called in `onMessageUpdateActivity()` to trigger the `'TeamsUndeleteMessage'` handlers.
+     * Called in `dispatchMessageUpdateActivity()` to trigger the `'TeamsUndeleteMessage'` handlers.
      * Override this in a derived class to provide logic for when a deleted message in a conversation is undeleted.
      * For example, when the user decides to "undo" a deleted message.
      *
@@ -666,7 +666,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     }
 
     /**
-     * Called in `onMessageUpdateActivity()` to trigger the `'TeamsEditMessage'` handlers.
+     * Called in `dispatchMessageUpdateActivity()` to trigger the `'TeamsEditMessage'` handlers.
      * Override this in a derived class to provide logic for when a message in a conversation is edited.
      *
      * @param context A context object for this turn.
@@ -677,7 +677,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     }
 
     /**
-     * Called in `onMessageDeleteActivity()` to trigger the `'TeamsEditMessage'` handlers.
+     * Called in `dispatchMessageDeleteActivity()` to trigger the `'TeamsEditMessage'` handlers.
      * Override this in a derived class to provide logic for when a message in a conversation is soft deleted.
      * This means that the message as the option of being undeleted.
      *
