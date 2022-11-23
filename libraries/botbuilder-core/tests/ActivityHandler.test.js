@@ -629,15 +629,20 @@ describe('ActivityHandler', function () {
         });
 
         it('call "MessageUpdate" then dispatch the its respective subtypes', async function () {
-            dispatchMessageUpdateActivityCalled = false;
+            let dispatchMessageUpdateActivityCalled = false;
             class MessageUpdateActivityHandler extends ActivityHandler {
                 dispatchMessageUpdateActivity(context) {
+                    assert(context, 'context not found');
                     assertTrueFlag(onMessageUpdateCalled, 'onMessageUpdate');
-                    assertFalseFlag(dispatchMessageUpdateActivityCalled, 'dispatchMessageUpdateActivity', 'onMessageUpdate')
+                    assertFalseFlag(
+                        dispatchMessageUpdateActivityCalled,
+                        'dispatchMessageUpdateActivity',
+                        'onMessageUpdate'
+                    );
                     dispatchMessageUpdateActivityCalled = true;
                 }
             }
-            
+
             const bot = new MessageUpdateActivityHandler();
 
             bot.onMessageUpdate(async (context, next) => {
@@ -676,15 +681,20 @@ describe('ActivityHandler', function () {
         });
 
         it('call "MessageDelete" then dispatch the its respective subtypes', async function () {
-            dispatchMessageDeleteActivityCalled = false;
+            let dispatchMessageDeleteActivityCalled = false;
             class MessageDeleteActivityHandler extends ActivityHandler {
                 dispatchMessageDeleteActivity(context) {
+                    assert(context, 'context not found');
                     assertTrueFlag(onMessageDeleteCalled, 'onMessageDelete');
-                    assertFalseFlag(dispatchMessageDeleteActivityCalled, 'dispatchMessageDeleteActivity', 'onMessageDelete')
+                    assertFalseFlag(
+                        dispatchMessageDeleteActivityCalled,
+                        'dispatchMessageDeleteActivity',
+                        'onMessageDelete'
+                    );
                     dispatchMessageDeleteActivityCalled = true;
                 }
             }
-            
+
             const bot = new MessageDeleteActivityHandler();
 
             bot.onMessageDelete(async (context, next) => {
