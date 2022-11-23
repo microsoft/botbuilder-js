@@ -624,10 +624,10 @@ export class TeamsActivityHandler extends ActivityHandler {
                     return await this.onTeamsEditMessage(context);
 
                 default:
-                    return this.dispatchMessageUpdateActivity(context);
+                    return super.dispatchMessageUpdateActivity(context);
             }
         } else {
-            return await this.dispatchMessageUpdateActivity(context);
+            return await super.dispatchMessageUpdateActivity(context);
         }
     }
 
@@ -646,10 +646,10 @@ export class TeamsActivityHandler extends ActivityHandler {
                     return await this.onTeamsSoftDeleteMessage(context);
 
                 default:
-                    return this.dispatchMessageDeleteActivity(context);
+                    return super.dispatchMessageDeleteActivity(context);
             }
         } else {
-            return await this.dispatchMessageDeleteActivity(context);
+            return await super.dispatchMessageDeleteActivity(context);
         }
     }
 

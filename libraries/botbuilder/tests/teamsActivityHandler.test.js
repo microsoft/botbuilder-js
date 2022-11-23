@@ -126,7 +126,8 @@ describe('TeamsActivityHandler', function () {
                 let onTeamsEditMessageCalled = false;
 
                 class TestActivityHandler extends TeamsActivityHandler {
-                    async onTeamsEditMessage() {
+                    async onTeamsEditMessage(context) {
+                        assert(context, "context not found")
                         onTeamsEditMessageCalled = true;
                     }
                 }
@@ -153,6 +154,7 @@ describe('TeamsActivityHandler', function () {
                         super();
 
                         this.onTeamsEditMessageEvent((context, next) => {
+                            assert(context, "context not found")
                             onTeamsEditMessageEventCalled = true;
 
                             next();
@@ -180,7 +182,8 @@ describe('TeamsActivityHandler', function () {
                 let onTeamsUndeleteMessageCalled = false;
 
                 class TestActivityHandler extends TeamsActivityHandler {
-                    async onTeamsUndeleteMessage() {
+                    async onTeamsUndeleteMessage(context) {
+                        assert(context, "context not found")
                         onTeamsUndeleteMessageCalled = true;
                     }
                 }
@@ -207,6 +210,7 @@ describe('TeamsActivityHandler', function () {
                         super();
 
                         this.onTeamsUndeleteMessageEvent((context, next) => {
+                            assert(context, "context not found")
                             onTeamsUndeleteMessageEventCalled = true;
 
                             next();
@@ -228,6 +232,29 @@ describe('TeamsActivityHandler', function () {
                     .startTest();
             });
         });
+
+        it('should route to defaultNextEvent when unrecognized subtype encountered', async function () {
+            let defaultNextEventCalled = false;
+            class TestActivityHandler extends TeamsActivityHandler {
+                defaultNextEvent(context){
+                    assert(context, "context not found")
+                    return () => { defaultNextEventCalled = true };
+                }
+            }
+
+            const bot = new TestActivityHandler();
+
+            const adapter = new TestAdapter(async (context) => {
+                await bot.run(context);
+            });
+
+            await adapter
+                .send(createMessageUpdateActivity('invalid subtype'))
+                .then(() => {
+                    assert(defaultNextEventCalled, 'defaultNextEvent not called');
+                })
+                .startTest();
+        });
     });
 
     describe('dispatchMessageDeleteActivity', function () {
@@ -247,7 +274,8 @@ describe('TeamsActivityHandler', function () {
                 let onTeamsSoftDeleteMessageCalled = false;
 
                 class TestActivityHandler extends TeamsActivityHandler {
-                    async onTeamsSoftDeleteMessage() {
+                    async onTeamsSoftDeleteMessage(context) {
+                        assert(context, "context not found")
                         onTeamsSoftDeleteMessageCalled = true;
                     }
                 }
@@ -273,6 +301,7 @@ describe('TeamsActivityHandler', function () {
                         super();
 
                         this.onTeamsSoftDeleteMessageEvent((context, next) => {
+                            assert(context, "context not found")
                             onTeamsSoftDeleteMessageEventCalled = true;
 
                             next();
@@ -293,6 +322,29 @@ describe('TeamsActivityHandler', function () {
                     })
                     .startTest();
             });
+        });
+
+        it('should route to defaultNextEvent when unrecognized subtype encountered', async function () {
+            let defaultNextEventCalled = false;
+            class TestActivityHandler extends TeamsActivityHandler {
+                defaultNextEvent(context){
+                    assert(context, "context not found")
+                    return () => { defaultNextEventCalled = true };
+                }
+            }
+
+            const bot = new TestActivityHandler();
+
+            const adapter = new TestAdapter(async (context) => {
+                await bot.run(context);
+            });
+
+            await adapter
+                .send(createMessageDeleteActivity('invalid subtype'))
+                .then(() => {
+                    assert(defaultNextEventCalled, 'defaultNextEvent not called');
+                })
+                .startTest();
         });
     });
 
