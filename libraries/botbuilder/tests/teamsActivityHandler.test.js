@@ -127,7 +127,7 @@ describe('TeamsActivityHandler', function () {
 
                 class TestActivityHandler extends TeamsActivityHandler {
                     async onTeamsEditMessage(context) {
-                        assert(context, "context not found")
+                        assert(context, 'context not found');
                         onTeamsEditMessageCalled = true;
                     }
                 }
@@ -154,7 +154,7 @@ describe('TeamsActivityHandler', function () {
                         super();
 
                         this.onTeamsEditMessageEvent((context, next) => {
-                            assert(context, "context not found")
+                            assert(context, 'context not found');
                             onTeamsEditMessageEventCalled = true;
 
                             next();
@@ -183,7 +183,7 @@ describe('TeamsActivityHandler', function () {
 
                 class TestActivityHandler extends TeamsActivityHandler {
                     async onTeamsUndeleteMessage(context) {
-                        assert(context, "context not found")
+                        assert(context, 'context not found');
                         onTeamsUndeleteMessageCalled = true;
                     }
                 }
@@ -210,7 +210,7 @@ describe('TeamsActivityHandler', function () {
                         super();
 
                         this.onTeamsUndeleteMessageEvent((context, next) => {
-                            assert(context, "context not found")
+                            assert(context, 'context not found');
                             onTeamsUndeleteMessageEventCalled = true;
 
                             next();
@@ -236,9 +236,11 @@ describe('TeamsActivityHandler', function () {
         it('should route to defaultNextEvent when unrecognized subtype encountered', async function () {
             let defaultNextEventCalled = false;
             class TestActivityHandler extends TeamsActivityHandler {
-                defaultNextEvent(context){
-                    assert(context, "context not found")
-                    return () => { defaultNextEventCalled = true };
+                defaultNextEvent(context) {
+                    assert(context, 'context not found');
+                    return () => {
+                        defaultNextEventCalled = true;
+                    };
                 }
             }
 
@@ -275,7 +277,7 @@ describe('TeamsActivityHandler', function () {
 
                 class TestActivityHandler extends TeamsActivityHandler {
                     async onTeamsSoftDeleteMessage(context) {
-                        assert(context, "context not found")
+                        assert(context, 'context not found');
                         onTeamsSoftDeleteMessageCalled = true;
                     }
                 }
@@ -301,7 +303,7 @@ describe('TeamsActivityHandler', function () {
                         super();
 
                         this.onTeamsSoftDeleteMessageEvent((context, next) => {
-                            assert(context, "context not found")
+                            assert(context, 'context not found');
                             onTeamsSoftDeleteMessageEventCalled = true;
 
                             next();
@@ -327,9 +329,11 @@ describe('TeamsActivityHandler', function () {
         it('should route to defaultNextEvent when unrecognized subtype encountered', async function () {
             let defaultNextEventCalled = false;
             class TestActivityHandler extends TeamsActivityHandler {
-                defaultNextEvent(context){
-                    assert(context, "context not found")
-                    return () => { defaultNextEventCalled = true };
+                defaultNextEvent(context) {
+                    assert(context, 'context not found');
+                    return () => {
+                        defaultNextEventCalled = true;
+                    };
                 }
             }
 
