@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
- import {
+import {
     ActivityHandler,
     AppBasedLinkQuery,
     ChannelInfo,
@@ -32,7 +32,6 @@
     TurnContext,
     tokenExchangeOperationName,
     verifyStateOperationName,
-    ActivityTypes,
 } from 'botbuilder-core';
 import { ReadReceiptInfo } from 'botframework-connector';
 import { TeamsInfo } from './teamsInfo';
@@ -613,7 +612,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param context A context object for this turn.
      * @returns A promise that represents the work queued.
      */
-     protected async dispatchMessageUpdateActivity(context: TurnContext): Promise<void> {
+    protected async dispatchMessageUpdateActivity(context: TurnContext): Promise<void> {
         if (context.activity.channelId == 'msteams') {
             const channelData = context.activity.channelData as TeamsChannelData;
 
@@ -638,7 +637,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param context A context object for this turn.
      * @returns A promise that represents the work queued.
      */
-     protected async dispatchMessageDeleteActivity(context: TurnContext): Promise<void> {
+    protected async dispatchMessageDeleteActivity(context: TurnContext): Promise<void> {
         if (context.activity.channelId == 'msteams') {
             const channelData = context.activity.channelData as TeamsChannelData;
 
@@ -662,7 +661,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param context A context object for this turn.
      * @returns A promise that represents the work queued.
      */
-     protected async onTeamsUndeleteMessage(context: TurnContext): Promise<void> {
+    protected async onTeamsUndeleteMessage(context: TurnContext): Promise<void> {
         await this.handle(context, 'TeamsUndeleteMessage', this.defaultNextEvent(context));
     }
 
@@ -681,7 +680,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * Called in `onMessageDeleteActivity()` to trigger the `'TeamsEditMessage'` handlers.
      * Override this in a derived class to provide logic for when a message in a conversation is soft deleted.
      * This means that the message as the option of being undeleted.
-     * 
+     *
      * @param context A context object for this turn.
      * @returns A promise that represents the work queued.
      */
@@ -880,7 +879,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     protected async onTeamsTeamUnarchived(context): Promise<void> {
         await this.handle(context, 'TeamsTeamUnarchived', this.defaultNextEvent(context));
     }
-    
+
     /**
      * Registers a handler for TeamsUndeleteMessage events, such as for when a message in a conversation that is
      * observed by the bot goes from a soft delete state to the normal state.
@@ -888,12 +887,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param handler A callback to handle the teams undelete message event.
      * @returns A promise that represents the work queued.
      */
-     onTeamsUndeleteMessageEvent(
-        handler: (
-            context: TurnContext,
-            next: () => Promise<void>
-        ) => Promise<void>
-    ): this {
+    onTeamsUndeleteMessageEvent(handler: (context: TurnContext, next: () => Promise<void>) => Promise<void>): this {
         return this.on('TeamsUndeleteMessage', async (context, next) => {
             await handler(context, next);
         });
@@ -906,36 +900,26 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param handler A callback to handle the teams edit message event.
      * @returns A promise that represents the work queued.
      */
-    onTeamsEditMessageEvent(
-        handler: (
-            context: TurnContext,
-            next: () => Promise<void>
-        ) => Promise<void>
-    ): this {
+    onTeamsEditMessageEvent(handler: (context: TurnContext, next: () => Promise<void>) => Promise<void>): this {
         return this.on('TeamsEditMessage', async (context, next) => {
             await handler(context, next);
         });
     }
-    
+
     /**
      * Registers a handler for TeamsSoftDeleteMessage events, such as for when a message in a conversation that is
-     * observed by the bot is soft deleted. This means that the deleted message, up to a certain time period, 
+     * observed by the bot is soft deleted. This means that the deleted message, up to a certain time period,
      * can be undoed.
      *
      * @param handler A callback to handle the teams edit message event.
      * @returns A promise that represents the work queued.
      */
-    onTeamsSoftDeleteMessageEvent(
-        handler: (
-            context: TurnContext,
-            next: () => Promise<void>
-        ) => Promise<void>
-    ): this {
+    onTeamsSoftDeleteMessageEvent(handler: (context: TurnContext, next: () => Promise<void>) => Promise<void>): this {
         return this.on('onTeamsSoftDeleteMessage', async (context, next) => {
             await handler(context, next);
         });
     }
-    
+
     /**
      * Registers a handler for TeamsMembersAdded events, such as for when members other than the bot
      * join the channel, such as your bot's welcome logic.

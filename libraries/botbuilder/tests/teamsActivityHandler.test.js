@@ -62,48 +62,48 @@ describe('TeamsActivityHandler', function () {
                 .startTest();
         });
 
-        it('should call onMessageUpdateActivity when the activity type is messageUpdate', async function (){
-            const msg = "hi";
+        it('should call onMessageUpdateActivity when the activity type is messageUpdate', async function () {
+            const msg = 'hi';
             class TestActivityHandler extends TeamsActivityHandler {
                 async onMessageUpdateActivity(context) {
-                    await context.sendActivity({type: context.activity.type, text: msg});
+                    await context.sendActivity({ type: context.activity.type, text: msg });
                 }
             }
-            
+
             const bot = new TestActivityHandler();
 
             const adapter = new TestAdapter(async (context) => {
                 await bot.run(context);
-            })
+            });
 
             await adapter
-                .send({ type: ActivityTypes.MessageUpdate})
+                .send({ type: ActivityTypes.MessageUpdate })
                 .assertReply((activity) => {
                     assert.strictEqual(activity.type, ActivityTypes.MessageUpdate);
-                    assert.strictEqual(activity.text, msg)
+                    assert.strictEqual(activity.text, msg);
                 })
                 .startTest();
         });
 
-        it('should call onMessageDeleteActivity when the activity type is messageDelete', async function (){
-            const msg = "hi";
+        it('should call onMessageDeleteActivity when the activity type is messageDelete', async function () {
+            const msg = 'hi';
             class TestActivityHandler extends TeamsActivityHandler {
                 async onMessageDeleteActivity(context) {
-                    await context.sendActivity({type: context.activity.type, text: msg});
+                    await context.sendActivity({ type: context.activity.type, text: msg });
                 }
             }
-            
+
             const bot = new TestActivityHandler();
 
             const adapter = new TestAdapter(async (context) => {
                 await bot.run(context);
-            })
+            });
 
             await adapter
-                .send({ type: ActivityTypes.MessageDelete})
+                .send({ type: ActivityTypes.MessageDelete })
                 .assertReply((activity) => {
                     assert.strictEqual(activity.type, ActivityTypes.MessageDelete);
-                    assert.strictEqual(activity.text, msg)
+                    assert.strictEqual(activity.text, msg);
                 })
                 .startTest();
         });
@@ -114,188 +114,187 @@ describe('TeamsActivityHandler', function () {
             const activity = {
                 type: ActivityTypes.MessageUpdate,
                 channelData: {
-                    eventType: channelDataEventType
+                    eventType: channelDataEventType,
                 },
                 channelId: 'msteams',
             };
             return activity;
         }
 
-        describe('routing to onTeamsEditMessage', () => {
+        describe('routing to onTeamsEditMessage', function () {
             it('should route to onTeamsEditMessage method', async function () {
-                var onTeamsEditMessageCalled = false;
-    
+                let onTeamsEditMessageCalled = false;
+
                 class TestActivityHandler extends TeamsActivityHandler {
-                    async onTeamsEditMessage(context) {
+                    async onTeamsEditMessage() {
                         onTeamsEditMessageCalled = true;
                     }
                 }
-                
+
                 const bot = new TestActivityHandler();
-    
+
                 const adapter = new TestAdapter(async (context) => {
                     await bot.run(context);
-                })
-    
+                });
+
                 await adapter
-                    .send(createMessageUpdateActivity("editMessage"))
+                    .send(createMessageUpdateActivity('editMessage'))
                     .then(() => {
-                        assert(onTeamsEditMessageCalled, "onTeamsEditMessage handler not called");
+                        assert(onTeamsEditMessageCalled, 'onTeamsEditMessage handler not called');
                     })
                     .startTest();
-            })
+            });
 
             it('should route to onTeamsEditMessageEvent registered handlers', async function () {
-                var onTeamsEditMessageEventCalled = false;
-    
+                let onTeamsEditMessageEventCalled = false;
+
                 class TestActivityHandler extends TeamsActivityHandler {
-                    constructor () {
-                        super()
+                    constructor() {
+                        super();
 
                         this.onTeamsEditMessageEvent((context, next) => {
                             onTeamsEditMessageEventCalled = true;
 
                             next();
-                        })
+                        });
                     }
                 }
-                
+
                 const bot = new TestActivityHandler();
-    
+
                 const adapter = new TestAdapter(async (context) => {
                     await bot.run(context);
-                })
-    
+                });
+
                 await adapter
-                    .send(createMessageUpdateActivity("editMessage"))
+                    .send(createMessageUpdateActivity('editMessage'))
                     .then(() => {
-                        assert(onTeamsEditMessageEventCalled, "onTeamsEditMessageEvent handler not called");
+                        assert(onTeamsEditMessageEventCalled, 'onTeamsEditMessageEvent handler not called');
                     })
                     .startTest();
-            })
-        })
+            });
+        });
 
-        describe('routing to onTeamsUndeleteMessage', () => {
+        describe('routing to onTeamsUndeleteMessage', function () {
             it('should route to onTeamsUndeleteMessage', async function () {
-                var onTeamsUndeleteMessageCalled = false;
-    
+                let onTeamsUndeleteMessageCalled = false;
+
                 class TestActivityHandler extends TeamsActivityHandler {
-                    async onTeamsUndeleteMessage(context) {
+                    async onTeamsUndeleteMessage() {
                         onTeamsUndeleteMessageCalled = true;
                     }
                 }
-                
+
                 const bot = new TestActivityHandler();
-    
+
                 const adapter = new TestAdapter(async (context) => {
                     await bot.run(context);
-                })
-    
+                });
+
                 await adapter
-                    .send(createMessageUpdateActivity("undeleteMessage"))
+                    .send(createMessageUpdateActivity('undeleteMessage'))
                     .then(() => {
-                        assert(onTeamsUndeleteMessageCalled, "onTeamsUndeleteMessage handler not called");
+                        assert(onTeamsUndeleteMessageCalled, 'onTeamsUndeleteMessage handler not called');
                     })
                     .startTest();
-            })
-    
+            });
+
             it('should route to onTeamsUndeleteMessageEvent registered handlers', async function () {
-                var onTeamsUndeleteMessageEventCalled = false;
-    
+                let onTeamsUndeleteMessageEventCalled = false;
+
                 class TestActivityHandler extends TeamsActivityHandler {
-                    constructor () {
-                        super()
-                        
+                    constructor() {
+                        super();
+
                         this.onTeamsUndeleteMessageEvent((context, next) => {
                             onTeamsUndeleteMessageEventCalled = true;
-    
+
                             next();
-                        })
+                        });
                     }
                 }
-                
+
                 const bot = new TestActivityHandler();
-    
+
                 const adapter = new TestAdapter(async (context) => {
                     await bot.run(context);
-                })
-    
+                });
+
                 await adapter
-                    .send(createMessageUpdateActivity("undeleteMessage"))
+                    .send(createMessageUpdateActivity('undeleteMessage'))
                     .then(() => {
-                        assert(onTeamsUndeleteMessageEventCalled, "onTeamsUndeleteMessageEvent handler not called");
+                        assert(onTeamsUndeleteMessageEventCalled, 'onTeamsUndeleteMessageEvent handler not called');
                     })
                     .startTest();
-            })    
-        })
-    })
+            });
+        });
+    });
 
     describe('dispatchMessageDeleteActivity', function () {
         function createMessageDeleteActivity(channelDataEventType) {
             const activity = {
                 type: ActivityTypes.MessageDelete,
                 channelData: {
-                    eventType: channelDataEventType
+                    eventType: channelDataEventType,
                 },
                 channelId: 'msteams',
             };
             return activity;
         }
 
-        describe('routing to onTeamsSoftDeleteMessage', () => {
+        describe('routing to onTeamsSoftDeleteMessage', function () {
             it('should route to onTeamsSoftDeleteMessage', async function () {
-                var onTeamsSoftDeleteMessageCalled = false;
-    
+                let onTeamsSoftDeleteMessageCalled = false;
+
                 class TestActivityHandler extends TeamsActivityHandler {
-                    async onTeamsSoftDeleteMessage(context) {
+                    async onTeamsSoftDeleteMessage() {
                         onTeamsSoftDeleteMessageCalled = true;
                     }
                 }
-                
+
                 const bot = new TestActivityHandler();
-    
+
                 const adapter = new TestAdapter(async (context) => {
                     await bot.run(context);
-                })
-    
+                });
+
                 await adapter
-                    .send(createMessageDeleteActivity("softDeleteMessage"))
+                    .send(createMessageDeleteActivity('softDeleteMessage'))
                     .then(() => {
-                        assert(onTeamsSoftDeleteMessageCalled, "onTeamsSoftDeleteMessage handler not called");
+                        assert(onTeamsSoftDeleteMessageCalled, 'onTeamsSoftDeleteMessage handler not called');
                     })
                     .startTest();
-            })
+            });
 
             it('should route to onTeamsSoftDeleteMessageEvent registered handlers', async function () {
-                var onTeamsSoftDeleteMessageEventCalled = false;
+                let onTeamsSoftDeleteMessageEventCalled = false;
                 class TestActivityHandler extends TeamsActivityHandler {
-                    constructor () {
-                        super()
-                        
+                    constructor() {
+                        super();
+
                         this.onTeamsSoftDeleteMessageEvent((context, next) => {
                             onTeamsSoftDeleteMessageEventCalled = true;
-    
+
                             next();
-                        })
+                        });
                     }
                 }
-                
+
                 const bot = new TestActivityHandler();
-    
+
                 const adapter = new TestAdapter(async (context) => {
                     await bot.run(context);
-                })
-    
+                });
+
                 await adapter
-                    .send(createMessageDeleteActivity("softDeleteMessage"))
+                    .send(createMessageDeleteActivity('softDeleteMessage'))
                     .then(() => {
-                        assert(onTeamsSoftDeleteMessageEventCalled, "onTeamsSoftDeleteMessageEvent handler not called");
+                        assert(onTeamsSoftDeleteMessageEventCalled, 'onTeamsSoftDeleteMessageEvent handler not called');
                     })
                     .startTest();
-            })    
-
-        })
-    })
+            });
+        });
+    });
 
     describe('onInvokeActivity()', function () {
         class InvokeActivityEmptyHandlers extends TeamsActivityHandler {
