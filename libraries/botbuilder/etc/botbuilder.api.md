@@ -359,6 +359,8 @@ export class StreamingHttpClient implements HttpClient {
 export class TeamsActivityHandler extends ActivityHandler {
     protected dispatchConversationUpdateActivity(context: TurnContext): Promise<void>;
     protected dispatchEventActivity(context: TurnContext): Promise<void>;
+    protected dispatchMessageDeleteActivity(context: TurnContext): Promise<void>;
+    protected dispatchMessageUpdateActivity(context: TurnContext): Promise<void>;
     protected handleTeamsAnonymousAppBasedLinkQuery(_context: TurnContext, _query: AppBasedLinkQuery): Promise<MessagingExtensionResponse>;
     protected handleTeamsAppBasedLinkQuery(_context: TurnContext, _query: AppBasedLinkQuery): Promise<MessagingExtensionResponse>;
     protected handleTeamsCardActionInvoke(_context: TurnContext): Promise<InvokeResponse>;
@@ -383,8 +385,6 @@ export class TeamsActivityHandler extends ActivityHandler {
     protected handleTeamsTaskModuleFetch(_context: TurnContext, _taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse>;
     protected handleTeamsTaskModuleSubmit(_context: TurnContext, _taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse>;
     protected onInvokeActivity(context: TurnContext): Promise<InvokeResponse>;
-    protected onMessageDeleteActivity(context: TurnContext): Promise<void>;
-    protected onMessageUpdateActivity(context: TurnContext): Promise<void>;
     protected onSignInInvoke(context: TurnContext): Promise<void>;
     protected onTeamsChannelCreated(context: any): Promise<void>;
     onTeamsChannelCreatedEvent(handler: (channelInfo: ChannelInfo, teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
@@ -422,7 +422,6 @@ export class TeamsActivityHandler extends ActivityHandler {
     onTeamsTeamUnarchivedEvent(handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
     protected onTeamsUndeleteMessage(context: TurnContext): Promise<void>;
     onTeamsUndeleteMessageEvent(handler: (context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
-    protected onTurnActivity(context: TurnContext): Promise<void>;
 }
 
 // @public
