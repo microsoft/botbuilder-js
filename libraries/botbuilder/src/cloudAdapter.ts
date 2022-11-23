@@ -133,7 +133,6 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
         }
 
         const authHeader = z.string().parse(req.headers.Authorization ?? req.headers.authorization ?? '');
-
         try {
             const invokeResponse = await this.processActivity(authHeader, activity, logic);
             return end(invokeResponse?.status ?? StatusCodes.OK, invokeResponse?.body);
@@ -142,6 +141,28 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
                 err instanceof AuthenticationError ? StatusCodes.UNAUTHORIZED : StatusCodes.INTERNAL_SERVER_ERROR,
                 err.message ?? err
             );
+        }
+    }
+
+    /**
+     * Asynchronously process an activity running the provided logic function.
+     *
+     * @param authorization The authorization header in the format: "Bearer [longString]" or the AuthenticateRequestResult for this turn.
+     * @param activity The activity to process.
+     * @param logic The logic function to apply.
+     * @returns a promise representing the asynchronous operation.
+     */
+    async processActivityDirect(
+        authorization: string | AuthenticateRequestResult,
+        activity: Activity,
+        logic: (context: TurnContext) => Promise<void>
+    ): Promise<void> {
+        try {
+            typeof authorization === 'string'
+                ? await this.processActivity(authorization, activity, logic)
+                : await this.processActivity(authorization, activity, logic);
+        } catch (err) {
+            throw new Error(`CloudAdapter.processActivityDirect(): ERROR\n ${err.stack}`);
         }
     }
 

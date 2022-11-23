@@ -1280,6 +1280,8 @@ export class BotFrameworkAdapter
     /**
      * Asynchronously creates a turn context and runs the middleware pipeline for an incoming activity.
      *
+     * Use [CloudAdapter.processActivityDirect] instead.
+     *
      * @param activity The activity to process.
      * @param logic The function to call at the end of the middleware pipeline.
      *
