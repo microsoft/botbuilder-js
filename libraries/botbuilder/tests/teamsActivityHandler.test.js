@@ -257,6 +257,34 @@ describe('TeamsActivityHandler', function () {
                 })
                 .startTest();
         });
+
+        it('should route to defaultNextEvent when channelid is not msteams', async function () {
+            let defaultNextEventCalled = false;
+            class TestActivityHandler extends TeamsActivityHandler {
+                defaultNextEvent(context) {
+                    assert(context, 'context not found');
+                    return () => {
+                        defaultNextEventCalled = true;
+                    };
+                }
+            }
+
+            const bot = new TestActivityHandler();
+
+            const adapter = new TestAdapter(async (context) => {
+                await bot.run(context);
+            });
+
+            await adapter
+                .send({
+                    type: ActivityTypes.MessageUpdate,
+                    channelId: 'not msteams',
+                })
+                .then(() => {
+                    assert(defaultNextEventCalled, 'defaultNextEvent not called');
+                })
+                .startTest();
+        });
     });
 
     describe('dispatchMessageDeleteActivity', function () {
@@ -345,6 +373,34 @@ describe('TeamsActivityHandler', function () {
 
             await adapter
                 .send(createMessageDeleteActivity('invalid subtype'))
+                .then(() => {
+                    assert(defaultNextEventCalled, 'defaultNextEvent not called');
+                })
+                .startTest();
+        });
+
+        it('should route to defaultNextEvent when channelid is not msteams', async function () {
+            let defaultNextEventCalled = false;
+            class TestActivityHandler extends TeamsActivityHandler {
+                defaultNextEvent(context) {
+                    assert(context, 'context not found');
+                    return () => {
+                        defaultNextEventCalled = true;
+                    };
+                }
+            }
+
+            const bot = new TestActivityHandler();
+
+            const adapter = new TestAdapter(async (context) => {
+                await bot.run(context);
+            });
+
+            await adapter
+                .send({
+                    type: ActivityTypes.MessageDelete,
+                    channelId: 'not msteams',
+                })
                 .then(() => {
                     assert(defaultNextEventCalled, 'defaultNextEvent not called');
                 })
