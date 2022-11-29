@@ -121,14 +121,14 @@ describe('TeamsActivityHandler', function () {
             return activity;
         }
 
-        describe('routing to onTeamsEditMessage', function () {
-            it('should route to onTeamsEditMessage method', async function () {
-                let onTeamsEditMessageCalled = false;
+        describe('routing to onTeamsMessageEdit', function () {
+            it('should route to onTeamsMessageEdit method', async function () {
+                let onTeamsMessageEditCalled = false;
 
                 class TestActivityHandler extends TeamsActivityHandler {
-                    async onTeamsEditMessage(context) {
+                    async onTeamsMessageEdit(context) {
                         assert(context, 'context not found');
-                        onTeamsEditMessageCalled = true;
+                        onTeamsMessageEditCalled = true;
                     }
                 }
 
@@ -141,21 +141,21 @@ describe('TeamsActivityHandler', function () {
                 await adapter
                     .send(createMessageUpdateActivity('editMessage'))
                     .then(() => {
-                        assert(onTeamsEditMessageCalled, 'onTeamsEditMessage handler not called');
+                        assert(onTeamsMessageEditCalled, 'onTeamsMessageEdit handler not called');
                     })
                     .startTest();
             });
 
-            it('should route to onTeamsEditMessageEvent registered handlers', async function () {
-                let onTeamsEditMessageEventCalled = false;
+            it('should route to onTeamsMessageEditEvent registered handlers', async function () {
+                let onTeamsMessageEditEventCalled = false;
 
                 class TestActivityHandler extends TeamsActivityHandler {
                     constructor() {
                         super();
 
-                        this.onTeamsEditMessageEvent((context, next) => {
+                        this.onTeamsMessageEditEvent((context, next) => {
                             assert(context, 'context not found');
-                            onTeamsEditMessageEventCalled = true;
+                            onTeamsMessageEditEventCalled = true;
 
                             next();
                         });
@@ -171,20 +171,20 @@ describe('TeamsActivityHandler', function () {
                 await adapter
                     .send(createMessageUpdateActivity('editMessage'))
                     .then(() => {
-                        assert(onTeamsEditMessageEventCalled, 'onTeamsEditMessageEvent handler not called');
+                        assert(onTeamsMessageEditEventCalled, 'onTeamsMessageEditEvent handler not called');
                     })
                     .startTest();
             });
         });
 
-        describe('routing to onTeamsUndeleteMessage', function () {
-            it('should route to onTeamsUndeleteMessage', async function () {
-                let onTeamsUndeleteMessageCalled = false;
+        describe('routing to onTeamsMessageUndelete', function () {
+            it('should route to onTeamsMessageUndelete', async function () {
+                let onTeamsMessageUndeleteCalled = false;
 
                 class TestActivityHandler extends TeamsActivityHandler {
-                    async onTeamsUndeleteMessage(context) {
+                    async onTeamsMessageUndelete(context) {
                         assert(context, 'context not found');
-                        onTeamsUndeleteMessageCalled = true;
+                        onTeamsMessageUndeleteCalled = true;
                     }
                 }
 
@@ -197,21 +197,21 @@ describe('TeamsActivityHandler', function () {
                 await adapter
                     .send(createMessageUpdateActivity('undeleteMessage'))
                     .then(() => {
-                        assert(onTeamsUndeleteMessageCalled, 'onTeamsUndeleteMessage handler not called');
+                        assert(onTeamsMessageUndeleteCalled, 'onTeamsMessageUndelete handler not called');
                     })
                     .startTest();
             });
 
-            it('should route to onTeamsUndeleteMessageEvent registered handlers', async function () {
-                let onTeamsUndeleteMessageEventCalled = false;
+            it('should route to onTeamsMessageUndeleteEvent registered handlers', async function () {
+                let onTeamsMessageUndeleteEventCalled = false;
 
                 class TestActivityHandler extends TeamsActivityHandler {
                     constructor() {
                         super();
 
-                        this.onTeamsUndeleteMessageEvent((context, next) => {
+                        this.onTeamsMessageUndeleteEvent((context, next) => {
                             assert(context, 'context not found');
-                            onTeamsUndeleteMessageEventCalled = true;
+                            onTeamsMessageUndeleteEventCalled = true;
 
                             next();
                         });
@@ -227,7 +227,7 @@ describe('TeamsActivityHandler', function () {
                 await adapter
                     .send(createMessageUpdateActivity('undeleteMessage'))
                     .then(() => {
-                        assert(onTeamsUndeleteMessageEventCalled, 'onTeamsUndeleteMessageEvent handler not called');
+                        assert(onTeamsMessageUndeleteEventCalled, 'onTeamsMessageUndeleteEvent handler not called');
                     })
                     .startTest();
             });
@@ -299,14 +299,14 @@ describe('TeamsActivityHandler', function () {
             return activity;
         }
 
-        describe('routing to onTeamsSoftDeleteMessage', function () {
-            it('should route to onTeamsSoftDeleteMessage', async function () {
-                let onTeamsSoftDeleteMessageCalled = false;
+        describe('routing to onTeamsMessageSoftDelete', function () {
+            it('should route to onTeamsMessageSoftDelete', async function () {
+                let onTeamsMessageSoftDeleteCalled = false;
 
                 class TestActivityHandler extends TeamsActivityHandler {
-                    async onTeamsSoftDeleteMessage(context) {
+                    async onTeamsMessageSoftDelete(context) {
                         assert(context, 'context not found');
-                        onTeamsSoftDeleteMessageCalled = true;
+                        onTeamsMessageSoftDeleteCalled = true;
                     }
                 }
 
@@ -319,20 +319,20 @@ describe('TeamsActivityHandler', function () {
                 await adapter
                     .send(createMessageDeleteActivity('softDeleteMessage'))
                     .then(() => {
-                        assert(onTeamsSoftDeleteMessageCalled, 'onTeamsSoftDeleteMessage handler not called');
+                        assert(onTeamsMessageSoftDeleteCalled, 'onTeamsMessageSoftDelete handler not called');
                     })
                     .startTest();
             });
 
-            it('should route to onTeamsSoftDeleteMessageEvent registered handlers', async function () {
-                let onTeamsSoftDeleteMessageEventCalled = false;
+            it('should route to onTeamsMessageSoftDeleteEvent registered handlers', async function () {
+                let onTeamsMessageSoftDeleteEventCalled = false;
                 class TestActivityHandler extends TeamsActivityHandler {
                     constructor() {
                         super();
 
-                        this.onTeamsSoftDeleteMessageEvent((context, next) => {
+                        this.onTeamsMessageSoftDeleteEvent((context, next) => {
                             assert(context, 'context not found');
-                            onTeamsSoftDeleteMessageEventCalled = true;
+                            onTeamsMessageSoftDeleteEventCalled = true;
 
                             next();
                         });
@@ -348,7 +348,7 @@ describe('TeamsActivityHandler', function () {
                 await adapter
                     .send(createMessageDeleteActivity('softDeleteMessage'))
                     .then(() => {
-                        assert(onTeamsSoftDeleteMessageEventCalled, 'onTeamsSoftDeleteMessageEvent handler not called');
+                        assert(onTeamsMessageSoftDeleteEventCalled, 'onTeamsMessageSoftDeleteEvent handler not called');
                     })
                     .startTest();
             });
