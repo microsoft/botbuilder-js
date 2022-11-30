@@ -19,6 +19,8 @@ describe('ActivityHandlerBase', function () {
 
     let onTurnActivityCalled = false;
     let onMessageCalled = false;
+    let onMessageUpdateActivityCalled = false;
+    let onMessageDeleteActivityCalled = false;
     let onConversationUpdateActivityCalled = false;
     let onMessageReactionCalled = false;
     let onEventCalled = false;
@@ -30,6 +32,8 @@ describe('ActivityHandlerBase', function () {
     afterEach(function () {
         onTurnActivityCalled = false;
         onMessageCalled = false;
+        onMessageUpdateActivityCalled = false;
+        onMessageDeleteActivityCalled = false;
         onConversationUpdateActivityCalled = false;
         onMessageReactionCalled = false;
         onEventCalled = false;
@@ -86,6 +90,16 @@ describe('ActivityHandlerBase', function () {
             onMessageCalled = true;
         }
 
+        async onMessageUpdateActivity(context) {
+            assert(context, 'context not found');
+            onMessageUpdateActivityCalled = true;
+        }
+
+        async onMessageDeleteActivity(context) {
+            assert(context, 'context not found');
+            onMessageDeleteActivityCalled = true;
+        }
+
         async onConversationUpdateActivity(context) {
             assert(context, 'context not found');
             onConversationUpdateActivityCalled = true;
@@ -126,6 +140,8 @@ describe('ActivityHandlerBase', function () {
         const bot = new UpdatedActivityHandler();
 
         await processActivity({ type: ActivityTypes.Message }, bot);
+        await processActivity({ type: ActivityTypes.MessageUpdate }, bot);
+        await processActivity({ type: ActivityTypes.MessageDelete }, bot);
         await processActivity({ type: ActivityTypes.ConversationUpdate }, bot);
         await processActivity({ type: ActivityTypes.MessageReaction }, bot);
         await processActivity({ type: ActivityTypes.Event }, bot);
@@ -136,6 +152,8 @@ describe('ActivityHandlerBase', function () {
 
         assert(onTurnActivityCalled, 'onTurnActivity was not called');
         assert(onMessageCalled, 'onMessageActivity was not called');
+        assert(onMessageUpdateActivityCalled, 'onMessageUpdateActivity was not called');
+        assert(onMessageDeleteActivityCalled, 'onMessageDeleteActivity was not called');
         assert(onConversationUpdateActivityCalled, 'onConversationUpdateActivity was not called');
         assert(onMessageReactionCalled, 'onMessageReactionActivity was not called');
         assert(onEventCalled, 'onEventActivity was not called');

@@ -120,6 +120,39 @@ export class ActivityHandler extends ActivityHandlerBase {
     }
 
     /**
+     * Registers an activity event handler for the _message update_ event, emitted for every incoming message activity.
+     *
+     * @param handler The event handler.
+     * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
+     * @remarks
+     * Message update activities represent an update of an existing message activity within a conversation.
+     * The updated activity is referred to by the [id](xref:botbuilder-core.TurnContext.activity.id) and
+     * [conversation](xref:botbuilder-core.TurnContext.activity.conversation) fields within the activity, and the
+     * message update activity contains all fields in the revised message activity.
+     * Message update activities are identified by a [type](xref:botbuilder-core.TurnContext.activity.type) value of
+     * `messageUpdate`.
+     */
+    onMessageUpdate(handler: BotHandler): this {
+        return this.on('MessageUpdate', handler);
+    }
+
+    /**
+     * Registers an activity event handler for the _message delete_ event, emitted for every incoming message activity.
+     *
+     * @param handler The event handler.
+     * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
+     * @remarks
+     * Message delete activities represent a deletion of an existing message activity within a conversation.
+     * The deleted activity is referred to by the [id](xref:botbuilder-core.TurnContext.activity.id) and
+     * [conversation](xref:botbuilder-core.TurnContext.activity.conversation) fields within the activity.
+     * Message delete activities are identified by a [type](xref:botbuilder-core.TurnContext.activity.type) value of
+     * `messageDelete`.
+     */
+    onMessageDelete(handler: BotHandler): this {
+        return this.on('MessageDelete', handler);
+    }
+
+    /**
      * Registers an activity event handler for the _conversation update_ event, emitted for every incoming
      * conversation update activity.
      *
@@ -445,6 +478,42 @@ export class ActivityHandler extends ActivityHandlerBase {
      */
     protected async onMessageActivity(context: TurnContext): Promise<void> {
         await this.handle(context, 'Message', this.defaultNextEvent(context));
+    }
+
+    /**
+     * Runs all registered _message update_ handlers and then continues the event emission process.
+     *
+     * @param context The context object for the current turn.
+     *
+     * @remarks
+     * Override this method to support channel-specific behavior across multiple channels.
+     *
+     * The default logic is to call any handlers registered via
+     * [onMessageUpdate](xref:botbuilder-core.ActivityHandler.onMessageUpdate),
+     * and then continue by calling [defaultNextEvent](xref:botbuilder-core.ActivityHandler.defaultNextEvent).
+     */
+    protected async onMessageUpdateActivity(context: TurnContext): Promise<void> {
+        await this.handle(context, 'MessageUpdate', async () => {
+            await this.dispatchMessageUpdateActivity(context);
+        });
+    }
+
+    /**
+     * Runs all registered _message delete_ handlers and then continues the event emission process.
+     *
+     * @param context The context object for the current turn.
+     *
+     * @remarks
+     * Override this method to support channel-specific behavior across multiple channels.
+     *
+     * The default logic is to call any handlers registered via
+     * [onMessageDelete](xref:botbuilder-core.ActivityHandler.onMessageDelete),
+     * and then continue by calling [defaultNextEvent](xref:botbuilder-core.ActivityHandler.defaultNextEvent).
+     */
+    protected async onMessageDeleteActivity(context: TurnContext): Promise<void> {
+        await this.handle(context, 'MessageDelete', async () => {
+            await this.dispatchMessageDeleteActivity(context);
+        });
     }
 
     /**
@@ -811,6 +880,35 @@ export class ActivityHandler extends ActivityHandlerBase {
         }
     }
 
+    /**
+     * Runs the _message update_ sub-type handlers, as appropriate, and then continues the event emission process.
+     *
+     * @param context The context object for the current turn.
+     *
+     * @remarks
+     * Override this method to support channel-specific behavior across multiple channels or to add
+     * custom conversation update sub-type events.
+     *
+     * The default logic to simple call [defaultNextEvent](xref:botbuilder-core.ActivityHandler.defaultNextEvent).
+     */
+    protected async dispatchMessageUpdateActivity(context: TurnContext): Promise<void> {
+        await this.defaultNextEvent(context)();
+    }
+
+    /**
+     * Runs the _message delete_ sub-type handlers, as appropriate, and then continues the event emission process.
+     *
+     * @param context The context object for the current turn.
+     *
+     * @remarks
+     * Override this method to support channel-specific behavior across multiple channels or to add
+     * custom conversation update sub-type events.
+     *
+     * The default logic to simple call [defaultNextEvent](xref:botbuilder-core.ActivityHandler.defaultNextEvent).
+     */
+    protected async dispatchMessageDeleteActivity(context: TurnContext): Promise<void> {
+        await this.defaultNextEvent(context)();
+    }
     /**
      * Runs all registered _message reaction_ handlers and then continues the event emission process.
      *

@@ -53,6 +53,12 @@ export class ActivityHandlerBase {
             case ActivityTypes.Message:
                 await this.onMessageActivity(context);
                 break;
+            case ActivityTypes.MessageUpdate:
+                await this.onMessageUpdateActivity(context);
+                break;
+            case ActivityTypes.MessageDelete:
+                await this.onMessageDeleteActivity(context);
+                break;
             case ActivityTypes.ConversationUpdate:
                 await this.onConversationUpdateActivity(context);
                 break;
@@ -102,6 +108,32 @@ export class ActivityHandlerBase {
      * emission process.
      */
     protected async onMessageActivity(_context: TurnContext): Promise<void> {
+        return;
+    }
+
+    /**
+     * Provides a hook for emitting the _message update_ event.
+     *
+     * @param _context The context object for the current turn.
+     *
+     * @remarks
+     * Override this method to run registered _message update_ handlers and then continue the event
+     * emission process.
+     */
+    protected async onMessageUpdateActivity(_context: TurnContext): Promise<void> {
+        return;
+    }
+
+    /**
+     * Provides a hook for emitting the _message delete_ event.
+     *
+     * @param _context The context object for the current turn.
+     *
+     * @remarks
+     * Override this method to run registered _message delete_ handlers and then continue the event
+     * emission process.
+     */
+    protected async onMessageDeleteActivity(_context: TurnContext): Promise<void> {
         return;
     }
 

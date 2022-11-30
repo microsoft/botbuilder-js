@@ -359,6 +359,8 @@ export class StreamingHttpClient implements HttpClient {
 export class TeamsActivityHandler extends ActivityHandler {
     protected dispatchConversationUpdateActivity(context: TurnContext): Promise<void>;
     protected dispatchEventActivity(context: TurnContext): Promise<void>;
+    protected dispatchMessageDeleteActivity(context: TurnContext): Promise<void>;
+    protected dispatchMessageUpdateActivity(context: TurnContext): Promise<void>;
     protected handleTeamsAnonymousAppBasedLinkQuery(_context: TurnContext, _query: AppBasedLinkQuery): Promise<MessagingExtensionResponse>;
     protected handleTeamsAppBasedLinkQuery(_context: TurnContext, _query: AppBasedLinkQuery): Promise<MessagingExtensionResponse>;
     protected handleTeamsCardActionInvoke(_context: TurnContext): Promise<InvokeResponse>;
@@ -400,6 +402,12 @@ export class TeamsActivityHandler extends ActivityHandler {
     onTeamsMembersAddedEvent(handler: (membersAdded: TeamsChannelAccount[], teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
     protected onTeamsMembersRemoved(context: TurnContext): Promise<void>;
     onTeamsMembersRemovedEvent(handler: (membersRemoved: TeamsChannelAccount[], teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
+    protected onTeamsMessageEdit(context: TurnContext): Promise<void>;
+    onTeamsMessageEditEvent(handler: (context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
+    protected onTeamsMessageSoftDelete(context: TurnContext): Promise<void>;
+    onTeamsMessageSoftDeleteEvent(handler: (context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
+    protected onTeamsMessageUndelete(context: TurnContext): Promise<void>;
+    onTeamsMessageUndeleteEvent(handler: (context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
     protected onTeamsReadReceipt(context: TurnContext): Promise<void>;
     onTeamsReadReceiptEvent(handler: (receiptInfo: ReadReceiptInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
     protected onTeamsTeamArchived(context: any): Promise<void>;

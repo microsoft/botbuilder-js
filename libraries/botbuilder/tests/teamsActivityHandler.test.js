@@ -61,6 +61,351 @@ describe('TeamsActivityHandler', function () {
                 })
                 .startTest();
         });
+
+        it('should call onMessageUpdateActivity when the activity type is messageUpdate', async function () {
+            const msg = 'hi';
+            class TestActivityHandler extends TeamsActivityHandler {
+                async onMessageUpdateActivity(context) {
+                    await context.sendActivity({ type: context.activity.type, text: msg });
+                }
+            }
+
+            const bot = new TestActivityHandler();
+
+            const adapter = new TestAdapter(async (context) => {
+                await bot.run(context);
+            });
+
+            await adapter
+                .send({ type: ActivityTypes.MessageUpdate })
+                .assertReply((activity) => {
+                    assert.strictEqual(activity.type, ActivityTypes.MessageUpdate);
+                    assert.strictEqual(activity.text, msg);
+                })
+                .startTest();
+        });
+
+        it('should call onMessageDeleteActivity when the activity type is messageDelete', async function () {
+            const msg = 'hi';
+            class TestActivityHandler extends TeamsActivityHandler {
+                async onMessageDeleteActivity(context) {
+                    await context.sendActivity({ type: context.activity.type, text: msg });
+                }
+            }
+
+            const bot = new TestActivityHandler();
+
+            const adapter = new TestAdapter(async (context) => {
+                await bot.run(context);
+            });
+
+            await adapter
+                .send({ type: ActivityTypes.MessageDelete })
+                .assertReply((activity) => {
+                    assert.strictEqual(activity.type, ActivityTypes.MessageDelete);
+                    assert.strictEqual(activity.text, msg);
+                })
+                .startTest();
+        });
+    });
+
+    describe('dispatchMessageUpdateActivity', function () {
+        function createMessageUpdateActivity(channelDataEventType) {
+            const activity = {
+                type: ActivityTypes.MessageUpdate,
+                channelData: {
+                    eventType: channelDataEventType,
+                },
+                channelId: 'msteams',
+            };
+            return activity;
+        }
+
+        describe('routing to onTeamsMessageEdit', function () {
+            it('should route to onTeamsMessageEdit method', async function () {
+                let onTeamsMessageEditCalled = false;
+
+                class TestActivityHandler extends TeamsActivityHandler {
+                    async onTeamsMessageEdit(context) {
+                        assert(context, 'context not found');
+                        onTeamsMessageEditCalled = true;
+                    }
+                }
+
+                const bot = new TestActivityHandler();
+
+                const adapter = new TestAdapter(async (context) => {
+                    await bot.run(context);
+                });
+
+                await adapter
+                    .send(createMessageUpdateActivity('editMessage'))
+                    .then(() => {
+                        assert(onTeamsMessageEditCalled, 'onTeamsMessageEdit handler not called');
+                    })
+                    .startTest();
+            });
+
+            it('should route to onTeamsMessageEditEvent registered handlers', async function () {
+                let onTeamsMessageEditEventCalled = false;
+
+                class TestActivityHandler extends TeamsActivityHandler {
+                    constructor() {
+                        super();
+
+                        this.onTeamsMessageEditEvent((context, next) => {
+                            assert(context, 'context not found');
+                            onTeamsMessageEditEventCalled = true;
+
+                            next();
+                        });
+                    }
+                }
+
+                const bot = new TestActivityHandler();
+
+                const adapter = new TestAdapter(async (context) => {
+                    await bot.run(context);
+                });
+
+                await adapter
+                    .send(createMessageUpdateActivity('editMessage'))
+                    .then(() => {
+                        assert(onTeamsMessageEditEventCalled, 'onTeamsMessageEditEvent handler not called');
+                    })
+                    .startTest();
+            });
+        });
+
+        describe('routing to onTeamsMessageUndelete', function () {
+            it('should route to onTeamsMessageUndelete', async function () {
+                let onTeamsMessageUndeleteCalled = false;
+
+                class TestActivityHandler extends TeamsActivityHandler {
+                    async onTeamsMessageUndelete(context) {
+                        assert(context, 'context not found');
+                        onTeamsMessageUndeleteCalled = true;
+                    }
+                }
+
+                const bot = new TestActivityHandler();
+
+                const adapter = new TestAdapter(async (context) => {
+                    await bot.run(context);
+                });
+
+                await adapter
+                    .send(createMessageUpdateActivity('undeleteMessage'))
+                    .then(() => {
+                        assert(onTeamsMessageUndeleteCalled, 'onTeamsMessageUndelete handler not called');
+                    })
+                    .startTest();
+            });
+
+            it('should route to onTeamsMessageUndeleteEvent registered handlers', async function () {
+                let onTeamsMessageUndeleteEventCalled = false;
+
+                class TestActivityHandler extends TeamsActivityHandler {
+                    constructor() {
+                        super();
+
+                        this.onTeamsMessageUndeleteEvent((context, next) => {
+                            assert(context, 'context not found');
+                            onTeamsMessageUndeleteEventCalled = true;
+
+                            next();
+                        });
+                    }
+                }
+
+                const bot = new TestActivityHandler();
+
+                const adapter = new TestAdapter(async (context) => {
+                    await bot.run(context);
+                });
+
+                await adapter
+                    .send(createMessageUpdateActivity('undeleteMessage'))
+                    .then(() => {
+                        assert(onTeamsMessageUndeleteEventCalled, 'onTeamsMessageUndeleteEvent handler not called');
+                    })
+                    .startTest();
+            });
+        });
+
+        it('should route to defaultNextEvent when unrecognized subtype encountered', async function () {
+            let defaultNextEventCalled = false;
+            class TestActivityHandler extends TeamsActivityHandler {
+                defaultNextEvent(context) {
+                    assert(context, 'context not found');
+                    return () => {
+                        defaultNextEventCalled = true;
+                    };
+                }
+            }
+
+            const bot = new TestActivityHandler();
+
+            const adapter = new TestAdapter(async (context) => {
+                await bot.run(context);
+            });
+
+            await adapter
+                .send(createMessageUpdateActivity('invalid subtype'))
+                .then(() => {
+                    assert(defaultNextEventCalled, 'defaultNextEvent not called');
+                })
+                .startTest();
+        });
+
+        it('should route to defaultNextEvent when channelid is not msteams', async function () {
+            let defaultNextEventCalled = false;
+            class TestActivityHandler extends TeamsActivityHandler {
+                defaultNextEvent(context) {
+                    assert(context, 'context not found');
+                    return () => {
+                        defaultNextEventCalled = true;
+                    };
+                }
+            }
+
+            const bot = new TestActivityHandler();
+
+            const adapter = new TestAdapter(async (context) => {
+                await bot.run(context);
+            });
+
+            await adapter
+                .send({
+                    type: ActivityTypes.MessageUpdate,
+                    channelId: 'not msteams',
+                })
+                .then(() => {
+                    assert(defaultNextEventCalled, 'defaultNextEvent not called');
+                })
+                .startTest();
+        });
+    });
+
+    describe('dispatchMessageDeleteActivity', function () {
+        function createMessageDeleteActivity(channelDataEventType) {
+            const activity = {
+                type: ActivityTypes.MessageDelete,
+                channelData: {
+                    eventType: channelDataEventType,
+                },
+                channelId: 'msteams',
+            };
+            return activity;
+        }
+
+        describe('routing to onTeamsMessageSoftDelete', function () {
+            it('should route to onTeamsMessageSoftDelete', async function () {
+                let onTeamsMessageSoftDeleteCalled = false;
+
+                class TestActivityHandler extends TeamsActivityHandler {
+                    async onTeamsMessageSoftDelete(context) {
+                        assert(context, 'context not found');
+                        onTeamsMessageSoftDeleteCalled = true;
+                    }
+                }
+
+                const bot = new TestActivityHandler();
+
+                const adapter = new TestAdapter(async (context) => {
+                    await bot.run(context);
+                });
+
+                await adapter
+                    .send(createMessageDeleteActivity('softDeleteMessage'))
+                    .then(() => {
+                        assert(onTeamsMessageSoftDeleteCalled, 'onTeamsMessageSoftDelete handler not called');
+                    })
+                    .startTest();
+            });
+
+            it('should route to onTeamsMessageSoftDeleteEvent registered handlers', async function () {
+                let onTeamsMessageSoftDeleteEventCalled = false;
+                class TestActivityHandler extends TeamsActivityHandler {
+                    constructor() {
+                        super();
+
+                        this.onTeamsMessageSoftDeleteEvent((context, next) => {
+                            assert(context, 'context not found');
+                            onTeamsMessageSoftDeleteEventCalled = true;
+
+                            next();
+                        });
+                    }
+                }
+
+                const bot = new TestActivityHandler();
+
+                const adapter = new TestAdapter(async (context) => {
+                    await bot.run(context);
+                });
+
+                await adapter
+                    .send(createMessageDeleteActivity('softDeleteMessage'))
+                    .then(() => {
+                        assert(onTeamsMessageSoftDeleteEventCalled, 'onTeamsMessageSoftDeleteEvent handler not called');
+                    })
+                    .startTest();
+            });
+        });
+
+        it('should route to defaultNextEvent when unrecognized subtype encountered', async function () {
+            let defaultNextEventCalled = false;
+            class TestActivityHandler extends TeamsActivityHandler {
+                defaultNextEvent(context) {
+                    assert(context, 'context not found');
+                    return () => {
+                        defaultNextEventCalled = true;
+                    };
+                }
+            }
+
+            const bot = new TestActivityHandler();
+
+            const adapter = new TestAdapter(async (context) => {
+                await bot.run(context);
+            });
+
+            await adapter
+                .send(createMessageDeleteActivity('invalid subtype'))
+                .then(() => {
+                    assert(defaultNextEventCalled, 'defaultNextEvent not called');
+                })
+                .startTest();
+        });
+
+        it('should route to defaultNextEvent when channelid is not msteams', async function () {
+            let defaultNextEventCalled = false;
+            class TestActivityHandler extends TeamsActivityHandler {
+                defaultNextEvent(context) {
+                    assert(context, 'context not found');
+                    return () => {
+                        defaultNextEventCalled = true;
+                    };
+                }
+            }
+
+            const bot = new TestActivityHandler();
+
+            const adapter = new TestAdapter(async (context) => {
+                await bot.run(context);
+            });
+
+            await adapter
+                .send({
+                    type: ActivityTypes.MessageDelete,
+                    channelId: 'not msteams',
+                })
+                .then(() => {
+                    assert(defaultNextEventCalled, 'defaultNextEvent not called');
+                })
+                .startTest();
+        });
     });
 
     describe('onInvokeActivity()', function () {
