@@ -215,7 +215,14 @@ function addStorage(services: ServiceCollection, configuration: Configuration): 
                 });
             }
 
+            case 'Memory': {
+                return new MemoryStorage();
+            }
+
             default:
+                if (storage) {
+                    throw new TypeError('Invalid runtime.storage value');
+                }
                 return new MemoryStorage();
         }
     });
