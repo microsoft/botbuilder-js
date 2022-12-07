@@ -240,6 +240,24 @@ export class Teams {
             callback
         ) as Promise<Models.TeamsMeetingInfoResponse>;
     }
+
+    // TODO: Add multiple method definitions
+    sendMeetingNotification(
+        meetingId: string,
+        notification: any,
+        options?: msRest.RequestOptionsBase,
+        callback?: msRest.ServiceCallback<any>
+    ): Promise<any> {
+        return this.client.sendOperationRequest(
+            {
+                meetingId,
+                notification,
+                options
+            },
+            sendMeetingNotificationOperationSpec,
+            callback
+        ) as Promise<any>;
+    }
 }
 
 // Operation Specifications
@@ -296,3 +314,20 @@ const fetchMeetingInfoOperationSpec: msRest.OperationSpec = {
     },
     serializer,
 };
+
+const sendMeetingNotificationOperationSpec: msRest.OperationSpec = {
+    httpMethod: 'POST',
+    path: 'v1/meetings/{meetingId}/notification',
+    urlParameters: [Parameters.meetingId],
+    requestBody: {
+        parameterPath: "notification",
+        mapper: {
+            ...Mappers.TeamsMeetingNotification,
+            required: true
+        }
+    },
+    responses: {
+        default: {} // TODO: ADD response mappers
+    },
+    serializer
+}

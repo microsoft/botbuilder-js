@@ -1817,3 +1817,41 @@ export interface MeetingEndEventDetails extends MeetingEventDetails {
      */
     endTime: Date;
 }
+
+export interface TeamsMeetingNotification {
+    type: string;
+    value: TeamsMeetingNotificationInfo;
+    channelData: TeamsMeetingNotificationChannelData;
+}
+
+export interface TeamsMeetingNotificationInfo {
+    recipients: string[];
+    surfaces: TeamsMeetingNotificationSurface[];
+}
+
+export interface TeamsMeetingNotificationSurface {
+    surface: string;
+    contentType: string;
+    content: TaskModuleContinueResponse;
+}
+
+export interface TeamsMeetingNotificationChannelData {
+    onBehalfOf: TeamsMeetingOnBehalfOf;
+}
+
+export interface TeamsMeetingOnBehalfOf {
+    itemid: number; // Supposed to be an integer BUT Typescript does not have an integer type. Should we be explicit here? i.e itemid: 0 | 1 | ..etc  
+    mentionType: string;
+    mri: string;
+    displayName: string;
+}
+
+export interface TeamsMeetingNotificationRecipientFailureInfo {
+    recipientMri: string;
+    failureReason: string;
+    errorCode: string;
+}
+
+export interface TeamsMeetingNotificationRecipientFailureInfos {
+    recipientsFailureInfo: TeamsMeetingNotificationRecipientFailureInfo[];
+}

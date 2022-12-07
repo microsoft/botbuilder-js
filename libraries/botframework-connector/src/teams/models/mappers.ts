@@ -434,6 +434,155 @@ export const TeamsMeetingDetails: msRest.CompositeMapper = {
     },
 };
 
+export const TeamsMeetingNotificationInfo: msRest.CompositeMapper = {
+    serializedName: "TeamsMeetingNotificationInfo",
+    type: {
+        name: "Composite",
+        className: "TeamsMeetingNotificationInfo",
+        modelProperties: {
+            recipients: {
+                serializedName: "recipients",
+                type: {
+                    name: "Sequence",
+                    element: {
+                        type: {
+                            name: "String",
+                        }
+                    }
+                }
+            },
+            surfaces: {
+                serializedName: "surfaces",
+                type: {
+                    name: "Sequence",
+                    element: {
+                        type: {
+                            name: "Composite",
+                            className: "TeamsMeetingNotificationSurface"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+export const TeamsMeetingNotification: msRest.CompositeMapper = {
+    serializedName: "TeamsMeetingNotification",
+    type: {
+        name: "Composite",
+        className: "TeamsMeetingNotification",
+        modelProperties: {
+            type: {
+                serializedName: "type",
+                type: {
+                    name: "String"
+                }
+            },
+            value: {
+                serializedName: "value",
+                type: {
+                    name: "Composite",
+                    className: "TeamsMeetingNotificationInfo"
+                }
+            },
+            channelData: {
+                serializedName: "channelData",
+                type: {
+                    name: "Composite",
+                    className: "TeamsMeetingNotificationChannelData"
+                }
+            }
+
+        }
+    }
+}
+
+export const TeamsMeetingNotificationSurface: msRest.CompositeMapper = {
+    serializedName: "TeamsMeetingNotificationSurface",
+    type: {
+        name: "Composite",
+        className: "TeamsMeetingNotificationSurface",
+        modelProperties: {
+            surface: {
+                serializedName: "surface",
+                type: {
+                    name: "String"
+                }
+            },
+            contentType: {
+                serializedName: "contentType",
+                type: {
+                    name: "String",
+                }
+            },
+            content: {
+                serializedName: "content",
+                type: {
+                    name: "Composite",
+                    className: "TaskModuleContinueResponse"
+                }
+            }
+        }
+    }
+}
+
+export const TeamsMeetingNotificationChannelData = {
+    serializedName: "TeamsMeetingNotificationChannelData",
+    type: {
+        name: "Composite",
+        className: "TeamsMeetingNotificationChannelData",
+        modelProperties: {
+            onBehalfOf: {
+                serializedName: "onBehalfOf",
+                type: {
+                    name: "Sequence",
+                    element: {
+                        type: { 
+                            name: "Composite",
+                            className: "TeamsMeetingOnBehalfOf"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+export const TeamsMeetingOnBehalfOf: msRest.CompositeMapper = {
+    serializedName: "TeamsMeetingOnBehalfOf",
+    type: {
+        name: "Composite",
+        className: "TeamsMeetingOnBehalfOf",
+        modelProperties: {
+            itemid: {
+                serializedName: "itemid",
+                type: {
+                    name: "Number"
+                }
+            },
+            mentionType: {
+                serializedName: "mentionType",
+                type: {
+                    name: "String"
+                }
+            },
+            mri: {
+                serializedName: "mri",
+                type: {
+                    name: "String"
+                }
+            },
+            displayName: {
+                serializedName: "displayName",
+                type: {
+                    name: "String"
+                }
+            }
+        }
+    }
+}
+
 export const CardAction: msRest.CompositeMapper = {
     serializedName: 'CardAction',
     type: {

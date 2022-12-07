@@ -333,6 +333,22 @@ export class TeamsInfo {
         return await this.getMemberInternal(this.getConnectorClient(context), t, userId);
     }
 
+    // TODO: Update types
+    static async sendMeetingNotification(context: TurnContext, notification: any, meetingId?: string): Promise<any> {
+        const activity = context.activity;
+
+        if (meetingId == null) {
+            const meeting = teamsGetTeamMeetingInfo(activity);
+            meetingId = meeting?.id;
+        }
+
+        if (!meetingId) {
+            throw new Error('meetingId is required.');
+        }
+
+        return await this.getTeamsConnectorClient(context).teams.sendMeetingNotification(meetingId, notification);
+    }
+
     /**
      * @private
      */

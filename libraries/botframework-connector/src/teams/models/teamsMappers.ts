@@ -13,4 +13,12 @@ export {
     TeamsMeetingDetails,
     TeamsMeetingInfo,
     TeamsMeetingParticipant,
+    TeamsMeetingNotification,
+    TeamsMeetingNotificationInfo,
+    TeamsMeetingNotificationSurface,
+    TeamsMeetingNotificationChannelData,
+    TeamsMeetingOnBehalfOf,
+    TaskModuleContinueResponse,
+    TaskModuleTaskInfo,
+    Attachment,
 } from './mappers';
