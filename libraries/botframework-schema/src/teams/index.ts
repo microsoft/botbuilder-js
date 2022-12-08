@@ -1860,7 +1860,7 @@ export interface TeamsMeetingNotificationChannelData {
  * Specifies the Teams user that triggered the Teams meeting notification.
  */
 export interface TeamsMeetingOnBehalfOf {
-    itemid: number; // Supposed to be an integer BUT Typescript does not have an integer type. Should we be explicit here? i.e itemid: 0 | 1 | ..etc  
+    itemid: number;
     mentionType: string;
     mri: string;
     displayName: string;

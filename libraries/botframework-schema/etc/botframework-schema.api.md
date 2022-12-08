@@ -1717,6 +1717,68 @@ export interface TeamsMeetingInfo {
 }
 
 // @public
+export interface TeamsMeetingNotification {
+    // (undocumented)
+    channelData: TeamsMeetingNotificationChannelData;
+    // (undocumented)
+    type: string;
+    // (undocumented)
+    value: TeamsMeetingNotificationInfo;
+}
+
+// @public
+export interface TeamsMeetingNotificationChannelData {
+    // (undocumented)
+    onBehalfOf: TeamsMeetingOnBehalfOf;
+}
+
+// @public
+export interface TeamsMeetingNotificationInfo {
+    // (undocumented)
+    recipients: string[];
+    // (undocumented)
+    surfaces: TeamsMeetingNotificationSurface[];
+}
+
+// @public
+export interface TeamsMeetingNotificationRecipientFailureInfo {
+    // (undocumented)
+    errorCode: string;
+    // (undocumented)
+    failureReason: string;
+    // (undocumented)
+    recipientMri: string;
+}
+
+// @public
+export interface TeamsMeetingNotificationRecipientFailureInfos {
+    // (undocumented)
+    recipientsFailureInfo: TeamsMeetingNotificationRecipientFailureInfo[];
+}
+
+// @public
+export interface TeamsMeetingNotificationSurface {
+    // (undocumented)
+    content: TaskModuleContinueResponse;
+    // (undocumented)
+    contentType: string;
+    // (undocumented)
+    surface: string;
+}
+
+// @public
+export interface TeamsMeetingOnBehalfOf {
+    // (undocumented)
+    displayName: string;
+    // (undocumented)
+    itemid: number;
+    // (undocumented)
+    mentionType: string;
+    // (undocumented)
+    mri: string;
+}
+
+// @public
 export interface TeamsMeetingParticipant {
     conversation?: ConversationAccount;
     meeting?: Meeting;
