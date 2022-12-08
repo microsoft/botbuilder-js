@@ -1098,7 +1098,7 @@ describe('TeamsInfo', function () {
 
         it('should throw an error if an empty meeting id is provided', async function () {
             const notification = {};
-            const emptyMeetingId = "";
+            const emptyMeetingId = '';
             const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
 
             const sendTeamsMeetingNotificationExpectation = nock('https://smba.trafficmanager.net/amer')
@@ -1117,7 +1117,7 @@ describe('TeamsInfo', function () {
                 assert(e.message, 'meetingId is required.');
                 isErrorThrown = true;
             }
-            
+
             assert(isErrorThrown);
             assert(fetchOauthToken.isDone() === false);
             assert(sendTeamsMeetingNotificationExpectation.isDone() === false);
@@ -1130,14 +1130,17 @@ describe('TeamsInfo', function () {
             const context = new TestContext(teamActivity);
 
             const sendTeamsMeetingNotificationExpectation = nock('https://smba.trafficmanager.net/amer')
-                .post(`/v1/meetings/${encodeURIComponent(teamActivity.channelData.meeting.id)}/notification`, notification)
+                .post(
+                    `/v1/meetings/${encodeURIComponent(teamActivity.channelData.meeting.id)}/notification`,
+                    notification
+                )
                 .matchHeader('Authorization', expectedAuthHeader)
                 .reply(202, {});
 
             context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
 
             await TeamsInfo.sendMeetingNotification(context, notification);
-            
+
             assert(fetchOauthToken.isDone());
             assert(sendTeamsMeetingNotificationExpectation.isDone());
         });
