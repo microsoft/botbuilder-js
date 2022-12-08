@@ -1718,11 +1718,8 @@ export interface TeamsMeetingInfo {
 
 // @public
 export interface TeamsMeetingNotification {
-    // (undocumented)
     channelData: TeamsMeetingNotificationChannelData;
-    // (undocumented)
     type: 'targetedMeetingNotification' | string;
-    // (undocumented)
     value: TeamsMeetingNotificationInfo;
 }
 

@@ -1823,8 +1823,17 @@ export interface MeetingEndEventDetails extends MeetingEventDetails {
  * Specifies details of a Teams meeting send notification payload.
  */
 export interface TeamsMeetingNotification {
+    /**
+     * @member {string} [type] The type of meeting notification.
+     */
     type: 'targetedMeetingNotification' | string;
+    /**
+     * @member {TeamsMeetingNotificationInfo} [type] The specific details of the meeting notification.
+     */
     value: TeamsMeetingNotificationInfo;
+    /**
+     * @member {TeamsMeetingNotificationChannelData} [type] The channel data of the meeting notification.
+     */
     channelData: TeamsMeetingNotificationChannelData;
 }
 
