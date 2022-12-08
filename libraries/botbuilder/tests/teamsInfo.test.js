@@ -1095,6 +1095,52 @@ describe('TeamsInfo', function () {
             assert(fetchOauthToken.isDone());
             assert(sendTeamsMeetingNotificationExpectation.isDone());
         });
+
+        it('should throw an error if an empty meeting id is provided', async function () {
+            const notification = {};
+            const emptyMeetingId = "";
+            const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+
+            const sendTeamsMeetingNotificationExpectation = nock('https://smba.trafficmanager.net/amer')
+                .post(`/v1/meetings/${emptyMeetingId}/notification`, notification)
+                .matchHeader('Authorization', expectedAuthHeader)
+                .reply(202, {});
+
+            const context = new TestContext(teamActivity);
+            context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
+
+            let isErrorThrown = false;
+            try {
+                await TeamsInfo.sendMeetingNotification(context, notification, emptyMeetingId);
+            } catch (e) {
+                assert(typeof e, 'Error');
+                assert(e.message, 'meetingId is required.');
+                isErrorThrown = true;
+            }
+            
+            assert(isErrorThrown);
+            assert(fetchOauthToken.isDone() === false);
+            assert(sendTeamsMeetingNotificationExpectation.isDone() === false);
+        });
+
+        it('should get the meeting id from the context object if no meeting id is provided', async function () {
+            const notification = {};
+            const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+
+            const context = new TestContext(teamActivity);
+
+            const sendTeamsMeetingNotificationExpectation = nock('https://smba.trafficmanager.net/amer')
+                .post(`/v1/meetings/${encodeURIComponent(teamActivity.channelData.meeting.id)}/notification`, notification)
+                .matchHeader('Authorization', expectedAuthHeader)
+                .reply(202, {});
+
+            context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
+
+            await TeamsInfo.sendMeetingNotification(context, notification);
+            
+            assert(fetchOauthToken.isDone());
+            assert(sendTeamsMeetingNotificationExpectation.isDone());
+        });
     });
 
     describe('private methods', function () {
