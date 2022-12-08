@@ -4,6 +4,12 @@
  */
 
 export {
+    ErrorResponse,
+    ErrorModel,
+    InnerHttpError  
+} from '../../connectorApi/models/mappers';
+
+export {
     ConversationList,
     ChannelInfo,
     MessageActionsPayloadConversation,
@@ -18,6 +24,8 @@ export {
     TeamsMeetingNotificationSurface,
     TeamsMeetingNotificationChannelData,
     TeamsMeetingOnBehalfOf,
+    TeamsMeetingNotificationRecipientFailureInfo,
+    TeamsMeetingNotificationRecipientFailureInfos,
     TaskModuleContinueResponse,
     TaskModuleTaskInfo,
     Attachment,

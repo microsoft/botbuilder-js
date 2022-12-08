@@ -583,6 +583,56 @@ export const TeamsMeetingOnBehalfOf: msRest.CompositeMapper = {
     }
 }
 
+export const TeamsMeetingNotificationRecipientFailureInfo: msRest.CompositeMapper = {
+    serializedName: "TeamsMeetingNotificationRecipientFailureInfo",
+    type: {
+        name: "Composite",
+        className: "TeamsMeetingNotificationRecipientFailureInfo",
+        modelProperties: {
+            recipientMri: {
+                serializedName: "recipientMri",
+                type: {
+                    name: "String"
+                }
+            },
+            failureReason: {
+                serializedName: "failureReason",
+                type: {
+                    name: "String"
+                }
+            },
+            errorCode: {
+                serializedName: "errorCode",
+                type: {
+                    name: "String"
+                }
+            },
+        }
+    }
+}
+
+export const TeamsMeetingNotificationRecipientFailureInfos: msRest.CompositeMapper = {
+    serializedName: "TeamsMeetingNotificationRecipientFailureInfos",
+    type: {
+        name: "Composite",
+        className: "TeamsMeetingNotificationRecipientFailureInfos",
+        modelProperties: {
+            recipientsFailureInfo: {
+                serializedName: "recipientsFailureInfo",
+                type: {
+                    name: "Sequence",
+                    element: {
+                        type: {
+                            name: "Composite",
+                            className: "TeamsMeetingNotificationRecipientFailureInfo"
+                        }
+                    }
+                }
+            },
+        }
+    }
+}
+
 export const CardAction: msRest.CompositeMapper = {
     serializedName: 'CardAction',
     type: {

@@ -1818,27 +1818,47 @@ export interface MeetingEndEventDetails extends MeetingEventDetails {
     endTime: Date;
 }
 
+/**
+ * @interface
+ * Specifies details of a Teams meeting send notification payload.
+ */
 export interface TeamsMeetingNotification {
     type: string;
     value: TeamsMeetingNotificationInfo;
     channelData: TeamsMeetingNotificationChannelData;
 }
 
+/**
+ * @interface
+ * Specifies recipients and surfaces to target in a Teams meeting notification.
+ */
 export interface TeamsMeetingNotificationInfo {
     recipients: string[];
     surfaces: TeamsMeetingNotificationSurface[];
 }
 
+/**
+ * @interface
+ * Specifies the surface and content for a Teams meeting notification. 
+ */
 export interface TeamsMeetingNotificationSurface {
     surface: string;
     contentType: string;
     content: TaskModuleContinueResponse;
 }
 
+/**
+ * @interface
+ * Specifies channel data associated with the Teams meeting notification.
+ */
 export interface TeamsMeetingNotificationChannelData {
     onBehalfOf: TeamsMeetingOnBehalfOf;
 }
 
+/**
+ * @interface
+ * Specifies the Teams user that triggered the Teams meeting notification.
+ */
 export interface TeamsMeetingOnBehalfOf {
     itemid: number; // Supposed to be an integer BUT Typescript does not have an integer type. Should we be explicit here? i.e itemid: 0 | 1 | ..etc  
     mentionType: string;
@@ -1846,12 +1866,20 @@ export interface TeamsMeetingOnBehalfOf {
     displayName: string;
 }
 
+/**
+ * @interface
+ * Specifies the recipients for which the Teams meeting notification was not sent. 
+ */
 export interface TeamsMeetingNotificationRecipientFailureInfo {
     recipientMri: string;
     failureReason: string;
     errorCode: string;
 }
 
+/**
+ * @interface
+ * Specifies the list of recipients for which the Teams meeting notification was not sent.
+ */
 export interface TeamsMeetingNotificationRecipientFailureInfos {
     recipientsFailureInfo: TeamsMeetingNotificationRecipientFailureInfo[];
 }

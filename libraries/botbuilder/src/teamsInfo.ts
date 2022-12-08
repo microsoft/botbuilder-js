@@ -22,6 +22,8 @@ import {
     TeamsMeetingParticipant,
     TeamsMeetingInfo,
     Channels,
+    TeamsMeetingNotification,
+    TeamsMeetingNotificationRecipientFailureInfos,
 } from 'botbuilder-core';
 import { ConnectorClient, TeamsConnectorClient, TeamsConnectorModels } from 'botframework-connector';
 
@@ -333,8 +335,7 @@ export class TeamsInfo {
         return await this.getMemberInternal(this.getConnectorClient(context), t, userId);
     }
 
-    // TODO: Update types
-    static async sendMeetingNotification(context: TurnContext, notification: any, meetingId?: string): Promise<any> {
+    static async sendMeetingNotification(context: TurnContext, notification: TeamsMeetingNotification, meetingId?: string): Promise<TeamsMeetingNotificationRecipientFailureInfos | {}> {
         const activity = context.activity;
 
         if (meetingId == null) {
