@@ -953,6 +953,147 @@ describe('TeamsInfo', function () {
         });
     });
 
+    describe('sendTeamsMeetingNotification()', function () {
+        it("should correctly map notification object as the request body of the POST request", async () => {
+            const notification = {
+                type: "targetedMeetingNotification",
+                value: {
+                    recipients: [
+                        "8:orgid:3c493705-8971-4e22-9830-967ad65cc74a",
+                        ],
+                    surfaces: [
+                        {
+                        surface: "meetingStage",
+                        contentType: "task",
+                        content: {
+                            value: {
+                            height: "3",
+                            width: "4",
+                            title: "this is Yunny's test",
+                            url: "https://www.bing.com"
+                            }
+                        }
+                        }
+                    ]
+                },
+                channelData: {
+                  onBehalfOf: [ // support for user attributions
+                    {
+                      itemid: 0,
+                      mentionType: "person",
+                      mri: "8:orgid:cf41f188-30ee-4698-9a65-8af95b9eb9c3",
+                      displayName: "MOD Administrator"
+                    }
+                  ]
+                }
+              };
+            const meetingId = "randomGUID";
+            const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+
+            const sendTeamsMeetingNotificationExpectation = nock('https://smba.trafficmanager.net/amer')
+            .post(`/v1/meetings/${meetingId}/notification`, notification)
+            .matchHeader('Authorization', expectedAuthHeader)
+            .reply(202, {});
+
+            
+            const context = new TestContext(teamActivity);
+            context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
+            // if notification object wasn't passed as request body, test would fail
+            const sendTeamsMeetingNotification = await TeamsInfo.sendMeetingNotification(context, notification, meetingId);
+
+            assert(fetchOauthToken.isDone());
+            assert(sendTeamsMeetingNotificationExpectation.isDone());
+        })
+
+        it("should return an empty object if a 202 status code was returned", async function () {
+            const notification = {};
+            const meetingId = "randomGUID";
+            const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+
+            const sendTeamsMeetingNotificationExpectation = nock('https://smba.trafficmanager.net/amer')
+            .post(`/v1/meetings/${meetingId}/notification`, notification)
+            .matchHeader('Authorization', expectedAuthHeader)
+            .reply(202, {});
+
+            
+            const context = new TestContext(teamActivity);
+            context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
+            const sendTeamsMeetingNotification = await TeamsInfo.sendMeetingNotification(context, notification, meetingId);
+
+            assert(fetchOauthToken.isDone());
+            assert(sendTeamsMeetingNotificationExpectation.isDone());
+
+            const isEmptyObject = obj => Object.keys(obj).length == 0;
+            assert(isEmptyObject(sendTeamsMeetingNotification));
+        })
+
+        it("should return a TeamsMeetingNotificationRecipientFailureInfos if a 207 status code was returned", async function () {
+            const notification = {};
+            const meetingId = "randomGUID";
+            const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+
+            const recipientsFailureInfo = {
+                recipientsFailureInfo: [
+                    {
+                    recipientMri: '8:orgid:4e8a10c0-4687-4f0a-9ed6-95f28d67c102',
+                    failureReason: 'Invalid recipient. Recipient not in roster',
+                    errorCode: 'MemberNotFoundInConversation'
+                    },
+                    {
+                    recipientMri: '8:orgid:4e8a10c0-4687-4f0a-9ed6-95f28d67c103',
+                    failureReason: 'Invalid recipient. Recipient not in roster',
+                    errorCode: 'MemberNotFoundInConversation'
+                    }
+                ]
+            }
+
+            const sendTeamsMeetingNotificationExpectation = nock('https://smba.trafficmanager.net/amer')
+            .post(`/v1/meetings/${meetingId}/notification`, notification)
+            .matchHeader('Authorization', expectedAuthHeader)
+            .reply(207, recipientsFailureInfo);
+
+            
+            const context = new TestContext(teamActivity);
+            context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
+            const sendTeamsMeetingNotification = await TeamsInfo.sendMeetingNotification(context, notification, meetingId);
+
+            assert(fetchOauthToken.isDone());
+            assert(sendTeamsMeetingNotificationExpectation.isDone());
+
+            assert.deepEqual(sendTeamsMeetingNotification, recipientsFailureInfo);
+        })
+
+        it("should return standard error response if a 4xx status code was returned", async function () {
+            const notification = {};
+            const meetingId = "randomGUID";
+            const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+
+            const errorResponse = { error: { code: 'BadSyntax', message: 'Payload is incorrect' } };
+
+            const sendTeamsMeetingNotificationExpectation = nock('https://smba.trafficmanager.net/amer')
+            .post(`/v1/meetings/${meetingId}/notification`, notification)
+            .matchHeader('Authorization', expectedAuthHeader)
+            .reply(400, errorResponse)
+
+            
+            const context = new TestContext(teamActivity);
+            context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
+
+            let isErrorThrown = false;
+            try {
+                await TeamsInfo.sendMeetingNotification(context, notification, meetingId);
+            } catch (e) {
+                assert.deepEqual(errorResponse, e.body);
+                isErrorThrown = true;
+            }
+
+            assert(isErrorThrown);
+
+            assert(fetchOauthToken.isDone());
+            assert(sendTeamsMeetingNotificationExpectation.isDone());
+        })
+    })
+
     describe('private methods', function () {
         describe('getConnectorClient()', function () {
             it("should error if the context doesn't have an adapter", function () {
