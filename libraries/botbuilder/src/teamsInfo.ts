@@ -335,7 +335,21 @@ export class TeamsInfo {
         return await this.getMemberInternal(this.getConnectorClient(context), t, userId);
     }
 
-    static async sendMeetingNotification(context: TurnContext, notification: TeamsMeetingNotification, meetingId?: string): Promise<TeamsMeetingNotificationRecipientFailureInfos | {}> {
+    /**
+     * Sends a meeting notification to specific users in a Teams meeting.
+     *
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
+     * @param notification The meeting notification payload.
+     * @param meetingId Id of the Teams meeting.
+     * @returns Promise with either an empty object if notifications were successfully sent to all recipients or
+     * [TeamsMeetingNotificationRecipientFailureInfos](xref:botframework-schema.TeamsMeetingNotificationRecipientFailureInfos) if notifications
+     * were sent to some but not all recipients.
+     */
+    static async sendMeetingNotification(
+        context: TurnContext,
+        notification: TeamsMeetingNotification,
+        meetingId?: string
+    ): Promise<TeamsMeetingNotificationRecipientFailureInfos | {}> {
         const activity = context.activity;
 
         if (meetingId == null) {

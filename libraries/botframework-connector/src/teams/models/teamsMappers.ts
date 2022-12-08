@@ -3,11 +3,7 @@
  * Licensed under the MIT License.
  */
 
-export {
-    ErrorResponse,
-    ErrorModel,
-    InnerHttpError  
-} from '../../connectorApi/models/mappers';
+export { ErrorResponse, ErrorModel, InnerHttpError } from '../../connectorApi/models/mappers';
 
 export {
     ConversationList,

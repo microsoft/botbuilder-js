@@ -1823,7 +1823,7 @@ export interface MeetingEndEventDetails extends MeetingEventDetails {
  * Specifies details of a Teams meeting send notification payload.
  */
 export interface TeamsMeetingNotification {
-    type: string;
+    type: 'targetedMeetingNotification' | string;
     value: TeamsMeetingNotificationInfo;
     channelData: TeamsMeetingNotificationChannelData;
 }
@@ -1833,17 +1833,32 @@ export interface TeamsMeetingNotification {
  * Specifies recipients and surfaces to target in a Teams meeting notification.
  */
 export interface TeamsMeetingNotificationInfo {
+    /**
+     * @member {string[]} [recipients] The list of recipient meeting MRIs.
+     */
     recipients: string[];
+    /**
+     * @member {TeamsMeetingNotificationSurface[]} [surfaces] The List of notification surface configuration.
+     */
     surfaces: TeamsMeetingNotificationSurface[];
 }
 
 /**
  * @interface
- * Specifies the surface and content for a Teams meeting notification. 
+ * Specifies the surface and content for a Teams meeting notification.
  */
 export interface TeamsMeetingNotificationSurface {
-    surface: string;
-    contentType: string;
+    /**
+     * @member {string} [surface] The surface type.
+     */
+    surface: 'meetingStage' | string;
+    /**
+     * @member {string} [contentType] The content type.
+     */
+    contentType: 'task' | string;
+    /**
+     * @member {TaskModuleContinueResponse} [content] The content to display in the meeting notification.
+     */
     content: TaskModuleContinueResponse;
 }
 
@@ -1852,7 +1867,10 @@ export interface TeamsMeetingNotificationSurface {
  * Specifies channel data associated with the Teams meeting notification.
  */
 export interface TeamsMeetingNotificationChannelData {
-    onBehalfOf: TeamsMeetingOnBehalfOf;
+    /**
+     * @member {TeamsMeetingOnBehalfOf} [onBehalfOf] The user that the bot is sending the notification on behalfOf, if any.
+     */
+    onBehalfOf?: TeamsMeetingOnBehalfOf;
 }
 
 /**
@@ -1860,19 +1878,40 @@ export interface TeamsMeetingNotificationChannelData {
  * Specifies the Teams user that triggered the Teams meeting notification.
  */
 export interface TeamsMeetingOnBehalfOf {
-    itemid: number;
-    mentionType: string;
+    /**
+     * @member {number} [itemid] The id of the item.
+     */
+    itemid: 0 | number;
+    /**
+     * @member {string} [mentionType] The mention type of a "person".
+     */
+    mentionType: 'person' | string;
+    /**
+     * @member {string} [mri] Ther user MRI of the sender.
+     */
     mri: string;
-    displayName: string;
+    /**
+     * @member {string} [displayName] The  of the person.
+     */
+    displayName?: string;
 }
 
 /**
  * @interface
- * Specifies the recipients for which the Teams meeting notification was not sent. 
+ * Specifies the recipients for which the Teams meeting notification was not sent.
  */
 export interface TeamsMeetingNotificationRecipientFailureInfo {
+    /**
+     * @member {string} [recipientMri] The targeted recipient's MRI.
+     */
     recipientMri: string;
+    /**
+     * @member {string} [failureReason] The reason for which the meetings notification could not be sent to the recipient.
+     */
     failureReason: string;
+    /**
+     * @member {string} [errorCode] The error code.
+     */
     errorCode: string;
 }
 
@@ -1881,5 +1920,8 @@ export interface TeamsMeetingNotificationRecipientFailureInfo {
  * Specifies the list of recipients for which the Teams meeting notification was not sent.
  */
 export interface TeamsMeetingNotificationRecipientFailureInfos {
+    /**
+     * @member {string} [errorCode] The list of recipients that failed to recieve the sent meetings notification.
+     */
     recipientsFailureInfo: TeamsMeetingNotificationRecipientFailureInfo[];
 }

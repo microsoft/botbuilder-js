@@ -4,7 +4,13 @@
  */
 
 import { HttpResponse, ServiceClientOptions, RequestOptionsBase } from '@azure/ms-rest-js';
-import { ConversationList, TeamDetails, TeamsMeetingInfo, TeamsMeetingNotificationRecipientFailureInfos, TeamsMeetingParticipant } from 'botframework-schema';
+import {
+    ConversationList,
+    TeamDetails,
+    TeamsMeetingInfo,
+    TeamsMeetingNotificationRecipientFailureInfos,
+    TeamsMeetingParticipant,
+} from 'botframework-schema';
 
 /**
  * @interface
@@ -122,7 +128,7 @@ export type TeamsMeetingInfoResponse = TeamsMeetingInfo & {
 /**
  * Contains response data for the sendMeetingNotification operation.
  */
- export type TeamsSendMeetingNotificationResponse = TeamsMeetingNotificationRecipientFailureInfos & {
+export type TeamsSendMeetingNotificationResponse = TeamsMeetingNotificationRecipientFailureInfos & {
     /**
      * The underlying HTTP response.
      */

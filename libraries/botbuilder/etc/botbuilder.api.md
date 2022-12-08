@@ -450,7 +450,6 @@ export class TeamsInfo {
     static getTeamMember(context: TurnContext, teamId?: string, userId?: string): Promise<TeamsChannelAccount>;
     // @deprecated
     static getTeamMembers(context: TurnContext, teamId?: string): Promise<TeamsChannelAccount[]>;
-    // (undocumented)
     static sendMeetingNotification(context: TurnContext, notification: TeamsMeetingNotification, meetingId?: string): Promise<TeamsMeetingNotificationRecipientFailureInfos | {}>;
     static sendMessageToTeamsChannel(context: TurnContext, activity: Activity, teamsChannelId: string, botAppId?: string): Promise<[ConversationReference, string]>;
 }

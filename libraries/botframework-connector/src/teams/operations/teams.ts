@@ -247,7 +247,6 @@ export class Teams {
      * @param meetingId Meeting Id.
      * @param notification The content and configuration for the notification to send.
      * @param options The optional parameters.
-     * @param options 
      */
     sendMeetingNotification(
         meetingId: string,
@@ -361,7 +360,7 @@ const sendMeetingNotificationOperationSpec: msRest.OperationSpec = {
     path: 'v1/meetings/{meetingId}/notification',
     urlParameters: [Parameters.meetingId],
     requestBody: {
-        parameterPath: "notification",
+        parameterPath: 'notification',
         mapper: {
             ...Mappers.TeamsMeetingNotification,
             required: true
