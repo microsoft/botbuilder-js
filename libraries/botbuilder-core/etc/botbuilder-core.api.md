@@ -60,7 +60,9 @@ export class ActivityHandler extends ActivityHandlerBase {
     protected dispatchConversationUpdateActivity(context: TurnContext): Promise<void>;
     protected dispatchEventActivity(context: TurnContext): Promise<void>;
     protected dispatchInstallationUpdateActivity(context: TurnContext): Promise<void>;
+    protected dispatchMessageDeleteActivity(context: TurnContext): Promise<void>;
     protected dispatchMessageReactionActivity(context: TurnContext): Promise<void>;
+    protected dispatchMessageUpdateActivity(context: TurnContext): Promise<void>;
     protected handle(context: TurnContext, type: string, onNext: () => Promise<void>): Promise<any>;
     // (undocumented)
     protected readonly handlers: {
@@ -90,8 +92,12 @@ export class ActivityHandler extends ActivityHandlerBase {
     onMembersRemoved(handler: BotHandler): this;
     onMessage(handler: BotHandler): this;
     protected onMessageActivity(context: TurnContext): Promise<void>;
+    onMessageDelete(handler: BotHandler): this;
+    protected onMessageDeleteActivity(context: TurnContext): Promise<void>;
     onMessageReaction(handler: BotHandler): this;
     protected onMessageReactionActivity(context: TurnContext): Promise<void>;
+    onMessageUpdate(handler: BotHandler): this;
+    protected onMessageUpdateActivity(context: TurnContext): Promise<void>;
     onReactionsAdded(handler: BotHandler): this;
     protected onReactionsAddedActivity(reactionsAdded: MessageReaction[], context: TurnContext): Promise<void>;
     onReactionsRemoved(handler: BotHandler): this;
@@ -122,7 +128,9 @@ export class ActivityHandlerBase {
     protected onMembersAddedActivity(_membersAdded: ChannelAccount[], _context: TurnContext): Promise<void>;
     protected onMembersRemovedActivity(_membersRemoved: ChannelAccount[], _context: TurnContext): Promise<void>;
     protected onMessageActivity(_context: TurnContext): Promise<void>;
+    protected onMessageDeleteActivity(_context: TurnContext): Promise<void>;
     protected onMessageReactionActivity(context: TurnContext): Promise<void>;
+    protected onMessageUpdateActivity(_context: TurnContext): Promise<void>;
     protected onReactionsAddedActivity(_reactionsAdded: MessageReaction[], _context: TurnContext): Promise<void>;
     protected onReactionsRemovedActivity(_reactionsRemoved: MessageReaction[], _context: TurnContext): Promise<void>;
     protected onTurnActivity(context: TurnContext): Promise<void>;
