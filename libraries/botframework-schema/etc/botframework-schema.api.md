@@ -1509,6 +1509,7 @@ export interface SigninStateVerificationQuery {
 export interface SignInUrlResponse {
     signInLink?: string;
     tokenExchangeResource?: TokenExchangeResource;
+    tokenPostResource?: TokenPostResource;
 }
 
 // @public
