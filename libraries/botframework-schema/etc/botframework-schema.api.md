@@ -1265,6 +1265,7 @@ export interface OAuthCard {
     connectionName: string;
     text: string;
     tokenExchangeResource: TokenExchangeResource;
+    tokenPostResource: TokenPostResource;
 }
 
 // @public
@@ -1808,6 +1809,11 @@ export type TokenExchangeState = {
     relatesTo: ConversationReference;
     msAppId: string;
 };
+
+// @public
+export interface TokenPostResource {
+    sasUrl?: string;
+}
 
 // @public
 export interface TokenRequest {

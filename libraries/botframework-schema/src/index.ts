@@ -1993,6 +1993,9 @@ export interface SignInUrlResponse {
      * @member {TokenExchangeResource} [tokenExchangeResource]
      */
     tokenExchangeResource?: TokenExchangeResource;
+    /**
+     * @member {TokenPostResource} [tokenPostResource]
+     */
     tokenPostResource?: TokenPostResource;
 }
 
