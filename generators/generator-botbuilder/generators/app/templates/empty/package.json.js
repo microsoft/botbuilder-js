@@ -17,7 +17,7 @@
     },
     "dependencies": {
         "botbuilder": "~4.15.0",
-        "restify": "~8.5.1"
+        "restify": "~10.0.0"
     },
     "devDependencies": {
         "eslint": "^7.0.0",
