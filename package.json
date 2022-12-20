@@ -40,7 +40,6 @@
     "update-versions": "yarn workspace botbuilder-repo-utils update-versions"
   },
   "resolutions": {
-    "adal-node": "0.2.3",
     "async": "3.2.3",
     "minimist": "^1.2.6",
     "mixme": "0.5.2",
@@ -48,7 +47,6 @@
     "node-fetch": "2.6.7",
     "underscore": "1.13.1",
     "json-schema": "0.4.0",
-    "@xmldom/xmldom": "0.8.6",
     "**/botbuilder-ai/@azure/cognitiveservices-luis-runtime/@azure/ms-rest-js": "^2.6.1"
   },
   "devDependencies": {
