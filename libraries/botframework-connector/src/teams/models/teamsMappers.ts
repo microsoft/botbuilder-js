@@ -3,6 +3,8 @@
  * Licensed under the MIT License.
  */
 
+export { ErrorResponse, ErrorModel, InnerHttpError } from '../../connectorApi/models/mappers';
+
 export {
     ConversationList,
     ChannelInfo,
@@ -13,4 +15,14 @@ export {
     TeamsMeetingDetails,
     TeamsMeetingInfo,
     TeamsMeetingParticipant,
+    TeamsMeetingNotification,
+    TeamsMeetingNotificationInfo,
+    TeamsMeetingNotificationSurface,
+    TeamsMeetingNotificationChannelData,
+    TeamsMeetingOnBehalfOf,
+    TeamsMeetingNotificationRecipientFailureInfo,
+    TeamsMeetingNotificationRecipientFailureInfos,
+    TaskModuleContinueResponse,
+    TaskModuleTaskInfo,
+    Attachment,
 } from './mappers';

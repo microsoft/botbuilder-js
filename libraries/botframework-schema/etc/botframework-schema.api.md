@@ -1717,6 +1717,51 @@ export interface TeamsMeetingInfo {
 }
 
 // @public
+export interface TeamsMeetingNotification {
+    channelData: TeamsMeetingNotificationChannelData;
+    type: 'targetedMeetingNotification' | string;
+    value: TeamsMeetingNotificationInfo;
+}
+
+// @public
+export interface TeamsMeetingNotificationChannelData {
+    onBehalfOf?: TeamsMeetingOnBehalfOf;
+}
+
+// @public
+export interface TeamsMeetingNotificationInfo {
+    recipients: string[];
+    surfaces: TeamsMeetingNotificationSurface[];
+}
+
+// @public
+export interface TeamsMeetingNotificationRecipientFailureInfo {
+    errorCode: string;
+    failureReason: string;
+    recipientMri: string;
+}
+
+// @public
+export interface TeamsMeetingNotificationRecipientFailureInfos {
+    recipientsFailureInfo: TeamsMeetingNotificationRecipientFailureInfo[];
+}
+
+// @public
+export interface TeamsMeetingNotificationSurface {
+    content: TaskModuleContinueResponse;
+    contentType: 'task' | string;
+    surface: 'meetingStage' | string;
+}
+
+// @public
+export interface TeamsMeetingOnBehalfOf {
+    displayName?: string;
+    itemid: 0 | number;
+    mentionType: 'person' | string;
+    mri: string;
+}
+
+// @public
 export interface TeamsMeetingParticipant {
     conversation?: ConversationAccount;
     meeting?: Meeting;
