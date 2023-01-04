@@ -17,6 +17,7 @@ import {
     SigninCard,
     ThumbnailCard,
     TokenExchangeResource,
+    TokenPostResource,
     VideoCard,
 } from 'botframework-schema';
 
@@ -237,6 +238,7 @@ export class CardFactory {
      * @param text Optional. Additional text to include on the card.
      * @param link Optional. The sign-in link to use.
      * @param tokenExchangeResource optional. The resource to try to perform token exchange with.
+     * @param tokenPostResource optional. The resource for directly post a token to token service.
      * @returns An [Attachment](xref:botframework-schema.Attachment).
      * @remarks OAuth cards support the Bot Framework's single sign on (SSO) service.
      */
@@ -245,12 +247,14 @@ export class CardFactory {
         title: string,
         text?: string,
         link?: string,
-        tokenExchangeResource?: TokenExchangeResource
+        tokenExchangeResource?: TokenExchangeResource,
+        tokenPostResource?: TokenPostResource
     ): Attachment {
         const card: Partial<OAuthCard> = {
             buttons: [{ type: ActionTypes.Signin, title: title, value: link, channelData: undefined }],
             connectionName,
             tokenExchangeResource,
+            tokenPostResource,
         };
         if (text) {
             card.text = text;

@@ -43,6 +43,7 @@ import { StatusCodes } from 'botframework-schema';
 import { ThumbnailCard } from 'botframework-schema';
 import { TokenExchangeRequest } from 'botframework-schema';
 import { TokenExchangeResource } from 'botframework-schema';
+import { TokenPostResource } from 'botframework-schema';
 import { TokenResponse } from 'botframework-schema';
 import { UserTokenClient } from 'botframework-connector';
 import { VideoCard } from 'botframework-schema';
@@ -302,7 +303,7 @@ export class CardFactory {
     static images(images: (CardImage | string)[] | undefined): CardImage[];
     static media(links: (MediaUrl | string)[] | undefined): MediaUrl[];
     static o365ConnectorCard(card: O365ConnectorCard): Attachment;
-    static oauthCard(connectionName: string, title: string, text?: string, link?: string, tokenExchangeResource?: TokenExchangeResource): Attachment;
+    static oauthCard(connectionName: string, title: string, text?: string, link?: string, tokenExchangeResource?: TokenExchangeResource, tokenPostResource?: TokenPostResource): Attachment;
     static receiptCard(card: ReceiptCard): Attachment;
     static signinCard(title: string, url: string, text?: string): Attachment;
     static thumbnailCard(title: string, images?: (CardImage | string)[], buttons?: (CardAction | string)[], other?: Partial<ThumbnailCard>): Attachment;

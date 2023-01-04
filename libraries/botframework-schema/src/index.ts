@@ -1367,6 +1367,10 @@ export interface OAuthCard {
      */
     tokenExchangeResource: TokenExchangeResource;
     /**
+     * The token for directly post a token to token service
+     */
+    tokenPostResource: TokenPostResource;
+    /**
      * Action to use to perform signin
      */
     buttons: CardAction[];
@@ -1989,6 +1993,10 @@ export interface SignInUrlResponse {
      * @member {TokenExchangeResource} [tokenExchangeResource]
      */
     tokenExchangeResource?: TokenExchangeResource;
+    /**
+     * @member {TokenPostResource} [tokenPostResource]
+     */
+    tokenPostResource?: TokenPostResource;
 }
 
 /**
@@ -2008,6 +2016,17 @@ export interface TokenExchangeResource {
      * @member {string} [providerId]
      */
     providerId?: string;
+}
+
+/**
+ * @interface
+ * An interface representing TokenPostResource.
+ */
+export interface TokenPostResource {
+    /**
+     * @member {string} [sasUrl]
+     */
+    sasUrl?: string;
 }
 
 /**
