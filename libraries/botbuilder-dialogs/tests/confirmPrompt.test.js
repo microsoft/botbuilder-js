@@ -742,6 +742,43 @@ describe('ConfirmPrompt', function () {
             .startTest();
     });
 
+    it('should accept and recognize other languages', async function () {
+        const adapter = new TestAdapter(async (turnContext) => {
+            const dc = await dialogs.createContext(turnContext);
+
+            const results = await dc.continueDialog();
+            if (results.status === DialogTurnStatus.empty) {
+                await dc.prompt('prompt', {
+                    prompt: { text: 'Please confirm.', type: ActivityTypes.Message },
+                    retryPrompt: {
+                        text: 'Please confirm, say "yes" or "no" or something like that.',
+                        type: ActivityTypes.Message,
+                    },
+                    recognizeLanguage: 'es-es',
+                });
+            } else if (results.status === DialogTurnStatus.complete) {
+                await turnContext.sendActivity(`The result found is '${results.result}'.`);
+            }
+            await convoState.saveChanges(turnContext);
+        });
+
+        const convoState = new ConversationState(new MemoryStorage());
+
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+
+        const prompt = new ConfirmPrompt('prompt');
+        prompt.choiceOptions = { includeNumbers: false };
+        dialogs.add(prompt);
+
+        await adapter
+            .send('Hola')
+            .assertReply('Please confirm. Yes or No')
+            .send('Si')
+            .assertReply("The result found is 'true'.")
+            .startTest();
+    });
+
     it('should not recognize invalid number when choiceOptions.includeNumbers is true.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
