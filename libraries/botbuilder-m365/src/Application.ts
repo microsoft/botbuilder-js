@@ -22,6 +22,7 @@ export type RouteHandler<TState extends TurnState> = (context: TurnContext, stat
 export class Application<TState extends TurnState = DefaultTurnState> {
     private readonly _options: ApplicationOptions<TState>;
     private readonly _routes: AppRoute<TState>[] = [];
+    private readonly _invokeRoutes: AppRoute<TState>[] = [];
     private readonly _adaptiveCards: AdaptiveCards<TState>;
     private readonly _messageExtensions: MessageExtensions<TState>;
 
@@ -59,8 +60,24 @@ export class Application<TState extends TurnState = DefaultTurnState> {
      * @param handler Function to call when the route is triggered.
      * @returns The application instance for chaining purposes.
      */
-    public addRoute(selector: RouteSelector, handler: RouteHandler<TState>): this {
-        this._routes.push({ selector, handler });
+    public addRoute(selector: RouteSelector, handler: RouteHandler<TState>)
+    /**
+     * Adds a new route to the application.
+     *
+     * @remarks
+     * Routes will be matched in the order they're added to the application. The first selector to
+     * return `true` when an activity is received will have its handler called.
+     * @param selector Function used to determine if the route should be triggered.
+     * @param handler Function to call when the route is triggered.
+     * @param isInvokeRoute boolean indicating if the RouteSelector checks for "Invoke" Activities as part of its routing logic. Defaults to `false`.
+     * @returns The application instance for chaining purposes.
+     */
+    public addRoute(selector: RouteSelector, handler: RouteHandler<TState>, isInvokeRoute: boolean = false): this {
+        if (isInvokeRoute) {
+            this._invokeRoutes.push({ selector, handler });
+        } else {
+            this._routes.push({ selector, handler });
+        }
         return this;
     }
 
@@ -93,6 +110,29 @@ export class Application<TState extends TurnState = DefaultTurnState> {
     }
 
     public async run(context: TurnContext): Promise<boolean> {
+        // Run any RouteSelectors in this._invokeRoutes first if the incoming activity.type is "Invoke".
+        // Invoke Activities from Teams need to be responded to in less than 5 seconds.
+        if (context.activity.type === ActivityTypes.Invoke) {
+            for (let i = 0; i < this._invokeRoutes.length; i++) {
+                const route = this._invokeRoutes[i];
+                if (await route.selector(context)) {
+                    // Load turn state
+                    const { storage, turnStateManager } = this._options;
+                    const state = await turnStateManager!.loadState(storage, context);
+
+                    // Execute route handler
+                    await route.handler(context, state);
+
+                    // Save turn state
+                    await turnStateManager!.saveState(storage, context, state);
+
+                    // End dispatch
+                    return true;
+                }
+            }
+        }
+
+        // All other ActivityTypes and any unhandled Invokes are run through the remaining routes.
         for (let i = 0; i < this._routes.length; i++) {
             const route = this._routes[i];
             if (await route.selector(context)) {

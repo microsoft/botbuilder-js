@@ -37,7 +37,7 @@ export class MessageExtensions<TState extends TurnState> {
                     await context.sendActivity({ value: { body: response, status: 200 } as InvokeResponse, type: ActivityTypes.InvokeResponse })
                 }
 
-            });
+            }, true);
         });
         return this._app;
     }
@@ -78,7 +78,7 @@ export class MessageExtensions<TState extends TurnState> {
                     await context.sendActivity({ value: { body: response, status: 200 } as InvokeResponse, type: ActivityTypes.InvokeResponse })
                 }
 
-            });
+            }, true);
         });
         return this._app;
     }
@@ -118,7 +118,7 @@ export class MessageExtensions<TState extends TurnState> {
                     // Queue up invoke response
                     await context.sendActivity({ value: { body: response, status: 200 } as InvokeResponse, type: ActivityTypes.InvokeResponse })
                 }
-            });
+            }, true);
         });
         return this._app;
     }
@@ -143,7 +143,7 @@ export class MessageExtensions<TState extends TurnState> {
                     // Queue up invoke response
                     await context.sendActivity({ value: { body: response, status: 200 } as InvokeResponse, type: ActivityTypes.InvokeResponse })
                 }
-            });
+            }, true);
         });
         return this._app;
     }
@@ -165,7 +165,7 @@ export class MessageExtensions<TState extends TurnState> {
                 // Queue up invoke response
                 await context.sendActivity({ value: { body: response, status: 200 } as InvokeResponse, type: ActivityTypes.InvokeResponse })
             }
-        });
+        }), true;
         return this._app;
     }
 
@@ -217,7 +217,7 @@ export class MessageExtensions<TState extends TurnState> {
                     await context.sendActivity({ value: { body: response, status: 200 } as InvokeResponse, type: ActivityTypes.InvokeResponse })
                 }
 
-            });
+            }, true);
         });
         return this._app;
     }
