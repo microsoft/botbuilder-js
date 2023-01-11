@@ -67,7 +67,7 @@ export class AdaptiveCards<TState extends TurnState> {
                     // Queue up invoke response
                     await context.sendActivity({ value: { body: response, status: 200 } as InvokeResponse, type: ActivityTypes.InvokeResponse })
                 }
-            });
+            }, true);
         });
         return this._app;
     }
@@ -124,7 +124,7 @@ export class AdaptiveCards<TState extends TurnState> {
                     // Queue up invoke response
                     await context.sendActivity({ value: { body: response, status: 200 } as InvokeResponse, type: ActivityTypes.InvokeResponse })
                 }
-            });
+            }, true);
         });
         return this._app;
     }
