@@ -7,7 +7,7 @@ const waitFor = require('./helpers/waitFor');
 
 const TEST_SERVER_PORT = 53978;
 
-describe.only('NodeWebSocket', function () {
+describe('NodeWebSocket', function () {
     it('creates a new NodeWebSocket', function () {
         const socket = new NodeWebSocket(new FauxSock());
         expect(socket).to.be.instanceOf(NodeWebSocket);
