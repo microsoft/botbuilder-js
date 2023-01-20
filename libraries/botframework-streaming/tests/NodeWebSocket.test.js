@@ -1,14 +1,12 @@
 const { expect } = require('chai');
-const { FauxSock, TestRequest } = require('./helpers');
+const { FauxSock, FauxSocket, TestRequest, waitFor } = require('./helpers');
 const { NodeWebSocket } = require('../');
 const { randomBytes } = require('crypto');
 const { Server } = require('ws');
-const { Socket } = require('net');
-const waitFor = require('./helpers/waitFor');
 
 const TEST_SERVER_PORT = 53978;
 
-describe('NodeWebSocket', function () {
+describe.only('NodeWebSocket', function () {
     it('creates a new NodeWebSocket', function () {
         const socket = new NodeWebSocket(new FauxSock());
         expect(socket).to.be.instanceOf(NodeWebSocket);
@@ -60,7 +58,7 @@ describe('NodeWebSocket', function () {
     });
 
     it('create() should be successful and set a WebSocket', async function () {
-        const sock = new Socket();
+        const sock = new FauxSocket();
         const nodeSocket = new NodeWebSocket();
         const request = new TestRequest();
 

@@ -1,6 +1,6 @@
-const sleep = require('./sleep');
+const { sleep } = require('./sleep');
 
-module.exports = async function waitFor(callback, { interval = 50, timeout = 1000 } = {}) {
+module.exports.waitFor = async function waitFor(callback, { interval = 50, timeout = 1000 } = {}) {
     let lastError;
 
     for (const startTime = Date.now(); Date.now() < startTime + timeout; ) {
