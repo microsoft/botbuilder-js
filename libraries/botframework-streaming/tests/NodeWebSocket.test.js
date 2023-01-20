@@ -129,6 +129,7 @@ describe('NodeWebSocket', function () {
             afterEach(function () {
                 try {
                     nodeSocket.close();
+                    // eslint-disable-next-line no-empty
                 } catch {}
             });
 
