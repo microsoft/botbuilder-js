@@ -3,7 +3,7 @@ const { FauxSocket, TestRequest } = require('./helpers');
 const { NodeWebSocket, NodeWebSocketFactory } = require('..');
 const { randomBytes } = require('crypto');
 
-describe.only('NodeWebSocketFactory', function () {
+describe('NodeWebSocketFactory', function () {
     it('createWebSocket() should create a new NodeWebSocket', async function () {
         const factory = new NodeWebSocketFactory();
         const sock = new FauxSocket();
