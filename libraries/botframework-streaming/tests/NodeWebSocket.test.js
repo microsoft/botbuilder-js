@@ -1,9 +1,13 @@
-const { NodeWebSocket } = require('../');
 const { expect } = require('chai');
 const { FauxSock, TestRequest } = require('./helpers');
+const { NodeWebSocket } = require('../');
 const { randomBytes } = require('crypto');
+const { Server } = require('ws');
+const waitFor = require('./helpers/waitFor');
 
-describe('NodeWebSocket', function () {
+const TEST_SERVER_PORT = 53978;
+
+describe.only('NodeWebSocket', function () {
     it('creates a new NodeWebSocket', function () {
         const socket = new NodeWebSocket(new FauxSock());
         expect(socket).to.be.instanceOf(NodeWebSocket);
@@ -22,9 +26,9 @@ describe('NodeWebSocket', function () {
     });
 
     it('attempts to open a connection', function () {
-        const socket = new NodeWebSocket(new FauxSock());
+        const socket = new NodeWebSocket();
         expect(
-            socket.connect().catch((error) => {
+            socket.connect('ws://127.0.0.1:8082/').catch((error) => {
                 expect(error.message).to.equal('connect ECONNREFUSED 127.0.0.1:8082');
             })
         );
@@ -72,5 +76,146 @@ describe('NodeWebSocket', function () {
         request.headers['sec-websocket-protocol'] = '';
 
         await nodeSocket.create(request, sock, Buffer.from([]));
+    });
+
+    describe('test against a WebSocket server', function () {
+        let serverEvents;
+        let server;
+        let serverSocket;
+
+        beforeEach(function () {
+            return new Promise((resolve) => {
+                server = new Server({ path: '/some-path', port: TEST_SERVER_PORT });
+                serverEvents = [];
+
+                server.on('connection', function (socket) {
+                    serverEvents.push(['connection', socket]);
+
+                    serverSocket = socket;
+                    serverSocket.emit();
+                    serverSocket.send('welcome');
+                    serverSocket.on('message', function (data) {
+                        serverEvents.push(['message', data]);
+                    });
+                    serverSocket.on('close', function (code, reason) {
+                        serverEvents.push(['close', code, reason]);
+                    });
+                });
+
+                server.on('listening', resolve);
+            });
+        });
+
+        afterEach(function () {
+            server.close();
+        });
+
+        describe('connect to a WebSocket server', function () {
+            let events;
+            let nodeSocket;
+
+            beforeEach(async function () {
+                nodeSocket = new NodeWebSocket();
+                events = [];
+
+                const connectPromise = nodeSocket.connect(`ws://localhost:${server.address().port}/some-path`);
+
+                nodeSocket.setOnCloseHandler((code, reason) => events.push(['close', code, reason]));
+                nodeSocket.setOnErrorHandler((error) => events.push(['error', error]));
+                nodeSocket.setOnMessageHandler((data) => events.push(['message', data]));
+
+                return connectPromise;
+            });
+
+            afterEach(function () {
+                try {
+                    nodeSocket.close();
+                } catch {}
+            });
+
+            it('should connect to the server', function () {
+                return waitFor(() => {
+                    expect(serverEvents).to.have.lengthOf(1);
+                    expect(serverEvents[0]).deep.to.equals(['connection', serverSocket]);
+                });
+            });
+
+            describe('isConnected property', function () {
+                it('should be true', function () {
+                    expect(nodeSocket.isConnected).to.be.true;
+                });
+            });
+
+            it('should receive initial message', function () {
+                return waitFor(() => {
+                    expect(events).to.have.lengthOf(1);
+                    // Initial message from server is text, not Uint8Array.
+                    expect(events[0]).deep.to.equals(['message', 'welcome']);
+                });
+            });
+
+            describe('after sending a binary message', function () {
+                beforeEach(function () {
+                    nodeSocket.write(new TextEncoder().encode('morning'));
+                });
+
+                it('should send to the server', function () {
+                    return waitFor(() => {
+                        expect(serverEvents).to.have.lengthOf(2);
+                        expect(new TextDecoder().decode(serverEvents[1][1])).to.equal('morning');
+                    });
+                });
+            });
+
+            describe('after server send a binary message', function () {
+                beforeEach(function () {
+                    serverSocket.send(new TextEncoder().encode('afternoon'));
+                });
+
+                it('should receive the message', function () {
+                    return waitFor(() => {
+                        expect(events).to.have.lengthOf(2);
+                        expect(new TextDecoder().decode(events[1][1])).to.equal('afternoon');
+                    });
+                });
+            });
+
+            it('should close with code and reason', function () {
+                nodeSocket.close(3000, 'bye');
+
+                return waitFor(() => {
+                    expect(serverEvents).to.have.lengthOf(2);
+                    expect(serverEvents[1]).deep.to.equals(['close', 3000, 'bye']);
+                });
+            });
+
+            describe('when server close connection', async function () {
+                beforeEach(() => {
+                    serverSocket.close(4999, 'goodnight');
+                });
+
+                it('should receive close event', function () {
+                    return waitFor(() => {
+                        expect(events).to.have.lengthOf(2);
+                        expect(events[1]).deep.to.equals(['close', 4999, 'goodnight']);
+                    });
+                });
+            });
+
+            describe('when server terminated the connection', async function () {
+                beforeEach(() => {
+                    serverSocket.terminate();
+                });
+
+                it('should receive close event with code 1006', function () {
+                    return waitFor(() => {
+                        expect(events).to.have.lengthOf(2);
+
+                        // 1006 is "close outside of Web Socket".
+                        expect(events[1]).deep.to.equals(['close', 1006, '']);
+                    });
+                });
+            });
+        });
     });
 });
