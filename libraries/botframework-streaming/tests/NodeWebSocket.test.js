@@ -114,7 +114,7 @@ describe.only('NodeWebSocket', function () {
             let events;
             let nodeSocket;
 
-            beforeEach(async function () {
+            beforeEach(function () {
                 nodeSocket = new NodeWebSocket();
                 events = [];
 
@@ -189,8 +189,8 @@ describe.only('NodeWebSocket', function () {
                 });
             });
 
-            describe('when server close connection', async function () {
-                beforeEach(() => {
+            describe('when server close connection', function () {
+                beforeEach(function () {
                     serverSocket.close(4999, 'goodnight');
                 });
 
@@ -202,8 +202,8 @@ describe.only('NodeWebSocket', function () {
                 });
             });
 
-            describe('when server terminated the connection', async function () {
-                beforeEach(() => {
+            describe('when server terminated the connection', function () {
+                beforeEach(function () {
                     serverSocket.terminate();
                 });
 
