@@ -85,13 +85,12 @@ export class NodeWebSocket implements ISocket {
     }
 
     /**
-     * Set the handler for `'data'` and `'message'` events received on the socket.
+     * Set the handler for `'message'` events received on the socket.
      *
      * @param handler The callback to handle the "message" event.
      */
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     setOnMessageHandler(handler: (x: any) => void): void {
-        this.wsSocket.on('data', handler);
         this.wsSocket.on('message', handler);
     }
 

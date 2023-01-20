@@ -3,6 +3,7 @@ const { FauxSock, TestRequest } = require('./helpers');
 const { NodeWebSocket } = require('../');
 const { randomBytes } = require('crypto');
 const { Server } = require('ws');
+const { Socket } = require('net');
 const waitFor = require('./helpers/waitFor');
 
 const TEST_SERVER_PORT = 53978;
@@ -37,11 +38,9 @@ describe('NodeWebSocket', function () {
     it('can set message handlers on the socket', function () {
         const sock = new FauxSock();
         const socket = new NodeWebSocket(sock);
-        expect(sock.dataHandler).to.be.undefined;
-        expect(sock._messageHandler).to.be.undefined;
+        expect(sock.messageHandler).to.be.undefined;
         expect(socket.setOnMessageHandler(() => {})).to.not.throw;
-        expect(sock.dataHandler).to.not.be.undefined;
-        expect(sock._messageHandler).to.not.be.undefined;
+        expect(sock.messageHandler).to.not.be.undefined;
     });
 
     it('can set error handler on the socket', function () {
@@ -61,7 +60,7 @@ describe('NodeWebSocket', function () {
     });
 
     it('create() should be successful and set a WebSocket', async function () {
-        const sock = new FauxSock();
+        const sock = new Socket();
         const nodeSocket = new NodeWebSocket();
         const request = new TestRequest();
 
