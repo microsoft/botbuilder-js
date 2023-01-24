@@ -954,9 +954,53 @@ export interface MeetingInfo {
 }
 
 // @public
+export type MeetingNotification = TargetedMeetingNotification;
+
+// @public
+export interface MeetingNotificationBase<T> {
+    type: string;
+    value: T;
+}
+
+// @public
+export interface MeetingNotificationChannelData {
+    onBehalfOf?: MeetingOnBehalfOf[];
+}
+
+// @public
+export interface MeetingNotificationRecipientFailureInfo {
+    errorCode: string;
+    failureReason: string;
+    recipientMri: string;
+}
+
+// @public
+export interface MeetingNotificationRecipientFailureInfos {
+    recipientsFailureInfo: MeetingNotificationRecipientFailureInfo[];
+}
+
+// @public
+export interface MeetingOnBehalfOf {
+    displayName?: string;
+    itemid: 0 | number;
+    mentionType: 'person' | string;
+    mri: string;
+}
+
+// @public (undocumented)
+export interface MeetingStageSurface<T> {
+    content: T;
+    contentType: 'task' | string;
+    surface: 'meetingStage';
+}
+
+// @public
 export interface MeetingStartEventDetails extends MeetingEventDetails {
     startTime: Date;
 }
+
+// @public
+export type MeetingSurface = MeetingStageSurface<any>;
 
 // @public
 export interface Mention {
@@ -1615,15 +1659,15 @@ export interface TabSuggestedActions {
 }
 
 // @public
-export interface TargetedMeetingNotification extends TeamsMeetingNotificationBase<TargetedMeetingNotificationInfo> {
-    channelData?: TeamsMeetingNotificationChannelData;
+export interface TargetedMeetingNotification extends MeetingNotificationBase<TargetedMeetingNotificationInfo> {
+    channelData?: MeetingNotificationChannelData;
     type: 'targetedMeetingNotification';
 }
 
 // @public
 export interface TargetedMeetingNotificationInfo {
     recipients: string[];
-    surfaces: TeamsMeetingSurface[];
+    surfaces: MeetingSurface[];
 }
 
 // @public
@@ -1731,55 +1775,11 @@ export interface TeamsMeetingInfo {
 }
 
 // @public
-export type TeamsMeetingNotification = TargetedMeetingNotification;
-
-// @public
-export interface TeamsMeetingNotificationBase<T> {
-    type: string;
-    value: T;
-}
-
-// @public
-export interface TeamsMeetingNotificationChannelData {
-    onBehalfOf?: TeamsMeetingOnBehalfOf[];
-}
-
-// @public
-export interface TeamsMeetingNotificationRecipientFailureInfo {
-    errorCode: string;
-    failureReason: string;
-    recipientMri: string;
-}
-
-// @public
-export interface TeamsMeetingNotificationRecipientFailureInfos {
-    recipientsFailureInfo: TeamsMeetingNotificationRecipientFailureInfo[];
-}
-
-// @public
-export interface TeamsMeetingOnBehalfOf {
-    displayName?: string;
-    itemid: 0 | number;
-    mentionType: 'person' | string;
-    mri: string;
-}
-
-// @public
 export interface TeamsMeetingParticipant {
     conversation?: ConversationAccount;
     meeting?: Meeting;
     user?: TeamsChannelAccount;
 }
-
-// @public (undocumented)
-export interface TeamsMeetingStageSurface<T> {
-    content: T;
-    contentType: 'task' | string;
-    surface: 'meetingStage';
-}
-
-// @public
-export type TeamsMeetingSurface = TeamsMeetingStageSurface<any>;
 
 // @public (undocumented)
 export interface TeamsPagedMembersResult {
