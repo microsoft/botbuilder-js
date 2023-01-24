@@ -434,7 +434,7 @@ export const TeamsMeetingDetails: msRest.CompositeMapper = {
     },
 };
 
-export const TeamsMeetingNotification: msRest.CompositeMapper =  {
+export const TeamsMeetingNotification: msRest.CompositeMapper = {
     serializedName: 'TeamsMeetingNotification',
     type: {
         name: 'Composite',
@@ -462,7 +462,6 @@ export const TeamsMeetingNotification: msRest.CompositeMapper =  {
         },
     },
 };
-
 
 export const TeamsMeetingNotificationChannelData = {
     serializedName: 'TeamsMeetingNotificationChannelData',

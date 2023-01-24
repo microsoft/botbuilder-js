@@ -1615,6 +1615,18 @@ export interface TabSuggestedActions {
 }
 
 // @public
+export interface TargetedMeetingNotification extends TeamsMeetingNotificationBase<TargetedMeetingNotificationInfo> {
+    channelData?: TeamsMeetingNotificationChannelData;
+    type: 'targetedMeetingNotification';
+}
+
+// @public
+export interface TargetedMeetingNotificationInfo {
+    recipients: string[];
+    surfaces: TeamsMeetingSurface[];
+}
+
+// @public
 export interface TaskModuleCardResponse extends TaskModuleResponseBase {
     value?: string;
 }
@@ -1719,21 +1731,17 @@ export interface TeamsMeetingInfo {
 }
 
 // @public
-export interface TeamsMeetingNotification {
-    channelData: TeamsMeetingNotificationChannelData;
-    type: 'targetedMeetingNotification' | string;
-    value: TeamsMeetingNotificationInfo;
+export type TeamsMeetingNotification = TargetedMeetingNotification;
+
+// @public
+export interface TeamsMeetingNotificationBase<T> {
+    type: string;
+    value: T;
 }
 
 // @public
 export interface TeamsMeetingNotificationChannelData {
-    onBehalfOf?: TeamsMeetingOnBehalfOf;
-}
-
-// @public
-export interface TeamsMeetingNotificationInfo {
-    recipients: string[];
-    surfaces: TeamsMeetingNotificationSurface[];
+    onBehalfOf?: TeamsMeetingOnBehalfOf[];
 }
 
 // @public
@@ -1746,13 +1754,6 @@ export interface TeamsMeetingNotificationRecipientFailureInfo {
 // @public
 export interface TeamsMeetingNotificationRecipientFailureInfos {
     recipientsFailureInfo: TeamsMeetingNotificationRecipientFailureInfo[];
-}
-
-// @public
-export interface TeamsMeetingNotificationSurface {
-    content: TaskModuleContinueResponse;
-    contentType: 'task' | string;
-    surface: 'meetingStage' | string;
 }
 
 // @public
@@ -1769,6 +1770,16 @@ export interface TeamsMeetingParticipant {
     meeting?: Meeting;
     user?: TeamsChannelAccount;
 }
+
+// @public (undocumented)
+export interface TeamsMeetingStageSurface<T> {
+    content: T;
+    contentType: 'task' | string;
+    surface: 'meetingStage';
+}
+
+// @public
+export type TeamsMeetingSurface = TeamsMeetingStageSurface<any>;
 
 // @public (undocumented)
 export interface TeamsPagedMembersResult {
