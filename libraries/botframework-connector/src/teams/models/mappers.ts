@@ -434,40 +434,7 @@ export const TeamsMeetingDetails: msRest.CompositeMapper = {
     },
 };
 
-export const TeamsMeetingNotificationInfo: msRest.CompositeMapper = {
-    serializedName: 'TeamsMeetingNotificationInfo',
-    type: {
-        name: 'Composite',
-        className: 'TeamsMeetingNotificationInfo',
-        modelProperties: {
-            recipients: {
-                serializedName: 'recipients',
-                type: {
-                    name: 'Sequence',
-                    element: {
-                        type: {
-                            name: 'String',
-                        },
-                    },
-                },
-            },
-            surfaces: {
-                serializedName: 'surfaces',
-                type: {
-                    name: 'Sequence',
-                    element: {
-                        type: {
-                            name: 'Composite',
-                            className: 'TeamsMeetingNotificationSurface',
-                        },
-                    },
-                },
-            },
-        },
-    },
-};
-
-export const TeamsMeetingNotification: msRest.CompositeMapper = {
+export const TeamsMeetingNotification: msRest.CompositeMapper =  {
     serializedName: 'TeamsMeetingNotification',
     type: {
         name: 'Composite',
@@ -482,8 +449,7 @@ export const TeamsMeetingNotification: msRest.CompositeMapper = {
             value: {
                 serializedName: 'value',
                 type: {
-                    name: 'Composite',
-                    className: 'TeamsMeetingNotificationInfo',
+                    name: 'any',
                 },
             },
             channelData: {
@@ -497,34 +463,6 @@ export const TeamsMeetingNotification: msRest.CompositeMapper = {
     },
 };
 
-export const TeamsMeetingNotificationSurface: msRest.CompositeMapper = {
-    serializedName: 'TeamsMeetingNotificationSurface',
-    type: {
-        name: 'Composite',
-        className: 'TeamsMeetingNotificationSurface',
-        modelProperties: {
-            surface: {
-                serializedName: 'surface',
-                type: {
-                    name: 'String',
-                },
-            },
-            contentType: {
-                serializedName: 'contentType',
-                type: {
-                    name: 'String',
-                },
-            },
-            content: {
-                serializedName: 'content',
-                type: {
-                    name: 'Composite',
-                    className: 'TaskModuleContinueResponse',
-                },
-            },
-        },
-    },
-};
 
 export const TeamsMeetingNotificationChannelData = {
     serializedName: 'TeamsMeetingNotificationChannelData',

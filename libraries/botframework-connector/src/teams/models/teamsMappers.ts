@@ -16,8 +16,6 @@ export {
     TeamsMeetingInfo,
     TeamsMeetingParticipant,
     TeamsMeetingNotification,
-    TeamsMeetingNotificationInfo,
-    TeamsMeetingNotificationSurface,
     TeamsMeetingNotificationChannelData,
     TeamsMeetingOnBehalfOf,
     TeamsMeetingNotificationRecipientFailureInfo,

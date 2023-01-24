@@ -1820,28 +1820,50 @@ export interface MeetingEndEventDetails extends MeetingEventDetails {
 
 /**
  * @interface
- * Specifies details of a Teams meeting send notification payload.
+ * Specifies base details of a Teams meeting send notification payload.
  */
-export interface TeamsMeetingNotification {
+export interface TeamsMeetingNotificationBase<T> {
     /**
      * @member {string} [type] The type of meeting notification.
      */
-    type: 'targetedMeetingNotification' | string;
+    type: string;
+
     /**
-     * @member {TeamsMeetingNotificationInfo} [type] The specific details of the meeting notification.
+     * @member {T} [value] The specific details of the meeting notification.
      */
-    value: TeamsMeetingNotificationInfo;
+    value: T;
+} 
+
+
+/**
+ * @interface
+ * Specifies details of a targeted Teams meeting send notification payload.
+ */
+export interface TargetedMeetingNotification extends TeamsMeetingNotificationBase<TargetedMeetingNotificationInfo> {
     /**
-     * @member {TeamsMeetingNotificationChannelData} [type] The channel data of the meeting notification.
+     * @member {string} [type] The type of meeting notification.
      */
-    channelData: TeamsMeetingNotificationChannelData;
-}
+    type: 'targetedMeetingNotification';
+
+    /**
+     * @member {TeamsMeetingNotificationChannelData} [channelData] The channel data of the meeting notification.
+     */
+    channelData?: TeamsMeetingNotificationChannelData;
+} 
+
+
+/**
+ * @type
+ * Defines the base Teams meeting notification type
+ */
+export type TeamsMeetingNotification = TargetedMeetingNotification;
+
 
 /**
  * @interface
  * Specifies recipients and surfaces to target in a Teams meeting notification.
  */
-export interface TeamsMeetingNotificationInfo {
+export interface TargetedMeetingNotificationInfo {
     /**
      * @member {string[]} [recipients] The list of recipient meeting MRIs.
      */
@@ -1849,26 +1871,26 @@ export interface TeamsMeetingNotificationInfo {
     /**
      * @member {TeamsMeetingNotificationSurface[]} [surfaces] The List of notification surface configuration.
      */
-    surfaces: TeamsMeetingNotificationSurface[];
+    surfaces: TeamsMeetingSurface[];
 }
 
-/**
- * @interface
- * Specifies the surface and content for a Teams meeting notification.
- */
-export interface TeamsMeetingNotificationSurface {
+
+export type TeamsMeetingSurface = TeamsMeetingStageSurface<any>;
+
+
+export interface TeamsMeetingStageSurface<T> {
     /**
      * @member {string} [surface] The surface type.
-     */
-    surface: 'meetingStage' | string;
+    */
+    surface: 'meetingStage';
     /**
      * @member {string} [contentType] The content type.
-     */
+    */
     contentType: 'task' | string;
     /**
-     * @member {TaskModuleContinueResponse} [content] The content to display in the meeting notification.
+     * @member {T} [content] The content to display in the meeting notification.
      */
-    content: TaskModuleContinueResponse;
+    content: T;
 }
 
 /**
@@ -1879,7 +1901,7 @@ export interface TeamsMeetingNotificationChannelData {
     /**
      * @member {TeamsMeetingOnBehalfOf} [onBehalfOf] The user that the bot is sending the notification on behalfOf, if any.
      */
-    onBehalfOf?: TeamsMeetingOnBehalfOf;
+    onBehalfOf?: TeamsMeetingOnBehalfOf[];
 }
 
 /**
