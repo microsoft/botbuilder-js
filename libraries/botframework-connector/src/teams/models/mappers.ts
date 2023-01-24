@@ -434,11 +434,11 @@ export const TeamsMeetingDetails: msRest.CompositeMapper = {
     },
 };
 
-export const TeamsMeetingNotification: msRest.CompositeMapper = {
-    serializedName: 'TeamsMeetingNotification',
+export const MeetingNotification: msRest.CompositeMapper = {
+    serializedName: 'MeetingNotification',
     type: {
         name: 'Composite',
-        className: 'TeamsMeetingNotification',
+        className: 'MeetingNotification',
         modelProperties: {
             type: {
                 serializedName: 'type',
@@ -456,18 +456,18 @@ export const TeamsMeetingNotification: msRest.CompositeMapper = {
                 serializedName: 'channelData',
                 type: {
                     name: 'Composite',
-                    className: 'TeamsMeetingNotificationChannelData',
+                    className: 'MeetingNotificationChannelData',
                 },
             },
         },
     },
 };
 
-export const TeamsMeetingNotificationChannelData = {
-    serializedName: 'TeamsMeetingNotificationChannelData',
+export const MeetingNotificationChannelData = {
+    serializedName: 'MeetingNotificationChannelData',
     type: {
         name: 'Composite',
-        className: 'TeamsMeetingNotificationChannelData',
+        className: 'MeetingNotificationChannelData',
         modelProperties: {
             onBehalfOf: {
                 serializedName: 'onBehalfOf',
@@ -476,7 +476,7 @@ export const TeamsMeetingNotificationChannelData = {
                     element: {
                         type: {
                             name: 'Composite',
-                            className: 'TeamsMeetingOnBehalfOf',
+                            className: 'MeetingOnBehalfOf',
                         },
                     },
                 },
@@ -485,11 +485,11 @@ export const TeamsMeetingNotificationChannelData = {
     },
 };
 
-export const TeamsMeetingOnBehalfOf: msRest.CompositeMapper = {
-    serializedName: 'TeamsMeetingOnBehalfOf',
+export const MeetingOnBehalfOf: msRest.CompositeMapper = {
+    serializedName: 'MeetingOnBehalfOf',
     type: {
         name: 'Composite',
-        className: 'TeamsMeetingOnBehalfOf',
+        className: 'MeetingOnBehalfOf',
         modelProperties: {
             itemid: {
                 serializedName: 'itemid',
@@ -519,11 +519,11 @@ export const TeamsMeetingOnBehalfOf: msRest.CompositeMapper = {
     },
 };
 
-export const TeamsMeetingNotificationRecipientFailureInfo: msRest.CompositeMapper = {
-    serializedName: 'TeamsMeetingNotificationRecipientFailureInfo',
+export const MeetingNotificationRecipientFailureInfo: msRest.CompositeMapper = {
+    serializedName: 'MeetingNotificationRecipientFailureInfo',
     type: {
         name: 'Composite',
-        className: 'TeamsMeetingNotificationRecipientFailureInfo',
+        className: 'MeetingNotificationRecipientFailureInfo',
         modelProperties: {
             recipientMri: {
                 serializedName: 'recipientMri',
@@ -547,11 +547,11 @@ export const TeamsMeetingNotificationRecipientFailureInfo: msRest.CompositeMappe
     },
 };
 
-export const TeamsMeetingNotificationRecipientFailureInfos: msRest.CompositeMapper = {
-    serializedName: 'TeamsMeetingNotificationRecipientFailureInfos',
+export const MeetingNotificationRecipientFailureInfos: msRest.CompositeMapper = {
+    serializedName: 'MeetingNotificationRecipientFailureInfos',
     type: {
         name: 'Composite',
-        className: 'TeamsMeetingNotificationRecipientFailureInfos',
+        className: 'MeetingNotificationRecipientFailureInfos',
         modelProperties: {
             recipientsFailureInfo: {
                 serializedName: 'recipientsFailureInfo',
@@ -560,7 +560,7 @@ export const TeamsMeetingNotificationRecipientFailureInfos: msRest.CompositeMapp
                     element: {
                         type: {
                             name: 'Composite',
-                            className: 'TeamsMeetingNotificationRecipientFailureInfo',
+                            className: 'MeetingNotificationRecipientFailureInfo',
                         },
                     },
                 },

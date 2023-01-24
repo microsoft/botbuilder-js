@@ -9,7 +9,7 @@ import * as Models from '../models';
 import * as Mappers from '../models/teamsMappers';
 import * as Parameters from '../models/parameters';
 import { TeamsConnectorClientContext } from '../';
-import { ConversationList, TeamDetails, TeamsMeetingInfo, TeamsMeetingParticipant, TeamsMeetingNotificationRecipientFailureInfos, TeamsMeetingNotification } from 'botframework-schema';
+import { ConversationList, TeamDetails, TeamsMeetingInfo, TeamsMeetingParticipant, MeetingNotificationRecipientFailureInfos, MeetingNotification } from 'botframework-schema';
 
 /** Class representing a Teams. */
 export class Teams {
@@ -250,7 +250,7 @@ export class Teams {
      */
     sendMeetingNotification(
         meetingId: string,
-        notification: TeamsMeetingNotification,
+        notification: MeetingNotification,
         options?: msRest.RequestOptionsBase,
     ): Promise<Models.TeamsSendMeetingNotificationResponse>
     /**
@@ -260,8 +260,8 @@ export class Teams {
      */
     sendMeetingNotification(
         meetingId: string,
-        notification: TeamsMeetingNotification,
-        callback: msRest.ServiceCallback<TeamsMeetingNotificationRecipientFailureInfos | {}>
+        notification: MeetingNotification,
+        callback: msRest.ServiceCallback<MeetingNotificationRecipientFailureInfos | {}>
     ): void;
     /**
      * @param meetingId Meeting Id.
@@ -271,22 +271,22 @@ export class Teams {
      */
     sendMeetingNotification(
         meetingId: string,
-        notification: TeamsMeetingNotification,
+        notification: MeetingNotification,
         options: msRest.RequestOptionsBase,
-        callback: msRest.ServiceCallback<TeamsMeetingNotificationRecipientFailureInfos | {}>
+        callback: msRest.ServiceCallback<MeetingNotificationRecipientFailureInfos | {}>
     ): void;
     /**
      * @param meetingId Meeting Id.
      * @param notification The content and configuration for the notification to send.
      * @param options The optional parameters.
      * @param callback The callback.
-     * @returns Promise with either TeamsMeetingNotificationRecipientFailureInfos or an empty object.
+     * @returns Promise with either MeetingNotificationRecipientFailureInfos or an empty object.
      */
     sendMeetingNotification(
         meetingId: string,
-        notification: TeamsMeetingNotification,
+        notification: MeetingNotification,
         options?: msRest.RequestOptionsBase,
-        callback?: msRest.ServiceCallback<TeamsMeetingNotificationRecipientFailureInfos | {}>
+        callback?: msRest.ServiceCallback<MeetingNotificationRecipientFailureInfos | {}>
     ): Promise<Models.TeamsSendMeetingNotificationResponse> {
         return this.client.sendOperationRequest(
             {
@@ -362,16 +362,16 @@ const sendMeetingNotificationOperationSpec: msRest.OperationSpec = {
     requestBody: {
         parameterPath: 'notification',
         mapper: {
-            ...Mappers.TeamsMeetingNotification,
+            ...Mappers.MeetingNotification,
             required: true
         }
     },
     responses: {
         202: {
-            bodyMapper: Mappers.TeamsMeetingNotificationRecipientFailureInfos
+            bodyMapper: Mappers.MeetingNotificationRecipientFailureInfos
         },
         207: {
-            bodyMapper: Mappers.TeamsMeetingNotificationRecipientFailureInfos
+            bodyMapper: Mappers.MeetingNotificationRecipientFailureInfos
         },
         default: {
             bodyMapper: Mappers.ErrorResponse

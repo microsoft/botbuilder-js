@@ -1028,7 +1028,7 @@ describe('TeamsInfo', function () {
             assert(isEmptyObject(sendTeamsMeetingNotification));
         });
 
-        it('should return a TeamsMeetingNotificationRecipientFailureInfos if a 207 status code was returned', async function () {
+        it('should return a MeetingNotificationRecipientFailureInfos if a 207 status code was returned', async function () {
             const notification = {};
             const meetingId = 'randomGUID';
             const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
