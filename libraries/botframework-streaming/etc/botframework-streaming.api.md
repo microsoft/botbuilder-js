@@ -447,7 +447,7 @@ export class NamedPipeServer implements IStreamingTransportServer {
 export class NodeWebSocket implements ISocket {
     constructor(wsSocket?: WebSocket);
     close(code?: number, data?: string): void;
-    connect(serverAddress: string, port?: number): Promise<void>;
+    connect(serverAddressOrHostName: string, port?: number): Promise<void>;
     create(req: INodeIncomingMessage, socket: INodeSocket, head: INodeBuffer): Promise<void>;
     get isConnected(): boolean;
     setOnCloseHandler(handler: (x: any) => void): void;
