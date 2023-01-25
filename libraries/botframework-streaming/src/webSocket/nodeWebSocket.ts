@@ -86,7 +86,7 @@ export class NodeWebSocket implements ISocket {
                 // eslint-disable-next-line no-empty
             } catch (_error) {}
 
-            if (!url || !url.hostname) {
+            if (!url?.hostname) {
                 url = new URL('ws://.');
                 url.hostname = serverAddressOrHostName;
                 url.port = port + '';
