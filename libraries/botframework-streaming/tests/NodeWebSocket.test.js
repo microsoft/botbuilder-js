@@ -248,7 +248,7 @@ describe('NodeWebSocket', function () {
 
             await connectPromise;
 
-            return waitFor(() => {
+            await waitFor(() => {
                 expect(events).to.have.lengthOf(2);
                 expect(events[0]).deep.to.equals(['message', 'welcome']);
                 expect(events[1]).deep.to.equals(['close', 1005, '']);
@@ -287,7 +287,7 @@ describe('NodeWebSocket', function () {
 
             await connectPromise;
 
-            return waitFor(() => {
+            await waitFor(() => {
                 expect(events).to.have.lengthOf(2);
                 expect(events[0]).deep.to.equals(['message', 'welcome']);
                 expect(events[1]).deep.to.equals(['close', 1005, '']);
