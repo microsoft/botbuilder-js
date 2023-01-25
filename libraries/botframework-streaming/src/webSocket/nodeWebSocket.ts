@@ -88,47 +88,7 @@ export class NodeWebSocket implements ISocket {
             // eslint-disable-next-line no-empty
         } catch (_error) {}
 
-        if (!url?.hostname) {
-            // [hawo]: The following logics are kept here for backward compatibility.
-            //
-            //         However, there are no tests to prove the following code works.
-            //         We tried our best to write a test and figure out how the code would work.
-            //
-            //         However, there are obvious mistakes in the code that made it very unlikely to work:
-            //         - `options.headers.upgrade` must set to `'websocket'`
-            //         - Second argument of `WebSocket.server.completeUpgrade` should be `{}`, instead of `undefined`
-            //
-            //         More readings at https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_servers#client_handshake_request.
-            this.wsServer = new WebSocket.Server({ noServer: true });
-            // Key generation per https://tools.ietf.org/html/rfc6455#section-1.3 (pg. 7)
-            const wskey = crypto.randomBytes(NONCE_LENGTH).toString('base64');
-            const options = {
-                port: port,
-                hostname: serverAddressOrHostName,
-                headers: {
-                    connection: 'upgrade',
-                    'Sec-WebSocket-Key': wskey,
-                    'Sec-WebSocket-Version': '13',
-                },
-            };
-
-            const req = request(options);
-
-            req.end();
-            req.on('upgrade', (res, socket, head): void => {
-                // @types/ws does not contain the signature for completeUpgrade
-                // https://github.com/websockets/ws/blob/0a612364e69fc07624b8010c6873f7766743a8e3/lib/websocket-server.js#L269
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                (this.wsServer as any).completeUpgrade(wskey, undefined, res, socket, head, (websocket): void => {
-                    this.wsSocket = websocket;
-                });
-            });
-
-            return new Promise<void>((resolve, reject): void => {
-                req.on('close', resolve);
-                req.on('error', reject);
-            });
-        } else {
+        if (url?.hostname) {
             return new Promise<void>((resolve, reject) => {
                 const ws = (this.wsSocket = new WebSocket(url));
 
@@ -136,6 +96,46 @@ export class NodeWebSocket implements ISocket {
                 ws.once('open', () => resolve());
             });
         }
+
+        // [hawo]: The following logics are kept here for backward compatibility.
+        //
+        //         However, there are no tests to prove the following code works.
+        //         We tried our best to write a test and figure out how the code would work.
+        //
+        //         However, there are obvious mistakes in the code that made it very unlikely to work:
+        //         - `options.headers.upgrade` must set to `'websocket'`
+        //         - Second argument of `WebSocket.server.completeUpgrade` should be `{}`, instead of `undefined`
+        //
+        //         More readings at https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_servers#client_handshake_request.
+        this.wsServer = new WebSocket.Server({ noServer: true });
+        // Key generation per https://tools.ietf.org/html/rfc6455#section-1.3 (pg. 7)
+        const wskey = crypto.randomBytes(NONCE_LENGTH).toString('base64');
+        const options = {
+            port: port,
+            hostname: serverAddressOrHostName,
+            headers: {
+                connection: 'upgrade',
+                'Sec-WebSocket-Key': wskey,
+                'Sec-WebSocket-Version': '13',
+            },
+        };
+
+        const req = request(options);
+
+        req.end();
+        req.on('upgrade', (res, socket, head): void => {
+            // @types/ws does not contain the signature for completeUpgrade
+            // https://github.com/websockets/ws/blob/0a612364e69fc07624b8010c6873f7766743a8e3/lib/websocket-server.js#L269
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (this.wsServer as any).completeUpgrade(wskey, undefined, res, socket, head, (websocket): void => {
+                this.wsSocket = websocket;
+            });
+        });
+
+        return new Promise<void>((resolve, reject): void => {
+            req.on('close', resolve);
+            req.on('error', reject);
+        });
     }
 
     /**
