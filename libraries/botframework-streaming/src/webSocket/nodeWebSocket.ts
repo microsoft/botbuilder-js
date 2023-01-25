@@ -6,11 +6,13 @@
  * Licensed under the MIT License.
  */
 
-import * as crypto from 'crypto';
 import { IncomingMessage, request } from 'http';
+import { URL } from 'url';
+import * as crypto from 'crypto';
 import * as WebSocket from 'ws';
 
 import { INodeIncomingMessage, INodeBuffer, INodeSocket, ISocket } from '../interfaces';
+
 const NONCE_LENGTH = 16;
 
 /**
@@ -74,23 +76,50 @@ export class NodeWebSocket implements ISocket {
     /**
      * Connects to the supporting socket using WebSocket protocol.
      *
-     * @param serverAddress The address the server is listening on.
-     * @param port The port the server is listening on, defaults to 8082.
+     * @param serverAddressOrHostName The host name or URL the server is listening on.
+     * @param port If `serverAddressOrHostName` is a host name, the port the server is listening on, defaults to 8082. Otherwise, this argument is ignored.
      * @returns A Promise that resolves when the websocket connection is closed, or rejects on an error.
      */
-    async connect(serverAddress: string, port = 8082): Promise<void> {
+    async connect(serverAddressOrHostName: string, port = 8082): Promise<void> {
+        let url: URL;
+
+        try {
+            url = new URL(serverAddressOrHostName);
+            // eslint-disable-next-line no-empty
+        } catch (_error) {}
+
+        if (url?.hostname) {
+            return new Promise<void>((resolve, reject) => {
+                const ws = (this.wsSocket = new WebSocket(url));
+
+                ws.once('error', ({ message }) => reject(new Error(message)));
+                ws.once('open', () => resolve());
+            });
+        }
+
+        // [hawo]: The following logics are kept here for backward compatibility.
+        //
+        //         However, there are no tests to prove the following code works.
+        //         We tried our best to write a test and figure out how the code would work.
+        //
+        //         However, there are obvious mistakes in the code that made it very unlikely to work:
+        //         - `options.headers.upgrade` must set to `'websocket'`
+        //         - Second argument of `WebSocket.server.completeUpgrade` should be `{}`, instead of `undefined`
+        //
+        //         More readings at https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_servers#client_handshake_request.
         this.wsServer = new WebSocket.Server({ noServer: true });
         // Key generation per https://tools.ietf.org/html/rfc6455#section-1.3 (pg. 7)
         const wskey = crypto.randomBytes(NONCE_LENGTH).toString('base64');
         const options = {
             port: port,
-            hostname: serverAddress,
+            hostname: serverAddressOrHostName,
             headers: {
                 connection: 'upgrade',
                 'Sec-WebSocket-Key': wskey,
                 'Sec-WebSocket-Version': '13',
             },
         };
+
         const req = request(options);
         req.end();
         req.on('upgrade', (res, socket, head): void => {
@@ -109,13 +138,12 @@ export class NodeWebSocket implements ISocket {
     }
 
     /**
-     * Set the handler for `'data'` and `'message'` events received on the socket.
+     * Set the handler for `'message'` events received on the socket.
      *
      * @param handler The callback to handle the "message" event.
      */
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     setOnMessageHandler(handler: (x: any) => void): void {
-        this.wsSocket.on('data', handler);
         this.wsSocket.on('message', handler);
     }
 
