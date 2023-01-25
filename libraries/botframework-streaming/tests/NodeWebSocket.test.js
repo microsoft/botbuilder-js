@@ -27,7 +27,7 @@ describe('NodeWebSocket', function () {
     it('attempts to open a connection', function () {
         const socket = new NodeWebSocket();
         expect(
-            socket.connect('ws://127.0.0.1:8082/').catch((error) => {
+            socket.connect().catch((error) => {
                 expect(error.message).to.equal('connect ECONNREFUSED 127.0.0.1:8082');
             })
         );

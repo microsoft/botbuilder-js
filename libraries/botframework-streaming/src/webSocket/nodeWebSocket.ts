@@ -88,7 +88,10 @@ export class NodeWebSocket implements ISocket {
 
             if (!url?.hostname) {
                 url = new URL('ws://.');
-                url.hostname = serverAddressOrHostName;
+                // `serverAddressOrHostName` is a required argument.
+                // However, our existing tests assume `serverAddressOrHostName` is optional.
+                // We are keeping the same API signatures, while internally coalesced to '127.0.0.1'.
+                url.hostname = serverAddressOrHostName || '127.0.0.1';
                 url.port = port + '';
             }
 
