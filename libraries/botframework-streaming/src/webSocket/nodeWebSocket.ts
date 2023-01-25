@@ -88,14 +88,7 @@ export class NodeWebSocket implements ISocket {
             // eslint-disable-next-line no-empty
         } catch (_error) {}
 
-        if (url?.hostname) {
-            return new Promise<void>((resolve, reject) => {
-                const ws = (this.wsSocket = new WebSocket(url));
-
-                ws.once('error', ({ message }) => reject(new Error(message)));
-                ws.once('open', () => resolve());
-            });
-        } else {
+        if (!url?.hostname) {
             // [hawo]: The following logics are kept here for backward compatibility.
             //
             //         However, there are no tests to prove the following code works.
@@ -134,6 +127,13 @@ export class NodeWebSocket implements ISocket {
             return new Promise<void>((resolve, reject): void => {
                 req.on('close', resolve);
                 req.on('error', reject);
+            });
+        } else {
+            return new Promise<void>((resolve, reject) => {
+                const ws = (this.wsSocket = new WebSocket(url));
+
+                ws.once('error', ({ message }) => reject(new Error(message)));
+                ws.once('open', () => resolve());
             });
         }
     }
