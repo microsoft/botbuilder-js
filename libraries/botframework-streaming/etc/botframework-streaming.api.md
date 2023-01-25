@@ -4,11 +4,9 @@
 
 ```ts
 
-/// <reference types="node" />
-
 import { Duplex } from 'stream';
 import { DuplexOptions } from 'stream';
-import * as WebSocket from 'ws';
+import * as WebSocket_2 from 'ws';
 
 // @public
 export class ContentStream {
@@ -23,7 +21,7 @@ export class ContentStream {
     get length(): number;
     readAsJson<T>(): Promise<T>;
     readAsString(): Promise<string>;
-}
+    }
 
 // @public
 export class HttpContent {
@@ -33,7 +31,7 @@ export class HttpContent {
     //
     // (undocumented)
     headers: IHttpContentHeaders;
-}
+    }
 
 // @public
 export interface INodeBuffer extends Uint8Array {
@@ -265,7 +263,7 @@ export interface INodeSocket {
     // Warning: (ae-forgotten-export) The symbol "WritableStream" needs to be exported by the entry point index.d.ts
     //
     // (undocumented)
-    pipe<T extends WritableStream>(destination: T, options?: {
+    pipe<T extends WritableStream_2>(destination: T, options?: {
         end?: boolean;
     }): T;
     // (undocumented)
@@ -432,7 +430,7 @@ export class NamedPipeClient implements IStreamingTransportClient {
     connect(): Promise<void>;
     disconnect(): void;
     send(request: StreamingRequest): Promise<IReceiveResponse>;
-}
+    }
 
 // @public
 export class NamedPipeServer implements IStreamingTransportServer {
@@ -445,7 +443,7 @@ export class NamedPipeServer implements IStreamingTransportServer {
 
 // @public
 export class NodeWebSocket implements ISocket {
-    constructor(wsSocket?: WebSocket);
+    constructor(wsSocket?: WebSocket_2);
     close(code?: number, data?: string): void;
     connect(serverAddressOrHostName: string, port?: number): Promise<void>;
     create(req: INodeIncomingMessage, socket: INodeSocket, head: INodeBuffer): Promise<void>;
@@ -455,8 +453,8 @@ export class NodeWebSocket implements ISocket {
     setOnMessageHandler(handler: (x: any) => void): void;
     write(buffer: INodeBuffer): void;
     // (undocumented)
-    protected wsServer: WebSocket.Server;
-}
+    protected wsServer: WebSocket_2.Server;
+    }
 
 // @public
 export class NodeWebSocketFactory extends NodeWebSocketFactoryBase {
@@ -517,7 +515,7 @@ export class WebSocketClient implements IStreamingTransportClient {
     connect(): Promise<void>;
     disconnect(): void;
     send(request: StreamingRequest): Promise<IReceiveResponse>;
-}
+    }
 
 // @public
 export class WebSocketServer implements IStreamingTransportServer {
@@ -526,7 +524,8 @@ export class WebSocketServer implements IStreamingTransportServer {
     get isConnected(): boolean;
     send(request: StreamingRequest): Promise<IReceiveResponse>;
     start(): Promise<string>;
-}
+    }
+
 
 // (No @packageDocumentation comment for this package)
 
