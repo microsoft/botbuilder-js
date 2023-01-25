@@ -121,7 +121,6 @@ export class NodeWebSocket implements ISocket {
         };
 
         const req = request(options);
-
         req.end();
         req.on('upgrade', (res, socket, head): void => {
             // @types/ws does not contain the signature for completeUpgrade
