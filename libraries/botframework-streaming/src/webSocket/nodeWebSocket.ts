@@ -6,11 +6,14 @@
  * Licensed under the MIT License.
  */
 
-import { IncomingMessage } from 'http';
+import { IncomingMessage, request } from 'http';
 import { URL } from 'url';
+import * as crypto from 'crypto';
 import * as WebSocket from 'ws';
 
 import { INodeIncomingMessage, INodeBuffer, INodeSocket, ISocket } from '../interfaces';
+
+const NONCE_LENGTH = 16;
 
 /**
  * An implementation of [ISocket](xref:botframework-streaming.ISocket) to use with a [NodeWebSocketFactory](xref:botframework-streaming.NodeWebSocketFactory) to create a WebSocket server.
@@ -78,28 +81,61 @@ export class NodeWebSocket implements ISocket {
      * @returns A Promise that resolves when the websocket connection is closed, or rejects on an error.
      */
     async connect(serverAddressOrHostName: string, port = 8082): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
-            let url: URL;
+        let url: URL;
 
-            try {
-                url = new URL(serverAddressOrHostName);
-                // eslint-disable-next-line no-empty
-            } catch (_error) {}
+        try {
+            url = new URL(serverAddressOrHostName);
+            // eslint-disable-next-line no-empty
+        } catch (_error) {}
 
-            if (!url?.hostname) {
-                url = new URL('ws://.');
-                // `serverAddressOrHostName` is a required argument.
-                // However, our existing tests assume `serverAddressOrHostName` is optional.
-                // We are keeping the same API signatures, while internally coalesced to '127.0.0.1'.
-                url.hostname = serverAddressOrHostName || '127.0.0.1';
-                url.port = port + '';
-            }
+        if (url?.hostname) {
+            return new Promise<void>((resolve, reject) => {
+                const ws = (this.wsSocket = new WebSocket(url));
 
-            const ws = (this.wsSocket = new WebSocket(url));
+                ws.once('error', ({ message }) => reject(new Error(message)));
+                ws.once('open', () => resolve());
+            });
+        } else {
+            // [hawo]: The following logics are kept here for backward compatibility.
+            //
+            //         However, there are no tests to prove the following code works.
+            //         We tried our best to write a test and figure out how the code would work.
+            //
+            //         However, there are obvious mistakes in the code that made it very unlikely to work:
+            //         - `options.headers.upgrade` must set to `'websocket'`
+            //         - Second argument of `WebSocket.server.completeUpgrade` should be `{}`, instead of `undefined`
+            //
+            //         More readings at https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_servers#client_handshake_request.
+            this.wsServer = new WebSocket.Server({ noServer: true });
+            // Key generation per https://tools.ietf.org/html/rfc6455#section-1.3 (pg. 7)
+            const wskey = crypto.randomBytes(NONCE_LENGTH).toString('base64');
+            const options = {
+                port: port,
+                hostname: serverAddressOrHostName,
+                headers: {
+                    connection: 'upgrade',
+                    'Sec-WebSocket-Key': wskey,
+                    'Sec-WebSocket-Version': '13',
+                },
+            };
 
-            ws.once('error', ({ message }) => reject(new Error(message)));
-            ws.once('open', () => resolve());
-        });
+            const req = request(options);
+
+            req.end();
+            req.on('upgrade', (res, socket, head): void => {
+                // @types/ws does not contain the signature for completeUpgrade
+                // https://github.com/websockets/ws/blob/0a612364e69fc07624b8010c6873f7766743a8e3/lib/websocket-server.js#L269
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                (this.wsServer as any).completeUpgrade(wskey, undefined, res, socket, head, (websocket): void => {
+                    this.wsSocket = websocket;
+                });
+            });
+
+            return new Promise<void>((resolve, reject): void => {
+                req.on('close', resolve);
+                req.on('error', reject);
+            });
+        }
     }
 
     /**
