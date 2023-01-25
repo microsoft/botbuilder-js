@@ -73,22 +73,22 @@ export class NodeWebSocket implements ISocket {
     /**
      * Connects to the supporting socket using WebSocket protocol.
      *
-     * @param serverAddress The host name or URL the server is listening on.
-     * @param port If `serverAddress` is a host name, the port number the server is listening on, defaults to 8082. Otherwise, this argument is ignored.
+     * @param serverAddressOrHostName The host name or URL the server is listening on.
+     * @param port If `serverAddressOrHostName` is a host name, the port number the server is listening on, defaults to 8082. Otherwise, this argument is ignored.
      * @returns A Promise that resolves when the websocket connection is closed, or rejects on an error.
      */
-    async connect(serverAddress: string, port = 8082): Promise<void> {
+    async connect(serverAddressOrHostName: string, port = 8082): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             let url: URL;
 
             try {
-                url = new URL(serverAddress);
+                url = new URL(serverAddressOrHostName);
                 // eslint-disable-next-line no-empty
             } catch (_error) {}
 
             if (!url || !url.hostname) {
                 url = new URL('ws://.');
-                url.hostname = serverAddress;
+                url.hostname = serverAddressOrHostName;
                 url.port = port + '';
             }
 
