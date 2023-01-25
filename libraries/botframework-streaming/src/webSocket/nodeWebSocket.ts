@@ -7,6 +7,7 @@
  */
 
 import { IncomingMessage } from 'http';
+import { URL } from 'url';
 import * as WebSocket from 'ws';
 
 import { INodeIncomingMessage, INodeBuffer, INodeSocket, ISocket } from '../interfaces';
@@ -72,12 +73,25 @@ export class NodeWebSocket implements ISocket {
     /**
      * Connects to the supporting socket using WebSocket protocol.
      *
-     * @param serverAddress The address the server is listening on.
+     * @param serverAddress The host name or URL the server is listening on.
+     * @param port If `serverAddress` is a host name, the port number the server is listening on, defaults to 8082. Otherwise, this argument is ignored.
      * @returns A Promise that resolves when the websocket connection is closed, or rejects on an error.
      */
-    async connect(serverAddress: string): Promise<void> {
+    async connect(serverAddress: string, port = 8082): Promise<void> {
         return new Promise<void>((resolve, reject) => {
-            const ws = (this.wsSocket = new WebSocket(serverAddress));
+            let url: URL;
+
+            try {
+                url = new URL(serverAddress);
+            } catch (error) {}
+
+            if (!url || !url.hostname) {
+                url = new URL('ws://.');
+                url.hostname = serverAddress;
+                url.port = port + '';
+            }
+
+            const ws = (this.wsSocket = new WebSocket(url));
 
             ws.once('error', ({ message }) => reject(new Error(message)));
             ws.once('open', () => resolve());

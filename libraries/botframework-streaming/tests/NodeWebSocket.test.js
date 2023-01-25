@@ -89,7 +89,6 @@ describe('NodeWebSocket', function () {
                     serverEvents.push(['connection', socket]);
 
                     serverSocket = socket;
-                    serverSocket.emit();
                     serverSocket.send('welcome');
                     serverSocket.on('message', function (data) {
                         serverEvents.push(['message', data]);
@@ -213,6 +212,85 @@ describe('NodeWebSocket', function () {
                         expect(events[1]).deep.to.equals(['close', 1006, '']);
                     });
                 });
+            });
+        });
+    });
+
+    describe('test against a WebSocket server with default path and port', function () {
+        let server;
+
+        beforeEach(function () {
+            return new Promise((resolve) => {
+                // Default port is 8082.
+                server = new Server({ port: 8082 });
+                server.on('connection', function (socket) {
+                    socket.send('welcome');
+                    socket.close();
+                });
+
+                server.on('listening', resolve);
+            });
+        });
+
+        afterEach(function () {
+            server.close();
+        });
+
+        it('should connect to a WebSocket server via hostname/port', async function () {
+            const events = [];
+            const nodeSocket = new NodeWebSocket();
+
+            const connectPromise = nodeSocket.connect('localhost');
+
+            nodeSocket.setOnCloseHandler((code, reason) => events.push(['close', code, reason]));
+            nodeSocket.setOnErrorHandler((error) => events.push(['error', error]));
+            nodeSocket.setOnMessageHandler((data) => events.push(['message', data]));
+
+            await connectPromise;
+
+            return waitFor(() => {
+                expect(events).to.have.lengthOf(2);
+                expect(events[0]).deep.to.equals(['message', 'welcome']);
+                expect(events[1]).deep.to.equals(['close', 1005, '']);
+            });
+        });
+    });
+
+    describe('test against a WebSocket server with default path', function () {
+        let server;
+
+        beforeEach(function () {
+            return new Promise((resolve) => {
+                server = new Server({ port: TEST_SERVER_PORT });
+                server.on('connection', function (socket) {
+                    socket.send('welcome');
+                    socket.close();
+                });
+
+                server.on('listening', resolve);
+            });
+        });
+
+        afterEach(function () {
+            server.close();
+        });
+
+        it('should connect to a WebSocket server via hostname/port', async function () {
+            const events = [];
+            const nodeSocket = new NodeWebSocket();
+
+            const connectPromise = nodeSocket.connect('localhost', server.address().port);
+
+            nodeSocket.setOnCloseHandler((code, reason) => events.push(['close', code, reason]));
+            nodeSocket.setOnErrorHandler((error) => events.push(['error', error]));
+            nodeSocket.setOnMessageHandler((data) => events.push(['message', data]));
+
+            await connectPromise;
+
+            return waitFor(() => {
+                expect(events).to.have.lengthOf(2);
+                expect(events[0]).deep.to.equals(['message', 'welcome']);
+                expect(events[1]).deep.to.equals(['close', 1005, '']);
             });
         });
     });
