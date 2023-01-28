@@ -3,6 +3,7 @@ import { TurnState, TurnStateManager } from './TurnState';
 import { DefaultTurnState, DefaultTurnStateManager} from './DefaultTurnStateManager';
 import { AdaptiveCards, AdaptiveCardsOptions } from './AdaptiveCards';
 import { MessageExtensions } from './MessageExtensions';
+import { PredictedDoCommand, PredictedSayCommand, PredictionEngine } from './PredictionEngine';
 
 export interface Query<TParams extends Record<string, any>> {
     count: number;
@@ -12,8 +13,10 @@ export interface Query<TParams extends Record<string, any>> {
 
 export interface ApplicationOptions<TState extends TurnState> {
     storage?: Storage;
+    predictionEngine?: PredictionEngine<TState>; 
     turnStateManager?: TurnStateManager<TState>;
     adaptiveCards?: AdaptiveCardsOptions;
+    onActionMissing?: (context: TurnContext, state: TState, data: Record<string, any>, action: string) => Promise<void>;
 }
 
 export type RouteSelector = (context: TurnContext) => Promise<boolean>;
@@ -23,6 +26,7 @@ export class Application<TState extends TurnState = DefaultTurnState> {
     private readonly _options: ApplicationOptions<TState>;
     private readonly _routes: AppRoute<TState>[] = [];
     private readonly _invokeRoutes: AppRoute<TState>[] = [];
+    private readonly _actions: Map<string, (context: TurnContext, state: TState, data: Record<string, any>) => Promise<void>> = new Map();
     private readonly _adaptiveCards: AdaptiveCards<TState>;
     private readonly _messageExtensions: MessageExtensions<TState>;
 
@@ -32,6 +36,14 @@ export class Application<TState extends TurnState = DefaultTurnState> {
         // Create default turn state manager if needed
         if (!this._options.turnStateManager) {
             this._options.turnStateManager = new DefaultTurnStateManager() as any;
+        }
+
+        // Setup default action missing handler
+        if (!this._options.onActionMissing) {
+            this._options.onActionMissing = (context, state, data, action) => {
+                console.warn(`An action named '${action}' was predicted but no handler was registered.`);
+                return Promise.resolve();
+            };
         }
 
         this._adaptiveCards = new AdaptiveCards<TState>(this);
@@ -52,17 +64,6 @@ export class Application<TState extends TurnState = DefaultTurnState> {
 
     /**
      * Adds a new route to the application.
-     * 
-     * @remarks
-     * Routes will be matched in the order they're added to the application. The first selector to
-     * return `true` when an activity is received will have its handler called.
-     * @param selector Function used to determine if the route should be triggered.
-     * @param handler Function to call when the route is triggered.
-     * @returns The application instance for chaining purposes.
-     */
-    public addRoute(selector: RouteSelector, handler: RouteHandler<TState>)
-    /**
-     * Adds a new route to the application.
      *
      * @remarks
      * Routes will be matched in the order they're added to the application. The first selector to
@@ -77,6 +78,24 @@ export class Application<TState extends TurnState = DefaultTurnState> {
             this._invokeRoutes.push({ selector, handler });
         } else {
             this._routes.push({ selector, handler });
+        }
+        return this;
+    }
+
+    /**
+     * Registers an handler for a named action. 
+     * 
+     * @remarks
+     * Actions can be triggered by a Prediction Engine returning a DO command.
+     * @param name Unique name of the action.
+     * @param handler Function to call when the action is triggered.
+     * @returns The application instance for chaining purposes.
+     */
+    public action(name: string, handler: (context: TurnContext, state: TState, data: Record<string, any>) => Promise<void>): this {
+        if (!this._actions.has(name)) {
+            this._actions.set(name, handler);
+        } else {
+            throw new Error(`Application.action(): an action named '${name}' has already been registered.`);
         }
         return this;
     }
@@ -150,6 +169,45 @@ export class Application<TState extends TurnState = DefaultTurnState> {
                 return true;
             }
         }
+
+        // Call prediction engine if configured
+        if (this._options?.predictionEngine && context.activity.type == ActivityTypes.Message && context.activity.text) {
+            // Load turn state
+            const { storage, turnStateManager } = this._options;
+            const state = await turnStateManager!.loadState(storage, context);
+
+            // Call prediction engine
+            const commands = await this._options.predictionEngine.predictCommands(context, state);
+            if (commands && commands.length > 0) {
+                // Run predicted commands
+                for (let i = 0; i < commands.length; i++) {
+                    const cmd = commands[i];
+                    switch (cmd.type) {
+                        case 'DO':
+                            const { action, data } = (cmd as PredictedDoCommand);
+                            if (this._actions.has(action)) {
+                                const handler = this._actions.get(action);
+                                await handler(context, state, data);
+                            } else {
+                                await this._options.onActionMissing!(context, state, data, action);
+                            }
+                            break;
+                        case 'SAY':
+                            const response = (cmd as PredictedSayCommand).response;
+                            await context.sendActivity(response);
+                            break;
+                        default:
+                            throw new Error(`Application.run(): unknown command of '${cmd.type}' predicted.`);
+                    }
+                }
+            }
+
+            // Save turn state
+            await turnStateManager!.saveState(storage, context, state);
+
+            // End dispatch
+            return true;
+        } 
 
         // activity wasn't handled
         return false;

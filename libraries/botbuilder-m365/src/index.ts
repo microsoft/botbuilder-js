@@ -9,5 +9,6 @@
 export * from './AdaptiveCards';
 export * from './Application';
 export * from './DefaultTurnStateManager';
+export * from './OpenAIPredictionEngine';
 export * from './MessageExtensions';
 export * from './TurnState';
