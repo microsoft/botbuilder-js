@@ -547,11 +547,11 @@ export const MeetingNotificationRecipientFailureInfo: msRest.CompositeMapper = {
     },
 };
 
-export const MeetingNotificationRecipientFailureInfos: msRest.CompositeMapper = {
-    serializedName: 'MeetingNotificationRecipientFailureInfos',
+export const MeetingNotificationResponse: msRest.CompositeMapper = {
+    serializedName: 'MeetingNotificationResponse',
     type: {
         name: 'Composite',
-        className: 'MeetingNotificationRecipientFailureInfos',
+        className: 'MeetingNotificationResponse',
         modelProperties: {
             recipientsFailureInfo: {
                 serializedName: 'recipientsFailureInfo',

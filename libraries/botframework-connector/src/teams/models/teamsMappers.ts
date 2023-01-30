@@ -19,7 +19,7 @@ export {
     MeetingNotificationChannelData,
     MeetingOnBehalfOf,
     MeetingNotificationRecipientFailureInfo,
-    MeetingNotificationRecipientFailureInfos,
+    MeetingNotificationResponse,
     TaskModuleContinueResponse,
     TaskModuleTaskInfo,
     Attachment,

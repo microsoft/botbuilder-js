@@ -8,7 +8,7 @@ import {
     ConversationList,
     TeamDetails,
     TeamsMeetingInfo,
-    MeetingNotificationRecipientFailureInfos,
+    MeetingNotificationResponse,
     TeamsMeetingParticipant,
 } from 'botframework-schema';
 
@@ -128,7 +128,7 @@ export type TeamsMeetingInfoResponse = TeamsMeetingInfo & {
 /**
  * Contains response data for the sendMeetingNotification operation.
  */
-export type TeamsSendMeetingNotificationResponse = MeetingNotificationRecipientFailureInfos & {
+export type TeamsMeetingNotificationResponse = MeetingNotificationResponse & {
     /**
      * The underlying HTTP response.
      */
@@ -140,6 +140,6 @@ export type TeamsSendMeetingNotificationResponse = MeetingNotificationRecipientF
         /**
          * The response body as parsed JSON or XML
          */
-        parsedBody: MeetingNotificationRecipientFailureInfos | {};
+        parsedBody: MeetingNotificationResponse | {};
     };
 };

@@ -975,7 +975,7 @@ export interface MeetingNotificationRecipientFailureInfo {
 }
 
 // @public
-export interface MeetingNotificationRecipientFailureInfos {
+export interface MeetingNotificationResponse {
     recipientsFailureInfo: MeetingNotificationRecipientFailureInfo[];
 }
 

@@ -1951,9 +1951,9 @@ export interface MeetingNotificationRecipientFailureInfo {
  * @interface
  * Specifies the list of recipients for which the Teams meeting notification was not sent.
  */
-export interface MeetingNotificationRecipientFailureInfos {
+export interface MeetingNotificationResponse {
     /**
      * @member {string} [recipientsFailureInfo] The list of recipients that failed to recieve the sent meetings notification.
      */
-    recipientsFailureInfo: MeetingNotificationRecipientFailureInfo[];
+    recipientsFailureInfo?: MeetingNotificationRecipientFailureInfo[];
 }
