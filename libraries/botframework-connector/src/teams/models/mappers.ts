@@ -476,7 +476,7 @@ export const MeetingNotificationChannelData = {
                     element: {
                         type: {
                             name: 'Composite',
-                            className: 'MeetingOnBehalfOf',
+                            className: 'OnBehalfOf',
                         },
                     },
                 },
@@ -485,11 +485,11 @@ export const MeetingNotificationChannelData = {
     },
 };
 
-export const MeetingOnBehalfOf: msRest.CompositeMapper = {
-    serializedName: 'MeetingOnBehalfOf',
+export const OnBehalfOf: msRest.CompositeMapper = {
+    serializedName: 'OnBehalfOf',
     type: {
         name: 'Composite',
-        className: 'MeetingOnBehalfOf',
+        className: 'OnBehalfOf',
         modelProperties: {
             itemid: {
                 serializedName: 'itemid',

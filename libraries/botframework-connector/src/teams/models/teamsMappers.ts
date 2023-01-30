@@ -17,7 +17,7 @@ export {
     TeamsMeetingParticipant,
     MeetingNotification,
     MeetingNotificationChannelData,
-    MeetingOnBehalfOf,
+    OnBehalfOf,
     MeetingNotificationRecipientFailureInfo,
     MeetingNotificationResponse,
     TaskModuleContinueResponse,

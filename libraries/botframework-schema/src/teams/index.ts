@@ -1900,16 +1900,16 @@ export interface MeetingStageSurface<T> {
  */
 export interface MeetingNotificationChannelData {
     /**
-     * @member {MeetingOnBehalfOf} [onBehalfOf] The user that the bot is sending the notification on behalfOf, if any.
+     * @member {OnBehalfOf} [onBehalfOf] The user that the bot is sending the notification on behalfOf, if any.
      */
-    onBehalfOf?: MeetingOnBehalfOf[];
+    onBehalfOf?: OnBehalfOf[];
 }
 
 /**
  * @interface
  * Specifies the Teams user that triggered the Teams meeting notification.
  */
-export interface MeetingOnBehalfOf {
+export interface OnBehalfOf {
     /**
      * @member {number} [itemid] The id of the item.
      */

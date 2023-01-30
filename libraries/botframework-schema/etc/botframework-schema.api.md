@@ -964,7 +964,7 @@ export interface MeetingNotificationBase<T> {
 
 // @public
 export interface MeetingNotificationChannelData {
-    onBehalfOf?: MeetingOnBehalfOf[];
+    onBehalfOf?: OnBehalfOf[];
 }
 
 // @public
@@ -976,15 +976,7 @@ export interface MeetingNotificationRecipientFailureInfo {
 
 // @public
 export interface MeetingNotificationResponse {
-    recipientsFailureInfo: MeetingNotificationRecipientFailureInfo[];
-}
-
-// @public
-export interface MeetingOnBehalfOf {
-    displayName?: string;
-    itemid: 0 | number;
-    mentionType: 'person' | string;
-    mri: string;
+    recipientsFailureInfo?: MeetingNotificationRecipientFailureInfo[];
 }
 
 // @public (undocumented)
@@ -1310,6 +1302,14 @@ export interface OAuthCard {
     text: string;
     tokenExchangeResource: TokenExchangeResource;
     tokenPostResource: TokenPostResource;
+}
+
+// @public
+export interface OnBehalfOf {
+    displayName?: string;
+    itemid: 0 | number;
+    mentionType: 'person' | string;
+    mri: string;
 }
 
 // @public
