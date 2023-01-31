@@ -1,3 +1,11 @@
+/**
+ * @module botbuilder-m365
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+
 import { TurnContext, ActivityTypes, InvokeResponse, INVOKE_RESPONSE_KEY, AdaptiveCardInvokeResponse } from 'botbuilder';
 import { Application, RouteSelector, Query } from './Application';
 import { TurnState } from './TurnState';

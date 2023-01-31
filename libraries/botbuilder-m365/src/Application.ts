@@ -1,4 +1,12 @@
-import { TurnContext, Storage, TabContext, ActivityTypes } from 'botbuilder';
+/**
+ * @module botbuilder-m365
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+
+import { TurnContext, Storage, ActivityTypes } from 'botbuilder';
 import { TurnState, TurnStateManager } from './TurnState';
 import { DefaultTurnState, DefaultTurnStateManager} from './DefaultTurnStateManager';
 import { AdaptiveCards, AdaptiveCardsOptions } from './AdaptiveCards';
@@ -21,12 +29,13 @@ export interface ApplicationOptions<TState extends TurnState> {
 
 export type RouteSelector = (context: TurnContext) => Promise<boolean>;
 export type RouteHandler<TState extends TurnState> = (context: TurnContext, state: TState) => Promise<void>;
+export type ActionMap<TState extends TurnState> =  Map<string, (context: TurnContext, state: TState, data: Record<string, any>) => Promise<boolean>>;
 
 export class Application<TState extends TurnState = DefaultTurnState> {
     private readonly _options: ApplicationOptions<TState>;
     private readonly _routes: AppRoute<TState>[] = [];
     private readonly _invokeRoutes: AppRoute<TState>[] = [];
-    private readonly _actions: Map<string, (context: TurnContext, state: TState, data: Record<string, any>) => Promise<void>> = new Map();
+    private readonly _actions: ActionMap<TState> = new Map();
     private readonly _adaptiveCards: AdaptiveCards<TState>;
     private readonly _messageExtensions: MessageExtensions<TState>;
 
@@ -62,6 +71,14 @@ export class Application<TState extends TurnState = DefaultTurnState> {
         return this._options;
     }
 
+    public get predictionEngine(): PredictionEngine<TState> {
+        if (!this._options.predictionEngine) {
+            throw new Error(`Application.predictionEngine: no prediction engine has been configured.`);
+        }
+
+        return this._options.predictionEngine;
+    }
+
     /**
      * Adds a new route to the application.
      *
@@ -91,7 +108,7 @@ export class Application<TState extends TurnState = DefaultTurnState> {
      * @param handler Function to call when the action is triggered.
      * @returns The application instance for chaining purposes.
      */
-    public action(name: string, handler: (context: TurnContext, state: TState, data: Record<string, any>) => Promise<void>): this {
+    public action(name: string, handler: (context: TurnContext, state: TState, data: Record<string, any>) => Promise<boolean>): this {
         if (!this._actions.has(name)) {
             this._actions.set(name, handler);
         } else {

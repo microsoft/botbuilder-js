@@ -1,3 +1,11 @@
+/**
+ * @module botbuilder-m365
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+
 import { TurnContext, TaskModuleTaskInfo, ActivityTypes, InvokeResponse, INVOKE_RESPONSE_KEY, TaskModuleResponse, MessagingExtensionResult, MessagingExtensionActionResponse, MessagingExtensionParameter, MessagingExtensionQueryOptions, MessagingExtensionQuery } from 'botbuilder';
 import { Application, RouteSelector, Query } from './Application';
 import { TurnState } from './TurnState';
