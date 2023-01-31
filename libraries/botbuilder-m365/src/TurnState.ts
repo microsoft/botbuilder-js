@@ -11,7 +11,7 @@ export interface TurnStateManager<TState extends TurnState> {
 }
 
 
-export class TurnStateEntry<TValue extends {} = {}>  {
+export class TurnStateEntry<TValue extends Record<string, any> = Record<string, any>>  {
     private _value: TValue;
     private _storageKey?: string;
     private _deleted = false;

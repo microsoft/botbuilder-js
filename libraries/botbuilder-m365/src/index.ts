@@ -8,7 +8,11 @@
 
 export * from './AdaptiveCards';
 export * from './Application';
+export * from './ConversationHistoryTracker';
 export * from './DefaultTurnStateManager';
-export * from './OpenAIPredictionEngine';
 export * from './MessageExtensions';
+export * from './OpenAIPredictionEngine';
+export * from './PredictionEngine';
+export * from './PromptParser';
+export * from './ResponseParser';
 export * from './TurnState';

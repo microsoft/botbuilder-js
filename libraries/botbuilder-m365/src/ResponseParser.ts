@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { PredictedCommand, PredictedDoCommand, PredictedSayCommand} from '../PredictionEngine';
+import { PredictedCommand, PredictedDoCommand, PredictedSayCommand} from './PredictionEngine';
 
 const BREAKING_CHARACTERS = '`~!@#$%^&*()_+-={}|[]\\:";\'<>?,./ \r\n\t';
 const NAME_BREAKING_CHARACTERS = '`~!@#$%^&*()+={}|[]\\:";\'<>?,./ \r\n\t';
