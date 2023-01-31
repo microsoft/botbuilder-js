@@ -12,11 +12,7 @@ import {
     CloudAdapter,
     ConfigurationBotFrameworkAuthentication,
     ConfigurationBotFrameworkAuthenticationOptions,
-    MemoryStorage,
-    ActivityTypes,
-    MessagingExtensionAttachment,
-    CardFactory,
-    CardAction
+    MemoryStorage
 } from 'botbuilder';
 
 // Read botFilePath and botFileSecret from .env file.
