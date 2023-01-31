@@ -1,0 +1,69 @@
+{
+  "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.12/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.12",
+  "version": "1.0.0",
+  "id": "220c0c26-59c0-44b1-8c3c-5ee7d5c5b981",
+  "packageName": "com.teams.sample.teamsserverapp",
+  "developer": {
+    "name": "Microsoft",
+    "websiteUrl": "https://dev.botframework.com",
+    "privacyUrl": "https://privacy.microsoft.com",
+    "termsOfUseUrl": "https://www.microsoft.com/en-us/legal/intellectualproperty/copyright/default.aspx"
+  },
+  "icons": {
+    "outline": "icon-outline.png",
+    "color": "icon-color.png"
+  },
+  "name": {
+    "short": "Teams Server App Sample",
+    "full": "Teams Server App Sample"
+  },
+  "description": {
+    "short": "Teams Server App Sample",
+    "full": "Teams Server App Sample"
+  },
+  "accentColor": "#FFFFFF",
+  "bots": [
+    {
+      "botId": "220c0c26-59c0-44b1-8c3c-5ee7d5c5b981",
+      "scopes": [
+        "personal",
+        "groupchat",
+        "team"
+      ],
+      "supportsFiles": false,
+      "isNotificationOnly": false
+    }
+  ],
+  "staticTabs": [
+    {
+      "entityId": "demoTab",
+      "name": "Adapt JS",
+      "contentBotId": "220c0c26-59c0-44b1-8c3c-5ee7d5c5b981",
+      "scopes": ["personal"]
+    }
+  ],
+  "permissions": [
+    "identity",
+    "messageTeamMembers"
+  ],
+  "validDomains": [],
+  "composeExtensions": [
+    {
+      "botId": "220c0c26-59c0-44b1-8c3c-5ee7d5c5b981",
+      "canUpdateConfiguration": true,
+      "commands": [{
+          "id": "searchCmd",
+          "description": "Test Search Extension",
+          "title": "Search",
+          "initialRun": true,
+          "parameters": [{
+            "name": "searchKeyword",
+            "description": "Enter your search keywords",
+            "title": "Keywords"
+          }]
+        }
+      ]
+    }
+  ]
+}
