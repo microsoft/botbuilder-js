@@ -146,7 +146,7 @@ export class TeamsSSOTokenExchangeMiddleware implements Middleware {
             const userTokenClient = context.turnState.get<UserTokenClient>(
                 (context.adapter as CloudAdapterBase).UserTokenClientKey
             );
-            if (userTokenClient != null) {
+            if (userTokenClient) {
                 tokenExchangeResponse = await userTokenClient.exchangeToken(
                     context.activity.from.id,
                     this.oAuthConnectionName,
