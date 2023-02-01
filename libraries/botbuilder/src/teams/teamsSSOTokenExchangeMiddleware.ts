@@ -140,8 +140,6 @@ export class TeamsSSOTokenExchangeMiddleware implements Middleware {
         let tokenExchangeResponse: TokenResponse;
         const tokenExchangeRequest: TokenExchangeInvokeRequest = context.activity.value;
 
-        const tokenProvider = ExchangeToken.safeParse(context.adapter);
-
         try {
             const userTokenClient = context.turnState.get<UserTokenClient>(
                 (context.adapter as CloudAdapterBase).UserTokenClientKey
@@ -153,15 +151,15 @@ export class TeamsSSOTokenExchangeMiddleware implements Middleware {
                     context.activity.channelId,
                     { token: tokenExchangeRequest.token }
                 );
-            } else if (tokenProvider.success) {
-                tokenExchangeResponse = await tokenProvider.data.exchangeToken(
+            } else if (ExchangeToken.check(context.adapter)) {
+                tokenExchangeResponse = await context.adapter.exchangeToken(
                     context,
                     this.oAuthConnectionName,
                     context.activity.channelId,
                     { token: tokenExchangeRequest.token }
                 );
             } else {
-                new Error('The provided token is not supported by the current adapter.');
+                new Error('Token Exchange is not supported by the current adapter.');
             }
         } catch (_err) {
             // Ignore Exceptions
