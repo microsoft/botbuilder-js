@@ -958,6 +958,7 @@ export type MeetingNotification = TargetedMeetingNotification;
 
 // @public
 export interface MeetingNotificationBase<T> {
+    channelData?: MeetingNotificationChannelData;
     type: string;
     value: T;
 }
@@ -979,10 +980,10 @@ export interface MeetingNotificationResponse {
     recipientsFailureInfo?: MeetingNotificationRecipientFailureInfo[];
 }
 
-// @public (undocumented)
+// @public
 export interface MeetingStageSurface<T> {
     content: T;
-    contentType: 'task' | string;
+    contentType: 'task';
     surface: 'meetingStage';
 }
 
@@ -1659,13 +1660,12 @@ export interface TabSuggestedActions {
 }
 
 // @public
-export interface TargetedMeetingNotification extends MeetingNotificationBase<TargetedMeetingNotificationInfo> {
-    channelData?: MeetingNotificationChannelData;
+export interface TargetedMeetingNotification extends MeetingNotificationBase<TargetedMeetingNotificationValue> {
     type: 'targetedMeetingNotification';
 }
 
 // @public
-export interface TargetedMeetingNotificationInfo {
+export interface TargetedMeetingNotificationValue {
     recipients: string[];
     surfaces: MeetingSurface[];
 }

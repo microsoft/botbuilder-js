@@ -1833,22 +1833,22 @@ export interface MeetingNotificationBase<T> {
      * @member {T} value The specific details of the meeting notification.
      */
     value: T;
+
+    /**
+     * @member {MeetingNotificationChannelData} [channelData] The channel data of the meeting notification.
+     */
+    channelData?: MeetingNotificationChannelData;
 }
 
 /**
  * @interface
  * Specifies details of a targeted Teams meeting send notification payload.
  */
-export interface TargetedMeetingNotification extends MeetingNotificationBase<TargetedMeetingNotificationInfo> {
+export interface TargetedMeetingNotification extends MeetingNotificationBase<TargetedMeetingNotificationValue> {
     /**
      * @member {string} [type] The type of meeting notification.
      */
     type: 'targetedMeetingNotification';
-
-    /**
-     * @member {MeetingNotificationChannelData} [channelData] The channel data of the meeting notification.
-     */
-    channelData?: MeetingNotificationChannelData;
 }
 
 /**
@@ -1861,7 +1861,7 @@ export type MeetingNotification = TargetedMeetingNotification;
  * @interface
  * Specifies recipients and surfaces to target in a Teams meeting notification.
  */
-export interface TargetedMeetingNotificationInfo {
+export interface TargetedMeetingNotificationValue {
     /**
      * @member {string[]} [recipients] The list of recipient meeting MRIs.
      */
@@ -1878,6 +1878,10 @@ export interface TargetedMeetingNotificationInfo {
  */
 export type MeetingSurface = MeetingStageSurface<any>;
 
+/**
+ * @interface
+ * Specifies the meeting stage surface in a Teams meeting notification.
+ */
 export interface MeetingStageSurface<T> {
     /**
      * @member {string} [surface] The surface type.
@@ -1886,7 +1890,7 @@ export interface MeetingStageSurface<T> {
     /**
      * @member {string} [contentType] The content type.
      */
-    contentType: 'task' | string;
+    contentType: 'task';
     /**
      * @template T
      * @member {T} [content] The content to display in the meeting notification.
