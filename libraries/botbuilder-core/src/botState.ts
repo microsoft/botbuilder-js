@@ -225,7 +225,7 @@ export class BotState implements PropertyManager {
                 return value.map((e) => inner([null, e], skip));
             }
 
-            if (!!value && typeof value !== 'object') {
+            if (value === null && typeof value !== 'object') {
                 return value;
             }
 
