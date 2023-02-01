@@ -10,17 +10,14 @@ import { TurnContext } from 'botbuilder-core';
 import { TurnState } from './TurnState';
 import { readFile } from 'fs/promises';
 import { ConversationHistoryOptions, ConversationHistoryTracker } from './ConversationHistoryTracker';
+import { Application } from './Application';
 
 enum PromptParseState { inText, inVariable }
 
 export type PromptTemplate = string|((context: TurnContext, state: TurnState) => Promise<string>);
 
-export interface PromptParseOptions {
-    conversationHistory?: Partial<ConversationHistoryOptions>;
-}
-
 export class PromptParser {
-    public static async expandPromptTemplate(context: TurnContext, state: TurnState, prompt: PromptTemplate, options?: PromptParseOptions): Promise<string> {
+    public static async expandPromptTemplate(app: Application, context: TurnContext, state: TurnState, data: Record<string, any>, prompt: PromptTemplate): Promise<string> {
         // Get template
         let promptTemplate: string;
         if (typeof prompt == 'function') {
@@ -57,7 +54,7 @@ export class PromptParser {
                         }
 
                         // Append variable contents to output
-                        outputPrompt += PromptParser.lookupPromptVariable(context, state, variableName);
+                        outputPrompt += PromptParser.lookupPromptVariable(app, context, state, data, variableName).toString();
                     } else {
                         // Append character to variable name
                         variableName += ch;
@@ -70,7 +67,7 @@ export class PromptParser {
     }
  
 
-    public static lookupPromptVariable(context: TurnContext, state: TurnState, variableName: string, options?: PromptParseOptions): string {
+    public static lookupPromptVariable(app: Application, context: TurnContext, state: TurnState, data: Record<string, any>, variableName: string): string {
         // Split variable name into parts and validate
         // TODO: Add support for longer dotted path variable names
         const parts = variableName.trim().split('.');
@@ -83,6 +80,9 @@ export class PromptParser {
             case 'activity':
                 // Return activity field
                 return (context.activity as any)[parts[1]] ?? '';
+            case 'data':
+                // Return referenced data entry
+                return data[parts[1]] ?? '';
             default:
                 // Find referenced state entry
                 const entry = state[parts[0]];
@@ -92,11 +92,11 @@ export class PromptParser {
 
                 // Special case `conversation.history` reference
                 if (parts[0] == 'conversation' && parts[1] == 'history') {
-                    return ConversationHistoryTracker.getHistoryAsText(context, state, options?.conversationHistory);
+                    return ConversationHistoryTracker.getHistoryAsText(context, state, app.options.conversationHistory);
                 }
 
                 // Return state field
-                return entry.value[parts[1]];
+                return entry.value[parts[1]] ?? '';
         }
     }
 }

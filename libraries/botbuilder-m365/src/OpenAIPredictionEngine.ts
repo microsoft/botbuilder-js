@@ -15,20 +15,23 @@ import { AxiosInstance, AxiosResponse, AxiosRequestConfig } from 'axios';
 import { ResponseParser } from './ResponseParser';
 import { PromptParser, PromptTemplate } from './PromptParser';
 import { ConversationHistoryOptions, ConversationHistoryTracker } from './ConversationHistoryTracker';
+import { Application } from './Application';
 
 
-export interface OpenAIPredictionEngineOptions {
+export interface OpenAIPredictionEngineOptions extends OpenAIPredictionOptions {
     configuration: ConfigurationParameters;
     basePath?: string;
     axios?: AxiosInstance;
+}
+
+export interface OpenAIPredictionOptions {
     prompt: PromptTemplate;
     promptConfig: CreateCompletionRequest;
     topicFilter?: PromptTemplate; 
     topicFilterConfig?: CreateCompletionRequest;
-    conversationHistory?: Partial<ConversationHistoryOptions>;
 }
 
-export class OpenAIPredictionEngine<TState extends TurnState = DefaultTurnState> implements PredictionEngine<TState> {
+export class OpenAIPredictionEngine<TState extends TurnState = DefaultTurnState> implements PredictionEngine<TState, OpenAIPredictionOptions> {
     private readonly _options: OpenAIPredictionEngineOptions;
     private readonly _configuration: Configuration;
     private readonly _openai: OpenAIApi;
@@ -36,12 +39,7 @@ export class OpenAIPredictionEngine<TState extends TurnState = DefaultTurnState>
 
 
     public constructor(options?: OpenAIPredictionEngineOptions) {
-        this._options = Object.assign({
-            conversationHistory: {
-                userPrefix: 'Human: ',
-                botPrefix: 'AI: '
-            }
-        } as OpenAIPredictionEngineOptions, options);
+        this._options = Object.assign({} as OpenAIPredictionEngineOptions, options);
         this._configuration = new Configuration(options.configuration);
         this._openai = new OpenAIApi(this._configuration, options.basePath, options.axios as any);
     }
@@ -54,17 +52,22 @@ export class OpenAIPredictionEngine<TState extends TurnState = DefaultTurnState>
         return this._openai;
     }
 
-    public async predictCommands(context: TurnContext, state: TState): Promise<PredictedCommand[]> {
+    public async predictCommands(app: Application, context: TurnContext, state: TState, data?: Record<string, any>, options?: OpenAIPredictionOptions): Promise<PredictedCommand[]> {
+        data = data ?? {};
+        options = options ?? this._options;
+    
+
         // Request base prompt completion
         const promises: Promise<AxiosResponse<CreateCompletionResponse>>[] = [];
-        promises.push(this._openai.createCompletion(await this.createCompletionRequest(context, state, this._options.prompt, this._options.promptConfig)) as any);
+        promises.push(this._openai.createCompletion(await this.createCompletionRequest(app, context, state, data, options.prompt, options.promptConfig)) as any);
     
         // Add optional topic filter completion
-        if (this._options.topicFilter) {
-            if (!this._options.topicFilterConfig) {
+        if (options.topicFilter) {
+            if (!options.topicFilterConfig) {
                 throw new Error(`OpenAIPredictionEngine: a "topicFilter" prompt was specified but the "topicFilterConfig" is missing.`);
             }
-            promises.push(this._openai.createCompletion(await this.createCompletionRequest(context, state, this._options.topicFilter, this._options.topicFilterConfig)) as any);
+
+            promises.push(this._openai.createCompletion(await this.createCompletionRequest(app, context, state, data, options.topicFilter, options.topicFilterConfig)) as any);
         }
 
         // Wait for completions to finish
@@ -90,12 +93,10 @@ export class OpenAIPredictionEngine<TState extends TurnState = DefaultTurnState>
         if (results[0]?.data?.choices && results[0].data.choices.length > 0) {
             // Remove response prefix
             let response = results[0].data.choices[0].text;
-            if (this._options?.conversationHistory?.botPrefix && response.toLowerCase().startsWith(this._options.conversationHistory.botPrefix.toLowerCase())) {
-                response = response.substring(this._options.conversationHistory.botPrefix.length);
+            const historyOptions = ConversationHistoryTracker.getOptions(app.options.conversationHistory);
+            if (historyOptions.botPrefix && response.toLowerCase().startsWith(historyOptions.botPrefix.toLowerCase())) {
+                response = response.substring(historyOptions.botPrefix.length);
             }
-
-            // Update conversation history
-            ConversationHistoryTracker.updateHistory(context, state, response, this._options.conversationHistory);
 
             // Parse response into commands
             const commands = ResponseParser.parseResponse(response.trim());
@@ -105,12 +106,12 @@ export class OpenAIPredictionEngine<TState extends TurnState = DefaultTurnState>
         return [];
     }
 
-    private async createCompletionRequest(context: TurnContext, state: TState, prompt: PromptTemplate, config: CreateCompletionRequest): Promise<CreateCompletionRequest> {
+    private async createCompletionRequest(app: Application, context: TurnContext, state: TState, data: Record<string, any>, prompt: PromptTemplate, config: CreateCompletionRequest): Promise<CreateCompletionRequest> {
         // Clone prompt config
         const request = Object.assign({}, config);
 
         // Expand prompt template
-        request.prompt = await PromptParser.expandPromptTemplate(context, state, prompt);
+        request.prompt = await PromptParser.expandPromptTemplate(app, context, state, data, prompt);
         console.log(`prompt: ${request.prompt}`);
 
         return request;

@@ -1,8 +1,17 @@
+/**
+ * @module botbuilder-m365
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+
 import { TurnContext } from 'botbuilder-core';
+import { Application } from './Application';
 import { TurnState } from './TurnState';
 
-export interface PredictionEngine<TState extends TurnState> {
-    predictCommands(context: TurnContext, state: TState): Promise<PredictedCommand[]>;
+export interface PredictionEngine<TState extends TurnState, TPredictionOptions> {
+    predictCommands(app: Application, context: TurnContext, state: TState, data?: Record<string, any>, options?: TPredictionOptions): Promise<PredictedCommand[]>;
 }
 
 export interface PredictedCommand {

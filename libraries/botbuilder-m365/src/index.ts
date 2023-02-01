@@ -7,6 +7,7 @@
  */
 
 export * from './AdaptiveCards';
+export * from './AI';
 export * from './Application';
 export * from './ConversationHistoryTracker';
 export * from './DefaultTurnStateManager';

@@ -61,12 +61,7 @@ server.listen(process.env.port || process.env.PORT || 3978, () => {
     console.log( '\nTo talk to your bot, open the emulator select "Open Bot"' );
 });
 
-import { Application, DefaultTurnState, OpenAIPredictionEngine } from 'botbuilder-m365';
-
-interface ConversationState {
-    lightsOn: boolean;
-}
-type ApplicationTurnState = DefaultTurnState<ConversationState>;
+import { Application, ConversationHistoryTracker, DefaultTurnState, OpenAIPredictionEngine } from 'botbuilder-m365';
 
 // Create prediction engine
 const predictionEngine = new OpenAIPredictionEngine({
@@ -76,8 +71,8 @@ const predictionEngine = new OpenAIPredictionEngine({
     prompt: path.join(__dirname, '../src/prompt.txt'),
     promptConfig: {
         model: "text-davinci-003",
-        temperature: 0.2,
-        max_tokens: 150,
+        temperature: 0.0,
+        max_tokens: 2048,
         top_p: 1,
         frequency_penalty: 0,
         presence_penalty: 0.6,
@@ -87,30 +82,9 @@ const predictionEngine = new OpenAIPredictionEngine({
 
 // Define storage and application
 const storage = new MemoryStorage();
-const app = new Application<ApplicationTurnState>({
+const app = new Application({
     storage,
     predictionEngine
-});
-
-app.message('reset', async (context, state) => {
-    state.conversation.delete();
-    await context.sendActivity(`Ok... starting over`);
-});
-
-app.action('LightsOn', async (context, state, data) => {
-    state.conversation.value.lightsOn = true;
-    await context.sendActivity(`[lights on]`);
-});
-
-app.action('LightsOff', async (context, state, data) => {
-    state.conversation.value.lightsOn = false;
-    await context.sendActivity(`[lights off]`);
-});
-
-app.action('Pause', async (context, state, data) => {
-    const time = data.time ? parseInt(data.time) : 1000;
-    await context.sendActivity(`[pausing for ${time / 1000} seconds]`);
-    await new Promise((resolve) => setTimeout(resolve, time));
 });
 
 // Listen for incoming server requests.
@@ -123,6 +97,66 @@ server.post('/api/messages', async (req, res) => {
 });
 
 /*
+interface ConversationState {
+    lightsOn: boolean;
+}
+type ApplicationTurnState = DefaultTurnState<ConversationState>;
+
+app.ai.action('LightsOn', async (context, state) => {
+    state.conversation.value.lightsOn = true;
+    await context.sendActivity(`[lights on]`);
+    return true;    
+});
+
+app.ai.action('LightsOff', async (context, state) => {
+    state.conversation.value.lightsOn = false;
+    await context.sendActivity(`[lights off]`);
+    return true;
+});
+
+app.ai.action('Pause', async (context, state, data) => {
+    const time = data.time ? parseInt(data.time) : 1000;
+    await context.sendActivity(`[pausing for ${time / 1000} seconds]`);
+    await new Promise((resolve) => setTimeout(resolve, time));
+    return true;
+});
+
+app.ai.action('LightStatus', async (context, state) => {
+    // Create data to pass into prompt
+    const data = {
+        lightStatus: state.conversation.value.lightsOn ? 'on' : 'off'
+    };
+
+    // Chain into a new prompt
+    await app.ai.chain(
+        context, 
+        state, 
+        data, 
+        {
+            prompt: path.join(__dirname, '../src/lightStatus.txt'),
+            promptConfig: {
+                model: "text-davinci-003",
+                temperature: 0.7,
+                max_tokens: 256,
+                top_p: 1,
+                frequency_penalty: 0,
+                presence_penalty: 0
+            }
+        });
+
+    // End the previous chain
+    return false;
+});
+
+app.message("/state", async (context, state) => {
+    await context.sendActivity(JSON.stringify(state.conversation.value));
+});
+
+app.message("/history", async (context, state) => {
+    const history = ConversationHistoryTracker.getHistoryAsText(context, state);
+    await context.sendActivity(history)
+});
+
 // Listen for ANY message to be received.
 app.activity(ActivityTypes.Message, async (context, state) => {
     // Increment count state
