@@ -1833,11 +1833,6 @@ export interface MeetingNotificationBase<T> {
      * @member {T} value The specific details of the meeting notification.
      */
     value: T;
-
-    /**
-     * @member {MeetingNotificationChannelData} [channelData] The channel data of the meeting notification.
-     */
-    channelData?: MeetingNotificationChannelData;
 }
 
 /**
@@ -1849,6 +1844,11 @@ export interface TargetedMeetingNotification extends MeetingNotificationBase<Tar
      * @member {string} [type] The type of meeting notification.
      */
     type: 'targetedMeetingNotification';
+
+    /**
+     * @member {MeetingNotificationChannelData} [channelData] The channel data of the meeting notification.
+     */
+    channelData?: MeetingNotificationChannelData;
 }
 
 /**

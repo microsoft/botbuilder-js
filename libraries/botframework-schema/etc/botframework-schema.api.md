@@ -958,7 +958,6 @@ export type MeetingNotification = TargetedMeetingNotification;
 
 // @public
 export interface MeetingNotificationBase<T> {
-    channelData?: MeetingNotificationChannelData;
     type: string;
     value: T;
 }
@@ -1661,6 +1660,7 @@ export interface TabSuggestedActions {
 
 // @public
 export interface TargetedMeetingNotification extends MeetingNotificationBase<TargetedMeetingNotificationValue> {
+    channelData?: MeetingNotificationChannelData;
     type: 'targetedMeetingNotification';
 }
 
