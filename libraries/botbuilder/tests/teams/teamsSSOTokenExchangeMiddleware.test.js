@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 const assert = require('assert');
+const { TurnContext } = require('botbuilder-core');
 const sinon = require('sinon');
 const { v4: uuid } = require('uuid');
 
@@ -13,6 +14,7 @@ const {
     TestAdapter,
     TestFlow,
     tokenExchangeOperationName,
+    CloudAdapterBase,
 } = require('../..');
 
 const connectionName = 'connectionName';
@@ -181,6 +183,69 @@ describe('TeamsSSOTokenExchangeMiddleware', function () {
             await adapter.send('test').assertReply('processed').startTest();
 
             assert.strictEqual(logic.callCount, 1);
+        });
+    });
+
+    describe('exchangedToken', function () {
+        beforeEach(function () {
+            this.sandbox = sinon.createSandbox();
+        });
+
+        afterEach(function () {
+            this.sandbox.restore();
+        });
+        it('exchange token with CloudAdapter', async function () {
+            class TestCloudAdapter extends CloudAdapterBase {}
+            const conversation = TestAdapter.createConversation('Convo1');
+            const adapter = new TestCloudAdapter({});
+            const context = new TurnContext(adapter, {
+                channelId: Channels.Msteams,
+                name: tokenExchangeOperationName,
+                from: conversation.user,
+                conversation: conversation.conversation,
+                value: {
+                    token: fakeExchangeableItem,
+                    id: exchangeId,
+                    connectionName,
+                },
+            });
+
+            const exchangeToken = this.sandbox.stub().returns(Promise.resolve({ token: fakeExchangeableItem }));
+            const logic = this.sandbox.stub();
+
+            context.turnState.set(adapter.UserTokenClientKey, { exchangeToken });
+            const middleware = new TeamsSSOTokenExchangeMiddleware(new MemoryStorage(), connectionName);
+            await middleware.onTurn(context, logic);
+
+            sinon.assert.calledOnce(exchangeToken);
+            sinon.assert.calledOnce(logic);
+        });
+
+        it('exchange token with BotFrameworkAdapter', async function () {
+            const conversation = TestAdapter.createConversation('Convo1');
+            const adapter = new TestAdapter(conversation);
+            const context = new TurnContext(adapter, {
+                channelId: Channels.Msteams,
+                name: tokenExchangeOperationName,
+                from: conversation.user,
+                conversation: conversation.conversation,
+                value: {
+                    token: fakeExchangeableItem,
+                    id: exchangeId,
+                    connectionName,
+                },
+            });
+
+            const exchangeToken = this.sandbox
+                .stub(adapter, 'exchangeToken')
+                .returns(Promise.resolve({ token: fakeExchangeableItem }));
+            const logic = this.sandbox.stub();
+
+            const middleware = new TeamsSSOTokenExchangeMiddleware(new MemoryStorage(), connectionName);
+            await middleware.onTurn(context, logic);
+
+            sinon.assert.calledOnce(exchangeToken);
+            sinon.assert.calledOnce(logic);
         });
     });
 });
