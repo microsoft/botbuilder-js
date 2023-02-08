@@ -16,7 +16,9 @@ import {
     TokenResponse,
     TurnContext,
     tokenExchangeOperationName,
+    CloudAdapterBase,
 } from 'botbuilder-core';
+import { UserTokenClient } from 'botframework-connector';
 
 function getStorageKey(context: TurnContext): string {
     const activity = context.activity;
@@ -138,16 +140,27 @@ export class TeamsSSOTokenExchangeMiddleware implements Middleware {
         let tokenExchangeResponse: TokenResponse;
         const tokenExchangeRequest: TokenExchangeInvokeRequest = context.activity.value;
 
-        const tokenProvider = ExchangeToken.parse(context.adapter);
-
-        // TODO(jgummersall) convert to new user token client provider when available
         try {
-            tokenExchangeResponse = await tokenProvider.exchangeToken(
-                context,
-                this.oAuthConnectionName,
-                context.activity.channelId,
-                { token: tokenExchangeRequest.token }
+            const userTokenClient = context.turnState.get<UserTokenClient>(
+                (context.adapter as CloudAdapterBase).UserTokenClientKey
             );
+            if (userTokenClient) {
+                tokenExchangeResponse = await userTokenClient.exchangeToken(
+                    context.activity.from.id,
+                    this.oAuthConnectionName,
+                    context.activity.channelId,
+                    { token: tokenExchangeRequest.token }
+                );
+            } else if (ExchangeToken.check(context.adapter)) {
+                tokenExchangeResponse = await context.adapter.exchangeToken(
+                    context,
+                    this.oAuthConnectionName,
+                    context.activity.channelId,
+                    { token: tokenExchangeRequest.token }
+                );
+            } else {
+                new Error('Token Exchange is not supported by the current adapter.');
+            }
         } catch (_err) {
             // Ignore Exceptions
             // If token exchange failed for any reason, tokenExchangeResponse above stays null,
