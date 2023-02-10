@@ -100,7 +100,6 @@ export class ChannelServiceRoutes {
             .catch((err) => {
                 ChannelServiceRoutes.handleError(err, res);
             });
-        return next();
     }
 
     /**
@@ -126,7 +125,6 @@ export class ChannelServiceRoutes {
             .catch((err) => {
                 ChannelServiceRoutes.handleError(err, res);
             });
-        return next();
     }
 
     /**
@@ -152,7 +150,6 @@ export class ChannelServiceRoutes {
             .catch((err) => {
                 ChannelServiceRoutes.handleError(err, res);
             });
-        return next();
     }
 
     /**
@@ -169,7 +166,6 @@ export class ChannelServiceRoutes {
             .catch((err) => {
                 ChannelServiceRoutes.handleError(err, res);
             });
-        return next();
     }
 
     /**
@@ -189,7 +185,6 @@ export class ChannelServiceRoutes {
             .catch((err) => {
                 ChannelServiceRoutes.handleError(err, res);
             });
-        return next();
     }
 
     /**
@@ -211,7 +206,6 @@ export class ChannelServiceRoutes {
                     ChannelServiceRoutes.handleError(err, res);
                 });
         });
-        return next();
     }
 
     /**
@@ -231,7 +225,6 @@ export class ChannelServiceRoutes {
             .catch((err) => {
                 ChannelServiceRoutes.handleError(err, res);
             });
-        return next();
     }
 
     /**
@@ -251,7 +244,6 @@ export class ChannelServiceRoutes {
             .catch((err) => {
                 ChannelServiceRoutes.handleError(err, res);
             });
-        return next();
     }
 
     /**
@@ -271,7 +263,6 @@ export class ChannelServiceRoutes {
             .catch((err) => {
                 ChannelServiceRoutes.handleError(err, res);
             });
-        return next();
     }
 
     /**
@@ -300,7 +291,6 @@ export class ChannelServiceRoutes {
             .catch((err) => {
                 ChannelServiceRoutes.handleError(err, res);
             });
-        return next();
     }
 
     /**
@@ -317,7 +307,6 @@ export class ChannelServiceRoutes {
             .catch((err) => {
                 ChannelServiceRoutes.handleError(err, res);
             });
-        return next();
     }
 
     /**
@@ -343,7 +332,6 @@ export class ChannelServiceRoutes {
             .catch((err) => {
                 ChannelServiceRoutes.handleError(err, res);
             });
-        return next();
     }
 
     /**
@@ -369,7 +357,6 @@ export class ChannelServiceRoutes {
             .catch((err) => {
                 ChannelServiceRoutes.handleError(err, res);
             });
-        return next();
     }
 
     /**
