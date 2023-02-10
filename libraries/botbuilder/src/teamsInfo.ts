@@ -22,8 +22,8 @@ import {
     TeamsMeetingParticipant,
     TeamsMeetingInfo,
     Channels,
-    TeamsMeetingNotification,
-    TeamsMeetingNotificationRecipientFailureInfos,
+    MeetingNotification,
+    MeetingNotificationResponse,
 } from 'botbuilder-core';
 import { ConnectorClient, TeamsConnectorClient, TeamsConnectorModels } from 'botframework-connector';
 
@@ -342,14 +342,14 @@ export class TeamsInfo {
      * @param notification The meeting notification payload.
      * @param meetingId Id of the Teams meeting.
      * @returns Promise with either an empty object if notifications were successfully sent to all recipients or
-     * [TeamsMeetingNotificationRecipientFailureInfos](xref:botframework-schema.TeamsMeetingNotificationRecipientFailureInfos) if notifications
+     * [MeetingNotificationResponse](xref:botframework-schema.MeetingNotificationResponse) if notifications
      * were sent to some but not all recipients.
      */
     static async sendMeetingNotification(
         context: TurnContext,
-        notification: TeamsMeetingNotification,
+        notification: MeetingNotification,
         meetingId?: string
-    ): Promise<TeamsMeetingNotificationRecipientFailureInfos | {}> {
+    ): Promise<MeetingNotificationResponse> {
         const activity = context.activity;
 
         if (meetingId == null) {

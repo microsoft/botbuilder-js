@@ -40,6 +40,8 @@ import { InvokeResponse } from 'botbuilder-core';
 import { IReceiveRequest } from 'botframework-streaming';
 import { IStreamingTransportServer } from 'botframework-streaming';
 import { MeetingEndEventDetails } from 'botbuilder-core';
+import { MeetingNotification } from 'botbuilder-core';
+import { MeetingNotificationResponse } from 'botbuilder-core';
 import { MeetingStartEventDetails } from 'botbuilder-core';
 import { MessagingExtensionAction } from 'botbuilder-core';
 import { MessagingExtensionActionResponse } from 'botbuilder-core';
@@ -70,8 +72,6 @@ import { TeamDetails } from 'botbuilder-core';
 import { TeamInfo } from 'botbuilder-core';
 import { TeamsChannelAccount } from 'botbuilder-core';
 import { TeamsMeetingInfo } from 'botbuilder-core';
-import { TeamsMeetingNotification } from 'botbuilder-core';
-import { TeamsMeetingNotificationRecipientFailureInfos } from 'botbuilder-core';
 import { TeamsMeetingParticipant } from 'botbuilder-core';
 import { TeamsPagedMembersResult } from 'botbuilder-core';
 import { TenantInfo } from 'botbuilder-core';
@@ -458,7 +458,7 @@ export class TeamsInfo {
     static getTeamMember(context: TurnContext, teamId?: string, userId?: string): Promise<TeamsChannelAccount>;
     // @deprecated
     static getTeamMembers(context: TurnContext, teamId?: string): Promise<TeamsChannelAccount[]>;
-    static sendMeetingNotification(context: TurnContext, notification: TeamsMeetingNotification, meetingId?: string): Promise<TeamsMeetingNotificationRecipientFailureInfos | {}>;
+    static sendMeetingNotification(context: TurnContext, notification: MeetingNotification, meetingId?: string): Promise<MeetingNotificationResponse>;
     static sendMessageToTeamsChannel(context: TurnContext, activity: Activity, teamsChannelId: string, botAppId?: string): Promise<[ConversationReference, string]>;
 }
 

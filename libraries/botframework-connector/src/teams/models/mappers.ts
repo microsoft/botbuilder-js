@@ -434,44 +434,11 @@ export const TeamsMeetingDetails: msRest.CompositeMapper = {
     },
 };
 
-export const TeamsMeetingNotificationInfo: msRest.CompositeMapper = {
-    serializedName: 'TeamsMeetingNotificationInfo',
+export const MeetingNotification: msRest.CompositeMapper = {
+    serializedName: 'MeetingNotification',
     type: {
         name: 'Composite',
-        className: 'TeamsMeetingNotificationInfo',
-        modelProperties: {
-            recipients: {
-                serializedName: 'recipients',
-                type: {
-                    name: 'Sequence',
-                    element: {
-                        type: {
-                            name: 'String',
-                        },
-                    },
-                },
-            },
-            surfaces: {
-                serializedName: 'surfaces',
-                type: {
-                    name: 'Sequence',
-                    element: {
-                        type: {
-                            name: 'Composite',
-                            className: 'TeamsMeetingNotificationSurface',
-                        },
-                    },
-                },
-            },
-        },
-    },
-};
-
-export const TeamsMeetingNotification: msRest.CompositeMapper = {
-    serializedName: 'TeamsMeetingNotification',
-    type: {
-        name: 'Composite',
-        className: 'TeamsMeetingNotification',
+        className: 'MeetingNotification',
         modelProperties: {
             type: {
                 serializedName: 'type',
@@ -482,55 +449,25 @@ export const TeamsMeetingNotification: msRest.CompositeMapper = {
             value: {
                 serializedName: 'value',
                 type: {
-                    name: 'Composite',
-                    className: 'TeamsMeetingNotificationInfo',
+                    name: 'any',
                 },
             },
             channelData: {
                 serializedName: 'channelData',
                 type: {
                     name: 'Composite',
-                    className: 'TeamsMeetingNotificationChannelData',
+                    className: 'MeetingNotificationChannelData',
                 },
             },
         },
     },
 };
 
-export const TeamsMeetingNotificationSurface: msRest.CompositeMapper = {
-    serializedName: 'TeamsMeetingNotificationSurface',
+export const MeetingNotificationChannelData = {
+    serializedName: 'MeetingNotificationChannelData',
     type: {
         name: 'Composite',
-        className: 'TeamsMeetingNotificationSurface',
-        modelProperties: {
-            surface: {
-                serializedName: 'surface',
-                type: {
-                    name: 'String',
-                },
-            },
-            contentType: {
-                serializedName: 'contentType',
-                type: {
-                    name: 'String',
-                },
-            },
-            content: {
-                serializedName: 'content',
-                type: {
-                    name: 'Composite',
-                    className: 'TaskModuleContinueResponse',
-                },
-            },
-        },
-    },
-};
-
-export const TeamsMeetingNotificationChannelData = {
-    serializedName: 'TeamsMeetingNotificationChannelData',
-    type: {
-        name: 'Composite',
-        className: 'TeamsMeetingNotificationChannelData',
+        className: 'MeetingNotificationChannelData',
         modelProperties: {
             onBehalfOf: {
                 serializedName: 'onBehalfOf',
@@ -539,7 +476,7 @@ export const TeamsMeetingNotificationChannelData = {
                     element: {
                         type: {
                             name: 'Composite',
-                            className: 'TeamsMeetingOnBehalfOf',
+                            className: 'OnBehalfOf',
                         },
                     },
                 },
@@ -548,11 +485,11 @@ export const TeamsMeetingNotificationChannelData = {
     },
 };
 
-export const TeamsMeetingOnBehalfOf: msRest.CompositeMapper = {
-    serializedName: 'TeamsMeetingOnBehalfOf',
+export const OnBehalfOf: msRest.CompositeMapper = {
+    serializedName: 'OnBehalfOf',
     type: {
         name: 'Composite',
-        className: 'TeamsMeetingOnBehalfOf',
+        className: 'OnBehalfOf',
         modelProperties: {
             itemid: {
                 serializedName: 'itemid',
@@ -582,11 +519,11 @@ export const TeamsMeetingOnBehalfOf: msRest.CompositeMapper = {
     },
 };
 
-export const TeamsMeetingNotificationRecipientFailureInfo: msRest.CompositeMapper = {
-    serializedName: 'TeamsMeetingNotificationRecipientFailureInfo',
+export const MeetingNotificationRecipientFailureInfo: msRest.CompositeMapper = {
+    serializedName: 'MeetingNotificationRecipientFailureInfo',
     type: {
         name: 'Composite',
-        className: 'TeamsMeetingNotificationRecipientFailureInfo',
+        className: 'MeetingNotificationRecipientFailureInfo',
         modelProperties: {
             recipientMri: {
                 serializedName: 'recipientMri',
@@ -610,11 +547,11 @@ export const TeamsMeetingNotificationRecipientFailureInfo: msRest.CompositeMappe
     },
 };
 
-export const TeamsMeetingNotificationRecipientFailureInfos: msRest.CompositeMapper = {
-    serializedName: 'TeamsMeetingNotificationRecipientFailureInfos',
+export const MeetingNotificationResponse: msRest.CompositeMapper = {
+    serializedName: 'MeetingNotificationResponse',
     type: {
         name: 'Composite',
-        className: 'TeamsMeetingNotificationRecipientFailureInfos',
+        className: 'MeetingNotificationResponse',
         modelProperties: {
             recipientsFailureInfo: {
                 serializedName: 'recipientsFailureInfo',
@@ -623,7 +560,7 @@ export const TeamsMeetingNotificationRecipientFailureInfos: msRest.CompositeMapp
                     element: {
                         type: {
                             name: 'Composite',
-                            className: 'TeamsMeetingNotificationRecipientFailureInfo',
+                            className: 'MeetingNotificationRecipientFailureInfo',
                         },
                     },
                 },
