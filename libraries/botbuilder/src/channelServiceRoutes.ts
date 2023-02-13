@@ -92,6 +92,7 @@ export class ChannelServiceRoutes {
                             res.send(resourceResponse);
                         }
                         res.end();
+                        return next();
                     })
                     .catch((err) => {
                         ChannelServiceRoutes.handleError(err, res);
@@ -117,6 +118,7 @@ export class ChannelServiceRoutes {
                             res.send(resourceResponse);
                         }
                         res.end();
+                        return next();
                     })
                     .catch((err) => {
                         ChannelServiceRoutes.handleError(err, res);
@@ -142,6 +144,7 @@ export class ChannelServiceRoutes {
                             res.send(resourceResponse);
                         }
                         res.end();
+                        return next();
                     })
                     .catch((err) => {
                         ChannelServiceRoutes.handleError(err, res);
@@ -162,6 +165,7 @@ export class ChannelServiceRoutes {
             .then(() => {
                 res.status(200);
                 res.end();
+                return next();
             })
             .catch((err) => {
                 ChannelServiceRoutes.handleError(err, res);
@@ -181,6 +185,7 @@ export class ChannelServiceRoutes {
                 }
                 res.status(200);
                 res.end();
+                return next();
             })
             .catch((err) => {
                 ChannelServiceRoutes.handleError(err, res);
@@ -201,6 +206,7 @@ export class ChannelServiceRoutes {
                     }
                     res.status(201);
                     res.end();
+                    return next();
                 })
                 .catch((err) => {
                     ChannelServiceRoutes.handleError(err, res);
@@ -221,6 +227,7 @@ export class ChannelServiceRoutes {
                 }
                 res.status(200);
                 res.end();
+                return next();
             })
             .catch((err) => {
                 ChannelServiceRoutes.handleError(err, res);
@@ -240,6 +247,7 @@ export class ChannelServiceRoutes {
                     res.send(channelAccounts);
                 }
                 res.end();
+                return next();
             })
             .catch((err) => {
                 ChannelServiceRoutes.handleError(err, res);
@@ -259,6 +267,7 @@ export class ChannelServiceRoutes {
                     res.send(channelAccount);
                 }
                 res.end();
+                return next();
             })
             .catch((err) => {
                 ChannelServiceRoutes.handleError(err, res);
@@ -287,6 +296,7 @@ export class ChannelServiceRoutes {
                     res.send(pagedMembersResult);
                 }
                 res.end();
+                return next();
             })
             .catch((err) => {
                 ChannelServiceRoutes.handleError(err, res);
@@ -303,6 +313,7 @@ export class ChannelServiceRoutes {
             .then(() => {
                 res.status(200);
                 res.end();
+                return next();
             })
             .catch((err) => {
                 ChannelServiceRoutes.handleError(err, res);
@@ -324,6 +335,7 @@ export class ChannelServiceRoutes {
                         }
                         res.status(200);
                         res.end();
+                        return next();
                     })
                     .catch((err) => {
                         ChannelServiceRoutes.handleError(err, res);
@@ -349,6 +361,7 @@ export class ChannelServiceRoutes {
                         }
                         res.status(200);
                         res.end();
+                        return next();
                     })
                     .catch((err) => {
                         ChannelServiceRoutes.handleError(err, res);
