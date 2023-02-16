@@ -127,7 +127,7 @@ describe('channelServiceRoutes', function () {
                     service.handleSendToConversation = sandbox.stub().resolves(testResource);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processSendToConversation(req, res);
+                    channel.processSendToConversation(req, res, Function);
                 } catch (err) {
                     done(err);
                 }
@@ -156,7 +156,7 @@ describe('channelServiceRoutes', function () {
                     service.handleSendToConversation = sandbox.stub().rejects(resourceResponse);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processSendToConversation(req, res);
+                    channel.processSendToConversation(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -188,7 +188,7 @@ describe('channelServiceRoutes', function () {
                     readActivityStub.rejects(resourceResponse);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processSendToConversation(req, res);
+                    channel.processSendToConversation(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -210,7 +210,7 @@ describe('channelServiceRoutes', function () {
                     service.handleReplyToActivity = sandbox.stub().resolves(testResource);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processReplyToActivity(req, res);
+                    channel.processReplyToActivity(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -240,7 +240,7 @@ describe('channelServiceRoutes', function () {
                     service.handleReplyToActivity = sandbox.stub().rejects(resourceResponse);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processReplyToActivity(req, res);
+                    channel.processReplyToActivity(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -272,7 +272,7 @@ describe('channelServiceRoutes', function () {
                     readActivityStub.rejects(resourceResponse);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processReplyToActivity(req, res);
+                    channel.processReplyToActivity(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -294,7 +294,7 @@ describe('channelServiceRoutes', function () {
                     service.handleUpdateActivity = sandbox.stub().resolves(testResource);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processUpdateActivity(req, res);
+                    channel.processUpdateActivity(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -324,7 +324,7 @@ describe('channelServiceRoutes', function () {
                     service.handleUpdateActivity = sandbox.stub().rejects(resourceResponse);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processUpdateActivity(req, res);
+                    channel.processUpdateActivity(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -356,7 +356,7 @@ describe('channelServiceRoutes', function () {
                     readActivityStub.rejects(resourceResponse);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processUpdateActivity(req, res);
+                    channel.processUpdateActivity(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -378,7 +378,7 @@ describe('channelServiceRoutes', function () {
                     service.handleDeleteActivity = sandbox.stub().resolves();
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processDeleteActivity(req, res);
+                    channel.processDeleteActivity(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -408,7 +408,7 @@ describe('channelServiceRoutes', function () {
                     service.handleDeleteActivity = sandbox.stub().rejects(resourceResponse);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processDeleteActivity(req, res);
+                    channel.processDeleteActivity(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -430,7 +430,7 @@ describe('channelServiceRoutes', function () {
                     service.handleGetActivityMembers = sandbox.stub().resolves(testResource);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processGetActivityMembers(req, res);
+                    channel.processGetActivityMembers(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -460,7 +460,7 @@ describe('channelServiceRoutes', function () {
                     service.handleGetActivityMembers = sandbox.stub().rejects(resourceResponse);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processGetActivityMembers(req, res);
+                    channel.processGetActivityMembers(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -482,7 +482,7 @@ describe('channelServiceRoutes', function () {
                     service.handleCreateConversation = sandbox.stub().resolves(testResource);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processCreateConversation(req, res);
+                    channel.processCreateConversation(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -512,7 +512,7 @@ describe('channelServiceRoutes', function () {
                     service.handleCreateConversation = sandbox.stub().rejects(resourceResponse);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processCreateConversation(req, res);
+                    channel.processCreateConversation(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -534,7 +534,7 @@ describe('channelServiceRoutes', function () {
                     service.handleGetConversations = sandbox.stub().resolves(testResource);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processGetConversations(req, res);
+                    channel.processGetConversations(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -564,7 +564,7 @@ describe('channelServiceRoutes', function () {
                     service.handleGetConversations = sandbox.stub().rejects(resourceResponse);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processGetConversations(req, res);
+                    channel.processGetConversations(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -586,7 +586,7 @@ describe('channelServiceRoutes', function () {
                     service.handleGetConversationMembers = sandbox.stub().resolves(testResource);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processGetConversationMembers(req, res);
+                    channel.processGetConversationMembers(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -616,7 +616,7 @@ describe('channelServiceRoutes', function () {
                     service.handleGetConversationMembers = sandbox.stub().rejects(resourceResponse);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processGetConversationMembers(req, res);
+                    channel.processGetConversationMembers(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -638,7 +638,7 @@ describe('channelServiceRoutes', function () {
                     service.handleGetConversationPagedMembers = sandbox.stub().resolves(testResource);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processGetConversationPagedMembers(req, res);
+                    channel.processGetConversationPagedMembers(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -668,7 +668,7 @@ describe('channelServiceRoutes', function () {
                     service.handleGetConversationPagedMembers = sandbox.stub().rejects(resourceResponse);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processGetConversationPagedMembers(req, res);
+                    channel.processGetConversationPagedMembers(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -690,7 +690,7 @@ describe('channelServiceRoutes', function () {
                     service.handleDeleteConversationMember = sandbox.stub().resolves(testResource);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processDeleteConversationMember(req, res);
+                    channel.processDeleteConversationMember(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -720,7 +720,7 @@ describe('channelServiceRoutes', function () {
                     service.handleDeleteConversationMember = sandbox.stub().rejects(resourceResponse);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processDeleteConversationMember(req, res);
+                    channel.processDeleteConversationMember(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -742,7 +742,7 @@ describe('channelServiceRoutes', function () {
                     service.handleSendConversationHistory = sandbox.stub().resolves(testResource);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processSendConversationHistory(req, res);
+                    channel.processSendConversationHistory(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -772,7 +772,7 @@ describe('channelServiceRoutes', function () {
                     service.handleSendConversationHistory = sandbox.stub().rejects(resourceResponse);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processSendConversationHistory(req, res);
+                    channel.processSendConversationHistory(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -804,7 +804,7 @@ describe('channelServiceRoutes', function () {
                     readBodyStub.rejects(resourceResponse);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processSendConversationHistory(req, res);
+                    channel.processSendConversationHistory(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -826,7 +826,7 @@ describe('channelServiceRoutes', function () {
                     service.handleUploadAttachment = sandbox.stub().resolves(testResource);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processUploadAttachment(req, res);
+                    channel.processUploadAttachment(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -856,7 +856,7 @@ describe('channelServiceRoutes', function () {
                     service.handleUploadAttachment = sandbox.stub().rejects(resourceResponse);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processUploadAttachment(req, res);
+                    channel.processUploadAttachment(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -888,7 +888,7 @@ describe('channelServiceRoutes', function () {
                     readBodyStub.rejects(resourceResponse);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processUploadAttachment(req, res);
+                    channel.processUploadAttachment(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
