@@ -1,12 +1,12 @@
-const { expect } = require('chai');
-const { FauxSocket, TestRequest } = require('./helpers');
 const { NodeWebSocket, NodeWebSocketFactory } = require('..');
+const { FauxSock, TestRequest } = require('./helpers');
+const { expect } = require('chai');
 const { randomBytes } = require('crypto');
 
 describe('NodeWebSocketFactory', function () {
     it('createWebSocket() should create a new NodeWebSocket', async function () {
         const factory = new NodeWebSocketFactory();
-        const sock = new FauxSocket();
+        const sock = new FauxSock();
         const request = new TestRequest();
         request.setIsUpgradeRequest(true);
         request.headers = [];
