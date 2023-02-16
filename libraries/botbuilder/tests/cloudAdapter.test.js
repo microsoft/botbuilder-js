@@ -11,10 +11,12 @@ const {
     allowedCallersClaimsValidator,
 } = require('botframework-connector');
 const {
+    CloudAdapter,
     ConfigurationServiceClientCredentialFactory,
+    ActivityTypes,
     createBotFrameworkAuthenticationFromConfiguration,
-} = require('botbuilder');
-const { CloudAdapter, ActivityTypes, INVOKE_RESPONSE_KEY } = require('..');
+    INVOKE_RESPONSE_KEY,
+} = require('..');
 const { NamedPipeServer } = require('botframework-streaming');
 const { StatusCodes } = require('botframework-schema');
 
