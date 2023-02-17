@@ -138,6 +138,7 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
             const invokeResponse = await this.processActivity(authHeader, activity, logic);
             return end(invokeResponse?.status ?? StatusCodes.OK, invokeResponse?.body);
         } catch (err) {
+            console.error("Error added >>> ", err.message ?? err)
             return end(
                 err instanceof AuthenticationError ? StatusCodes.UNAUTHORIZED : StatusCodes.INTERNAL_SERVER_ERROR,
                 err.message ?? err
@@ -330,7 +331,7 @@ class StreamingRequestHandler extends RequestHandler {
 class StreamingConnectorFactory implements ConnectorFactory {
     private serviceUrl?: string;
 
-    constructor(private readonly requestHandler: StreamingRequestHandler) {}
+    constructor(private readonly requestHandler: StreamingRequestHandler) { }
 
     async create(serviceUrl: string, _audience: string): Promise<ConnectorClient> {
         this.serviceUrl ??= serviceUrl;
@@ -351,7 +352,7 @@ class StreamingConnectorFactory implements ConnectorFactory {
  * @internal
  */
 class StreamingHttpClient implements HttpClient {
-    constructor(private readonly requestHandler: StreamingRequestHandler) {}
+    constructor(private readonly requestHandler: StreamingRequestHandler) { }
 
     async sendRequest(httpRequest: WebResource): Promise<HttpOperationResponse> {
         const streamingRequest = this.createStreamingRequest(httpRequest);
