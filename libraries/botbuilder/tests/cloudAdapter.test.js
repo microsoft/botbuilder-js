@@ -4,6 +4,7 @@
 const assert = require('assert');
 const httpMocks = require('node-mocks-http');
 const net = require('net');
+const { expect } = require('chai');
 const sinon = require('sinon');
 const {
     AuthenticationConfiguration,
@@ -149,7 +150,7 @@ describe('CloudAdapter', function () {
 
             assert.equal(StatusCodes.UNAUTHORIZED, res.statusCode);
 
-            assert.equal(consoleSpy.calledWith('Error: ', 'The token has expired'), true);
+            expect(consoleSpy.calledWithMatch({ message: 'The token has expired' })).to.be.true;
         });
     });
 
