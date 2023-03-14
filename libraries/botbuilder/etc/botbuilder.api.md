@@ -40,6 +40,7 @@ import { InvokeResponse } from 'botbuilder-core';
 import { IReceiveRequest } from 'botframework-streaming';
 import { IStreamingTransportServer } from 'botframework-streaming';
 import { MeetingEndEventDetails } from 'botbuilder-core';
+import { MeetingInfo } from 'botbuilder-core';
 import { MeetingNotification } from 'botbuilder-core';
 import { MeetingNotificationResponse } from 'botbuilder-core';
 import { MeetingStartEventDetails } from 'botbuilder-core';
@@ -446,7 +447,7 @@ export function teamsGetTenant(activity: Activity): TenantInfo | null;
 
 // @public
 export class TeamsInfo {
-    static getMeetingInfo(context: TurnContext, meetingId?: string): Promise<TeamsMeetingInfo>;
+    static getMeetingInfo(context: TurnContext, meetingId?: string): Promise<MeetingInfo>;
     static getMeetingParticipant(context: TurnContext, meetingId?: string, participantId?: string, tenantId?: string): Promise<TeamsMeetingParticipant>;
     static getMember(context: TurnContext, userId: string): Promise<TeamsChannelAccount>;
     // @deprecated
