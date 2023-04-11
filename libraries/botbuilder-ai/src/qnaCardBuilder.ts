@@ -59,6 +59,7 @@ export class QnACardBuilder {
         return message;
     }
 
+    
     /**
      * Returns an [activity](xref:botframework-schema.Activity) with answer text and a hero card attachment, containing buttons for multi turn prompts.
      *
@@ -66,7 +67,7 @@ export class QnACardBuilder {
      * @param {boolean} displayPreciseAnswerOnly whether to display PreciseAnswer Only or along with source Answer text. .
      * @returns {Partial<Activity>} Activity representing the prompts as a card
      */
-    static getQnAAnswerCard(result: QnAMakerResult, displayPreciseAnswerOnly: boolean): Partial<Activity> {
+    static getQnAAnswerCard(result: QnAMakerResult, displayPreciseAnswerOnly: boolean, useTeamsAdaptiveCard: boolean = false): Partial<Activity> {
         if (!result) {
             throw new Error('Missing QnAMaker result');
         }
@@ -84,20 +85,128 @@ export class QnACardBuilder {
             });
         });
 
-        let heroCardText = '';
+        let cardText = '';
         chatActivity.text = result.answer;
         if (result.answerSpan && result.answerSpan.text.length > 0) {
             // When the configuration is set to display precise answer only
             if (!displayPreciseAnswerOnly) {
-                heroCardText = result.answer;
+                cardText = result.answer;
             }
 
             chatActivity.text = result.answerSpan.text;
         }
 
-        if (buttonList.length > 0 || heroCardText.length > 0) {
+        if (buttonList.length > 0 || cardText.length > 0) {
+            if(useTeamsAdaptiveCard){
+                // Create adaptive card attachement
+                let buttonArray = [];
+
+                for(let button of buttonList)
+                {
+                    // Create messageBack card for Teams
+                    buttonArray.push({
+                        "type": "Action.Submit",
+                        "title": button.title,
+                        "data": {
+                            "msteams": {
+                                "type": "messageBack",
+                                "displayText": button.displayText,
+                                "text": button.text,
+                                "value": button.value
+                            }
+                        }
+                    });
+                }
+
+                // Define JSON representation of an adaptive card
+                let adaptiveCardJson =  {
+                    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+                    "type": "AdaptiveCard",
+                    "version": "1.3",
+                    "body": [
+                        {
+                            "type": "TextBlock",
+                            "text": cardText
+                        }
+                    ],
+                    "actions": buttonArray
+                };
+
+                // Create the attachment.
+                const prompt = CardFactory.adaptiveCard(adaptiveCardJson);
+                chatActivity.attachments = [prompt];
+            }
+            else{
+                // Create the attachement
+                const prompt = CardFactory.heroCard('', cardText, undefined, buttonList);
+                chatActivity.attachments = [prompt];
+            }
+        }
+        return chatActivity;
+    }
+
+    /**
+     * Returns an [activity](xref:botframework-schema.Activity) with answer text and an adaptive card attachment, containing buttons for multi turn prompts.
+     *
+     * @param {QnAMakerResult} result QnAMaker result containing the answer text and multi turn prompts to be displayed.
+     * @param {boolean} displayPreciseAnswerOnly whether to display PreciseAnswer Only or along with source Answer text. .
+     * @returns {Partial<Activity>} Activity representing the prompts as a card
+     */
+    static getQnAAnswerCardAdaptive(result: QnAMakerResult, displayPreciseAnswerOnly: boolean): Partial<Activity> {
+        if (!result) {
+            throw new Error('Missing QnAMaker result');
+        }
+
+        const chatActivity: Partial<Activity> = { type: ActivityTypes.Message };
+        const buttonList: CardAction[] = [];
+
+        result.context?.prompts?.forEach((prompt) => {
+            buttonList.push({
+                value: prompt.qnaId,
+                type: 'messageBack',
+                title: prompt.displayText,
+                text: prompt.displayText,
+                displayText: prompt.displayText,
+            });
+        });
+
+        let adaptiveCardText = '';
+        chatActivity.text = result.answer;
+        if (result.answerSpan && result.answerSpan.text.length > 0) {
+            // When the configuration is set to display precise answer only
+            if (!displayPreciseAnswerOnly) {
+                adaptiveCardText = result.answer;
+            }
+
+            chatActivity.text = result.answerSpan.text;
+        }
+
+        if (buttonList.length > 0 || adaptiveCardText.length > 0) {
+            let buttonArray = [];
+
+            for(var button in buttonList){
+                buttonArray.push({
+                    "type": "Action.Submit",
+                    "title": button
+                });
+            }
+
+            let adaptiveCardJson = {
+                "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+                "type": "AdaptiveCard",
+                "version": "1.3",
+                "body": [
+                    {
+                        "type": "TextBlock",
+                        "text": adaptiveCardText
+                    }
+                ],
+                "actions": buttonArray
+            };
+
+
             // Create the attachment.
-            const prompt = CardFactory.heroCard('', heroCardText, undefined, buttonList);
+            const prompt = CardFactory.adaptiveCard('', adaptiveCardText, undefined, buttonList);
             chatActivity.attachments = [prompt];
         }
 
@@ -108,9 +217,10 @@ export class QnACardBuilder {
      * Returns an [activity](xref:botframework-schema.Activity) with answer text and a hero card attachment, containing buttons for multi turn prompts.
      *
      * @param {QnAMakerResult} result QnAMaker result containing the answer text and multi turn prompts to be displayed.
+     * @param {QnAMakerResult} useAdaptiveCard QnAMaker result containing the answer text and multi turn prompts to be displayed as an AdaptiveCard. Defaults to false.
      * @returns {Partial<Activity>} Activity representing the prompts as a card
      */
-    static getQnAPromptsCard(result: QnAMakerResult): Partial<Activity> {
-        return this.getQnAAnswerCard(result, true);
+    static getQnAPromptsCard(result: QnAMakerResult, useTeamsAdaptiveCard: boolean = false): Partial<Activity> {
+        return this.getQnAAnswerCard(result, true, useTeamsAdaptiveCard);
     }
 }
