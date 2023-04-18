@@ -195,6 +195,9 @@ export class QnACardBuilder {
                 "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
                 "type": "AdaptiveCard",
                 "version": "1.3",
+                "msteams": {
+                    "width": "full"
+                },
                 "body": [
                     {
                         "type": "TextBlock",
@@ -203,7 +206,6 @@ export class QnACardBuilder {
                 ],
                 "actions": buttonArray
             };
-
 
             // Create the attachment.
             const prompt = CardFactory.adaptiveCard('', adaptiveCardText, undefined, buttonList);
