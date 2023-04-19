@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, MessageFactory, CardAction, CardFactory, ActivityTypes } from 'botbuilder-core';
+import { Activity, MessageFactory, CardAction, CardFactory, ActivityTypes, Attachment } from 'botbuilder-core';
 import { QnAMakerResult } from './';
 
 /**
@@ -61,10 +61,12 @@ export class QnACardBuilder {
 
     
     /**
-     * Returns an [activity](xref:botframework-schema.Activity) with answer text and a hero card attachment, containing buttons for multi turn prompts.
+     * Returns an [activity](xref:botframework-schema.Activity) with answer text and a card attachment, containing buttons for multi turn prompts.
      *
      * @param {QnAMakerResult} result QnAMaker result containing the answer text and multi turn prompts to be displayed.
-     * @param {boolean} displayPreciseAnswerOnly whether to display PreciseAnswer Only or along with source Answer text. .
+     * @param {boolean} displayPreciseAnswerOnly whether to display PreciseAnswer Only or along with source Answer text.
+     * @param {boolean} useTeamsAdaptiveCard whether to use a Microsoft Teams formatted adaptive card instead of a hero card. 
+     *  Card width is limited by Teams and long CQA responses should be formatted in the Language Studio to add line breaks. Card payload is specific to MS Teams.
      * @returns {Partial<Activity>} Activity representing the prompts as a card
      */
     static getQnAAnswerCard(result: QnAMakerResult, displayPreciseAnswerOnly: boolean, useTeamsAdaptiveCard: boolean = false): Partial<Activity> {
@@ -97,50 +99,8 @@ export class QnACardBuilder {
         }
 
         if (buttonList.length > 0 || cardText.length > 0) {
-            if(useTeamsAdaptiveCard){
-                // Create adaptive card attachement
-                let buttonArray = [];
-
-                for(let button of buttonList)
-                {
-                    // Create messageBack card for Teams
-                    buttonArray.push({
-                        "type": "Action.Submit",
-                        "title": button.title,
-                        "data": {
-                            "msteams": {
-                                "type": "messageBack",
-                                "displayText": button.displayText,
-                                "text": button.text,
-                                "value": button.value
-                            }
-                        }
-                    });
-                }
-
-                // Define JSON representation of an adaptive card
-                let adaptiveCardJson =  {
-                    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-                    "type": "AdaptiveCard",
-                    "version": "1.3",
-                    "body": [
-                        {
-                            "type": "TextBlock",
-                            "text": cardText
-                        }
-                    ],
-                    "actions": buttonArray
-                };
-
-                // Create the attachment.
-                const prompt = CardFactory.adaptiveCard(adaptiveCardJson);
-                chatActivity.attachments = [prompt];
-            }
-            else{
-                // Create the attachement
-                const prompt = CardFactory.heroCard('', cardText, undefined, buttonList);
-                chatActivity.attachments = [prompt];
-            }
+            const prompt = useTeamsAdaptiveCard ? this.getTeamsAdaptiveCard(cardText, buttonList) : this.getHeroCard(cardText, buttonList);
+            chatActivity.attachments = [prompt];
         }
         return chatActivity;
     }
@@ -152,7 +112,67 @@ export class QnACardBuilder {
      * @param {QnAMakerResult} useAdaptiveCard QnAMaker result containing the answer text and multi turn prompts to be displayed as an AdaptiveCard. Defaults to false.
      * @returns {Partial<Activity>} Activity representing the prompts as a card
      */
-    static getQnAPromptsCard(result: QnAMakerResult, useTeamsAdaptiveCard: boolean = false): Partial<Activity> {
-        return this.getQnAAnswerCard(result, true, useTeamsAdaptiveCard);
+    static getQnAPromptsCard(result: QnAMakerResult): Partial<Activity> {
+        return this.getQnAAnswerCard(result, true);
+    }
+
+    /**
+     * Returns an Adaptive Card attachment containing the text for the card and a button list formatted for MS Teams
+     * 
+     * @param {string} cardText The string to be placed in the card's text field 
+     * @param {any[]} buttonList The list of buttons to be converted to MS Teams messageBack buttons and placed in the card's actions field
+     * @returns {Attachment} An attachment representing the MS Teams-formatted Adaptive Card
+     */
+    static getTeamsAdaptiveCard(cardText: string, buttonList: any[]){
+        // Create adaptive card attachement
+        let buttonArray = [];
+
+        for(let button of buttonList)
+        {
+            // Create messageBack card for Teams
+            buttonArray.push({
+                "type": "Action.Submit",
+                "title": button.title,
+                "data": {
+                    "msteams": {
+                        "type": "messageBack",
+                        "displayText": button.displayText,
+                        "text": button.text,
+                        "value": button.value,
+                        "width": "full"
+                    }
+                }
+            });
+        }
+
+        // Define JSON representation of an adaptive card
+        let adaptiveCardJson =  {
+            "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+            "type": "AdaptiveCard",
+            "version": "1.3",
+            "msteams": { 
+                "width": "full",
+                "height": "full" 
+            },
+            "body": [
+                {
+                    "type": "TextBlock",
+                    "text": cardText
+                }
+            ],
+            "actions": buttonArray
+        };
+        return CardFactory.adaptiveCard(adaptiveCardJson);
+    }
+
+    /**
+     * Returns a Hero Card attachment containing the text for the card and a button list
+     * 
+     * @param {string} cardText The string to be placed in the card's text field 
+     * @param {any[]} buttonList The list of buttons to be converted to imBack buttons and attached to the card
+     * @returns {Attachment} An attachment representing the Hero Card
+     */
+    static getHeroCard(cardText: string, buttonList: any[]){
+        return CardFactory.heroCard('', cardText, undefined, buttonList);
     }
 }

@@ -321,7 +321,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
     includeUnstructuredSources = true;
 
     /**
-     * Gets or sets a value indicating whether to include use a Teams-formatted Adaptive Card in responses.
+     * Gets or sets a value indicating whether to use a Teams-formatted Adaptive Card in responses instead of a generic Hero Card.
      */
     useTeamsAdaptiveCard = false;
 
@@ -345,7 +345,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
      * @param {QnAMakerMetadata[]} strictFilters (Optional) QnA Maker metadata with which to filter or boost queries to the knowledge base; or null to apply none.
      * @param {string} dialogId (Optional) Id of the created dialog. Default is 'QnAMakerDialog'.
      * @param {string} strictFiltersJoinOperator join operator for strict filters
-     * @param {string} useTeamsAdaptiveCard boolean setting for Teams Adaptive Cards
+     * @param {string} useTeamsAdaptiveCard boolean setting for using Teams Adaptive Cards instead of Hero Cards
      */
     constructor(
         knowledgeBaseId?: string,
@@ -382,7 +382,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
      * @param {QnAMakerMetadata[]} strictFilters (Optional) QnA Maker metadata with which to filter or boost queries to the knowledge base; or null to apply none.
      * @param {string} dialogId (Optional) Id of the created dialog. Default is 'QnAMakerDialog'.
      * @param {string} strictFiltersJoinOperator join operator for strict filters
-     * @param {string} useTeamsAdaptiveCard boolean setting for Teams Adaptive Cards
+     * @param {string} useTeamsAdaptiveCard boolean setting for using Teams Adaptive Cards instead of Hero Cards
      */
     constructor(
         knowledgeBaseId?: string,
@@ -493,7 +493,9 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         }
         this.qnaServiceType = qnaServiceType;
 
-        this.useTeamsAdaptiveCard = useTeamsAdaptiveCard;
+        if(useTeamsAdaptiveCard) {
+            this.useTeamsAdaptiveCard = useTeamsAdaptiveCard;
+        }
 
         this.addStep(this.callGenerateAnswer.bind(this));
         this.addStep(this.callTrain.bind(this));
