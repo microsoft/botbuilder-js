@@ -992,7 +992,13 @@ export interface MeetingStartEventDetails extends MeetingEventDetails {
 }
 
 // @public
-export type MeetingSurface = MeetingStageSurface<any>;
+export type MeetingSurface = MeetingStageSurface<any> | MeetingTabIconSurface;
+
+// @public
+export interface MeetingTabIconSurface {
+    surface: 'meetingTabIcon';
+    tabEntityId?: string;
+}
 
 // @public
 export interface Mention {
