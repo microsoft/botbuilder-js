@@ -5,6 +5,8 @@ import * as z from 'zod';
 import { ok } from 'assert';
 import { Configuration } from 'botbuilder-dialogs-adaptive-runtime-core';
 import {
+    AuthenticationConstants,
+    CertificateServiceClientCredentialsFactory,
     JwtTokenProviderFactory,
     ManagedIdentityServiceClientCredentialsFactory,
     PasswordServiceClientCredentialFactory,
@@ -37,6 +39,16 @@ const TypedConfig = z
          * The tenant id assigned to your bot in the [Bot Framework Portal](https://dev.botframework.com/).
          */
         MicrosoftAppTenantId: z.string(),
+
+        /**
+         * Certificate thumbprint to authenticate the appId against AAD.
+         */
+        [AuthenticationConstants.CertificateThumbprint]: z.string(),
+
+        /**
+         * Certificate key to authenticate the appId against AAD.
+         */
+        [AuthenticationConstants.CertificatePrivateKey]: z.string(),
     })
     .partial();
 
@@ -62,10 +74,24 @@ export class ConfigurationServiceClientCredentialFactory extends PasswordService
             MicrosoftAppPassword = null,
             MicrosoftAppType = null,
             MicrosoftAppTenantId = null,
+            [AuthenticationConstants.CertificateThumbprint]: CertificateThumbprint = null,
+            [AuthenticationConstants.CertificatePrivateKey]: CertificatePrivateKey = null,
         } = TypedConfig.nonstrict().parse(factoryOptions);
         super(MicrosoftAppId, MicrosoftAppPassword, MicrosoftAppTenantId);
 
         const appType = MicrosoftAppType?.trim() ?? MultiTenant;
+        const withCertificate = CertificateThumbprint || CertificatePrivateKey;
+
+        if (withCertificate) {
+            ok(
+                CertificateThumbprint?.trim(),
+                'CertificateThumbprint is required when using a Certificate in configuration.'
+            );
+            ok(
+                CertificatePrivateKey?.trim(),
+                'CertificatePrivateKey is required when using a Certificate in configuration.'
+            );
+        }
 
         switch (appType.toLocaleLowerCase()) {
             case UserAssignedMsi.toLocaleLowerCase():
@@ -80,18 +106,44 @@ export class ConfigurationServiceClientCredentialFactory extends PasswordService
                 break;
             case SingleTenant.toLocaleLowerCase():
                 ok(MicrosoftAppId?.trim(), 'MicrosoftAppId is required for SingleTenant in configuration.');
-                ok(MicrosoftAppPassword?.trim(), 'MicrosoftAppPassword is required for SingleTenant in configuration.');
                 ok(MicrosoftAppTenantId?.trim(), 'MicrosoftAppTenantId is required for SingleTenant in configuration.');
 
-                this.inner = new PasswordServiceClientCredentialFactory(
-                    MicrosoftAppId,
-                    MicrosoftAppPassword,
-                    MicrosoftAppTenantId
-                );
+                if (withCertificate) {
+                    this.inner = new CertificateServiceClientCredentialsFactory(
+                        MicrosoftAppId,
+                        CertificateThumbprint,
+                        CertificatePrivateKey,
+                        MicrosoftAppTenantId
+                    );
+                } else {
+                    ok(
+                        MicrosoftAppPassword?.trim(),
+                        'MicrosoftAppPassword is required for SingleTenant in configuration.'
+                    );
+
+                    this.inner = new PasswordServiceClientCredentialFactory(
+                        MicrosoftAppId,
+                        MicrosoftAppPassword,
+                        MicrosoftAppTenantId
+                    );
+                }
                 break;
             default:
                 //MultiTenant
-                this.inner = new PasswordServiceClientCredentialFactory(MicrosoftAppId, MicrosoftAppPassword, '');
+                if (withCertificate) {
+                    ok(
+                        MicrosoftAppId?.trim(),
+                        'MicrosoftAppId is required for MultiTenant when using a Certificate in configuration.'
+                    );
+
+                    this.inner = new CertificateServiceClientCredentialsFactory(
+                        MicrosoftAppId,
+                        CertificateThumbprint,
+                        CertificatePrivateKey
+                    );
+                } else {
+                    this.inner = new PasswordServiceClientCredentialFactory(MicrosoftAppId, MicrosoftAppPassword, '');
+                }
                 break;
         }
     }
