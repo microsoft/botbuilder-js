@@ -36,7 +36,7 @@ export class CertificateServiceClientCredentialsFactory extends ServiceClientCre
             'CertificateServiceClientCredentialsFactory.constructor(): missing certificateThumbprint.'
         );
         ok(
-            certificateThumbprint?.trim(),
+            certificatePrivateKey?.trim(),
             'CertificateServiceClientCredentialsFactory.constructor(): missing certificatePrivateKey.'
         );
 
@@ -67,7 +67,7 @@ export class CertificateServiceClientCredentialsFactory extends ServiceClientCre
     async createCredentials(appId: string, audience: string): Promise<ServiceClientCredentials> {
         ok(
             await this.isValidAppId(appId),
-            'ManagedIdentityServiceClientCredentialsFactory.createCredentials(): Invalid Managed ID.'
+            'CertificateServiceClientCredentialsFactory.createCredentials(): Invalid Managed ID.'
         );
 
         return new CertificateAppCredentials(
