@@ -127,7 +127,7 @@ describe('Streaming Extensions ProtocolAdapter', function () {
             onCompleted: function () {},
         });
 
-        expect(protocolAdapter.onCancelStream(assembler)).to.not.throw;
+        expect(() => protocolAdapter.onCancelStream(assembler)).to.not.throw();
     });
 
     it('sends requests.', async function (done) {
@@ -142,7 +142,7 @@ describe('Streaming Extensions ProtocolAdapter', function () {
             payloadReceiver
         );
 
-        expect(protocolAdapter.sendRequest(new Request.StreamingRequest())).to.not.throw;
+        expect(() => protocolAdapter.sendRequest(new Request.StreamingRequest())).to.not.throw();
         done();
     });
 

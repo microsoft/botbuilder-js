@@ -10,7 +10,7 @@ describe('NodeWebSocket', function () {
     it('creates a new NodeWebSocket', function () {
         const socket = new NodeWebSocket(new FauxSock());
         expect(socket).to.be.instanceOf(NodeWebSocket);
-        expect(socket.close()).to.not.throw;
+        expect(() => socket.close()).to.not.throw();
     });
 
     it('starts out connected', function () {
@@ -21,14 +21,17 @@ describe('NodeWebSocket', function () {
     it('writes to the socket', function () {
         const socket = new NodeWebSocket(new FauxSock());
         const buff = Buffer.from('hello');
-        expect(socket.write(buff)).to.not.throw;
+        expect(() => socket.write(buff)).to.not.throw();
     });
 
     it('attempts to open a connection', function () {
         const socket = new NodeWebSocket(new FauxSock());
         expect(
             socket.connect().catch((error) => {
-                expect(error.message).to.equal('connect ECONNREFUSED 127.0.0.1:8082');
+                expect(
+                    error.message === 'connect ECONNREFUSED 127.0.0.1:8082' ||
+                        error.message === 'connect ECONNREFUSED ::1:8082'
+                ).to.be.true;
             })
         );
     });
@@ -37,7 +40,7 @@ describe('NodeWebSocket', function () {
         const sock = new FauxSock();
         const socket = new NodeWebSocket(sock);
         expect(sock.messageHandler).to.be.undefined;
-        expect(socket.setOnMessageHandler(() => {})).to.not.throw;
+        expect(() => socket.setOnMessageHandler(() => {})).to.not.throw();
         expect(sock.messageHandler).to.not.be.undefined;
     });
 
@@ -45,7 +48,7 @@ describe('NodeWebSocket', function () {
         const sock = new FauxSock();
         const socket = new NodeWebSocket(sock);
         expect(sock.errorHandler).to.be.undefined;
-        expect(socket.setOnErrorHandler(() => {})).to.not.throw;
+        expect(() => socket.setOnErrorHandler(() => {})).to.not.throw();
         expect(sock.errorHandler).to.not.be.undefined;
     });
 
@@ -53,7 +56,7 @@ describe('NodeWebSocket', function () {
         const sock = new FauxSock();
         const socket = new NodeWebSocket(sock);
         expect(sock.closeHandler).to.be.undefined;
-        expect(socket.setOnCloseHandler(() => {})).to.not.throw;
+        expect(() => socket.setOnCloseHandler(() => {})).to.not.throw();
         expect(sock.closeHandler).to.not.be.undefined;
     });
 
