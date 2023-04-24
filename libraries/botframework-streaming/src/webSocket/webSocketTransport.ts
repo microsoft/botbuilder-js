@@ -59,7 +59,7 @@ export class WebSocketTransport implements ITransportSender, ITransportReceiver 
      * @returns `true` if the the transport is connected and ready to send data, `false` otherwise.
      */
     get isConnected(): boolean {
-        return this.ws?.isConnected;
+        return !!this.ws?.isConnected;
     }
 
     /**

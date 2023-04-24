@@ -21,7 +21,7 @@ class PendingRequest {
  * Orchestrates and manages pending streaming requests.
  */
 export class RequestManager {
-    private readonly _pendingRequests = {};
+    private readonly _pendingRequests: Record<string, PendingRequest> = {};
 
     /**
      * Gets the count of the pending requests.
@@ -76,5 +76,18 @@ export class RequestManager {
         this._pendingRequests[requestId] = pendingRequest;
 
         return promise;
+    }
+
+    /**
+     * Rejects all requests pending a response.
+     *
+     * @param reason The reason for rejection.
+     */
+    rejectAllResponses(reason?: Error): void {
+        Object.entries(this._pendingRequests).forEach(([requestId, { reject }]) => {
+            reject(reason);
+
+            delete this._pendingRequests[requestId];
+        });
     }
 }

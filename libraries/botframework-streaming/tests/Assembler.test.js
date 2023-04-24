@@ -30,7 +30,7 @@ describe('PayloadAssembler', function () {
 
         expect(() => {
             rra.close();
-        }).to.not.throw;
+        }).to.not.throw();
     });
 
     it('returns a new stream.', function () {
@@ -121,7 +121,7 @@ describe('PayloadAssembler', function () {
         const csa = new PayloadAssembler(streamManager, { header, onCompleted: () => {} });
 
         expect(csa.createPayloadStream()).instanceOf(SubscribableStream);
-        expect(csa.close()).to.not.throw;
+        expect(() => csa.close()).to.not.throw();
     });
 });
 
@@ -175,7 +175,7 @@ describe('PayloadAssemblerManager', function () {
         };
         const s = p.getPayloadStream(head);
         expect(s).to.be.instanceOf(SubscribableStream);
-        expect(p.onReceive(head, s, 0)).to.not.throw;
+        expect(() => p.onReceive(head, s, 0)).to.not.throw();
         done();
     });
 
@@ -195,7 +195,7 @@ describe('PayloadAssemblerManager', function () {
         const s = p.getPayloadStream(head);
 
         expect(s).to.be.instanceOf(SubscribableStream);
-        expect(p.onReceive(head, s, 0)).to.not.throw;
+        expect(() => p.onReceive(head, s, 0)).to.not.throw();
         done();
     });
 
@@ -215,7 +215,7 @@ describe('PayloadAssemblerManager', function () {
         const s = p.getPayloadStream(head);
 
         expect(s).to.be.instanceOf(SubscribableStream);
-        expect(p.onReceive(head, s, 0)).to.not.throw;
+        expect(() => p.onReceive(head, s, 0)).to.not.throw();
         done();
     });
 
