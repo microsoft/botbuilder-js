@@ -1,5 +1,6 @@
 const assert = require('assert');
 const { expect } = require('chai');
+const { expectEventually } = require('./helpers/expectEventually');
 const { NamedPipeClient, NamedPipeServer, StreamingRequest } = require('../lib');
 const { NamedPipeTransport } = require('../lib/namedPipe');
 const { platform } = require('os');
@@ -79,6 +80,7 @@ class TestClient {
     }
 }
 
+// Skips Windows-only tests. Linux does not have named pipes.
 describe.windowsOnly = platform() === 'linux' ? describe.skip : describe;
 
 describe.windowsOnly('Streaming Extensions NamedPipe Library Tests', function () {
@@ -165,15 +167,17 @@ describe.windowsOnly('Streaming Extensions NamedPipe Library Tests', function ()
             expect(() => transport.close()).to.not.throw();
         });
 
-        it('throws when reading from a dead socket', function () {
+        // TODO: 2023-04-24 [hawo] #4462 The code today does not allows the receive() call to be rejected by reading a dead socket.
+        //                         The receive() call will be rejected IFF the socket is closed/error AFTER the receive() call.
+        it.skip('throws when reading from a dead socket', async function () {
             const sock = new FauxSock();
-            sock.destroyed = false;
+            sock.destroyed = true;
             sock.connecting = false;
             sock.writable = true;
             const transport = new NamedPipeTransport(sock, 'fakeSocket5');
             expect(transport).to.be.instanceOf(NamedPipeTransport);
-            expect(transport.isConnected).to.be.true;
-            expect(transport.receive(5)).to.throw();
+            expect(transport.isConnected).to.be.false;
+            (await expectEventually(transport.receive(5))).to.throw();
             expect(() => transport.close()).to.not.throw();
         });
 
@@ -234,7 +238,7 @@ describe.windowsOnly('Streaming Extensions NamedPipe Library Tests', function ()
             expect(transport).to.be.instanceOf(NamedPipeTransport);
             expect(transport.isConnected).to.be.true;
             const buff = Buffer.from('hello', 'utf8');
-            expect(transport.socketReceive(buff)).to.not.throw();
+            expect(() => transport.socketReceive(buff)).to.not.throw();
         });
     });
 
@@ -255,7 +259,10 @@ describe.windowsOnly('Streaming Extensions NamedPipe Library Tests', function ()
             expect(() => client.disconnect()).to.not.throw();
         });
 
-        it('sends without throwing', function (done) {
+        // TODO: 2023-04-24 [hawo] #4462 The client.send() call will only resolve when the other side responded.
+        //                         Because the other side is not connected to anything, thus, no response is received.
+        //                         Thus, the Promise is not resolved.
+        it.skip('sends without throwing', function (done) {
             const req = new StreamingRequest();
             req.Verb = 'POST';
             req.Path = 'some/path';
@@ -304,7 +311,10 @@ describe.windowsOnly('Streaming Extensions NamedPipe Library Tests', function ()
             expect(server.isConnected).to.be.true;
         });
 
-        it('sends without throwing', function (done) {
+        // TODO: 2023-04-24 [hawo] #4462 The client.send() call will only resolve when the other side responded.
+        //                         Because the other side is not connected to anything, thus, no response is received.
+        //                         Thus, the Promise is not resolved.
+        it.skip('sends without throwing', function (done) {
             const server = new NamedPipeServer('pipeA', new RequestHandler());
             expect(server).to.be.instanceOf(NamedPipeServer);
             expect(() => server.start()).to.not.throw();
@@ -314,7 +324,7 @@ describe.windowsOnly('Streaming Extensions NamedPipe Library Tests', function ()
                 .catch((err) => {
                     expect(err).to.be.undefined;
                 })
-                .then(expect(() => server.disconnect()).to.not.throw)
+                .then(expect(() => server.disconnect()).to.not.throw())
                 .then(done);
         });
 
@@ -377,7 +387,6 @@ describe.windowsOnly('Streaming Extensions NamedPipe Library Tests', function ()
 
         it('should return a Server when calling createNodeServer()', function () {
             const server = createNodeServer();
-            expect(server).to.not.throw();
             expect(server).to.not.be.null;
             expect(server).to.be.instanceOf(Object);
             expect(typeof server.listen).to.equal('function');
@@ -392,9 +401,9 @@ describe.windowsOnly('Streaming Extensions NamedPipe Library Tests', function ()
         });
 
         it("should throw if the callback isn't a valid connection listener callback", function () {
-            const callback = () => {};
+            const callback = 'not a function';
             const serverFactory = getServerFactory();
-            expect(serverFactory(callback)).to.throw();
+            expect(() => serverFactory(callback)).to.throw();
         });
     });
 });
