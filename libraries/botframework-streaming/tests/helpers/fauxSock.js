@@ -66,7 +66,7 @@ class FauxSock {
     close() {
         if (this.connected) {
             this.connected = false;
-            this.closeHandler?.();
+            this.closeHandler && this.closeHandler();
         }
     }
     end() {
