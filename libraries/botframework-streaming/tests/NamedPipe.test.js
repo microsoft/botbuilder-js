@@ -2,6 +2,7 @@ const assert = require('assert');
 const { expect } = require('chai');
 const { NamedPipeClient, NamedPipeServer, StreamingRequest } = require('../lib');
 const { NamedPipeTransport } = require('../lib/namedPipe');
+const { platform } = require('os');
 const { RequestHandler } = require('../lib');
 const { createNodeServer, getServerFactory } = require('../lib/utilities/createNodeServer');
 
@@ -78,7 +79,9 @@ class TestClient {
     }
 }
 
-describe('Streaming Extensions NamedPipe Library Tests', function () {
+describe.windowsOnly = platform() === 'linux' ? describe.skip : describe;
+
+describe.windowsOnly('Streaming Extensions NamedPipe Library Tests', function () {
     describe('NamedPipe Transport Tests', function () {
         it('Client connect', function () {
             const c = new TestClient('pipeName');
