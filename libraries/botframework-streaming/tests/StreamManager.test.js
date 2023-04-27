@@ -73,18 +73,21 @@ describe('StreamManager', function () {
         expect(() => sm.onReceive(head, stream, 5)).to.not.throw();
     });
 
-    it('can close a stream', function (done) {
-        const sm = new StreamManager(done());
+    it('can close a stream', function () {
+        let called = false;
+        const sm = new StreamManager(() => (called = true));
         const pa = sm.getPayloadAssembler('bob');
 
         expect(pa.id).to.equal('bob');
         const stream = new SubscribableStream();
         stream.write('hello');
         expect(() => sm.closeStream(pa.id)).to.not.throw();
+        expect(called).to.be.true;
     });
 
-    it('does not throw when asked to close a stream that does not exist', function (done) {
-        const sm = new StreamManager(done());
+    it('does not throw when asked to close a stream that does not exist', function () {
+        let called = false;
+        const sm = new StreamManager(() => (called = true));
         const head = {
             payloadType: PayloadTypes.request,
             payloadLength: '0',
@@ -92,5 +95,6 @@ describe('StreamManager', function () {
             end: true,
         };
         expect(() => sm.closeStream(head.id)).to.not.throw();
+        expect(called).to.be.false;
     });
 });

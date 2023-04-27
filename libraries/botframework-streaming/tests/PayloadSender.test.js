@@ -177,11 +177,7 @@ describe('PayloadTransport', function () {
             sock.setReceiver(pr);
 
             this.streamManager = new StreamManager(undefined);
-            const assemblerManager = new PayloadAssemblerManager(
-                this.streamManager,
-                () => done(),
-                () => done()
-            );
+            const assemblerManager = new PayloadAssemblerManager(this.streamManager);
 
             pr.subscribe(
                 (header) => assemblerManager.getPayloadStream(header),
