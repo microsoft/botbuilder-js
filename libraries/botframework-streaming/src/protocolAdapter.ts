@@ -71,9 +71,14 @@ export class ProtocolAdapter {
      */
     async sendRequest(request: StreamingRequest): Promise<IReceiveResponse> {
         const requestId: string = generateGuid();
+
+        // Register the request in the request manager before sending it to the server.
+        // Otherwise, if the server respond quickly, it may miss the request.
+        const getResponsePromise = this.requestManager.getResponse(requestId);
+
         await this.sendOperations.sendRequest(requestId, request);
 
-        return this.requestManager.getResponse(requestId);
+        return getResponsePromise;
     }
 
     /**

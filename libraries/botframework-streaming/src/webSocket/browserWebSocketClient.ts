@@ -96,6 +96,9 @@ export class WebSocketClient implements IStreamingTransportClient {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private onConnectionDisconnected(sender: Record<string, unknown>, args: any): void {
+        // Rejects all pending requests on disconnect.
+        this._requestManager.rejectAllResponses(new Error('Disconnect was called.'));
+
         if (this._disconnectionHandler != null) {
             this._disconnectionHandler('Disconnected');
             return;

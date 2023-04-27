@@ -55,7 +55,7 @@ describe('StreamManager', function () {
         };
         const stream = new SubscribableStream();
         stream.write('hello');
-        expect(sm.onReceive(head, stream, 5)).to.not.throw;
+        expect(() => sm.onReceive(head, stream, 5)).to.not.throw();
     });
 
     it('attempts to receive from an existing stream', function () {
@@ -70,7 +70,7 @@ describe('StreamManager', function () {
         expect(pa.id).to.equal('bob');
         const stream = new SubscribableStream();
         stream.write('hello');
-        expect(sm.onReceive(head, stream, 5)).to.not.throw;
+        expect(() => sm.onReceive(head, stream, 5)).to.not.throw();
     });
 
     it('can close a stream', function (done) {
@@ -80,7 +80,7 @@ describe('StreamManager', function () {
         expect(pa.id).to.equal('bob');
         const stream = new SubscribableStream();
         stream.write('hello');
-        expect(sm.closeStream(pa.id)).to.not.throw;
+        expect(() => sm.closeStream(pa.id)).to.not.throw();
     });
 
     it('does not throw when asked to close a stream that does not exist', function (done) {
@@ -91,6 +91,6 @@ describe('StreamManager', function () {
             id: 'bob',
             end: true,
         };
-        expect(sm.closeStream(head.id)).to.not.throw;
+        expect(() => sm.closeStream(head.id)).to.not.throw();
     });
 });
