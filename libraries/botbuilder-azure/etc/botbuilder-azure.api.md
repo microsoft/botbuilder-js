@@ -9,6 +9,7 @@ import { CosmosClientOptions } from '@azure/cosmos';
 import { PagedResult } from 'botbuilder';
 import { Storage as Storage_2 } from 'botbuilder';
 import { StoreItems } from 'botbuilder';
+import { TokenCredential } from '@azure/core-auth';
 import { TranscriptInfo } from 'botbuilder';
 import { TranscriptStore } from 'botbuilder';
 
@@ -64,6 +65,7 @@ export interface CosmosDbPartitionedStorageOptions {
     cosmosDbEndpoint?: string;
     databaseId: string;
     keySuffix?: string;
+    tokenCredential?: TokenCredential;
 }
 
 // @public (undocumented)

@@ -68,7 +68,10 @@ export interface CosmosDbPartitionedStorageOptions {
      * compatibilityMode cannot be true if keySuffix is used.
      */
     compatibilityMode?: boolean;
-    tokenCredential?: TokenCredential
+    /**
+     * The authentication tokenCredential for Cosmos DB.
+     */
+    tokenCredential?: TokenCredential;
 }
 
 //Internal data structure for storing items in a CosmosDB Collection.
@@ -145,7 +148,11 @@ export class CosmosDbPartitionedStorage implements Storage {
             throw new ReferenceError('cosmosDbEndpoint for CosmosDB is required.');
         }
         cosmosDbStorageOptions.authKey ??= cosmosClientOptions?.key;
-        if (!cosmosDbStorageOptions.authKey && !cosmosClientOptions?.tokenProvider && !cosmosDbStorageOptions.tokenCredential) {
+        if (
+            !cosmosDbStorageOptions.authKey &&
+            !cosmosClientOptions?.tokenProvider &&
+            !cosmosDbStorageOptions.tokenCredential
+        ) {
             throw new ReferenceError('authKey or tokenCredential for CosmosDB is required.');
         }
         if (!cosmosDbStorageOptions.databaseId) {
@@ -330,7 +337,7 @@ export class CosmosDbPartitionedStorage implements Storage {
                         aadCredentials: this.cosmosDbStorageOptions.tokenCredential,
                         userAgentSuffix: `${pjson.name} ${pjson.version}`,
                         ...this.cosmosDbStorageOptions.cosmosClientOptions,
-                    })
+                    });
                 } else {
                     this.client = new CosmosClient({
                         endpoint: this.cosmosDbStorageOptions.cosmosDbEndpoint,
