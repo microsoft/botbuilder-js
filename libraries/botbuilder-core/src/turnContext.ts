@@ -546,6 +546,11 @@ export class TurnContext {
             } else {
                 const responses = await this.adapter.sendActivities(this, output);
 
+                for (let index = 0; index < responses.length; index++) {
+                    const activity = output[index];
+                    activity.id = responses[index].id;
+                }
+
                 // Set responded flag
                 if (sentNonTraceActivity) {
                     this.responded = true;
