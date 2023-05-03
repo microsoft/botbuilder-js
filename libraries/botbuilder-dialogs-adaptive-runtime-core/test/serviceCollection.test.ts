@@ -4,14 +4,14 @@
 import assert from 'assert';
 import { ServiceCollection } from '../src/serviceCollection';
 
-class Foo { }
+class Foo {}
 
 class Bar {
-    constructor(public foo: Foo) { }
+    constructor(public foo: Foo) {}
 }
 
 class Baz {
-    constructor(public foo: Foo, public bar: Bar) { }
+    constructor(public foo: Foo, public bar: Bar) {}
 }
 
 interface TestServices {
