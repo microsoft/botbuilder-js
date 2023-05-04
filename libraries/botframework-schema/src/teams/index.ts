@@ -190,7 +190,7 @@ export interface TeamsChannelData {
      */
     settings?: TeamsChannelDataSettings;
     /**
-     * @member {OnBehalfOf} [onBehalfOf] The OnBehalfOf information of the message
+     * @member {OnBehalfOf} [onBehalfOf] The OnBehalfOf information of the message.
      */
     onBehalfOf?: OnBehalfOf[];
 }

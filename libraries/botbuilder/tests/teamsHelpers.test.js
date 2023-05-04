@@ -212,7 +212,7 @@ describe('TeamsActivityHelpers method', function () {
                 },
             };
             const onBehalfOf = teamsGetTeamOnBehalfOf(activity)[0];
-            assert.strictEqual(onBehalfOf.displayName, 'onBehalfOfTest');
+            assert.strictEqual(onBehalfOf.displayName, activity.channelData.onBehalfOf[0].displayName);
         });
 
         it('should return null with no channelData', async function () {
@@ -224,7 +224,7 @@ describe('TeamsActivityHelpers method', function () {
         it('should return null with no onBehalfOf list', async function () {
             const activity = { channelData: { onBehalfOf: null } };
             const onBehalfOf = teamsGetTeamOnBehalfOf(activity);
-            assert.strictEqual(onBehalfOf, null);
+            assert(onBehalfOf === null);
         });
     });
 });

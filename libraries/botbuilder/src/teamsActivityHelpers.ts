@@ -139,10 +139,8 @@ export function teamsNotifyUser(
 export function teamsGetTeamOnBehalfOf(activity: Activity): OnBehalfOf[] {
     validateActivity(activity);
 
-    const channelData = activity.channelData;
-    if (isTeamsChannelData(channelData)) {
-        const onBehalfOf = channelData.onBehalfOf;
-        return onBehalfOf || null;
+    if (isTeamsChannelData(activity.channelData)) {
+        return activity.channelData.onBehalfOf || null;
     }
 
     return null;
