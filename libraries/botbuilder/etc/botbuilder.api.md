@@ -51,6 +51,7 @@ import { MicrosoftAppCredentials } from 'botframework-connector';
 import { Middleware } from 'botbuilder-core';
 import { NodeWebSocketFactoryBase } from 'botframework-streaming';
 import { O365ConnectorCardActionQuery } from 'botbuilder-core';
+import { OnBehalfOf } from 'botbuilder-core';
 import { PagedMembersResult } from 'botbuilder-core';
 import { PagedResult } from 'botbuilder-core';
 import { ReadReceiptInfo } from 'botframework-connector';
@@ -440,6 +441,9 @@ export function teamsGetTeamInfo(activity: Activity): TeamInfo | null;
 
 // @public
 export function teamsGetTeamMeetingInfo(activity: Activity): TeamsMeetingInfo | null;
+
+// @public (undocumented)
+export function teamsGetTeamOnBehalfOf(activity: Activity): OnBehalfOf[];
 
 // @public
 export function teamsGetTenant(activity: Activity): TenantInfo | null;
