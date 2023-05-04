@@ -972,6 +972,10 @@ describe('TeamsInfo', function () {
                                 },
                             },
                         },
+                        {
+                            surface: 'meetingTabIcon',
+                            tabEntityId: 'some-tab-id',
+                        },
                     ],
                 },
                 channelData: {
