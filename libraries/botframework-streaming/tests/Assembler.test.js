@@ -126,12 +126,8 @@ describe('PayloadAssembler', function () {
 });
 
 describe('PayloadAssemblerManager', function () {
-    it('creates a response stream', function (done) {
-        const p = new PayloadAssemblerManager(
-            streamManager,
-            () => done(),
-            () => done()
-        );
+    it('creates a response stream', function () {
+        const p = new PayloadAssemblerManager(streamManager);
         const head = {
             payloadType: PayloadTypes.response,
             payloadLength: '42',
@@ -140,15 +136,10 @@ describe('PayloadAssemblerManager', function () {
         };
 
         expect(p.getPayloadStream(head)).to.be.instanceOf(SubscribableStream);
-        done();
     });
 
-    it('creates a request stream', function (done) {
-        const p = new PayloadAssemblerManager(
-            streamManager,
-            () => done(),
-            () => done()
-        );
+    it('creates a request stream', function () {
+        const p = new PayloadAssemblerManager(streamManager);
         const head = {
             payloadType: PayloadTypes.request,
             payloadLength: '42',
@@ -157,16 +148,10 @@ describe('PayloadAssemblerManager', function () {
         };
 
         expect(p.getPayloadStream(head)).to.be.instanceOf(SubscribableStream);
-        done();
     });
 
-    it('does not throw when receiving a request', function (done) {
-        const p = new PayloadAssemblerManager(
-            streamManager,
-            () => done(),
-            () => done()
-        );
-
+    it('does not throw when receiving a request', function () {
+        const p = new PayloadAssemblerManager(streamManager);
         const head = {
             payloadType: PayloadTypes.request,
             payloadLength: '42',
@@ -176,16 +161,10 @@ describe('PayloadAssemblerManager', function () {
         const s = p.getPayloadStream(head);
         expect(s).to.be.instanceOf(SubscribableStream);
         expect(() => p.onReceive(head, s, 0)).to.not.throw();
-        done();
     });
 
-    it('does not throw when receiving a stream', function (done) {
-        const p = new PayloadAssemblerManager(
-            streamManager,
-            () => done(),
-            () => done()
-        );
-
+    it('does not throw when receiving a stream', function () {
+        const p = new PayloadAssemblerManager(streamManager);
         const head = {
             payloadType: PayloadTypes.stream,
             payloadLength: '42',
@@ -196,16 +175,10 @@ describe('PayloadAssemblerManager', function () {
 
         expect(s).to.be.instanceOf(SubscribableStream);
         expect(() => p.onReceive(head, s, 0)).to.not.throw();
-        done();
     });
 
-    it('does not throw when receiving a response', function (done) {
-        const p = new PayloadAssemblerManager(
-            streamManager,
-            () => done(),
-            () => done()
-        );
-
+    it('does not throw when receiving a response', function () {
+        const p = new PayloadAssemblerManager(streamManager);
         const head = {
             payloadType: PayloadTypes.response,
             payloadLength: '42',
@@ -216,16 +189,10 @@ describe('PayloadAssemblerManager', function () {
 
         expect(s).to.be.instanceOf(SubscribableStream);
         expect(() => p.onReceive(head, s, 0)).to.not.throw();
-        done();
     });
 
-    it('returns undefined when asked to create an existing stream', function (done) {
-        const p = new PayloadAssemblerManager(
-            streamManager,
-            () => done(),
-            () => done()
-        );
-
+    it('returns undefined when asked to create an existing stream', function () {
+        const p = new PayloadAssemblerManager(streamManager);
         const head = {
             payloadType: PayloadTypes.request,
             payloadLength: '42',
@@ -236,24 +203,18 @@ describe('PayloadAssemblerManager', function () {
 
         expect(s).to.be.instanceOf(SubscribableStream);
         expect(p.getPayloadStream(head)).to.be.undefined;
-        done();
     });
 
-    it('throws if not given an ID', function (done) {
+    it('throws if not given an ID', function () {
         const header = {
             payloadType: PayloadTypes.request,
             payloadLength: '5',
             id: undefined,
             end: true,
         };
-        expect(
-            () =>
-                new PayloadAssembler(streamManager, {
-                    header,
-                    onCompleted: () => done(),
-                })
-        ).to.throw('An ID must be supplied when creating an assembler.');
-        done();
+        expect(() => new PayloadAssembler(streamManager, { header })).to.throw(
+            'An ID must be supplied when creating an assembler.'
+        );
     });
 
     it('processes a response with streams without throwing.', function (done) {
