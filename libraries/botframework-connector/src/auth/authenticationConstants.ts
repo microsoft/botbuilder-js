@@ -181,4 +181,14 @@ export namespace AuthenticationConstants {
      * Indicates that bot identity is anonymous (no appId and password were provided).
      */
     export const AnonymousAuthType = 'anonymous';
+
+    /**
+     * Certificate thumbprint to authenticate the appId against AAD.
+     */
+    export const CertificateThumbprint = 'CertificateThumbprint';
+
+    /**
+     * Certificate key to authenticate the appId against AAD.
+     */
+    export const CertificatePrivateKey = 'CertificatePrivateKey';
 }

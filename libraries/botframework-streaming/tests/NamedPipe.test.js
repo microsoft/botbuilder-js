@@ -92,7 +92,7 @@ describe.windowsOnly('Streaming Extensions NamedPipe Library Tests', function ()
             c.disconnect();
         });
 
-        it('Client cannot send while connecting', async function (done) {
+        it('Client cannot send while connecting', async function () {
             const c = new TestClient('pipeName');
             c.connect();
 
@@ -103,7 +103,6 @@ describe.windowsOnly('Streaming Extensions NamedPipe Library Tests', function ()
             expect(count).to.equal(0);
 
             c.disconnect();
-            done();
         });
 
         it('creates a new transport', function () {

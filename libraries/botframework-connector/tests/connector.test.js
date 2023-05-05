@@ -96,14 +96,13 @@ const readStreamToBuffer = function (stream, callback) {
 };
 
 describe('Bot Framework Connector SDK', function () {
-    before(function (done) {
+    before(function () {
         suite = new SuiteBase(this, testPrefix, requiredEnvironment, libraryPath);
         suite.setupSuite(function () {
             credentials = new BotConnector.MicrosoftAppCredentials(clientId, clientSecret);
             client = new ConnectorClient(credentials, { baseUri: hostURL });
             tokenApiClient = new TokenApiClient(credentials, { baseUri: 'https://token.botframework.com' });
         });
-        done();
     });
 
     after(function (done) {

@@ -4,6 +4,7 @@
 const assert = require('assert');
 const { jwt } = require('botbuilder-test-utils');
 const { JwtTokenExtractor } = require('../../lib/auth/jwtTokenExtractor');
+const { StatusCodes } = require('../../../botframework-schema');
 
 describe('JwtTokenExtractor', function () {
     jwt.mocha();
@@ -35,6 +36,29 @@ describe('JwtTokenExtractor', function () {
             assert.strictEqual(identity.claims.find((c) => c.type === 'key').value, key);
 
             verify();
+        });
+    });
+
+    describe('validateToken', function () {
+        it('throws with expired token', async function () {
+            const { algorithm, issuer, metadata, sign } = jwt.stub();
+            const key = 'value';
+            const token = sign({ key });
+
+            const client = new JwtTokenExtractor(
+                {
+                    issuer,
+                    clockTimestamp: Date.now(),
+                    clockTolerance: -10,
+                },
+                metadata,
+                [algorithm]
+            );
+
+            await assert.rejects(client.getIdentityFromAuthHeader(`Bearer ${token}`), {
+                message: 'The token has expired',
+                statusCode: StatusCodes.UNAUTHORIZED,
+            });
         });
     });
 });

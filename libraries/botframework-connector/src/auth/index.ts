@@ -15,6 +15,7 @@ export * from './authenticateRequestResult';
 export * from './botFrameworkAuthentication';
 export * from './botFrameworkAuthenticationFactory';
 export * from './certificateAppCredentials';
+export * from './certificateServiceClientCredentialsFactory';
 export * from './channelValidation';
 export * from './claimsIdentity';
 export * from './connectorFactory';

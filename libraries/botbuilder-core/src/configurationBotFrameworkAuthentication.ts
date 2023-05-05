@@ -88,6 +88,16 @@ const TypedOptions = z
          * A value for the CallerId.
          */
         CallerId: z.string(),
+
+        /**
+         * Certificate thumbprint to authenticate the appId against AAD.
+         */
+        [AuthenticationConstants.CertificateThumbprint]: z.string(),
+
+        /**
+         * Certificate key to authenticate the appId against AAD.
+         */
+        [AuthenticationConstants.CertificatePrivateKey]: z.string(),
     })
     .partial();
 
