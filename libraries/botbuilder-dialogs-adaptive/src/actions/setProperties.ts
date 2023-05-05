@@ -109,6 +109,9 @@ export class SetProperties<O extends object = {}> extends Dialog<O> implements S
             dc.state.setValue(property, value);
         }
 
+        // save all state scopes to their respective botState locations.
+        await dc.state.saveAllChanges();
+
         return await dc.endDialog();
     }
 
