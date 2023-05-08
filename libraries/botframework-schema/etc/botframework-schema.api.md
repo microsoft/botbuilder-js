@@ -1764,6 +1764,7 @@ export interface TeamsChannelData {
     eventType?: string;
     meeting?: TeamsMeetingInfo;
     notification?: NotificationInfo;
+    onBehalfOf?: OnBehalfOf[];
     settings?: TeamsChannelDataSettings;
     team?: TeamInfo;
     tenant?: TenantInfo;

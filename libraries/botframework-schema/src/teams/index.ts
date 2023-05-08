@@ -189,8 +189,11 @@ export interface TeamsChannelData {
      * message was sent.
      */
     settings?: TeamsChannelDataSettings;
+    /**
+     * @member {OnBehalfOf} [onBehalfOf] The OnBehalfOf information of the message.
+     */
+    onBehalfOf?: OnBehalfOf[];
 }
-
 /**
  * @interface
  * An interface representing TeamsChannelAccount.
