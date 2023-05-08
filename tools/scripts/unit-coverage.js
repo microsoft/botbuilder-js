@@ -171,4 +171,4 @@ if (!process.env.NOCK_OFF && !process.env.AZURE_NOCK_RECORD) {
     }
 }
 
-require('../node_modules/nyc/bin/nyc');
+require('../../node_modules/nyc/bin/nyc');
