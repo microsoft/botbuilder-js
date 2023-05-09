@@ -442,7 +442,7 @@ async function addSettingsBotComponents(services: ServiceCollection, configurati
             const botComponent = await loadBotComponent(name);
 
             botComponent.configureServices(services, configuration.bind([settingsPrefix ?? name]));
-        } catch (error) {
+        } catch (error: any) {
             loadErrors.push({ error, name });
         }
     }

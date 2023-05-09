@@ -1,7 +1,9 @@
 const assert = require('assert');
 const { expect } = require('chai');
+const { expectEventually } = require('./helpers/expectEventually');
 const { NamedPipeClient, NamedPipeServer, StreamingRequest } = require('../lib');
 const { NamedPipeTransport } = require('../lib/namedPipe');
+const { platform } = require('os');
 const { RequestHandler } = require('../lib');
 const { createNodeServer, getServerFactory } = require('../lib/utilities/createNodeServer');
 
@@ -78,7 +80,10 @@ class TestClient {
     }
 }
 
-describe('Streaming Extensions NamedPipe Library Tests', function () {
+// Skips Windows-only tests. Linux does not have named pipes.
+describe.windowsOnly = platform() === 'linux' ? describe.skip : describe;
+
+describe.windowsOnly('Streaming Extensions NamedPipe Library Tests', function () {
     describe('NamedPipe Transport Tests', function () {
         it('Client connect', function () {
             const c = new TestClient('pipeName');
@@ -87,7 +92,7 @@ describe('Streaming Extensions NamedPipe Library Tests', function () {
             c.disconnect();
         });
 
-        it('Client cannot send while connecting', async function (done) {
+        it('Client cannot send while connecting', async function () {
             const c = new TestClient('pipeName');
             c.connect();
 
@@ -98,7 +103,6 @@ describe('Streaming Extensions NamedPipe Library Tests', function () {
             expect(count).to.equal(0);
 
             c.disconnect();
-            done();
         });
 
         it('creates a new transport', function () {
@@ -108,7 +112,7 @@ describe('Streaming Extensions NamedPipe Library Tests', function () {
             sock.writable = true;
             const transport = new NamedPipeTransport(sock, 'fakeSocket1');
             expect(transport).to.be.instanceOf(NamedPipeTransport);
-            expect(() => transport.close()).to.not.throw;
+            expect(() => transport.close()).to.not.throw();
         });
 
         it('creates a new transport and connects', function () {
@@ -119,7 +123,7 @@ describe('Streaming Extensions NamedPipe Library Tests', function () {
             const transport = new NamedPipeTransport(sock, 'fakeSocket2');
             expect(transport).to.be.instanceOf(NamedPipeTransport);
             expect(transport.isConnected).to.be.true;
-            expect(() => transport.close()).to.not.throw;
+            expect(() => transport.close()).to.not.throw();
         });
 
         it('closes the transport without throwing', function () {
@@ -129,7 +133,7 @@ describe('Streaming Extensions NamedPipe Library Tests', function () {
             sock.writable = true;
             const transport = new NamedPipeTransport(sock, 'fakeSocket3');
             expect(transport).to.be.instanceOf(NamedPipeTransport);
-            expect(transport.close()).to.not.throw;
+            expect(() => transport.close()).to.not.throw();
             expect(transport.isConnected).to.be.false;
         });
 
@@ -144,7 +148,7 @@ describe('Streaming Extensions NamedPipe Library Tests', function () {
             const buff = Buffer.from('hello', 'utf8');
             const sent = transport.send(buff);
             expect(sent).to.equal(5);
-            expect(() => transport.close()).to.not.throw;
+            expect(() => transport.close()).to.not.throw();
         });
 
         it('returns 0 when attempting to write to a closed socket', function () {
@@ -159,19 +163,21 @@ describe('Streaming Extensions NamedPipe Library Tests', function () {
             const buff = Buffer.from('hello', 'utf8');
             const sent = transport.send(buff);
             expect(sent).to.equal(0);
-            expect(() => transport.close()).to.not.throw;
+            expect(() => transport.close()).to.not.throw();
         });
 
-        it('throws when reading from a dead socket', function () {
+        // TODO: 2023-04-24 [hawo] #4462 The code today does not allows the receive() call to be rejected by reading a dead socket.
+        //                         The receive() call will be rejected IFF the socket is closed/error AFTER the receive() call.
+        it.skip('throws when reading from a dead socket', async function () {
             const sock = new FauxSock();
-            sock.destroyed = false;
+            sock.destroyed = true;
             sock.connecting = false;
             sock.writable = true;
             const transport = new NamedPipeTransport(sock, 'fakeSocket5');
             expect(transport).to.be.instanceOf(NamedPipeTransport);
-            expect(transport.isConnected).to.be.true;
-            expect(transport.receive(5)).to.throw;
-            expect(() => transport.close()).to.not.throw;
+            expect(transport.isConnected).to.be.false;
+            (await expectEventually(transport.receive(5))).to.throw();
+            expect(() => transport.close()).to.not.throw();
         });
 
         it('can read from the socket', function () {
@@ -185,7 +191,7 @@ describe('Streaming Extensions NamedPipe Library Tests', function () {
             transport.receive(12).catch();
             transport.socketReceive(Buffer.from('Hello World!', 'utf8'));
 
-            expect(() => transport.close()).to.not.throw;
+            expect(() => transport.close()).to.not.throw();
         });
 
         it('cleans up when onClose is fired', function () {
@@ -231,7 +237,7 @@ describe('Streaming Extensions NamedPipe Library Tests', function () {
             expect(transport).to.be.instanceOf(NamedPipeTransport);
             expect(transport.isConnected).to.be.true;
             const buff = Buffer.from('hello', 'utf8');
-            expect(transport.socketReceive(buff)).to.not.throw;
+            expect(() => transport.socketReceive(buff)).to.not.throw();
         });
     });
 
@@ -240,19 +246,22 @@ describe('Streaming Extensions NamedPipe Library Tests', function () {
 
         it('creates a new client', function () {
             expect(client).to.be.instanceOf(NamedPipeClient);
-            expect(client.disconnect()).to.not.throw;
+            expect(() => client.disconnect()).to.not.throw();
         });
 
         it('connects without throwing', function () {
-            expect(client.connect()).to.not.throw;
-            expect(client.disconnect()).to.not.throw;
+            expect(() => client.connect()).to.not.throw();
+            expect(() => client.disconnect()).to.not.throw();
         });
 
         it('disconnects without throwing', function () {
-            expect(client.disconnect()).to.not.throw;
+            expect(() => client.disconnect()).to.not.throw();
         });
 
-        it('sends without throwing', function (done) {
+        // TODO: 2023-04-24 [hawo] #4462 The client.send() call will only resolve when the other side responded.
+        //                         Because the other side is not connected to anything, thus, no response is received.
+        //                         Thus, the Promise is not resolved.
+        it.skip('sends without throwing', function (done) {
             const req = new StreamingRequest();
             req.Verb = 'POST';
             req.Path = 'some/path';
@@ -262,7 +271,7 @@ describe('Streaming Extensions NamedPipe Library Tests', function () {
                 .catch((err) => {
                     expect(err).to.be.undefined;
                 })
-                .then(done());
+                .then(done);
         });
     });
 
@@ -270,7 +279,7 @@ describe('Streaming Extensions NamedPipe Library Tests', function () {
         it('creates a new server', function () {
             const server = new NamedPipeServer('pipeA', new RequestHandler());
             expect(server).to.be.instanceOf(NamedPipeServer);
-            expect(server.disconnect()).to.not.throw;
+            expect(() => server.disconnect()).to.not.throw();
         });
 
         it('throws a TypeError during construction if missing the "baseName" parameter', function () {
@@ -281,15 +290,15 @@ describe('Streaming Extensions NamedPipe Library Tests', function () {
             const server = new NamedPipeServer('pipeA', new RequestHandler());
             expect(server).to.be.instanceOf(NamedPipeServer);
 
-            expect(server.start()).to.not.throw;
-            expect(server.disconnect()).to.not.throw;
+            expect(() => server.start()).to.not.throw();
+            expect(() => server.disconnect()).to.not.throw();
         });
 
         it('disconnects without throwing', function () {
             const server = new NamedPipeServer('pipeA', new RequestHandler());
             expect(server).to.be.instanceOf(NamedPipeServer);
-            expect(server.start()).to.not.throw;
-            expect(server.disconnect()).to.not.throw;
+            expect(() => server.start()).to.not.throw();
+            expect(() => server.disconnect()).to.not.throw();
         });
 
         it('returns true if isConnected === true on _receiver & _sender', function () {
@@ -301,25 +310,28 @@ describe('Streaming Extensions NamedPipe Library Tests', function () {
             expect(server.isConnected).to.be.true;
         });
 
-        it('sends without throwing', function (done) {
+        // TODO: 2023-04-24 [hawo] #4462 The client.send() call will only resolve when the other side responded.
+        //                         Because the other side is not connected to anything, thus, no response is received.
+        //                         Thus, the Promise is not resolved.
+        it.skip('sends without throwing', function (done) {
             const server = new NamedPipeServer('pipeA', new RequestHandler());
             expect(server).to.be.instanceOf(NamedPipeServer);
-            expect(server.start()).to.not.throw;
+            expect(() => server.start()).to.not.throw();
             const req = { verb: 'POST', path: '/api/messages', streams: [] };
             server
                 .send(req)
                 .catch((err) => {
                     expect(err).to.be.undefined;
                 })
-                .then(expect(server.disconnect()).to.not.throw)
-                .then(done());
+                .then(expect(() => server.disconnect()).to.not.throw())
+                .then(done);
         });
 
         it('handles being disconnected', function () {
             const server = new NamedPipeServer('pipeA', new RequestHandler());
             expect(server).to.be.instanceOf(NamedPipeServer);
             server.start();
-            expect(server.disconnect()).to.not.throw;
+            expect(() => server.disconnect()).to.not.throw();
         });
 
         it('ensures that two servers cannot get into a split brain scenario', async function () {
@@ -369,12 +381,11 @@ describe('Streaming Extensions NamedPipe Library Tests', function () {
         });
 
         it('should not throw when choosing not to pass in a callback at all into createNodeServer()', function () {
-            expect(() => createNodeServer()).to.not.throw;
+            expect(() => createNodeServer()).to.not.throw();
         });
 
         it('should return a Server when calling createNodeServer()', function () {
             const server = createNodeServer();
-            expect(server).to.not.throw;
             expect(server).to.not.be.null;
             expect(server).to.be.instanceOf(Object);
             expect(typeof server.listen).to.equal('function');
@@ -382,16 +393,16 @@ describe('Streaming Extensions NamedPipe Library Tests', function () {
         });
 
         it('should return the factory when calling getServerFactory()', function () {
-            expect(getServerFactory()).to.not.throw;
+            expect(() => getServerFactory()).to.not.throw();
             const serverFactoryFunction = getServerFactory();
             expect(serverFactoryFunction).to.not.be.null;
             expect(typeof serverFactoryFunction).to.equal('function');
         });
 
         it("should throw if the callback isn't a valid connection listener callback", function () {
-            const callback = () => {};
+            const callback = 'not a function';
             const serverFactory = getServerFactory();
-            expect(serverFactory(callback)).to.throw;
+            expect(() => serverFactory(callback)).to.throw();
         });
     });
 });

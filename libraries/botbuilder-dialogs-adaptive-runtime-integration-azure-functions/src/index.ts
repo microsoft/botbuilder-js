@@ -209,7 +209,7 @@ export function makeTriggers(
                 res.status(200);
                 res.set('Content-Type', contentType);
                 res.end(contents);
-            } catch (err) {
+            } catch (err: any) {
                 if (err.message.includes('ENOENT')) {
                     return res.status(404).end();
                 }

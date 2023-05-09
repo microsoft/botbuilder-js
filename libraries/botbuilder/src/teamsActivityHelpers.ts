@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { Activity, TeamInfo, TeamsChannelData, TeamsMeetingInfo, TenantInfo } from 'botbuilder-core';
+import { Activity, OnBehalfOf, TeamInfo, TeamsChannelData, TeamsMeetingInfo, TenantInfo } from 'botbuilder-core';
 
 function isTeamsChannelData(channelData: unknown): channelData is TeamsChannelData {
     return typeof channelData === 'object';
@@ -130,4 +130,18 @@ export function teamsNotifyUser(
     if (isTeamsChannelData(activity.channelData)) {
         activity.channelData.notification = { alert: !alertInMeeting, alertInMeeting, externalResourceUrl };
     }
+}
+
+/**
+ * @param activity The current [Activity](xref:botframework-schema.Activity).
+ * @returns The current [Activity](xref:botframework-schema.Activity)'s team's onBehalfOf list, or null.
+ */
+export function teamsGetTeamOnBehalfOf(activity: Activity): OnBehalfOf[] {
+    validateActivity(activity);
+
+    if (isTeamsChannelData(activity.channelData)) {
+        return activity.channelData.onBehalfOf || null;
+    }
+
+    return null;
 }

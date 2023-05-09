@@ -1,2 +1,2 @@
 # BotFramework Connector SDK
-../libraries/botframework-connector/tests/connector-tests.js
+../libraries/botframework-connector/tests/connector.test.js

@@ -189,8 +189,11 @@ export interface TeamsChannelData {
      * message was sent.
      */
     settings?: TeamsChannelDataSettings;
+    /**
+     * @member {OnBehalfOf} [onBehalfOf] The OnBehalfOf information of the message.
+     */
+    onBehalfOf?: OnBehalfOf[];
 }
-
 /**
  * @interface
  * An interface representing TeamsChannelAccount.
@@ -1876,7 +1879,7 @@ export interface TargetedMeetingNotificationValue {
  * @type {MeetingSurface}
  * Defines the generic Teams meeting surface type.
  */
-export type MeetingSurface = MeetingStageSurface<any>;
+export type MeetingSurface = MeetingStageSurface<any> | MeetingTabIconSurface;
 
 /**
  * @interface
@@ -1896,6 +1899,22 @@ export interface MeetingStageSurface<T> {
      * @member {T} [content] The content to display in the meeting notification.
      */
     content: T;
+}
+
+/**
+ * @interface
+ * Specifies the meeting tab icon surface in a Teams meeting notification.
+ */
+export interface MeetingTabIconSurface {
+    /**
+     * @member {string} [surface] The surface type.
+     */
+    surface: 'meetingTabIcon';
+
+    /**
+     * @member {string} [tabEntityId] The tab entity ID.
+     */
+    tabEntityId?: string;
 }
 
 /**

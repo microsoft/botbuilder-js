@@ -57,7 +57,7 @@ describe('ServiceCollection', function () {
                 services.addFactory<number[]>('values', (values = [1]) => values.concat(2));
                 services.composeFactory<number[]>('values', (values) => values.concat(3));
 
-                const { values } = services.makeInstances();
+                const { values } = services.makeInstances<{ values: number[] }>();
                 assert.deepStrictEqual(values, [1, 2, 3]);
             });
 
@@ -69,7 +69,7 @@ describe('ServiceCollection', function () {
                 services.composeFactory<number[]>('values', (values) => values.concat(2));
                 services.composeFactory<number[]>('values', (values) => values.concat(3));
 
-                const { values } = services.makeInstances();
+                const { values } = services.makeInstances<{ values: number[] }>();
                 assert.deepStrictEqual(values, [1, 2, 3]);
             });
         });
@@ -95,8 +95,7 @@ describe('ServiceCollection', function () {
 
         it('optionally fully reconstructs dependencies', function () {
             const services = makeServiceCollection();
-
-            const { foo, bar, baz } = services.makeInstances();
+            const { foo, bar, baz } = services.makeInstances<{ foo: Foo; bar: Bar; baz: Baz }>();
             assert.ok(foo);
             assert.ok(bar);
             assert.ok(baz);

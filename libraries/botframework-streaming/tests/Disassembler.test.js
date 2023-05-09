@@ -41,6 +41,6 @@ describe('CancelDisassembler', function () {
         expect(cd.payloadType).to.equal(PayloadTypes.cancelStream);
         expect(cd.sender).to.equal(sender);
 
-        expect(cd.disassemble()).to.not.throw;
+        expect(() => cd.disassemble()).to.not.throw();
     });
 });

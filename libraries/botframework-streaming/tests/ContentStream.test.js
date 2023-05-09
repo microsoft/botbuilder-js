@@ -134,6 +134,6 @@ describe('Streaming Extensions ContentStream Tests ', function () {
         const cs = new ContentStream('cs1', new TestPayloadAssembler());
         cs.readAsString();
 
-        expect(cs.cancel()).to.not.throw;
+        expect(() => cs.cancel()).to.not.throw();
     });
 });

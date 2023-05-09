@@ -80,7 +80,7 @@ export class ChannelServiceRoutes {
     /**
      * @private
      */
-    private processSendToConversation(req: WebRequest, res: WebResponse): void {
+    private processSendToConversation(req: WebRequest, res: WebResponse, next: Function): void {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         ChannelServiceRoutes.readActivity(req)
             .then((activity) => {
@@ -92,6 +92,7 @@ export class ChannelServiceRoutes {
                             res.send(resourceResponse);
                         }
                         res.end();
+                        return next();
                     })
                     .catch((err) => {
                         ChannelServiceRoutes.handleError(err, res);
@@ -105,7 +106,7 @@ export class ChannelServiceRoutes {
     /**
      * @private
      */
-    private processReplyToActivity(req: WebRequest, res: WebResponse): void {
+    private processReplyToActivity(req: WebRequest, res: WebResponse, next: Function): void {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         ChannelServiceRoutes.readActivity(req)
             .then((activity) => {
@@ -117,6 +118,7 @@ export class ChannelServiceRoutes {
                             res.send(resourceResponse);
                         }
                         res.end();
+                        return next();
                     })
                     .catch((err) => {
                         ChannelServiceRoutes.handleError(err, res);
@@ -130,7 +132,7 @@ export class ChannelServiceRoutes {
     /**
      * @private
      */
-    private processUpdateActivity(req: WebRequest, res: WebResponse): void {
+    private processUpdateActivity(req: WebRequest, res: WebResponse, next: Function): void {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         ChannelServiceRoutes.readActivity(req)
             .then((activity) => {
@@ -142,6 +144,7 @@ export class ChannelServiceRoutes {
                             res.send(resourceResponse);
                         }
                         res.end();
+                        return next();
                     })
                     .catch((err) => {
                         ChannelServiceRoutes.handleError(err, res);
@@ -155,13 +158,14 @@ export class ChannelServiceRoutes {
     /**
      * @private
      */
-    private processDeleteActivity(req: WebRequest, res: WebResponse): void {
+    private processDeleteActivity(req: WebRequest, res: WebResponse, next: Function): void {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         this.channelServiceHandler
             .handleDeleteActivity(authHeader, req.params.conversationId, req.params.activityId)
             .then(() => {
                 res.status(200);
                 res.end();
+                return next();
             })
             .catch((err) => {
                 ChannelServiceRoutes.handleError(err, res);
@@ -171,7 +175,7 @@ export class ChannelServiceRoutes {
     /**
      * @private
      */
-    private processGetActivityMembers(req: WebRequest, res: WebResponse): void {
+    private processGetActivityMembers(req: WebRequest, res: WebResponse, next: Function): void {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         this.channelServiceHandler
             .handleGetActivityMembers(authHeader, req.params.conversationId, req.params.activityId)
@@ -181,6 +185,7 @@ export class ChannelServiceRoutes {
                 }
                 res.status(200);
                 res.end();
+                return next();
             })
             .catch((err) => {
                 ChannelServiceRoutes.handleError(err, res);
@@ -190,7 +195,7 @@ export class ChannelServiceRoutes {
     /**
      * @private
      */
-    private processCreateConversation(req: WebRequest, res: WebResponse): void {
+    private processCreateConversation(req: WebRequest, res: WebResponse, next: Function): void {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         ChannelServiceRoutes.readBody<ConversationParameters>(req).then((conversationParameters) => {
             this.channelServiceHandler
@@ -201,6 +206,7 @@ export class ChannelServiceRoutes {
                     }
                     res.status(201);
                     res.end();
+                    return next();
                 })
                 .catch((err) => {
                     ChannelServiceRoutes.handleError(err, res);
@@ -211,7 +217,7 @@ export class ChannelServiceRoutes {
     /**
      * @private
      */
-    private processGetConversations(req: WebRequest, res: WebResponse): void {
+    private processGetConversations(req: WebRequest, res: WebResponse, next: Function): void {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         this.channelServiceHandler
             .handleGetConversations(authHeader, req.params.conversationId, req.query.continuationToken)
@@ -221,6 +227,7 @@ export class ChannelServiceRoutes {
                 }
                 res.status(200);
                 res.end();
+                return next();
             })
             .catch((err) => {
                 ChannelServiceRoutes.handleError(err, res);
@@ -230,7 +237,7 @@ export class ChannelServiceRoutes {
     /**
      * @private
      */
-    private processGetConversationMembers(req: WebRequest, res: WebResponse): void {
+    private processGetConversationMembers(req: WebRequest, res: WebResponse, next: Function): void {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         this.channelServiceHandler
             .handleGetConversationMembers(authHeader, req.params.conversationId)
@@ -240,6 +247,7 @@ export class ChannelServiceRoutes {
                     res.send(channelAccounts);
                 }
                 res.end();
+                return next();
             })
             .catch((err) => {
                 ChannelServiceRoutes.handleError(err, res);
@@ -249,7 +257,7 @@ export class ChannelServiceRoutes {
     /**
      * @private
      */
-    private processGetConversationMember(req: WebRequest, res: WebResponse): void {
+    private processGetConversationMember(req: WebRequest, res: WebResponse, next: Function): void {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         this.channelServiceHandler
             .handleGetConversationMember(authHeader, req.params.memberId, req.params.conversationId)
@@ -259,6 +267,7 @@ export class ChannelServiceRoutes {
                     res.send(channelAccount);
                 }
                 res.end();
+                return next();
             })
             .catch((err) => {
                 ChannelServiceRoutes.handleError(err, res);
@@ -268,7 +277,7 @@ export class ChannelServiceRoutes {
     /**
      * @private
      */
-    private processGetConversationPagedMembers(req: WebRequest, res: WebResponse): void {
+    private processGetConversationPagedMembers(req: WebRequest, res: WebResponse, next: Function): void {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         let pageSize = parseInt(req.query.pageSize);
         if (isNaN(pageSize)) {
@@ -287,6 +296,7 @@ export class ChannelServiceRoutes {
                     res.send(pagedMembersResult);
                 }
                 res.end();
+                return next();
             })
             .catch((err) => {
                 ChannelServiceRoutes.handleError(err, res);
@@ -296,13 +306,14 @@ export class ChannelServiceRoutes {
     /**
      * @private
      */
-    private processDeleteConversationMember(req: WebRequest, res: WebResponse): void {
+    private processDeleteConversationMember(req: WebRequest, res: WebResponse, next: Function): void {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         this.channelServiceHandler
             .handleDeleteConversationMember(authHeader, req.params.conversationId, req.params.memberId)
             .then(() => {
                 res.status(200);
                 res.end();
+                return next();
             })
             .catch((err) => {
                 ChannelServiceRoutes.handleError(err, res);
@@ -312,7 +323,7 @@ export class ChannelServiceRoutes {
     /**
      * @private
      */
-    private processSendConversationHistory(req: WebRequest, res: WebResponse): void {
+    private processSendConversationHistory(req: WebRequest, res: WebResponse, next: Function): void {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         ChannelServiceRoutes.readBody<Transcript>(req)
             .then((transcript) => {
@@ -324,6 +335,7 @@ export class ChannelServiceRoutes {
                         }
                         res.status(200);
                         res.end();
+                        return next();
                     })
                     .catch((err) => {
                         ChannelServiceRoutes.handleError(err, res);
@@ -337,7 +349,7 @@ export class ChannelServiceRoutes {
     /**
      * @private
      */
-    private processUploadAttachment(req: WebRequest, res: WebResponse): void {
+    private processUploadAttachment(req: WebRequest, res: WebResponse, next: Function): void {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         ChannelServiceRoutes.readBody<AttachmentData>(req)
             .then((attachmentData) => {
@@ -349,6 +361,7 @@ export class ChannelServiceRoutes {
                         }
                         res.status(200);
                         res.end();
+                        return next();
                     })
                     .catch((err) => {
                         ChannelServiceRoutes.handleError(err, res);

@@ -43,9 +43,11 @@ describe('TelemetryMiddleware', function () {
 
         const expectTrackEvent = (name, properties = {}) => {
             expectExactEvent(name, {
+                conversationId: sinon.match.string,
                 conversationName: sinon.match.string,
                 recipientId: sinon.match.string,
                 type: sinon.match.string,
+                activityId: sinon.match.string,
                 ...properties,
             });
         };

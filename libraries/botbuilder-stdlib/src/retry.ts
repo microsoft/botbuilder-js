@@ -25,7 +25,7 @@ export async function retry<T>(
         try {
             // Note: return await intentional so we can catch errors
             return await promise(n);
-        } catch (err) {
+        } catch (err: any) {
             maybeError = err;
 
             await new Promise((resolve) => setTimeout(resolve, delay));
