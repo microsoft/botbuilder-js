@@ -64,7 +64,10 @@ class FauxSock {
         if (this.receiver.isConnected) this.receiver.disconnect();
     }
     close() {
-        this.connected = false;
+        if (this.connected) {
+            this.connected = false;
+            this.closeHandler && this.closeHandler();
+        }
     }
     end() {
         this.exists = false;
@@ -74,24 +77,10 @@ class FauxSock {
         return this.exists;
     }
 
-    /** WaterShed Socket Specific? */
-    destroy() {
-        return true;
-    }
-
-    /** WaterShed Socket Specific? */
-    removeAllListeners() {
-        return true;
-    }
-
     on(action, handler) {
         switch (action) {
             case 'error':
                 this.errorHandler = handler;
-                break;
-            case 'data':
-                this.messageHandler = handler;
-                this.dataHandler = handler; // Required for `ws` WebSockets
                 break;
             case 'close':
                 this.closeHandler = handler;
@@ -99,14 +88,8 @@ class FauxSock {
             case 'end':
                 this.endHandler = handler;
                 break;
-            case 'text':
-                this.textHandler = handler; // Required for `watershed` WebSockets
-                break;
-            case 'binary':
-                this.binaryHandler = handler; // Required for `watershed` WebSockets
-                break;
             case 'message':
-                this._messageHandler = handler; // Required for `ws` WebSockets
+                this.messageHandler = handler; // Required for `ws` WebSockets
                 break;
             default:
                 throw new Error(`TestError: Unknown action ("${action}") passed to FauxSock.on()`);

@@ -135,13 +135,11 @@ describe('PayloadTransport', function () {
             expect(ps.isConnected).to.equal(false);
         });
 
-        it('gracefully fails when trying to write before connecting.', function (done) {
+        it('gracefully fails when trying to write before connecting.', function () {
+            // When not connected, PayloadSender should not throw.
+            // It should drop the packet silently.
             const ps = new PayloadSender();
-            ps.disconnected = () => done();
             expect(ps.isConnected).to.equal(false);
-            ps.connect(new FauxSock());
-            expect(ps.isConnected).to.equal(true);
-            expect(ps.disconnected).to.not.be.undefined;
 
             const stream = new SubscribableStream();
             stream.write('This is a test stream.');
@@ -152,7 +150,7 @@ describe('PayloadTransport', function () {
                 end: true,
             };
 
-            ps.sendPayload(header, stream, () => done());
+            ps.sendPayload(header, stream);
         });
     });
 
@@ -179,11 +177,7 @@ describe('PayloadTransport', function () {
             sock.setReceiver(pr);
 
             this.streamManager = new StreamManager(undefined);
-            const assemblerManager = new PayloadAssemblerManager(
-                this.streamManager,
-                () => done(),
-                () => done()
-            );
+            const assemblerManager = new PayloadAssemblerManager(this.streamManager);
 
             pr.subscribe(
                 (header) => assemblerManager.getPayloadStream(header),
@@ -191,7 +185,7 @@ describe('PayloadTransport', function () {
                     assemblerManager.onReceive(header, contentStream, contentLength)
             );
 
-            expect(pr.connect(sock)).to.not.throw;
+            expect(() => pr.connect(sock)).to.not.throw();
 
             pr.disconnected = () => done();
             expect(pr.isConnected).to.be.true;

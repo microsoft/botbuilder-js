@@ -10,6 +10,7 @@ const {
     teamsGetTeamId,
     teamsGetTeamInfo,
     teamsNotifyUser,
+    teamsGetTeamOnBehalfOf,
 } = require('../');
 
 function createActivityTeamId() {
@@ -193,6 +194,37 @@ describe('TeamsActivityHelpers method', function () {
             const activity = { channelData: { settings: null } };
             const channelId = teamsGetSelectedChannelId(activity);
             assert.strictEqual(channelId, '');
+        });
+    });
+
+    describe('teamsGetTeamOnBehalfOf()', function () {
+        it('should return onBehalfOf list', async function () {
+            const activity = {
+                channelData: {
+                    onBehalfOf: [
+                        {
+                            itemId: 0,
+                            displayName: 'onBehalfOfTest',
+                            mentionType: 'person',
+                            mri: 'mriTest',
+                        },
+                    ],
+                },
+            };
+            const onBehalfOf = teamsGetTeamOnBehalfOf(activity)[0];
+            assert.strictEqual(onBehalfOf.displayName, activity.channelData.onBehalfOf[0].displayName);
+        });
+
+        it('should return null with no channelData', async function () {
+            const activity = createActivityNoChannelData();
+            const onBehalfOf = teamsGetTeamOnBehalfOf(activity);
+            assert(onBehalfOf === null);
+        });
+
+        it('should return null with no onBehalfOf list', async function () {
+            const activity = { channelData: { onBehalfOf: null } };
+            const onBehalfOf = teamsGetTeamOnBehalfOf(activity);
+            assert(onBehalfOf === null);
         });
     });
 });

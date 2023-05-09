@@ -189,8 +189,11 @@ export interface TeamsChannelData {
      * message was sent.
      */
     settings?: TeamsChannelDataSettings;
+    /**
+     * @member {OnBehalfOf} [onBehalfOf] The OnBehalfOf information of the message.
+     */
+    onBehalfOf?: OnBehalfOf[];
 }
-
 /**
  * @interface
  * An interface representing TeamsChannelAccount.
@@ -1816,4 +1819,164 @@ export interface MeetingEndEventDetails extends MeetingEventDetails {
      * @member {Date} [endTime] Timestamp for meeting end, in UTC.
      */
     endTime: Date;
+}
+
+/**
+ * @interface
+ * Specifies base details of a Teams meeting send notification payload.
+ */
+export interface MeetingNotificationBase<T> {
+    /**
+     * @member {string} [type] The type of meeting notification.
+     */
+    type: string;
+
+    /**
+     * @template T
+     * @member {T} value The specific details of the meeting notification.
+     */
+    value: T;
+}
+
+/**
+ * @interface
+ * Specifies details of a targeted Teams meeting send notification payload.
+ */
+export interface TargetedMeetingNotification extends MeetingNotificationBase<TargetedMeetingNotificationValue> {
+    /**
+     * @member {string} [type] The type of meeting notification.
+     */
+    type: 'targetedMeetingNotification';
+
+    /**
+     * @member {MeetingNotificationChannelData} [channelData] The channel data of the meeting notification.
+     */
+    channelData?: MeetingNotificationChannelData;
+}
+
+/**
+ * @type {MeetingNotification}
+ * Defines the base Teams meeting notification type.
+ */
+export type MeetingNotification = TargetedMeetingNotification;
+
+/**
+ * @interface
+ * Specifies recipients and surfaces to target in a Teams meeting notification.
+ */
+export interface TargetedMeetingNotificationValue {
+    /**
+     * @member {string[]} [recipients] The list of recipient meeting MRIs.
+     */
+    recipients: string[];
+    /**
+     * @member {MeetingSurface[]} [surfaces] The List of notification surface configuration.
+     */
+    surfaces: MeetingSurface[];
+}
+
+/**
+ * @type {MeetingSurface}
+ * Defines the generic Teams meeting surface type.
+ */
+export type MeetingSurface = MeetingStageSurface<any> | MeetingTabIconSurface;
+
+/**
+ * @interface
+ * Specifies the meeting stage surface in a Teams meeting notification.
+ */
+export interface MeetingStageSurface<T> {
+    /**
+     * @member {string} [surface] The surface type.
+     */
+    surface: 'meetingStage';
+    /**
+     * @member {string} [contentType] The content type.
+     */
+    contentType: 'task';
+    /**
+     * @template T
+     * @member {T} [content] The content to display in the meeting notification.
+     */
+    content: T;
+}
+
+/**
+ * @interface
+ * Specifies the meeting tab icon surface in a Teams meeting notification.
+ */
+export interface MeetingTabIconSurface {
+    /**
+     * @member {string} [surface] The surface type.
+     */
+    surface: 'meetingTabIcon';
+
+    /**
+     * @member {string} [tabEntityId] The tab entity ID.
+     */
+    tabEntityId?: string;
+}
+
+/**
+ * @interface
+ * Specifies channel data associated with the Teams meeting notification.
+ */
+export interface MeetingNotificationChannelData {
+    /**
+     * @member {OnBehalfOf} [onBehalfOf] The user that the bot is sending the notification on behalfOf, if any.
+     */
+    onBehalfOf?: OnBehalfOf[];
+}
+
+/**
+ * @interface
+ * Specifies the Teams user that triggered the Teams meeting notification.
+ */
+export interface OnBehalfOf {
+    /**
+     * @member {number} [itemid] The id of the item.
+     */
+    itemid: 0 | number;
+    /**
+     * @member {string} [mentionType] The mention type of a "person".
+     */
+    mentionType: 'person' | string;
+    /**
+     * @member {string} [mri] Ther user MRI of the sender.
+     */
+    mri: string;
+    /**
+     * @member {string} [displayName] The  of the person.
+     */
+    displayName?: string;
+}
+
+/**
+ * @interface
+ * Specifies the recipients for which the Teams meeting notification was not sent.
+ */
+export interface MeetingNotificationRecipientFailureInfo {
+    /**
+     * @member {string} [recipientMri] The targeted recipient's MRI.
+     */
+    recipientMri: string;
+    /**
+     * @member {string} [failureReason] The reason for which the meetings notification could not be sent to the recipient.
+     */
+    failureReason: string;
+    /**
+     * @member {string} [errorCode] The error code.
+     */
+    errorCode: string;
+}
+
+/**
+ * @interface
+ * Specifies the list of recipients for which the Teams meeting notification was not sent.
+ */
+export interface MeetingNotificationResponse {
+    /**
+     * @member {string} [recipientsFailureInfo] The list of recipients that failed to recieve the sent meetings notification.
+     */
+    recipientsFailureInfo?: MeetingNotificationRecipientFailureInfo[];
 }

@@ -18,7 +18,7 @@ const {
 } = require('../..');
 
 describe('JwtTokenValidation', function () {
-    afterEach(function () {
+    beforeEach(function () {
         JwtTokenExtractor.openIdMetadataCache.clear();
     });
 

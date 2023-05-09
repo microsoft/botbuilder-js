@@ -86,8 +86,31 @@ describe('getRuntimeServices', function () {
     });
 
     describe('storage', function () {
+        it('throws error for wrong storage settings', async function () {
+            const configuration = new Configuration().argv().env();
+
+            configuration.set(['runtimeSettings', 'storage'], 'WrongStorage');
+
+            await rejects(async () => {
+                const [services] = await getRuntimeServices(__dirname, configuration);
+                const _ = services.mustMakeInstance('storage');
+            }, new TypeError('Invalid runtime.storage value'));
+        });
+
         it('defaults to memory storage', async function () {
             const [services] = await getRuntimeServices(__dirname, __dirname);
+            ok(services);
+
+            const storage = services.mustMakeInstance('storage');
+            ok(storage instanceof MemoryStorage);
+        });
+
+        it('supports memory storage', async function () {
+            const configuration = new Configuration().argv().env();
+
+            configuration.set(['runtimeSettings', 'storage'], 'Memory');
+
+            const [services] = await getRuntimeServices(__dirname, configuration);
             ok(services);
 
             const storage = services.mustMakeInstance('storage');

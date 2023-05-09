@@ -11,6 +11,7 @@ import { Container, CosmosClient, CosmosClientOptions } from '@azure/cosmos';
 import { CosmosDbKeyEscape } from './cosmosDbKeyEscape';
 import { DoOnce } from './doOnce';
 import { Storage, StoreItems } from 'botbuilder';
+import { TokenCredential } from '@azure/core-auth';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const pjson: Record<'name' | 'version', string> = require('../package.json');
@@ -67,6 +68,10 @@ export interface CosmosDbPartitionedStorageOptions {
      * compatibilityMode cannot be true if keySuffix is used.
      */
     compatibilityMode?: boolean;
+    /**
+     * The authentication tokenCredential for Cosmos DB.
+     */
+    tokenCredential?: TokenCredential;
 }
 
 //Internal data structure for storing items in a CosmosDB Collection.
@@ -143,8 +148,12 @@ export class CosmosDbPartitionedStorage implements Storage {
             throw new ReferenceError('cosmosDbEndpoint for CosmosDB is required.');
         }
         cosmosDbStorageOptions.authKey ??= cosmosClientOptions?.key;
-        if (!cosmosDbStorageOptions.authKey && !cosmosClientOptions?.tokenProvider) {
-            throw new ReferenceError('authKey for CosmosDB is required.');
+        if (
+            !cosmosDbStorageOptions.authKey &&
+            !cosmosClientOptions?.tokenProvider &&
+            !cosmosDbStorageOptions.tokenCredential
+        ) {
+            throw new ReferenceError('authKey or tokenCredential for CosmosDB is required.');
         }
         if (!cosmosDbStorageOptions.databaseId) {
             throw new ReferenceError('databaseId is for CosmosDB required.');
@@ -322,12 +331,21 @@ export class CosmosDbPartitionedStorage implements Storage {
     async initialize(): Promise<void> {
         if (!this.container) {
             if (!this.client) {
-                this.client = new CosmosClient({
-                    endpoint: this.cosmosDbStorageOptions.cosmosDbEndpoint,
-                    key: this.cosmosDbStorageOptions.authKey,
-                    userAgentSuffix: `${pjson.name} ${pjson.version}`,
-                    ...this.cosmosDbStorageOptions.cosmosClientOptions,
-                });
+                if (this.cosmosDbStorageOptions.tokenCredential) {
+                    this.client = new CosmosClient({
+                        endpoint: this.cosmosDbStorageOptions.cosmosDbEndpoint,
+                        aadCredentials: this.cosmosDbStorageOptions.tokenCredential,
+                        userAgentSuffix: `${pjson.name} ${pjson.version}`,
+                        ...this.cosmosDbStorageOptions.cosmosClientOptions,
+                    });
+                } else {
+                    this.client = new CosmosClient({
+                        endpoint: this.cosmosDbStorageOptions.cosmosDbEndpoint,
+                        key: this.cosmosDbStorageOptions.authKey,
+                        userAgentSuffix: `${pjson.name} ${pjson.version}`,
+                        ...this.cosmosDbStorageOptions.cosmosClientOptions,
+                    });
+                }
             }
             const dbAndContainerKey = `${this.cosmosDbStorageOptions.databaseId}-${this.cosmosDbStorageOptions.containerId}`;
             this.container = await _doOnce.waitFor(

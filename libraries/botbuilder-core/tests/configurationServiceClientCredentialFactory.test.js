@@ -6,6 +6,7 @@ const {
     ConfigurationServiceClientCredentialFactory,
     createServiceClientCredentialFactoryFromConfiguration,
 } = require('../');
+const { CertificateAppCredentials } = require('botframework-connector');
 
 describe('ConfigurationServiceClientCredentialFactory', function () {
     class TestConfiguration {
@@ -96,6 +97,52 @@ describe('ConfigurationServiceClientCredentialFactory', function () {
         createServiceClientCredentialFactoryFromConfiguration(config);
     });
 
+    it('createServiceClientCredentialFactoryFromConfiguration() with certificate', async function () {
+        const config = new TestConfiguration({
+            CertificateThumbprint: 'CertificateThumbprint',
+            CertificatePrivateKey: 'CertificatePrivateKey',
+        });
+
+        const serviceClient = createServiceClientCredentialFactoryFromConfiguration(config);
+        const credentialClient = await serviceClient.createCredentials(TestConfiguration.DefaultConfig.MicrosoftAppId);
+        assert(credentialClient instanceof CertificateAppCredentials);
+    });
+
+    it('createServiceClientCredentialFactoryFromConfiguration() with certificate and no MicrosoftAppId', async function () {
+        const config = new TestConfiguration({
+            MicrosoftAppId: undefined,
+            CertificateThumbprint: 'CertificateThumbprint',
+            CertificatePrivateKey: 'CertificatePrivateKey',
+        });
+
+        assert.throws(() => createServiceClientCredentialFactoryFromConfiguration(config), {
+            name: 'AssertionError',
+            message: 'MicrosoftAppId is required for MultiTenant when using a Certificate in configuration.',
+        });
+    });
+
+    it('createServiceClientCredentialFactoryFromConfiguration() with certificate and no CertificatePrivateKey', async function () {
+        const config = new TestConfiguration({
+            CertificateThumbprint: 'CertificateThumbprint',
+        });
+
+        assert.throws(() => createServiceClientCredentialFactoryFromConfiguration(config), {
+            name: 'AssertionError',
+            message: 'CertificatePrivateKey is required when using a Certificate in configuration.',
+        });
+    });
+
+    it('createServiceClientCredentialFactoryFromConfiguration() with certificate and no CertificateThumbprint', async function () {
+        const config = new TestConfiguration({
+            CertificatePrivateKey: 'CertificatePrivateKey',
+        });
+
+        assert.throws(() => createServiceClientCredentialFactoryFromConfiguration(config), {
+            name: 'AssertionError',
+            message: 'CertificateThumbprint is required when using a Certificate in configuration.',
+        });
+    });
+
     it('createServiceClientCredentialFactoryFromConfiguration() with casing-string MicrosoftAppType configuration should work', function () {
         const config = new TestConfiguration({ ...SingleTenantConfig, MicrosoftAppType: 'singletenant' });
 
@@ -135,6 +182,18 @@ describe('ConfigurationServiceClientCredentialFactory', function () {
             name: 'AssertionError',
             message: 'MicrosoftAppPassword is required for SingleTenant in configuration.',
         });
+    });
+
+    it('createServiceClientCredentialFactoryFromConfiguration() singleTenant with certificate', async function () {
+        const config = new TestConfiguration({
+            ...SingleTenantConfig,
+            CertificateThumbprint: 'CertificateThumbprint',
+            CertificatePrivateKey: 'CertificatePrivateKey',
+        });
+
+        const serviceClient = createServiceClientCredentialFactoryFromConfiguration(config);
+        const credentialClient = await serviceClient.createCredentials(SingleTenantConfig.MicrosoftAppId);
+        assert(credentialClient instanceof CertificateAppCredentials);
     });
 
     it('createServiceClientCredentialFactoryFromConfiguration() manageIdentityApp with config should work', function () {
