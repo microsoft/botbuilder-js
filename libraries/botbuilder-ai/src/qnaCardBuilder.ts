@@ -125,21 +125,21 @@ export class QnACardBuilder {
      */
     static getTeamsAdaptiveCard(cardText: string, buttonList: any[]){
         // Create adaptive card attachement
-        let buttonArray = [];
+        const buttonArray = [];
 
         for(let button of buttonList)
         {
             // Create messageBack card for Teams
             buttonArray.push({
-                "type": "Action.Submit",
-                "title": button.title,
-                "data": {
-                    "msteams": {
-                        "type": "messageBack",
-                        "displayText": button.displayText,
-                        "text": button.text,
-                        "value": button.value,
-                        "width": "full"
+                'type': 'Action.Submit',
+                'title': button.title,
+                'data': {
+                    'msteams': {
+                        'type': 'messageBack',
+                        'displayText': button.displayText,
+                        'text': button.text,
+                        'value': button.value,
+                        'width': 'full'
                     }
                 }
             });
@@ -147,20 +147,20 @@ export class QnACardBuilder {
 
         // Define JSON representation of an adaptive card
         let adaptiveCardJson =  {
-            "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-            "type": "AdaptiveCard",
-            "version": "1.3",
-            "msteams": { 
-                "width": "full",
-                "height": "full" 
+            '$schema': 'http://adaptivecards.io/schemas/adaptive-card.json',
+            'type': 'AdaptiveCard',
+            'version': '1.3',
+            'msteams': { 
+                'width': 'full',
+                'height': 'full' 
             },
-            "body": [
+            'body': [
                 {
-                    "type": "TextBlock",
-                    "text": cardText
+                    'type': 'TextBlock',
+                    'text': cardText
                 }
             ],
-            "actions": buttonArray
+            'actions': buttonArray
         };
         return CardFactory.adaptiveCard(adaptiveCardJson);
     }
