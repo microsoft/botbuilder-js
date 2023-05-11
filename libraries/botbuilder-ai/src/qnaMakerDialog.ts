@@ -493,7 +493,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         }
         this.qnaServiceType = qnaServiceType;
 
-        if(useTeamsAdaptiveCard) {
+        if (useTeamsAdaptiveCard) {
             this.useTeamsAdaptiveCard = useTeamsAdaptiveCard;
         }
 
@@ -750,13 +750,21 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         if (response?.length > 0) {
             const activity = dialogOptions.qnaDialogResponseOptions.noAnswer;
             if (response[0].id !== -1) {
-                const message = QnACardBuilder.getQnAAnswerCard(response[0], this.displayPreciseAnswerOnly, this.useTeamsAdaptiveCard);
+                const message = QnACardBuilder.getQnAAnswerCard(
+                    response[0],
+                    this.displayPreciseAnswerOnly,
+                    this.useTeamsAdaptiveCard
+                );
                 await step.context.sendActivity(message);
             } else {
                 if (activity && activity.text) {
                     await step.context.sendActivity(activity);
                 } else {
-                    const message = QnACardBuilder.getQnAAnswerCard(response[0], this.displayPreciseAnswerOnly, this.useTeamsAdaptiveCard);
+                    const message = QnACardBuilder.getQnAAnswerCard(
+                        response[0],
+                        this.displayPreciseAnswerOnly,
+                        this.useTeamsAdaptiveCard
+                    );
                     await step.context.sendActivity(message);
                 }
             }
@@ -945,7 +953,11 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
                 step.activeDialog.state[this.qnAContextData] = previousContextData;
                 step.activeDialog.state[this.previousQnAId] = answer.id;
                 step.activeDialog.state[this.options] = dialogOptions;
-                const message = QnACardBuilder.getQnAAnswerCard(answer, this.displayPreciseAnswerOnly, this.useTeamsAdaptiveCard);
+                const message = QnACardBuilder.getQnAAnswerCard(
+                    answer,
+                    this.displayPreciseAnswerOnly,
+                    this.useTeamsAdaptiveCard
+                );
                 await step.context.sendActivity(message);
                 return Dialog.EndOfTurn;
             }
