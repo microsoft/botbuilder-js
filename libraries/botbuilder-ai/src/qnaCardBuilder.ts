@@ -127,7 +127,7 @@ export class QnACardBuilder {
      * @param {any[]} buttonList The list of buttons to be converted to MS Teams messageBack buttons and placed in the card's actions field
      * @returns {Attachment} An attachment representing the MS Teams-formatted Adaptive Card
      */
-    static getTeamsAdaptiveCard(cardText: string, buttonList: any[]) {
+    static getTeamsAdaptiveCard(cardText: string, buttonList: any[]): Attachment {
         // Create adaptive card attachement
         const buttonArray = [];
 
@@ -175,7 +175,7 @@ export class QnACardBuilder {
      * @param {any[]} buttonList The list of buttons to be converted to imBack buttons and attached to the card
      * @returns {Attachment} An attachment representing the Hero Card
      */
-    static getHeroCard(cardText: string, buttonList: any[]) {
+    static getHeroCard(cardText: string, buttonList: any[]): Attachment {
         return CardFactory.heroCard('', cardText, undefined, buttonList);
     }
 }
