@@ -6,11 +6,11 @@
  * Licensed under the MIT License.
  */
 
+import { XMLBuilder } from 'fast-xml-parser';
 import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { ReturnType } from '../returnType';
-import { j2xParser } from 'fast-xml-parser';
 /**
  * Return the newline string according to the environment.
  */
@@ -38,11 +38,11 @@ export class XML extends ExpressionEvaluator {
             } else if (typeof args[0] === 'object') {
                 obj = args[0];
             }
-            const parser = new j2xParser({
+            const parser = new XMLBuilder({
                 indentBy: '  ',
                 format: true,
             });
-            result = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n${parser.parse(obj)}`.trim();
+            result = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n${parser.build(obj)}`.trim();
         } catch {
             error = `${args[0]} is not a valid json`;
         }
