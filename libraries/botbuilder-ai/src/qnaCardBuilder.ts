@@ -18,12 +18,15 @@ export class QnACardBuilder {
      * @param {string[]} suggestionsList List of suggestions to be displayed on hero card.
      * @param {string} cardTitle Title of the hero card.
      * @param {string} cardNoMatchText Text for button to be added to card to allow user to select 'no match'.
+     * @param {boolean} useTeamsAdaptiveCard whether to use a Microsoft Teams formatted adaptive card instead of a hero card. Defaults to false.
+     *  Card width is limited by Teams and long CQA responses should be formatted in the Language Studio to add line breaks. Card payload is specific to MS Teams.
      * @returns {Partial<Activity>} Activity representing the suggestions as a card
      */
     static getSuggestionsCard(
         suggestionsList: string[],
         cardTitle: string,
-        cardNoMatchText: string
+        cardNoMatchText: string,
+        useTeamsAdaptiveCard = false
     ): Partial<Activity> {
         if (!Array.isArray(suggestionsList)) {
             throw new Error('Missing suggestionsList');
@@ -53,7 +56,9 @@ export class QnACardBuilder {
             title: cardNoMatchText,
         });
 
-        const promptsCard = CardFactory.heroCard(cardTitle, undefined, buttonList);
+        const promptsCard = useTeamsAdaptiveCard
+            ? this.getTeamsAdaptiveCard(cardTitle, buttonList)
+            : this.getHeroCard(cardTitle, buttonList);
         const message = MessageFactory.attachment(promptsCard);
 
         return message;
@@ -64,7 +69,7 @@ export class QnACardBuilder {
      *
      * @param {QnAMakerResult} result QnAMaker result containing the answer text and multi turn prompts to be displayed.
      * @param {boolean} displayPreciseAnswerOnly whether to display PreciseAnswer Only or along with source Answer text.
-     * @param {boolean} useTeamsAdaptiveCard whether to use a Microsoft Teams formatted adaptive card instead of a hero card.
+     * @param {boolean} useTeamsAdaptiveCard whether to use a Microsoft Teams formatted adaptive card instead of a hero card. Defaults to false.
      *  Card width is limited by Teams and long CQA responses should be formatted in the Language Studio to add line breaks. Card payload is specific to MS Teams.
      * @returns {Partial<Activity>} Activity representing the prompts as a card
      */
@@ -131,21 +136,22 @@ export class QnACardBuilder {
         // Create adaptive card attachement
         const buttonArray = [];
 
-        for (const button of buttonList) {
-            // Create messageBack card for Teams
-            buttonArray.push({
-                type: 'Action.Submit',
-                title: button.title,
-                data: {
-                    msteams: {
-                        type: 'messageBack',
-                        displayText: button.displayText,
-                        text: button.text,
-                        value: button.value,
-                        width: 'full',
+        if (buttonList) {
+            for (const button of buttonList) {
+                // Create messageBack card for Teams
+                buttonArray.push({
+                    type: 'Action.Submit',
+                    data: {
+                        msteams: {
+                            type: 'messageBack',
+                            displayText: button.displayText,
+                            text: button.text,
+                            value: button.value,
+                            width: 'full',
+                        },
                     },
-                },
-            });
+                });
+            }
         }
 
         // Define JSON representation of an adaptive card
@@ -153,6 +159,7 @@ export class QnACardBuilder {
             $schema: 'http://adaptivecards.io/schemas/adaptive-card.json',
             type: 'AdaptiveCard',
             version: '1.3',
+            title: !cardText || !cardText.trim() ? cardText : '',
             msteams: {
                 width: 'full',
                 height: 'full',
@@ -160,7 +167,7 @@ export class QnACardBuilder {
             body: [
                 {
                     type: 'TextBlock',
-                    text: cardText,
+                    text: !cardText || !cardText.trim() ? cardText : '',
                 },
             ],
             actions: buttonArray,
@@ -176,6 +183,6 @@ export class QnACardBuilder {
      * @returns {Attachment} An attachment representing the Hero Card
      */
     static getHeroCard(cardText: string, buttonList: any[]): Attachment {
-        return CardFactory.heroCard('', cardText, undefined, buttonList);
+        return CardFactory.heroCard(cardText, cardText, undefined, buttonList);
     }
 }

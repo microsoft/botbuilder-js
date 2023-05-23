@@ -862,7 +862,8 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
                         QnACardBuilder.getSuggestionsCard(
                             suggestedQuestions,
                             dialogOptions.qnaDialogResponseOptions.activeLearningCardTitle,
-                            dialogOptions.qnaDialogResponseOptions.cardNoMatchText
+                            dialogOptions.qnaDialogResponseOptions.cardNoMatchText,
+                            this.useTeamsAdaptiveCard
                         );
 
                     z.record(z.unknown()).parse(message, { path: ['message'] });

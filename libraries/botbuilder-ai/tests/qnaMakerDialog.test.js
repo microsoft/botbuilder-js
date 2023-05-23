@@ -57,6 +57,12 @@ describe('QnAMakerDialog', function () {
         new QnAMakerDialog('kbId', 'endpointKey', 'https://myqnainstance.azurewebsites.net/qnamaker');
     });
 
+    it('should successfully set useTeamsAdaptiveCard to true', function () {
+        const qna = new QnAMakerDialog('kbId', 'endpointKey', 'https://myqnainstance.azurewebsites.net/qnamaker');
+        qna.useTeamsAdaptiveCard = true;
+        strictEqual(qna.useTeamsAdaptiveCard, true);
+    });
+
     it('should add instance to a dialog set', function () {
         const dialogs = new DialogSet();
         const qna = new QnAMakerDialog('kbId', 'endpointKey', 'https://myqnainstance.azurewebsites.net/qnamaker');
@@ -365,6 +371,63 @@ describe('QnAMakerDialog', function () {
                 .startTest();
         });
 
+        it('should send an Adaptive Card with suggestions', async function () {
+            const kbId = 'dummyKbId';
+            const endpointKey = 'dummyEndpointKey';
+            const convoState = new ConversationState(new MemoryStorage());
+            const dm = new DialogManager();
+            dm.conversationState = convoState;
+            const activeLearningCardTitle = 'Suggested questions';
+            const cardNoMatchText = 'Not helpful.';
+            const qnaDialog = new QnAMakerDialog(
+                kbId,
+                endpointKey,
+                HOSTNAME,
+                undefined,
+                undefined,
+                activeLearningCardTitle,
+                cardNoMatchText
+            );
+            qnaDialog.useTeamsAdaptiveCard = true;
+
+            dm.rootDialog = qnaDialog;
+            const adapter = new TestAdapter((turnContext) => {
+                return dm.onTurn(turnContext);
+            });
+
+            await adapter
+                .send('QnaMaker_TopNAnswer.json')
+                .assertReply((reply) => {
+                    strictEqual(reply.type, ActivityTypes.Message);
+                    strictEqual(reply.attachments && reply.attachments.length, 1);
+                    strictEqual(reply.attachments[0].contentType, 'application/vnd.microsoft.card.adaptive');
+
+                    const adaptiveCard = reply.attachments[0].content;
+
+                    // Verify the suggestions match the values received from QnA Maker.
+                    strictEqual(adaptiveCard.actions.length, 4);
+
+                    for (let idx = 0; idx < adaptiveCard.actions.length; idx++) {
+                        const type = adaptiveCard.actions[idx].type;
+                        const value = adaptiveCard.actions[idx].data.msteams.value;
+
+                        // With TopNAnswer's data, the last suggestion's low score of 50
+                        // means it is not included in suggestions passed to the QnACardBuilder.
+                        // The builder adds the cardNoMatchText button at the end.
+                        if (idx < adaptiveCard.actions.length - 1) {
+                            const suggestion = TopNAnswersData.answers[idx].questions[0];
+                            strictEqual(type, 'Action.Submit');
+                            strictEqual(value, suggestion);
+                        } else {
+                            // Assert cardNoMatchText param passed into constructor was used.
+                            strictEqual(type, 'Action.Submit');
+                            strictEqual(value, cardNoMatchText);
+                        }
+                    }
+                })
+                .startTest();
+        });
+
         it('should use suggestionsActivityFactory', async function () {
             const kbId = 'dummyKbId';
             const endpointKey = 'dummyEndpointKey';
@@ -455,12 +518,13 @@ describe('QnAMakerDialog', function () {
             const suggestionsCardTitle = 'Card Title';
             const cardNoMatchText = 'Not helpful.';
             const suggestionsList = TopNAnswersData.answers.reduce((list, ans) => list.concat(ans.questions), []);
+            const useTeamsAdaptiveCard = false;
             // Remove low scoring answer from QnA Maker result. Low scoring answers are filtered out by ActiveLearningUtils.
             suggestionsList.pop();
             sandbox
                 .mock(QnACardBuilder)
                 .expects('getSuggestionsCard')
-                .withExactArgs(suggestionsList, suggestionsCardTitle, cardNoMatchText)
+                .withExactArgs(suggestionsList, suggestionsCardTitle, cardNoMatchText, useTeamsAdaptiveCard)
                 .returns(undefined);
 
             const qnaDialog = new QnAMakerDialog(
@@ -472,6 +536,48 @@ describe('QnAMakerDialog', function () {
                 suggestionsCardTitle,
                 cardNoMatchText
             );
+
+            dm.rootDialog = qnaDialog;
+            const adapter = new TestAdapter((turnContext) => {
+                return dm.onTurn(turnContext);
+            });
+
+            await rejects(
+                adapter.send('QnaMaker_TopNAnswer.json').startTest(),
+                (thrown) => thrown.message.includes('invalid_type at message') && thrown.message.includes('Required')
+            );
+
+            sandbox.verify();
+        });
+
+        it('should error if QnACardBuilder.getSuggestionsCard returns void with useTeamsAdaptiveCard', async function () {
+            const kbId = 'dummyKbId';
+            const endpointKey = 'dummyEndpointKey';
+            const convoState = new ConversationState(new MemoryStorage());
+            const dm = new DialogManager();
+            dm.conversationState = convoState;
+            const suggestionsCardTitle = 'Card Title';
+            const cardNoMatchText = 'Not helpful.';
+            const suggestionsList = TopNAnswersData.answers.reduce((list, ans) => list.concat(ans.questions), []);
+            const useTeamsAdaptiveCard = true;
+            // Remove low scoring answer from QnA Maker result. Low scoring answers are filtered out by ActiveLearningUtils.
+            suggestionsList.pop();
+            sandbox
+                .mock(QnACardBuilder)
+                .expects('getSuggestionsCard')
+                .withExactArgs(suggestionsList, suggestionsCardTitle, cardNoMatchText, useTeamsAdaptiveCard)
+                .returns(undefined);
+
+            const qnaDialog = new QnAMakerDialog(
+                kbId,
+                endpointKey,
+                HOSTNAME,
+                undefined,
+                undefined,
+                suggestionsCardTitle,
+                cardNoMatchText
+            );
+            qnaDialog.useTeamsAdaptiveCard = true;
 
             dm.rootDialog = qnaDialog;
             const adapter = new TestAdapter((turnContext) => {
