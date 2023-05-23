@@ -429,7 +429,7 @@ export class QnACardBuilder {
     static getHeroCard(cardText: string, buttonList: any[]): Attachment;
     static getQnAAnswerCard(result: QnAMakerResult, displayPreciseAnswerOnly: boolean, useTeamsAdaptiveCard?: boolean): Partial<Activity>;
     static getQnAPromptsCard(result: QnAMakerResult): Partial<Activity>;
-    static getSuggestionsCard(suggestionsList: string[], cardTitle: string, cardNoMatchText: string): Partial<Activity>;
+    static getSuggestionsCard(suggestionsList: string[], cardTitle: string, cardNoMatchText: string, useTeamsAdaptiveCard?: boolean): Partial<Activity>;
     static getTeamsAdaptiveCard(cardText: string, buttonList: any[]): Attachment;
 }
 
