@@ -9,13 +9,15 @@
 import {
     ActivityHandler,
     AppBasedLinkQuery,
+    BotConfigAuth,
     ChannelInfo,
     Channels,
     ConfigResponse,
+    ConfigTaskResponse,
     FileConsentCardResponse,
     InvokeResponse,
-    MeetingStartEventDetails,
     MeetingEndEventDetails,
+    MeetingStartEventDetails,
     MessagingExtensionAction,
     MessagingExtensionActionResponse,
     MessagingExtensionQuery,
@@ -27,11 +29,11 @@ import {
     TabSubmit,
     TaskModuleRequest,
     TaskModuleResponse,
-    TeamsChannelData,
-    TeamsChannelAccount,
     TeamInfo,
-    TurnContext,
+    TeamsChannelAccount,
+    TeamsChannelData,
     tokenExchangeOperationName,
+    TurnContext,
     verifyStateOperationName,
 } from 'botbuilder-core';
 import { ReadReceiptInfo } from 'botframework-connector';
@@ -89,11 +91,11 @@ export class TeamsActivityHandler extends ActivityHandler {
                 switch (context.activity.name) {
                     case 'config/fetch':
                         return ActivityHandler.createInvokeResponse(
-                            this.handleTeamsBotConfigAuthFetch(context, context.activity.value)
+                            this.handleTeamsBotConfigFetch(context, context.activity.value)
                         );
                     case 'config/submit':
                         return ActivityHandler.createInvokeResponse(
-                            this.handleTeamsBotConfigAuthSubmit(context, context.activity.value)
+                            this.handleTeamsBotConfigSubmit(context, context.activity.value)
                         );
                     case 'fileConsent/invoke':
                         return ActivityHandler.createInvokeResponse(
@@ -209,7 +211,10 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param _configData The object representing the configuration.
      * @returns An Invoke Response for the activity.
      */
-    protected async handleTeamsBotConfigAuthFetch(_context: TurnContext, _configData: any): Promise<ConfigResponse> {
+    protected async handleTeamsBotConfigFetch(
+        _context: TurnContext,
+        _configData: any
+    ): Promise<ConfigResponse<BotConfigAuth>> {
         throw new Error('NotImplemented');
     }
 
@@ -220,7 +225,10 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param _configData The object representing the configuration.
      * @returns An Invoke Response for the activity.
      */
-    protected async handleTeamsBotConfigAuthSubmit(_context: TurnContext, _configData: any): Promise<ConfigResponse> {
+    protected async handleTeamsBotConfigSubmit(
+        _context: TurnContext,
+        _configData: any
+    ): Promise<ConfigResponse<ConfigTaskResponse>> {
         throw new Error('NotImplemented');
     }
 
