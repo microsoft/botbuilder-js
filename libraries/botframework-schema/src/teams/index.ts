@@ -59,7 +59,8 @@ export interface ConfigResponse<T> {
      */
     cacheInfo: CacheInfo;
     /**
-     * @member {config} [T] The response to a configuration message.
+     * @template T
+     * @member {T} [config] The response to a configuration message.
      */
     config: T;
     /**
