@@ -11,6 +11,7 @@ import {
     AppBasedLinkQuery,
     ChannelInfo,
     Channels,
+    ConfigResponse,
     FileConsentCardResponse,
     InvokeResponse,
     MeetingStartEventDetails,
@@ -86,6 +87,14 @@ export class TeamsActivityHandler extends ActivityHandler {
                 return await this.handleTeamsCardActionInvoke(context);
             } else {
                 switch (context.activity.name) {
+                    case 'config/fetch':
+                        return ActivityHandler.createInvokeResponse(
+                            this.handleTeamsBotConfigAuthFetch(context, context.activity.value)
+                        );
+                    case 'config/submit':
+                        return ActivityHandler.createInvokeResponse(
+                            this.handleTeamsBotConfigAuthSubmit(context, context.activity.value)
+                        );
                     case 'fileConsent/invoke':
                         return ActivityHandler.createInvokeResponse(
                             await this.handleTeamsFileConsent(context, context.activity.value)
@@ -190,6 +199,28 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @returns An Invoke Response for the activity.
      */
     protected async handleTeamsCardActionInvoke(_context: TurnContext): Promise<InvokeResponse> {
+        throw new Error('NotImplemented');
+    }
+
+    /**
+     * Handles a config/fetch invoke activity.
+     *
+     * @param _context A context object for this turn.
+     * @param _configData The object representing the configuration.
+     * @returns An Invoke Response for the activity.
+     */
+    protected async handleTeamsBotConfigAuthFetch(_context: TurnContext, _configData: any): Promise<ConfigResponse> {
+        throw new Error('NotImplemented');
+    }
+
+    /**
+     * Handles a config/submit invoke activity.
+     *
+     * @param _context A context object for this turn.
+     * @param _configData The object representing the configuration.
+     * @returns An Invoke Response for the activity.
+     */
+    protected async handleTeamsBotConfigAuthSubmit(_context: TurnContext, _configData: any): Promise<ConfigResponse> {
         throw new Error('NotImplemented');
     }
 
@@ -424,7 +455,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @remarks
      * Used in creating a Search-based Message Extension.
      * @param _context A context object for this turn.
-     * @param _query he object representing the query.
+     * @param _query The object representing the query.
      * @returns The Messaging Extension Response for the query.
      */
     protected async handleTeamsMessagingExtensionSelectItem(
