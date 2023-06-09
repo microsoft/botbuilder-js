@@ -5,16 +5,19 @@
 ```ts
 
 import { Activity } from 'botbuilder-core';
+import { AnonymousCredential } from '@azure/storage-blob';
 import { PagedResult } from 'botbuilder-core';
 import { Storage as Storage_2 } from 'botbuilder-core';
 import { StoragePipelineOptions } from '@azure/storage-blob';
+import { StorageSharedKeyCredential } from '@azure/storage-blob';
 import { StoreItems } from 'botbuilder-core';
+import { TokenCredential } from '@azure/core-http';
 import { TranscriptInfo } from 'botbuilder-core';
 import { TranscriptStore } from 'botbuilder-core';
 
 // @public
 export class BlobsStorage implements Storage_2 {
-    constructor(connectionString: string, containerName: string, options?: BlobsStorageOptions);
+    constructor(connectionString: string, containerName: string, options?: BlobsStorageOptions, url?: string, credential?: StorageSharedKeyCredential | AnonymousCredential | TokenCredential);
     delete(keys: string[]): Promise<void>;
     read(keys: string[]): Promise<StoreItems>;
     write(changes: StoreItems): Promise<void>;

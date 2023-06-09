@@ -4,10 +4,16 @@
 import * as z from 'zod';
 import getStream from 'get-stream';
 import pmap from 'p-map';
-import { ContainerClient, StoragePipelineOptions } from '@azure/storage-blob';
+import {
+    AnonymousCredential,
+    ContainerClient,
+    StoragePipelineOptions,
+    StorageSharedKeyCredential,
+} from '@azure/storage-blob';
 import { Storage, StoreItems } from 'botbuilder-core';
 import { ignoreError, isStatusCodeError } from './ignoreError';
 import { sanitizeBlobKey } from './sanitizeBlobKey';
+import { TokenCredential, isTokenCredential } from '@azure/core-http';
 
 /**
  * Optional settings for BlobsStorage
@@ -18,6 +24,12 @@ export interface BlobsStorageOptions {
      * storage client
      */
     storagePipelineOptions?: StoragePipelineOptions;
+}
+
+function isCredentialType(value: any): value is TokenCredential {
+    return (
+        isTokenCredential(value) || value instanceof StorageSharedKeyCredential || value instanceof AnonymousCredential
+    );
 }
 
 /**
@@ -34,18 +46,47 @@ export class BlobsStorage implements Storage {
      * @param {string} connectionString Azure Blob Storage connection string
      * @param {string} containerName Azure Blob Storage container name
      * @param {BlobsStorageOptions} options Other options for BlobsStorage
+     * @param {string} url Azure Blob Storage container url
+     * @param {StorageSharedKeyCredential | AnonymousCredential | TokenCredential} credential Azure credential to access the resource
      */
-    constructor(connectionString: string, containerName: string, options?: BlobsStorageOptions) {
-        z.object({ connectionString: z.string(), containerName: z.string() }).parse({
-            connectionString,
-            containerName,
-        });
+    constructor(
+        connectionString: string,
+        containerName: string,
+        options?: BlobsStorageOptions,
+        url = '',
+        credential?: StorageSharedKeyCredential | AnonymousCredential | TokenCredential
+    ) {
+        if (url != '' && credential != null) {
+            z.object({ url: z.string() }).parse({
+                url,
+            });
 
-        this._containerClient = new ContainerClient(connectionString, containerName, options?.storagePipelineOptions);
+            if (typeof credential != 'object' || !isCredentialType(credential)) {
+                throw new ReferenceError('Invalid credential type.');
+            }
 
-        // At most one promise at a time to be friendly to local emulator users
-        if (connectionString.trim() === 'UseDevelopmentStorage=true;') {
-            this._concurrency = 1;
+            this._containerClient = new ContainerClient(url, credential, options?.storagePipelineOptions);
+
+            // At most one promise at a time to be friendly to local emulator users
+            if (url.trim() === 'UseDevelopmentStorage=true;') {
+                this._concurrency = 1;
+            }
+        } else {
+            z.object({ connectionString: z.string(), containerName: z.string() }).parse({
+                connectionString,
+                containerName,
+            });
+
+            this._containerClient = new ContainerClient(
+                connectionString,
+                containerName,
+                options?.storagePipelineOptions
+            );
+
+            // At most one promise at a time to be friendly to local emulator users
+            if (connectionString.trim() === 'UseDevelopmentStorage=true;') {
+                this._concurrency = 1;
+            }
         }
     }
 
