@@ -724,6 +724,42 @@ describe('TeamsActivityHandler', function () {
     });
 
     describe('should send a NotImplemented status code if', function () {
+        it('handleTeamsBotConfigFetch is not overridden', async function () {
+            const bot = new TeamsActivityHandler();
+
+            const adapter = new TestAdapter(async (context) => {
+                await bot.run(context);
+            });
+
+            const taskSubmitActivity = createInvokeActivity('config/fetch');
+            await adapter
+                .send(taskSubmitActivity)
+                .assertReply((activity) => {
+                    assert.strictEqual(activity.type, 'invokeResponse');
+                    assert.strictEqual(activity.value.status, 501);
+                    assert.strictEqual(activity.value.body, undefined);
+                })
+                .startTest();
+        });
+
+        it('handleTeamsBotConfigSubmit is not overridden', async function () {
+            const bot = new TeamsActivityHandler();
+
+            const adapter = new TestAdapter(async (context) => {
+                await bot.run(context);
+            });
+
+            const taskSubmitActivity = createInvokeActivity('config/submit');
+            await adapter
+                .send(taskSubmitActivity)
+                .assertReply((activity) => {
+                    assert.strictEqual(activity.type, 'invokeResponse');
+                    assert.strictEqual(activity.value.status, 501);
+                    assert.strictEqual(activity.value.body, undefined);
+                })
+                .startTest();
+        });
+
         it('handleTeamsMessagingExtensionSubmitAction is not overridden', async function () {
             const bot = new TeamsActivityHandler();
 
