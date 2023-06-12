@@ -28,6 +28,8 @@
   },
   "dependencies": {
     "@azure/ms-rest-js": "^2.6.1",
+    "@azure/core-rest-pipeline": "^1.8.1",
+    "@azure/core-tracing": "^1.0.1",
     "axios": "^0.25.0",
     "botbuilder-core": "4.1.6",
     "botbuilder-stdlib": "4.1.6",

@@ -134,7 +134,7 @@ function getAppropriateReplyToId(source: Partial<Activity>): string | undefined 
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface TurnContext {}
+export interface TurnContext { }
 
 /**
  * Provides context for a turn of a bot.
@@ -327,7 +327,7 @@ export class TurnContext {
         isIncoming = false
     ): Partial<Activity> {
         activity.channelId = reference.channelId;
-        activity.locale = reference.locale;
+        activity.locale ??= reference.locale;
         activity.serviceUrl = reference.serviceUrl;
         activity.conversation = reference.conversation;
         if (isIncoming) {
