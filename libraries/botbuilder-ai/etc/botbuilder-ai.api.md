@@ -6,6 +6,7 @@
 
 import { Activity } from 'botbuilder-core';
 import { ArrayExpression } from 'adaptive-expressions';
+import { Attachment } from 'botbuilder-core';
 import { BoolExpression } from 'adaptive-expressions';
 import { BotComponent } from 'botbuilder-core';
 import { BotTelemetryClient } from 'botbuilder-core';
@@ -425,9 +426,11 @@ export interface OrdinalV2 {
 
 // @public
 export class QnACardBuilder {
-    static getQnAAnswerCard(result: QnAMakerResult, displayPreciseAnswerOnly: boolean): Partial<Activity>;
+    static getHeroCard(cardText: string, buttonList: any[]): Attachment;
+    static getQnAAnswerCard(result: QnAMakerResult, displayPreciseAnswerOnly: boolean, useTeamsAdaptiveCard?: boolean): Partial<Activity>;
     static getQnAPromptsCard(result: QnAMakerResult): Partial<Activity>;
-    static getSuggestionsCard(suggestionsList: string[], cardTitle: string, cardNoMatchText: string): Partial<Activity>;
+    static getSuggestionsCard(suggestionsList: string[], cardTitle: string, cardNoMatchText: string, useTeamsAdaptiveCard?: boolean): Partial<Activity>;
+    static getTeamsAdaptiveCard(cardText: string, buttonList: any[]): Attachment;
 }
 
 // @public
@@ -503,8 +506,8 @@ export class QnAMakerComponentRegistration extends ComponentRegistration {
 export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogConfiguration {
     // (undocumented)
     static $kind: string;
-    constructor(knowledgeBaseId?: string, endpointKey?: string, hostname?: string, noAnswer?: Activity, threshold?: number, activeLearningCardTitle?: string, cardNoMatchText?: string, top?: number, cardNoMatchResponse?: Activity, rankerType?: RankerTypes, strictFilters?: QnAMakerMetadata[], dialogId?: string, strictFiltersJoinOperator?: JoinOperator, enablePreciseAnswer?: boolean, displayPreciseAnswerOnly?: boolean, qnaServiceType?: ServiceType);
-    constructor(knowledgeBaseId?: string, endpointKey?: string, hostname?: string, noAnswer?: Activity, threshold?: number, suggestionsActivityFactory?: QnASuggestionsActivityFactory, cardNoMatchText?: string, top?: number, cardNoMatchResponse?: Activity, rankerType?: RankerTypes, strictFilters?: QnAMakerMetadata[], dialogId?: string, strictFiltersJoinOperator?: JoinOperator, enablePreciseAnswer?: boolean, displayPreciseAnswerOnly?: boolean, qnaServiceType?: ServiceType);
+    constructor(knowledgeBaseId?: string, endpointKey?: string, hostname?: string, noAnswer?: Activity, threshold?: number, activeLearningCardTitle?: string, cardNoMatchText?: string, top?: number, cardNoMatchResponse?: Activity, rankerType?: RankerTypes, strictFilters?: QnAMakerMetadata[], dialogId?: string, strictFiltersJoinOperator?: JoinOperator, enablePreciseAnswer?: boolean, displayPreciseAnswerOnly?: boolean, qnaServiceType?: ServiceType, useTeamsAdaptiveCard?: boolean);
+    constructor(knowledgeBaseId?: string, endpointKey?: string, hostname?: string, noAnswer?: Activity, threshold?: number, suggestionsActivityFactory?: QnASuggestionsActivityFactory, cardNoMatchText?: string, top?: number, cardNoMatchResponse?: Activity, rankerType?: RankerTypes, strictFilters?: QnAMakerMetadata[], dialogId?: string, strictFiltersJoinOperator?: JoinOperator, enablePreciseAnswer?: boolean, displayPreciseAnswerOnly?: boolean, qnaServiceType?: ServiceType, useTeamsAdaptiveCard?: boolean);
     activeLearningCardTitle: StringExpression;
     beginDialog(dc: DialogContext, options?: object): Promise<DialogTurnResult>;
     cardNoMatchResponse: TemplateInterface<Partial<Activity>, DialogStateManager>;
@@ -538,7 +541,8 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
     strictFiltersJoinOperator: JoinOperator;
     threshold: NumberExpression;
     top: IntExpression;
-    }
+    useTeamsAdaptiveCard: boolean;
+}
 
 // @public
 export interface QnAMakerDialogOptions {

@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
-
 const assert = require('assert');
 const { spy } = require('sinon');
 const { ok } = require('assert');
@@ -815,6 +814,85 @@ describe('OAuthPrompt', function () {
         });
     });
 
+    describe('OAuthPrompt sas url present in OAuthCard', function () {
+        const connectionName = 'myConnection';
+
+        it('TestAdapter with no sas url', async function () {
+            //Create new ConversationState with MemoryStorage
+            const convoState = new ConversationState(new MemoryStorage());
+            //Create a DialogState property, DialogSet and OAuthPrompt
+            const dialogState = convoState.createProperty('dialogState');
+            const dialogs = new DialogSet(dialogState);
+            dialogs.add(
+                new OAuthPrompt('OAuthPrompt', {
+                    connectionName,
+                    title: 'Sign in',
+                    timeout: 30000,
+                    text: 'Please sign in',
+                })
+            );
+
+            const adapter = new TestAdapter(async (turnContext) => {
+                const dc = await dialogs.createContext(turnContext);
+                const results = await dc.continueDialog();
+                if (results.status === DialogTurnStatus.empty) {
+                    await dc.prompt('OAuthPrompt', {});
+                }
+                await convoState.saveChanges(turnContext);
+            });
+
+            await adapter
+                .send('hello')
+                .assertReply((activity) => {
+                    assert.strictEqual(activity.attachments.length, 1);
+                    assert.strictEqual(activity.attachments[0].contentType, CardFactory.contentTypes.oauthCard);
+                    assert(activity.inputHint === InputHints.AcceptingInput);
+                    const oAuthCard = activity.attachments[0].content;
+                    assert(!oAuthCard.tokenPostResource);
+                    assert(oAuthCard.tokenExchangeResource);
+                })
+                .startTest();
+        });
+
+        it('SignInTestAdapter with sas url', async function () {
+            //Create new ConversationState with MemoryStorage
+            const convoState = new ConversationState(new MemoryStorage());
+            //Create a DialogState property, DialogSet and OAuthPrompt
+            const dialogState = convoState.createProperty('dialogState');
+            const dialogs = new DialogSet(dialogState);
+            dialogs.add(
+                new OAuthPrompt('OAuthPrompt', {
+                    connectionName,
+                    title: 'Sign in',
+                    timeout: 30000,
+                    text: 'Please sign in',
+                })
+            );
+
+            const adapter = new SignInTestAdapter(async (turnContext) => {
+                const dc = await dialogs.createContext(turnContext);
+                const results = await dc.continueDialog();
+                if (results.status === DialogTurnStatus.empty) {
+                    await dc.prompt('OAuthPrompt', {});
+                }
+                await convoState.saveChanges(turnContext);
+            });
+
+            await adapter
+                .send('hello')
+                .assertReply((activity) => {
+                    assert.strictEqual(activity.attachments.length, 1);
+                    assert.strictEqual(activity.attachments[0].contentType, CardFactory.contentTypes.oauthCard);
+                    assert(activity.inputHint === InputHints.AcceptingInput);
+                    const oAuthCard = activity.attachments[0].content;
+                    assert(oAuthCard.tokenPostResource);
+                    assert(oAuthCard.tokenPostResource.sasUrl);
+                    assert(oAuthCard.tokenExchangeResource);
+                })
+                .startTest();
+        });
+    });
+
     describe('Test Adapter should be able to exchange tokens for uri and token', function () {
         let adapter;
         const connectionName = 'myConnection';
@@ -1149,7 +1227,6 @@ async function testTimeout(
         )
     );
 
-    // Initialize TestAdapter.
     const adapter = new TestAdapter(async (turnContext) => {
         const dc = await dialogs.createContext(turnContext);
 
@@ -1195,4 +1272,38 @@ async function testTimeout(
         .send(oauthPromptActivity)
         .assertReply(noTokenResponse)
         .startTest();
+}
+/**
+ * Sign in test adapter used for unit tests. This adapter can be used to simulate sending messages from the
+ * user to the bot.
+ *
+ * @remarks
+ * The following example sets up the test adapter and then executes a simple test:
+ *
+ * ```JavaScript
+ * const { TestAdapter } = require('botbuilder');
+ *
+ * const adapter = new TestAdapter(async (context) => {
+ *      await context.sendActivity(`Hello World`);
+ * });
+ *
+ * adapter.test(`hi`, `Hello World`)
+ *        .then(() => done());
+ * ```
+ */
+class SignInTestAdapter extends TestAdapter {
+    /**
+     * Gets a sign-in resource.
+     *
+     * @param turnContext [TurnContext](xref:botbuilder-core.TurnContext) for the current turn of conversation with the user.
+     * @param connectionName Name of the auth connection to use.
+     * @param userId User ID
+     * @param finalRedirect Final redirect URL.
+     * @returns A `Promise` with a new [SignInUrlResponse](xref:botframework-schema.SignInUrlResponse) object.
+     */
+    async getSignInResource(turnContext, connectionName, userId, finalRedirect = null) {
+        const result = await super.getSignInResource(turnContext, connectionName, userId, finalRedirect);
+        result.tokenPostResource = { sasUrl: `https://www.fakesas.com/${connectionName}/${userId}` };
+        return result;
+    }
 }

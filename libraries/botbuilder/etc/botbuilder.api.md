@@ -40,6 +40,8 @@ import { InvokeResponse } from 'botbuilder-core';
 import { IReceiveRequest } from 'botframework-streaming';
 import { IStreamingTransportServer } from 'botframework-streaming';
 import { MeetingEndEventDetails } from 'botbuilder-core';
+import { MeetingNotification } from 'botbuilder-core';
+import { MeetingNotificationResponse } from 'botbuilder-core';
 import { MeetingStartEventDetails } from 'botbuilder-core';
 import { MessagingExtensionAction } from 'botbuilder-core';
 import { MessagingExtensionActionResponse } from 'botbuilder-core';
@@ -49,6 +51,7 @@ import { MicrosoftAppCredentials } from 'botframework-connector';
 import { Middleware } from 'botbuilder-core';
 import { NodeWebSocketFactoryBase } from 'botframework-streaming';
 import { O365ConnectorCardActionQuery } from 'botbuilder-core';
+import { OnBehalfOf } from 'botbuilder-core';
 import { PagedMembersResult } from 'botbuilder-core';
 import { PagedResult } from 'botbuilder-core';
 import { ReadReceiptInfo } from 'botframework-connector';
@@ -439,6 +442,9 @@ export function teamsGetTeamInfo(activity: Activity): TeamInfo | null;
 // @public
 export function teamsGetTeamMeetingInfo(activity: Activity): TeamsMeetingInfo | null;
 
+// @public (undocumented)
+export function teamsGetTeamOnBehalfOf(activity: Activity): OnBehalfOf[];
+
 // @public
 export function teamsGetTenant(activity: Activity): TenantInfo | null;
 
@@ -456,6 +462,7 @@ export class TeamsInfo {
     static getTeamMember(context: TurnContext, teamId?: string, userId?: string): Promise<TeamsChannelAccount>;
     // @deprecated
     static getTeamMembers(context: TurnContext, teamId?: string): Promise<TeamsChannelAccount[]>;
+    static sendMeetingNotification(context: TurnContext, notification: MeetingNotification, meetingId?: string): Promise<MeetingNotificationResponse>;
     static sendMessageToTeamsChannel(context: TurnContext, activity: Activity, teamsChannelId: string, botAppId?: string): Promise<[ConversationReference, string]>;
 }
 

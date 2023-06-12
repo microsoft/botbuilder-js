@@ -376,7 +376,8 @@ export class OAuthPrompt extends Dialog {
                 settings.title,
                 settings.text,
                 link,
-                signInResource.tokenExchangeResource
+                signInResource.tokenExchangeResource,
+                signInResource.tokenPostResource
             );
 
             // Set the appropriate ActionType for the button.

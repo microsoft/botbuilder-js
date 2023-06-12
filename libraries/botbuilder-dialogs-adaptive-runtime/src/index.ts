@@ -215,7 +215,14 @@ function addStorage(services: ServiceCollection, configuration: Configuration): 
                 });
             }
 
+            case 'Memory': {
+                return new MemoryStorage();
+            }
+
             default:
+                if (storage) {
+                    throw new TypeError('Invalid runtime.storage value');
+                }
                 return new MemoryStorage();
         }
     });
@@ -435,7 +442,7 @@ async function addSettingsBotComponents(services: ServiceCollection, configurati
             const botComponent = await loadBotComponent(name);
 
             botComponent.configureServices(services, configuration.bind([settingsPrefix ?? name]));
-        } catch (error) {
+        } catch (error: any) {
             loadErrors.push({ error, name });
         }
     }

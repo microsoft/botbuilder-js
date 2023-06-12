@@ -954,8 +954,50 @@ export interface MeetingInfo {
 }
 
 // @public
+export type MeetingNotification = TargetedMeetingNotification;
+
+// @public
+export interface MeetingNotificationBase<T> {
+    type: string;
+    value: T;
+}
+
+// @public
+export interface MeetingNotificationChannelData {
+    onBehalfOf?: OnBehalfOf[];
+}
+
+// @public
+export interface MeetingNotificationRecipientFailureInfo {
+    errorCode: string;
+    failureReason: string;
+    recipientMri: string;
+}
+
+// @public
+export interface MeetingNotificationResponse {
+    recipientsFailureInfo?: MeetingNotificationRecipientFailureInfo[];
+}
+
+// @public
+export interface MeetingStageSurface<T> {
+    content: T;
+    contentType: 'task';
+    surface: 'meetingStage';
+}
+
+// @public
 export interface MeetingStartEventDetails extends MeetingEventDetails {
     startTime: Date;
+}
+
+// @public
+export type MeetingSurface = MeetingStageSurface<any> | MeetingTabIconSurface;
+
+// @public
+export interface MeetingTabIconSurface {
+    surface: 'meetingTabIcon';
+    tabEntityId?: string;
 }
 
 // @public
@@ -1265,6 +1307,15 @@ export interface OAuthCard {
     connectionName: string;
     text: string;
     tokenExchangeResource: TokenExchangeResource;
+    tokenPostResource: TokenPostResource;
+}
+
+// @public
+export interface OnBehalfOf {
+    displayName?: string;
+    itemid: 0 | number;
+    mentionType: 'person' | string;
+    mri: string;
 }
 
 // @public
@@ -1509,6 +1560,7 @@ export interface SigninStateVerificationQuery {
 export interface SignInUrlResponse {
     signInLink?: string;
     tokenExchangeResource?: TokenExchangeResource;
+    tokenPostResource?: TokenPostResource;
 }
 
 // @public
@@ -1613,6 +1665,18 @@ export interface TabSuggestedActions {
 }
 
 // @public
+export interface TargetedMeetingNotification extends MeetingNotificationBase<TargetedMeetingNotificationValue> {
+    channelData?: MeetingNotificationChannelData;
+    type: 'targetedMeetingNotification';
+}
+
+// @public
+export interface TargetedMeetingNotificationValue {
+    recipients: string[];
+    surfaces: MeetingSurface[];
+}
+
+// @public
 export interface TaskModuleCardResponse extends TaskModuleResponseBase {
     value?: string;
 }
@@ -1700,6 +1764,7 @@ export interface TeamsChannelData {
     eventType?: string;
     meeting?: TeamsMeetingInfo;
     notification?: NotificationInfo;
+    onBehalfOf?: OnBehalfOf[];
     settings?: TeamsChannelDataSettings;
     team?: TeamInfo;
     tenant?: TenantInfo;
@@ -1807,6 +1872,11 @@ export type TokenExchangeState = {
     relatesTo: ConversationReference;
     msAppId: string;
 };
+
+// @public
+export interface TokenPostResource {
+    sasUrl?: string;
+}
 
 // @public
 export interface TokenRequest {

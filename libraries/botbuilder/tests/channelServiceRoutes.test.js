@@ -127,7 +127,7 @@ describe('channelServiceRoutes', function () {
                     service.handleSendToConversation = sandbox.stub().resolves(testResource);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processSendToConversation(req, res);
+                    channel.processSendToConversation(req, res, Function);
                 } catch (err) {
                     done(err);
                 }
@@ -136,13 +136,10 @@ describe('channelServiceRoutes', function () {
             it('should throw a handleSendToConversation error', function (done) {
                 try {
                     const resourceResponse = { error: 'handleSendToConversation error' };
-                    const res = new MockResponse(
-                        {
-                            statusCode: 200,
-                            body: resourceResponse,
-                        },
-                        done
-                    );
+                    const res = new MockResponse({
+                        statusCode: 200,
+                        body: resourceResponse,
+                    });
 
                     ChannelServiceRoutes.handleError = (err) => {
                         assert.deepStrictEqual(
@@ -156,7 +153,7 @@ describe('channelServiceRoutes', function () {
                     service.handleSendToConversation = sandbox.stub().rejects(resourceResponse);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processSendToConversation(req, res);
+                    channel.processSendToConversation(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -165,13 +162,10 @@ describe('channelServiceRoutes', function () {
             it('should throw a readActivity error', function (done) {
                 try {
                     const resourceResponse = { error: 'readActivity error' };
-                    const res = new MockResponse(
-                        {
-                            statusCode: 200,
-                            body: resourceResponse,
-                        },
-                        done
-                    );
+                    const res = new MockResponse({
+                        statusCode: 200,
+                        body: resourceResponse,
+                    });
 
                     ChannelServiceRoutes.handleError = (err) => {
                         assert.deepStrictEqual(
@@ -188,7 +182,7 @@ describe('channelServiceRoutes', function () {
                     readActivityStub.rejects(resourceResponse);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processSendToConversation(req, res);
+                    channel.processSendToConversation(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -210,7 +204,7 @@ describe('channelServiceRoutes', function () {
                     service.handleReplyToActivity = sandbox.stub().resolves(testResource);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processReplyToActivity(req, res);
+                    channel.processReplyToActivity(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -219,13 +213,10 @@ describe('channelServiceRoutes', function () {
             it('should throw a handleReplyToActivity error', function (done) {
                 try {
                     const resourceResponse = { error: 'handleReplyToActivity error' };
-                    const res = new MockResponse(
-                        {
-                            statusCode: 200,
-                            body: resourceResponse,
-                        },
-                        done
-                    );
+                    const res = new MockResponse({
+                        statusCode: 200,
+                        body: resourceResponse,
+                    });
 
                     ChannelServiceRoutes.handleError = (err) => {
                         assert.deepStrictEqual(
@@ -240,7 +231,7 @@ describe('channelServiceRoutes', function () {
                     service.handleReplyToActivity = sandbox.stub().rejects(resourceResponse);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processReplyToActivity(req, res);
+                    channel.processReplyToActivity(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -249,13 +240,10 @@ describe('channelServiceRoutes', function () {
             it('should throw a readActivity error', function (done) {
                 try {
                     const resourceResponse = { error: 'readActivity error' };
-                    const res = new MockResponse(
-                        {
-                            statusCode: 200,
-                            body: resourceResponse,
-                        },
-                        done
-                    );
+                    const res = new MockResponse({
+                        statusCode: 200,
+                        body: resourceResponse,
+                    });
 
                     ChannelServiceRoutes.handleError = (err) => {
                         assert.deepStrictEqual(
@@ -272,7 +260,7 @@ describe('channelServiceRoutes', function () {
                     readActivityStub.rejects(resourceResponse);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processReplyToActivity(req, res);
+                    channel.processReplyToActivity(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -294,7 +282,7 @@ describe('channelServiceRoutes', function () {
                     service.handleUpdateActivity = sandbox.stub().resolves(testResource);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processUpdateActivity(req, res);
+                    channel.processUpdateActivity(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -303,13 +291,10 @@ describe('channelServiceRoutes', function () {
             it('should throw a handleUpdateActivity error', function (done) {
                 try {
                     const resourceResponse = { error: 'handleUpdateActivity error' };
-                    const res = new MockResponse(
-                        {
-                            statusCode: 200,
-                            body: resourceResponse,
-                        },
-                        done
-                    );
+                    const res = new MockResponse({
+                        statusCode: 200,
+                        body: resourceResponse,
+                    });
 
                     ChannelServiceRoutes.handleError = (err) => {
                         assert.deepStrictEqual(
@@ -324,7 +309,7 @@ describe('channelServiceRoutes', function () {
                     service.handleUpdateActivity = sandbox.stub().rejects(resourceResponse);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processUpdateActivity(req, res);
+                    channel.processUpdateActivity(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -333,13 +318,10 @@ describe('channelServiceRoutes', function () {
             it('should throw a readActivity error', function (done) {
                 try {
                     const resourceResponse = { error: 'readActivity error' };
-                    const res = new MockResponse(
-                        {
-                            statusCode: 200,
-                            body: resourceResponse,
-                        },
-                        done
-                    );
+                    const res = new MockResponse({
+                        statusCode: 200,
+                        body: resourceResponse,
+                    });
 
                     ChannelServiceRoutes.handleError = (err) => {
                         assert.deepStrictEqual(
@@ -356,7 +338,7 @@ describe('channelServiceRoutes', function () {
                     readActivityStub.rejects(resourceResponse);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processUpdateActivity(req, res);
+                    channel.processUpdateActivity(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -378,7 +360,7 @@ describe('channelServiceRoutes', function () {
                     service.handleDeleteActivity = sandbox.stub().resolves();
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processDeleteActivity(req, res);
+                    channel.processDeleteActivity(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -387,13 +369,10 @@ describe('channelServiceRoutes', function () {
             it('should throw a handleDeleteActivity error', function (done) {
                 try {
                     const resourceResponse = { error: 'handleDeleteActivity error' };
-                    const res = new MockResponse(
-                        {
-                            statusCode: 200,
-                            body: resourceResponse,
-                        },
-                        done
-                    );
+                    const res = new MockResponse({
+                        statusCode: 200,
+                        body: resourceResponse,
+                    });
 
                     ChannelServiceRoutes.handleError = (err) => {
                         assert.deepStrictEqual(
@@ -408,7 +387,7 @@ describe('channelServiceRoutes', function () {
                     service.handleDeleteActivity = sandbox.stub().rejects(resourceResponse);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processDeleteActivity(req, res);
+                    channel.processDeleteActivity(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -430,7 +409,7 @@ describe('channelServiceRoutes', function () {
                     service.handleGetActivityMembers = sandbox.stub().resolves(testResource);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processGetActivityMembers(req, res);
+                    channel.processGetActivityMembers(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -439,13 +418,10 @@ describe('channelServiceRoutes', function () {
             it('should throw a handleGetActivityMembers error', function (done) {
                 try {
                     const resourceResponse = { error: 'handleGetActivityMembers error' };
-                    const res = new MockResponse(
-                        {
-                            statusCode: 200,
-                            body: resourceResponse,
-                        },
-                        done
-                    );
+                    const res = new MockResponse({
+                        statusCode: 200,
+                        body: resourceResponse,
+                    });
 
                     ChannelServiceRoutes.handleError = (err) => {
                         assert.deepStrictEqual(
@@ -460,7 +436,7 @@ describe('channelServiceRoutes', function () {
                     service.handleGetActivityMembers = sandbox.stub().rejects(resourceResponse);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processGetActivityMembers(req, res);
+                    channel.processGetActivityMembers(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -482,7 +458,7 @@ describe('channelServiceRoutes', function () {
                     service.handleCreateConversation = sandbox.stub().resolves(testResource);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processCreateConversation(req, res);
+                    channel.processCreateConversation(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -491,13 +467,10 @@ describe('channelServiceRoutes', function () {
             it('should throw a handleCreateConversation error', function (done) {
                 try {
                     const resourceResponse = { error: 'handleCreateConversation error' };
-                    const res = new MockResponse(
-                        {
-                            statusCode: 200,
-                            body: resourceResponse,
-                        },
-                        done
-                    );
+                    const res = new MockResponse({
+                        statusCode: 200,
+                        body: resourceResponse,
+                    });
 
                     ChannelServiceRoutes.handleError = (err) => {
                         assert.deepStrictEqual(
@@ -512,7 +485,7 @@ describe('channelServiceRoutes', function () {
                     service.handleCreateConversation = sandbox.stub().rejects(resourceResponse);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processCreateConversation(req, res);
+                    channel.processCreateConversation(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -534,7 +507,7 @@ describe('channelServiceRoutes', function () {
                     service.handleGetConversations = sandbox.stub().resolves(testResource);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processGetConversations(req, res);
+                    channel.processGetConversations(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -543,13 +516,10 @@ describe('channelServiceRoutes', function () {
             it('should throw a handleGetConversations error', function (done) {
                 try {
                     const resourceResponse = { error: 'handleGetConversations error' };
-                    const res = new MockResponse(
-                        {
-                            statusCode: 200,
-                            body: resourceResponse,
-                        },
-                        done
-                    );
+                    const res = new MockResponse({
+                        statusCode: 200,
+                        body: resourceResponse,
+                    });
 
                     ChannelServiceRoutes.handleError = (err) => {
                         assert.deepStrictEqual(
@@ -564,7 +534,7 @@ describe('channelServiceRoutes', function () {
                     service.handleGetConversations = sandbox.stub().rejects(resourceResponse);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processGetConversations(req, res);
+                    channel.processGetConversations(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -586,7 +556,7 @@ describe('channelServiceRoutes', function () {
                     service.handleGetConversationMembers = sandbox.stub().resolves(testResource);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processGetConversationMembers(req, res);
+                    channel.processGetConversationMembers(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -595,13 +565,10 @@ describe('channelServiceRoutes', function () {
             it('should throw a handleGetConversationMembers error', function (done) {
                 try {
                     const resourceResponse = { error: 'handleGetConversationMembers error' };
-                    const res = new MockResponse(
-                        {
-                            statusCode: 200,
-                            body: resourceResponse,
-                        },
-                        done
-                    );
+                    const res = new MockResponse({
+                        statusCode: 200,
+                        body: resourceResponse,
+                    });
 
                     ChannelServiceRoutes.handleError = (err) => {
                         assert.deepStrictEqual(
@@ -616,7 +583,7 @@ describe('channelServiceRoutes', function () {
                     service.handleGetConversationMembers = sandbox.stub().rejects(resourceResponse);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processGetConversationMembers(req, res);
+                    channel.processGetConversationMembers(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -638,7 +605,7 @@ describe('channelServiceRoutes', function () {
                     service.handleGetConversationPagedMembers = sandbox.stub().resolves(testResource);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processGetConversationPagedMembers(req, res);
+                    channel.processGetConversationPagedMembers(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -647,13 +614,10 @@ describe('channelServiceRoutes', function () {
             it('should throw a handleGetConversationPagedMembers error', function (done) {
                 try {
                     const resourceResponse = { error: 'handleGetConversationPagedMembers error' };
-                    const res = new MockResponse(
-                        {
-                            statusCode: 200,
-                            body: resourceResponse,
-                        },
-                        done
-                    );
+                    const res = new MockResponse({
+                        statusCode: 200,
+                        body: resourceResponse,
+                    });
 
                     ChannelServiceRoutes.handleError = (err) => {
                         assert.deepStrictEqual(
@@ -668,7 +632,7 @@ describe('channelServiceRoutes', function () {
                     service.handleGetConversationPagedMembers = sandbox.stub().rejects(resourceResponse);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processGetConversationPagedMembers(req, res);
+                    channel.processGetConversationPagedMembers(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -690,7 +654,7 @@ describe('channelServiceRoutes', function () {
                     service.handleDeleteConversationMember = sandbox.stub().resolves(testResource);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processDeleteConversationMember(req, res);
+                    channel.processDeleteConversationMember(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -699,13 +663,10 @@ describe('channelServiceRoutes', function () {
             it('should throw a handleDeleteConversationMember error', function (done) {
                 try {
                     const resourceResponse = { error: 'handleDeleteConversationMember error' };
-                    const res = new MockResponse(
-                        {
-                            statusCode: 200,
-                            body: resourceResponse,
-                        },
-                        done
-                    );
+                    const res = new MockResponse({
+                        statusCode: 200,
+                        body: resourceResponse,
+                    });
 
                     ChannelServiceRoutes.handleError = (err) => {
                         assert.deepStrictEqual(
@@ -720,7 +681,7 @@ describe('channelServiceRoutes', function () {
                     service.handleDeleteConversationMember = sandbox.stub().rejects(resourceResponse);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processDeleteConversationMember(req, res);
+                    channel.processDeleteConversationMember(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -742,7 +703,7 @@ describe('channelServiceRoutes', function () {
                     service.handleSendConversationHistory = sandbox.stub().resolves(testResource);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processSendConversationHistory(req, res);
+                    channel.processSendConversationHistory(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -751,13 +712,10 @@ describe('channelServiceRoutes', function () {
             it('should throw a handleSendConversationHistory error', function (done) {
                 try {
                     const resourceResponse = { error: 'handleSendConversationHistory error' };
-                    const res = new MockResponse(
-                        {
-                            statusCode: 200,
-                            body: resourceResponse,
-                        },
-                        done
-                    );
+                    const res = new MockResponse({
+                        statusCode: 200,
+                        body: resourceResponse,
+                    });
 
                     ChannelServiceRoutes.handleError = (err) => {
                         assert.deepStrictEqual(
@@ -772,7 +730,7 @@ describe('channelServiceRoutes', function () {
                     service.handleSendConversationHistory = sandbox.stub().rejects(resourceResponse);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processSendConversationHistory(req, res);
+                    channel.processSendConversationHistory(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -781,13 +739,10 @@ describe('channelServiceRoutes', function () {
             it('should throw a readBody error', function (done) {
                 try {
                     const resourceResponse = { error: 'readBody error' };
-                    const res = new MockResponse(
-                        {
-                            statusCode: 200,
-                            body: resourceResponse,
-                        },
-                        done
-                    );
+                    const res = new MockResponse({
+                        statusCode: 200,
+                        body: resourceResponse,
+                    });
 
                     ChannelServiceRoutes.handleError = (err) => {
                         assert.deepStrictEqual(
@@ -804,7 +759,7 @@ describe('channelServiceRoutes', function () {
                     readBodyStub.rejects(resourceResponse);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processSendConversationHistory(req, res);
+                    channel.processSendConversationHistory(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -826,7 +781,7 @@ describe('channelServiceRoutes', function () {
                     service.handleUploadAttachment = sandbox.stub().resolves(testResource);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processUploadAttachment(req, res);
+                    channel.processUploadAttachment(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -835,13 +790,10 @@ describe('channelServiceRoutes', function () {
             it('should throw a handleUploadAttachment error', function (done) {
                 try {
                     const resourceResponse = { error: 'handleUploadAttachment error' };
-                    const res = new MockResponse(
-                        {
-                            statusCode: 200,
-                            body: resourceResponse,
-                        },
-                        done
-                    );
+                    const res = new MockResponse({
+                        statusCode: 200,
+                        body: resourceResponse,
+                    });
 
                     ChannelServiceRoutes.handleError = (err) => {
                         assert.deepStrictEqual(
@@ -856,7 +808,7 @@ describe('channelServiceRoutes', function () {
                     service.handleUploadAttachment = sandbox.stub().rejects(resourceResponse);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processUploadAttachment(req, res);
+                    channel.processUploadAttachment(req, res, Function);
                 } catch (error) {
                     done(error);
                 }
@@ -865,13 +817,10 @@ describe('channelServiceRoutes', function () {
             it('should throw a readBody error', function (done) {
                 try {
                     const resourceResponse = { error: 'readBody error' };
-                    const res = new MockResponse(
-                        {
-                            statusCode: 200,
-                            body: resourceResponse,
-                        },
-                        done
-                    );
+                    const res = new MockResponse({
+                        statusCode: 200,
+                        body: resourceResponse,
+                    });
 
                     ChannelServiceRoutes.handleError = (err) => {
                         assert.deepStrictEqual(
@@ -888,7 +837,7 @@ describe('channelServiceRoutes', function () {
                     readBodyStub.rejects(resourceResponse);
 
                     const channel = new ChannelServiceRoutes(service);
-                    channel.processUploadAttachment(req, res);
+                    channel.processUploadAttachment(req, res, Function);
                 } catch (error) {
                     done(error);
                 }

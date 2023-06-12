@@ -138,6 +138,7 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
             const invokeResponse = await this.processActivity(authHeader, activity, logic);
             return end(invokeResponse?.status ?? StatusCodes.OK, invokeResponse?.body);
         } catch (err) {
+            console.error(err);
             return end(
                 err instanceof AuthenticationError ? StatusCodes.UNAUTHORIZED : StatusCodes.INTERNAL_SERVER_ERROR,
                 err.message ?? err

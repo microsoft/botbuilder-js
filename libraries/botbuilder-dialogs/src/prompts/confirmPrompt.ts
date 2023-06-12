@@ -147,7 +147,7 @@ export class ConfirmPrompt extends Prompt<boolean> {
             return result;
         }
         const culture = this.determineCulture(context.activity);
-        const results = Recognizers.recognizeBoolean(utterance, culture);
+        const results = Recognizers.recognizeBoolean(utterance, _options.recognizeLanguage ?? culture);
         if (results.length > 0 && results[0].resolution) {
             result.succeeded = true;
             result.value = results[0].resolution.value;

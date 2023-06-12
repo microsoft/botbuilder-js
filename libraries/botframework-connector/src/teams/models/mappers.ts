@@ -434,6 +434,141 @@ export const TeamsMeetingDetails: msRest.CompositeMapper = {
     },
 };
 
+export const MeetingNotification: msRest.CompositeMapper = {
+    serializedName: 'MeetingNotification',
+    type: {
+        name: 'Composite',
+        className: 'MeetingNotification',
+        modelProperties: {
+            type: {
+                serializedName: 'type',
+                type: {
+                    name: 'String',
+                },
+            },
+            value: {
+                serializedName: 'value',
+                type: {
+                    name: 'any',
+                },
+            },
+            channelData: {
+                serializedName: 'channelData',
+                type: {
+                    name: 'Composite',
+                    className: 'MeetingNotificationChannelData',
+                },
+            },
+        },
+    },
+};
+
+export const MeetingNotificationChannelData = {
+    serializedName: 'MeetingNotificationChannelData',
+    type: {
+        name: 'Composite',
+        className: 'MeetingNotificationChannelData',
+        modelProperties: {
+            onBehalfOf: {
+                serializedName: 'onBehalfOf',
+                type: {
+                    name: 'Sequence',
+                    element: {
+                        type: {
+                            name: 'Composite',
+                            className: 'OnBehalfOf',
+                        },
+                    },
+                },
+            },
+        },
+    },
+};
+
+export const OnBehalfOf: msRest.CompositeMapper = {
+    serializedName: 'OnBehalfOf',
+    type: {
+        name: 'Composite',
+        className: 'OnBehalfOf',
+        modelProperties: {
+            itemid: {
+                serializedName: 'itemid',
+                type: {
+                    name: 'Number',
+                },
+            },
+            mentionType: {
+                serializedName: 'mentionType',
+                type: {
+                    name: 'String',
+                },
+            },
+            mri: {
+                serializedName: 'mri',
+                type: {
+                    name: 'String',
+                },
+            },
+            displayName: {
+                serializedName: 'displayName',
+                type: {
+                    name: 'String',
+                },
+            },
+        },
+    },
+};
+
+export const MeetingNotificationRecipientFailureInfo: msRest.CompositeMapper = {
+    serializedName: 'MeetingNotificationRecipientFailureInfo',
+    type: {
+        name: 'Composite',
+        className: 'MeetingNotificationRecipientFailureInfo',
+        modelProperties: {
+            recipientMri: {
+                serializedName: 'recipientMri',
+                type: {
+                    name: 'String',
+                },
+            },
+            failureReason: {
+                serializedName: 'failureReason',
+                type: {
+                    name: 'String',
+                },
+            },
+            errorCode: {
+                serializedName: 'errorCode',
+                type: {
+                    name: 'String',
+                },
+            },
+        },
+    },
+};
+
+export const MeetingNotificationResponse: msRest.CompositeMapper = {
+    serializedName: 'MeetingNotificationResponse',
+    type: {
+        name: 'Composite',
+        className: 'MeetingNotificationResponse',
+        modelProperties: {
+            recipientsFailureInfo: {
+                serializedName: 'recipientsFailureInfo',
+                type: {
+                    name: 'Sequence',
+                    element: {
+                        type: {
+                            name: 'Composite',
+                            className: 'MeetingNotificationRecipientFailureInfo',
+                        },
+                    },
+                },
+            },
+        },
+    },
+};
+
 export const CardAction: msRest.CompositeMapper = {
     serializedName: 'CardAction',
     type: {

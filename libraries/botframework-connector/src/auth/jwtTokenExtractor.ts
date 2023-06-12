@@ -196,6 +196,10 @@ export class JwtTokenExtractor {
             // from a validated JWT (see `verify` above), so no harm in doing so.
             return new ClaimsIdentity(claims, true);
         } catch (err) {
+            if (err.name === 'TokenExpiredError') {
+                console.error(err);
+                throw new AuthenticationError('The token has expired', StatusCodes.UNAUTHORIZED);
+            }
             console.error(`Error finding key for token. Available keys: ${metadata.key}`);
             throw err;
         }

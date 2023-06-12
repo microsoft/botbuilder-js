@@ -22,6 +22,8 @@ import {
     TeamsMeetingParticipant,
     TeamsMeetingInfo,
     Channels,
+    MeetingNotification,
+    MeetingNotificationResponse,
 } from 'botbuilder-core';
 import { ConnectorClient, TeamsConnectorClient, TeamsConnectorModels } from 'botframework-connector';
 
@@ -331,6 +333,35 @@ export class TeamsInfo {
             throw new Error('This method is only valid within the scope of a MS Teams Team.');
         }
         return await this.getMemberInternal(this.getConnectorClient(context), t, userId);
+    }
+
+    /**
+     * Sends a meeting notification to specific users in a Teams meeting.
+     *
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
+     * @param notification The meeting notification payload.
+     * @param meetingId Id of the Teams meeting.
+     * @returns Promise with either an empty object if notifications were successfully sent to all recipients or
+     * [MeetingNotificationResponse](xref:botframework-schema.MeetingNotificationResponse) if notifications
+     * were sent to some but not all recipients.
+     */
+    static async sendMeetingNotification(
+        context: TurnContext,
+        notification: MeetingNotification,
+        meetingId?: string
+    ): Promise<MeetingNotificationResponse> {
+        const activity = context.activity;
+
+        if (meetingId == null) {
+            const meeting = teamsGetTeamMeetingInfo(activity);
+            meetingId = meeting?.id;
+        }
+
+        if (!meetingId) {
+            throw new Error('meetingId is required.');
+        }
+
+        return await this.getTeamsConnectorClient(context).teams.sendMeetingNotification(meetingId, notification);
     }
 
     /**

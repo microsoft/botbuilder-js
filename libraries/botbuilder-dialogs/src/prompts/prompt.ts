@@ -75,6 +75,11 @@ export interface PromptOptions {
      * (Optional) Additional validation rules to pass the prompts validator routine.
      */
     validations?: object;
+
+    /**
+     * The locale to be use for recognizing the utterance.
+     */
+    recognizeLanguage?: string;
 }
 
 /**

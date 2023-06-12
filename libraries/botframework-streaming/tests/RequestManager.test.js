@@ -1,9 +1,11 @@
 const { RequestManager } = require('../lib/payloads');
 const { expect } = require('chai');
+const { expectEventually } = require('./helpers');
+
 const REQUEST_ID = '123';
 
 describe('RequestManager', function () {
-    it('RequestManager starts empty', function () {
+    it('starts empty', function () {
         const rm = new RequestManager();
 
         const count = rm.pendingRequestCount();
@@ -27,11 +29,12 @@ describe('RequestManager', function () {
         expect(result).to.equal(false);
     });
 
-    it('RequestManager end to end success', async function () {
+    it('end to end success', async function () {
         const rm = new RequestManager();
         const requestId = '123';
 
         const promise = rm.getResponse(requestId, undefined);
+        expect(rm.pendingRequestCount()).to.equal(1);
 
         const result = await rm.signalResponse(requestId, undefined);
         expect(result).to.equal(true);
@@ -40,5 +43,32 @@ describe('RequestManager', function () {
 
         expect(receiveResponse).to.equal(undefined);
         expect(rm.pendingRequestCount()).to.equal(0);
+    });
+
+    describe('rejectAllResponses() is called', function () {
+        let rm;
+        let promise1;
+        let promise2;
+
+        this.beforeEach(function () {
+            rm = new RequestManager();
+            promise1 = rm.getResponse('1', undefined);
+            promise2 = rm.getResponse('2', undefined);
+
+            rm.rejectAllResponses('disconnected');
+        });
+
+        it('should reject all requests', async function () {
+            (await expectEventually(promise1)).to.throw('disconnected');
+            (await expectEventually(promise2)).to.throw('disconnected');
+        });
+
+        it('should have no pending requests', function () {
+            expect(rm.pendingRequestCount()).to.equal(0);
+
+            // Catching rejection to prevent Node.js reporting UnhandledPromiseRejection.
+            promise1.catch(() => {});
+            promise2.catch(() => {});
+        });
     });
 });

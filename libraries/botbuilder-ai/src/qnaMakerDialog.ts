@@ -128,6 +128,7 @@ export interface QnAMakerDialogConfiguration extends DialogConfiguration {
     displayPreciseAnswerOnly?: boolean;
     strictFiltersJoinOperator?: JoinOperator;
     includeUnstructuredSources?: boolean;
+    useTeamsAdaptiveCard?: boolean;
 }
 
 /**
@@ -319,6 +320,11 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
      */
     includeUnstructuredSources = true;
 
+    /**
+     * Gets or sets a value indicating whether to use a Teams-formatted Adaptive Card in responses instead of a generic Hero Card.
+     */
+    useTeamsAdaptiveCard = false;
+
     // TODO: Add Expressions support
     private suggestionsActivityFactory?: QnASuggestionsActivityFactory;
 
@@ -339,6 +345,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
      * @param {QnAMakerMetadata[]} strictFilters (Optional) QnA Maker metadata with which to filter or boost queries to the knowledge base; or null to apply none.
      * @param {string} dialogId (Optional) Id of the created dialog. Default is 'QnAMakerDialog'.
      * @param {string} strictFiltersJoinOperator join operator for strict filters
+     * @param {string} useTeamsAdaptiveCard boolean setting for using Teams Adaptive Cards instead of Hero Cards
      */
     constructor(
         knowledgeBaseId?: string,
@@ -356,7 +363,8 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         strictFiltersJoinOperator?: JoinOperator,
         enablePreciseAnswer?: boolean,
         displayPreciseAnswerOnly?: boolean,
-        qnaServiceType?: ServiceType
+        qnaServiceType?: ServiceType,
+        useTeamsAdaptiveCard?: boolean
     );
 
     /**
@@ -374,6 +382,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
      * @param {QnAMakerMetadata[]} strictFilters (Optional) QnA Maker metadata with which to filter or boost queries to the knowledge base; or null to apply none.
      * @param {string} dialogId (Optional) Id of the created dialog. Default is 'QnAMakerDialog'.
      * @param {string} strictFiltersJoinOperator join operator for strict filters
+     * @param {string} useTeamsAdaptiveCard boolean setting for using Teams Adaptive Cards instead of Hero Cards
      */
     constructor(
         knowledgeBaseId?: string,
@@ -391,7 +400,8 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         strictFiltersJoinOperator?: JoinOperator,
         enablePreciseAnswer?: boolean,
         displayPreciseAnswerOnly?: boolean,
-        qnaServiceType?: ServiceType
+        qnaServiceType?: ServiceType,
+        useTeamsAdaptiveCard?: boolean
     );
 
     /**
@@ -415,7 +425,8 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         strictFiltersJoinOperator?: JoinOperator,
         enablePreciseAnswer?: boolean,
         displayPreciseAnswerOnly?: boolean,
-        qnaServiceType?: ServiceType
+        qnaServiceType?: ServiceType,
+        useTeamsAdaptiveCard?: boolean
     ) {
         super(dialogId);
         if (knowledgeBaseId) {
@@ -481,6 +492,10 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
             this.rankerType = new EnumExpression(rankerType);
         }
         this.qnaServiceType = qnaServiceType;
+
+        if (useTeamsAdaptiveCard) {
+            this.useTeamsAdaptiveCard = useTeamsAdaptiveCard;
+        }
 
         this.addStep(this.callGenerateAnswer.bind(this));
         this.addStep(this.callTrain.bind(this));
@@ -735,13 +750,21 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         if (response?.length > 0) {
             const activity = dialogOptions.qnaDialogResponseOptions.noAnswer;
             if (response[0].id !== -1) {
-                const message = QnACardBuilder.getQnAAnswerCard(response[0], this.displayPreciseAnswerOnly);
+                const message = QnACardBuilder.getQnAAnswerCard(
+                    response[0],
+                    this.displayPreciseAnswerOnly,
+                    this.useTeamsAdaptiveCard
+                );
                 await step.context.sendActivity(message);
             } else {
                 if (activity && activity.text) {
                     await step.context.sendActivity(activity);
                 } else {
-                    const message = QnACardBuilder.getQnAAnswerCard(response[0], this.displayPreciseAnswerOnly);
+                    const message = QnACardBuilder.getQnAAnswerCard(
+                        response[0],
+                        this.displayPreciseAnswerOnly,
+                        this.useTeamsAdaptiveCard
+                    );
                     await step.context.sendActivity(message);
                 }
             }
@@ -839,7 +862,8 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
                         QnACardBuilder.getSuggestionsCard(
                             suggestedQuestions,
                             dialogOptions.qnaDialogResponseOptions.activeLearningCardTitle,
-                            dialogOptions.qnaDialogResponseOptions.cardNoMatchText
+                            dialogOptions.qnaDialogResponseOptions.cardNoMatchText,
+                            this.useTeamsAdaptiveCard
                         );
 
                     z.record(z.unknown()).parse(message, { path: ['message'] });
@@ -930,7 +954,11 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
                 step.activeDialog.state[this.qnAContextData] = previousContextData;
                 step.activeDialog.state[this.previousQnAId] = answer.id;
                 step.activeDialog.state[this.options] = dialogOptions;
-                const message = QnACardBuilder.getQnAAnswerCard(answer, this.displayPreciseAnswerOnly);
+                const message = QnACardBuilder.getQnAAnswerCard(
+                    answer,
+                    this.displayPreciseAnswerOnly,
+                    this.useTeamsAdaptiveCard
+                );
                 await step.context.sendActivity(message);
                 return Dialog.EndOfTurn;
             }

@@ -79,4 +79,9 @@ export class TelemetryConstants {
      * The telemetry property value for activity type.
      */
     static readonly activityTypeProperty: string = 'type';
+
+    /**
+     * The telemetry property value for activity id.
+     */
+    static readonly activityIdProperty: string = 'activityId';
 }

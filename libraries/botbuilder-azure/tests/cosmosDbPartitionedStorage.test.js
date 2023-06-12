@@ -146,12 +146,12 @@ describe('CosmosDbPartitionedStorage - Constructor Tests', function () {
         );
     });
 
-    it('throws when no authKey provided', function () {
+    it('throws when no authKey or tokenCredential provided', function () {
         const noAuthKey = getSettings();
         noAuthKey.authKey = null;
         assert.throws(
             () => new CosmosDbPartitionedStorage(noAuthKey),
-            ReferenceError('authKey for CosmosDB is required.')
+            ReferenceError('authKey or tokenCredential for CosmosDB is required.')
         );
     });
 
