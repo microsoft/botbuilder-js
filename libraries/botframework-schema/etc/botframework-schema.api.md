@@ -368,6 +368,15 @@ export interface BasicCard {
 }
 
 // @public
+export interface BotConfigAuth {
+    suggestedActions?: SuggestedActions;
+    type: 'auth';
+}
+
+// @public
+export type BotConfigAuthType = 'auth' | 'task';
+
+// @public
 export type BotMessagePreviewActionType = 'edit' | 'send';
 
 // @public
@@ -482,6 +491,21 @@ export interface CommandResultValue<T = unknown> {
 export interface CommandValue<T = unknown> {
     commandId: string;
     data?: T;
+}
+
+// @public (undocumented)
+export interface ConfigAuthResponse extends ConfigResponse<BotConfigAuth> {
+}
+
+// @public
+export interface ConfigResponse<T> {
+    cacheInfo: CacheInfo;
+    config: T;
+    responseType: string;
+}
+
+// @public (undocumented)
+export interface ConfigTaskResponse extends ConfigResponse<TaskModuleResponse> {
 }
 
 // @public
