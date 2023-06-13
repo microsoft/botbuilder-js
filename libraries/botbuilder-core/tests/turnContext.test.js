@@ -305,7 +305,7 @@ describe('TurnContext', function () {
         });
     });
 
-    it.only('should round trip a conversation reference using getConversationReference() and applyConversationRefernce().', function () {
+    it('should round trip a conversation reference using getConversationReference() and applyConversationRefernce().', function () {
         // Convert to reference
         const testMessageWithLocale = JSON.parse(JSON.stringify(testMessage));
         testMessageWithLocale.locale = 'en_uS'; // Intentionally oddly-cased to check that it isn't defaulted somewhere, but tests stay in English
@@ -337,14 +337,21 @@ describe('TurnContext', function () {
         assert(activity.recipient.id === reference.user.id, "activity recipient.id doesn't match user.id");
 
         // Round trip back to incoming activity
-        const activity2 = TurnContext.applyConversationReference({ text: 'foo', type: 'message', locale: "es-ES" }, reference, true);
+        const activity2 = TurnContext.applyConversationReference(
+            { text: 'foo', type: 'message', locale: 'es-ES' },
+            reference,
+            true
+        );
         assert(activity2.id, 'activity2 missing id');
         assert(activity2.from, 'activity2 missing from');
         assert(activity2.from.id === reference.user.id, "activity2 from.id doesn't match user.id");
         assert(activity2.recipient, 'activity2 missing recipient');
         assert(activity2.recipient.id === reference.bot.id, "activity2 recipient.id doesn't match bot.id");
         assert(activity2.locale, 'activity2 missing locale.');
-        assert(activity2.locale !== testMessageWithLocale.locale, "the activity2 locale is being overwritten by the reference locale");
+        assert(
+            activity2.locale !== testMessageWithLocale.locale,
+            'the activity2 locale is being overwritten by the reference locale'
+        );
 
         // Round trip outgoing activity without a replyToId
         delete reference.activityId;
