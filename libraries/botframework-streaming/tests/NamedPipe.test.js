@@ -176,6 +176,19 @@ describe.windowsOnly('Streaming Extensions NamedPipe Library Tests', function ()
             expect(() => transport.close()).to.not.throw();
         });
 
+        it('throws when reading from a unavailable/null socket', async function () {
+            const sock = new FauxSock();
+            sock.destroyed = false;
+            sock.connecting = false;
+            sock.writable = true;
+            const transport = new NamedPipeTransport(sock, 'fakeSocket5');
+            expect(transport).to.be.instanceOf(NamedPipeTransport);
+            expect(() => transport.close()).to.not.throw();
+            expect(transport.isConnected).to.be.false;
+            expect(transport.socket).to.be.null;
+            expect(() => transport.receive(5)).to.throw();
+        });
+
         it('can read from the socket', function () {
             const sock = new FauxSock();
             sock.destroyed = false;
@@ -267,7 +280,7 @@ describe.windowsOnly('Streaming Extensions NamedPipe Library Tests', function ()
                 }
             }
             const server = new NamedPipeServer('pipeClientTest', new TestRequestHandler());
-            const client = new NamedPipeClient('pipeClientTest', false);
+            const client = new NamedPipeClient('pipeClientTest');
             const pingServer = () =>
                 new Promise((resolve) => {
                     // Ping server before sending any information, so the server makes the connection over the socket.
