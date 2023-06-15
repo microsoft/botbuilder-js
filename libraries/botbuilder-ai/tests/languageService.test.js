@@ -255,7 +255,7 @@ describe('LanguageService', function () {
 
         it('sorts the answers in the qna results from highest to lowest score', async function () {
             const qna = new CustomQuestionAnswering(endpoint);
-            const context = new TestContext({ text: "what's your favorite animal?" });
+            const context = new TestContext({ text: "what's your favorite animal?", from: { id: 'user' } });
             const options = { top: 5 };
 
             const results = await qna.getAnswers(context, options);

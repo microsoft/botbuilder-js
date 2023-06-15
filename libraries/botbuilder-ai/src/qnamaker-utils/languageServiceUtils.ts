@@ -99,6 +99,7 @@ export class LanguageServiceUtils {
             context: queryOptions.context,
             answerSpanRequest: { enable: queryOptions.enablePreciseAnswer },
             includeUnstructuredSources: queryOptions.includeUnstructuredSources,
+            userId: options.userId,
         });
 
         const qnaResults = await this.httpRequestUtils.executeHttpRequest(
