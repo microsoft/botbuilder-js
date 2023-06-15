@@ -91,11 +91,11 @@ export class TeamsActivityHandler extends ActivityHandler {
                 switch (context.activity.name) {
                     case 'config/fetch':
                         return ActivityHandler.createInvokeResponse(
-                            await this.handleTeamsBotConfigFetch(context, context.activity.value)
+                            await this.handleTeamsConfigFetch(context, context.activity.value)
                         );
                     case 'config/submit':
                         return ActivityHandler.createInvokeResponse(
-                            await this.handleTeamsBotConfigSubmit(context, context.activity.value)
+                            await this.handleTeamsConfigSubmit(context, context.activity.value)
                         );
                     case 'fileConsent/invoke':
                         return ActivityHandler.createInvokeResponse(
@@ -211,10 +211,10 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param _configData The object representing the configuration.
      * @returns An Invoke Response for the activity.
      */
-    protected async handleTeamsBotConfigFetch(
+    protected async handleTeamsConfigFetch(
         _context: TurnContext,
         _configData: any
-    ): Promise<ConfigResponse<BotConfigAuth>> {
+    ): Promise<ConfigResponse<BotConfigAuth | ConfigTaskResponse>> {
         throw new Error('NotImplemented');
     }
 
@@ -225,10 +225,10 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param _configData The object representing the configuration.
      * @returns An Invoke Response for the activity.
      */
-    protected async handleTeamsBotConfigSubmit(
+    protected async handleTeamsConfigSubmit(
         _context: TurnContext,
         _configData: any
-    ): Promise<ConfigResponse<ConfigTaskResponse>> {
+    ): Promise<ConfigResponse<BotConfigAuth | ConfigTaskResponse>> {
         throw new Error('NotImplemented');
     }
 
