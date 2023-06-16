@@ -172,7 +172,7 @@ describe.windowsOnly('Streaming Extensions NamedPipe Library Tests', function ()
             const transport = new NamedPipeTransport(sock, 'fakeSocket5');
             expect(transport).to.be.instanceOf(NamedPipeTransport);
             expect(transport.isConnected).to.be.false;
-            expect(() => transport.receive(5)).to.throw();
+            expect(() => transport.receive(5)).to.throw('Cannot receive data over a dead/destroyed socket.');
             expect(() => transport.close()).to.not.throw();
         });
 
@@ -186,7 +186,7 @@ describe.windowsOnly('Streaming Extensions NamedPipe Library Tests', function ()
             expect(() => transport.close()).to.not.throw();
             expect(transport.isConnected).to.be.false;
             expect(transport.socket).to.be.null;
-            expect(() => transport.receive(5)).to.throw();
+            expect(() => transport.receive(5)).to.throw('Cannot receive data over an unavailable/null socket.');
         });
 
         it('can read from the socket', function () {
