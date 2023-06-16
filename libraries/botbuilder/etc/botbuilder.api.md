@@ -369,9 +369,9 @@ export class TeamsActivityHandler extends ActivityHandler {
     protected dispatchMessageUpdateActivity(context: TurnContext): Promise<void>;
     protected handleTeamsAnonymousAppBasedLinkQuery(_context: TurnContext, _query: AppBasedLinkQuery): Promise<MessagingExtensionResponse>;
     protected handleTeamsAppBasedLinkQuery(_context: TurnContext, _query: AppBasedLinkQuery): Promise<MessagingExtensionResponse>;
-    protected handleTeamsBotConfigFetch(_context: TurnContext, _configData: any): Promise<ConfigResponse<BotConfigAuth>>;
-    protected handleTeamsBotConfigSubmit(_context: TurnContext, _configData: any): Promise<ConfigResponse<ConfigTaskResponse>>;
     protected handleTeamsCardActionInvoke(_context: TurnContext): Promise<InvokeResponse>;
+    protected handleTeamsConfigFetch(_context: TurnContext, _configData: any): Promise<ConfigResponse<BotConfigAuth | ConfigTaskResponse>>;
+    protected handleTeamsConfigSubmit(_context: TurnContext, _configData: any): Promise<ConfigResponse<BotConfigAuth | ConfigTaskResponse>>;
     protected handleTeamsFileConsent(context: TurnContext, fileConsentCardResponse: FileConsentCardResponse): Promise<void>;
     protected handleTeamsFileConsentAccept(_context: TurnContext, _fileConsentCardResponse: FileConsentCardResponse): Promise<void>;
     protected handleTeamsFileConsentDecline(_context: TurnContext, _fileConsentCardResponse: FileConsentCardResponse): Promise<void>;
