@@ -64,7 +64,7 @@ export interface ConfigResponse<T> {
      */
     config: T;
     /**
-     * @member {string}
+     * @member {string} [responseType] The type of config response. Possible values are 'auth' and 'continue'
      */
     responseType: string;
 }
