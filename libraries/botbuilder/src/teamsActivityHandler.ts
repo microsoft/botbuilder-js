@@ -209,7 +209,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      *
      * @param _context A context object for this turn.
      * @param _configData The object representing the configuration.
-     * @returns An Invoke Response for the activity.
+     * @returns A Config Response for the activity.
      */
     protected async handleTeamsConfigFetch(
         _context: TurnContext,
@@ -223,7 +223,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      *
      * @param _context A context object for this turn.
      * @param _configData The object representing the configuration.
-     * @returns An Invoke Response for the activity.
+     * @returns A Config Response for the activity.
      */
     protected async handleTeamsConfigSubmit(
         _context: TurnContext,
