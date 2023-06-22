@@ -6,9 +6,29 @@
 // The Teams schemas was manually added to botframework-schema. This file has been updated import from the botframework-schema and the extension folder.
 // The ChannelCount and MemberCount fields were manually added to the TeamDetails definition.
 import { MessageActionsPayloadBody, O365ConnectorCardActionBase, O365ConnectorCardInputBase } from './extension';
-import { Activity, Attachment, CardAction, ChannelAccount, ConversationAccount } from '../';
+import { Activity, Attachment, CardAction, ChannelAccount, ConversationAccount, SuggestedActions } from '../';
 export * from './extension';
 
+/**
+ * @interface
+ * An interface the bot's authentication config for SuggestedActions
+ */
+export interface BotConfigAuth {
+    /**
+     * @member {SuggestedActions} [suggestedActions] SuggestedActions for the Bot Config Auth
+     */
+    suggestedActions?: SuggestedActions;
+    /**
+     * @member {BotConfigAuthType} [type] Type of the Bot Config Auth
+     */
+    type: 'auth';
+}
+
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface ConfigAuthResponse extends ConfigResponse<BotConfigAuth> {}
+
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface ConfigTaskResponse extends ConfigResponse<TaskModuleResponse> {}
 /**
  * @interface
  * An interface representing ChannelInfo.
@@ -28,6 +48,25 @@ export interface ChannelInfo {
      * @member {string} [type] The type of the channel. Valid values are standard, shared and private.
      */
     type?: string;
+}
+/**
+ * @interface
+ * An interface container for the Config response payload
+ */
+export interface ConfigResponse<T> {
+    /**
+     * @member {CacheInfo} [cacheInfo] The data of the ConfigResponse cache, including cache type and cache duration.
+     */
+    cacheInfo: CacheInfo;
+    /**
+     * @template T
+     * @member {T} [config] The response to a configuration message.
+     */
+    config: T;
+    /**
+     * @member {string} [responseType] The type of config response. Possible values are 'auth' and 'continue'
+     */
+    responseType: string;
 }
 
 /**
@@ -1564,6 +1603,16 @@ export type Type = 'ViewAction' | 'OpenUri' | 'HttpPOST' | 'ActionCard';
  * @enum {string}
  */
 export type ActivityImageType = 'avatar' | 'article';
+
+/**
+ * Defines possible values for BotConfigAuth type.
+ * Possible values include: "auth"
+ *
+ * @readonly
+ * @enum {string}
+ */
+
+export type BotConfigAuthType = 'auth' | 'task';
 
 /**
  * Defines values for Os.

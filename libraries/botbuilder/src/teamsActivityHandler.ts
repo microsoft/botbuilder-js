@@ -9,12 +9,15 @@
 import {
     ActivityHandler,
     AppBasedLinkQuery,
+    BotConfigAuth,
     ChannelInfo,
     Channels,
+    ConfigResponse,
+    ConfigTaskResponse,
     FileConsentCardResponse,
     InvokeResponse,
-    MeetingStartEventDetails,
     MeetingEndEventDetails,
+    MeetingStartEventDetails,
     MessagingExtensionAction,
     MessagingExtensionActionResponse,
     MessagingExtensionQuery,
@@ -26,11 +29,11 @@ import {
     TabSubmit,
     TaskModuleRequest,
     TaskModuleResponse,
-    TeamsChannelData,
-    TeamsChannelAccount,
     TeamInfo,
-    TurnContext,
+    TeamsChannelAccount,
+    TeamsChannelData,
     tokenExchangeOperationName,
+    TurnContext,
     verifyStateOperationName,
 } from 'botbuilder-core';
 import { ReadReceiptInfo } from 'botframework-connector';
@@ -86,6 +89,14 @@ export class TeamsActivityHandler extends ActivityHandler {
                 return await this.handleTeamsCardActionInvoke(context);
             } else {
                 switch (context.activity.name) {
+                    case 'config/fetch':
+                        return ActivityHandler.createInvokeResponse(
+                            await this.handleTeamsConfigFetch(context, context.activity.value)
+                        );
+                    case 'config/submit':
+                        return ActivityHandler.createInvokeResponse(
+                            await this.handleTeamsConfigSubmit(context, context.activity.value)
+                        );
                     case 'fileConsent/invoke':
                         return ActivityHandler.createInvokeResponse(
                             await this.handleTeamsFileConsent(context, context.activity.value)
@@ -169,7 +180,7 @@ export class TeamsActivityHandler extends ActivityHandler {
                         return super.onInvokeActivity(context);
                 }
             }
-        } catch (err) {
+        } catch (err: any) {
             if (err.message === 'NotImplemented') {
                 return { status: 501 };
             } else if (err.message === 'BadRequest') {
@@ -190,6 +201,34 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @returns An Invoke Response for the activity.
      */
     protected async handleTeamsCardActionInvoke(_context: TurnContext): Promise<InvokeResponse> {
+        throw new Error('NotImplemented');
+    }
+
+    /**
+     * Handles a config/fetch invoke activity.
+     *
+     * @param _context A context object for this turn.
+     * @param _configData The object representing the configuration.
+     * @returns A Config Response for the activity.
+     */
+    protected async handleTeamsConfigFetch(
+        _context: TurnContext,
+        _configData: any
+    ): Promise<ConfigResponse<BotConfigAuth | ConfigTaskResponse>> {
+        throw new Error('NotImplemented');
+    }
+
+    /**
+     * Handles a config/submit invoke activity.
+     *
+     * @param _context A context object for this turn.
+     * @param _configData The object representing the configuration.
+     * @returns A Config Response for the activity.
+     */
+    protected async handleTeamsConfigSubmit(
+        _context: TurnContext,
+        _configData: any
+    ): Promise<ConfigResponse<BotConfigAuth | ConfigTaskResponse>> {
         throw new Error('NotImplemented');
     }
 
@@ -424,7 +463,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @remarks
      * Used in creating a Search-based Message Extension.
      * @param _context A context object for this turn.
-     * @param _query he object representing the query.
+     * @param _query The object representing the query.
      * @returns The Messaging Extension Response for the query.
      */
     protected async handleTeamsMessagingExtensionSelectItem(
@@ -700,6 +739,9 @@ export class TeamsActivityHandler extends ActivityHandler {
      */
     protected async onTeamsMembersAdded(context: TurnContext): Promise<void> {
         if ('TeamsMembersAdded' in this.handlers && this.handlers['TeamsMembersAdded'].length > 0) {
+            if (!context.activity || !context.activity.membersAdded) {
+                throw new Error('OnTeamsMemberAdded: context.activity is undefined');
+            }
             for (let i = 0; i < context.activity.membersAdded.length; i++) {
                 const channelAccount = context.activity.membersAdded[i];
 
@@ -717,7 +759,7 @@ export class TeamsActivityHandler extends ActivityHandler {
 
                 try {
                     context.activity.membersAdded[i] = await TeamsInfo.getMember(context, channelAccount.id);
-                } catch (err) {
+                } catch (err: any) {
                     const errCode: string = err.body && err.body.error && err.body.error.code;
                     if (errCode === 'ConversationNotFound') {
                         // unable to find the member added in ConversationUpdate Activity in the response from the getMember call
@@ -767,7 +809,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param context A context object for this turn.
      * @returns A promise that represents the work queued.
      */
-    protected async onTeamsChannelCreated(context): Promise<void> {
+    protected async onTeamsChannelCreated(context: TurnContext): Promise<void> {
         await this.handle(context, 'TeamsChannelCreated', this.defaultNextEvent(context));
     }
 
@@ -779,7 +821,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param context A context object for this turn.
      * @returns A promise that represents the work queued.
      */
-    protected async onTeamsChannelDeleted(context): Promise<void> {
+    protected async onTeamsChannelDeleted(context: TurnContext): Promise<void> {
         await this.handle(context, 'TeamsChannelDeleted', this.defaultNextEvent(context));
     }
 
@@ -791,7 +833,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param context A context object for this turn.
      * @returns A promise that represents the work queued.
      */
-    protected async onTeamsChannelRenamed(context): Promise<void> {
+    protected async onTeamsChannelRenamed(context: TurnContext): Promise<void> {
         await this.handle(context, 'TeamsChannelRenamed', this.defaultNextEvent(context));
     }
 
@@ -803,7 +845,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param context The context for this turn.
      * @returns A promise that represents the work queued.
      */
-    protected async onTeamsTeamArchived(context): Promise<void> {
+    protected async onTeamsTeamArchived(context: TurnContext): Promise<void> {
         await this.handle(context, 'TeamsTeamArchived', this.defaultNextEvent(context));
     }
 
@@ -815,7 +857,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param context The context for this turn.
      * @returns A promise that represents the work queued.
      */
-    protected async onTeamsTeamDeleted(context): Promise<void> {
+    protected async onTeamsTeamDeleted(context: TurnContext): Promise<void> {
         await this.handle(context, 'TeamsTeamDeleted', this.defaultNextEvent(context));
     }
 
@@ -827,7 +869,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param context The context for this turn.
      * @returns A promise that represents the work queued.
      */
-    protected async onTeamsTeamHardDeleted(context): Promise<void> {
+    protected async onTeamsTeamHardDeleted(context: TurnContext): Promise<void> {
         await this.handle(context, 'TeamsTeamHardDeleted', this.defaultNextEvent(context));
     }
 
@@ -840,7 +882,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param context The context for this turn.
      * @returns A promise that represents the work queued.
      */
-    protected async onTeamsChannelRestored(context): Promise<void> {
+    protected async onTeamsChannelRestored(context: TurnContext): Promise<void> {
         await this.handle(context, 'TeamsChannelRestored', this.defaultNextEvent(context));
     }
 
@@ -852,7 +894,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param context The context for this turn.
      * @returns A promise that represents the work queued.
      */
-    protected async onTeamsTeamRenamed(context): Promise<void> {
+    protected async onTeamsTeamRenamed(context: TurnContext): Promise<void> {
         await this.handle(context, 'TeamsTeamRenamed', this.defaultNextEvent(context));
     }
 
@@ -864,7 +906,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param context The context for this turn.
      * @returns A promise that represents the work queued.
      */
-    protected async onTeamsTeamRestored(context): Promise<void> {
+    protected async onTeamsTeamRestored(context: TurnContext): Promise<void> {
         await this.handle(context, 'TeamsTeamRestored', this.defaultNextEvent(context));
     }
 
@@ -876,7 +918,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param context The context for this turn.
      * @returns A promise that represents the work queued.
      */
-    protected async onTeamsTeamUnarchived(context): Promise<void> {
+    protected async onTeamsTeamUnarchived(context: TurnContext): Promise<void> {
         await this.handle(context, 'TeamsTeamUnarchived', this.defaultNextEvent(context));
     }
 
