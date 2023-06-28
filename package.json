@@ -42,6 +42,7 @@
   "resolutions": {
     "adal-node": "0.2.3",
     "async": "3.2.3",
+    "lodash.trimend": "https://github.com/lodash/lodash.git#4.17",
     "minimist": "^1.2.6",
     "mixme": "0.5.2",
     "ms-rest-azure": "2.6.2",
