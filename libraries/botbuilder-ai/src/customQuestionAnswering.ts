@@ -269,7 +269,8 @@ export class CustomQuestionAnswering implements QnAMakerClient, QnAMakerTelemetr
         telemetryMetrics: { [key: string]: number }
     ): Promise<QnAMakerResults> {
         const question: string = this.getTrimmedMessageText(context);
-        const queryOptions: QnAMakerOptions = { ...this._options, ...options } as QnAMakerOptions;
+        const userId = context?.activity?.from?.id;
+        const queryOptions: QnAMakerOptions = { ...this._options, ...options, userId } as QnAMakerOptions;
 
         let result: QnAMakerResults;
 

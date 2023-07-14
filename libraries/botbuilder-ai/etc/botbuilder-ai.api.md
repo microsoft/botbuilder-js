@@ -589,6 +589,7 @@ export interface QnAMakerOptions {
     strictFiltersJoinOperator?: JoinOperator;
     timeout?: number;
     top?: number;
+    userId?: string;
 }
 
 // @public
