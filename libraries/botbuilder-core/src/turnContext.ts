@@ -327,7 +327,7 @@ export class TurnContext {
         isIncoming = false
     ): Partial<Activity> {
         activity.channelId = reference.channelId;
-        activity.locale = reference.locale;
+        activity.locale ??= reference.locale;
         activity.serviceUrl = reference.serviceUrl;
         activity.conversation = reference.conversation;
         if (isIncoming) {
