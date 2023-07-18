@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "@azure/identity": "^2.0.4",
-    "@azure/ms-rest-js": "^2.6.1",
+    "@azure/ms-rest-js": "^2.7.0",
     "adal-node": "0.2.3",
     "axios": "^0.25.0",
     "base64url": "^3.0.0",
