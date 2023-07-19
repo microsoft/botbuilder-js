@@ -28,7 +28,7 @@
     }
   },
   "dependencies": {
-    "@azure/storage-queue": "^12.2.0",
+    "@azure/storage-queue": "^12.14.0",
     "botbuilder-core": "4.1.6"
   },
   "devDependencies": {
