@@ -207,7 +207,7 @@ export class BlobsTranscriptStore implements TranscriptStore {
             .listBlobsByHierarchy('/', {
                 prefix: getChannelPrefix(channelId),
             })
-            .byPage({ continuationToken, maxPageSize: MAX_PAGE_SIZE })
+            .byPage({ continuationToken, maxPageSize: MAX_PAGE_SIZE });
 
         let page = await iter.next();
         const result: any[] = [];
