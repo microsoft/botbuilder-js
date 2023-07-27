@@ -1,7 +1,6 @@
 const assert = require('assert');
 const { BlobStorage } = require('../');
 const { StorageBaseTests } = require('../../botbuilder-core/tests/storageBaseTests');
-const azure = require('azure-storage');
 const { MockMode, usingNock } = require('./mockHelper.js');
 const nock = require('nock');
 const fs = require('fs');
@@ -19,15 +18,14 @@ const getSettings = (container = null) => ({
     containerName: container || 'test',
 });
 
-const reset = (done) => {
+const reset = async () => {
     nock.cleanAll();
     nock.enableNetConnect();
     if (mode !== MockMode.lockdown) {
-        const settings = getSettings();
-        const client = azure.createBlobService(settings.storageAccountOrConnectionString, settings.storageAccessKey);
-        client.deleteContainerIfExists(settings.containerName, (_err, _result) => done());
-    } else {
-        done();
+        const containerClient = storage.containerClient;
+        if (containerClient.exists()) {
+            await containerClient.deleteIfExists();
+        }
     }
 };
 

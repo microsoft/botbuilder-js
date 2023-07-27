@@ -1,24 +1,29 @@
 [
     {
         "scope": "http://127.0.0.1:10000",
-        "method": "HEAD",
+        "method": "DELETE",
         "path": "/devstoreaccount1/test/unknown_key",
         "body": "",
         "status": 404,
-        "response": "",
+        "response": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<Error>\n  <Code>BlobNotFound</Code>\n  <Message>The specified blob does not exist.\nRequestId:3aaa6bad-b1ce-457c-b3ae-10becf506712\nTime:2023-07-27T15:01:57.003Z</Message>\n</Error>",
         "rawHeaders": [
-            "Transfer-Encoding",
-            "chunked",
             "Server",
-            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-            "x-ms-request-id",
-            "d1c3f38e-a5d8-4587-a0d0-2e2427212001",
-            "x-ms-version",
-            "2018-03-28",
+            "Azurite-Blob/3.25.0",
             "x-ms-error-code",
             "BlobNotFound",
+            "x-ms-request-id",
+            "3aaa6bad-b1ce-457c-b3ae-10becf506712",
+            "content-type",
+            "application/xml",
             "Date",
-            "Thu, 12 Dec 2019 23:27:14 GMT"
-        ]
+            "Thu, 27 Jul 2023 15:01:57 GMT",
+            "Connection",
+            "keep-alive",
+            "Keep-Alive",
+            "timeout=5",
+            "Transfer-Encoding",
+            "chunked"
+        ],
+        "responseIsBinary": false
     }
 ]
