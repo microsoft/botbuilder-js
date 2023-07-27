@@ -5,9 +5,18 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import * as azure from 'azure-storage';
+import {
+    AnonymousCredential,
+    BlockBlobUploadOptions,
+    BlockBlobUploadResponse,
+    ContainerClient,
+    ContainerCreateIfNotExistsResponse,
+    newPipeline,
+    StorageRetryPolicyType,
+} from '@azure/storage-blob';
 import { Storage, StoreItems } from 'botbuilder';
 import { escape } from 'querystring';
+import getStream from 'get-stream';
 
 // A host address.
 export interface Host {
@@ -94,7 +103,7 @@ const ResolvePromisesParallel = (values, promise) => Promise.all(values.map(prom
  * @private
  * Internal dictionary with the containers where entities will be stored.
  */
-const checkedCollections: { [key: string]: Promise<azure.BlobService.ContainerResult> } = {};
+const checkedCollections: { [key: string]: Promise<ContainerCreateIfNotExistsResponse> } = {};
 
 /**
  * Middleware that implements a BlobStorage based storage provider for a bot.
@@ -108,7 +117,7 @@ const checkedCollections: { [key: string]: Promise<azure.BlobService.ContainerRe
  */
 export class BlobStorage implements Storage {
     private settings: BlobStorageSettings;
-    private client: BlobServiceAsync;
+    private containerClient: ContainerClient;
     private useEmulator: boolean;
 
     /**
@@ -129,12 +138,26 @@ export class BlobStorage implements Storage {
             throw new Error('Invalid container name.');
         }
 
+        if (!settings.storageAccountOrConnectionString) {
+            throw new Error('The storageAccountOrConnectionString is required.');
+        }
+
         this.settings = { ...settings };
-        this.client = this.createBlobService(
+
+        const pipeline = newPipeline(new AnonymousCredential(), {
+            retryOptions: {
+                retryPolicyType: StorageRetryPolicyType.FIXED,
+                maxTries: 5,
+                retryDelayInMs: 500,
+            }, // Retry options
+        });
+
+        this.containerClient = new ContainerClient(
             this.settings.storageAccountOrConnectionString,
-            this.settings.storageAccessKey,
-            this.settings.host
+            this.settings.containerName,
+            pipeline.options
         );
+
         this.useEmulator = settings.storageAccountOrConnectionString === 'UseDevelopmentStorage=true;';
     }
 
@@ -152,31 +175,27 @@ export class BlobStorage implements Storage {
         const sanitizedKeys: string[] = keys.filter((k: string) => k).map((key: string) => this.sanitizeKey(key));
 
         return this.ensureContainerExists()
-            .then((container: azure.BlobService.ContainerResult) => {
+            .then(() => {
                 return new Promise<StoreItems>((resolve: any, reject: any): void => {
                     Promise.all<DocumentStoreItem>(
-                        sanitizedKeys.map((key: string) => {
-                            return this.client
-                                .doesBlobExistAsync(container.name, key)
-                                .then((blobResult: azure.BlobService.BlobResult) => {
-                                    if (blobResult.exists) {
-                                        return this.client
-                                            .getBlobMetadataAsync(container.name, key)
-                                            .then((blobMetadata: azure.BlobService.BlobResult) => {
-                                                return this.client
-                                                    .getBlobToTextAsync(blobMetadata.container, blobMetadata.name)
-                                                    .then((result: azure.BlobService.BlobToText) => {
-                                                        const document: DocumentStoreItem = JSON.parse(result as any);
-                                                        document.document.eTag = blobMetadata.etag;
+                        sanitizedKeys.map(async (key: string) => {
+                            const blob = this.containerClient.getBlobClient(key);
+                            if (await blob.exists()) {
+                                const result = await blob.download();
+                                const { etag: eTag, readableStreamBody: stream } = result;
+                                if (!stream) {
+                                    return { document: {} } as DocumentStoreItem;
+                                }
 
-                                                        return document;
-                                                    });
-                                            });
-                                    } else {
-                                        // If blob does not exist, return an empty DocumentStoreItem.
-                                        return { document: {} } as DocumentStoreItem;
-                                    }
-                                });
+                                const contents = await getStream(stream);
+                                const parsed = JSON.parse(contents);
+                                const document: DocumentStoreItem = parsed;
+                                document.document.eTag = eTag;
+                                return document;
+                            } else {
+                                // If blob does not exist, return an empty DocumentStoreItem.
+                                return { document: {} } as DocumentStoreItem;
+                            }
                         })
                     )
                         .then((items: DocumentStoreItem[]) => {
@@ -211,11 +230,11 @@ export class BlobStorage implements Storage {
             throw new Error('Please provide a StoreItems with changes to persist.');
         }
 
-        return this.ensureContainerExists().then((container: azure.BlobService.ContainerResult) => {
+        return this.ensureContainerExists().then(() => {
             const blobs: {
                 id: string;
                 data: string;
-                options: azure.BlobService.CreateBlobRequestOptions;
+                options: BlockBlobUploadOptions;
             }[] = Object.keys(changes).map((key: string) => {
                 const documentChange: DocumentStoreItem = {
                     id: this.sanitizeKey(key),
@@ -224,12 +243,9 @@ export class BlobStorage implements Storage {
                 };
 
                 const payload: string = JSON.stringify(documentChange);
-                const options: azure.BlobService.CreateBlobRequestOptions = {
-                    accessConditions:
-                        changes[key].eTag === '*'
-                            ? azure.AccessCondition.generateEmptyCondition()
-                            : azure.AccessCondition.generateIfMatchCondition(changes[key].eTag),
-                    parallelOperationThreadCount: 4,
+
+                const options = {
+                    conditions: changes[key].eTag === '*' ? {} : { ifMatch: changes[key].eTag },
                 };
 
                 return {
@@ -242,10 +258,13 @@ export class BlobStorage implements Storage {
             // A block blob can be uploaded using a single PUT operation or divided into multiple PUT block operations
             // depending on the payload's size. The default maximum size for a single blob upload is 128MB.
             // An 'InvalidBlockList' error is commonly caused due to concurrently uploading an object larger than 128MB in size.
-            const promise: (b: any) => Promise<azure.BlobService.BlobResult> = (
+            const promise: (b: any) => Promise<BlockBlobUploadResponse> = (
                 blob: any
-            ): Promise<azure.BlobService.BlobResult> =>
-                this.client.createBlockBlobFromTextAsync(container.name, blob.id, blob.data, blob.options);
+            ): Promise<BlockBlobUploadResponse> => {
+                const blockBlobClient = this.containerClient.getBlockBlobClient(blob.id);
+                const uploadBlobResponse = blockBlobClient.upload(blob.data, blob.data.length, blob.options);
+                return uploadBlobResponse;
+            };
 
             // if the blob service client is using the storage emulator, all write operations must be performed in a sequential mode
             // because of the storage emulator internal implementation, that includes a SQL LocalDb
@@ -279,10 +298,11 @@ export class BlobStorage implements Storage {
         const sanitizedKeys: string[] = keys.filter((k: string) => k).map((key: string) => this.sanitizeKey(key));
 
         return this.ensureContainerExists()
-            .then((container: azure.BlobService.ContainerResult) => {
+            .then(() => {
                 return Promise.all(
-                    sanitizedKeys.map((key: string) => {
-                        return this.client.deleteBlobIfExistsAsync(container.name, key);
+                    sanitizedKeys.map(async (key: string) => {
+                        const blockBlobClient = this.containerClient.getBlockBlobClient(key);
+                        return await blockBlobClient.deleteIfExists();
                     })
                 );
             })
@@ -332,78 +352,12 @@ export class BlobStorage implements Storage {
      *
      * @returns A promise representing the asynchronous operation.
      */
-    private ensureContainerExists(): Promise<azure.BlobService.ContainerResult> {
+    private ensureContainerExists(): Promise<ContainerCreateIfNotExistsResponse> {
         const key: string = this.settings.containerName;
         if (!checkedCollections[key]) {
-            checkedCollections[key] = this.client.createContainerIfNotExistsAsync(key);
+            checkedCollections[key] = this.containerClient.createIfNotExists();
         }
 
         return checkedCollections[key];
     }
-
-    /**
-     * Create a Blob Service.
-     *
-     * @param storageAccountOrConnectionString Azure CloudStorageAccount instance or Connection String.
-     * @param storageAccessKey Blob Service Access Key.
-     * @param host Blob Service Host.
-     * @returns The blob services created.
-     */
-    private createBlobService(
-        storageAccountOrConnectionString: string,
-        storageAccessKey: string,
-        host: any
-    ): BlobServiceAsync {
-        if (!storageAccountOrConnectionString) {
-            throw new Error('The storageAccountOrConnectionString parameter is required.');
-        }
-
-        const blobService: azure.BlobService = azure
-            .createBlobService(storageAccountOrConnectionString, storageAccessKey, host)
-            .withFilter(new azure.LinearRetryPolicyFilter(5, 500));
-
-        // create BlobServiceAsync by using denodeify to create promise wrappers around cb functions
-        return {
-            createBlockBlobFromTextAsync: this.denodeify(blobService, blobService.createBlockBlobFromText),
-            createContainerIfNotExistsAsync: this.denodeify(blobService, blobService.createContainerIfNotExists),
-            deleteBlobIfExistsAsync: this.denodeify(blobService, blobService.deleteBlobIfExists),
-            deleteContainerIfExistsAsync: this.denodeify(blobService, blobService.deleteContainerIfExists),
-            doesBlobExistAsync: this.denodeify(blobService, blobService.doesBlobExist),
-            getBlobMetadataAsync: this.denodeify(blobService, blobService.getBlobMetadata),
-            getBlobToTextAsync: this.denodeify(blobService, blobService.getBlobToText),
-        } as any;
-    }
-
-    /**
-     * @private
-     * Turn a cb based azure method into a Promisified one.
-     */
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    private denodeify<T>(thisArg: any, fn: Function): (...args: any[]) => Promise<T> {
-        return (...args: any[]): Promise<T> => {
-            return new Promise<T>((resolve: any, reject: any): void => {
-                args.push((error: Error, result: any) => (error ? reject(error) : resolve(result)));
-                fn.apply(thisArg, args);
-            });
-        };
-    }
-}
-
-/**
- * @private
- * Promise based methods created using denodeify function
- */
-interface BlobServiceAsync extends azure.BlobService {
-    createBlockBlobFromTextAsync(
-        container: string,
-        blob: string,
-        text: string | Buffer,
-        options: azure.BlobService.CreateBlobRequestOptions
-    ): Promise<azure.BlobService.BlobResult>;
-    createContainerIfNotExistsAsync(container: string): Promise<azure.BlobService.ContainerResult>;
-    deleteBlobIfExistsAsync(container: string, blob: string): Promise<boolean>;
-    deleteContainerIfExistsAsync(container: string): Promise<boolean>;
-    doesBlobExistAsync(container: string, blob: string): Promise<azure.BlobService.BlobResult>;
-    getBlobMetadataAsync(container: string, blob: string): Promise<azure.BlobService.BlobResult>;
-    getBlobToTextAsync(container: string, blob: string): Promise<azure.BlobService.BlobToText>;
 }
