@@ -1,81 +1,9 @@
 const assert = require('assert');
-const { AzureBlobTranscriptStore, checkedCollectionsKey } = require('../');
-const azure = require('azure-storage');
-const expectedCalls = require('./TestData/expectedCalls');
+const { AzureBlobTranscriptStore } = require('../');
+const azure = require('@azure/storage-blob');
+const sinon = require('sinon');
 
-// Mocks
-class MockBlobService {
-    constructor(storageAccount, storageAccessKey, host) {
-        this.timeStamp = { getTime: () => 1546214400000 };
-        this.mockFunctionCalls = [{ constructor: { storageAccount, storageAccessKey, host } }];
-    }
-
-    createBlockBlobFromText(container, blob, text, options, cb) {
-        this.mockFunctionCalls.push({ createBlockBlobFromTextAsync: [container, blob, text, options] });
-        return cb();
-    }
-
-    createContainerIfNotExists(container, cb) {
-        this.mockFunctionCalls.push({ createContainerIfNotExistsAsync: [container] });
-        return cb(null, { name: container });
-    }
-
-    deleteBlobIfExists(container, blob, cb) {
-        this.mockFunctionCalls.push({ deleteBlobIfExistsAsync: [container, blob] });
-        return cb();
-    }
-
-    deleteContainerIfExists(container, cb) {
-        this.mockFunctionCalls.push({ deleteContainerIfExistsAsync: [container] });
-        return cb();
-    }
-
-    getBlobMetadata(container, blob, cb) {
-        this.mockFunctionCalls.push({ getBlobMetadataAsync: [container, blob] });
-        return cb();
-    }
-
-    getBlobProperties(container, blob, cb) {
-        this.mockFunctionCalls.push({ getBlobPropertiesAsync: [container, blob] });
-        return cb();
-    }
-
-    getBlobToText(container, blob, cb) {
-        this.mockFunctionCalls.push({ getBlobToTextAsync: [container, blob] });
-        return cb(null, JSON.stringify(createActivity('123432', this.timeStamp)));
-    }
-
-    listBlobDirectoriesSegmentedWithPrefix(container, prefix, currentToken, cb) {
-        this.mockFunctionCalls.push({ listBlobDirectoriesSegmentedWithPrefixAsync: [container, prefix, currentToken] });
-        return cb(null, { entries: [{ name: 'blob1' }, { name: 'blob2' }] });
-    }
-
-    listBlobsSegmentedWithPrefix(container, prefix, currentToken, options, cb) {
-        this.mockFunctionCalls.push({ listBlobsSegmentedWithPrefixAsync: [container, prefix, currentToken, options] });
-        return cb(null, {
-            entries: [
-                { metadata: { timestamp: this.timeStamp.getTime() } },
-                { metadata: { timestamp: this.timeStamp.getTime() } },
-                { metadata: { timestamp: this.timeStamp.getTime() } },
-            ],
-        });
-    }
-
-    setBlobMetadata(container, blob, metadata, cb) {
-        this.mockFunctionCalls.push({ setBlobMetadataAsync: [container, blob, metadata] });
-        return cb();
-    }
-
-    setBlobProperties(container, blob, propertiesAndOptions, cb) {
-        this.mockFunctionCalls.push({ setBlobPropertiesAsync: [container, blob, propertiesAndOptions] });
-        return cb();
-    }
-
-    withFilter(...args) {
-        this.mockFunctionCalls.push({ withFilter: args });
-        return this;
-    }
-}
+const pageSize = 20;
 
 const getSettings = (container = null) => ({
     storageAccountOrConnectionString: 'UseDevelopmentStorage=true;',
@@ -84,22 +12,107 @@ const getSettings = (container = null) => ({
     storageAccessKey: '*(^&%*',
     host: 'none',
 });
-const { createBlobService } = azure;
+
+const activity = {
+    channelId: 'channelId',
+    conversation: { id: 'conversationId' },
+    from: { id: 'fromId' },
+    id: 'activityId',
+    recipient: { id: 'recipientId' },
+    timestamp: new Date(),
+};
+const rand = () => Math.floor(Math.random() * 10000000);
+const channelId = `${activity.channelId}-${rand()}`;
+const conversationId = `${activity.conversation.id}-${rand()}`;
+
+const activities = [1, 2].map((n) => {
+    const timestamp = activity.timestamp;
+    return {
+        ...activity,
+        channelId,
+        conversation: {
+            ...activity.conversation,
+            id: conversationId,
+        },
+        id: `${activity.id}-${n}`,
+        timestamp,
+    };
+});
+
+const { BlobClient, BlockBlobClient, ContainerClient } = azure;
 describe('The AzureBlobTranscriptStore', function () {
     let storage;
-    let mockService;
+    let sandbox;
+    let mockBlock;
+    let mockBlobClient;
+    let mockContainer;
+    let pagedAsyncIterableIterator;
     beforeEach(function () {
-        for (const key of Reflect.ownKeys(AzureBlobTranscriptStore[checkedCollectionsKey])) {
-            delete AzureBlobTranscriptStore[checkedCollectionsKey][key];
-        }
-        azure.createBlobService = (storageAccount, storageAccessKey, host) => {
-            return (mockService = new MockBlobService(storageAccount, storageAccessKey, host));
+        sandbox = sinon.createSandbox();
+
+        pagedAsyncIterableIterator = {
+            byPage: sinon.stub().returns({
+                next: sinon
+                    .stub()
+                    .onFirstCall()
+                    .returns({
+                        value: {
+                            segment: {
+                                blobItems: [
+                                    {
+                                        name: `blob1/${conversationId}`,
+                                        properties: { createdOn: 1546214400000 },
+                                    },
+                                ],
+                            },
+                        },
+                        done: false,
+                    })
+                    .onSecondCall()
+                    .returns({
+                        value: {
+                            segment: {
+                                blobItems: [
+                                    {
+                                        name: `blob2/${conversationId}`,
+                                        properties: { createdOn: 1546214400000 },
+                                    },
+                                ],
+                            },
+                        },
+                        done: false,
+                    })
+                    .onThirdCall()
+                    .returns({
+                        value: {},
+                        done: true,
+                    }),
+            }),
         };
+
+        mockBlock = sandbox.createStubInstance(BlockBlobClient);
+        mockBlock.upload = sandbox.stub().resolves();
+
+        mockBlobClient = sandbox.createStubInstance(BlobClient);
+        mockBlobClient.download = sandbox
+            .stub()
+            .onFirstCall()
+            .resolves(generateStreamedContent(activities[0]))
+            .onSecondCall()
+            .resolves(generateStreamedContent(activities[1]));
+
+        mockContainer = sandbox.createStubInstance(ContainerClient);
+        mockContainer.getBlockBlobClient = sandbox.stub().returns(mockBlock);
+        mockContainer.listBlobsByHierarchy = sandbox.stub().returns(pagedAsyncIterableIterator);
+        mockContainer.deleteBlob = sandbox.stub().resolves();
+        mockContainer.getBlobClient = sandbox.stub().returns(mockBlobClient);
+
         storage = new AzureBlobTranscriptStore(getSettings());
+        storage.containerClient = mockContainer;
     });
     after(function () {
         // reset mock
-        azure.createBlobService = createBlobService;
+        sandbox.restore();
     });
 
     describe('should throw when', function () {
@@ -121,7 +134,7 @@ describe('The AzureBlobTranscriptStore', function () {
         it('it is constructed without the storageAccountOrConnectionString in the settings', function () {
             assert.throws(
                 () => new AzureBlobTranscriptStore({ ...getSettings(), storageAccountOrConnectionString: '' }),
-                new Error('The storageAccountOrConnectionString parameter is required.')
+                new Error('The storageAccountOrConnectionString is required.')
             );
         });
 
@@ -151,62 +164,70 @@ describe('The AzureBlobTranscriptStore', function () {
     });
 
     it('should log an activity', async function () {
-        const date = new Date(1546214400000);
-        const activity = createActivity('logActivityTest', date);
         await storage.logActivity(activity);
-        const { mockFunctionCalls } = mockService;
-        const { logActivity } = expectedCalls;
-        assert.ok(
-            mockFunctionCalls.length === 6,
-            `Expected 6 function calls but received ${mockService.mockFunctionCalls.length}`
-        );
-        mockFunctionCalls.forEach((call, index) => {
-            assert.ok(
-                JSON.stringify(call) === JSON.stringify(logActivity[index]),
-                `Expected: ${JSON.stringify(logActivity[index])} but got: ${JSON.stringify(call)}`
-            );
-        });
+
+        sinon.assert.calledOnce(mockContainer.getBlockBlobClient);
+        sinon.assert.calledOnce(mockBlock.upload);
     });
 
     it('should delete a transcript', async function () {
         await storage.deleteTranscript('deleteTranscript', '1234');
-        const { mockFunctionCalls } = mockService;
-        const { deleteTranscript } = expectedCalls;
-        mockFunctionCalls.forEach((call, index) => {
-            assert.ok(JSON.stringify(call) === JSON.stringify(deleteTranscript[index]));
+
+        sinon.assert.calledOnceWithExactly(mockContainer.listBlobsByHierarchy, '/', {
+            prefix: 'deleteTranscript/1234/',
+            includeMetadata: true,
         });
+        sinon.assert.calledOnceWithExactly(pagedAsyncIterableIterator.byPage, { maxPageSize: pageSize });
+        sinon.assert.calledTwice(mockContainer.deleteBlob);
     });
 
     it('get transcript activities', async function () {
-        await storage.getTranscriptActivities('getTranscriptActivities', '1234', null, mockService.timeStamp);
-        const { mockFunctionCalls } = mockService;
-        const { getTranscriptActivities } = expectedCalls;
-        mockFunctionCalls.forEach((call, index) => {
-            assert.ok(JSON.stringify(call) === JSON.stringify(getTranscriptActivities[index]));
+        const result = await storage.getTranscriptActivities('getTranscriptActivities', '1234', null, this.timestamp);
+        sinon.assert.calledOnceWithExactly(mockContainer.listBlobsByHierarchy, '/', {
+            prefix: 'getTranscriptActivities/1234/',
         });
+        sinon.assert.calledOnceWithExactly(pagedAsyncIterableIterator.byPage, {
+            continuationToken: null,
+            maxPageSize: pageSize,
+        });
+        sinon.assert.calledTwice(mockBlobClient.download);
+        assert.deepStrictEqual(result.items, activities);
     });
 
     it('should list transcripts', async function () {
-        const result = await storage.listTranscripts('listTranscripts');
-        const { mockFunctionCalls } = mockService;
-        const { listTranscripts } = expectedCalls;
-        mockFunctionCalls.forEach((call, index) => {
-            assert.ok(JSON.stringify(call) === JSON.stringify(listTranscripts[index]));
+        const result = await storage.listTranscripts(channelId);
+
+        sinon.assert.calledOnceWithExactly(mockContainer.listBlobsByHierarchy, '/', {
+            prefix: `${channelId}/`,
         });
-        assert.ok(JSON.stringify(result) === JSON.stringify(expectedCalls.listTranscriptResult));
+        sinon.assert.calledOnceWithExactly(pagedAsyncIterableIterator.byPage, {
+            continuationToken: undefined,
+            maxPageSize: pageSize,
+        });
+        const actual = result.items.map((item) => {
+            return {
+                channelId: item.channelId,
+                id: item.id,
+            };
+        });
+        const expected = activities.map((activity) => ({
+            channelId: activity.channelId,
+            id: activity.conversation.id,
+        }));
+        assert.deepStrictEqual(actual, expected);
     });
 });
 
-function createActivity(conversationId, ts) {
+function generateStreamedContent(data) {
+    const stream = require('stream');
+    const Readable = stream.Readable;
+
+    const streamReadable = new Readable();
+    streamReadable._read = () => {};
+    streamReadable.push(JSON.stringify(data));
+    streamReadable.push(null);
+
     return {
-        type: 'message',
-        timestamp: ts,
-        id: 1,
-        text: 'testMessage',
-        channelId: 'test',
-        from: { id: 'User1' },
-        conversation: { id: conversationId },
-        recipient: { id: 'Bot1', name: '2' },
-        serviceUrl: 'http://foo.com/api/messages',
+        readableStreamBody: streamReadable,
     };
 }

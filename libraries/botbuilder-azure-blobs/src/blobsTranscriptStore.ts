@@ -141,9 +141,11 @@ export class BlobsTranscriptStore implements TranscriptStore {
             .byPage({ continuationToken, maxPageSize: MAX_PAGE_SIZE });
 
         let page = await iter.next();
+        const result: Activity[] = [];
+        let response: ContainerListBlobHierarchySegmentResponse | undefined;
         while (!page.done) {
             // Note: azure library does not properly type iterator result, hence the need to cast
-            const response = maybeCast<ContainerListBlobHierarchySegmentResponse>(page?.value ?? {});
+            response = maybeCast<ContainerListBlobHierarchySegmentResponse>(page?.value ?? {});
             const blobItems = response?.segment?.blobItems ?? [];
 
             // Locate first index of results to slice from. If we have a start date, we want to return
@@ -174,19 +176,18 @@ export class BlobsTranscriptStore implements TranscriptStore {
                     { concurrency: this._concurrency }
                 );
 
-                return {
-                    continuationToken: response?.continuationToken ?? '',
-                    items: activities.reduce<Activity[]>(
-                        (acc, activity) => (activity ? acc.concat(activity) : acc),
-                        []
-                    ),
-                };
+                activities.forEach((activity) => {
+                    if (activity) result.push(activity);
+                });
             }
 
             page = await iter.next();
         }
 
-        return { continuationToken: '', items: [] };
+        return {
+            continuationToken: response?.continuationToken ?? '',
+            items: result.reduce<Activity[]>((acc, activity) => (activity ? acc.concat(activity) : acc), []),
+        };
     }
 
     /**
@@ -202,26 +203,39 @@ export class BlobsTranscriptStore implements TranscriptStore {
 
         await this._initialize();
 
-        const page = await this._containerClient
+        const iter = this._containerClient
             .listBlobsByHierarchy('/', {
                 prefix: getChannelPrefix(channelId),
             })
-            .byPage({ continuationToken, maxPageSize: MAX_PAGE_SIZE })
-            .next();
+            .byPage({ continuationToken, maxPageSize: MAX_PAGE_SIZE });
 
-        // Note: azure library does not properly type iterator result, hence the need to cast
-        const response = maybeCast<ContainerListBlobHierarchySegmentResponse>(page?.value ?? {});
-        const blobItems = response?.segment?.blobItems ?? [];
+        let page = await iter.next();
+        const result: any[] = [];
+        let response: ContainerListBlobHierarchySegmentResponse | undefined;
 
-        return {
-            continuationToken: response?.continuationToken ?? '',
-            items: blobItems.map((blobItem) => {
+        while (!page.done) {
+            // Note: azure library does not properly type iterator result, hence the need to cast
+            const response = maybeCast<ContainerListBlobHierarchySegmentResponse>(page?.value ?? {});
+            const blobItems = response?.segment?.blobItems ?? [];
+
+            const items = blobItems.map((blobItem) => {
                 const [, id] = decodeURIComponent(blobItem.name).split('/');
 
                 const created = blobItem.metadata?.timestamp ? new Date(blobItem.metadata.timestamp) : new Date();
 
                 return { channelId, created, id };
-            }),
+            });
+
+            items.forEach((transcript) => {
+                if (transcript) result.push(transcript);
+            });
+
+            page = await iter.next();
+        }
+
+        return {
+            continuationToken: response?.continuationToken ?? '',
+            items: result ?? [],
         };
     }
 
