@@ -8,7 +8,7 @@
     "chromedriver": "^100.0.0",
     "dotenv": "^8.6.0",
     "geckodriver": "^1.19.1",
-    "nightwatch": "^1.7.13",
+    "nightwatch": "^2.6.21",
     "selenium-server": "^3.141.59"
   },
   "directories": {
