@@ -36,7 +36,6 @@
   },
   "devDependencies": {
     "chatdown": "^1.2.4",
-    "request": "^2.88.2",
     "unzipper": "^0.10.9"
   },
   "scripts": {
