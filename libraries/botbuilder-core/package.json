@@ -35,6 +35,7 @@
     "zod": "~1.11.17"
   },
   "devDependencies": {
+    "axios": "^0.25.0",
     "chatdown": "^1.2.4",
     "unzipper": "^0.10.9"
   },
