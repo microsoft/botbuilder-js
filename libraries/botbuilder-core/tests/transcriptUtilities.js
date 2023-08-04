@@ -13,7 +13,7 @@ const request = require('request');
 const unzip = require('unzipper');
 const rimraf = require('rimraf');
 
-const chatdown = require('chatdown');
+const chatdown = require('@microsoft/bf-chatdown');
 
 const { TestAdapter, MemoryStorage, UserState, ConversationState, AutoSaveStateMiddleware } = require('../');
 
