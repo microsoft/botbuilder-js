@@ -35,8 +35,8 @@
     "zod": "~1.11.17"
   },
   "devDependencies": {
+    "@microsoft/bf-chatdown": "^4.15.0",
     "axios": "^0.25.0",
-    "chatdown": "^1.2.4",
     "unzipper": "^0.10.9"
   },
   "scripts": {
