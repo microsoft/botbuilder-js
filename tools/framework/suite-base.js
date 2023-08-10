@@ -7,7 +7,7 @@
 //   http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
+// distributed under the License is distributed on an "AS IS" BASIS,ms-rest-azure
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //
 // See the License for the specific language governing permissions and
@@ -23,7 +23,8 @@ var _ = require('underscore');
 var util = require('util');
 var uuid = require('uuid');
 var msRest = require('ms-rest');
-var msRestAzure = require('ms-rest-azure');
+var msRestAuth = require("@azure/ms-rest-nodeauth");
+var {Environment} = require("@azure/ms-rest-azure-env")
 var MicrosoftAppCredentials = require('botframework-connector/lib/auth/microsoftAppCredentials');
 var TokenApiClient = require('botframework-connector/lib/tokenApi/tokenApiClient');
 var FileTokenCache = require('../util/fileTokenCache');
@@ -33,7 +34,7 @@ var ResourceManagementClient = require('../resourceManagement/lib/resource/resou
 var async = require('async');
 var adal = require('adal-node');
 
-var DEFAULT_ADAL_CLIENT_ID =  '04b07795-8ddb-461a-bbee-02f9e1bf7b46';
+var DEFAULT_ADAL_CLIENT_ID = '04b07795-8ddb-461a-bbee-02f9e1bf7b46';
 
 /**
  * @class
@@ -54,7 +55,7 @@ var DEFAULT_ADAL_CLIENT_ID =  '04b07795-8ddb-461a-bbee-02f9e1bf7b46';
  */
 function SuiteBase(mochaSuiteObject, testPrefix, env, libraryPath) {
     this.mochaSuiteObject = mochaSuiteObject;
-    this.testPrefix =  this.normalizeTestName(testPrefix);
+    this.testPrefix = this.normalizeTestName(testPrefix);
     this.mockServerClient;
     this.currentTest = '';
     //Recording info
@@ -73,7 +74,7 @@ function SuiteBase(mochaSuiteObject, testPrefix, env, libraryPath) {
     this.password = process.env['AZURE_PASSWORD'] || 'dummypassword';
     this.secret = process.env['CLIENT_SECRET'] || 'dummysecret';
     this.tokenCache = new adal.MemoryCache();
-    
+
     this._setCredentials();
     //subscriptionId should be recorded for playback
     if (!env) {
@@ -101,11 +102,11 @@ _.extend(SuiteBase.prototype, {
                 let token = process.env['AZURE_ACCESS_TOKEN'] || 'token';
                 this.credentials = new msRest.TokenCredentials('token');
             } else if ((process.env['AZURE_PASSWORD'] && process.env['CLIENT_SECRET']) ||
-                        (!process.env['AZURE_PASSWORD'] && !process.env['CLIENT_SECRET'])) {
+                (!process.env['AZURE_PASSWORD'] && !process.env['CLIENT_SECRET'])) {
                 throw new Error('You must either set the envt. variables \'AZURE_USERNAME\' ' +
-                                'and \'AZURE_PASSWORD\' for running tests as a user or set the ' +
-                                'envt. variable \'CLIENT_ID\' and \'CLIENT_SECRET\' ' +
-                                'for running tests as a service-principal, but not both.');
+                    'and \'AZURE_PASSWORD\' for running tests as a user or set the ' +
+                    'envt. variable \'CLIENT_ID\' and \'CLIENT_SECRET\' ' +
+                    'for running tests as a service-principal, but not both.');
             }
 
             if (process.env['AZURE_PASSWORD']) {
@@ -123,7 +124,7 @@ _.extend(SuiteBase.prototype, {
     /**
    * Creates the UserTokenCredentials object.
    *
-   * @returns {ms-rest-azure.UserTokenCredentials} The user token credentials object.
+   * @returns {@azure/ms-rest-nodeauth.UserTokenCredentials} The user token credentials object.
    */
     _createUserCredentials: function() {
         if(process.env['AZURE_ENVIRONMENT'] && process.env['AZURE_ENVIRONMENT'].toUpperCase() === 'DOGFOOD') {
@@ -135,19 +136,19 @@ _.extend(SuiteBase.prototype, {
                 managementEndpointUrl: 'https://management-preview.core.windows-int.net/',
                 resourceManagerEndpointUrl: 'https://api-dogfood.resources.windows-int.net/'
             };
-            var env = msRestAzure.AzureEnvironment.add(df);
-            return new msRestAzure.UserTokenCredentials(this.clientId, this.domain, this.username,
+            var env = Environment.add(df);
+            return new msRestAuth.UserTokenCredentials(this.clientId, this.domain, this.username,
                 this.password, { 'tokenCache': this.tokenCache, 'environment': env });
         }
-    
-        return new msRestAzure.UserTokenCredentials(this.clientId, this.domain, this.username,
+
+        return new msRestAuth.UserTokenCredentials(this.clientId, this.domain, this.username,
             this.password, { 'tokenCache': this.tokenCache });
     },
 
     /**
    * Creates the ApplicationTokenCredentials object.
    *
-   * @returns {ms-rest-azure.ApplicationTokenCredentials} The application token credentials object.
+   * @returns {@azure/ms-rest-nodeauth.ApplicationTokenCredentials} The application token credentials object.
    */
     _createApplicationCredentials: function() {
         if(process.env['AZURE_ENVIRONMENT'] && process.env['AZURE_ENVIRONMENT'].toUpperCase() === 'DOGFOOD') {
@@ -159,14 +160,14 @@ _.extend(SuiteBase.prototype, {
                 managementEndpointUrl: 'https://management-preview.core.windows-int.net/',
                 resourceManagerEndpointUrl: 'https://api-dogfood.resources.windows-int.net/'
             };
-            var env = msRestAzure.AzureEnvironment.add(df);               
-            return new msRestAzure.ApplicationTokenCredentials(this.clientId, this.domain, this.secret, {
+            var env = Environment.add(df);
+            return new msRestAuth.ApplicationTokenCredentials(this.clientId, this.domain, this.secret, {
                 'tokenCache': this.tokenCache,
                 'environment': env
             });
         }
-    
-        return new msRestAzure.ApplicationTokenCredentials(this.clientId, this.domain, this.secret, {
+
+        return new msRestAuth.ApplicationTokenCredentials(this.clientId, this.domain, this.secret, {
             'tokenCache': this.tokenCache
         });
     },
@@ -242,7 +243,7 @@ _.extend(SuiteBase.prototype, {
    */
     getTestRecordingsFile: function() {
         this.testRecordingsFile = this.getRecordingsDirectory() +
-      this.normalizeTestName(this.currentTest) + '.nock.js';
+            this.normalizeTestName(this.currentTest) + '.nock.js';
         return this.testRecordingsFile;
     },
 
@@ -278,7 +279,7 @@ _.extend(SuiteBase.prototype, {
 
         if (missing.length > 0) {
             messages.push('This test requires the following environment variables which are not set: ' +
-        missing.join(', '));
+                missing.join(', '));
         }
 
         if (messages.length > 0) {
@@ -364,11 +365,11 @@ _.extend(SuiteBase.prototype, {
                 secondCallback(null);
             }
         ],
-        function(err, results) {
-            if (err) {
-                throw err;
-            }
-        });
+            function(err, results) {
+                if (err) {
+                    throw err;
+                }
+            });
     },
 
     /**
@@ -438,7 +439,7 @@ _.extend(SuiteBase.prototype, {
                 });
             } else {
                 throw new Error('It appears the ' + this.getTestRecordingsFile() + ' file has more tests than there are mocked tests. ' +
-          'You may need to re-generate it.');
+                    'You may need to re-generate it.');
             }
         }
 
@@ -484,13 +485,13 @@ _.extend(SuiteBase.prototype, {
                         line = line.replace(/(\.get\('.*\/microsoft.insights\/eventtypes\/management\/values\?api-version=[0-9-]+)[^)]+\)/,
                             '.filteringPath(function (path) { return path.slice(0, path.indexOf(\'&\')); })\n$1\')');
                         if (line.match(/\/oauth2\/token\//ig) === null &&
-                            line.match(/login\.windows\.net/ig) === null && 
+                            line.match(/login\.windows\.net/ig) === null &&
                             line.match(/login\.windows-ppe\.net/ig) === null &&
                             line.match(/login\.microsoftonline\.com/ig) === null &&
                             line.match(/login\.chinacloudapi\.cn/ig) === null &&
                             line.match(/login\.microsoftonline\.de/ig) === null) {
                             scope += (lineWritten ? ',\n' : '') + 'function (nock) { \n' +
-                                    'var result = ' + line + ' return result; }';
+                                'var result = ' + line + ' return result; }';
                             lineWritten = true;
                         }
                     }
@@ -656,7 +657,7 @@ _.extend(SuiteBase.prototype, {
    * in 'Record' mode or keeps it in memory when the test is run in 'Live' mode.
    */
     saveMockVariable: function(mockVariableName, mockVariable) {
-    //record or live
+        //record or live
         if (!this.isPlayback) {
             this.mockVariables[mockVariableName] = mockVariable;
         }
@@ -709,17 +710,17 @@ _.extend(SuiteBase.prototype, {
    */
     _stubMethods: function() {
         if (this.isPlayback) {
-            if (msRestAzure.UserTokenCredentials.prototype.signRequest.restore) {
-                msRestAzure.UserTokenCredentials.prototype.signRequest.restore();
+            if (msRestAuth.UserTokenCredentials.prototype.signRequest.restore) {
+                msRestAuth.UserTokenCredentials.prototype.signRequest.restore();
             }
-            sinon.stub(msRestAzure.UserTokenCredentials.prototype, 'signRequest').callsFake(function(webResource, callback) {
+            sinon.stub(msRestAuth.UserTokenCredentials.prototype, 'signRequest').callsFake(function (webResource, callback) {
                 return callback(null);
             });
 
-            if (msRestAzure.ApplicationTokenCredentials.prototype.signRequest.restore) {
-                msRestAzure.ApplicationTokenCredentials.prototype.signRequest.restore();
+            if (msRestAuth.ApplicationTokenCredentials.prototype.signRequest.restore) {
+                msRestAuth.ApplicationTokenCredentials.prototype.signRequest.restore();
             }
-            sinon.stub(msRestAzure.ApplicationTokenCredentials.prototype, 'signRequest').callsFake(function(webResource, callback) {
+            sinon.stub(msRestAuth.ApplicationTokenCredentials.prototype, 'signRequest').callsFake(function (webResource, callback) {
                 return callback(null);
             });
 
