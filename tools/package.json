@@ -29,9 +29,7 @@
   "main": "./lib/azure.js",
   "license": "(MIT OR Apache-2.0)",
   "dependencies": {
-    "@azure/ms-rest-azure-js": "^2.1.0",
-    "@azure/ms-rest-nodeauth": "^3.1.1",
-    "@azure/ms-rest-azure-env":"^2.0.0",
+    "@azure/identity": "^2.0.4",
     "@types/request": "^2.47.1",
     "botframework-connector": "4.1.6",
     "dotenv": "^4.0.0",

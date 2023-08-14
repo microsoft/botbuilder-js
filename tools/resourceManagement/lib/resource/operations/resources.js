@@ -9,6 +9,7 @@
  */
 
 'use strict';
+
 const uuid = require('uuid');
 const msRest = require('ms-rest');
 

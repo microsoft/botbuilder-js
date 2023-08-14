@@ -62,7 +62,7 @@ class ResourceManagementClient extends ServiceClient {
     this.credentials = credentials;
     this.subscriptionId = subscriptionId;
 
-    //property to store various pieces of information we would finally concat to produce a user-agent header.
+    //Property to store various pieces of information we would finally concat to produce a user-agent header.
     this.userAgentInfo = { value: [] };
 
     let packageInfo = this.getPackageJsonInfo(__dirname);

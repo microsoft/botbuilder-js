@@ -7,7 +7,7 @@
 //   http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,ms-rest-azure
+// distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //
 // See the License for the specific language governing permissions and
@@ -23,8 +23,7 @@ var _ = require('underscore');
 var util = require('util');
 var uuid = require('uuid');
 var msRest = require('ms-rest');
-var msRestAuth = require("@azure/ms-rest-nodeauth");
-var {Environment} = require("@azure/ms-rest-azure-env")
+var identity = require("@azure/identity");
 var MicrosoftAppCredentials = require('botframework-connector/lib/auth/microsoftAppCredentials');
 var TokenApiClient = require('botframework-connector/lib/tokenApi/tokenApiClient');
 var FileTokenCache = require('../util/fileTokenCache');
@@ -35,6 +34,7 @@ var async = require('async');
 var adal = require('adal-node');
 
 var DEFAULT_ADAL_CLIENT_ID = '04b07795-8ddb-461a-bbee-02f9e1bf7b46';
+var DEFAULT_ADAL_TENANT_ID = 'd4058e97-3782-4874-bc12-c975407af782';
 
 /**
  * @class
@@ -69,6 +69,7 @@ function SuiteBase(mochaSuiteObject, testPrefix, env, libraryPath) {
     //authentication info
     this.subscriptionId = process.env['AZURE_SUBSCRIPTION_ID'] || 'subscription-id';
     this.clientId = process.env['CLIENT_ID'] || DEFAULT_ADAL_CLIENT_ID;
+    this.tenantId = process.env['TENANT_ID'] || DEFAULT_ADAL_TENANT_ID;
     this.domain = process.env['DOMAIN'] || 'domain';
     this.username = process.env['AZURE_USERNAME'] || 'username@example.com';
     this.password = process.env['AZURE_PASSWORD'] || 'dummypassword';
@@ -124,52 +125,19 @@ _.extend(SuiteBase.prototype, {
     /**
    * Creates the UserTokenCredentials object.
    *
-   * @returns {@azure/ms-rest-nodeauth.UserTokenCredentials} The user token credentials object.
+   * @returns {@azure/identity.UsernamePasswordCredential} The user token credentials object.
    */
     _createUserCredentials: function() {
-        if(process.env['AZURE_ENVIRONMENT'] && process.env['AZURE_ENVIRONMENT'].toUpperCase() === 'DOGFOOD') {
-            var df = {
-                name: 'Dogfood',
-                portalUrl: 'https://windows.azure-test.net/',
-                activeDirectoryEndpointUrl: 'https://login.windows-ppe.net/',
-                activeDirectoryResourceId: 'https://management.core.windows.net/',
-                managementEndpointUrl: 'https://management-preview.core.windows-int.net/',
-                resourceManagerEndpointUrl: 'https://api-dogfood.resources.windows-int.net/'
-            };
-            var env = Environment.add(df);
-            return new msRestAuth.UserTokenCredentials(this.clientId, this.domain, this.username,
-                this.password, { 'tokenCache': this.tokenCache, 'environment': env });
-        }
-
-        return new msRestAuth.UserTokenCredentials(this.clientId, this.domain, this.username,
-            this.password, { 'tokenCache': this.tokenCache });
+        return new identity.UsernamePasswordCredential(this.tenantId, this.clientId, this.username);
     },
 
     /**
    * Creates the ApplicationTokenCredentials object.
    *
-   * @returns {@azure/ms-rest-nodeauth.ApplicationTokenCredentials} The application token credentials object.
+   * @returns {@azure/identity.ClientSecretCredential} The application token credentials object.
    */
     _createApplicationCredentials: function() {
-        if(process.env['AZURE_ENVIRONMENT'] && process.env['AZURE_ENVIRONMENT'].toUpperCase() === 'DOGFOOD') {
-            var df = {
-                name: 'Dogfood',
-                portalUrl: 'https://windows.azure-test.net/',
-                activeDirectoryEndpointUrl: 'https://login.windows-ppe.net/',
-                activeDirectoryResourceId: 'https://management.core.windows.net/',
-                managementEndpointUrl: 'https://management-preview.core.windows-int.net/',
-                resourceManagerEndpointUrl: 'https://api-dogfood.resources.windows-int.net/'
-            };
-            var env = Environment.add(df);
-            return new msRestAuth.ApplicationTokenCredentials(this.clientId, this.domain, this.secret, {
-                'tokenCache': this.tokenCache,
-                'environment': env
-            });
-        }
-
-        return new msRestAuth.ApplicationTokenCredentials(this.clientId, this.domain, this.secret, {
-            'tokenCache': this.tokenCache
-        });
+        return new identity.ClientSecretCredential(this.tenantId, this.clientId, this.secret);
     },
 
     /**
@@ -365,11 +333,11 @@ _.extend(SuiteBase.prototype, {
                 secondCallback(null);
             }
         ],
-            function(err, results) {
-                if (err) {
-                    throw err;
-                }
-            });
+        function(err, results) {
+            if (err) {
+                throw err;
+            }
+        });
     },
 
     /**
@@ -709,21 +677,7 @@ _.extend(SuiteBase.prototype, {
    * Stubs certain methods.
    */
     _stubMethods: function() {
-        if (this.isPlayback) {
-            if (msRestAuth.UserTokenCredentials.prototype.signRequest.restore) {
-                msRestAuth.UserTokenCredentials.prototype.signRequest.restore();
-            }
-            sinon.stub(msRestAuth.UserTokenCredentials.prototype, 'signRequest').callsFake(function (webResource, callback) {
-                return callback(null);
-            });
-
-            if (msRestAuth.ApplicationTokenCredentials.prototype.signRequest.restore) {
-                msRestAuth.ApplicationTokenCredentials.prototype.signRequest.restore();
-            }
-            sinon.stub(msRestAuth.ApplicationTokenCredentials.prototype, 'signRequest').callsFake(function (webResource, callback) {
-                return callback(null);
-            });
-
+        if (this.isPlayback) {           
             if (this.createResourcegroup.restore) {
                 this.createResourcegroup.restore();
             }

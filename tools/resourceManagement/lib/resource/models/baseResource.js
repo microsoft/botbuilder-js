@@ -9,8 +9,6 @@
  * @constructor
  */
 class BaseResource {
-  constructor() { }
-
   /**
    * Defines the metadata of BaseResource
    *
@@ -24,8 +22,7 @@ class BaseResource {
       type: {
         name: 'Composite',
         className: 'BaseResource',
-        modelProperties: {
-        }
+        modelProperties: {}
       }
     };
   }
