@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { LUISRuntimeModels as LuisModels } from '@azure/cognitiveservices-luis-runtime';
+import * as msRest from '@azure/ms-rest-js';
 
 import Url from 'url-parse';
 import { BotTelemetryClient, NullTelemetryClient, RecognizerResult, TurnContext } from 'botbuilder-core';
@@ -41,7 +41,11 @@ export interface LuisApplication {
  *
  * Options per LUIS prediction.
  */
-export interface LuisPredictionOptions extends LuisModels.PredictionResolveOptionalParams {
+export interface LuisPredictionOptions extends msRest.RequestOptionsBase {
+    /**
+     * If true, return all intents instead of just the top scoring intent.
+     */
+    verbose?: boolean;
     /**
      * (Optional) Bing Spell Check subscription key.
      */

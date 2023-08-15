@@ -9,13 +9,13 @@
   dependencies:
     tslib "^1.9.3"
 
-"@azure/cognitiveservices-luis-runtime@2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@azure/cognitiveservices-luis-runtime/-/cognitiveservices-luis-runtime-2.0.0.tgz#97686f2897ee2e3c2f8d6ba1aed6b98757a10b98"
-  integrity sha512-NZuqxiwpn8iYM76/QDIBDGq1jJ+YHiwS0S/yprAMeaaQgu1S5VtVhWDbTrZl+AfaqCn6iDpRewI7EKRv1GJx0g==
+"@azure/cognitiveservices-luis-runtime@^4.0.0":
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/@azure/cognitiveservices-luis-runtime/-/cognitiveservices-luis-runtime-4.0.1.tgz#7c49b0a98af2b3d1c76e2fee64b1270769de1b25"
+  integrity sha512-W5oDt1LvJQmtxCIDq1aFh8R4W+5ZKSTC+9So9DIGVZmy29SMxBNyTf8OTliHDv0L+P6Y2XBySoGCliPYfTyrhQ==
   dependencies:
-    "@azure/ms-rest-js" "^1.6.0"
-    tslib "^1.9.3"
+    "@azure/ms-rest-js" "^2.0.3"
+    tslib "^1.10.0"
 
 "@azure/core-asynciterator-polyfill@^1.0.0":
   version "1.0.0"
@@ -209,7 +209,7 @@
   dependencies:
     tslib "^2.0.0"
 
-"@azure/ms-rest-js@^1.6.0", "@azure/ms-rest-js@^2.7.0":
+"@azure/ms-rest-js@^2.0.3", "@azure/ms-rest-js@^2.7.0":
   version "2.7.0"
   resolved "https://registry.yarnpkg.com/@azure/ms-rest-js/-/ms-rest-js-2.7.0.tgz#8639065577ffdf4946951e1d246334ebfd72d537"
   integrity sha512-ngbzWbqF+NmztDOpLBVDxYM+XLcUj7nKhxGbSU9WtIsXfRB//cf2ZbAG5HkOrhU9/wd/ORRB6lM/d69RKVjiyA==

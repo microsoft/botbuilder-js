@@ -9,13 +9,10 @@
 import * as msRest from '@azure/ms-rest-js';
 import * as os from 'os';
 import { LuisApplication, LuisRecognizerOptionsV2 } from './luisRecognizer';
+import { CompositeChildModel, CompositeEntityModel, EntityModel, LuisResult } from './luisV2-models/luisResult';
+import { LUISRuntimeClientV2 as LuisClient } from './luisV2-models/luisRuntimeClientV2';
 import { LuisRecognizerInternal } from './luisRecognizerOptions';
 import { NullTelemetryClient, TurnContext, RecognizerResult } from 'botbuilder-core';
-
-import {
-    LUISRuntimeClient as LuisClient,
-    LUISRuntimeModels as LuisModels,
-} from '@azure/cognitiveservices-luis-runtime';
 import { DialogContext } from 'botbuilder-dialogs';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -116,7 +113,7 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
 
         const luisPredictionOptions = this.options;
 
-        const luisResult: LuisModels.LuisResult = await this.luisClient.prediction.resolve(
+        const luisResult: LuisResult = await this.luisClient.prediction.resolve(
             this.application.applicationId,
             utterance,
             {
@@ -155,7 +152,7 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
     }
 
     // Get Intents from a LuisResult object.
-    private getIntents(luisResult: LuisModels.LuisResult): Record<string, Record<'score', number>> {
+    private getIntents(luisResult: LuisResult): Record<string, Record<'score', number>> {
         const intents: { [name: string]: { score: number } } = {};
         if (luisResult.intents) {
             luisResult.intents.reduce((prev, curr) => {
@@ -171,8 +168,8 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
     }
 
     private getEntitiesAndMetadata(
-        entities: LuisModels.EntityModel[],
-        compositeEntities: LuisModels.CompositeEntityModel[] | undefined,
+        entities: EntityModel[],
+        compositeEntities: CompositeEntityModel[] | undefined,
         verbose: boolean
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ): any {
@@ -183,14 +180,14 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
         // We start by populating composite entities so that entities covered by them are removed from the entities list
         if (compositeEntities) {
             compositeEntityTypes = compositeEntities.map(
-                (compositeEntity: LuisModels.CompositeEntityModel) => compositeEntity.parentType
+                (compositeEntity: CompositeEntityModel) => compositeEntity.parentType
             );
-            compositeEntities.forEach((compositeEntity: LuisModels.CompositeEntityModel) => {
+            compositeEntities.forEach((compositeEntity: CompositeEntityModel) => {
                 entities = this.populateCompositeEntity(compositeEntity, entities, entitiesAndMetadata, verbose);
             });
         }
 
-        entities.forEach((entity: LuisModels.EntityModel) => {
+        entities.forEach((entity: EntityModel) => {
             // we'll address composite entities separately
             if (compositeEntityTypes.indexOf(entity.type) > -1) {
                 return;
@@ -213,35 +210,33 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
     }
 
     private populateCompositeEntity(
-        compositeEntity: LuisModels.CompositeEntityModel,
-        entities: LuisModels.EntityModel[],
+        compositeEntity: CompositeEntityModel,
+        entities: EntityModel[],
         entitiesAndMetadata: any, // eslint-disable-line @typescript-eslint/no-explicit-any
         verbose: boolean
-    ): LuisModels.EntityModel[] {
+    ): EntityModel[] {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const childrenEntities: any = verbose ? { $instance: {} } : {};
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         let childrenEntitiesMetadata: any = {};
 
         // This is now implemented as O(n^2) search and can be reduced to O(2n) using a map as an optimization if n grows
-        const compositeEntityMetadata: LuisModels.EntityModel | undefined = entities.find(
-            (entity: LuisModels.EntityModel) => {
-                // For now we are matching by value, which can be ambiguous if the same composite entity shows up with the same text
-                // multiple times within an utterance, but this is just a stop gap solution till the indices are included in composite entities
-                return entity.type === compositeEntity.parentType && entity.entity === compositeEntity.value;
-            }
-        );
+        const compositeEntityMetadata: EntityModel | undefined = entities.find((entity: EntityModel) => {
+            // For now we are matching by value, which can be ambiguous if the same composite entity shows up with the same text
+            // multiple times within an utterance, but this is just a stop gap solution till the indices are included in composite entities
+            return entity.type === compositeEntity.parentType && entity.entity === compositeEntity.value;
+        });
 
-        const filteredEntities: LuisModels.EntityModel[] = [];
+        const filteredEntities: EntityModel[] = [];
         if (verbose) {
             childrenEntitiesMetadata = this.getEntityMetadata(compositeEntityMetadata);
         }
 
         // This is now implemented as O(n*k) search and can be reduced to O(n + k) using a map as an optimization if n or k grow
         const coveredSet = new Set();
-        compositeEntity.children.forEach((childEntity: LuisModels.CompositeChildModel) => {
+        compositeEntity.children.forEach((childEntity: CompositeChildModel) => {
             for (let i = 0; i < entities.length; i++) {
-                const entity: LuisModels.EntityModel = entities[i];
+                const entity: EntityModel = entities[i];
                 if (
                     !coveredSet.has(i) &&
                     childEntity.type === entity.type &&
@@ -291,7 +286,7 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    private getEntityValue(entity: LuisModels.EntityModel): any {
+    private getEntityValue(entity: EntityModel): any {
         if (entity.type.startsWith('builtin.geographyV2.')) {
             return {
                 type: entity.type.substring(20),
@@ -359,7 +354,7 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
         }
     }
 
-    private getEntityMetadata(entity: LuisModels.EntityModel): Record<string, string | number> {
+    private getEntityMetadata(entity: EntityModel): Record<string, string | number> {
         const res: Record<string, string | number> = {
             startIndex: entity.startIndex,
             endIndex: entity.endIndex + 1,
@@ -374,7 +369,7 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
         return res;
     }
 
-    private getNormalizedEntityName(entity: LuisModels.EntityModel): string {
+    private getNormalizedEntityName(entity: EntityModel): string {
         // Type::Role -> Role
         let type = entity.type.split(':').pop();
         if (type.startsWith('builtin.datetimeV2.')) {
@@ -405,7 +400,7 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
         }
     }
 
-    private getSentiment(luis: LuisModels.LuisResult): Record<'label' | 'score', unknown> | undefined {
+    private getSentiment(luis: LuisResult): Record<'label' | 'score', unknown> | undefined {
         if (luis.sentimentAnalysis) {
             return {
                 label: luis.sentimentAnalysis.label,
@@ -427,7 +422,7 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
 
     private emitTraceInfo(
         context: TurnContext,
-        luisResult: LuisModels.LuisResult,
+        luisResult: LuisResult,
         recognizerResult: RecognizerResult
     ): Promise<unknown> {
         const traceInfo = {
