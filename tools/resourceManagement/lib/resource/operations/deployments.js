@@ -10,7 +10,7 @@
 
 'use strict';
 
-const msRest = require('ms-rest');
+const msRest = require('@azure/ms-rest-js');
 const uuid = require('uuid');
 const WebResource = msRest.WebResource;
 
@@ -67,7 +67,7 @@ function _deleteMethod(resourceGroupName, deploymentName, options, callback) {
   this.beginDeleteMethod(resourceGroupName, deploymentName, options, (err, parsedResult, httpRequest, response) => {
     if (err) return callback(err);
 
-    let initialResult = new msRest.HttpOperationResponse();
+    let initialResult = new client.models['HttpOperationResponse']();
     initialResult.request = httpRequest;
     initialResult.response = response;
     initialResult.body = response.body;
@@ -351,7 +351,7 @@ function _createOrUpdate(resourceGroupName, deploymentName, parameters, options,
   this.beginCreateOrUpdate(resourceGroupName, deploymentName, parameters, options, (err, parsedResult, httpRequest, response) => {
     if (err) return callback(err);
 
-    let initialResult = new msRest.HttpOperationResponse();
+    let initialResult = new client.models['HttpOperationResponse']();
     initialResult.request = httpRequest;
     initialResult.response = response;
     initialResult.body = response.body;
@@ -1960,7 +1960,7 @@ class Deployments {
     let self = this;
     return new Promise((resolve, reject) => {
       self._deleteMethod(resourceGroupName, deploymentName, options, (err, result, request, response) => {
-        let httpOperationResponse = new msRest.HttpOperationResponse(request, response);
+        let httpOperationResponse = new client.models['HttpOperationResponse'](request, response);
         httpOperationResponse.body = result;
         if (err) { reject(err); }
         else { resolve(httpOperationResponse); }
@@ -2058,7 +2058,7 @@ class Deployments {
     let self = this;
     return new Promise((resolve, reject) => {
       self._checkExistence(resourceGroupName, deploymentName, options, (err, result, request, response) => {
-        let httpOperationResponse = new msRest.HttpOperationResponse(request, response);
+        let httpOperationResponse = new client.models['HttpOperationResponse'](request, response);
         httpOperationResponse.body = result;
         if (err) { reject(err); }
         else { resolve(httpOperationResponse); }
@@ -2207,7 +2207,7 @@ class Deployments {
     let self = this;
     return new Promise((resolve, reject) => {
       self._createOrUpdate(resourceGroupName, deploymentName, parameters, options, (err, result, request, response) => {
-        let httpOperationResponse = new msRest.HttpOperationResponse(request, response);
+        let httpOperationResponse = new client.models['HttpOperationResponse'](request, response);
         httpOperationResponse.body = result;
         if (err) { reject(err); }
         else { resolve(httpOperationResponse); }
@@ -2357,7 +2357,7 @@ class Deployments {
     let self = this;
     return new Promise((resolve, reject) => {
       self._get(resourceGroupName, deploymentName, options, (err, result, request, response) => {
-        let httpOperationResponse = new msRest.HttpOperationResponse(request, response);
+        let httpOperationResponse = new client.models['HttpOperationResponse'](request, response);
         httpOperationResponse.body = result;
         if (err) { reject(err); }
         else { resolve(httpOperationResponse); }
@@ -2450,7 +2450,7 @@ class Deployments {
     let self = this;
     return new Promise((resolve, reject) => {
       self._cancel(resourceGroupName, deploymentName, options, (err, result, request, response) => {
-        let httpOperationResponse = new msRest.HttpOperationResponse(request, response);
+        let httpOperationResponse = new client.models['HttpOperationResponse'](request, response);
         httpOperationResponse.body = result;
         if (err) { reject(err); }
         else { resolve(httpOperationResponse); }
@@ -2601,7 +2601,7 @@ class Deployments {
     let self = this;
     return new Promise((resolve, reject) => {
       self._validate(resourceGroupName, deploymentName, parameters, options, (err, result, request, response) => {
-        let httpOperationResponse = new msRest.HttpOperationResponse(request, response);
+        let httpOperationResponse = new client.models['HttpOperationResponse'](request, response);
         httpOperationResponse.body = result;
         if (err) { reject(err); }
         else { resolve(httpOperationResponse); }
@@ -2750,7 +2750,7 @@ class Deployments {
     let self = this;
     return new Promise((resolve, reject) => {
       self._exportTemplate(resourceGroupName, deploymentName, options, (err, result, request, response) => {
-        let httpOperationResponse = new msRest.HttpOperationResponse(request, response);
+        let httpOperationResponse = new client.models['HttpOperationResponse'](request, response);
         httpOperationResponse.body = result;
         if (err) { reject(err); }
         else { resolve(httpOperationResponse); }
@@ -2844,7 +2844,7 @@ class Deployments {
     let self = this;
     return new Promise((resolve, reject) => {
       self._listByResourceGroup(resourceGroupName, options, (err, result, request, response) => {
-        let httpOperationResponse = new msRest.HttpOperationResponse(request, response);
+        let httpOperationResponse = new client.models['HttpOperationResponse'](request, response);
         httpOperationResponse.body = result;
         if (err) { reject(err); }
         else { resolve(httpOperationResponse); }
@@ -2947,7 +2947,7 @@ class Deployments {
     let self = this;
     return new Promise((resolve, reject) => {
       self._beginDeleteMethod(resourceGroupName, deploymentName, options, (err, result, request, response) => {
-        let httpOperationResponse = new msRest.HttpOperationResponse(request, response);
+        let httpOperationResponse = new client.models['HttpOperationResponse'](request, response);
         httpOperationResponse.body = result;
         if (err) { reject(err); }
         else { resolve(httpOperationResponse); }
@@ -3107,7 +3107,7 @@ class Deployments {
     let self = this;
     return new Promise((resolve, reject) => {
       self._beginCreateOrUpdate(resourceGroupName, deploymentName, parameters, options, (err, result, request, response) => {
-        let httpOperationResponse = new msRest.HttpOperationResponse(request, response);
+        let httpOperationResponse = new client.models['HttpOperationResponse'](request, response);
         httpOperationResponse.body = result;
         if (err) { reject(err); }
         else { resolve(httpOperationResponse); }
@@ -3255,7 +3255,7 @@ class Deployments {
     let self = this;
     return new Promise((resolve, reject) => {
       self._listByResourceGroupNext(nextPageLink, options, (err, result, request, response) => {
-        let httpOperationResponse = new msRest.HttpOperationResponse(request, response);
+        let httpOperationResponse = new client.models['HttpOperationResponse'](request, response);
         httpOperationResponse.body = result;
         if (err) { reject(err); }
         else { resolve(httpOperationResponse); }
