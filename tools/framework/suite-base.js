@@ -24,6 +24,7 @@ var util = require('util');
 var uuid = require('uuid');
 var msRest = require('ms-rest');
 var identity = require("@azure/identity");
+var {Environment} = require("@azure/ms-rest-azure-env")
 var MicrosoftAppCredentials = require('botframework-connector/lib/auth/microsoftAppCredentials');
 var TokenApiClient = require('botframework-connector/lib/tokenApi/tokenApiClient');
 var FileTokenCache = require('../util/fileTokenCache');
@@ -128,7 +129,22 @@ _.extend(SuiteBase.prototype, {
    * @returns {@azure/identity.UsernamePasswordCredential} The user token credentials object.
    */
     _createUserCredentials: function() {
-        return new identity.UsernamePasswordCredential(this.tenantId, this.clientId, this.username);
+        if(process.env['AZURE_ENVIRONMENT'] && process.env['AZURE_ENVIRONMENT'].toUpperCase() === 'DOGFOOD') {
+            var df = {
+                name: 'Dogfood',
+                portalUrl: 'https://windows.azure-test.net/',
+                activeDirectoryEndpointUrl: 'https://login.windows-ppe.net/',
+                activeDirectoryResourceId: 'https://management.core.windows.net/',
+                managementEndpointUrl: 'https://management-preview.core.windows-int.net/',
+                resourceManagerEndpointUrl: 'https://api-dogfood.resources.windows-int.net/'
+            };
+            var env = Environment.add(df);
+            return new identity.UsernamePasswordCredential(this.tenantId, this.clientId, this.username,
+                this.password, { 'tokenCache': this.tokenCache, 'environment': env });
+        }
+
+        return new identity.UsernamePasswordCredential(this.tenantId, this.clientId, this.username,
+            this.password, { 'tokenCache': this.tokenCache });
     },
 
     /**
@@ -137,7 +153,25 @@ _.extend(SuiteBase.prototype, {
    * @returns {@azure/identity.ClientSecretCredential} The application token credentials object.
    */
     _createApplicationCredentials: function() {
-        return new identity.ClientSecretCredential(this.tenantId, this.clientId, this.secret);
+        if(process.env['AZURE_ENVIRONMENT'] && process.env['AZURE_ENVIRONMENT'].toUpperCase() === 'DOGFOOD') {
+            var df = {
+                name: 'Dogfood',
+                portalUrl: 'https://windows.azure-test.net/',
+                activeDirectoryEndpointUrl: 'https://login.windows-ppe.net/',
+                activeDirectoryResourceId: 'https://management.core.windows.net/',
+                managementEndpointUrl: 'https://management-preview.core.windows-int.net/',
+                resourceManagerEndpointUrl: 'https://api-dogfood.resources.windows-int.net/'
+            };
+            var env = Environment.add(df);
+            return new identity.ClientSecretCredential(this.tenantId, this.clientId, this.secret, {
+                'tokenCache': this.tokenCache,
+                'environment': env
+            });
+        }
+
+        return new identity.ClientSecretCredential(this.tenantId, this.clientId, this.secret, {
+            'tokenCache': this.tokenCache
+        });
     },
 
     /**
