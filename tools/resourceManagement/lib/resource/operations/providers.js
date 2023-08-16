@@ -10,7 +10,7 @@
 
 'use strict';
 
-const msRest = require('ms-rest');
+const msRest = require('@azure/ms-rest-js');
 const uuid = require('uuid');
 const WebResource = msRest.WebResource;
 
@@ -763,7 +763,7 @@ class Providers {
     let self = this;
     return new Promise((resolve, reject) => {
       self._unregister(resourceProviderNamespace, options, (err, result, request, response) => {
-        let httpOperationResponse = new msRest.HttpOperationResponse(request, response);
+        let httpOperationResponse = new client.models['HttpOperationResponse'](request, response);
         httpOperationResponse.body = result;
         if (err) { reject(err); }
         else { resolve(httpOperationResponse); }
@@ -847,7 +847,7 @@ class Providers {
     let self = this;
     return new Promise((resolve, reject) => {
       self._register(resourceProviderNamespace, options, (err, result, request, response) => {
-        let httpOperationResponse = new msRest.HttpOperationResponse(request, response);
+        let httpOperationResponse = new client.models['HttpOperationResponse'](request, response);
         httpOperationResponse.body = result;
         if (err) { reject(err); }
         else { resolve(httpOperationResponse); }
@@ -936,7 +936,7 @@ class Providers {
     let self = this;
     return new Promise((resolve, reject) => {
       self._list(options, (err, result, request, response) => {
-        let httpOperationResponse = new msRest.HttpOperationResponse(request, response);
+        let httpOperationResponse = new client.models['HttpOperationResponse'](request, response);
         httpOperationResponse.body = result;
         if (err) { reject(err); }
         else { resolve(httpOperationResponse); }
@@ -1028,7 +1028,7 @@ class Providers {
     let self = this;
     return new Promise((resolve, reject) => {
       self._get(resourceProviderNamespace, options, (err, result, request, response) => {
-        let httpOperationResponse = new msRest.HttpOperationResponse(request, response);
+        let httpOperationResponse = new client.models['HttpOperationResponse'](request, response);
         httpOperationResponse.body = result;
         if (err) { reject(err); }
         else { resolve(httpOperationResponse); }
@@ -1115,7 +1115,7 @@ class Providers {
     let self = this;
     return new Promise((resolve, reject) => {
       self._listNext(nextPageLink, options, (err, result, request, response) => {
-        let httpOperationResponse = new msRest.HttpOperationResponse(request, response);
+        let httpOperationResponse = new client.models['HttpOperationResponse'](request, response);
         httpOperationResponse.body = result;
         if (err) { reject(err); }
         else { resolve(httpOperationResponse); }

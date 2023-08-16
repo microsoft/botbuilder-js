@@ -35,7 +35,6 @@
     "botframework-connector": "4.1.6",
     "dotenv": "^4.0.0",
     "mime": "^1.4.1",
-    "ms-rest": "^2.3.6",
     "underscore": "^1.13.1",
     "uuid": "^3.3.2"
   },

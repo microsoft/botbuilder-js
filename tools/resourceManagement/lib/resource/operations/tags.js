@@ -10,7 +10,7 @@
 
 'use strict';
 
-const msRest = require('ms-rest');
+const msRest = require('@azure/ms-rest-js');
 const uuid = require('uuid');
 const WebResource = msRest.WebResource;
 
@@ -887,7 +887,7 @@ class Tags {
     let self = this;
     return new Promise((resolve, reject) => {
       self._deleteValue(tagName, tagValue, options, (err, result, request, response) => {
-        let httpOperationResponse = new msRest.HttpOperationResponse(request, response);
+        let httpOperationResponse = new client.models['HttpOperationResponse'](request, response);
         httpOperationResponse.body = result;
         if (err) { reject(err); }
         else { resolve(httpOperationResponse); }
@@ -972,7 +972,7 @@ class Tags {
     let self = this;
     return new Promise((resolve, reject) => {
       self._createOrUpdateValue(tagName, tagValue, options, (err, result, request, response) => {
-        let httpOperationResponse = new msRest.HttpOperationResponse(request, response);
+        let httpOperationResponse = new client.models['HttpOperationResponse'](request, response);
         httpOperationResponse.body = result;
         if (err) { reject(err); }
         else { resolve(httpOperationResponse); }
@@ -1060,7 +1060,7 @@ class Tags {
     let self = this;
     return new Promise((resolve, reject) => {
       self._createOrUpdate(tagName, options, (err, result, request, response) => {
-        let httpOperationResponse = new msRest.HttpOperationResponse(request, response);
+        let httpOperationResponse = new client.models['HttpOperationResponse'](request, response);
         httpOperationResponse.body = result;
         if (err) { reject(err); }
         else { resolve(httpOperationResponse); }
@@ -1148,7 +1148,7 @@ class Tags {
     let self = this;
     return new Promise((resolve, reject) => {
       self._deleteMethod(tagName, options, (err, result, request, response) => {
-        let httpOperationResponse = new msRest.HttpOperationResponse(request, response);
+        let httpOperationResponse = new client.models['HttpOperationResponse'](request, response);
         httpOperationResponse.body = result;
         if (err) { reject(err); }
         else { resolve(httpOperationResponse); }
@@ -1230,7 +1230,7 @@ class Tags {
     let self = this;
     return new Promise((resolve, reject) => {
       self._list(options, (err, result, request, response) => {
-        let httpOperationResponse = new msRest.HttpOperationResponse(request, response);
+        let httpOperationResponse = new client.models['HttpOperationResponse'](request, response);
         httpOperationResponse.body = result;
         if (err) { reject(err); }
         else { resolve(httpOperationResponse); }
@@ -1313,7 +1313,7 @@ class Tags {
     let self = this;
     return new Promise((resolve, reject) => {
       self._listNext(nextPageLink, options, (err, result, request, response) => {
-        let httpOperationResponse = new msRest.HttpOperationResponse(request, response);
+        let httpOperationResponse = new client.models['HttpOperationResponse'](request, response);
         httpOperationResponse.body = result;
         if (err) { reject(err); }
         else { resolve(httpOperationResponse); }

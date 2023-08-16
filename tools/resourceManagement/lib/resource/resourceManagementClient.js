@@ -14,7 +14,7 @@
 
 'use strict';
 
-const msRest = require('ms-rest');
+const msRest = require('@azure/ms-rest-js');
 const fs = require('fs');
 const path = require('path');
 const ServiceClient = msRest.ServiceClient;
@@ -83,8 +83,15 @@ class ResourceManagementClient extends ServiceClient {
     this.tags = new operations.Tags(this);
     this.deploymentOperations = new operations.DeploymentOperations(this);
     this.models = models;
-    msRest.addSerializationMixin(this);
+    this.addSerializationMixin(this);
   }
+
+  addSerializationMixin(destObject) {
+    ['serialize', 'serializeObject', 'deserialize'].forEach((property) => {
+      destObject[property] = serialization[property];
+    });
+  };
+
 
   addUserAgentInfo(additionalUserAgentInfo) {
     if (this.userAgentInfo.value.indexOf(additionalUserAgentInfo) === -1) {
