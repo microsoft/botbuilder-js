@@ -21,6 +21,9 @@ export interface LuisResult {
      * The corrected utterance (when spell checking was enabled).
      */
     alteredQuery?: string;
+    /**
+     * The intent with the higher score.
+     */
     topScoringIntent?: IntentModel;
     /**
      * All the intents (and their score) that were detected from utterance.
@@ -34,7 +37,13 @@ export interface LuisResult {
      * The composite entities extracted from the utterance.
      */
     compositeEntities?: CompositeEntityModel[];
+    /**
+     * Sentiment of the input utterance.
+     */
     sentimentAnalysis?: LuisModels.Sentiment;
+    /**
+     * Prediction, based on the input query, containing intents and entities.
+     */
     connectedServiceResult?: LuisResult;
 }
 

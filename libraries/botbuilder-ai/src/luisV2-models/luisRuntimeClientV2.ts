@@ -13,7 +13,9 @@ import { LuisPrediction } from './luisPrediction';
 import { LUISRuntimeClientContext } from '@azure/cognitiveservices-luis-runtime';
 
 /**
+ * Represents the LUIS client for V2 of the runtime.
  *
+ * @remarks This is a clone of the LUISRuntimeClient in version 2 of the runtime.
  */
 class LUISRuntimeClientV2 extends LUISRuntimeClientContext {
     // Operation groups
@@ -22,7 +24,6 @@ class LUISRuntimeClientV2 extends LUISRuntimeClientContext {
     /**
      * Initializes a new instance of the LUISRuntimeClientV2 class.
      *
-     * @remarks This is a clone of the LUISRuntimeClient in version 2 of the runtime.
      * @param credentials Subscription credentials which uniquely identify client subscription.
      * @param endpoint Supported Cognitive Services endpoints (protocol and hostname, for example:
      * https://westus.api.cognitive.microsoft.com).
