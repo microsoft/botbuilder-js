@@ -88,7 +88,7 @@ class ResourceManagementClient extends ServiceClient {
 
   addSerializationMixin(destObject) {
     ['serialize', 'serializeObject', 'deserialize'].forEach((property) => {
-      destObject[property] = serialization[property];
+      destObject[property] = msRest.Serializer[property];
     });
   };
 
