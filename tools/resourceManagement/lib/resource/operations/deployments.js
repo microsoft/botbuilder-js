@@ -10,8 +10,8 @@
 
 'use strict';
 
-const msRest = require('ms-rest');
-const msRestAzure = require('ms-rest-azure');
+const msRest = require('@azure/ms-rest-js');
+const uuid = require('uuid');
 const WebResource = msRest.WebResource;
 
 
@@ -67,7 +67,7 @@ function _deleteMethod(resourceGroupName, deploymentName, options, callback) {
   this.beginDeleteMethod(resourceGroupName, deploymentName, options, (err, parsedResult, httpRequest, response) => {
     if (err) return callback(err);
 
-    let initialResult = new msRest.HttpOperationResponse();
+    let initialResult = new client.models['HttpOperationResponse']();
     initialResult.request = httpRequest;
     initialResult.response = response;
     initialResult.body = response.body;
@@ -193,7 +193,7 @@ function _checkExistence(resourceGroupName, deploymentName, options, callback) {
   // Set Headers
   httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
   if (this.client.generateClientRequestId) {
-      httpRequest.headers['x-ms-client-request-id'] = msRestAzure.generateUuid();
+      httpRequest.headers['x-ms-client-request-id'] = uuid.v4();
   }
   if (this.client.acceptLanguage !== undefined && this.client.acceptLanguage !== null) {
     httpRequest.headers['accept-language'] = this.client.acceptLanguage;
@@ -351,7 +351,7 @@ function _createOrUpdate(resourceGroupName, deploymentName, parameters, options,
   this.beginCreateOrUpdate(resourceGroupName, deploymentName, parameters, options, (err, parsedResult, httpRequest, response) => {
     if (err) return callback(err);
 
-    let initialResult = new msRest.HttpOperationResponse();
+    let initialResult = new client.models['HttpOperationResponse']();
     initialResult.request = httpRequest;
     initialResult.response = response;
     initialResult.body = response.body;
@@ -492,7 +492,7 @@ function _get(resourceGroupName, deploymentName, options, callback) {
   // Set Headers
   httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
   if (this.client.generateClientRequestId) {
-      httpRequest.headers['x-ms-client-request-id'] = msRestAzure.generateUuid();
+      httpRequest.headers['x-ms-client-request-id'] = uuid.v4();
   }
   if (this.client.acceptLanguage !== undefined && this.client.acceptLanguage !== null) {
     httpRequest.headers['accept-language'] = this.client.acceptLanguage;
@@ -670,7 +670,7 @@ function _cancel(resourceGroupName, deploymentName, options, callback) {
   // Set Headers
   httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
   if (this.client.generateClientRequestId) {
-      httpRequest.headers['x-ms-client-request-id'] = msRestAzure.generateUuid();
+      httpRequest.headers['x-ms-client-request-id'] = uuid.v4();
   }
   if (this.client.acceptLanguage !== undefined && this.client.acceptLanguage !== null) {
     httpRequest.headers['accept-language'] = this.client.acceptLanguage;
@@ -890,7 +890,7 @@ function _validate(resourceGroupName, deploymentName, parameters, options, callb
   // Set Headers
   httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
   if (this.client.generateClientRequestId) {
-      httpRequest.headers['x-ms-client-request-id'] = msRestAzure.generateUuid();
+      httpRequest.headers['x-ms-client-request-id'] = uuid.v4();
   }
   if (this.client.acceptLanguage !== undefined && this.client.acceptLanguage !== null) {
     httpRequest.headers['accept-language'] = this.client.acceptLanguage;
@@ -1097,7 +1097,7 @@ function _exportTemplate(resourceGroupName, deploymentName, options, callback) {
   // Set Headers
   httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
   if (this.client.generateClientRequestId) {
-      httpRequest.headers['x-ms-client-request-id'] = msRestAzure.generateUuid();
+      httpRequest.headers['x-ms-client-request-id'] = uuid.v4();
   }
   if (this.client.acceptLanguage !== undefined && this.client.acceptLanguage !== null) {
     httpRequest.headers['accept-language'] = this.client.acceptLanguage;
@@ -1271,7 +1271,7 @@ function _listByResourceGroup(resourceGroupName, options, callback) {
   // Set Headers
   httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
   if (this.client.generateClientRequestId) {
-      httpRequest.headers['x-ms-client-request-id'] = msRestAzure.generateUuid();
+      httpRequest.headers['x-ms-client-request-id'] = uuid.v4();
   }
   if (this.client.acceptLanguage !== undefined && this.client.acceptLanguage !== null) {
     httpRequest.headers['accept-language'] = this.client.acceptLanguage;
@@ -1455,7 +1455,7 @@ function _beginDeleteMethod(resourceGroupName, deploymentName, options, callback
   // Set Headers
   httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
   if (this.client.generateClientRequestId) {
-      httpRequest.headers['x-ms-client-request-id'] = msRestAzure.generateUuid();
+      httpRequest.headers['x-ms-client-request-id'] = uuid.v4();
   }
   if (this.client.acceptLanguage !== undefined && this.client.acceptLanguage !== null) {
     httpRequest.headers['accept-language'] = this.client.acceptLanguage;
@@ -1677,7 +1677,7 @@ function _beginCreateOrUpdate(resourceGroupName, deploymentName, parameters, opt
   // Set Headers
   httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
   if (this.client.generateClientRequestId) {
-      httpRequest.headers['x-ms-client-request-id'] = msRestAzure.generateUuid();
+      httpRequest.headers['x-ms-client-request-id'] = uuid.v4();
   }
   if (this.client.acceptLanguage !== undefined && this.client.acceptLanguage !== null) {
     httpRequest.headers['accept-language'] = this.client.acceptLanguage;
@@ -1835,7 +1835,7 @@ function _listByResourceGroupNext(nextPageLink, options, callback) {
   // Set Headers
   httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
   if (this.client.generateClientRequestId) {
-      httpRequest.headers['x-ms-client-request-id'] = msRestAzure.generateUuid();
+      httpRequest.headers['x-ms-client-request-id'] = uuid.v4();
   }
   if (this.client.acceptLanguage !== undefined && this.client.acceptLanguage !== null) {
     httpRequest.headers['accept-language'] = this.client.acceptLanguage;
@@ -1960,7 +1960,7 @@ class Deployments {
     let self = this;
     return new Promise((resolve, reject) => {
       self._deleteMethod(resourceGroupName, deploymentName, options, (err, result, request, response) => {
-        let httpOperationResponse = new msRest.HttpOperationResponse(request, response);
+        let httpOperationResponse = new client.models['HttpOperationResponse'](request, response);
         httpOperationResponse.body = result;
         if (err) { reject(err); }
         else { resolve(httpOperationResponse); }
@@ -2058,7 +2058,7 @@ class Deployments {
     let self = this;
     return new Promise((resolve, reject) => {
       self._checkExistence(resourceGroupName, deploymentName, options, (err, result, request, response) => {
-        let httpOperationResponse = new msRest.HttpOperationResponse(request, response);
+        let httpOperationResponse = new client.models['HttpOperationResponse'](request, response);
         httpOperationResponse.body = result;
         if (err) { reject(err); }
         else { resolve(httpOperationResponse); }
@@ -2207,7 +2207,7 @@ class Deployments {
     let self = this;
     return new Promise((resolve, reject) => {
       self._createOrUpdate(resourceGroupName, deploymentName, parameters, options, (err, result, request, response) => {
-        let httpOperationResponse = new msRest.HttpOperationResponse(request, response);
+        let httpOperationResponse = new client.models['HttpOperationResponse'](request, response);
         httpOperationResponse.body = result;
         if (err) { reject(err); }
         else { resolve(httpOperationResponse); }
@@ -2357,7 +2357,7 @@ class Deployments {
     let self = this;
     return new Promise((resolve, reject) => {
       self._get(resourceGroupName, deploymentName, options, (err, result, request, response) => {
-        let httpOperationResponse = new msRest.HttpOperationResponse(request, response);
+        let httpOperationResponse = new client.models['HttpOperationResponse'](request, response);
         httpOperationResponse.body = result;
         if (err) { reject(err); }
         else { resolve(httpOperationResponse); }
@@ -2450,7 +2450,7 @@ class Deployments {
     let self = this;
     return new Promise((resolve, reject) => {
       self._cancel(resourceGroupName, deploymentName, options, (err, result, request, response) => {
-        let httpOperationResponse = new msRest.HttpOperationResponse(request, response);
+        let httpOperationResponse = new client.models['HttpOperationResponse'](request, response);
         httpOperationResponse.body = result;
         if (err) { reject(err); }
         else { resolve(httpOperationResponse); }
@@ -2601,7 +2601,7 @@ class Deployments {
     let self = this;
     return new Promise((resolve, reject) => {
       self._validate(resourceGroupName, deploymentName, parameters, options, (err, result, request, response) => {
-        let httpOperationResponse = new msRest.HttpOperationResponse(request, response);
+        let httpOperationResponse = new client.models['HttpOperationResponse'](request, response);
         httpOperationResponse.body = result;
         if (err) { reject(err); }
         else { resolve(httpOperationResponse); }
@@ -2750,7 +2750,7 @@ class Deployments {
     let self = this;
     return new Promise((resolve, reject) => {
       self._exportTemplate(resourceGroupName, deploymentName, options, (err, result, request, response) => {
-        let httpOperationResponse = new msRest.HttpOperationResponse(request, response);
+        let httpOperationResponse = new client.models['HttpOperationResponse'](request, response);
         httpOperationResponse.body = result;
         if (err) { reject(err); }
         else { resolve(httpOperationResponse); }
@@ -2844,7 +2844,7 @@ class Deployments {
     let self = this;
     return new Promise((resolve, reject) => {
       self._listByResourceGroup(resourceGroupName, options, (err, result, request, response) => {
-        let httpOperationResponse = new msRest.HttpOperationResponse(request, response);
+        let httpOperationResponse = new client.models['HttpOperationResponse'](request, response);
         httpOperationResponse.body = result;
         if (err) { reject(err); }
         else { resolve(httpOperationResponse); }
@@ -2947,7 +2947,7 @@ class Deployments {
     let self = this;
     return new Promise((resolve, reject) => {
       self._beginDeleteMethod(resourceGroupName, deploymentName, options, (err, result, request, response) => {
-        let httpOperationResponse = new msRest.HttpOperationResponse(request, response);
+        let httpOperationResponse = new client.models['HttpOperationResponse'](request, response);
         httpOperationResponse.body = result;
         if (err) { reject(err); }
         else { resolve(httpOperationResponse); }
@@ -3107,7 +3107,7 @@ class Deployments {
     let self = this;
     return new Promise((resolve, reject) => {
       self._beginCreateOrUpdate(resourceGroupName, deploymentName, parameters, options, (err, result, request, response) => {
-        let httpOperationResponse = new msRest.HttpOperationResponse(request, response);
+        let httpOperationResponse = new client.models['HttpOperationResponse'](request, response);
         httpOperationResponse.body = result;
         if (err) { reject(err); }
         else { resolve(httpOperationResponse); }
@@ -3255,7 +3255,7 @@ class Deployments {
     let self = this;
     return new Promise((resolve, reject) => {
       self._listByResourceGroupNext(nextPageLink, options, (err, result, request, response) => {
-        let httpOperationResponse = new msRest.HttpOperationResponse(request, response);
+        let httpOperationResponse = new client.models['HttpOperationResponse'](request, response);
         httpOperationResponse.body = result;
         if (err) { reject(err); }
         else { resolve(httpOperationResponse); }

@@ -29,12 +29,12 @@
   "main": "./lib/azure.js",
   "license": "(MIT OR Apache-2.0)",
   "dependencies": {
+    "@azure/identity": "^2.0.4",
+    "@azure/ms-rest-azure-env":"^2.0.0",
     "@types/request": "^2.47.1",
     "botframework-connector": "4.1.6",
     "dotenv": "^4.0.0",
     "mime": "^1.4.1",
-    "ms-rest": "^2.3.6",
-    "ms-rest-azure": "^2.5.7",
     "underscore": "^1.13.1",
     "uuid": "^3.3.2"
   },
