@@ -209,7 +209,12 @@
   dependencies:
     tslib "^2.0.0"
 
-"@azure/ms-rest-azure-env@^2.0.0", "@azure/ms-rest-js@^2.0.3", "@azure/ms-rest-js@^2.7.0":
+"@azure/ms-rest-azure-env@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@azure/ms-rest-azure-env/-/ms-rest-azure-env-2.0.0.tgz#45809f89763a480924e21d3c620cd40866771625"
+  integrity sha512-dG76W7ElfLi+fbTjnZVGj+M9e0BIEJmRxU6fHaUQ12bZBe8EJKYb2GV50YWNaP2uJiVQ5+7nXEVj1VN1UQtaEw==
+
+"@azure/ms-rest-js@^2.0.3", "@azure/ms-rest-js@^2.7.0":
   version "2.7.0"
   resolved "https://registry.yarnpkg.com/@azure/ms-rest-js/-/ms-rest-js-2.7.0.tgz#8639065577ffdf4946951e1d246334ebfd72d537"
   integrity sha512-ngbzWbqF+NmztDOpLBVDxYM+XLcUj7nKhxGbSU9WtIsXfRB//cf2ZbAG5HkOrhU9/wd/ORRB6lM/d69RKVjiyA==
