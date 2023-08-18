@@ -92,7 +92,6 @@ class ResourceManagementClient extends ServiceClient {
     });
   };
 
-
   addUserAgentInfo(additionalUserAgentInfo) {
     if (this.userAgentInfo.value.indexOf(additionalUserAgentInfo) === -1) {
       this.userAgentInfo.value.push(additionalUserAgentInfo);
@@ -140,7 +139,6 @@ class ResourceManagementClient extends ServiceClient {
 
     return packageJsonInfo;
   }
-
 }
 
 module.exports = ResourceManagementClient;

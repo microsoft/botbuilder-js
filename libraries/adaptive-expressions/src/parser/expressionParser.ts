@@ -27,7 +27,7 @@ export class ExpressionParser implements ExpressionParserInterface {
      */
     readonly EvaluatorLookup: EvaluatorLookup;
 
-    private static expressionDict: Map<string, ParseTree> = new Map<string, ParseTree>();
+    private static expressionDict: WeakMap<any, ParseTree> = new WeakMap<any, ParseTree>();
 
     private readonly ExpressionTransformer = class
         extends AbstractParseTreeVisitor<Expression>
@@ -279,8 +279,8 @@ export class ExpressionParser implements ExpressionParserInterface {
      * @returns A ParseTree.
      */
     protected static antlrParse(expression: string): ParseTree {
-        if (ExpressionParser.expressionDict.has(expression)) {
-            return ExpressionParser.expressionDict.get(expression);
+        if (ExpressionParser.expressionDict.has({ key: expression })) {
+            return ExpressionParser.expressionDict.get({ key: expression });
         }
 
         const inputStream: ANTLRInputStream = new ANTLRInputStream(expression);
@@ -297,7 +297,7 @@ export class ExpressionParser implements ExpressionParserInterface {
         if (file !== undefined) {
             expressionContext = file.expression();
         }
-        ExpressionParser.expressionDict.set(expression, expressionContext);
+        ExpressionParser.expressionDict.set({ key: expression }, expressionContext);
 
         return expressionContext;
     }
