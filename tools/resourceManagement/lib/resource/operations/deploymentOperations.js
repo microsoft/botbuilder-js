@@ -10,7 +10,7 @@
 
 'use strict';
 
-const msRest = require('ms-rest');
+const msRest = require('@azure/ms-rest-js');
 const uuid = require('uuid');
 const WebResource = msRest.WebResource;
 
@@ -546,7 +546,7 @@ class DeploymentOperations {
     let self = this;
     return new Promise((resolve, reject) => {
       self._get(resourceGroupName, deploymentName, operationId, options, (err, result, request, response) => {
-        let httpOperationResponse = new msRest.HttpOperationResponse(request, response);
+        let httpOperationResponse = new client.models['HttpOperationResponse'](request, response);
         httpOperationResponse.body = result;
         if (err) { reject(err); }
         else { resolve(httpOperationResponse); }
@@ -639,7 +639,7 @@ class DeploymentOperations {
     let self = this;
     return new Promise((resolve, reject) => {
       self._list(resourceGroupName, deploymentName, options, (err, result, request, response) => {
-        let httpOperationResponse = new msRest.HttpOperationResponse(request, response);
+        let httpOperationResponse = new client.models['HttpOperationResponse'](request, response);
         httpOperationResponse.body = result;
         if (err) { reject(err); }
         else { resolve(httpOperationResponse); }
@@ -729,7 +729,7 @@ class DeploymentOperations {
     let self = this;
     return new Promise((resolve, reject) => {
       self._listNext(nextPageLink, options, (err, result, request, response) => {
-        let httpOperationResponse = new msRest.HttpOperationResponse(request, response);
+        let httpOperationResponse = new new client.models['HttpOperationResponse'](request, response);
         httpOperationResponse.body = result;
         if (err) { reject(err); }
         else { resolve(httpOperationResponse); }

@@ -61,3 +61,4 @@ exports.ResourceListResult = require('./resourceListResult');
 exports.ResourceGroupListResult = require('./resourceGroupListResult');
 exports.TagsListResult = require('./tagsListResult');
 exports.DeploymentOperationsListResult = require('./deploymentOperationsListResult');
+exports.HttpOperationResponse = require("./HttpOperationResponse");
