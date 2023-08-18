@@ -11,7 +11,7 @@
 'use strict';
 
 const msRest = require('ms-rest');
-const msRestAzure = require('ms-rest-azure');
+const uuid = require('uuid');
 const WebResource = msRest.WebResource;
 
 /**
@@ -125,7 +125,7 @@ function _get(resourceGroupName, deploymentName, operationId, options, callback)
   // Set Headers
   httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
   if (this.client.generateClientRequestId) {
-      httpRequest.headers['x-ms-client-request-id'] = msRestAzure.generateUuid();
+      httpRequest.headers['x-ms-client-request-id'] = uuid.v4();
   }
   if (this.client.acceptLanguage !== undefined && this.client.acceptLanguage !== null) {
     httpRequest.headers['accept-language'] = this.client.acceptLanguage;
@@ -310,7 +310,7 @@ function _list(resourceGroupName, deploymentName, options, callback) {
   // Set Headers
   httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
   if (this.client.generateClientRequestId) {
-      httpRequest.headers['x-ms-client-request-id'] = msRestAzure.generateUuid();
+      httpRequest.headers['x-ms-client-request-id'] = uuid.v4();
   }
   if (this.client.acceptLanguage !== undefined && this.client.acceptLanguage !== null) {
     httpRequest.headers['accept-language'] = this.client.acceptLanguage;
@@ -438,7 +438,7 @@ function _listNext(nextPageLink, options, callback) {
   // Set Headers
   httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
   if (this.client.generateClientRequestId) {
-      httpRequest.headers['x-ms-client-request-id'] = msRestAzure.generateUuid();
+      httpRequest.headers['x-ms-client-request-id'] = uuid.v4();
   }
   if (this.client.acceptLanguage !== undefined && this.client.acceptLanguage !== null) {
     httpRequest.headers['accept-language'] = this.client.acceptLanguage;
