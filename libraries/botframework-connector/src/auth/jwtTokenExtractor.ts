@@ -156,12 +156,14 @@ export class JwtTokenExtractor {
             }
 
             // enforce endorsements in openIdMetadadata if there is any endorsements associated with the key
-            const endorsements = metadata.endorsements;
-            if (Array.isArray(endorsements) && endorsements.length !== 0) {
+            const endorsements = new Set<string>(metadata.endorsements);
+            if (endorsements.size !== 0) {
                 const isEndorsed = EndorsementsValidator.validate(channelId, endorsements);
                 if (!isEndorsed) {
                     throw new AuthenticationError(
-                        `Could not validate endorsement for key: ${keyId} with endorsements: ${endorsements.join(',')}`,
+                        `Could not validate endorsement for key: ${keyId} with endorsements: ${[...endorsements].join(
+                            ','
+                        )}`,
                         StatusCodes.UNAUTHORIZED
                     );
                 }

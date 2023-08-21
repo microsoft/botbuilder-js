@@ -25,14 +25,14 @@ export class EndorsementsValidator {
      * some specific channels. That list is the endorsement list, and is validated here against the channelId.
      * @returns {boolean} True is the channelId is found in the Endorsement set. False if the channelId is not found.
      */
-    static validate(channelId: string, endorsements: string[]): boolean {
+    static validate(channelId: string, endorsements: Set<string>): boolean {
         // If the Activity came in and doesn't have a Channel ID then it's making no
         // assertions as to who endorses it. This means it should pass.
         if (channelId === null || channelId.trim() === '') {
             return true;
         }
 
-        if (endorsements === null) {
+        if (!endorsements) {
             throw new AuthenticationError('endorsements required', StatusCodes.UNAUTHORIZED);
         }
 
@@ -47,11 +47,6 @@ export class EndorsementsValidator {
 
         // Does the set of endorsements match the channelId that was passed in?
 
-        // ToDo: Consider moving this to a HashSet instead of a string
-        // array, to make lookups O(1) instead of O(N). To give a sense
-        // of scope, tokens from WebChat have about 10 endorsements, and
-        // tokens coming from Teams have about 20.
-
-        return endorsements.some((value: string) => value === channelId);
+        return endorsements.has(channelId);
     }
 }
