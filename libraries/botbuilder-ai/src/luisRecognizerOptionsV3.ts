@@ -8,8 +8,8 @@
 
 import fetch from 'node-fetch';
 import { RequestInfo, RequestInit } from 'node-fetch';
-import { LUISRuntimeModels as LuisModels } from '@azure/cognitiveservices-luis-runtime';
 import { LuisApplication, LuisRecognizerOptionsV3 } from './luisRecognizer';
+import { LuisResult } from './luisV2-models/luisResult';
 import { LuisRecognizerInternal } from './luisRecognizerOptions';
 import { NullTelemetryClient, TurnContext, RecognizerResult } from 'botbuilder-core';
 import { DialogContext } from 'botbuilder-dialogs';
@@ -239,7 +239,7 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
 
     private emitTraceInfo(
         context: TurnContext,
-        luisResult: LuisModels.LuisResult,
+        luisResult: LuisResult,
         recognizerResult: RecognizerResult,
         options: LuisRecognizerOptionsV3
     ): Promise<unknown> {

@@ -1,7 +1,7 @@
 const assert = require('assert');
 const fs = require('fs-extra');
 const nock = require('nock');
-const { LUISRuntimeClient } = require('@azure/cognitiveservices-luis-runtime');
+const { LUISRuntimeClientV2 } = require('../lib/luisV2-models/luisRuntimeClientV2');
 const msRest = require('@azure/ms-rest-js');
 
 const applicationId = '00000000-0000-0000-0000-000000000000';
@@ -78,7 +78,7 @@ async function TestJson(file, includeAllIntents = true, includeInstance = true) 
 
     const newPath = expectedPath + '.new';
 
-    const client = new LUISRuntimeClient(creds, baseUrl);
+    const client = new LUISRuntimeClientV2(creds, baseUrl);
     const result = await client.prediction.resolve(applicationId, expected.query, {
         includeAllIntents: includeAllIntents,
         includeInstance: includeInstance,
