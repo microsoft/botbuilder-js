@@ -21,7 +21,7 @@
         "botbuilder": "~4.15.0",
         "dotenv": "~8.2.0",
         "replace": "~1.2.0",
-        "restify": "~8.5.1"
+        "restify": "~11.1.0"
     },
     "devDependencies": {
         "@types/restify": "8.4.2",
