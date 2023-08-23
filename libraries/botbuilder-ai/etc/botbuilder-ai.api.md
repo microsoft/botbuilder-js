@@ -23,7 +23,7 @@ import { DialogTurnResult } from 'botbuilder-dialogs';
 import { EnumExpression } from 'adaptive-expressions';
 import { Expression } from 'adaptive-expressions';
 import { IntExpression } from 'adaptive-expressions';
-import { LUISRuntimeModels } from '@azure/cognitiveservices-luis-runtime';
+import * as msRest from '@azure/ms-rest-js';
 import { NumberExpression } from 'adaptive-expressions';
 import { ObjectExpression } from 'adaptive-expressions';
 import { Recognizer } from 'botbuilder-dialogs';
@@ -290,7 +290,7 @@ export class LuisComponentRegistration extends ComponentRegistration {
     }
 
 // @public
-export interface LuisPredictionOptions extends LUISRuntimeModels.PredictionResolveOptionalParams {
+export interface LuisPredictionOptions extends msRest.RequestOptionsBase {
     bingSpellCheckSubscriptionKey?: string;
     includeAllIntents?: boolean;
     includeInstanceData?: boolean;
@@ -300,6 +300,7 @@ export interface LuisPredictionOptions extends LUISRuntimeModels.PredictionResol
     staging?: boolean;
     telemetryClient?: BotTelemetryClient;
     timezoneOffset?: number;
+    verbose?: boolean;
 }
 
 // @public

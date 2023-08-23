@@ -150,7 +150,7 @@ describe('CloudAdapter', function () {
             await adapter.process(req, res, logic);
 
             assert.equal(StatusCodes.UNAUTHORIZED, res.statusCode);
-            expect(consoleSpy.calledWithMatch({ message: 'The token has expired' })).to.be.true;
+            expect(consoleSpy.calledWithMatch({ message: 'jwt expired' })).to.be.true;
         });
     });
 
