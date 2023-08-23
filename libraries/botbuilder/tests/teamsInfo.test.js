@@ -5,6 +5,7 @@ const { BotFrameworkAdapter, TeamsInfo, CloudAdapter } = require('../');
 const { Conversations } = require('botframework-connector/lib/connectorApi/operations');
 const { MicrosoftAppCredentials, ConnectorClient } = require('botframework-connector');
 const { TurnContext, MessageFactory, ActionTypes, Channels } = require('botbuilder-core');
+const { TeamMember } = require('botframework-schema');
 
 class TeamsInfoAdapter extends BotFrameworkAdapter {
     constructor() {
@@ -1148,6 +1149,179 @@ describe('TeamsInfo', function () {
             assert(fetchOauthToken.isDone());
             assert(sendTeamsMeetingNotificationExpectation.isDone());
         });
+    });
+
+    describe('sendMessageToListOfUsers()', function () {
+        it('should correctly map notification object as the request body of the POST request', async function () {
+            const activity = MessageFactory.text('Message to users from batch');
+            const tenant = 'tenant-id';
+            const members = [
+                {id: "member-1"},
+                {id: "member-2"},
+                {id: "member-3"}
+            ];
+            const content = {
+                "activity": activity,
+                "members": members,
+                "tenant": tenant
+            };
+            const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+
+            const sendMessageToListOfUsersExpectation = nock('https://smba.trafficmanager.net/amer')
+                .post('/v3/batch/conversation/users/', content)
+                .matchHeader('Authorization', expectedAuthHeader)
+                .reply(201, {"operacion": "1"});
+
+            const context = new TestContext(teamActivity);
+            context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
+
+            const operationId = await TeamsInfo.sendMessageToListOfUsers(context, tenant, members);
+
+            assert(fetchOauthToken.isDone());
+            assert(sendMessageToListOfUsersExpectation.isDone());
+        });
+
+        // it('should return an empty object if a 202 status code was returned', async function () {
+        //     const notification = {};
+        //     const meetingId = 'randomGUID';
+        //     const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+
+        //     const sendTeamsMeetingNotificationExpectation = nock('https://smba.trafficmanager.net/amer')
+        //         .post(`/v1/meetings/${meetingId}/notification`, notification)
+        //         .matchHeader('Authorization', expectedAuthHeader)
+        //         .reply(202, {});
+
+        //     const context = new TestContext(teamActivity);
+        //     context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
+        //     const sendTeamsMeetingNotification = await TeamsInfo.sendMeetingNotification(
+        //         context,
+        //         notification,
+        //         meetingId
+        //     );
+
+        //     assert(fetchOauthToken.isDone());
+        //     assert(sendTeamsMeetingNotificationExpectation.isDone());
+
+        //     const isEmptyObject = (obj) => Object.keys(obj).length == 0;
+        //     assert(isEmptyObject(sendTeamsMeetingNotification));
+        // });
+
+        // it('should return a MeetingNotificationResponse if a 207 status code was returned', async function () {
+        //     const notification = {};
+        //     const meetingId = 'randomGUID';
+        //     const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+
+        //     const recipientsFailureInfo = {
+        //         recipientsFailureInfo: [
+        //             {
+        //                 recipientMri: '8:orgid:4e8a10c0-4687-4f0a-9ed6-95f28d67c102',
+        //                 failureReason: 'Invalid recipient. Recipient not in roster',
+        //                 errorCode: 'MemberNotFoundInConversation',
+        //             },
+        //             {
+        //                 recipientMri: '8:orgid:4e8a10c0-4687-4f0a-9ed6-95f28d67c103',
+        //                 failureReason: 'Invalid recipient. Recipient not in roster',
+        //                 errorCode: 'MemberNotFoundInConversation',
+        //             },
+        //         ],
+        //     };
+
+        //     const sendTeamsMeetingNotificationExpectation = nock('https://smba.trafficmanager.net/amer')
+        //         .post(`/v1/meetings/${meetingId}/notification`, notification)
+        //         .matchHeader('Authorization', expectedAuthHeader)
+        //         .reply(207, recipientsFailureInfo);
+
+        //     const context = new TestContext(teamActivity);
+        //     context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
+        //     const sendTeamsMeetingNotification = await TeamsInfo.sendMeetingNotification(
+        //         context,
+        //         notification,
+        //         meetingId
+        //     );
+
+        //     assert(fetchOauthToken.isDone());
+        //     assert(sendTeamsMeetingNotificationExpectation.isDone());
+
+        //     assert.deepEqual(sendTeamsMeetingNotification, recipientsFailureInfo);
+        // });
+
+        // it('should return standard error response if a 4xx status code was returned', async function () {
+        //     const notification = {};
+        //     const meetingId = 'randomGUID';
+        //     const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+
+        //     const errorResponse = { error: { code: 'BadSyntax', message: 'Payload is incorrect' } };
+
+        //     const sendTeamsMeetingNotificationExpectation = nock('https://smba.trafficmanager.net/amer')
+        //         .post(`/v1/meetings/${meetingId}/notification`, notification)
+        //         .matchHeader('Authorization', expectedAuthHeader)
+        //         .reply(400, errorResponse);
+
+        //     const context = new TestContext(teamActivity);
+        //     context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
+
+        //     let isErrorThrown = false;
+        //     try {
+        //         await TeamsInfo.sendMeetingNotification(context, notification, meetingId);
+        //     } catch (e) {
+        //         assert.deepEqual(errorResponse, e.body);
+        //         isErrorThrown = true;
+        //     }
+
+        //     assert(isErrorThrown);
+
+        //     assert(fetchOauthToken.isDone());
+        //     assert(sendTeamsMeetingNotificationExpectation.isDone());
+        // });
+
+        // it('should throw an error if an empty meeting id is provided', async function () {
+        //     const notification = {};
+        //     const emptyMeetingId = '';
+        //     const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+
+        //     const sendTeamsMeetingNotificationExpectation = nock('https://smba.trafficmanager.net/amer')
+        //         .post(`/v1/meetings/${emptyMeetingId}/notification`, notification)
+        //         .matchHeader('Authorization', expectedAuthHeader)
+        //         .reply(202, {});
+
+        //     const context = new TestContext(teamActivity);
+        //     context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
+
+        //     let isErrorThrown = false;
+        //     try {
+        //         await TeamsInfo.sendMeetingNotification(context, notification, emptyMeetingId);
+        //     } catch (e) {
+        //         assert(typeof e, 'Error');
+        //         assert(e.message, 'meetingId is required.');
+        //         isErrorThrown = true;
+        //     }
+
+        //     assert(isErrorThrown);
+        //     assert(fetchOauthToken.isDone() === false);
+        //     assert(sendTeamsMeetingNotificationExpectation.isDone() === false);
+        // });
+
+        // it('should get the meeting id from the context object if no meeting id is provided', async function () {
+        //     const notification = {};
+        //     const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+
+        //     const context = new TestContext(teamActivity);
+
+        //     const sendTeamsMeetingNotificationExpectation = nock('https://smba.trafficmanager.net/amer')
+        //         .post(
+        //             `/v1/meetings/${encodeURIComponent(teamActivity.channelData.meeting.id)}/notification`,
+        //             notification
+        //         )
+        //         .matchHeader('Authorization', expectedAuthHeader)
+        //         .reply(202, {});
+
+        //     context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
+
+        //     await TeamsInfo.sendMeetingNotification(context, notification);
+
+        //     assert(fetchOauthToken.isDone());
+        //     assert(sendTeamsMeetingNotificationExpectation.isDone());
+        // });
     });
 
     describe('private methods', function () {

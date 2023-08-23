@@ -7,6 +7,7 @@
 // The ChannelCount and MemberCount fields were manually added to the TeamDetails definition.
 import { MessageActionsPayloadBody, O365ConnectorCardActionBase, O365ConnectorCardInputBase } from './extension';
 import { Activity, Attachment, CardAction, ChannelAccount, ConversationAccount, SuggestedActions } from '../';
+import { isTypeNode } from 'typescript';
 export * from './extension';
 
 /**
@@ -25,10 +26,10 @@ export interface BotConfigAuth {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface ConfigAuthResponse extends ConfigResponse<BotConfigAuth> {}
+export interface ConfigAuthResponse extends ConfigResponse<BotConfigAuth> { }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface ConfigTaskResponse extends ConfigResponse<TaskModuleResponse> {}
+export interface ConfigTaskResponse extends ConfigResponse<TaskModuleResponse> { }
 /**
  * @interface
  * An interface representing ChannelInfo.
@@ -2029,3 +2030,109 @@ export interface MeetingNotificationResponse {
      */
     recipientsFailureInfo?: MeetingNotificationRecipientFailureInfo[];
 }
+
+/**
+ * @type
+ * Specifies the Teams member data.
+ */
+export interface TeamsMemberInterface {
+    /**
+     * @member {string} [id] The member id.
+     */
+    id: string;
+}
+
+/**
+ * @type
+ * Defines the TeamMember type.
+ */
+export type TeamsMember = TeamsMemberInterface;
+
+/**
+ * @interface
+ * Specifies the body of the teams batch operation request.
+ */
+export interface BatchOperationRequest {
+    /**
+     * @member {Activity} [activity] The activity of the request.
+     */
+    activity: Activity;
+    /**
+     * @member {string} [tenantId] The id of the Teams tenant.
+     */
+    tenantId: string;
+    /**
+     * @member {string} [teamId] The id of the team.
+     */
+    teamId?: string;
+    /**
+     * @member {TeamMember[]} [members] The list of members.
+     */
+    members?: TeamsMember[]
+}
+
+/**
+ * @interface
+ * Specifies the body of the teams batch operation response.
+ */
+export interface BatchOperationResponse {
+    /**
+     * @member {string} [operationId] The id of the operation executed.
+     */
+    operationId: string;
+}
+
+/**
+ * @interface
+ * Specifies the body of the teams batch operation state response.
+ */
+export interface GetOperationStateResponse {
+    /**
+     * @member {string} [state] The state of the operation.
+     */
+    state: string;
+    /**
+     * @member {Record<number, number>} [statusMap] The status map for processed operations.
+     */
+    statusMap: Record<number, number>;
+    /**
+     * @member {Date} [retryAfter] The datetime value to retry the operation.
+     */
+    retryAfter?: Date;
+    /**
+     * @member {number} [totalEntriesCount] The number of entries.
+     */
+    totalEntriesCount: number;
+}
+
+/**
+ * @interface
+ * Specifies the failed entry with its id and error.
+ */
+export interface BatchFailedEntry {
+    /**
+     * @member {string} [id] The id of the failed entry.
+     */
+    id: string;
+    /**
+     * @member {string} [error] The error of the failed entry.
+     */
+    error: string;
+}
+
+/**
+ * @interface
+ * Specifies the body of the batch failed entries response.
+ */
+export interface GetFailedEntriesResponse {
+    /**
+     * @member {string} [continuationToken] The continuation token for paginated results.
+     */
+    continuationToken: string;
+    /**
+     * @member {BatchFailedEntry[]} [failedEntryResponses] The list of failed entries result of a batch operation.
+     */
+    failedEntryResponses: BatchFailedEntry[];
+}
+
+

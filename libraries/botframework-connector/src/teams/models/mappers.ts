@@ -2242,3 +2242,143 @@ export const AppBasedLinkQuery: msRest.CompositeMapper = {
         },
     },
 };
+
+export const BatchOperationRequest: msRest.CompositeMapper = {
+    serializedName: 'BatchOperationRequest',
+    type: {
+        name: 'Composite',
+        className: 'BatchOperationRequest',
+        modelProperties: {
+            activity: {
+                serializedName: 'activity',
+                type: {
+                    name: 'Composite',
+                    className: 'Activity',
+                },
+            },
+            tenantId: {
+                serializedName: 'tenantId',
+                type: {
+                    name: 'String',
+                },
+            },
+            teamId: {
+                serializedName: 'teamId',
+                type: {
+                    name: 'String',
+                },
+            },
+            members: {
+                serializedName: 'members',
+                type: {
+                    name: 'Sequence',
+                    element: {
+                        type: {
+                            name: 'Composite',
+                            className: 'TeamsMember',
+                        },
+                    },
+                },
+            },
+        },
+    },
+};
+
+export const BatchOperationResponse: msRest.CompositeMapper = {
+    serializedName: 'BatchOperationResponse',
+    type: {
+        name: 'Composite',
+        className: 'BatchOperationResponse',
+        modelProperties: {
+            operationId: {
+                serializedName: 'operationId',
+                type: {
+                    name: 'String',
+                },
+            },
+        },
+    },
+};
+
+export const GetTeamsOperationStateResponse: msRest.CompositeMapper = {
+    serializedName: 'GetTeamsOperationStateResponse',
+    type: {
+        name: 'Composite',
+        className: 'GetTeamsOperationStateResponse',
+        modelProperties: {
+            state: {
+                serializedName: 'state',
+                type: {
+                    name: 'String',
+                },
+            },
+            stateMap: {
+                serializedName: 'stateMap',
+                type: {
+                    name: 'Dictionary',
+                    value: {
+                        type: {
+                            name: 'Number',
+                        },
+                    },
+                },
+            },
+            retryAfter: {
+                serializedName: 'retryAfter',
+                type: {
+                    name: 'DateTime',
+                },
+            },
+            totalEntriesCount: {
+                serializedName: 'totalEntriesCount',
+                type: {
+                    name: 'Number',
+                },
+            },
+        },
+    },
+};
+
+export const GetTeamsFailedEntriesResponse: msRest.CompositeMapper = {
+    serializedName: 'GetFailedEntriesResponse',
+    type: {
+        name: 'Composite',
+        className: 'GetFailedEntriesResponse',
+        modelProperties: {
+            activity: {
+                serializedName: 'continuationToken',
+                type: {
+                    name: 'String',
+                },
+            },
+            failedEntryResponses: {
+                serializedName: 'failedEntryResponses',
+                type: {
+                    name: 'Sequence',
+                    element: {
+                        type: {
+                            name: 'Composite',
+                            className: 'BatchFailedEntry',
+                        },
+                    },
+                },
+            },
+        },
+    },
+};
+
+export const TeamsMember: msRest.CompositeMapper = {
+    serializedName: 'TeamsMember',
+    type: {
+        name: 'Composite',
+        className: 'TeamsMember',
+        modelProperties: {
+            id: {
+                serializedName: 'id',
+                type: {
+                    name: 'String',
+                },
+            },
+        },
+    },
+};

@@ -10,6 +10,9 @@ import {
     TeamsMeetingInfo,
     MeetingNotificationResponse,
     TeamsMeetingParticipant,
+    BatchOperationResponse,
+    GetOperationStateResponse,
+    GetFailedEntriesResponse
 } from 'botframework-schema';
 
 /**
@@ -141,5 +144,81 @@ export type TeamsMeetingNotificationResponse = MeetingNotificationResponse & {
          * The response body as parsed JSON or XML
          */
         parsedBody: MeetingNotificationResponse | {};
+    };
+};
+
+/**
+ * Contains response data for the Teams batch operations.
+ */
+export type TeamsBatchOperationResponse = BatchOperationResponse & {
+    /**
+     * The underlying HTTP response.
+     */
+    _response: HttpResponse & {
+        /**
+         * The response body as text (string format)
+         */
+        bodyAsText: string;
+        /**
+         * The response body as parsed JSON or XML
+         */
+        parsedBody: BatchOperationResponse | {};
+    };
+};
+
+/**
+ * Contains response data for the Teams batch operation state.
+ */
+export type BatchGetOperationStateResponse = GetOperationStateResponse & {
+    /**
+     * The underlying HTTP response.
+     */
+    _response: HttpResponse & {
+        /**
+         * The response body as text (string format)
+         */
+        bodyAsText: string;
+        /**
+         * The response body as parsed JSON or XML
+         */
+        parsedBody: GetOperationStateResponse | {};
+    };
+};
+
+/**
+ * Contains response data for the Teams batch failed entries.
+ */
+export type BatchGetFailedEntriesResponse = GetFailedEntriesResponse & {
+    /**
+     * The underlying HTTP response.
+     */
+    _response: HttpResponse & {
+        /**
+         * The response body as text (string format)
+         */
+        bodyAsText: string;
+        /**
+         * The response body as parsed JSON or XML
+         */
+        parsedBody: GetFailedEntriesResponse | {};
+    };
+};
+
+/**
+ * Contains response data for the Teams batch cancel operation.
+ */
+export type CancelOperationResponse = {
+    /**
+     * The underlying HTTP response.
+     */
+    _response: HttpResponse & {
+        /**
+         * The response body as text (string format)
+         */
+        bodyAsText: string;
+        /**
+         * The response body as parsed JSON or XML
+         */
+        parsedBody: {};
     };
 };

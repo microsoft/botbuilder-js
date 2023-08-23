@@ -6,6 +6,7 @@
 export { ErrorResponse, ErrorModel, InnerHttpError } from '../../connectorApi/models/mappers';
 
 export {
+    Activity,
     ConversationList,
     ChannelInfo,
     MessageActionsPayloadConversation,
@@ -23,4 +24,9 @@ export {
     TaskModuleContinueResponse,
     TaskModuleTaskInfo,
     Attachment,
+    BatchOperationRequest,
+    BatchOperationResponse,
+    GetTeamsFailedEntriesResponse,
+    GetTeamsOperationStateResponse,
+    TeamsMember,
 } from './mappers';
