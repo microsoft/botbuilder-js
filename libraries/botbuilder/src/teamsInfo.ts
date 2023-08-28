@@ -372,22 +372,25 @@ export class TeamsInfo {
      * Sends a message to the provided users in the list of Teams members.
      *
      * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
+     * @param activity The activity to send.
      * @param tenantId The tenant ID.
      * @param members The list of user members.
      * @returns Promise with operationId
      */
     static async sendMessageToListOfUsers(
         context: TurnContext,
+        activity: Activity,
         tenantId: string,
         members: TeamsMember[]
     ): Promise<BatchOperationResponse> {
-        const activity = context.activity;
-
+        if (!activity) {
+            throw new Error('activity is required.');
+        }
         if (!tenantId) {
             throw new Error('tenantId is required.');
         }
         if (!members || members.length == 0) {
-            throw new Error('memebers list is required.');
+            throw new Error('members list is required.');
         }
 
         return await this.getTeamsConnectorClient(context).teams.sendMessageToListOfUsers(activity, tenantId, members);
@@ -397,15 +400,18 @@ export class TeamsInfo {
      * Sends a message to all the users in a tenant.
      *
      * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
+     * @param activity The activity to send.
      * @param tenantId The tenant ID.
      * @returns Promise with operationId
      */
     static async sendMessageToAllUsersInTenant(
         context: TurnContext,
+        activity: Activity,
         tenantId: string,
     ): Promise<BatchOperationResponse> {
-        const activity = context.activity;
-
+        if (!activity) {
+            throw new Error('activity is required.');
+        }
         if (!tenantId) {
             throw new Error('tenantId is required.');
         }
@@ -417,17 +423,20 @@ export class TeamsInfo {
      * Sends a message to all the users in a team.
      *
      * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
+     * @param activity The activity to send.
      * @param tenantId The tenant ID.
      * @param teamId The team ID.
      * @returns Promise with operationId
      */
-    static async sendMessageToAllUserInTeam(
+    static async sendMessageToAllUsersInTeam(
         context: TurnContext,
+        activity: Activity,
         tenantId: string,
         teamId: string
     ): Promise<BatchOperationResponse> {
-        const activity = context.activity;
-
+        if (!activity) {
+            throw new Error('activity is required.');
+        }
         if (!tenantId) {
             throw new Error('tenantId is required.');
         }
@@ -442,17 +451,20 @@ export class TeamsInfo {
      * Sends a message to the provided list of Teams channels.
      *
      * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
+     * @param activity The activity to send.
      * @param tenantId The tenant ID.
      * @param members The list of channels.
      * @returns Promise with operationId
      */
     static async sendMessageToListOfChannels(
         context: TurnContext,
+        activity: Activity,
         tenantId: string,
         members: TeamsMember[]
     ): Promise<BatchOperationResponse> {
-        const activity = context.activity;
-
+        if (!activity) {
+            throw new Error('activity is required.');
+        }
         if (!tenantId) {
             throw new Error('tenantId is required.');
         }
@@ -474,8 +486,6 @@ export class TeamsInfo {
         context: TurnContext,
         operationId: string
     ): Promise<GetOperationStateResponse> {
-        const activity = context.activity;
-
         if (!operationId) {
             throw new Error('operationId is required.');
         }

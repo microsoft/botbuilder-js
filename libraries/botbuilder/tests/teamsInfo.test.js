@@ -184,7 +184,8 @@ const teamActivity = {
 
 describe('TeamsInfo', function () {
     const connectorClient = new ConnectorClient(new MicrosoftAppCredentials('abc', '123'), {
-        baseUri: 'https://smba.trafficmanager.net/amer/',
+        //baseUri: 'https://smba.trafficmanager.net/amer/',
+        baseUri: 'https://canary.botapi.skype.com/',
     });
 
     beforeEach(function () {
@@ -1154,25 +1155,22 @@ describe('TeamsInfo', function () {
     describe('sendMessageToListOfUsers()', function () {
         it('should correctly map notification object as the request body of the POST request', async function () {
             const activity = MessageFactory.text('Message to users from batch');
+            activity.serviceUrl = 'https://canary.botapi.skype.com/';
             const tenant = 'tenant-id';
-            const members = [
-                {id: "member-1"},
-                {id: "member-2"},
-                {id: "member-3"}
-            ];
+            const members = [{ id: 'member-1' }, { id: 'member-2' }, { id: 'member-3' }];
             const content = {
-                "activity": activity,
-                "members": members,
-                "tenant": tenant
+                activity: activity,
+                members: members,
+                tenant: tenant,
             };
             const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
 
             const sendMessageToListOfUsersExpectation = nock('https://smba.trafficmanager.net/amer')
                 .post('/v3/batch/conversation/users/', content)
                 .matchHeader('Authorization', expectedAuthHeader)
-                .reply(201, {"operacion": "1"});
+                .reply(201, { operacion: '1' });
 
-            const context = new TestContext(teamActivity);
+            const context = new TestContext(activity);
             context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
 
             const operationId = await TeamsInfo.sendMessageToListOfUsers(context, tenant, members);

@@ -10,7 +10,7 @@ import * as Mappers from '../models/teamsMappers';
 import * as Parameters from '../models/parameters';
 import { TeamsConnectorClientContext } from '../';
 import { Activity, ConversationList, TeamDetails, TeamsMeetingInfo, TeamsMeetingParticipant, MeetingNotificationResponse, MeetingNotification, TeamsMember, BatchOperationResponse, GetOperationStateResponse, GetFailedEntriesResponse } from 'botframework-schema';
-import { retry } from 'botbuilder-stdlib';
+import { retry } from '../';
 
 /** Class representing a Teams. */
 export class Teams {
@@ -301,47 +301,10 @@ export class Teams {
         ) as Promise<Models.TeamsMeetingNotificationResponse>;
     }
 
-    //Batch Operations -------------------------------------------------------------
+    //Batch Operations
     /**
      * Send message to a list of users.
      * 
-     * @param activity The activity to send.
-     * @param tenantId The tenant Id.
-     * @param members The recipient members list.
-     * @param options The optional parameters.
-     */
-    sendMessageToListOfUsers(
-        activity: Activity,
-        tenantId: string,
-        members: TeamsMember[],
-        options?: msRest.RequestOptionsBase,
-    ): Promise<Models.TeamsBatchOperationResponse>
-    /**
-     * @param activity The activity to send.
-     * @param tenantId The tenant Id.
-     * @param members The recipient members list.
-     * @param callback The callback.
-     */
-    sendMessageToListOfUsers(
-        activity: Activity,
-        tenantId: string,
-        members: TeamsMember[],
-        callback: msRest.ServiceCallback<BatchOperationResponse>
-    ): void;
-    /**
-     * @param activity The activity to send.
-     * @param tenantId The tenant Id.
-     * @param members The recipient members list.
-     * @param options The optional parameters.
-     * @param callback The callback.
-     */
-    sendMessageToListOfUsers(
-        activity: Activity,
-        tenantId: string,
-        members: TeamsMember[],
-        options: msRest.RequestOptionsBase,
-        callback: msRest.ServiceCallback<BatchOperationResponse>
-    ): void;
     /**
      * @param activity The activity to send.
      * @param tenantId The tenant Id.
@@ -375,37 +338,6 @@ export class Teams {
     /**
      * Send message to all users belonging to a tenant.
      * 
-     * @param activity The activity to send.
-     * @param tenantId The tenant Id.
-     * @param options The optional parameters.
-     */
-    sendMessageToAllUsersInTenant(
-        activity: Activity,
-        tenantId: string,
-        options?: msRest.RequestOptionsBase,
-    ): Promise<Models.TeamsBatchOperationResponse>
-    /**
-     * @param activity The activity to send.
-     * @param tenantId The tenant Id.
-     * @param callback The callback.
-     */
-    sendMessageToAllUsersInTenant(
-        activity: Activity,
-        tenantId: string,
-        callback: msRest.ServiceCallback<BatchOperationResponse>
-    ): void;
-    /**
-     * @param activity The activity to send.
-     * @param tenantId The tenant Id.
-     * @param options The optional parameters.
-     * @param callback The callback.
-     */
-    sendMessageToAllUsersInTenant(
-        activity: Activity,
-        tenantId: string,
-        options: msRest.RequestOptionsBase,
-        callback: msRest.ServiceCallback<BatchOperationResponse>
-    ): void;
     /**
      * @param activity The activity to send.
      * @param tenantId The tenant Id.
@@ -436,43 +368,6 @@ export class Teams {
     /**
      * Send message to all users belonging to a team.
      * 
-     * @param activity The activity to send.
-     * @param tenantId The tenant Id.
-     * @param teamId The id of the recipient Team.
-     * @param options The optional parameters.
-     */
-    sendMessageToAllUsersInTeam(
-        activity: Activity,
-        tenantId: string,
-        teamId: string,
-        options?: msRest.RequestOptionsBase,
-    ): Promise<Models.TeamsBatchOperationResponse>
-    /**
-     * @param activity The activity to send.
-     * @param tenantId The tenant Id.
-     * @param teamId The id of the recipient Team.
-     * @param callback The callback.
-     */
-    sendMessageToAllUsersInTeam(
-        activity: Activity,
-        tenantId: string,
-        teamId: string,
-        callback: msRest.ServiceCallback<BatchOperationResponse>
-    ): void;
-    /**
-     * @param activity The activity to send.
-     * @param tenantId The tenant Id.
-     * @param teamId The id of the recipient Team.
-     * @param options The optional parameters.
-     * @param callback The callback.
-     */
-    sendMessageToAllUsersInTeam(
-        activity: Activity,
-        tenantId: string,
-        teamId: string,
-        options: msRest.RequestOptionsBase,
-        callback: msRest.ServiceCallback<BatchOperationResponse>
-    ): void;
     /**
      * @param activity The activity to send.
      * @param tenantId The tenant Id.
@@ -506,43 +401,6 @@ export class Teams {
     /**
      * Send message to a list of channels.
      * 
-     * @param activity The activity to send.
-     * @param tenantId The tenant Id.
-     * @param members The recipient members list.
-     * @param options The optional parameters.
-     */
-    sendMessageToListOfChannels(
-        activity: Activity,
-        tenantId: string,
-        members: TeamsMember[],
-        options?: msRest.RequestOptionsBase,
-    ): Promise<Models.TeamsBatchOperationResponse>
-    /**
-     * @param activity The activity to send.
-     * @param tenantId The tenant Id.
-     * @param members The recipient members list.
-     * @param callback The callback.
-     */
-    sendMessageToListOfChannels(
-        activity: Activity,
-        tenantId: string,
-        members: TeamsMember[],
-        callback: msRest.ServiceCallback<BatchOperationResponse>
-    ): void;
-    /**
-     * @param activity The activity to send.
-     * @param tenantId The tenant Id.
-     * @param members The recipient members list.
-     * @param options The optional parameters.
-     * @param callback The callback.
-     */
-    sendMessageToListOfChannels(
-        activity: Activity,
-        tenantId: string,
-        members: TeamsMember[],
-        options: msRest.RequestOptionsBase,
-        callback: msRest.ServiceCallback<BatchOperationResponse>
-    ): void;
     /**
      * @param activity The activity to send.
      * @param tenantId The tenant Id.
@@ -614,6 +472,7 @@ export class Teams {
     ): Promise<Models.BatchGetOperationStateResponse> {
         return retry(() => this.client.sendOperationRequest(
             {
+                operationId,
                 options
             },
             getOperationStateSpec,
@@ -662,6 +521,7 @@ export class Teams {
     ): Promise<Models.BatchGetFailedEntriesResponse> {
         return retry(() => this.client.sendOperationRequest(
             {
+                operationId,
                 options
             },
             getPagedFailedEntriesSpec,
@@ -684,6 +544,7 @@ export class Teams {
     ): Promise<Models.CancelOperationResponse> {
         return retry(() => this.client.sendOperationRequest(
             {
+                operationId,
                 options
             },
             cancelOperationSpec
@@ -774,6 +635,7 @@ const sendMeetingNotificationOperationSpec: msRest.OperationSpec = {
 const sendMessageToListOfUsersOperationSpec: msRest.OperationSpec = {
     httpMethod: 'POST',
     path: 'v3/batch/conversation/users/',
+    baseUrl: 'https://canary.botapi.skype.com/amer-df/',
     requestBody: {
         parameterPath: 'content',
         mapper: {
@@ -795,6 +657,7 @@ const sendMessageToListOfUsersOperationSpec: msRest.OperationSpec = {
 const sendMessageToAllUsersInTenantOperationSpec: msRest.OperationSpec = {
     httpMethod: 'POST',
     path: 'v3/batch/conversation/tenant/',
+    baseUrl: 'https://canary.botapi.skype.com/amer-df/',
     requestBody: {
         parameterPath: 'content',
         mapper: {
@@ -816,6 +679,7 @@ const sendMessageToAllUsersInTenantOperationSpec: msRest.OperationSpec = {
 const sendMessageToAllUsersInTeamOperationSpec: msRest.OperationSpec = {
     httpMethod: 'POST',
     path: 'v3/batch/conversation/team/',
+    baseUrl: 'https://canary.botapi.skype.com/amer-df/',
     requestBody: {
         parameterPath: 'content',
         mapper: {
@@ -837,6 +701,7 @@ const sendMessageToAllUsersInTeamOperationSpec: msRest.OperationSpec = {
 const sendMessageToListOfChannelsOperationSpec: msRest.OperationSpec = {
     httpMethod: 'POST',
     path: 'v3/batch/conversation/channels/',
+    baseUrl: 'https://canary.botapi.skype.com/amer-df/',
     requestBody: {
         parameterPath: 'content',
         mapper: {
@@ -858,6 +723,7 @@ const sendMessageToListOfChannelsOperationSpec: msRest.OperationSpec = {
 const getOperationStateSpec: msRest.OperationSpec = {
     httpMethod: 'GET',
     path: 'v3/batch/conversation/{operationId}',
+    baseUrl: 'https://canary.botapi.skype.com/amer-df/',
     urlParameters: [Parameters.operationId],
     responses: {
         200: {
@@ -873,6 +739,7 @@ const getOperationStateSpec: msRest.OperationSpec = {
 const getPagedFailedEntriesSpec: msRest.OperationSpec = {
     httpMethod: 'GET',
     path: 'v3/batch/conversation/failedentries/{operationId}',
+    baseUrl: 'https://canary.botapi.skype.com/amer-df/',
     urlParameters: [Parameters.operationId],
     responses: {
         200: {
@@ -888,6 +755,7 @@ const getPagedFailedEntriesSpec: msRest.OperationSpec = {
 const cancelOperationSpec: msRest.OperationSpec = {
     httpMethod: 'DELETE',
     path: 'v3/batch/conversation/{operationId}',
+    baseUrl: 'https://canary.botapi.skype.com/amer-df/',
     urlParameters: [Parameters.operationId],
     responses: {
         200: {},
