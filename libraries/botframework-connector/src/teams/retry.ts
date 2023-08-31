@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
+import { Errors } from 'botframework-schema';
 
 /**
  * Retry a given promise with gradually increasing delay.
@@ -16,7 +17,8 @@ export async function retry<T>(
 ): Promise<T | undefined> {
     let delay = initialDelay,
         n = 1
-    let error: number;
+    let errStatusCode: number;
+    let errorsArray = [];
 
     // Take care of negative or zero
     maxRetries = Math.max(maxRetries, 1);
@@ -26,14 +28,16 @@ export async function retry<T>(
             // Note: return await intentional so we can catch errors
             return await promise(n);
         } catch (err: any) {
+            errorsArray.push(err);
+            errStatusCode = err.statusCode
             if (err.statusCode == 429) {
-                error = err.statusCode
                 await new Promise((resolve) => setTimeout(resolve, delay));
                 delay *= n;
                 n++;
             }
         }
-    } while (n <= maxRetries && error === 429)
+    } while (n <= maxRetries && errStatusCode === 429)
 
-    throw new Error("Failed to perform the required operation.");
+    throw new Errors(errorsArray, "Failed to perform the required operation.");
 }
+

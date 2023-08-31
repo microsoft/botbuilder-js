@@ -184,8 +184,8 @@ const teamActivity = {
 
 describe('TeamsInfo', function () {
     const connectorClient = new ConnectorClient(new MicrosoftAppCredentials('abc', '123'), {
-        //baseUri: 'https://smba.trafficmanager.net/amer/',
-        baseUri: 'https://canary.botapi.skype.com/',
+        baseUri: 'https://smba.trafficmanager.net/amer/',
+        // baseUri: 'https://canary.botapi.skype.com/',
     });
 
     beforeEach(function () {
@@ -1153,173 +1153,853 @@ describe('TeamsInfo', function () {
     });
 
     describe('sendMessageToListOfUsers()', function () {
-        it('should correctly map notification object as the request body of the POST request', async function () {
+        it('should correctly map message object as the request body of the POST request', async function () {
             const activity = MessageFactory.text('Message to users from batch');
-            activity.serviceUrl = 'https://canary.botapi.skype.com/';
-            const tenant = 'tenant-id';
-            const members = [{ id: 'member-1' }, { id: 'member-2' }, { id: 'member-3' }];
-            const content = {
-                activity: activity,
-                members: members,
-                tenant: tenant,
-            };
+            const tenantId = 'randomGUID';
+            const members = [{ id: '19:member-1' }, { id: '19:member-2' }, { id: '19:member-3' }, { id: '19:member-4' }, { id: '19:member-5' }];
+
+            let content = {
+                activity: {
+                    text: 'Message to users from batch',
+                    type: 'message'
+                },
+                members: [
+                    { id: '19:member-1' },
+                    { id: '19:member-2' },
+                    { id: '19:member-3' },
+                    { id: '19:member-4' },
+                    { id: '19:member-5' }
+                ],
+                tenantId: 'randomGUID'
+            }
+
             const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
 
             const sendMessageToListOfUsersExpectation = nock('https://smba.trafficmanager.net/amer')
-                .post('/v3/batch/conversation/users/', content)
+                .post('/v3/batch/conversation/users', content)
                 .matchHeader('Authorization', expectedAuthHeader)
-                .reply(201, { operacion: '1' });
+                .reply(201, {});
 
-            const context = new TestContext(activity);
+            const context = new TestContext(teamActivity);
             context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
 
-            const operationId = await TeamsInfo.sendMessageToListOfUsers(context, tenant, members);
+            await TeamsInfo.sendMessageToListOfUsers(context, activity, tenantId, members);
 
             assert(fetchOauthToken.isDone());
             assert(sendMessageToListOfUsersExpectation.isDone());
         });
 
-        // it('should return an empty object if a 202 status code was returned', async function () {
-        //     const notification = {};
-        //     const meetingId = 'randomGUID';
-        //     const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+        it('should return operation id if a 201 status code was returned', async function () {
+            const activity = MessageFactory.text('Message to users from batch');
+            const tenantId = 'randomGUID';
+            const members = [{ id: '19:member-1' }];
 
-        //     const sendTeamsMeetingNotificationExpectation = nock('https://smba.trafficmanager.net/amer')
-        //         .post(`/v1/meetings/${meetingId}/notification`, notification)
-        //         .matchHeader('Authorization', expectedAuthHeader)
-        //         .reply(202, {});
+            const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
 
-        //     const context = new TestContext(teamActivity);
-        //     context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
-        //     const sendTeamsMeetingNotification = await TeamsInfo.sendMeetingNotification(
-        //         context,
-        //         notification,
-        //         meetingId
-        //     );
+            const sendMessageToListOfUsersExpectation = nock('https://smba.trafficmanager.net/amer')
+                .post('/v3/batch/conversation/users')
+                .matchHeader('Authorization', expectedAuthHeader)
+                .reply(201, { operationId: '1' });
 
-        //     assert(fetchOauthToken.isDone());
-        //     assert(sendTeamsMeetingNotificationExpectation.isDone());
+            const context = new TestContext(teamActivity);
+            context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
 
-        //     const isEmptyObject = (obj) => Object.keys(obj).length == 0;
-        //     assert(isEmptyObject(sendTeamsMeetingNotification));
-        // });
+            const operationId = await TeamsInfo.sendMessageToListOfUsers(context, activity, tenantId, members);
 
-        // it('should return a MeetingNotificationResponse if a 207 status code was returned', async function () {
-        //     const notification = {};
-        //     const meetingId = 'randomGUID';
-        //     const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+            assert(fetchOauthToken.isDone());
+            assert(sendMessageToListOfUsersExpectation.isDone());
+            assert(operationId, { operationId: '1' });
+        });
 
-        //     const recipientsFailureInfo = {
-        //         recipientsFailureInfo: [
-        //             {
-        //                 recipientMri: '8:orgid:4e8a10c0-4687-4f0a-9ed6-95f28d67c102',
-        //                 failureReason: 'Invalid recipient. Recipient not in roster',
-        //                 errorCode: 'MemberNotFoundInConversation',
-        //             },
-        //             {
-        //                 recipientMri: '8:orgid:4e8a10c0-4687-4f0a-9ed6-95f28d67c103',
-        //                 failureReason: 'Invalid recipient. Recipient not in roster',
-        //                 errorCode: 'MemberNotFoundInConversation',
-        //             },
-        //         ],
-        //     };
+        it('should return standard error response if a 4xx status code was returned', async function () {
+            const activity = MessageFactory.text('Message to users from batch');
+            const tenantId = 'randomGUID';
+            const members = [{ id: '19:member-1' }, { id: '19:member-2' }, { id: '19:member-3' }, { id: '19:member-4' }, { id: '19:member-5' }];
 
-        //     const sendTeamsMeetingNotificationExpectation = nock('https://smba.trafficmanager.net/amer')
-        //         .post(`/v1/meetings/${meetingId}/notification`, notification)
-        //         .matchHeader('Authorization', expectedAuthHeader)
-        //         .reply(207, recipientsFailureInfo);
 
-        //     const context = new TestContext(teamActivity);
-        //     context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
-        //     const sendTeamsMeetingNotification = await TeamsInfo.sendMeetingNotification(
-        //         context,
-        //         notification,
-        //         meetingId
-        //     );
+            const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
 
-        //     assert(fetchOauthToken.isDone());
-        //     assert(sendTeamsMeetingNotificationExpectation.isDone());
+            const errorResponse = { error: { code: 'BadSyntax', message: 'Payload is incorrect' } };
 
-        //     assert.deepEqual(sendTeamsMeetingNotification, recipientsFailureInfo);
-        // });
+            const sendMessageToListOfUsersExpectation = nock('https://smba.trafficmanager.net/amer')
+                .post('/v3/batch/conversation/users')
+                .matchHeader('Authorization', expectedAuthHeader)
+                .reply(400, errorResponse);
 
-        // it('should return standard error response if a 4xx status code was returned', async function () {
-        //     const notification = {};
-        //     const meetingId = 'randomGUID';
-        //     const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+            const context = new TestContext(teamActivity);
+            context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
 
-        //     const errorResponse = { error: { code: 'BadSyntax', message: 'Payload is incorrect' } };
+            let isErrorThrown = false;
+            try {
+                await TeamsInfo.sendMessageToListOfUsers(context, activity, tenantId, members);
+            } catch (e) {
+                assert.deepEqual(errorResponse, e.errors[0].body);
+                isErrorThrown = true;
+            }
 
-        //     const sendTeamsMeetingNotificationExpectation = nock('https://smba.trafficmanager.net/amer')
-        //         .post(`/v1/meetings/${meetingId}/notification`, notification)
-        //         .matchHeader('Authorization', expectedAuthHeader)
-        //         .reply(400, errorResponse);
+            assert(isErrorThrown);
 
-        //     const context = new TestContext(teamActivity);
-        //     context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
+            assert(fetchOauthToken.isDone());
+            assert(sendMessageToListOfUsersExpectation.isDone());
+        });
 
-        //     let isErrorThrown = false;
-        //     try {
-        //         await TeamsInfo.sendMeetingNotification(context, notification, meetingId);
-        //     } catch (e) {
-        //         assert.deepEqual(errorResponse, e.body);
-        //         isErrorThrown = true;
-        //     }
+        it('should throw an error if an empty activity is provided', async function () {
+            const activity = null;
+            const tenantId = 'randomGUID';
+            const members = [{ id: '19:member-1' }];
+            const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
 
-        //     assert(isErrorThrown);
+            const sendMessageToListOfUsersExpectation = nock('https://smba.trafficmanager.net/amer')
+                .post('/v3/batch/conversation/users')
+                .matchHeader('Authorization', expectedAuthHeader)
+                .reply(201, {});
 
-        //     assert(fetchOauthToken.isDone());
-        //     assert(sendTeamsMeetingNotificationExpectation.isDone());
-        // });
+            const context = new TestContext(teamActivity);
+            context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
 
-        // it('should throw an error if an empty meeting id is provided', async function () {
-        //     const notification = {};
-        //     const emptyMeetingId = '';
-        //     const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+            let isErrorThrown = false;
+            try {
+                await TeamsInfo.sendMessageToListOfUsers(context, activity, tenantId, members);
+            } catch (e) {
+                assert(typeof e, 'Error');
+                assert(e.message, 'activity is required.');
+                isErrorThrown = true;
+            }
 
-        //     const sendTeamsMeetingNotificationExpectation = nock('https://smba.trafficmanager.net/amer')
-        //         .post(`/v1/meetings/${emptyMeetingId}/notification`, notification)
-        //         .matchHeader('Authorization', expectedAuthHeader)
-        //         .reply(202, {});
+            assert(isErrorThrown);
+            assert(fetchOauthToken.isDone() === false);
+            assert(sendMessageToListOfUsersExpectation.isDone() === false);
+        });
 
-        //     const context = new TestContext(teamActivity);
-        //     context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
+        it('should throw an error if an empty member list is provided', async function () {
+            const activity = MessageFactory.text('Message to users from batch');
+            const tenantId = 'randomGUID';
+            const members = [];
+            const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
 
-        //     let isErrorThrown = false;
-        //     try {
-        //         await TeamsInfo.sendMeetingNotification(context, notification, emptyMeetingId);
-        //     } catch (e) {
-        //         assert(typeof e, 'Error');
-        //         assert(e.message, 'meetingId is required.');
-        //         isErrorThrown = true;
-        //     }
+            const sendMessageToListOfUsersExpectation = nock('https://smba.trafficmanager.net/amer')
+                .post('/v3/batch/conversation/users')
+                .matchHeader('Authorization', expectedAuthHeader)
+                .reply(201, {});
 
-        //     assert(isErrorThrown);
-        //     assert(fetchOauthToken.isDone() === false);
-        //     assert(sendTeamsMeetingNotificationExpectation.isDone() === false);
-        // });
+            const context = new TestContext(teamActivity);
+            context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
 
-        // it('should get the meeting id from the context object if no meeting id is provided', async function () {
-        //     const notification = {};
-        //     const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+            let isErrorThrown = false;
+            try {
+                await TeamsInfo.sendMessageToListOfUsers(context, activity, tenantId, members);
+            } catch (e) {
+                assert(typeof e, 'Error');
+                assert(e.message, 'members list is required.');
+                isErrorThrown = true;
+            }
 
-        //     const context = new TestContext(teamActivity);
+            assert(isErrorThrown);
+            assert(fetchOauthToken.isDone() === false);
+            assert(sendMessageToListOfUsersExpectation.isDone() === false);
+        });
 
-        //     const sendTeamsMeetingNotificationExpectation = nock('https://smba.trafficmanager.net/amer')
-        //         .post(
-        //             `/v1/meetings/${encodeURIComponent(teamActivity.channelData.meeting.id)}/notification`,
-        //             notification
-        //         )
-        //         .matchHeader('Authorization', expectedAuthHeader)
-        //         .reply(202, {});
+        it('should throw an error if an empty tenant id is provided', async function () {
+            const activity = MessageFactory.text('Message to users from batch');
+            const tenantId = null;
+            const members = [{ id: '19:member-1' }];
+            const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
 
-        //     context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
+            const sendMessageToListOfUsersExpectation = nock('https://smba.trafficmanager.net/amer')
+                .post('/v3/batch/conversation/users')
+                .matchHeader('Authorization', expectedAuthHeader)
+                .reply(201, {});
 
-        //     await TeamsInfo.sendMeetingNotification(context, notification);
+            const context = new TestContext(teamActivity);
+            context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
 
-        //     assert(fetchOauthToken.isDone());
-        //     assert(sendTeamsMeetingNotificationExpectation.isDone());
-        // });
+            let isErrorThrown = false;
+            try {
+                await TeamsInfo.sendMessageToListOfUsers(context, activity, tenantId, members);
+            } catch (e) {
+                assert(typeof e, 'Error');
+                assert(e.message, 'tenantId is required.');
+                isErrorThrown = true;
+            }
+
+            assert(isErrorThrown);
+            assert(fetchOauthToken.isDone() === false);
+            assert(sendMessageToListOfUsersExpectation.isDone() === false);
+        });
+    });
+
+    describe('sendMessageToAllUsersInTenant()', function () {
+        it('should correctly map message object as the request body of the POST request', async function () {
+            const activity = MessageFactory.text('Message to users from batch');
+            const tenantId = 'randomGUID';
+
+            let content = {
+                activity: {
+                    text: 'Message to users from batch',
+                    type: 'message'
+                },
+                tenantId: 'randomGUID'
+            }
+
+            const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+
+            const sendMessageToAllUsersInTenantExpectation = nock('https://smba.trafficmanager.net/amer')
+                .post('/v3/batch/conversation/tenant', content)
+                .matchHeader('Authorization', expectedAuthHeader)
+                .reply(201, {});
+
+            const context = new TestContext(teamActivity);
+            context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
+
+            await TeamsInfo.sendMessageToAllUsersInTenant(context, activity, tenantId);
+
+            assert(fetchOauthToken.isDone());
+            assert(sendMessageToAllUsersInTenantExpectation.isDone());
+        });
+
+        it('should return operation id if a 201 status code was returned', async function () {
+            const activity = MessageFactory.text('Message to users from batch');
+            const tenantId = 'randomGUID';
+
+            const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+
+            const sendMessageToAllUsersInTenantExpectation = nock('https://smba.trafficmanager.net/amer')
+                .post('/v3/batch/conversation/tenant')
+                .matchHeader('Authorization', expectedAuthHeader)
+                .reply(201, { operationId: '1' });
+
+            const context = new TestContext(teamActivity);
+            context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
+
+            const operationId = await TeamsInfo.sendMessageToAllUsersInTenant(context, activity, tenantId);
+
+            assert(fetchOauthToken.isDone());
+            assert(sendMessageToAllUsersInTenantExpectation.isDone());
+            assert(operationId, { operationId: '1' });
+        });
+
+        it('should return standard error response if a 4xx status code was returned', async function () {
+            const activity = MessageFactory.text('Message to users from batch');
+            const tenantId = 'randomGUID';
+
+            const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+
+            const errorResponse = { error: { code: 'BadSyntax', message: 'Payload is incorrect' } };
+
+            const sendMessageToAllUsersInTenantExpectation = nock('https://smba.trafficmanager.net/amer')
+                .post('/v3/batch/conversation/tenant')
+                .matchHeader('Authorization', expectedAuthHeader)
+                .reply(400, errorResponse);
+
+            const context = new TestContext(teamActivity);
+            context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
+
+            let isErrorThrown = false;
+            try {
+                await TeamsInfo.sendMessageToAllUsersInTenant(context, activity, tenantId);
+            } catch (e) {
+                assert.deepEqual(errorResponse, e.errors[0].body);
+                isErrorThrown = true;
+            }
+
+            assert(isErrorThrown);
+
+            assert(fetchOauthToken.isDone());
+            assert(sendMessageToAllUsersInTenantExpectation.isDone());
+        });
+
+        it('should throw an error if an empty activity is provided', async function () {
+            const activity = null;
+            const tenantId = 'randomGUID';
+            const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+
+            const sendMessageToAllUsersInTenantExpectation = nock('https://smba.trafficmanager.net/amer')
+                .post('/v3/batch/conversation/tenant')
+                .matchHeader('Authorization', expectedAuthHeader)
+                .reply(201, {});
+
+            const context = new TestContext(teamActivity);
+            context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
+
+            let isErrorThrown = false;
+            try {
+                await TeamsInfo.sendMessageToAllUsersInTenant(context, activity, tenantId);
+            } catch (e) {
+                assert(typeof e, 'Error');
+                assert(e.message, 'activity is required.');
+                isErrorThrown = true;
+            }
+
+            assert(isErrorThrown);
+            assert(fetchOauthToken.isDone() === false);
+            assert(sendMessageToAllUsersInTenantExpectation.isDone() === false);
+        });
+
+        it('should throw an error if an empty tenant id is provided', async function () {
+            const activity = MessageFactory.text('Message to users from batch');
+            const tenantId = null;
+            const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+
+            const sendMessageToAllUsersInTenantExpectation = nock('https://smba.trafficmanager.net/amer')
+                .post('/v3/batch/conversation/tenant')
+                .matchHeader('Authorization', expectedAuthHeader)
+                .reply(201, {});
+
+            const context = new TestContext(teamActivity);
+            context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
+
+            let isErrorThrown = false;
+            try {
+                await TeamsInfo.sendMessageToAllUsersInTenant(context, activity, tenantId);
+            } catch (e) {
+                assert(typeof e, 'Error');
+                assert(e.message, 'tenantId is required.');
+                isErrorThrown = true;
+            }
+
+            assert(isErrorThrown);
+            assert(fetchOauthToken.isDone() === false);
+            assert(sendMessageToAllUsersInTenantExpectation.isDone() === false);
+        });
+    });
+
+    describe('sendMessageToAllUsersInTeam()', function () {
+        it('should correctly map message object as the request body of the POST request', async function () {
+            const activity = MessageFactory.text('Message to users from batch');
+            const tenantId = 'randomGUID';
+            const teamId = 'teamRandomGUID';
+
+            let content = {
+                activity: {
+                    text: 'Message to users from batch',
+                    type: 'message'
+                },
+                tenantId: 'randomGUID',
+                teamId: 'teamRandomGUID'
+            }
+
+            const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+
+            const sendMessageToAllUsersInTeamExpectation = nock('https://smba.trafficmanager.net/amer')
+                .post('/v3/batch/conversation/team', content)
+                .matchHeader('Authorization', expectedAuthHeader)
+                .reply(201, {});
+
+            const context = new TestContext(teamActivity);
+            context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
+
+            await TeamsInfo.sendMessageToAllUsersInTeam(context, activity, tenantId, teamId);
+
+            assert(fetchOauthToken.isDone());
+            assert(sendMessageToAllUsersInTeamExpectation.isDone());
+        });
+
+        it('should return operation id if a 201 status code was returned', async function () {
+            const activity = MessageFactory.text('Message to users from batch');
+            const tenantId = 'randomGUID';
+            const teamId = 'teamRandomGUID';
+
+            const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+
+            const sendMessageToAllUsersInTeamExpectation = nock('https://smba.trafficmanager.net/amer')
+                .post('/v3/batch/conversation/team')
+                .matchHeader('Authorization', expectedAuthHeader)
+                .reply(201, { operationId: '1' });
+
+            const context = new TestContext(teamActivity);
+            context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
+
+            const operationId = await TeamsInfo.sendMessageToAllUsersInTeam(context, activity, tenantId, teamId);
+
+            assert(fetchOauthToken.isDone());
+            assert(sendMessageToAllUsersInTeamExpectation.isDone());
+            assert(operationId, { operationId: '1' });
+        });
+
+        it('should return standard error response if a 4xx status code was returned', async function () {
+            const activity = MessageFactory.text('Message to users from batch');
+            const tenantId = 'randomGUID';
+            const teamId = 'teamRandomGUID';
+
+            const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+
+            const errorResponse = { error: { code: 'BadSyntax', message: 'Payload is incorrect' } };
+
+            const sendMessageToAllUsersInTeamExpectation = nock('https://smba.trafficmanager.net/amer')
+                .post('/v3/batch/conversation/team')
+                .matchHeader('Authorization', expectedAuthHeader)
+                .reply(400, errorResponse);
+
+            const context = new TestContext(teamActivity);
+            context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
+
+            let isErrorThrown = false;
+            try {
+                await TeamsInfo.sendMessageToAllUsersInTeam(context, activity, tenantId, teamId);
+            } catch (e) {
+                assert.deepEqual(errorResponse, e.errors[0].body);
+                isErrorThrown = true;
+            }
+
+            assert(isErrorThrown);
+
+            assert(fetchOauthToken.isDone());
+            assert(sendMessageToAllUsersInTeamExpectation.isDone());
+        });
+
+        it('should throw an error if an empty activity is provided', async function () {
+            const activity = null;
+            const tenantId = 'randomGUID';
+            const teamId = 'teamRandomGUID';
+            const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+
+            const sendMessageToAllUsersInTeamExpectation = nock('https://smba.trafficmanager.net/amer')
+                .post('/v3/batch/conversation/team')
+                .matchHeader('Authorization', expectedAuthHeader)
+                .reply(201, {});
+
+            const context = new TestContext(teamActivity);
+            context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
+
+            let isErrorThrown = false;
+            try {
+                await TeamsInfo.sendMessageToAllUsersInTeam(context, activity, tenantId, teamId);
+            } catch (e) {
+                assert(typeof e, 'Error');
+                assert(e.message, 'activity is required.');
+                isErrorThrown = true;
+            }
+
+            assert(isErrorThrown);
+            assert(fetchOauthToken.isDone() === false);
+            assert(sendMessageToAllUsersInTeamExpectation.isDone() === false);
+        });
+
+        it('should throw an error if an empty tenant id is provided', async function () {
+            const activity = MessageFactory.text('Message to users from batch');
+            const tenantId = null;
+            const teamId = 'teamRandomGUID';
+            const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+
+            const sendMessageToAllUsersInTeamExpectation = nock('https://smba.trafficmanager.net/amer')
+                .post('/v3/batch/conversation/team')
+                .matchHeader('Authorization', expectedAuthHeader)
+                .reply(201, {});
+
+            const context = new TestContext(teamActivity);
+            context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
+
+            let isErrorThrown = false;
+            try {
+                await TeamsInfo.sendMessageToAllUsersInTeam(context, activity, tenantId, teamId);
+            } catch (e) {
+                assert(typeof e, 'Error');
+                assert(e.message, 'tenantId is required.');
+                isErrorThrown = true;
+            }
+
+            assert(isErrorThrown);
+            assert(fetchOauthToken.isDone() === false);
+            assert(sendMessageToAllUsersInTeamExpectation.isDone() === false);
+        });
+
+        it('should throw an error if an empty team id is provided', async function () {
+            const activity = MessageFactory.text('Message to users from batch');
+            const tenantId = 'randomGUID';
+            const teamId = null;
+            const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+
+            const sendMessageToAllUsersInTeamExpectation = nock('https://smba.trafficmanager.net/amer')
+                .post('/v3/batch/conversation/team')
+                .matchHeader('Authorization', expectedAuthHeader)
+                .reply(201, {});
+
+            const context = new TestContext(teamActivity);
+            context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
+
+            let isErrorThrown = false;
+            try {
+                await TeamsInfo.sendMessageToAllUsersInTeam(context, activity, tenantId, teamId);
+            } catch (e) {
+                assert(typeof e, 'Error');
+                assert(e.message, 'teamId is required.');
+                isErrorThrown = true;
+            }
+
+            assert(isErrorThrown);
+            assert(fetchOauthToken.isDone() === false);
+            assert(sendMessageToAllUsersInTeamExpectation.isDone() === false);
+        });
+    });
+
+    describe('sendMessageToListOfChannels()', function () {
+        it('should correctly map message object as the request body of the POST request', async function () {
+            const activity = MessageFactory.text('Message to users from batch');
+            const tenantId = 'randomGUID';
+            const members = [{ id: '19:member-1' }, { id: '19:member-2' }, { id: '19:member-3' }, { id: '19:member-4' }, { id: '19:member-5' }];
+
+            let content = {
+                activity: {
+                    text: 'Message to users from batch',
+                    type: 'message'
+                },
+                members: [
+                    { id: '19:member-1' },
+                    { id: '19:member-2' },
+                    { id: '19:member-3' },
+                    { id: '19:member-4' },
+                    { id: '19:member-5' }
+                ],
+                tenantId: 'randomGUID'
+            }
+
+            const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+
+            const sendMessageToListOfChannelsExpectation = nock('https://smba.trafficmanager.net/amer')
+                .post('/v3/batch/conversation/channels', content)
+                .matchHeader('Authorization', expectedAuthHeader)
+                .reply(201, {});
+
+            const context = new TestContext(teamActivity);
+            context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
+
+            await TeamsInfo.sendMessageToListOfChannels(context, activity, tenantId, members);
+
+            assert(fetchOauthToken.isDone());
+            assert(sendMessageToListOfChannelsExpectation.isDone());
+        });
+
+        it('should return operation id if a 201 status code was returned', async function () {
+            const activity = MessageFactory.text('Message to users from batch');
+            const tenantId = 'randomGUID';
+            const members = [{ id: '19:member-1' }];
+
+            const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+
+            const sendMessageToListOfChannelsExpectation = nock('https://smba.trafficmanager.net/amer')
+                .post('/v3/batch/conversation/channels')
+                .matchHeader('Authorization', expectedAuthHeader)
+                .reply(201, { operationId: '1' });
+
+            const context = new TestContext(teamActivity);
+            context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
+
+            const operationId = await TeamsInfo.sendMessageToListOfChannels(context, activity, tenantId, members);
+
+            assert(fetchOauthToken.isDone());
+            assert(sendMessageToListOfChannelsExpectation.isDone());
+            assert(operationId, { operationId: '1' });
+        });
+
+        it('should return standard error response if a 4xx status code was returned', async function () {
+            const activity = MessageFactory.text('Message to users from batch');
+            const tenantId = 'randomGUID';
+            const members = [{ id: '19:member-1' }, { id: '19:member-2' }, { id: '19:member-3' }, { id: '19:member-4' }, { id: '19:member-5' }];
+
+
+            const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+
+            const errorResponse = { error: { code: 'BadSyntax', message: 'Payload is incorrect' } };
+
+            const sendMessageToListOfChannelsExpectation = nock('https://smba.trafficmanager.net/amer')
+                .post('/v3/batch/conversation/channels')
+                .matchHeader('Authorization', expectedAuthHeader)
+                .reply(400, errorResponse);
+
+            const context = new TestContext(teamActivity);
+            context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
+
+            let isErrorThrown = false;
+            try {
+                await TeamsInfo.sendMessageToListOfChannels(context, activity, tenantId, members);
+            } catch (e) {
+                assert.deepEqual(errorResponse, e.errors[0].body);
+                isErrorThrown = true;
+            }
+
+            assert(isErrorThrown);
+
+            assert(fetchOauthToken.isDone());
+            assert(sendMessageToListOfChannelsExpectation.isDone());
+        });
+
+        it('should throw an error if an empty activity is provided', async function () {
+            const activity = null;
+            const tenantId = 'randomGUID';
+            const members = [{ id: '19:member-1' }];
+            const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+
+            const sendMessageToListOfChannelsExpectation = nock('https://smba.trafficmanager.net/amer')
+                .post('/v3/batch/conversation/channels')
+                .matchHeader('Authorization', expectedAuthHeader)
+                .reply(201, {});
+
+            const context = new TestContext(teamActivity);
+            context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
+
+            let isErrorThrown = false;
+            try {
+                await TeamsInfo.sendMessageToListOfChannels(context, activity, tenantId, members);
+            } catch (e) {
+                assert(typeof e, 'Error');
+                assert(e.message, 'activity is required.');
+                isErrorThrown = true;
+            }
+
+            assert(isErrorThrown);
+            assert(fetchOauthToken.isDone() === false);
+            assert(sendMessageToListOfChannelsExpectation.isDone() === false);
+        });
+
+        it('should throw an error if an empty member list is provided', async function () {
+            const activity = MessageFactory.text('Message to users from batch');
+            const tenantId = 'randomGUID';
+            const members = [];
+            const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+
+            const sendMessageToListOfChannelsExpectation = nock('https://smba.trafficmanager.net/amer')
+                .post('/v3/batch/conversation/channels')
+                .matchHeader('Authorization', expectedAuthHeader)
+                .reply(201, {});
+
+            const context = new TestContext(teamActivity);
+            context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
+
+            let isErrorThrown = false;
+            try {
+                await TeamsInfo.sendMessageToListOfChannels(context, activity, tenantId, members);
+            } catch (e) {
+                assert(typeof e, 'Error');
+                assert(e.message, 'members list is required.');
+                isErrorThrown = true;
+            }
+
+            assert(isErrorThrown);
+            assert(fetchOauthToken.isDone() === false);
+            assert(sendMessageToListOfChannelsExpectation.isDone() === false);
+        });
+
+        it('should throw an error if an empty tenant id is provided', async function () {
+            const activity = MessageFactory.text('Message to users from batch');
+            const tenantId = null;
+            const members = [{ id: '19:member-1' }];
+            const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+
+            const sendMessageToListOfChannelsExpectation = nock('https://smba.trafficmanager.net/amer')
+                .post('/v3/batch/conversation/channels')
+                .matchHeader('Authorization', expectedAuthHeader)
+                .reply(201, {});
+
+            const context = new TestContext(teamActivity);
+            context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
+
+            let isErrorThrown = false;
+            try {
+                await TeamsInfo.sendMessageToListOfChannels(context, activity, tenantId, members);
+            } catch (e) {
+                assert(typeof e, 'Error');
+                assert(e.message, 'tenantId is required.');
+                isErrorThrown = true;
+            }
+
+            assert(isErrorThrown);
+            assert(fetchOauthToken.isDone() === false);
+            assert(sendMessageToListOfChannelsExpectation.isDone() === false);
+        });
+    });
+
+    describe('getOperationState()', function () {
+        it('should work with correct operationId in parameters', async function () {
+            const operationId = 'amerOperationId'
+            const operationState = {
+                state: 'Completed',
+                statusMap: {
+                    201: 1,
+                    404: 4
+                },
+                totalEntriesCount: 5
+            };
+
+            const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+
+            const getOperationStateExpectation = nock('https://smba.trafficmanager.net/amer')
+                .get(`/v3/batch/conversation/${operationId}`)
+                .matchHeader('Authorization', expectedAuthHeader)
+                .reply(200, operationState);
+
+            const context = new TestContext(teamActivity);
+            context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
+
+            const operationStateDetails = await TeamsInfo.getOperationState(context, operationId);
+
+            assert(fetchOauthToken.isDone());
+            assert(getOperationStateExpectation.isDone());
+
+            assert.deepStrictEqual(operationStateDetails, operationState);
+        });
+
+        it('should return standard error response if a 4xx status code was returned', async function () {
+            const operationId = 'amerOperationId'
+            const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+            const errorResponse = { error: { code: 'BadSyntax', message: 'Payload is incorrect' } };
+
+            const getOperationStateExpectation = nock('https://smba.trafficmanager.net/amer')
+                .get(`/v3/batch/conversation/${operationId}`)
+                .matchHeader('Authorization', expectedAuthHeader)
+                .reply(400, errorResponse);
+
+            const context = new TestContext(teamActivity);
+            context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
+
+            let isErrorThrown = false;
+            try {
+                await TeamsInfo.getOperationState(context, operationId);
+            } catch (e) {
+                assert.deepEqual(errorResponse, e.errors[0].body);
+                isErrorThrown = true;
+            }
+
+            assert(isErrorThrown);
+
+            assert(fetchOauthToken.isDone());
+            assert(getOperationStateExpectation.isDone());
+        });
+
+        it('should throw error for missing operation Id', async function () {
+            await assert.rejects(
+                TeamsInfo.getOperationState({ activity: {} }),
+                Error('operationId is required.')
+            );
+        });
+    });
+
+    describe('getFailedEntries()', function () {
+        it('should work with correct operationId in parameters', async function () {
+            const operationId = 'amerOperationId'
+            const failedEntries = {
+                continuationToken: 'Token',
+                failedEntryResponses: [
+                    {
+                        id: 'id-1',
+                        error: 'error-1'
+                    },
+                    {
+                        id: 'id-2',
+                        error: 'error-2'
+                    },
+                    {
+                        id: 'id-3',
+                        error: 'error-3'
+                    },
+                ]
+            };
+
+            const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+
+            const getFailedEntriesExpectation = nock('https://smba.trafficmanager.net/amer')
+                .get(`/v3/batch/conversation/failedentries/${operationId}`)
+                .matchHeader('Authorization', expectedAuthHeader)
+                .reply(200, failedEntries);
+
+            const context = new TestContext(teamActivity);
+            context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
+
+            const failedEntriesResponse = await TeamsInfo.getFailedEntries(context, operationId);
+
+            assert(fetchOauthToken.isDone());
+            assert(getFailedEntriesExpectation.isDone());
+
+            assert.deepStrictEqual(failedEntriesResponse, failedEntries);
+        });
+
+        it('should return standard error response if a 4xx status code was returned', async function () {
+            const operationId = 'amerOperationId'
+            const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+            const errorResponse = { error: { code: 'BadSyntax', message: 'Payload is incorrect' } };
+
+            const getFailedEntriesExpectation = nock('https://smba.trafficmanager.net/amer')
+                .get(`/v3/batch/conversation/failedentries/${operationId}`)
+                .matchHeader('Authorization', expectedAuthHeader)
+                .reply(400, errorResponse);
+
+            const context = new TestContext(teamActivity);
+            context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
+
+            let isErrorThrown = false;
+            try {
+                await TeamsInfo.getFailedEntries(context, operationId);
+            } catch (e) {
+                assert.deepEqual(errorResponse, e.errors[0].body);
+                isErrorThrown = true;
+            }
+
+            assert(isErrorThrown);
+
+            assert(fetchOauthToken.isDone());
+            assert(getFailedEntriesExpectation.isDone());
+        });
+
+        it('should throw error for missing operation Id', async function () {
+            await assert.rejects(
+                TeamsInfo.getFailedEntries({ activity: {} }),
+                Error('operationId is required.')
+            );
+        });
+    });
+
+    describe('cancelOperation()', function () {
+        it('should finish operation with correct operationId in parameters', async function () {
+            const operationId = 'amerOperationId'
+
+            const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+
+            const cancelOperationExpectation = nock('https://smba.trafficmanager.net/amer')
+                .delete(`/v3/batch/conversation/${operationId}`)
+                .matchHeader('Authorization', expectedAuthHeader)
+                .reply(200);
+
+            const context = new TestContext(teamActivity);
+            context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
+
+            await TeamsInfo.cancelOperation(context, operationId);
+
+            assert(fetchOauthToken.isDone());
+            assert(cancelOperationExpectation.isDone());
+        });
+
+        it('should return standard error response if a 4xx status code was returned', async function () {
+            const operationId = 'amerOperationId'
+            const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+            const errorResponse = { error: { code: 'BadSyntax', message: 'Payload is incorrect' } };
+
+            const cancelOperationExpectation = nock('https://smba.trafficmanager.net/amer')
+                .delete(`/v3/batch/conversation/${operationId}`)
+                .matchHeader('Authorization', expectedAuthHeader)
+                .reply(400, errorResponse);
+
+            const context = new TestContext(teamActivity);
+            context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
+
+            let isErrorThrown = false;
+            try {
+                await TeamsInfo.cancelOperation(context, operationId);
+            } catch (e) {
+                assert.deepEqual(errorResponse, e.errors[0].body);
+                isErrorThrown = true;
+            }
+
+            assert(isErrorThrown);
+
+            assert(fetchOauthToken.isDone());
+            assert(cancelOperationExpectation.isDone());
+        });
+
+        it('should throw error for missing operation Id', async function () {
+            await assert.rejects(
+                TeamsInfo.getFailedEntries({ activity: {} }),
+                Error('operationId is required.')
+            );
+        });
     });
 
     describe('private methods', function () {

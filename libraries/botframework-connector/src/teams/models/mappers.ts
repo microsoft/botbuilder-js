@@ -2373,7 +2373,7 @@ export const GetTeamsFailedEntriesResponse: msRest.CompositeMapper = {
         name: 'Composite',
         className: 'GetFailedEntriesResponse',
         modelProperties: {
-            activity: {
+            continuationToken: {
                 serializedName: 'continuationToken',
                 type: {
                     name: 'String',

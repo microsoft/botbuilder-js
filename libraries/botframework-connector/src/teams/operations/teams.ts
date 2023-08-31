@@ -634,8 +634,7 @@ const sendMeetingNotificationOperationSpec: msRest.OperationSpec = {
 
 const sendMessageToListOfUsersOperationSpec: msRest.OperationSpec = {
     httpMethod: 'POST',
-    path: 'v3/batch/conversation/users/',
-    baseUrl: 'https://canary.botapi.skype.com/amer-df/',
+    path: 'v3/batch/conversation/users',
     requestBody: {
         parameterPath: 'content',
         mapper: {
@@ -656,8 +655,7 @@ const sendMessageToListOfUsersOperationSpec: msRest.OperationSpec = {
 
 const sendMessageToAllUsersInTenantOperationSpec: msRest.OperationSpec = {
     httpMethod: 'POST',
-    path: 'v3/batch/conversation/tenant/',
-    baseUrl: 'https://canary.botapi.skype.com/amer-df/',
+    path: 'v3/batch/conversation/tenant',
     requestBody: {
         parameterPath: 'content',
         mapper: {
@@ -678,8 +676,7 @@ const sendMessageToAllUsersInTenantOperationSpec: msRest.OperationSpec = {
 
 const sendMessageToAllUsersInTeamOperationSpec: msRest.OperationSpec = {
     httpMethod: 'POST',
-    path: 'v3/batch/conversation/team/',
-    baseUrl: 'https://canary.botapi.skype.com/amer-df/',
+    path: 'v3/batch/conversation/team',
     requestBody: {
         parameterPath: 'content',
         mapper: {
@@ -700,8 +697,7 @@ const sendMessageToAllUsersInTeamOperationSpec: msRest.OperationSpec = {
 
 const sendMessageToListOfChannelsOperationSpec: msRest.OperationSpec = {
     httpMethod: 'POST',
-    path: 'v3/batch/conversation/channels/',
-    baseUrl: 'https://canary.botapi.skype.com/amer-df/',
+    path: 'v3/batch/conversation/channels',
     requestBody: {
         parameterPath: 'content',
         mapper: {
@@ -723,7 +719,6 @@ const sendMessageToListOfChannelsOperationSpec: msRest.OperationSpec = {
 const getOperationStateSpec: msRest.OperationSpec = {
     httpMethod: 'GET',
     path: 'v3/batch/conversation/{operationId}',
-    baseUrl: 'https://canary.botapi.skype.com/amer-df/',
     urlParameters: [Parameters.operationId],
     responses: {
         200: {
@@ -739,7 +734,6 @@ const getOperationStateSpec: msRest.OperationSpec = {
 const getPagedFailedEntriesSpec: msRest.OperationSpec = {
     httpMethod: 'GET',
     path: 'v3/batch/conversation/failedentries/{operationId}',
-    baseUrl: 'https://canary.botapi.skype.com/amer-df/',
     urlParameters: [Parameters.operationId],
     responses: {
         200: {
@@ -755,7 +749,6 @@ const getPagedFailedEntriesSpec: msRest.OperationSpec = {
 const cancelOperationSpec: msRest.OperationSpec = {
     httpMethod: 'DELETE',
     path: 'v3/batch/conversation/{operationId}',
-    baseUrl: 'https://canary.botapi.skype.com/amer-df/',
     urlParameters: [Parameters.operationId],
     responses: {
         200: {},
