@@ -101,7 +101,7 @@ describe('CloudAdapter', function () {
         });
 
         it('throws exception on expired token', async function () {
-            const consoleStub = sinon.stub(console, 'error');
+            const consoleStub = sandbox.stub(console, 'error');
 
             // Expired token with removed AppID
             const authorization =
@@ -151,7 +151,6 @@ describe('CloudAdapter', function () {
 
             assert.equal(StatusCodes.UNAUTHORIZED, res.statusCode);
             expect(consoleStub.calledWithMatch({ message: 'The token has expired' })).to.be.true;
-            consoleStub.restore();
         });
     });
 
