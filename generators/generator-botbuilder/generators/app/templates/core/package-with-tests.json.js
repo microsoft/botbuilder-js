@@ -17,12 +17,12 @@
     },
     "dependencies": {
         "@microsoft/recognizers-text-data-types-timex-expression": "1.1.4",
-        "botbuilder": "~4.15.0",
-        "botbuilder-ai": "~4.15.0",
-        "botbuilder-dialogs": "~4.15.0",
-        "botbuilder-testing": "~4.15.0",
+        "botbuilder": "~4.20.0",
+        "botbuilder-ai": "~4.20.0",
+        "botbuilder-dialogs": "~4.20.0",
+        "botbuilder-testing": "~4.20.0",
         "dotenv": "^8.2.0",
-        "restify": "^8.5.1"
+        "restify": "^11.1.0"
     },
     "devDependencies": {
         "eslint": "^7.0.0",

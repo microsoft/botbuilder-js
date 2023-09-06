@@ -16,8 +16,8 @@
         "url": "https://github.com"
     },
     "dependencies": {
-        "botbuilder": "~4.15.0",
-        "restify": "~10.0.0"
+        "botbuilder": "~4.20.0",
+        "restify": "~11.1.0"
     },
     "devDependencies": {
         "eslint": "^7.0.0",
