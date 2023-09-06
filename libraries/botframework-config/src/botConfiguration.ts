@@ -106,7 +106,8 @@ export class BotConfiguration extends BotConfigurationBase {
      * @returns A Promise with the new BotConfiguration instance.
      */
     static async load(botpath: string, secret?: string): Promise<BotConfiguration> {
-        const json: string = fs.readFileSync(botpath, "utf8")
+        // eslint-disable-next-line security/detect-non-literal-fs-filename
+        const json: string = fs.readFileSync(botpath, 'utf8');
         const bot: BotConfiguration = BotConfiguration.internalLoad(json, secret);
         bot.internal.location = botpath;
 
@@ -121,7 +122,8 @@ export class BotConfiguration extends BotConfigurationBase {
      * @returns A new BotConfiguration instance.
      */
     static loadSync(botpath: string, secret?: string): BotConfiguration {
-        const json: string = fs.readFileSync(botpath, "utf8")
+        // eslint-disable-next-line security/detect-non-literal-fs-filename
+        const json: string = fs.readFileSync(botpath, 'utf8');
         const bot: BotConfiguration = BotConfiguration.internalLoad(json, secret);
         bot.internal.location = botpath;
 
