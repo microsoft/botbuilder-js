@@ -5,7 +5,6 @@ const { BotFrameworkAdapter, TeamsInfo, CloudAdapter } = require('../');
 const { Conversations } = require('botframework-connector/lib/connectorApi/operations');
 const { MicrosoftAppCredentials, ConnectorClient } = require('botframework-connector');
 const { TurnContext, MessageFactory, ActionTypes, Channels } = require('botbuilder-core');
-const { TeamMember } = require('botframework-schema');
 
 class TeamsInfoAdapter extends BotFrameworkAdapter {
     constructor() {
@@ -185,7 +184,6 @@ const teamActivity = {
 describe('TeamsInfo', function () {
     const connectorClient = new ConnectorClient(new MicrosoftAppCredentials('abc', '123'), {
         baseUri: 'https://smba.trafficmanager.net/amer/',
-        // baseUri: 'https://canary.botapi.skype.com/',
     });
 
     beforeEach(function () {
@@ -1156,22 +1154,28 @@ describe('TeamsInfo', function () {
         it('should correctly map message object as the request body of the POST request', async function () {
             const activity = MessageFactory.text('Message to users from batch');
             const tenantId = 'randomGUID';
-            const members = [{ id: '19:member-1' }, { id: '19:member-2' }, { id: '19:member-3' }, { id: '19:member-4' }, { id: '19:member-5' }];
+            const members = [
+                { id: '19:member-1' },
+                { id: '19:member-2' },
+                { id: '19:member-3' },
+                { id: '19:member-4' },
+                { id: '19:member-5' },
+            ];
 
-            let content = {
+            const content = {
                 activity: {
                     text: 'Message to users from batch',
-                    type: 'message'
+                    type: 'message',
                 },
                 members: [
                     { id: '19:member-1' },
                     { id: '19:member-2' },
                     { id: '19:member-3' },
                     { id: '19:member-4' },
-                    { id: '19:member-5' }
+                    { id: '19:member-5' },
                 ],
-                tenantId: 'randomGUID'
-            }
+                tenantId: 'randomGUID',
+            };
 
             const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
 
@@ -1214,8 +1218,13 @@ describe('TeamsInfo', function () {
         it('should return standard error response if a 4xx status code was returned', async function () {
             const activity = MessageFactory.text('Message to users from batch');
             const tenantId = 'randomGUID';
-            const members = [{ id: '19:member-1' }, { id: '19:member-2' }, { id: '19:member-3' }, { id: '19:member-4' }, { id: '19:member-5' }];
-
+            const members = [
+                { id: '19:member-1' },
+                { id: '19:member-2' },
+                { id: '19:member-3' },
+                { id: '19:member-4' },
+                { id: '19:member-5' },
+            ];
 
             const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
 
@@ -1333,13 +1342,13 @@ describe('TeamsInfo', function () {
             const activity = MessageFactory.text('Message to users from batch');
             const tenantId = 'randomGUID';
 
-            let content = {
+            const content = {
                 activity: {
                     text: 'Message to users from batch',
-                    type: 'message'
+                    type: 'message',
                 },
-                tenantId: 'randomGUID'
-            }
+                tenantId: 'randomGUID',
+            };
 
             const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
 
@@ -1469,14 +1478,14 @@ describe('TeamsInfo', function () {
             const tenantId = 'randomGUID';
             const teamId = 'teamRandomGUID';
 
-            let content = {
+            const content = {
                 activity: {
                     text: 'Message to users from batch',
-                    type: 'message'
+                    type: 'message',
                 },
                 tenantId: 'randomGUID',
-                teamId: 'teamRandomGUID'
-            }
+                teamId: 'teamRandomGUID',
+            };
 
             const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
 
@@ -1636,22 +1645,28 @@ describe('TeamsInfo', function () {
         it('should correctly map message object as the request body of the POST request', async function () {
             const activity = MessageFactory.text('Message to users from batch');
             const tenantId = 'randomGUID';
-            const members = [{ id: '19:member-1' }, { id: '19:member-2' }, { id: '19:member-3' }, { id: '19:member-4' }, { id: '19:member-5' }];
+            const members = [
+                { id: '19:member-1' },
+                { id: '19:member-2' },
+                { id: '19:member-3' },
+                { id: '19:member-4' },
+                { id: '19:member-5' },
+            ];
 
-            let content = {
+            const content = {
                 activity: {
                     text: 'Message to users from batch',
-                    type: 'message'
+                    type: 'message',
                 },
                 members: [
                     { id: '19:member-1' },
                     { id: '19:member-2' },
                     { id: '19:member-3' },
                     { id: '19:member-4' },
-                    { id: '19:member-5' }
+                    { id: '19:member-5' },
                 ],
-                tenantId: 'randomGUID'
-            }
+                tenantId: 'randomGUID',
+            };
 
             const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
 
@@ -1694,8 +1709,13 @@ describe('TeamsInfo', function () {
         it('should return standard error response if a 4xx status code was returned', async function () {
             const activity = MessageFactory.text('Message to users from batch');
             const tenantId = 'randomGUID';
-            const members = [{ id: '19:member-1' }, { id: '19:member-2' }, { id: '19:member-3' }, { id: '19:member-4' }, { id: '19:member-5' }];
-
+            const members = [
+                { id: '19:member-1' },
+                { id: '19:member-2' },
+                { id: '19:member-3' },
+                { id: '19:member-4' },
+                { id: '19:member-5' },
+            ];
 
             const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
 
@@ -1810,14 +1830,14 @@ describe('TeamsInfo', function () {
 
     describe('getOperationState()', function () {
         it('should work with correct operationId in parameters', async function () {
-            const operationId = 'amerOperationId'
+            const operationId = 'amerOperationId';
             const operationState = {
                 state: 'Completed',
                 statusMap: {
                     201: 1,
-                    404: 4
+                    404: 4,
                 },
-                totalEntriesCount: 5
+                totalEntriesCount: 5,
             };
 
             const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
@@ -1839,7 +1859,7 @@ describe('TeamsInfo', function () {
         });
 
         it('should return standard error response if a 4xx status code was returned', async function () {
-            const operationId = 'amerOperationId'
+            const operationId = 'amerOperationId';
             const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
             const errorResponse = { error: { code: 'BadSyntax', message: 'Payload is incorrect' } };
 
@@ -1866,32 +1886,29 @@ describe('TeamsInfo', function () {
         });
 
         it('should throw error for missing operation Id', async function () {
-            await assert.rejects(
-                TeamsInfo.getOperationState({ activity: {} }),
-                Error('operationId is required.')
-            );
+            await assert.rejects(TeamsInfo.getOperationState({ activity: {} }), Error('operationId is required.'));
         });
     });
 
     describe('getFailedEntries()', function () {
         it('should work with correct operationId in parameters', async function () {
-            const operationId = 'amerOperationId'
+            const operationId = 'amerOperationId';
             const failedEntries = {
                 continuationToken: 'Token',
                 failedEntryResponses: [
                     {
                         id: 'id-1',
-                        error: 'error-1'
+                        error: 'error-1',
                     },
                     {
                         id: 'id-2',
-                        error: 'error-2'
+                        error: 'error-2',
                     },
                     {
                         id: 'id-3',
-                        error: 'error-3'
+                        error: 'error-3',
                     },
-                ]
+                ],
             };
 
             const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
@@ -1913,7 +1930,7 @@ describe('TeamsInfo', function () {
         });
 
         it('should return standard error response if a 4xx status code was returned', async function () {
-            const operationId = 'amerOperationId'
+            const operationId = 'amerOperationId';
             const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
             const errorResponse = { error: { code: 'BadSyntax', message: 'Payload is incorrect' } };
 
@@ -1940,16 +1957,13 @@ describe('TeamsInfo', function () {
         });
 
         it('should throw error for missing operation Id', async function () {
-            await assert.rejects(
-                TeamsInfo.getFailedEntries({ activity: {} }),
-                Error('operationId is required.')
-            );
+            await assert.rejects(TeamsInfo.getFailedEntries({ activity: {} }), Error('operationId is required.'));
         });
     });
 
     describe('cancelOperation()', function () {
         it('should finish operation with correct operationId in parameters', async function () {
-            const operationId = 'amerOperationId'
+            const operationId = 'amerOperationId';
 
             const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
 
@@ -1968,7 +1982,7 @@ describe('TeamsInfo', function () {
         });
 
         it('should return standard error response if a 4xx status code was returned', async function () {
-            const operationId = 'amerOperationId'
+            const operationId = 'amerOperationId';
             const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
             const errorResponse = { error: { code: 'BadSyntax', message: 'Payload is incorrect' } };
 
@@ -1995,10 +2009,7 @@ describe('TeamsInfo', function () {
         });
 
         it('should throw error for missing operation Id', async function () {
-            await assert.rejects(
-                TeamsInfo.getFailedEntries({ activity: {} }),
-                Error('operationId is required.')
-            );
+            await assert.rejects(TeamsInfo.getFailedEntries({ activity: {} }), Error('operationId is required.'));
         });
     });
 

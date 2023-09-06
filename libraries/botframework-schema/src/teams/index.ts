@@ -7,7 +7,6 @@
 // The ChannelCount and MemberCount fields were manually added to the TeamDetails definition.
 import { MessageActionsPayloadBody, O365ConnectorCardActionBase, O365ConnectorCardInputBase } from './extension';
 import { Activity, Attachment, CardAction, ChannelAccount, ConversationAccount, SuggestedActions } from '../';
-import { isTypeNode } from 'typescript';
 export * from './extension';
 
 /**
@@ -26,10 +25,10 @@ export interface BotConfigAuth {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface ConfigAuthResponse extends ConfigResponse<BotConfigAuth> { }
+export interface ConfigAuthResponse extends ConfigResponse<BotConfigAuth> {}
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface ConfigTaskResponse extends ConfigResponse<TaskModuleResponse> { }
+export interface ConfigTaskResponse extends ConfigResponse<TaskModuleResponse> {}
 /**
  * @interface
  * An interface representing ChannelInfo.
@@ -2032,21 +2031,15 @@ export interface MeetingNotificationResponse {
 }
 
 /**
- * @type
- * Specifies the Teams member data.
+ * @type {TeamsMember}
+ * Defines the TeamMember type.
  */
-export interface TeamsMemberInterface {
+export type TeamsMember = {
     /**
      * @member {string} [id] The member id.
      */
     id: string;
-}
-
-/**
- * @type
- * Defines the TeamMember type.
- */
-export type TeamsMember = TeamsMemberInterface;
+};
 
 /**
  * @interface
@@ -2066,9 +2059,9 @@ export interface BatchOperationRequest {
      */
     teamId?: string;
     /**
-     * @member {TeamMember[]} [members] The list of members.
+     * @member {TeamsMember[]} [members] The list of members.
      */
-    members?: TeamsMember[]
+    members?: TeamsMember[];
 }
 
 /**
@@ -2134,5 +2127,3 @@ export interface GetFailedEntriesResponse {
      */
     failedEntryResponses: BatchFailedEntry[];
 }
-
-

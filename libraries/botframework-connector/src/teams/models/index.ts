@@ -12,7 +12,7 @@ import {
     TeamsMeetingParticipant,
     BatchOperationResponse,
     GetOperationStateResponse,
-    GetFailedEntriesResponse
+    GetFailedEntriesResponse,
 } from 'botframework-schema';
 
 /**

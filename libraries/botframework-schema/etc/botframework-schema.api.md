@@ -368,6 +368,25 @@ export interface BasicCard {
 }
 
 // @public
+export interface BatchFailedEntry {
+    error: string;
+    id: string;
+}
+
+// @public
+export interface BatchOperationRequest {
+    activity: Activity;
+    members?: TeamsMember[];
+    teamId?: string;
+    tenantId: string;
+}
+
+// @public
+export interface BatchOperationResponse {
+    operationId: string;
+}
+
+// @public
 export interface BotConfigAuth {
     suggestedActions?: SuggestedActions;
     type: 'auth';
@@ -686,6 +705,20 @@ export interface GeoCoordinates {
     longitude: number;
     name: string;
     type: string;
+}
+
+// @public
+export interface GetFailedEntriesResponse {
+    continuationToken: string;
+    failedEntryResponses: BatchFailedEntry[];
+}
+
+// @public
+export interface GetOperationStateResponse {
+    retryAfter?: Date;
+    state: string;
+    statusMap: Record<number, number>;
+    totalEntriesCount: number;
 }
 
 // @public
@@ -1811,6 +1844,11 @@ export interface TeamsMeetingParticipant {
     meeting?: Meeting;
     user?: TeamsChannelAccount;
 }
+
+// @public
+export type TeamsMember = {
+    id: string;
+};
 
 // @public (undocumented)
 export interface TeamsPagedMembersResult {

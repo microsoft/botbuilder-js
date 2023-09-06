@@ -11,12 +11,14 @@ import { AppBasedLinkQuery } from 'botbuilder-core';
 import { AppCredentials } from 'botframework-connector';
 import { AttachmentData } from 'botbuilder-core';
 import { AuthenticationConfiguration } from 'botframework-connector';
+import { BatchOperationResponse } from 'botbuilder-core';
 import { BotAdapter } from 'botbuilder-core';
 import { BotConfigAuth } from 'botbuilder-core';
 import { BotFrameworkAuthentication } from 'botframework-connector';
 import { BotFrameworkClient } from 'botbuilder-core';
 import { BotFrameworkSkill } from 'botbuilder-core';
 import { BotState } from 'botbuilder-core';
+import { CancelOperationResponse } from 'botframework-connector';
 import { ChannelAccount } from 'botbuilder-core';
 import { ChannelInfo } from 'botbuilder-core';
 import { ClaimsIdentity } from 'botframework-connector';
@@ -34,6 +36,8 @@ import { ConversationState } from 'botbuilder-core';
 import { CoreAppCredentials } from 'botbuilder-core';
 import { ExtendedUserTokenProvider } from 'botbuilder-core';
 import { FileConsentCardResponse } from 'botbuilder-core';
+import { GetFailedEntriesResponse } from 'botbuilder-core';
+import { GetOperationStateResponse } from 'botbuilder-core';
 import { HttpClient } from '@azure/ms-rest-js';
 import { HttpOperationResponse } from '@azure/ms-rest-js';
 import { ICredentialProvider } from 'botframework-connector';
@@ -77,6 +81,7 @@ import { TeamInfo } from 'botbuilder-core';
 import { TeamsChannelAccount } from 'botbuilder-core';
 import { TeamsMeetingInfo } from 'botbuilder-core';
 import { TeamsMeetingParticipant } from 'botbuilder-core';
+import { TeamsMember } from 'botbuilder-core';
 import { TeamsPagedMembersResult } from 'botbuilder-core';
 import { TenantInfo } from 'botbuilder-core';
 import { TokenApiClient } from 'botframework-connector';
@@ -455,11 +460,14 @@ export function teamsGetTenant(activity: Activity): TenantInfo | null;
 
 // @public
 export class TeamsInfo {
+    static cancelOperation(context: TurnContext, operationId: string): Promise<CancelOperationResponse>;
+    static getFailedEntries(context: TurnContext, operationId: string): Promise<GetFailedEntriesResponse>;
     static getMeetingInfo(context: TurnContext, meetingId?: string): Promise<TeamsMeetingInfo>;
     static getMeetingParticipant(context: TurnContext, meetingId?: string, participantId?: string, tenantId?: string): Promise<TeamsMeetingParticipant>;
     static getMember(context: TurnContext, userId: string): Promise<TeamsChannelAccount>;
     // @deprecated
     static getMembers(context: TurnContext): Promise<TeamsChannelAccount[]>;
+    static getOperationState(context: TurnContext, operationId: string): Promise<GetOperationStateResponse>;
     static getPagedMembers(context: TurnContext, pageSize?: number, continuationToken?: string): Promise<TeamsPagedMembersResult>;
     static getPagedTeamMembers(context: TurnContext, teamId?: string, pageSize?: number, continuationToken?: string): Promise<TeamsPagedMembersResult>;
     static getTeamChannels(context: TurnContext, teamId?: string): Promise<ChannelInfo[]>;
@@ -468,6 +476,10 @@ export class TeamsInfo {
     // @deprecated
     static getTeamMembers(context: TurnContext, teamId?: string): Promise<TeamsChannelAccount[]>;
     static sendMeetingNotification(context: TurnContext, notification: MeetingNotification, meetingId?: string): Promise<MeetingNotificationResponse>;
+    static sendMessageToAllUsersInTeam(context: TurnContext, activity: Activity, tenantId: string, teamId: string): Promise<BatchOperationResponse>;
+    static sendMessageToAllUsersInTenant(context: TurnContext, activity: Activity, tenantId: string): Promise<BatchOperationResponse>;
+    static sendMessageToListOfChannels(context: TurnContext, activity: Activity, tenantId: string, members: TeamsMember[]): Promise<BatchOperationResponse>;
+    static sendMessageToListOfUsers(context: TurnContext, activity: Activity, tenantId: string, members: TeamsMember[]): Promise<BatchOperationResponse>;
     static sendMessageToTeamsChannel(context: TurnContext, activity: Activity, teamsChannelId: string, botAppId?: string): Promise<[ConversationReference, string]>;
 }
 

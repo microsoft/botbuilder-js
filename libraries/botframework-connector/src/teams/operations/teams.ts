@@ -10,12 +10,12 @@ import * as Mappers from '../models/teamsMappers';
 import * as Parameters from '../models/parameters';
 import { TeamsConnectorClientContext } from '../';
 import { Activity, ConversationList, TeamDetails, TeamsMeetingInfo, TeamsMeetingParticipant, MeetingNotificationResponse, MeetingNotification, TeamsMember, BatchOperationResponse, GetOperationStateResponse, GetFailedEntriesResponse } from 'botframework-schema';
-import { retry } from '../';
+import { retryAction } from '../';
 
 /** Class representing a Teams. */
 export class Teams {
     private readonly client: TeamsConnectorClientContext;
-    private readonly retryCount = 7;
+    private readonly retryCount = 10;
 
     /**
      * Create a Teams.
@@ -304,11 +304,10 @@ export class Teams {
     //Batch Operations
     /**
      * Send message to a list of users.
-     * 
-    /**
+     *
      * @param activity The activity to send.
      * @param tenantId The tenant Id.
-     * @param members The recipient members list.
+     * @param members The list of members.
      * @param options The optional parameters.
      * @param callback The callback.
      * @returns Promise with TeamsBatchOperationResponse.
@@ -320,12 +319,12 @@ export class Teams {
         options?: msRest.RequestOptionsBase,
         callback?: msRest.ServiceCallback<BatchOperationResponse>
     ): Promise<Models.TeamsBatchOperationResponse> {
-        let content = {
+        const content = {
             activity,
             members,
             tenantId
         }
-        return retry(() => this.client.sendOperationRequest(
+        return retryAction(() => this.client.sendOperationRequest(
             {
                 content,
                 options
@@ -337,10 +336,9 @@ export class Teams {
 
     /**
      * Send message to all users belonging to a tenant.
-     * 
-    /**
+     *
      * @param activity The activity to send.
-     * @param tenantId The tenant Id.
+     * @param tenantId The id of the recipient Tenant.
      * @param options The optional parameters.
      * @param callback The callback.
      * @returns Promise with TeamsBatchOperationResponse.
@@ -351,11 +349,11 @@ export class Teams {
         options?: msRest.RequestOptionsBase,
         callback?: msRest.ServiceCallback<BatchOperationResponse>
     ): Promise<Models.TeamsBatchOperationResponse> {
-        let content = {
+        const content = {
             activity,
             tenantId
         }
-        return retry(() => this.client.sendOperationRequest(
+        return retryAction(() => this.client.sendOperationRequest(
             {
                 content,
                 options
@@ -367,8 +365,7 @@ export class Teams {
 
     /**
      * Send message to all users belonging to a team.
-     * 
-    /**
+     *
      * @param activity The activity to send.
      * @param tenantId The tenant Id.
      * @param teamId The id of the recipient Team.
@@ -383,12 +380,12 @@ export class Teams {
         options?: msRest.RequestOptionsBase,
         callback?: msRest.ServiceCallback<BatchOperationResponse>
     ): Promise<Models.TeamsBatchOperationResponse> {
-        let content = {
+        const content = {
             activity,
             tenantId,
             teamId
         }
-        return retry(() => this.client.sendOperationRequest(
+        return retryAction(() => this.client.sendOperationRequest(
             {
                 content,
                 options
@@ -400,11 +397,10 @@ export class Teams {
 
     /**
      * Send message to a list of channels.
-     * 
-    /**
+     *
      * @param activity The activity to send.
      * @param tenantId The tenant Id.
-     * @param members The recipient members list.
+     * @param members The list of channels.
      * @param options The optional parameters.
      * @param callback The callback.
      * @returns Promise with TeamsBatchOperationResponse.
@@ -416,12 +412,12 @@ export class Teams {
         options?: msRest.RequestOptionsBase,
         callback?: msRest.ServiceCallback<BatchOperationResponse>
     ): Promise<Models.TeamsBatchOperationResponse> {
-        let content = {
+        const content = {
             activity,
             tenantId,
             members
         }
-        return retry(() => this.client.sendOperationRequest(
+        return retryAction(() => this.client.sendOperationRequest(
             {
                 content,
                 options
@@ -434,33 +430,7 @@ export class Teams {
     /**
      * Get the state of an operation.
      * 
-     * @param operationsId The operation Id.
-     * @param options The optional parameters.
-     */
-    getOperationState(
-        operationId: string,
-        options?: msRest.RequestOptionsBase,
-    ): Promise<Models.BatchGetOperationStateResponse>
-    /**
-     * @param operationsId The operation Id.
-     * @param callback The callback.
-     */
-    getOperationState(
-        operationId: string,
-        callback: msRest.ServiceCallback<GetOperationStateResponse>
-    ): void;
-    /**
-     * @param operationsId The operation Id.
-     * @param options The optional parameters.
-     * @param callback The callback.
-     */
-    getOperationState(
-        operationId: string,
-        options: msRest.RequestOptionsBase,
-        callback: msRest.ServiceCallback<GetOperationStateResponse>
-    ): void;
-    /**
-     * @param operationsId The operation Id.
+     * @param operationId The operationId to get the state of.
      * @param options The optional parameters.
      * @param callback The callback.
      * @returns Promise with GetOperationStateResponse.
@@ -470,7 +440,7 @@ export class Teams {
         options?: msRest.RequestOptionsBase,
         callback?: msRest.ServiceCallback<GetOperationStateResponse>
     ): Promise<Models.BatchGetOperationStateResponse> {
-        return retry(() => this.client.sendOperationRequest(
+        return retryAction(() => this.client.sendOperationRequest(
             {
                 operationId,
                 options
@@ -483,33 +453,7 @@ export class Teams {
     /**
      * Get the failed entries of an operation.
      * 
-     * @param operationsId The operation Id.
-     * @param options The optional parameters.
-     */
-    getOperationFailedEntries(
-        operationId: string,
-        options?: msRest.RequestOptionsBase,
-    ): Promise<Models.BatchGetFailedEntriesResponse>
-    /**
-     * @param operationsId The operation Id.
-     * @param callback The callback.
-     */
-    getOperationFailedEntries(
-        operationId: string,
-        callback: msRest.ServiceCallback<GetFailedEntriesResponse>
-    ): void;
-    /**
-     * @param operationsId The operation Id.
-     * @param options The optional parameters.
-     * @param callback The callback.
-     */
-    getOperationFailedEntries(
-        operationId: string,
-        options: msRest.RequestOptionsBase,
-        callback: msRest.ServiceCallback<GetFailedEntriesResponse>
-    ): void;
-    /**
-     * @param operationsId The operation Id.
+     * @param operationId The operationId to get the failed entries of.
      * @param options The optional parameters.
      * @param callback The callback.
      * @returns Promise with GetFailedEntriesResponse.
@@ -519,7 +463,7 @@ export class Teams {
         options?: msRest.RequestOptionsBase,
         callback?: msRest.ServiceCallback<GetFailedEntriesResponse>
     ): Promise<Models.BatchGetFailedEntriesResponse> {
-        return retry(() => this.client.sendOperationRequest(
+        return retryAction(() => this.client.sendOperationRequest(
             {
                 operationId,
                 options
@@ -531,18 +475,16 @@ export class Teams {
 
     /**
      * Cancel an operation.
-     * 
-    /**
-     * @param operationsId The operation Id.
+     *
+     * @param operationId The id of the operation to cancel.
      * @param options The optional parameters.
-     * @param callback The callback.
      * @returns Promise with CancelOperationResponse.
      */
     cancelOperation(
         operationId: string,
         options?: msRest.RequestOptionsBase,
     ): Promise<Models.CancelOperationResponse> {
-        return retry(() => this.client.sendOperationRequest(
+        return retryAction(() => this.client.sendOperationRequest(
             {
                 operationId,
                 options

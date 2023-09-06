@@ -29,7 +29,12 @@ import {
     GetOperationStateResponse,
     GetFailedEntriesResponse,
 } from 'botbuilder-core';
-import { CancelOperationResponse, ConnectorClient, TeamsConnectorClient, TeamsConnectorModels } from 'botframework-connector';
+import {
+    CancelOperationResponse,
+    ConnectorClient,
+    TeamsConnectorClient,
+    TeamsConnectorModels,
+} from 'botframework-connector';
 
 import { BotFrameworkAdapter } from './botFrameworkAdapter';
 import { CloudAdapter } from './cloudAdapter';
@@ -374,8 +379,8 @@ export class TeamsInfo {
      * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      * @param activity The activity to send.
      * @param tenantId The tenant ID.
-     * @param members The list of user members.
-     * @returns Promise with operationId
+     * @param members The list of users recipients for the message.
+     * @returns Promise with operationId.
      */
     static async sendMessageToListOfUsers(
         context: TurnContext,
@@ -402,12 +407,12 @@ export class TeamsInfo {
      * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      * @param activity The activity to send.
      * @param tenantId The tenant ID.
-     * @returns Promise with operationId
+     * @returns Promise with operationId.
      */
     static async sendMessageToAllUsersInTenant(
         context: TurnContext,
         activity: Activity,
-        tenantId: string,
+        tenantId: string
     ): Promise<BatchOperationResponse> {
         if (!activity) {
             throw new Error('activity is required.');
@@ -426,7 +431,7 @@ export class TeamsInfo {
      * @param activity The activity to send.
      * @param tenantId The tenant ID.
      * @param teamId The team ID.
-     * @returns Promise with operationId
+     * @returns Promise with operationId.
      */
     static async sendMessageToAllUsersInTeam(
         context: TurnContext,
@@ -444,7 +449,11 @@ export class TeamsInfo {
             throw new Error('teamId is required.');
         }
 
-        return await this.getTeamsConnectorClient(context).teams.sendMessageToAllUsersInTeam(activity, tenantId, teamId);
+        return await this.getTeamsConnectorClient(context).teams.sendMessageToAllUsersInTeam(
+            activity,
+            tenantId,
+            teamId
+        );
     }
 
     /**
@@ -453,8 +462,8 @@ export class TeamsInfo {
      * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      * @param activity The activity to send.
      * @param tenantId The tenant ID.
-     * @param members The list of channels.
-     * @returns Promise with operationId
+     * @param members The list of channels recipients for the message.
+     * @returns Promise with operationId.
      */
     static async sendMessageToListOfChannels(
         context: TurnContext,
@@ -469,23 +478,24 @@ export class TeamsInfo {
             throw new Error('tenantId is required.');
         }
         if (!members || members.length == 0) {
-            throw new Error('memebers list is required.');
+            throw new Error('members list is required.');
         }
 
-        return await this.getTeamsConnectorClient(context).teams.sendMessageToListOfChannels(activity, tenantId, members);
+        return await this.getTeamsConnectorClient(context).teams.sendMessageToListOfChannels(
+            activity,
+            tenantId,
+            members
+        );
     }
 
     /**
-    * Gets the operation state.
-    *
-    * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
-    * @param operationId The operation ID.
-    * @returns Promise with operation state
-    */
-    static async getOperationState(
-        context: TurnContext,
-        operationId: string
-    ): Promise<GetOperationStateResponse> {
+     * Gets the operation state.
+     *
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
+     * @param operationId The operationId to get the state of.
+     * @returns Promise with The state and responses of the operation.
+     */
+    static async getOperationState(context: TurnContext, operationId: string): Promise<GetOperationStateResponse> {
         if (!operationId) {
             throw new Error('operationId is required.');
         }
@@ -494,18 +504,13 @@ export class TeamsInfo {
     }
 
     /**
-    * Gets the failed entries of a executed operation.
-    *
-    * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
-    * @param operationId The operation ID.
-    * @returns Promise with the failed entries data
-    */
-    static async getFailedEntries(
-        context: TurnContext,
-        operationId: string
-    ): Promise<GetFailedEntriesResponse> {
-        const activity = context.activity;
-
+     * Gets the failed entries of an executed operation.
+     *
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
+     * @param operationId The operationId to get the failed entries of.
+     * @returns Promise with the list of failed entries of the operation.
+     */
+    static async getFailedEntries(context: TurnContext, operationId: string): Promise<GetFailedEntriesResponse> {
         if (!operationId) {
             throw new Error('operationId is required.');
         }
@@ -514,17 +519,13 @@ export class TeamsInfo {
     }
 
     /**
-    * Cancels a pending operation.
-    *
-    * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
-    * @param operationId The operation ID.
-    */
-    static async cancelOperation(
-        context: TurnContext,
-        operationId: string
-    ): Promise<CancelOperationResponse> {
-        const activity = context.activity;
-
+     * Cancels a pending operation.
+     *
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
+     * @param operationId The id of the operation to cancel.
+     * @returns Promise representing the asynchronous operation.
+     */
+    static async cancelOperation(context: TurnContext, operationId: string): Promise<CancelOperationResponse> {
         if (!operationId) {
             throw new Error('operationId is required.');
         }

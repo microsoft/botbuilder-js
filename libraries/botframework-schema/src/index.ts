@@ -13,7 +13,6 @@ export { CallerIdConstants } from './callerIdConstants';
 export { SpeechConstants } from './speechConstants';
 export { TokenExchangeInvokeRequest } from './tokenExchangeInvokeRequest';
 export { TokenExchangeInvokeResponse } from './tokenExchangeInvokeResponse';
-export { Errors } from './errors'
 
 // The Teams schemas was manually added to this library. This file has been updated to export those schemas.
 export * from './teams';
@@ -2444,7 +2443,7 @@ export interface SearchInvokeOptions {
  * Name of 'application/search'.
  */
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface SearchInvokeResponse extends AdaptiveCardInvokeResponse { }
+export interface SearchInvokeResponse extends AdaptiveCardInvokeResponse {}
 
 /**
  * Represents a response returned by a bot when it receives an `invoke` activity.

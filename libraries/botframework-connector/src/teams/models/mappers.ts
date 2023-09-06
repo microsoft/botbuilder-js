@@ -2256,25 +2256,25 @@ export const BatchOperationRequest: msRest.CompositeMapper = {
         className: 'BatchOperationRequest',
         modelProperties: {
             activity: {
-                serializedName: "activity",
+                serializedName: 'activity',
                 type: {
-                    name: "Composite",
-                    className: "Activity",
+                    name: 'Composite',
+                    className: 'Activity',
                     modelProperties: {
                         text: {
-                            serializedName: "text",
+                            serializedName: 'text',
                             type: {
                                 name: 'String',
                             },
                         },
                         type: {
-                            serializedName: "type",
+                            serializedName: 'type',
                             type: {
                                 name: 'String',
                             },
-                        }
-                    }
-                }
+                        },
+                    },
+                },
             },
             tenantId: {
                 serializedName: 'tenantId',
@@ -2298,12 +2298,12 @@ export const BatchOperationRequest: msRest.CompositeMapper = {
                             className: 'TeamsMember',
                             modelProperties: {
                                 id: {
-                                    serializedName: "id",
+                                    serializedName: 'id',
                                     type: {
                                         name: 'String',
                                     },
-                                }
-                            }
+                                },
+                            },
                         },
                     },
                 },
@@ -2389,18 +2389,18 @@ export const GetTeamsFailedEntriesResponse: msRest.CompositeMapper = {
                             className: 'BatchFailedEntry',
                             modelProperties: {
                                 id: {
-                                    serializedName: "Id",
+                                    serializedName: 'Id',
                                     type: {
                                         name: 'String',
                                     },
                                 },
                                 error: {
-                                    serializedName: "error",
+                                    serializedName: 'error',
                                     type: {
                                         name: 'String',
                                     },
-                                }
-                            }
+                                },
+                            },
                         },
                     },
                 },
