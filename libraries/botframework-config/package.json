@@ -35,7 +35,6 @@
   },
   "dependencies": {
     "fs-extra": "^7.0.1",
-    "read-text-file": "^1.1.0",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
