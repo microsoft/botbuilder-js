@@ -107,7 +107,7 @@ export class BotConfiguration extends BotConfigurationBase {
      */
     static async load(botpath: string, secret?: string): Promise<BotConfiguration> {
         // eslint-disable-next-line security/detect-non-literal-fs-filename
-        const json: string = fs.readFileSync(botpath, 'utf8');
+        const json: string = await fs.promises.readFile(botpath, 'utf8');
         const bot: BotConfiguration = BotConfiguration.internalLoad(json, secret);
         bot.internal.location = botpath;
 
