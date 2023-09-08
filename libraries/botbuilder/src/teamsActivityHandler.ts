@@ -35,7 +35,7 @@ import {
     tokenExchangeOperationName,
     TurnContext,
     verifyStateOperationName,
-    MeetingParticipantsEventDetails
+    MeetingParticipantsEventDetails,
 } from 'botbuilder-core';
 import { ReadReceiptInfo } from 'botframework-connector';
 import { TeamsInfo } from './teamsInfo';
@@ -1194,10 +1194,10 @@ export class TeamsActivityHandler extends ActivityHandler {
                     return this.onTeamsMeetingStart(context);
                 case 'application/vnd.microsoft.meetingEnd':
                     return this.onTeamsMeetingEnd(context);
-                case "application/vnd.microsoft.meetingParticipantJoin":
-                    return this.onTeamsMeetingParticipantJoin(context);
-                case "application/vnd.microsoft.meetingParticipantLeave":
-                    return this.onTeamsMeetingParticipantLeave(context);
+                case 'application/vnd.microsoft.meetingParticipantJoin':
+                    return this.onTeamsMeetingParticipantsJoin(context);
+                case 'application/vnd.microsoft.meetingParticipantLeave':
+                    return this.onTeamsMeetingParticipantsLeave(context);
             }
         }
 
@@ -1244,8 +1244,8 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param context The context for this turn.
      * @returns A promise that represents the work queued.
      */
-    protected async onTeamsMeetingParticipantJoin(context: TurnContext): Promise<void> {
-        await this.handle(context, 'TeamsMeetingParticipantJoin', this.defaultNextEvent(context));
+    protected async onTeamsMeetingParticipantsJoin(context: TurnContext): Promise<void> {
+        await this.handle(context, 'TeamsMeetingParticipantsJoin', this.defaultNextEvent(context));
     }
 
     /**
@@ -1255,8 +1255,8 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param context The context for this turn.
      * @returns A promise that represents the work queued.
      */
-    protected async onTeamsMeetingParticipantLeave(context: TurnContext): Promise<void> {
-        await this.handle(context, 'TeamsMeetingParticipantLeave', this.defaultNextEvent(context));
+    protected async onTeamsMeetingParticipantsLeave(context: TurnContext): Promise<void> {
+        await this.handle(context, 'TeamsMeetingParticipantsLeave', this.defaultNextEvent(context));
     }
 
     /**
@@ -1331,13 +1331,17 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @returns A promise that represents the work queued.
      */
     onTeamsMeetingParticipantsJoinEvent(
-        handler: (meeting: MeetingParticipantsEventDetails, context: TurnContext, next: () => Promise<void>) => Promise<void>
+        handler: (
+            meeting: MeetingParticipantsEventDetails,
+            context: TurnContext,
+            next: () => Promise<void>
+        ) => Promise<void>
     ): this {
         return this.on('TeamsMeetingParticipantsJoin', async (context, next) => {
             const meeting = context.activity.value;
             await handler(
                 {
-                    members: meeting?.members
+                    members: meeting?.members,
                 },
                 context,
                 next
@@ -1352,13 +1356,17 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @returns A promise that represents the work queued.
      */
     onTeamsMeetingParticipantsLeaveEvent(
-        handler: (meeting: MeetingParticipantsEventDetails, context: TurnContext, next: () => Promise<void>) => Promise<void>
+        handler: (
+            meeting: MeetingParticipantsEventDetails,
+            context: TurnContext,
+            next: () => Promise<void>
+        ) => Promise<void>
     ): this {
         return this.on('TeamsMeetingParticipantsLeave', async (context, next) => {
             const meeting = context.activity.value;
             await handler(
                 {
-                    members: meeting?.members
+                    members: meeting?.members,
                 },
                 context,
                 next

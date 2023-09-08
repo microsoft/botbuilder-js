@@ -25,10 +25,10 @@ export interface BotConfigAuth {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface ConfigAuthResponse extends ConfigResponse<BotConfigAuth> { }
+export interface ConfigAuthResponse extends ConfigResponse<BotConfigAuth> {}
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface ConfigTaskResponse extends ConfigResponse<TaskModuleResponse> { }
+export interface ConfigTaskResponse extends ConfigResponse<TaskModuleResponse> {}
 /**
  * @interface
  * An interface representing ChannelInfo.
