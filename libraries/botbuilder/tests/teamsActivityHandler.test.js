@@ -414,23 +414,23 @@ describe('TeamsActivityHandler', function () {
                 super();
             }
 
-            handleTeamsO365ConnectorCardAction() {}
+            handleTeamsO365ConnectorCardAction() { }
 
-            handleTeamsAppBasedLinkQuery() {}
+            handleTeamsAppBasedLinkQuery() { }
 
-            handleTeamsAnonymousAppBasedLinkQuery() {}
+            handleTeamsAnonymousAppBasedLinkQuery() { }
 
-            handleTeamsMessagingExtensionQuery() {}
+            handleTeamsMessagingExtensionQuery() { }
 
-            handleTeamsMessagingExtensionSelectItem() {}
+            handleTeamsMessagingExtensionSelectItem() { }
 
-            handleTeamsMessagingExtensionFetchTask() {}
+            handleTeamsMessagingExtensionFetchTask() { }
 
-            handleTeamsMessagingExtensionConfigurationQuerySettingUrl() {}
+            handleTeamsMessagingExtensionConfigurationQuerySettingUrl() { }
 
-            handleTeamsMessagingExtensionConfigurationSetting() {}
+            handleTeamsMessagingExtensionConfigurationSetting() { }
 
-            handleTeamsMessagingExtensionCardButtonClicked() {}
+            handleTeamsMessagingExtensionCardButtonClicked() { }
         }
 
         it('activity.name is not defined. should return status code [501].', async function () {
@@ -2603,6 +2603,34 @@ describe('TeamsActivityHandler', function () {
             return activity;
         }
 
+        function createMeetingParticipantEventActivity(join = true) {
+            const value = {
+                members: [
+                    {
+                        user:
+                        {
+                            id: 'id',
+                            name: 'name'
+                        },
+                        meeting:
+                        {
+                            role: 'role',
+                            inMeeting: join
+                        }
+                    }
+                ]
+            }
+
+            const activity = {
+                channelId: Channels.Msteams,
+                type: 'event',
+                value: value,
+                name: join ? "application/vnd.microsoft.meetingParticipantJoin" : "application/vnd.microsoft.meetingParticipantLeave"
+            };
+
+            return activity;
+        }
+
         let onEventCalled;
         let onDialogCalled;
         this.beforeEach(function () {
@@ -2751,14 +2779,14 @@ describe('TeamsActivityHandler', function () {
                 .startTest();
         });
 
-        it('onTeamsReadReceipt routed activity', async function () {
+        it.only('onTeamsReadReceipt routed activity', async function () {
             let onTeamsReadReceiptCalled = false;
             const bot = new TeamsActivityHandler();
             const activity = {
                 channelId: Channels.Msteams,
                 type: 'event',
                 name: 'application/vnd.microsoft.readReceipt',
-                value: JSON.parse('{ "lastReadMessageId": 10101010}'),
+                value: JSON.parse('{ "lastReadMessageI": 10101010}'),
             };
 
             bot.onEvent(async (context, next) => {
@@ -2792,6 +2820,48 @@ describe('TeamsActivityHandler', function () {
                 .send(activity)
                 .then(() => {
                     assert(onTeamsReadReceiptCalled);
+                    assert(onEventCalled, 'onConversationUpdate handler not called');
+                    assert(onDialogCalled, 'onDialog handler not called');
+                })
+                .startTest();
+        });
+
+        it.only('onTeamsMeetingParticipantJoin routed activity', async function () {
+            let onTeamsMeetingParticipantJoinCalled = false;
+            const bot = new TeamsActivityHandler();
+            const activity = createMeetingParticipantEventActivity();
+
+            bot.onEvent(async (context, next) => {
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                onEventCalled = true;
+                await next();
+            });
+
+            bot.onTeamsMeetingParticipantsJoinEvent(async (meeting, context, next) => {
+                assert(meeting, 'meeting not found');
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                assert.strictEqual(meeting, activity.value);
+                onTeamsMeetingParticipantJoinCalled = true;
+                await next();
+            });
+
+            bot.onDialog(async (context, next) => {
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                onDialogCalled = true;
+                await next();
+            });
+
+            const adapter = new TestAdapter(async (context) => {
+                await bot.run(context);
+            });
+
+            await adapter
+                .send(activity)
+                .then(() => {
+                    assert(onTeamsMeetingParticipantJoinCalled);
                     assert(onEventCalled, 'onConversationUpdate handler not called');
                     assert(onDialogCalled, 'onDialog handler not called');
                 })

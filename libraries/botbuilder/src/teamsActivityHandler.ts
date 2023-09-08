@@ -35,6 +35,7 @@ import {
     tokenExchangeOperationName,
     TurnContext,
     verifyStateOperationName,
+    MeetingParticipantsEventDetails
 } from 'botbuilder-core';
 import { ReadReceiptInfo } from 'botframework-connector';
 import { TeamsInfo } from './teamsInfo';
@@ -1193,6 +1194,10 @@ export class TeamsActivityHandler extends ActivityHandler {
                     return this.onTeamsMeetingStart(context);
                 case 'application/vnd.microsoft.meetingEnd':
                     return this.onTeamsMeetingEnd(context);
+                case "application/vnd.microsoft.meetingParticipantJoin":
+                    return this.onTeamsMeetingParticipantJoin(context);
+                case "application/vnd.microsoft.meetingParticipantLeave":
+                    return this.onTeamsMeetingParticipantLeave(context);
             }
         }
 
@@ -1230,6 +1235,28 @@ export class TeamsActivityHandler extends ActivityHandler {
      */
     protected async onTeamsReadReceipt(context: TurnContext): Promise<void> {
         await this.handle(context, 'TeamsReadReceipt', this.defaultNextEvent(context));
+    }
+
+    /**
+     * Invoked when a Meeting Participant Join event activity is received from the connector.
+     * Override this in a derived class to provide logic for when a meeting participant is joined.
+     *
+     * @param context The context for this turn.
+     * @returns A promise that represents the work queued.
+     */
+    protected async onTeamsMeetingParticipantJoin(context: TurnContext): Promise<void> {
+        await this.handle(context, 'TeamsMeetingParticipantJoin', this.defaultNextEvent(context));
+    }
+
+    /**
+     * Invoked when a Meeting Participant Join event activity is received from the connector.
+     * Override this in a derived class to provide logic for when a meeting participant is left.
+     *
+     * @param context The context for this turn.
+     * @returns A promise that represents the work queued.
+     */
+    protected async onTeamsMeetingParticipantLeave(context: TurnContext): Promise<void> {
+        await this.handle(context, 'TeamsMeetingParticipantLeave', this.defaultNextEvent(context));
     }
 
     /**
@@ -1294,6 +1321,48 @@ export class TeamsActivityHandler extends ActivityHandler {
         return this.on('TeamsReadReceipt', async (context, next) => {
             const receiptInfo = context.activity.value;
             await handler(new ReadReceiptInfo(receiptInfo.lastReadMessageId), context, next);
+        });
+    }
+
+    /**
+     * Registers a handler for when a Teams meeting participant join.
+     *
+     * @param handler A callback that handles Meeting Participant Join events.
+     * @returns A promise that represents the work queued.
+     */
+    onTeamsMeetingParticipantsJoinEvent(
+        handler: (meeting: MeetingParticipantsEventDetails, context: TurnContext, next: () => Promise<void>) => Promise<void>
+    ): this {
+        return this.on('TeamsMeetingParticipantsJoin', async (context, next) => {
+            const meeting = context.activity.value;
+            await handler(
+                {
+                    members: meeting?.members
+                },
+                context,
+                next
+            );
+        });
+    }
+
+    /**
+     * Registers a handler for when a Teams meeting participant leave.
+     *
+     * @param handler A callback that handles Meeting Participant Leave events.
+     * @returns A promise that represents the work queued.
+     */
+    onTeamsMeetingParticipantsLeaveEvent(
+        handler: (meeting: MeetingParticipantsEventDetails, context: TurnContext, next: () => Promise<void>) => Promise<void>
+    ): this {
+        return this.on('TeamsMeetingParticipantsLeave', async (context, next) => {
+            const meeting = context.activity.value;
+            await handler(
+                {
+                    members: meeting?.members
+                },
+                context,
+                next
+            );
         });
     }
 }

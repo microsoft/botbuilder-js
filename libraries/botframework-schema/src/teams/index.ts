@@ -25,10 +25,10 @@ export interface BotConfigAuth {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface ConfigAuthResponse extends ConfigResponse<BotConfigAuth> {}
+export interface ConfigAuthResponse extends ConfigResponse<BotConfigAuth> { }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface ConfigTaskResponse extends ConfigResponse<TaskModuleResponse> {}
+export interface ConfigTaskResponse extends ConfigResponse<TaskModuleResponse> { }
 /**
  * @interface
  * An interface representing ChannelInfo.
@@ -2028,4 +2028,45 @@ export interface MeetingNotificationResponse {
      * @member {string} [recipientsFailureInfo] The list of recipients that failed to recieve the sent meetings notification.
      */
     recipientsFailureInfo?: MeetingNotificationRecipientFailureInfo[];
+}
+
+/**
+ * @interface
+ * Specific details about the meeting participants.
+ */
+export interface MeetingParticipantsEventDetails {
+    /**
+     * @member {TeamsMeetingMember[]} [members] The participants info.
+     */
+    members: TeamsMeetingMember[];
+}
+
+/**
+ * @interface
+ * Specific details about the meeting participants.
+ */
+export interface TeamsMeetingMember {
+    /**
+     * @member {TeamsChannelAccount} [user] The participant account.
+     */
+    user: TeamsChannelAccount;
+    /**
+     * @member {UserMeetingDetails} [meeting] The participants info.
+     */
+    meeting: UserMeetingDetails;
+}
+
+/**
+ * @interface
+ * Specific details of a user in a Teams meeting.
+ */
+export interface UserMeetingDetails {
+    /**
+     * @member {boolean} [inMeeting] The user in meeting indicator.
+     */
+    inMeeting: boolean;
+    /**
+     * @member {string} [role] The user's role.
+     */
+    role: string;
 }
