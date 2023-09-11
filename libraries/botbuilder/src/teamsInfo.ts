@@ -26,8 +26,8 @@ import {
     MeetingNotificationResponse,
     TeamsMember,
     BatchOperationResponse,
-    GetOperationStateResponse,
-    GetFailedEntriesResponse,
+    BatchOperationStateResponse,
+    BatchFailedEntriesResponse,
 } from 'botbuilder-core';
 import {
     CancelOperationResponse,
@@ -495,7 +495,7 @@ export class TeamsInfo {
      * @param operationId The operationId to get the state of.
      * @returns Promise with The state and responses of the operation.
      */
-    static async getOperationState(context: TurnContext, operationId: string): Promise<GetOperationStateResponse> {
+    static async getOperationState(context: TurnContext, operationId: string): Promise<BatchOperationStateResponse> {
         if (!operationId) {
             throw new Error('operationId is required.');
         }
@@ -510,7 +510,7 @@ export class TeamsInfo {
      * @param operationId The operationId to get the failed entries of.
      * @returns Promise with the list of failed entries of the operation.
      */
-    static async getFailedEntries(context: TurnContext, operationId: string): Promise<GetFailedEntriesResponse> {
+    static async getFailedEntries(context: TurnContext, operationId: string): Promise<BatchFailedEntriesResponse> {
         if (!operationId) {
             throw new Error('operationId is required.');
         }

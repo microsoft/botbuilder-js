@@ -11,7 +11,9 @@ import { AppBasedLinkQuery } from 'botbuilder-core';
 import { AppCredentials } from 'botframework-connector';
 import { AttachmentData } from 'botbuilder-core';
 import { AuthenticationConfiguration } from 'botframework-connector';
+import { BatchFailedEntriesResponse } from 'botbuilder-core';
 import { BatchOperationResponse } from 'botbuilder-core';
+import { BatchOperationStateResponse } from 'botbuilder-core';
 import { BotAdapter } from 'botbuilder-core';
 import { BotConfigAuth } from 'botbuilder-core';
 import { BotFrameworkAuthentication } from 'botframework-connector';
@@ -36,8 +38,6 @@ import { ConversationState } from 'botbuilder-core';
 import { CoreAppCredentials } from 'botbuilder-core';
 import { ExtendedUserTokenProvider } from 'botbuilder-core';
 import { FileConsentCardResponse } from 'botbuilder-core';
-import { GetFailedEntriesResponse } from 'botbuilder-core';
-import { GetOperationStateResponse } from 'botbuilder-core';
 import { HttpClient } from '@azure/ms-rest-js';
 import { HttpOperationResponse } from '@azure/ms-rest-js';
 import { ICredentialProvider } from 'botframework-connector';
@@ -461,13 +461,13 @@ export function teamsGetTenant(activity: Activity): TenantInfo | null;
 // @public
 export class TeamsInfo {
     static cancelOperation(context: TurnContext, operationId: string): Promise<CancelOperationResponse>;
-    static getFailedEntries(context: TurnContext, operationId: string): Promise<GetFailedEntriesResponse>;
+    static getFailedEntries(context: TurnContext, operationId: string): Promise<BatchFailedEntriesResponse>;
     static getMeetingInfo(context: TurnContext, meetingId?: string): Promise<TeamsMeetingInfo>;
     static getMeetingParticipant(context: TurnContext, meetingId?: string, participantId?: string, tenantId?: string): Promise<TeamsMeetingParticipant>;
     static getMember(context: TurnContext, userId: string): Promise<TeamsChannelAccount>;
     // @deprecated
     static getMembers(context: TurnContext): Promise<TeamsChannelAccount[]>;
-    static getOperationState(context: TurnContext, operationId: string): Promise<GetOperationStateResponse>;
+    static getOperationState(context: TurnContext, operationId: string): Promise<BatchOperationStateResponse>;
     static getPagedMembers(context: TurnContext, pageSize?: number, continuationToken?: string): Promise<TeamsPagedMembersResult>;
     static getPagedTeamMembers(context: TurnContext, teamId?: string, pageSize?: number, continuationToken?: string): Promise<TeamsPagedMembersResult>;
     static getTeamChannels(context: TurnContext, teamId?: string): Promise<ChannelInfo[]>;

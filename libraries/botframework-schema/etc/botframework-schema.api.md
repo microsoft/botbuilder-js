@@ -368,6 +368,12 @@ export interface BasicCard {
 }
 
 // @public
+export interface BatchFailedEntriesResponse {
+    continuationToken: string;
+    failedEntryResponses: BatchFailedEntry[];
+}
+
+// @public
 export interface BatchFailedEntry {
     error: string;
     id: string;
@@ -384,6 +390,14 @@ export interface BatchOperationRequest {
 // @public
 export interface BatchOperationResponse {
     operationId: string;
+}
+
+// @public
+export interface BatchOperationStateResponse {
+    retryAfter?: Date;
+    state: string;
+    statusMap: Record<number, number>;
+    totalEntriesCount: number;
 }
 
 // @public
@@ -705,20 +719,6 @@ export interface GeoCoordinates {
     longitude: number;
     name: string;
     type: string;
-}
-
-// @public
-export interface GetFailedEntriesResponse {
-    continuationToken: string;
-    failedEntryResponses: BatchFailedEntry[];
-}
-
-// @public
-export interface GetOperationStateResponse {
-    retryAfter?: Date;
-    state: string;
-    statusMap: Record<number, number>;
-    totalEntriesCount: number;
 }
 
 // @public

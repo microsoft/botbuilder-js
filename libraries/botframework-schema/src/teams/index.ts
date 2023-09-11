@@ -2032,7 +2032,7 @@ export interface MeetingNotificationResponse {
 
 /**
  * @type {TeamsMember}
- * Defines the TeamMember type.
+ * Defines the TeamsMember type.
  */
 export type TeamsMember = {
     /**
@@ -2079,7 +2079,7 @@ export interface BatchOperationResponse {
  * @interface
  * Specifies the body of the teams batch operation state response.
  */
-export interface GetOperationStateResponse {
+export interface BatchOperationStateResponse {
     /**
      * @member {string} [state] The state of the operation.
      */
@@ -2117,7 +2117,7 @@ export interface BatchFailedEntry {
  * @interface
  * Specifies the body of the batch failed entries response.
  */
-export interface GetFailedEntriesResponse {
+export interface BatchFailedEntriesResponse {
     /**
      * @member {string} [continuationToken] The continuation token for paginated results.
      */

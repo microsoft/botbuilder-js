@@ -2368,10 +2368,10 @@ export const GetTeamsOperationStateResponse: msRest.CompositeMapper = {
 };
 
 export const GetTeamsFailedEntriesResponse: msRest.CompositeMapper = {
-    serializedName: 'GetFailedEntriesResponse',
+    serializedName: 'BatchFailedEntriesResponse',
     type: {
         name: 'Composite',
-        className: 'GetFailedEntriesResponse',
+        className: 'BatchFailedEntriesResponse',
         modelProperties: {
             continuationToken: {
                 serializedName: 'continuationToken',

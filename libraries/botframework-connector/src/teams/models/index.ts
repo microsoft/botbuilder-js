@@ -11,8 +11,8 @@ import {
     MeetingNotificationResponse,
     TeamsMeetingParticipant,
     BatchOperationResponse,
-    GetOperationStateResponse,
-    GetFailedEntriesResponse,
+    BatchOperationStateResponse,
+    BatchFailedEntriesResponse,
 } from 'botframework-schema';
 
 /**
@@ -169,7 +169,7 @@ export type TeamsBatchOperationResponse = BatchOperationResponse & {
 /**
  * Contains response data for the Teams batch operation state.
  */
-export type BatchGetOperationStateResponse = GetOperationStateResponse & {
+export type BatchBatchOperationStateResponse = BatchOperationStateResponse & {
     /**
      * The underlying HTTP response.
      */
@@ -181,14 +181,14 @@ export type BatchGetOperationStateResponse = GetOperationStateResponse & {
         /**
          * The response body as parsed JSON or XML
          */
-        parsedBody: GetOperationStateResponse | {};
+        parsedBody: BatchOperationStateResponse | {};
     };
 };
 
 /**
  * Contains response data for the Teams batch failed entries.
  */
-export type BatchGetFailedEntriesResponse = GetFailedEntriesResponse & {
+export type BatchBatchFailedEntriesResponse = BatchFailedEntriesResponse & {
     /**
      * The underlying HTTP response.
      */
@@ -200,7 +200,7 @@ export type BatchGetFailedEntriesResponse = GetFailedEntriesResponse & {
         /**
          * The response body as parsed JSON or XML
          */
-        parsedBody: GetFailedEntriesResponse | {};
+        parsedBody: BatchFailedEntriesResponse | {};
     };
 };
 

@@ -8,9 +8,21 @@ import * as msRest from '@azure/ms-rest-js';
 import * as Models from '../models';
 import * as Mappers from '../models/teamsMappers';
 import * as Parameters from '../models/parameters';
-import { TeamsConnectorClientContext } from '../';
-import { Activity, ConversationList, TeamDetails, TeamsMeetingInfo, TeamsMeetingParticipant, MeetingNotificationResponse, MeetingNotification, TeamsMember, BatchOperationResponse, GetOperationStateResponse, GetFailedEntriesResponse } from 'botframework-schema';
-import { retryAction } from '../';
+import { TeamsConnectorClientContext, retryAction } from '../';
+import {
+    Activity,
+    ConversationList,
+    TeamDetails,
+    TeamsMeetingInfo,
+    TeamsMeetingParticipant,
+    MeetingNotificationResponse,
+    MeetingNotification,
+    TeamsMember,
+    BatchOperationResponse,
+    BatchOperationStateResponse,
+    BatchFailedEntriesResponse
+} from 'botframework-schema';
+
 
 /** Class representing a Teams. */
 export class Teams {
@@ -433,13 +445,13 @@ export class Teams {
      * @param operationId The operationId to get the state of.
      * @param options The optional parameters.
      * @param callback The callback.
-     * @returns Promise with GetOperationStateResponse.
+     * @returns Promise with BatchOperationStateResponse.
      */
     getOperationState(
         operationId: string,
         options?: msRest.RequestOptionsBase,
-        callback?: msRest.ServiceCallback<GetOperationStateResponse>
-    ): Promise<Models.BatchGetOperationStateResponse> {
+        callback?: msRest.ServiceCallback<BatchOperationStateResponse>
+    ): Promise<Models.BatchBatchOperationStateResponse> {
         return retryAction(() => this.client.sendOperationRequest(
             {
                 operationId,
@@ -447,7 +459,7 @@ export class Teams {
             },
             getOperationStateSpec,
             callback
-        ) as Promise<Models.BatchGetOperationStateResponse>, this.retryCount);
+        ) as Promise<Models.BatchBatchOperationStateResponse>, this.retryCount);
     }
 
     /**
@@ -456,13 +468,13 @@ export class Teams {
      * @param operationId The operationId to get the failed entries of.
      * @param options The optional parameters.
      * @param callback The callback.
-     * @returns Promise with GetFailedEntriesResponse.
+     * @returns Promise with BatchFailedEntriesResponse.
      */
     getOperationFailedEntries(
         operationId: string,
         options?: msRest.RequestOptionsBase,
-        callback?: msRest.ServiceCallback<GetFailedEntriesResponse>
-    ): Promise<Models.BatchGetFailedEntriesResponse> {
+        callback?: msRest.ServiceCallback<BatchFailedEntriesResponse>
+    ): Promise<Models.BatchBatchFailedEntriesResponse> {
         return retryAction(() => this.client.sendOperationRequest(
             {
                 operationId,
@@ -470,7 +482,7 @@ export class Teams {
             },
             getPagedFailedEntriesSpec,
             callback
-        ) as Promise<Models.BatchGetFailedEntriesResponse>, this.retryCount);
+        ) as Promise<Models.BatchBatchFailedEntriesResponse>, this.retryCount);
     }
 
     /**
