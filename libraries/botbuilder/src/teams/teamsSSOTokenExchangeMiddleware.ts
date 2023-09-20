@@ -155,7 +155,7 @@ export class TeamsSSOTokenExchangeMiddleware implements Middleware {
                 tokenExchangeResponse = await context.adapter.exchangeToken(
                     context,
                     this.oAuthConnectionName,
-                    context.activity.channelId,
+                    context.activity.from.id,
                     { token: tokenExchangeRequest.token }
                 );
             } else {
