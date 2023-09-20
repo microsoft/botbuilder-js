@@ -1249,7 +1249,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     }
 
     /**
-     * Invoked when a Meeting Participant Join event activity is received from the connector.
+     * Invoked when a Meeting Participant Leave event activity is received from the connector.
      * Override this in a derived class to provide logic for when a meeting participant is left.
      *
      * @param context The context for this turn.
