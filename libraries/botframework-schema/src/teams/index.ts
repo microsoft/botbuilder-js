@@ -2030,7 +2030,7 @@ export interface MeetingNotificationResponse {
     recipientsFailureInfo?: MeetingNotificationRecipientFailureInfo[];
 }
 
-/**  
+/**
  * @interface
  * Specific details about the meeting participants.
  */
