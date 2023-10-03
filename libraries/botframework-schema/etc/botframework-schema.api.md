@@ -368,6 +368,39 @@ export interface BasicCard {
 }
 
 // @public
+export interface BatchFailedEntriesResponse {
+    continuationToken: string;
+    failedEntryResponses: BatchFailedEntry[];
+}
+
+// @public
+export interface BatchFailedEntry {
+    error: string;
+    id: string;
+}
+
+// @public
+export interface BatchOperationRequest {
+    activity: Activity;
+    members?: TeamsMember[];
+    teamId?: string;
+    tenantId: string;
+}
+
+// @public
+export interface BatchOperationResponse {
+    operationId: string;
+}
+
+// @public
+export interface BatchOperationStateResponse {
+    retryAfter?: Date;
+    state: string;
+    statusMap: Record<number, number>;
+    totalEntriesCount: number;
+}
+
+// @public
 export interface BotConfigAuth {
     suggestedActions?: SuggestedActions;
     type: 'auth';
@@ -1822,6 +1855,11 @@ export interface TeamsMeetingParticipant {
     meeting?: Meeting;
     user?: TeamsChannelAccount;
 }
+
+// @public
+export type TeamsMember = {
+    id: string;
+};
 
 // @public (undocumented)
 export interface TeamsPagedMembersResult {

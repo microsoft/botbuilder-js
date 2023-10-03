@@ -8,12 +8,26 @@ import * as msRest from '@azure/ms-rest-js';
 import * as Models from '../models';
 import * as Mappers from '../models/teamsMappers';
 import * as Parameters from '../models/parameters';
-import { TeamsConnectorClientContext } from '../';
-import { ConversationList, TeamDetails, TeamsMeetingInfo, TeamsMeetingParticipant, MeetingNotificationResponse, MeetingNotification } from 'botframework-schema';
+import { TeamsConnectorClientContext, retryAction } from '../';
+import {
+    Activity,
+    ConversationList,
+    TeamDetails,
+    TeamsMeetingInfo,
+    TeamsMeetingParticipant,
+    MeetingNotificationResponse,
+    MeetingNotification,
+    TeamsMember,
+    BatchOperationResponse,
+    BatchOperationStateResponse,
+    BatchFailedEntriesResponse
+} from 'botframework-schema';
+
 
 /** Class representing a Teams. */
 export class Teams {
     private readonly client: TeamsConnectorClientContext;
+    private readonly retryCount = 10;
 
     /**
      * Create a Teams.
@@ -206,7 +220,7 @@ export class Teams {
      * @param meetingId Meeting Id, encoded as a BASE64 string.
      * @param callback The callback
      */
-     fetchMeetingInfo(
+    fetchMeetingInfo(
         meetingId: string,
         callback: msRest.ServiceCallback<TeamsMeetingInfo>
     ): void;
@@ -215,7 +229,7 @@ export class Teams {
      * @param options The optional parameters
      * @param callback The callback
      */
-     fetchMeetingInfo(
+    fetchMeetingInfo(
         meetingId: string,
         options: msRest.RequestOptionsBase | msRest.ServiceCallback<TeamDetails>,
         callback: msRest.ServiceCallback<TeamsMeetingInfo>
@@ -298,6 +312,198 @@ export class Teams {
             callback
         ) as Promise<Models.TeamsMeetingNotificationResponse>;
     }
+
+    //Batch Operations
+    /**
+     * Send message to a list of users.
+     *
+     * @param activity The activity to send.
+     * @param tenantId The tenant Id.
+     * @param members The list of members.
+     * @param options The optional parameters.
+     * @param callback The callback.
+     * @returns Promise with TeamsBatchOperationResponse.
+     */
+    sendMessageToListOfUsers(
+        activity: Activity,
+        tenantId: string,
+        members: TeamsMember[],
+        options?: msRest.RequestOptionsBase,
+        callback?: msRest.ServiceCallback<BatchOperationResponse>
+    ): Promise<Models.TeamsBatchOperationResponse> {
+        const content = {
+            activity,
+            members,
+            tenantId
+        }
+        return retryAction(() => this.client.sendOperationRequest(
+            {
+                content,
+                options
+            },
+            sendMessageToListOfUsersOperationSpec,
+            callback
+        ) as Promise<Models.TeamsBatchOperationResponse>, this.retryCount);
+    }
+
+    /**
+     * Send message to all users belonging to a tenant.
+     *
+     * @param activity The activity to send.
+     * @param tenantId The id of the recipient Tenant.
+     * @param options The optional parameters.
+     * @param callback The callback.
+     * @returns Promise with TeamsBatchOperationResponse.
+     */
+    sendMessageToAllUsersInTenant(
+        activity: Activity,
+        tenantId: string,
+        options?: msRest.RequestOptionsBase,
+        callback?: msRest.ServiceCallback<BatchOperationResponse>
+    ): Promise<Models.TeamsBatchOperationResponse> {
+        const content = {
+            activity,
+            tenantId
+        }
+        return retryAction(() => this.client.sendOperationRequest(
+            {
+                content,
+                options
+            },
+            sendMessageToAllUsersInTenantOperationSpec,
+            callback
+        ) as Promise<Models.TeamsBatchOperationResponse>, this.retryCount);
+    }
+
+    /**
+     * Send message to all users belonging to a team.
+     *
+     * @param activity The activity to send.
+     * @param tenantId The tenant Id.
+     * @param teamId The id of the recipient Team.
+     * @param options The optional parameters.
+     * @param callback The callback.
+     * @returns Promise with TeamsBatchOperationResponse.
+     */
+    sendMessageToAllUsersInTeam(
+        activity: Activity,
+        tenantId: string,
+        teamId: string,
+        options?: msRest.RequestOptionsBase,
+        callback?: msRest.ServiceCallback<BatchOperationResponse>
+    ): Promise<Models.TeamsBatchOperationResponse> {
+        const content = {
+            activity,
+            tenantId,
+            teamId
+        }
+        return retryAction(() => this.client.sendOperationRequest(
+            {
+                content,
+                options
+            },
+            sendMessageToAllUsersInTeamOperationSpec,
+            callback
+        ) as Promise<Models.TeamsBatchOperationResponse>, this.retryCount);
+    }
+
+    /**
+     * Send message to a list of channels.
+     *
+     * @param activity The activity to send.
+     * @param tenantId The tenant Id.
+     * @param members The list of channels.
+     * @param options The optional parameters.
+     * @param callback The callback.
+     * @returns Promise with TeamsBatchOperationResponse.
+     */
+    sendMessageToListOfChannels(
+        activity: Activity,
+        tenantId: string,
+        members: TeamsMember[],
+        options?: msRest.RequestOptionsBase,
+        callback?: msRest.ServiceCallback<BatchOperationResponse>
+    ): Promise<Models.TeamsBatchOperationResponse> {
+        const content = {
+            activity,
+            tenantId,
+            members
+        }
+        return retryAction(() => this.client.sendOperationRequest(
+            {
+                content,
+                options
+            },
+            sendMessageToListOfChannelsOperationSpec,
+            callback
+        ) as Promise<Models.TeamsBatchOperationResponse>, this.retryCount);
+    }
+
+    /**
+     * Get the state of an operation.
+     * 
+     * @param operationId The operationId to get the state of.
+     * @param options The optional parameters.
+     * @param callback The callback.
+     * @returns Promise with BatchOperationStateResponse.
+     */
+    getOperationState(
+        operationId: string,
+        options?: msRest.RequestOptionsBase,
+        callback?: msRest.ServiceCallback<BatchOperationStateResponse>
+    ): Promise<Models.BatchBatchOperationStateResponse> {
+        return retryAction(() => this.client.sendOperationRequest(
+            {
+                operationId,
+                options
+            },
+            getOperationStateSpec,
+            callback
+        ) as Promise<Models.BatchBatchOperationStateResponse>, this.retryCount);
+    }
+
+    /**
+     * Get the failed entries of an operation.
+     * 
+     * @param operationId The operationId to get the failed entries of.
+     * @param options The optional parameters.
+     * @param callback The callback.
+     * @returns Promise with BatchFailedEntriesResponse.
+     */
+    getOperationFailedEntries(
+        operationId: string,
+        options?: msRest.RequestOptionsBase,
+        callback?: msRest.ServiceCallback<BatchFailedEntriesResponse>
+    ): Promise<Models.BatchBatchFailedEntriesResponse> {
+        return retryAction(() => this.client.sendOperationRequest(
+            {
+                operationId,
+                options
+            },
+            getPagedFailedEntriesSpec,
+            callback
+        ) as Promise<Models.BatchBatchFailedEntriesResponse>, this.retryCount);
+    }
+
+    /**
+     * Cancel an operation.
+     *
+     * @param operationId The id of the operation to cancel.
+     * @param options The optional parameters.
+     * @returns Promise with CancelOperationResponse.
+     */
+    cancelOperation(
+        operationId: string,
+        options?: msRest.RequestOptionsBase,
+    ): Promise<Models.CancelOperationResponse> {
+        return retryAction(() => this.client.sendOperationRequest(
+            {
+                operationId,
+                options
+            },
+            cancelOperationSpec
+        ) as Promise<Models.CancelOperationResponse>, this.retryCount);
+    }
 }
 
 // Operation Specifications
@@ -379,3 +585,130 @@ const sendMeetingNotificationOperationSpec: msRest.OperationSpec = {
     },
     serializer
 }
+
+const sendMessageToListOfUsersOperationSpec: msRest.OperationSpec = {
+    httpMethod: 'POST',
+    path: 'v3/batch/conversation/users',
+    requestBody: {
+        parameterPath: 'content',
+        mapper: {
+            ...Mappers.BatchOperationRequest,
+            required: true
+        }
+    },
+    responses: {
+        201: {
+            bodyMapper: Mappers.BatchOperationResponse
+        },
+        default: {
+            bodyMapper: Mappers.ErrorResponse
+        }
+    },
+    serializer
+}
+
+const sendMessageToAllUsersInTenantOperationSpec: msRest.OperationSpec = {
+    httpMethod: 'POST',
+    path: 'v3/batch/conversation/tenant',
+    requestBody: {
+        parameterPath: 'content',
+        mapper: {
+            ...Mappers.BatchOperationRequest,
+            required: true
+        }
+    },
+    responses: {
+        201: {
+            bodyMapper: Mappers.BatchOperationResponse
+        },
+        default: {
+            bodyMapper: Mappers.ErrorResponse
+        }
+    },
+    serializer
+}
+
+const sendMessageToAllUsersInTeamOperationSpec: msRest.OperationSpec = {
+    httpMethod: 'POST',
+    path: 'v3/batch/conversation/team',
+    requestBody: {
+        parameterPath: 'content',
+        mapper: {
+            ...Mappers.BatchOperationRequest,
+            required: true
+        }
+    },
+    responses: {
+        201: {
+            bodyMapper: Mappers.BatchOperationResponse
+        },
+        default: {
+            bodyMapper: Mappers.ErrorResponse
+        }
+    },
+    serializer
+}
+
+const sendMessageToListOfChannelsOperationSpec: msRest.OperationSpec = {
+    httpMethod: 'POST',
+    path: 'v3/batch/conversation/channels',
+    requestBody: {
+        parameterPath: 'content',
+        mapper: {
+            ...Mappers.BatchOperationRequest,
+            required: true
+        }
+    },
+    responses: {
+        201: {
+            bodyMapper: Mappers.BatchOperationResponse
+        },
+        default: {
+            bodyMapper: Mappers.ErrorResponse
+        }
+    },
+    serializer
+}
+
+const getOperationStateSpec: msRest.OperationSpec = {
+    httpMethod: 'GET',
+    path: 'v3/batch/conversation/{operationId}',
+    urlParameters: [Parameters.operationId],
+    responses: {
+        200: {
+            bodyMapper: Mappers.GetTeamsOperationStateResponse,
+        },
+        default: {
+            bodyMapper: Mappers.ErrorResponse
+        }
+    },
+    serializer,
+};
+
+const getPagedFailedEntriesSpec: msRest.OperationSpec = {
+    httpMethod: 'GET',
+    path: 'v3/batch/conversation/failedentries/{operationId}',
+    urlParameters: [Parameters.operationId],
+    responses: {
+        200: {
+            bodyMapper: Mappers.GetTeamsFailedEntriesResponse,
+        },
+        default: {
+            bodyMapper: Mappers.ErrorResponse
+        }
+    },
+    serializer,
+};
+
+const cancelOperationSpec: msRest.OperationSpec = {
+    httpMethod: 'DELETE',
+    path: 'v3/batch/conversation/{operationId}',
+    urlParameters: [Parameters.operationId],
+    responses: {
+        200: {},
+        default: {
+            bodyMapper: Mappers.ErrorResponse
+        }
+    },
+    serializer,
+};

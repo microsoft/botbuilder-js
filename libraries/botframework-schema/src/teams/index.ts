@@ -2070,3 +2070,101 @@ export interface UserMeetingDetails {
      */
     role: string;
 }
+
+/**
+ * @type {TeamsMember}
+ * Defines the TeamsMember type.
+ */
+export type TeamsMember = {
+    /**
+     * @member {string} [id] The member id.
+     */
+    id: string;
+};
+
+/**
+ * @interface
+ * Specifies the body of the teams batch operation request.
+ */
+export interface BatchOperationRequest {
+    /**
+     * @member {Activity} [activity] The activity of the request.
+     */
+    activity: Activity;
+    /**
+     * @member {string} [tenantId] The id of the Teams tenant.
+     */
+    tenantId: string;
+    /**
+     * @member {string} [teamId] The id of the team.
+     */
+    teamId?: string;
+    /**
+     * @member {TeamsMember[]} [members] The list of members.
+     */
+    members?: TeamsMember[];
+}
+
+/**
+ * @interface
+ * Specifies the body of the teams batch operation response.
+ */
+export interface BatchOperationResponse {
+    /**
+     * @member {string} [operationId] The id of the operation executed.
+     */
+    operationId: string;
+}
+
+/**
+ * @interface
+ * Specifies the body of the teams batch operation state response.
+ */
+export interface BatchOperationStateResponse {
+    /**
+     * @member {string} [state] The state of the operation.
+     */
+    state: string;
+    /**
+     * @member {Record<number, number>} [statusMap] The status map for processed operations.
+     */
+    statusMap: Record<number, number>;
+    /**
+     * @member {Date} [retryAfter] The datetime value to retry the operation.
+     */
+    retryAfter?: Date;
+    /**
+     * @member {number} [totalEntriesCount] The number of entries.
+     */
+    totalEntriesCount: number;
+}
+
+/**
+ * @interface
+ * Specifies the failed entry with its id and error.
+ */
+export interface BatchFailedEntry {
+    /**
+     * @member {string} [id] The id of the failed entry.
+     */
+    id: string;
+    /**
+     * @member {string} [error] The error of the failed entry.
+     */
+    error: string;
+}
+
+/**
+ * @interface
+ * Specifies the body of the batch failed entries response.
+ */
+export interface BatchFailedEntriesResponse {
+    /**
+     * @member {string} [continuationToken] The continuation token for paginated results.
+     */
+    continuationToken: string;
+    /**
+     * @member {BatchFailedEntry[]} [failedEntryResponses] The list of failed entries result of a batch operation.
+     */
+    failedEntryResponses: BatchFailedEntry[];
+}

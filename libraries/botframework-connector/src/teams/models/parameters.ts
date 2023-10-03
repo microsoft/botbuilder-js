@@ -47,3 +47,13 @@ export const tenantId: msRest.OperationQueryParameter = {
         },
     },
 };
+
+export const operationId: msRest.OperationURLParameter = {
+    parameterPath: 'operationId',
+    mapper: {
+        serializedName: 'operationId',
+        type: {
+            name: 'String',
+        },
+    },
+};

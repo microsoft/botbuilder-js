@@ -25,3 +25,4 @@ export * from './teamsConnectorClient';
 export * from './teamsConnectorClientContext';
 export * from './models';
 export * from './readReceiptInfo';
+export * from './retryAction';
