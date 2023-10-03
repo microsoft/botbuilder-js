@@ -1037,6 +1037,11 @@ export interface MeetingNotificationResponse {
 }
 
 // @public
+export interface MeetingParticipantsEventDetails {
+    members: TeamsMeetingMember[];
+}
+
+// @public
 export interface MeetingStageSurface<T> {
     content: T;
     contentType: 'task';
@@ -1839,6 +1844,12 @@ export interface TeamsMeetingInfo {
 }
 
 // @public
+export interface TeamsMeetingMember {
+    meeting: UserMeetingDetails;
+    user: TeamsChannelAccount;
+}
+
+// @public
 export interface TeamsMeetingParticipant {
     conversation?: ConversationAccount;
     meeting?: Meeting;
@@ -1986,6 +1997,12 @@ export type Type3 = MessagingExtensionResultType;
 
 // @public
 export type UserIdentityType = 'aadUser' | 'onPremiseAadUser' | 'anonymousGuest' | 'federatedUser';
+
+// @public
+export interface UserMeetingDetails {
+    inMeeting: boolean;
+    role: string;
+}
 
 // @public
 export interface VideoCard {

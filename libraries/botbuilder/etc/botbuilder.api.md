@@ -49,6 +49,7 @@ import { IStreamingTransportServer } from 'botframework-streaming';
 import { MeetingEndEventDetails } from 'botbuilder-core';
 import { MeetingNotification } from 'botbuilder-core';
 import { MeetingNotificationResponse } from 'botbuilder-core';
+import { MeetingParticipantsEventDetails } from 'botbuilder-core';
 import { MeetingStartEventDetails } from 'botbuilder-core';
 import { MessagingExtensionAction } from 'botbuilder-core';
 import { MessagingExtensionActionResponse } from 'botbuilder-core';
@@ -409,6 +410,10 @@ export class TeamsActivityHandler extends ActivityHandler {
     onTeamsChannelRestoredEvent(handler: (channelInfo: ChannelInfo, teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
     protected onTeamsMeetingEnd(context: TurnContext): Promise<void>;
     onTeamsMeetingEndEvent(handler: (meeting: MeetingEndEventDetails, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
+    protected onTeamsMeetingParticipantsJoin(context: TurnContext): Promise<void>;
+    onTeamsMeetingParticipantsJoinEvent(handler: (meeting: MeetingParticipantsEventDetails, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
+    protected onTeamsMeetingParticipantsLeave(context: TurnContext): Promise<void>;
+    onTeamsMeetingParticipantsLeaveEvent(handler: (meeting: MeetingParticipantsEventDetails, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
     protected onTeamsMeetingStart(context: TurnContext): Promise<void>;
     onTeamsMeetingStartEvent(handler: (meeting: MeetingStartEventDetails, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
     protected onTeamsMembersAdded(context: TurnContext): Promise<void>;
