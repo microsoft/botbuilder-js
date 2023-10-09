@@ -68,6 +68,7 @@ If you want to debug an issue, would like to [contribute](#Contributing-and-our-
 - [Git](https://git-scm.com/downloads)
 - [Node.js](https://nodejs.org/en/)
 - [Yarn 1.x](https://classic.yarnpkg.com/)
+- [TypeScript](https://www.typescriptlang.org/) version >= 3.8
 - Your favorite code-editor for example [VS Code](https://code.visualstudio.com/)
 
 ### Clone
