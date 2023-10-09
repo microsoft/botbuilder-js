@@ -35,3 +35,6 @@ export * from './passwordServiceClientCredentialFactory';
 export * from './skillValidation';
 export * from './serviceClientCredentialsFactory';
 export * from './userTokenClient';
+
+export { MsalAppCredentials } from './msalAppCredentials';
+export { MsalServiceClientCredentialsFactory } from './msalServiceClientCredentialsFactory';
