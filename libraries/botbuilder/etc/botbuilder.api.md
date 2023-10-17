@@ -10,6 +10,7 @@ import { ActivityHandlerBase } from 'botbuilder-core';
 import { AppBasedLinkQuery } from 'botbuilder-core';
 import { AppCredentials } from 'botframework-connector';
 import { AttachmentData } from 'botbuilder-core';
+import { AuthenticateRequestResult } from 'botframework-connector';
 import { AuthenticationConfiguration } from 'botframework-connector';
 import { BatchFailedEntriesResponse } from 'botbuilder-core';
 import { BatchOperationResponse } from 'botbuilder-core';
@@ -244,6 +245,7 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
     connectNamedPipe(pipeName: string, logic: (context: TurnContext) => Promise<void>, appId: string, audience: string, callerId?: string, retryCount?: number): Promise<void>;
     process(req: Request_2, res: Response_2, logic: (context: TurnContext) => Promise<void>): Promise<void>;
     process(req: Request_2, socket: INodeSocket, head: INodeBuffer, logic: (context: TurnContext) => Promise<void>): Promise<void>;
+    processActivityDirect(authorization: string | AuthenticateRequestResult, activity: Activity, logic: (context: TurnContext) => Promise<void>): Promise<void>;
 }
 
 // Warning: (ae-forgotten-export) The symbol "CloudChannelServiceHandler" needs to be exported by the entry point index.d.ts
