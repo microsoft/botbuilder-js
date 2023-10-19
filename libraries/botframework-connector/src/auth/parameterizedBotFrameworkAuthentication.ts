@@ -123,7 +123,8 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
             this.toChannelFromBotOAuthScope,
             this.toChannelFromBotLoginUrl,
             this.validateAuthority,
-            this.credentialsFactory
+            this.credentialsFactory,
+            this.connectorClientOptions
         );
 
         return {
@@ -188,7 +189,8 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
             this.toChannelFromBotOAuthScope,
             this.toChannelFromBotLoginUrl,
             this.validateAuthority,
-            this.credentialsFactory
+            this.credentialsFactory,
+            this.connectorClientOptions
         );
     }
 
