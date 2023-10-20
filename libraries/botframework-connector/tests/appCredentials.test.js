@@ -84,12 +84,7 @@ describe('AppCredentials', function () {
 
         it('should fail to get a token with an appId and no appPassword', async function () {
             const tokenGenerator = new MicrosoftAppCredentials(APP_ID);
-            await assert.rejects(
-                tokenGenerator.getToken(true),
-                // e.message evaluation per adal-node@0.2.1:
-                // https://github.com/AzureAD/azure-activedirectory-library-for-nodejs/blob/eeff5215bd7a6629edbd1d71450a0db68f029838/lib/authentication-context.js#L277
-                new Error('The clientSecret parameter is required.')
-            );
+            await assert.rejects(tokenGenerator.getToken(true), { errorCode: 'invalid_client_credential' });
         });
     });
 });

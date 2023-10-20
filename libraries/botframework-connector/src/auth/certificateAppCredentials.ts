@@ -6,8 +6,10 @@
  * Licensed under the MIT License.
  */
 
-import * as adal from 'adal-node';
+import { ConfidentialClientApplication } from '@azure/msal-node';
 import { AppCredentials } from './appCredentials';
+import { AuthenticatorResult } from './authenticatorResult';
+import { MsalAppCredentials } from './msalAppCredentials';
 
 /**
  * CertificateAppCredentials auth implementation
@@ -15,6 +17,9 @@ import { AppCredentials } from './appCredentials';
 export class CertificateAppCredentials extends AppCredentials {
     certificateThumbprint: string;
     certificatePrivateKey: string;
+    x5c: string;
+
+    private credentials: MsalAppCredentials;
 
     /**
      * Initializes a new instance of the [CertificateAppCredentials](xref:botframework-connector.CertificateAppCredentials) class.
@@ -24,37 +29,55 @@ export class CertificateAppCredentials extends AppCredentials {
      * @param certificatePrivateKey A PEM encoded certificate private key.
      * @param channelAuthTenant Optional. The oauth token tenant.
      * @param oAuthScope Optional. The scope for the token.
+     * @param x5c Optional. Enables application developers to achieve easy certificates roll-over in Azure AD:
+     * set this parameter to send the public certificate (BEGIN CERTIFICATE) to Azure AD, so that Azure AD can use it to validate the subject name based on a trusted issuer policy.
      */
     constructor(
         appId: string,
         certificateThumbprint: string,
         certificatePrivateKey: string,
         channelAuthTenant?: string,
-        oAuthScope?: string
+        oAuthScope?: string,
+        x5c?: string
     ) {
         super(appId, channelAuthTenant, oAuthScope);
         this.certificateThumbprint = certificateThumbprint;
         this.certificatePrivateKey = certificatePrivateKey;
+        this.x5c = x5c;
     }
 
-    protected async refreshToken(): Promise<adal.TokenResponse> {
-        if (!this.refreshingToken) {
-            this.refreshingToken = new Promise<adal.TokenResponse>((resolve, reject) => {
-                this.authenticationContext.acquireTokenWithClientCertificate(
-                    this.oAuthScope,
-                    this.appId,
-                    this.certificatePrivateKey,
-                    this.certificateThumbprint,
-                    function (err, tokenResponse) {
-                        if (err) {
-                            reject(err);
-                        } else {
-                            resolve(tokenResponse as adal.TokenResponse);
-                        }
-                    }
-                );
-            });
-        }
-        return this.refreshingToken;
+    /**
+     * @inheritdoc
+     */
+    async getToken(forceRefresh = false): Promise<string> {
+        this.credentials ??= new MsalAppCredentials(
+            this.createClientApplication(),
+            this.appId,
+            this.oAuthEndpoint,
+            this.oAuthScope
+        );
+        return this.credentials.getToken(forceRefresh);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected refreshToken(): Promise<AuthenticatorResult> {
+        // This will never be executed because we are using MsalAppCredentials.getToken underneath.
+        throw new Error('Method not implemented.');
+    }
+
+    private createClientApplication() {
+        return new ConfidentialClientApplication({
+            auth: {
+                clientId: this.appId,
+                authority: this.oAuthEndpoint,
+                clientCertificate: {
+                    thumbprint: this.certificateThumbprint,
+                    privateKey: this.certificatePrivateKey,
+                    x5c: this.x5c,
+                },
+            },
+        });
     }
 }

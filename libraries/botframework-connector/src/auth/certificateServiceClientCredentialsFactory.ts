@@ -19,6 +19,7 @@ export class CertificateServiceClientCredentialsFactory extends ServiceClientCre
     private readonly certificateThumbprint: string;
     private readonly certificatePrivateKey: string;
     private readonly tenantId: string | null;
+    private readonly x5c: string | null;
 
     /**
      * Initializes a new instance of the CertificateServiceClientCredentialsFactory class.
@@ -27,8 +28,16 @@ export class CertificateServiceClientCredentialsFactory extends ServiceClientCre
      * @param certificateThumbprint A hex encoded thumbprint of the certificate.
      * @param certificatePrivateKey A PEM encoded certificate private key.
      * @param tenantId Optional. The oauth token tenant.
+     * @param x5c Optional. Enables application developers to achieve easy certificates roll-over in Azure AD:
+     * set this parameter to send the public certificate (BEGIN CERTIFICATE) to Azure AD, so that Azure AD can use it to validate the subject name based on a trusted issuer policy.
      */
-    constructor(appId: string, certificateThumbprint: string, certificatePrivateKey: string, tenantId?: string) {
+    constructor(
+        appId: string,
+        certificateThumbprint: string,
+        certificatePrivateKey: string,
+        tenantId?: string,
+        x5c?: string
+    ) {
         super();
         ok(appId?.trim(), 'CertificateServiceClientCredentialsFactory.constructor(): missing appId.');
         ok(
@@ -44,6 +53,7 @@ export class CertificateServiceClientCredentialsFactory extends ServiceClientCre
         this.certificateThumbprint = certificateThumbprint;
         this.certificatePrivateKey = certificatePrivateKey;
         this.tenantId = tenantId;
+        this.x5c = x5c;
     }
 
     /**
@@ -75,7 +85,8 @@ export class CertificateServiceClientCredentialsFactory extends ServiceClientCre
             this.certificateThumbprint,
             this.certificatePrivateKey,
             this.tenantId,
-            audience
+            audience,
+            this.x5c
         );
     }
 }
