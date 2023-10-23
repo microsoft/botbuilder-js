@@ -39,7 +39,7 @@
     "uuid": "^3.3.2"
   },
   "devDependencies": {
-    "adal-node": "^0.1.28",
+    "@azure/msal-node": "^1.2.0",
     "async": "^2.6.1",
     "colors": "1.1.2",
     "fs-extra": "^5.0.0",

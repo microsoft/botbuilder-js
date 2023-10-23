@@ -8,10 +8,11 @@
 
 export * from './allowedCallersClaimsValidator';
 export * from './appCredentials';
+export * from './authenticateRequestResult';
 export * from './authenticationConfiguration';
 export * from './authenticationConstants';
 export * from './authenticationError';
-export * from './authenticateRequestResult';
+export * from './authenticatorResult';
 export * from './botFrameworkAuthentication';
 export * from './botFrameworkAuthenticationFactory';
 export * from './certificateAppCredentials';
@@ -32,8 +33,8 @@ export * from './managedIdentityAuthenticator';
 export * from './managedIdentityServiceClientCredentialsFactory';
 export * from './microsoftAppCredentials';
 export * from './passwordServiceClientCredentialFactory';
-export * from './skillValidation';
 export * from './serviceClientCredentialsFactory';
+export * from './skillValidation';
 export * from './userTokenClient';
 
 export { MsalAppCredentials } from './msalAppCredentials';

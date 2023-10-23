@@ -6,18 +6,9 @@
  * Licensed under the MIT License.
  */
 
-import * as adal from 'adal-node';
 import { AppCredentials } from './appCredentials';
-
-// Determines if an unknown value is of adal.ErrorResponse type
-function isErrorResponse(value: unknown): value is adal.ErrorResponse {
-    if (value) {
-        const { error, errorDescription } = value as adal.ErrorResponse;
-        return error != null && errorDescription != null;
-    }
-
-    return false;
-}
+import { AuthenticatorResult } from './authenticatorResult';
+import { MsalAppCredentials } from './msalAppCredentials';
 
 /**
  * MicrosoftAppCredentials auth implementation
@@ -27,6 +18,8 @@ export class MicrosoftAppCredentials extends AppCredentials {
      * An empty set of credentials.
      */
     static readonly Empty = new MicrosoftAppCredentials(null, null);
+
+    private credentials: MsalAppCredentials;
 
     /**
      * Initializes a new instance of the [MicrosoftAppCredentials](xref:botframework-connector.MicrosoftAppCredentials) class.
@@ -40,26 +33,19 @@ export class MicrosoftAppCredentials extends AppCredentials {
         super(appId, channelAuthTenant, oAuthScope);
     }
 
-    protected async refreshToken(): Promise<adal.TokenResponse> {
-        if (!this.refreshingToken) {
-            this.refreshingToken = new Promise<adal.TokenResponse>((resolve, reject): void => {
-                this.authenticationContext.acquireTokenWithClientCredentials(
-                    this.oAuthScope,
-                    this.appId,
-                    this.appPassword,
-                    (err, tokenResponse) => {
-                        if (err) {
-                            reject(err);
-                        } else if (isErrorResponse(tokenResponse)) {
-                            reject(new Error(tokenResponse.error));
-                        } else {
-                            resolve(tokenResponse);
-                        }
-                    }
-                );
-            });
-        }
+    /**
+     * @inheritdoc
+     */
+    async getToken(forceRefresh = false): Promise<string> {
+        this.credentials ??= new MsalAppCredentials(this.appId, this.appPassword, this.oAuthEndpoint, this.oAuthScope);
+        return this.credentials.getToken(forceRefresh);
+    }
 
-        return this.refreshingToken;
+    /**
+     * @inheritdoc
+     */
+    protected refreshToken(): Promise<AuthenticatorResult> {
+        // This will never be executed because we are using MsalAppCredentials.getToken underneath.
+        throw new Error('Method not implemented.');
     }
 }

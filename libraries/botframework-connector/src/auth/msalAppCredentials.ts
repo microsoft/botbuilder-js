@@ -4,9 +4,9 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { AppCredentials } from './appCredentials';
 import { ConfidentialClientApplication, NodeAuthOptions } from '@azure/msal-node';
-import { TokenResponse } from 'adal-node';
+import { AppCredentials } from './appCredentials';
+import { AuthenticatorResult } from './authenticatorResult';
 
 export interface Certificate {
     thumbprint: string;
@@ -21,8 +21,6 @@ export class MsalAppCredentials extends AppCredentials {
      * A reference used for Empty auth scenarios
      */
     static Empty = new MsalAppCredentials();
-
-    private readonly clientApplication?: ConfidentialClientApplication;
 
     /**
      * Create an MsalAppCredentials instance using a confidential client application.
@@ -102,7 +100,7 @@ export class MsalAppCredentials extends AppCredentials {
     /**
      * @inheritdoc
      */
-    protected async refreshToken(): Promise<TokenResponse> {
+    protected async refreshToken(): Promise<AuthenticatorResult> {
         if (!this.clientApplication) {
             throw new Error('getToken should not be called for empty credentials.');
         }
@@ -123,14 +121,9 @@ export class MsalAppCredentials extends AppCredentials {
             throw new Error('Authentication: No access token received from MSAL.');
         }
 
-        const expiresIn = (token.expiresOn.getTime() - Date.now()) / 1000;
-
         return {
             accessToken: token.accessToken,
             expiresOn: token.expiresOn,
-            tokenType: token.tokenType,
-            expiresIn: expiresIn,
-            resource: this.oAuthScope,
         };
     }
 }

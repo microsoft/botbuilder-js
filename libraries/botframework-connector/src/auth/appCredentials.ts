@@ -7,15 +7,16 @@
  */
 
 import * as msrest from '@azure/ms-rest-js';
-import * as adal from 'adal-node';
+import { ConfidentialClientApplication } from '@azure/msal-node';
 import { AuthenticationConstants } from './authenticationConstants';
+import { AuthenticatorResult } from './authenticatorResult';
 
 /**
- * General AppCredentials auth implementation and cache. Supports any ADAL client credential flow.
+ * General AppCredentials auth implementation and cache.
  * Subclasses can implement refreshToken to acquire the token.
  */
 export abstract class AppCredentials implements msrest.ServiceClientCredentials {
-    private static readonly cache: Map<string, adal.TokenResponse> = new Map<string, adal.TokenResponse>();
+    private static readonly cache: Map<string, AuthenticatorResult> = new Map<string, AuthenticatorResult>();
 
     appId: string;
 
@@ -23,8 +24,7 @@ export abstract class AppCredentials implements msrest.ServiceClientCredentials 
     private _oAuthScope: string;
     private _tenant: string;
     tokenCacheKey: string;
-    protected refreshingToken: Promise<adal.TokenResponse> | null = null;
-    protected authenticationContext: adal.AuthenticationContext;
+    protected clientApplication: ConfidentialClientApplication;
 
     // Protects against JSON.stringify leaking secrets
     private toJSON(): unknown {
@@ -104,7 +104,6 @@ export abstract class AppCredentials implements msrest.ServiceClientCredentials 
         // aadApiVersion is set to '1.5' to avoid the "spn:" concatenation on the audience claim
         // For more info, see https://github.com/AzureAD/azure-activedirectory-library-for-nodejs/issues/128
         this._oAuthEndpoint = value;
-        this.authenticationContext = new adal.AuthenticationContext(value, true, undefined, '1.5');
     }
 
     /**
@@ -168,12 +167,10 @@ export abstract class AppCredentials implements msrest.ServiceClientCredentials 
     async getToken(forceRefresh = false): Promise<string> {
         if (!forceRefresh) {
             // check the global cache for the token. If we have it, and it's valid, we're done.
-            const oAuthToken: adal.TokenResponse = AppCredentials.cache.get(this.tokenCacheKey);
-            if (oAuthToken) {
-                // we have the token. Is it valid?
-                if (oAuthToken.expirationTime > Date.now()) {
-                    return oAuthToken.accessToken;
-                }
+            const oAuthToken = AppCredentials.cache.get(this.tokenCacheKey);
+            // Check if the token is not expired.
+            if (oAuthToken && oAuthToken.expiresOn > new Date()) {
+                return oAuthToken.accessToken;
             }
         }
 
@@ -181,28 +178,19 @@ export abstract class AppCredentials implements msrest.ServiceClientCredentials 
         // 1. The user requested it via the forceRefresh parameter
         // 2. We have it, but it's expired
         // 3. We don't have it in the cache.
-        const res: adal.TokenResponse = await this.refreshToken();
-        this.refreshingToken = null;
+        const res = await this.refreshToken();
 
         if (res && res.accessToken) {
-            // `res` is equalivent to the results from the cached promise `this.refreshingToken`.
-            // Because the promise has been cached, we need to see if the body has been read.
-            // If the body has not been read yet, we can call res.json() to get the access_token.
-            // If the body has been read, the OAuthResponse for that call should have been cached already,
-            // in which case we can return the cache from there. If a cached OAuthResponse does not exist,
-            // call getToken() again to retry the authentication process.
-
-            // Subtract 5 minutes from expires_in so they'll we'll get a
-            // new token before it expires.
-            res.expirationTime = Date.now() + res.expiresIn * 1000 - 300000;
+            // Subtract 5 minutes from expiresOn so they'll we'll get a new token before it expires.
+            res.expiresOn.setMinutes(res.expiresOn.getMinutes() - 5);
             AppCredentials.cache.set(this.tokenCacheKey, res);
             return res.accessToken;
         } else {
-            throw new Error('Authentication: No response or error received from ADAL.');
+            throw new Error('Authentication: No response or error received from MSAL.');
         }
     }
 
-    protected abstract refreshToken(): Promise<adal.TokenResponse>;
+    protected abstract refreshToken(): Promise<AuthenticatorResult>;
 
     /**
      * @private

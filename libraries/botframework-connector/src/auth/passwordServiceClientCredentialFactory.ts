@@ -4,7 +4,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import * as adal from 'adal-node';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
 import { AuthenticationConstants } from './authenticationConstants';
 import { GovernmentConstants } from './governmentConstants';
@@ -171,6 +170,5 @@ class PrivateCloudAppCredentials extends MicrosoftAppCredentials {
         // aadApiVersion is set to '1.5' to avoid the "spn:" concatenation on the audience claim
         // For more info, see https://github.com/AzureAD/azure-activedirectory-library-for-nodejs/issues/128
         this.__oAuthEndpoint = value;
-        this.authenticationContext = new adal.AuthenticationContext(value, this.validateAuthority, undefined, '1.5');
     }
 }

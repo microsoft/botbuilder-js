@@ -14,7 +14,6 @@
 // limitations under the License.
 //
 
-
 var fs = require('fs');
 var os = require('os');
 var path = require('path');
@@ -23,8 +22,8 @@ var _ = require('underscore');
 var util = require('util');
 var uuid = require('uuid');
 var msRest = require('@azure/ms-rest-js');
-var identity = require("@azure/identity");
-var {Environment} = require("@azure/ms-rest-azure-env")
+var identity = require('@azure/identity');
+var { Environment } = require('@azure/ms-rest-azure-env');
 var MicrosoftAppCredentials = require('botframework-connector/lib/auth/microsoftAppCredentials');
 var TokenApiClient = require('botframework-connector/lib/tokenApi/tokenApiClient');
 var FileTokenCache = require('../util/fileTokenCache');
@@ -32,7 +31,7 @@ var MockTokenCache = require('./mock-token-cache');
 var nockHelper = require('./nock-helper');
 var ResourceManagementClient = require('../resourceManagement/lib/resource/resourceManagementClient');
 var async = require('async');
-var adal = require('adal-node');
+var msal = require('@azure/msal-node');
 
 var DEFAULT_ADAL_CLIENT_ID = '04b07795-8ddb-461a-bbee-02f9e1bf7b46';
 var DEFAULT_ADAL_TENANT_ID = 'd4058e97-3782-4874-bc12-c975407af782';
@@ -75,7 +74,8 @@ function SuiteBase(mochaSuiteObject, testPrefix, env, libraryPath) {
     this.username = process.env['AZURE_USERNAME'] || 'username@example.com';
     this.password = process.env['AZURE_PASSWORD'] || 'dummypassword';
     this.secret = process.env['CLIENT_SECRET'] || 'dummysecret';
-    this.tokenCache = new adal.MemoryCache();
+    const clientApplication = new msal.PublicClientApplication({auth: {}});
+    this.tokenCache = clientApplication.getTokenCache();
 
     this._setCredentials();
     //subscriptionId should be recorded for playback
