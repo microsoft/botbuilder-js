@@ -2,5 +2,5 @@
 // Licensed under the MIT License.
 
 export interface QuickViewData {
-    [key: string]: any;
+    [key: string]: unknown;
 }

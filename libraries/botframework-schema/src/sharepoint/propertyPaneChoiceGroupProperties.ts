@@ -4,7 +4,16 @@
 import { PropertyPaneFieldProperties } from './propertyPaneFieldProperties';
 import { PropertyPaneChoiceGroupOption } from './propertyPaneChoiceGroupOption';
 
+/**
+ * SharePoint property pane choice group field properties.
+ */
 export interface PropertyPaneChoiceGroupProperties extends PropertyPaneFieldProperties {
-    label: string;
-    options: [PropertyPaneChoiceGroupOption];
+    /**
+     * The label text to display next to the choice group.
+     */
+    label?: string;
+    /**
+     * The options for the choice group.
+     */
+    options: PropertyPaneChoiceGroupOption[];
 }

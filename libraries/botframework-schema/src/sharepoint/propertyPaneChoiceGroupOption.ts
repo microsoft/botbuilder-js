@@ -4,13 +4,40 @@
 import { PropertyPaneChoiceGroupIconProperties } from './propertyPaneChoiceGroupIconProperties';
 import { PropertyPaneChoiceGroupImageSize } from './propertyPaneChoiceGroupImageSize';
 
+/**
+ * SharePoint property pane choice group option.
+ */
 export interface PropertyPaneChoiceGroupOption {
-    ariaLabel: string;
-    disabled: boolean;
-    checked: boolean;
-    iconProps: PropertyPaneChoiceGroupIconProperties;
-    imageSize: PropertyPaneChoiceGroupImageSize;
-    imageSrc: string;
+    /**
+     * Optional ariaLabel flag. Text for screen-reader to announce regardless of toggle state.
+     */
+    ariaLabel?: string;
+    /**
+     * Indicates whether the choice group option is disabled or not.
+     */
+    disabled?: boolean;
+    /**
+     * Indicates whether the choice group option is checked or not.
+     */
+    checked?: boolean;
+    /**
+     * The icon properties to use for the choice group option.
+     */
+    iconProps?: PropertyPaneChoiceGroupIconProperties;
+    /**
+     * The image size to use for the choice group option.
+     */
+    imageSize?: PropertyPaneChoiceGroupImageSize;
+    /**
+     * The image source to use for the choice group option.
+     */
+    imageSrc?: string;
+    /**
+     * The key to uniquely identify the choice group option.
+     */
     key: string;
+    /**
+     * The text to display next for this choice group option.
+     */
     text: string;
 }

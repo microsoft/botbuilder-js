@@ -6,12 +6,11 @@
  */
 export interface AceRequest {
     /**
-     * @member {any} [data] User ACE request data. Free payload with key-value pairs.
+     * User ACE request data. Free payload with key-value pairs.
      */
-    data?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
-
+    data?: any;
     /**
-     * @member {any} [properties] ACE properties data.
+     * ACE properties data.
      */
-    properties?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+    properties?: any;
 }

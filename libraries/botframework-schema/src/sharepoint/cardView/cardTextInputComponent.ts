@@ -17,8 +17,6 @@ export interface ICardTextInputIconButton extends CardButtonBase {
 
 /**
  * Text input title button.
- *
- * @public
  */
 export interface ICardTextInputTitleButton extends CardButtonBase {
   /**
@@ -28,39 +26,33 @@ export interface ICardTextInputTitleButton extends CardButtonBase {
 }
 
 /**
- * Text input component parameters.
+ * Adaptive Card Extension Text input component.
  */
 export interface CardTextInputComponent extends BaseCardComponent {
   /**
    * Unique component name.
    */
   componentName: 'textInput';
-
   /**
    * Placeholder text to display.
    */
   placeholder?: string;
-
   /**
    * Default value to display.
    */
   defaultValue?: string;
-  
   /**
    * Properties for an optional icon, displayed in the left end of the text input.
    */
   iconBefore?: CardImage;
-
   /**
    * Properties for an optional icon, displayed in the right end of the text input.
    */
   iconAfter?: CardImage;
-
   /**
    * Optional button to display.
    */
   button?: ICardTextInputIconButton | ICardTextInputTitleButton;
-
   /**
    * Aria label for the text field.
    */

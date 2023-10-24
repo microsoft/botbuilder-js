@@ -5,7 +5,7 @@ import type { CardImage } from './cardImage';
 import type { BaseCardComponent } from './baseCardComponent';
 
 /**
- * Card view title area (card bar) component parameters
+ * Adaptive Card Extension Card view title area (card bar) component
  */
 export interface CardBarComponent extends BaseCardComponent {
   /**

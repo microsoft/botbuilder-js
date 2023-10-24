@@ -5,7 +5,7 @@ import type { BaseCardComponent } from './baseCardComponent';
 import type { CardButtonBase } from './cardButtonBase';
 
 /**
- * Card button component.
+ * Adaptive Card Extension Card button component.
  */
 export interface CardButtonComponent extends BaseCardComponent, CardButtonBase {
   /**

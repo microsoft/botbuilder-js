@@ -4,14 +4,13 @@
 import type { BaseCardComponent } from './baseCardComponent';
 
 /**
- * Text component parameters. Represents a text block rendered in the card view.
+ * Adaptive Card Extension Text component. Represents a text block rendered in the card view.
  */
 export interface CardTextComponent extends BaseCardComponent {
   /**
    * Unique component name.
    */
   componentName: 'text';
-
   /**
    * Text to display.
    */

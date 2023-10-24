@@ -13,9 +13,7 @@ export type CardComponentName =
   | 'searchFooter';
 
 /**
- * Base card view component.
- *
- * @public
+ * Base Adaptive Card Extension card view component.
  */
 export interface BaseCardComponent {
   /**

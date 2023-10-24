@@ -10,24 +10,21 @@ import type { CardButtonBase } from './cardButtonBase';
 export interface ICardSearchBoxButton extends CardButtonBase {}
 
 /**
- * Search box component parameters. Represents a search box rendered in the card view.
+ * Adaptive Card Extension Search box component. Represents a search box rendered in the card view.
  */
 export interface CardSearchBoxComponent extends BaseCardComponent {
   /**
    * Unique component name.
    */
   componentName: 'searchBox';
-
   /**
    * Placeholder text to display.
    */
   placeholder?: string;
-
   /**
    * Default value to display.
    */
   defaultValue?: string;
-
   /**
    * Button displayed on the search box.
    */

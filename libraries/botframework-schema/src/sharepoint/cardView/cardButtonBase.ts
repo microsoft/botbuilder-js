@@ -4,7 +4,7 @@
 import type { CardAction } from '../actions/cardAction';
 
 /**
- * Base properties for the buttons used in different ACE card view components, such as Text Input and Search Box and Card Button.
+ * Base properties for the buttons used in different Adaptive Card Extension card view components, such as Text Input, Search Box and Card Button.
  */
 export interface CardButtonBase {
   /**
@@ -13,7 +13,6 @@ export interface CardButtonBase {
   action: CardAction;
   /**
    * Unique Id of the button.
-   *
    */
   id?: string;
 }

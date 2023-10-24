@@ -3,7 +3,16 @@
 
 import { PropertyPaneFieldProperties } from './propertyPaneFieldProperties';
 
+/**
+ * SharePoint property pane label properties.
+ */
 export interface PropertyPaneLabelProperties extends PropertyPaneFieldProperties {
+    /**
+     * The text to display in the label.
+     */
     text: string;
-    required: boolean;
+    /**
+     * Whether the label is required or not.
+     */
+    required?: boolean;
 }

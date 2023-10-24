@@ -1,5 +1,5 @@
 /**
- * Interface for property pane group or conditional group
+ * SharePoint property pane group or conditional group
  */
 export interface PropertyPaneGroupOrConditionalGroup {
 
