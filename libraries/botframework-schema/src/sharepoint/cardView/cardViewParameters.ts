@@ -143,7 +143,7 @@ export type CardViewParameters = TextCardViewParameters | TextInputCardViewParam
  * @param cardBar - card bar component
  * @param header - text component to display as header
  * @param footer - up to two buttons or text input to display as footer
- * @returns Basic Card View parameters.
+ * @returns basic card view parameters.
  */
 export function BasicCardView(
     cardBar: CardBarComponent,
@@ -170,6 +170,7 @@ export function BasicCardView(
  * @param header - text component to display as header
  * @param body - text component to display as body
  * @param footer - up to two buttons or text input to display as footer
+ * @returns primary text card view parameters.
  */
 export function PrimaryTextCardView(
     cardBar: CardBarComponent,
@@ -197,6 +198,7 @@ export function PrimaryTextCardView(
  * @param header - text component to display as header
  * @param image - image to display
  * @param footer - up to two buttons or text input to display as footer
+ * @returns image card view parameters
  */
 export function ImageCardView(
     cardBar: CardBarComponent,
@@ -226,6 +228,7 @@ export function ImageCardView(
  * @param header - text component to display as header
  * @param body - text input component to display as body
  * @param footer - up to two buttons to display as footer
+ * @returns text input card view parameters
  */
 export function TextInputCardView(
     cardBar: CardBarComponent,
@@ -253,6 +256,7 @@ export function TextInputCardView(
  * @param header - text component to display as header
  * @param body - search box component to display as body
  * @param footer - search footer component to display as footer
+ * @returns search card view parameters
  */
 export function SearchCardView(
     cardBar: CardBarComponent,
@@ -281,7 +285,7 @@ export function SearchCardView(
  * @param header - text component to display as header
  * @param body - text component to display as body
  * @param footer - sign in complete button to display as footer
- * @returns 
+ * @returns sign in card view parameters
  */
 export function SignInCardView(
     cardBar: CardBarComponent,
