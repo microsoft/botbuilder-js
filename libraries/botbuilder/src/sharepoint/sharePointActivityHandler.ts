@@ -15,7 +15,7 @@ import {
     QuickViewResponse,
     GetPropertyPaneConfigurationResponse,
     SetPropertyPaneConfigurationResponse,
-    HandleActionResponse
+    HandleActionResponse,
 } from 'botbuilder-core';
 
 /**
@@ -26,10 +26,10 @@ export class SharePointActivityHandler extends ActivityHandler {
     /**
      * Invoked when an invoke activity is received from the connector.
      * Invoke activities can be used to communicate many different things.
+     * * Invoke activities communicate programmatic commands from a client or channel to a bot.
+     *
      * @param context A strongly-typed context object for this turn
      * @returns A task that represents the work queued to execute
-     * 
-     * Invoke activities communicate programmatic commands from a client or channel to a bot.
      */
     protected async onInvokeActivity(context: TurnContext): Promise<InvokeResponse> {
         try {
@@ -39,26 +39,32 @@ export class SharePointActivityHandler extends ActivityHandler {
                 switch (context.activity.name) {
                     case 'cardExtension/getCardView':
                         return ActivityHandler.createInvokeResponse(
-                            await this.OnSharePointTaskGetCardViewAsync(context, (context.activity.value as AceRequest))
+                            await this.OnSharePointTaskGetCardViewAsync(context, context.activity.value as AceRequest)
                         );
 
                     case 'cardExtension/getQuickView':
                         return ActivityHandler.createInvokeResponse(
-                            await this.OnSharePointTaskGetQuickViewAsync(context, (context.activity.value as AceRequest))
+                            await this.OnSharePointTaskGetQuickViewAsync(context, context.activity.value as AceRequest)
                         );
 
                     case 'cardExtension/getPropertyPaneConfiguration':
                         return ActivityHandler.createInvokeResponse(
-                            await this.OnSharePointTaskGetPropertyPaneConfigurationAsync(context, (context.activity.value as AceRequest))
+                            await this.OnSharePointTaskGetPropertyPaneConfigurationAsync(
+                                context,
+                                context.activity.value as AceRequest
+                            )
                         );
 
                     case 'cardExtension/setPropertyPaneConfiguration':
                         return ActivityHandler.createInvokeResponse(
-                            await this.OnSharePointTaskSetPropertyPaneConfigurationAsync(context, (context.activity.value as AceRequest))
+                            await this.OnSharePointTaskSetPropertyPaneConfigurationAsync(
+                                context,
+                                context.activity.value as AceRequest
+                            )
                         );
                     case 'cardExtension/handleAction':
                         return ActivityHandler.createInvokeResponse(
-                            await this.OnSharePointTaskHandleActionAsync(context, (context.activity.value as AceRequest))
+                            await this.OnSharePointTaskHandleActionAsync(context, context.activity.value as AceRequest)
                         );
                     default:
                         return super.onInvokeActivity(context);
@@ -76,56 +82,71 @@ export class SharePointActivityHandler extends ActivityHandler {
 
     /**
      * Override this in a derived class to provide logic for when a card view is fetched
-     * 
-     * @param context - A strongly-typed context object for this turn
-     * @param taskModuleRequest - The task module invoke request value payload
+     *
+     * @param _context - A strongly-typed context object for this turn
+     * @param _aceRequest - The Ace invoke request value payload
      * @returns A task module response for the request
      */
-    protected async OnSharePointTaskGetCardViewAsync(context: TurnContext, aceRequest: AceRequest): Promise<CardViewResponse>{
+    protected async OnSharePointTaskGetCardViewAsync(
+        _context: TurnContext,
+        _aceRequest: AceRequest
+    ): Promise<CardViewResponse> {
         throw new Error('NotImplemented');
     }
 
     /**
      * Override this in a derived class to provide logic for when a quick view is fetched
-     * 
-     * @param context - A strongly-typed context object for this turn
-     * @param taskModuleRequest - The task module invoke request value payload
+     *
+     * @param _context - A strongly-typed context object for this turn
+     * @param _aceRequest - The Ace invoke request value payload
      * @returns A task module response for the request
      */
-    protected async OnSharePointTaskGetQuickViewAsync(context: TurnContext, aceRequest: AceRequest): Promise<QuickViewResponse>{
+    protected async OnSharePointTaskGetQuickViewAsync(
+        _context: TurnContext,
+        _aceRequest: AceRequest
+    ): Promise<QuickViewResponse> {
         throw new Error('NotImplemented');
     }
 
     /**
      * Override this in a derived class to provide logic for getting configuration pane properties.
-     * 
-     * @param context - A strongly-typed context object for this turn
-     * @param taskModuleRequest - The task module invoke request value payload
+     *
+     * @param _context - A strongly-typed context object for this turn
+     * @param _aceRequest - The Ace invoke request value payload
      * @returns A task module response for the request
      */
-    protected async OnSharePointTaskGetPropertyPaneConfigurationAsync(context: TurnContext, aceRequest: AceRequest): Promise<GetPropertyPaneConfigurationResponse>{
+    protected async OnSharePointTaskGetPropertyPaneConfigurationAsync(
+        _context: TurnContext,
+        _aceRequest: AceRequest
+    ): Promise<GetPropertyPaneConfigurationResponse> {
         throw new Error('NotImplemented');
     }
 
     /**
      * Override this in a derived class to provide logic for setting configuration pane properties.
-     * 
-     * @param context - A strongly-typed context object for this turn
-     * @param taskModuleRequest - The task module invoke request value payload
+     *
+     * @param _context - A strongly-typed context object for this turn
+     * @param _aceRequest - The Ace invoke request value payload
      * @returns A task module response for the request
      */
-    protected async OnSharePointTaskSetPropertyPaneConfigurationAsync(context: TurnContext, aceRequest: AceRequest): Promise<SetPropertyPaneConfigurationResponse>{
+    protected async OnSharePointTaskSetPropertyPaneConfigurationAsync(
+        _context: TurnContext,
+        _aceRequest: AceRequest
+    ): Promise<SetPropertyPaneConfigurationResponse> {
         throw new Error('NotImplemented');
-    } 
+    }
 
     /**
      * Override this in a derived class to provide logic for setting configuration pane properties.
-     * 
-     * @param context - A strongly-typed context object for this turn
-     * @param taskModuleRequest - The task module invoke request value payload
+     *
+     * @param _context - A strongly-typed context object for this turn
+     * @param _aceRequest - The Ace invoke request value payload
      * @returns A task module response for the request
      */
-    protected async OnSharePointTaskHandleActionAsync(context: TurnContext, aceRequest: AceRequest): Promise<HandleActionResponse>{
+    protected async OnSharePointTaskHandleActionAsync(
+        _context: TurnContext,
+        _aceRequest: AceRequest
+    ): Promise<HandleActionResponse> {
         throw new Error('NotImplemented');
-    } 
+    }
 }
