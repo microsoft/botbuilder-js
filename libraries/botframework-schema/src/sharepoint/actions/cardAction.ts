@@ -43,7 +43,7 @@ export interface Location {
 export enum MediaType {
     Image = 1,
     Audio = 4,
-    Document = 8
+    Document = 8,
 }
 
 /**
@@ -71,8 +71,8 @@ export interface QuickViewParameters {
 }
 
 /**
-* SharePoint ExternalLink action.
-*/
+ * SharePoint ExternalLink action.
+ */
 export interface ExternalLinkCardAction {
     /**
      * Indicates this is an external link button.
@@ -255,7 +255,8 @@ export type CardAction =
 /**
  * Type of handler for when a card is selected.
  */
-export type OnCardSelectionAction = QuickViewCardAction
+export type OnCardSelectionAction =
+    | QuickViewCardAction
     | ExternalLinkCardAction
     | SelectMediaCardAction
     | GetLocationCardAction

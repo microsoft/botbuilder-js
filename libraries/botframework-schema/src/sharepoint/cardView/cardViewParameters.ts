@@ -33,8 +33,8 @@ export interface BaseCardViewParameters {
 }
 
 /**
-* The parameters for the card view with text or empty body.
-*/
+ * The parameters for the card view with text or empty body.
+ */
 export interface TextCardViewParameters extends BaseCardViewParameters {
     /**
      * Card View type
@@ -108,8 +108,8 @@ export interface SearchCardViewParameters extends BaseCardViewParameters {
 }
 
 /**
-* The parameters for the sign in card view.
-*/
+ * The parameters for the sign in card view.
+ */
 export interface SignInCardViewParameters extends BaseCardViewParameters {
     /**
      * Card View type
@@ -132,7 +132,11 @@ export interface SignInCardViewParameters extends BaseCardViewParameters {
 /**
  * Card View Parameters.
  */
-export type CardViewParameters = TextCardViewParameters | TextInputCardViewParameters | SearchCardViewParameters | SignInCardViewParameters;
+export type CardViewParameters =
+    | TextCardViewParameters
+    | TextInputCardViewParameters
+    | SearchCardViewParameters
+    | SignInCardViewParameters;
 
 /**
  * Helper method to create a Basic Card View.
@@ -140,6 +144,7 @@ export type CardViewParameters = TextCardViewParameters | TextInputCardViewParam
  * - Card bar
  * - One primary text field
  * - Zero or one button in the Medium card size, up to two buttons in Large card size; or text input.
+ *
  * @param cardBar - card bar component
  * @param header - text component to display as header
  * @param footer - up to two buttons or text input to display as footer
@@ -155,7 +160,7 @@ export function BasicCardView(
         body: undefined,
         cardBar: [cardBar],
         header: [header],
-        footer: footer
+        footer: footer,
     };
 }
 
@@ -166,6 +171,7 @@ export function BasicCardView(
  * - One primary text field
  * - One description text field
  * - Zero or one button in the Medium card size, up to two buttons in Large card size; or text input.
+ *
  * @param cardBar - card bar component
  * @param header - text component to display as header
  * @param body - text component to display as body
@@ -183,7 +189,7 @@ export function PrimaryTextCardView(
         cardBar: [cardBar],
         header: [header],
         body: [body],
-        footer: footer
+        footer: footer,
     };
 }
 
@@ -194,6 +200,7 @@ export function PrimaryTextCardView(
  * - One primary text field
  * - One image
  * - Zero buttons in the Medium card size, up to two buttons in Large card size; or text input.
+ *
  * @param cardBar - card bar component
  * @param header - text component to display as header
  * @param image - image to display
@@ -212,7 +219,7 @@ export function ImageCardView(
         cardBar: [cardBar],
         header: [header],
         body: undefined,
-        footer: footer
+        footer: footer,
     };
 }
 
@@ -224,6 +231,7 @@ export function ImageCardView(
  * - Zero or one image
  * - Zero text input in Medium card size if image is presented, one text input in Medium card size if no image is presented, one text input in Large card size
  * - Zero buttons in the Medium card size if image is presented, one button in Medium card size if no image is presented, up to two buttons in Large card size; or text input.
+ *
  * @param cardBar - card bar component
  * @param header - text component to display as header
  * @param body - text input component to display as body
@@ -241,7 +249,7 @@ export function TextInputCardView(
         cardBar: [cardBar],
         header: [header],
         body: [body],
-        footer: footer
+        footer: footer,
     };
 }
 
@@ -252,6 +260,7 @@ export function TextInputCardView(
  * - One primary text field
  * - One search box
  * - One search footer
+ *
  * @param cardBar - card bar component
  * @param header - text component to display as header
  * @param body - search box component to display as body
@@ -269,7 +278,7 @@ export function SearchCardView(
         cardBar: [cardBar],
         header: [header],
         body: [body],
-        footer: [footer]
+        footer: [footer],
     };
 }
 
@@ -280,6 +289,7 @@ export function SearchCardView(
  * - One primary text field
  * - One description text field
  * - Two buttons.
+ *
  * @remarks The first button (sign in button) is always displayed based on the signInText property of the Adaptive Card Extension. Here you should specify the second button (sign in complete button) to display.
  * @param cardBar - card bar component
  * @param header - text component to display as header
@@ -298,6 +308,6 @@ export function SignInCardView(
         cardBar: [cardBar],
         header: [header],
         body: [body],
-        footer: [footer]
+        footer: [footer],
     };
 }

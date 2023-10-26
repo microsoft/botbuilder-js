@@ -4,25 +4,19 @@
 /**
  * Names of the components allowed in a card view.
  */
-export type CardComponentName =
-  | 'text'
-  | 'cardButton'
-  | 'cardBar'
-  | 'textInput'
-  | 'searchBox'
-  | 'searchFooter';
+export type CardComponentName = 'text' | 'cardButton' | 'cardBar' | 'textInput' | 'searchBox' | 'searchFooter';
 
 /**
  * Base Adaptive Card Extension card view component.
  */
 export interface BaseCardComponent {
-  /**
-   * Unique component name.
-   * For example, "textInput"
-   */
-  componentName: CardComponentName;
-  /**
-   * Optional unique identifier of the component's instance.
-   */
-  id?: string;
+    /**
+     * Unique component name.
+     * For example, "textInput"
+     */
+    componentName: CardComponentName;
+    /**
+     * Optional unique identifier of the component's instance.
+     */
+    id?: string;
 }

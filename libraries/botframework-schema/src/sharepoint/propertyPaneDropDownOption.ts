@@ -38,5 +38,5 @@ export enum DropDownOptionType {
     /**
      * Render a header.
      */
-    Header = 2
+    Header = 2,
 }

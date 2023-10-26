@@ -13,4 +13,4 @@ export interface CardImage {
      * The alt text.
      */
     altText?: string;
-  }
+}

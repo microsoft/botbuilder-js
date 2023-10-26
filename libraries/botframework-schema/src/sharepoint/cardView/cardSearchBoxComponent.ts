@@ -7,26 +7,29 @@ import type { CardButtonBase } from './cardButtonBase';
 /**
  * Search box button properties.
  */
-export interface ICardSearchBoxButton extends CardButtonBase {}
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface ICardSearchBoxButton extends CardButtonBase {
+    // reserved for future. Not additional properties.
+}
 
 /**
  * Adaptive Card Extension Search box component. Represents a search box rendered in the card view.
  */
 export interface CardSearchBoxComponent extends BaseCardComponent {
-  /**
-   * Unique component name.
-   */
-  componentName: 'searchBox';
-  /**
-   * Placeholder text to display.
-   */
-  placeholder?: string;
-  /**
-   * Default value to display.
-   */
-  defaultValue?: string;
-  /**
-   * Button displayed on the search box.
-   */
-  button: ICardSearchBoxButton;
+    /**
+     * Unique component name.
+     */
+    componentName: 'searchBox';
+    /**
+     * Placeholder text to display.
+     */
+    placeholder?: string;
+    /**
+     * Default value to display.
+     */
+    defaultValue?: string;
+    /**
+     * Button displayed on the search box.
+     */
+    button: ICardSearchBoxButton;
 }

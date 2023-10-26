@@ -68,4 +68,7 @@ export interface NoOpHandleActionResponse extends BaseHandleActionResponse {
 /**
  * The handle action response.
  */
-export type HandleActionResponse = CardViewHandleActionResponse | QuickViewHandleActionResponse | NoOpHandleActionResponse;
+export type HandleActionResponse =
+    | CardViewHandleActionResponse
+    | QuickViewHandleActionResponse
+    | NoOpHandleActionResponse;

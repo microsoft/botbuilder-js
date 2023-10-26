@@ -46,5 +46,5 @@ export enum PopupWindowPosition {
     /**
      * Left bottom.
      */
-    LeftBottom = 4
+    LeftBottom = 4,
 }
