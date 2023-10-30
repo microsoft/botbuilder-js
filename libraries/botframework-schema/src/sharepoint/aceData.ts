@@ -10,11 +10,13 @@ export interface AceData {
      */
     cardSize: AceCardSize;
     /**
-     * The version of the ACE data schema.
+     * The value of this property is stored in the serialized data of the Adaptive Card Extension. 
+     * It can be used to manage versioning of the Adaptive Card Extension.
+     * @remarks - although there is no restriction on the format of this property, it is recommended to use semantic versioning.s
      */
     dataVersion: string;
     /**
-     * The id of the ACE.
+     * The unique id (Guid) of the ACE.
      */
     id: string;
     /**

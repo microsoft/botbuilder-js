@@ -28,7 +28,7 @@ export interface Location {
      */
     longitude: number;
     /**
-     * Timestamp
+     * Timestamp in ISO milliseconds since epoch.
      */
     timestamp?: number;
     /**

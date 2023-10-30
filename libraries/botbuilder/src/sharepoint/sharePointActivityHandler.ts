@@ -39,17 +39,23 @@ export class SharePointActivityHandler extends ActivityHandler {
                 switch (context.activity.name) {
                     case 'cardExtension/getCardView':
                         return ActivityHandler.createInvokeResponse(
-                            await this.OnSharePointTaskGetCardViewAsync(context, context.activity.value as AceRequest)
+                            await this.onSharePointTaskGetCardViewAsync(
+                                context, 
+                                context.activity.value as AceRequest
+                            )
                         );
 
                     case 'cardExtension/getQuickView':
                         return ActivityHandler.createInvokeResponse(
-                            await this.OnSharePointTaskGetQuickViewAsync(context, context.activity.value as AceRequest)
+                            await this.onSharePointTaskGetQuickViewAsync(
+                                context, 
+                                context.activity.value as AceRequest
+                            )
                         );
 
                     case 'cardExtension/getPropertyPaneConfiguration':
                         return ActivityHandler.createInvokeResponse(
-                            await this.OnSharePointTaskGetPropertyPaneConfigurationAsync(
+                            await this.onSharePointTaskGetPropertyPaneConfigurationAsync(
                                 context,
                                 context.activity.value as AceRequest
                             )
@@ -57,14 +63,14 @@ export class SharePointActivityHandler extends ActivityHandler {
 
                     case 'cardExtension/setPropertyPaneConfiguration':
                         return ActivityHandler.createInvokeResponse(
-                            await this.OnSharePointTaskSetPropertyPaneConfigurationAsync(
+                            await this.onSharePointTaskSetPropertyPaneConfigurationAsync(
                                 context,
                                 context.activity.value as AceRequest
                             )
                         );
                     case 'cardExtension/handleAction':
                         return ActivityHandler.createInvokeResponse(
-                            await this.OnSharePointTaskHandleActionAsync(context, context.activity.value as AceRequest)
+                            await this.onSharePointTaskHandleActionAsync(context, context.activity.value as AceRequest)
                         );
                     default:
                         return super.onInvokeActivity(context);
@@ -87,7 +93,7 @@ export class SharePointActivityHandler extends ActivityHandler {
      * @param _aceRequest - The Ace invoke request value payload
      * @returns A task module response for the request
      */
-    protected async OnSharePointTaskGetCardViewAsync(
+    protected async onSharePointTaskGetCardViewAsync(
         _context: TurnContext,
         _aceRequest: AceRequest
     ): Promise<CardViewResponse> {
@@ -101,7 +107,7 @@ export class SharePointActivityHandler extends ActivityHandler {
      * @param _aceRequest - The Ace invoke request value payload
      * @returns A task module response for the request
      */
-    protected async OnSharePointTaskGetQuickViewAsync(
+    protected async onSharePointTaskGetQuickViewAsync(
         _context: TurnContext,
         _aceRequest: AceRequest
     ): Promise<QuickViewResponse> {
@@ -115,7 +121,7 @@ export class SharePointActivityHandler extends ActivityHandler {
      * @param _aceRequest - The Ace invoke request value payload
      * @returns A task module response for the request
      */
-    protected async OnSharePointTaskGetPropertyPaneConfigurationAsync(
+    protected async onSharePointTaskGetPropertyPaneConfigurationAsync(
         _context: TurnContext,
         _aceRequest: AceRequest
     ): Promise<GetPropertyPaneConfigurationResponse> {
@@ -129,7 +135,7 @@ export class SharePointActivityHandler extends ActivityHandler {
      * @param _aceRequest - The Ace invoke request value payload
      * @returns A task module response for the request
      */
-    protected async OnSharePointTaskSetPropertyPaneConfigurationAsync(
+    protected async onSharePointTaskSetPropertyPaneConfigurationAsync(
         _context: TurnContext,
         _aceRequest: AceRequest
     ): Promise<SetPropertyPaneConfigurationResponse> {
@@ -143,7 +149,7 @@ export class SharePointActivityHandler extends ActivityHandler {
      * @param _aceRequest - The Ace invoke request value payload
      * @returns A task module response for the request
      */
-    protected async OnSharePointTaskHandleActionAsync(
+    protected async onSharePointTaskHandleActionAsync(
         _context: TurnContext,
         _aceRequest: AceRequest
     ): Promise<HandleActionResponse> {
