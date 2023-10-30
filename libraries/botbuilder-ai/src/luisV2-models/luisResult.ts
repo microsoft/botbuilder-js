@@ -6,8 +6,8 @@
  * Licensed under the MIT License.
  */
 
-import { LUISRuntimeModels as LuisModels } from '@azure/cognitiveservices-luis-runtime';
-import * as msRest from '@azure/ms-rest-js';
+import { Sentiment } from './sentiment';
+import { HttpResponse, RequestOptionsBase } from '@azure/core-http';
 
 /**
  * Prediction, based on the input query, containing intent(s) and entities.
@@ -40,7 +40,7 @@ export interface LuisResult {
     /**
      * Sentiment of the input utterance.
      */
-    sentimentAnalysis?: LuisModels.Sentiment;
+    sentimentAnalysis?: Sentiment;
     /**
      * Prediction, based on the input query, containing intents and entities.
      */
@@ -122,7 +122,7 @@ export interface CompositeChildModel {
 /**
  * Optional Parameters.
  */
-export interface PredictionResolveOptionalParams extends msRest.RequestOptionsBase {
+export interface PredictionResolveOptionalParams extends RequestOptionsBase {
     /**
      * The timezone offset for the location of the request.
      */
@@ -156,7 +156,7 @@ export type PredictionResolveResponse = LuisResult & {
     /**
      * The underlying HTTP response.
      */
-    _response: msRest.HttpResponse & {
+    _response: HttpResponse & {
         /**
          * The response body as text (string format)
          */

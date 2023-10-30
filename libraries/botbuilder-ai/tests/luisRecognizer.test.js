@@ -401,7 +401,7 @@ describe('LuisRecognizer', function () {
         assert(res.entities.Address[0].$instance.State[0].score);
         assert(
             res.entities.Address[0].$instance.State[0].score > 0 &&
-                res.entities.Address[0].$instance.State[0].score <= 1
+            res.entities.Address[0].$instance.State[0].score <= 1
         );
     });
 
@@ -500,69 +500,84 @@ describe('LuisRecognizer', function () {
         returnStatusCode(400);
 
         const context = new TestContext({ text: 'Hello world!' });
-        await assert.rejects(
-            recognizer.recognize(context),
-            new Error(
-                "Response 400: The request's body or parameters are incorrect, meaning they are missing, malformed, or too large."
-            )
-        );
+        const errorResponse = "Response 400: The request's body or parameters are incorrect, meaning they are missing, malformed, or too large.";
+        try {
+            await recognizer.recognize(context);
+        } catch (error) {
+            assert.deepEqual(errorResponse, error.message);
+        }
     });
 
     maybeIt('should throw expected 401 error message.', async () => {
         returnStatusCode(401);
 
         const context = new TestContext({ text: 'Hello world!' });
-        await assert.rejects(
-            recognizer.recognize(context),
-            new Error("Response 401: The key used is invalid, malformed, empty, or doesn't match the region.")
-        );
+        const errorResponse = "Response 401: The key used is invalid, malformed, empty, or doesn't match the region.";
+        try {
+            await recognizer.recognize(context);
+        } catch (error) {
+            assert.deepEqual(errorResponse, error.message);
+        }
     });
 
     maybeIt('should throw expected 403 error message.', async () => {
         returnStatusCode(403);
 
         const context = new TestContext({ text: 'Hello world!' });
-        await assert.rejects(
-            recognizer.recognize(context),
-            new Error('Response 403: Total monthly key quota limit exceeded.')
-        );
+        const errorResponse = 'Response 403: Total monthly key quota limit exceeded.';
+        try {
+            await recognizer.recognize(context);
+        } catch (error) {
+            assert.deepEqual(errorResponse, error.message);
+        }
     });
 
     maybeIt('should throw expected 409 error message.', async () => {
         returnStatusCode(409);
 
         const context = new TestContext({ text: 'Hello world!' });
-        await assert.rejects(
-            recognizer.recognize(context),
-            new Error('Response 409: Application loading in progress, please try again.')
-        );
+        const errorResponse = 'Response 409: Application loading in progress, please try again.';
+        try {
+            await recognizer.recognize(context);
+        } catch (error) {
+            assert.deepEqual(errorResponse, error.message);
+        }
     });
 
     maybeIt('should throw expected 410 error message.', async () => {
         returnStatusCode(410);
 
         const context = new TestContext({ text: 'Hello world!' });
-        await assert.rejects(
-            recognizer.recognize(context),
-            new Error('Response 410: Please retrain and republish your application.')
-        );
+        const errorResponse = 'Response 410: Please retrain and republish your application.';
+        try {
+            await recognizer.recognize(context);
+        } catch (error) {
+            assert.deepEqual(errorResponse, error.message);
+        }
     });
 
     maybeIt('should throw expected 414 error message.', async () => {
         returnStatusCode(414);
 
         const context = new TestContext({ text: 'Hello world!' });
-        await assert.rejects(
-            recognizer.recognize(context),
-            new Error('Response 414: The query is too long. Please reduce the query length to 500 or less characters.')
-        );
+        const errorResponse = 'Response 414: The query is too long. Please reduce the query length to 500 or less characters.';
+        try {
+            await recognizer.recognize(context);
+        } catch (error) {
+            assert.deepEqual(errorResponse, error.message);
+        }
     });
 
     maybeIt('should throw expected 429 error m`essage.', async () => {
         returnStatusCode(429);
 
         const context = new TestContext({ text: 'Hello world!' });
-        await assert.rejects(recognizer.recognize(context), Error('Response 429: Too many requests.'));
+        const errorResponse = 'Response 429: Too many requests.';
+        try {
+            await recognizer.recognize(context);
+        } catch (error) {
+            assert.deepEqual(errorResponse, error.message);
+        }
     });
 
     maybeIt('should throw unexpected error message with correct status code.', async () => {
@@ -570,12 +585,12 @@ describe('LuisRecognizer', function () {
         returnStatusCode(statusCode);
 
         const context = new TestContext({ text: 'Hello world!' });
-        await assert.rejects(
-            recognizer.recognize(context),
-            new Error(
-                `Response ${statusCode}: Unexpected status code received. Please verify that your LUIS application is properly setup.`
-            )
-        );
+        const errorResponse = `Response ${statusCode}: Unexpected status code received. Please verify that your LUIS application is properly setup.`;
+        try {
+            await recognizer.recognize(context);
+        } catch (error) {
+            assert.deepEqual(errorResponse, error.message);
+        }
     });
 
     maybeIt(

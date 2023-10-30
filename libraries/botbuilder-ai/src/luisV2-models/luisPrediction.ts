@@ -6,8 +6,8 @@
  * Licensed under the MIT License.
  */
 
-import * as msRest from '@azure/ms-rest-js';
-import { LUISRuntimeClientContext } from '@azure/cognitiveservices-luis-runtime';
+import { ServiceCallback, OperationSpec, Serializer } from '@azure/core-http';
+import { LUISRuntimeClientContext } from '../luisRuntimeClientContext';
 import { LuisResult, PredictionResolveOptionalParams, PredictionResolveResponse } from './luisResult';
 import * as Parameters from './luisParameters';
 import * as Mappers from './luisMappers';
@@ -44,7 +44,7 @@ export class LuisPrediction {
      * @param query The utterance to predict.
      * @param callback The callback
      */
-    resolve(appId: string, query: string, callback: msRest.ServiceCallback<LuisResult>): void;
+    resolve(appId: string, query: string, callback: ServiceCallback<LuisResult>): void;
     /**
      * @param appId The LUIS application ID (Guid).
      * @param query The utterance to predict.
@@ -55,7 +55,7 @@ export class LuisPrediction {
         appId: string,
         query: string,
         options: PredictionResolveOptionalParams,
-        callback: msRest.ServiceCallback<LuisResult>
+        callback: ServiceCallback<LuisResult>
     ): void;
     /**
      * @param appId The LUIS application ID (Guid).
@@ -67,8 +67,8 @@ export class LuisPrediction {
     resolve(
         appId: string,
         query: string,
-        options?: PredictionResolveOptionalParams | msRest.ServiceCallback<LuisResult>,
-        callback?: msRest.ServiceCallback<LuisResult>
+        options?: PredictionResolveOptionalParams | ServiceCallback<LuisResult>,
+        callback?: ServiceCallback<LuisResult>
     ): Promise<PredictionResolveResponse> {
         return this.client.sendOperationRequest(
             {
@@ -83,8 +83,8 @@ export class LuisPrediction {
 }
 
 // Operation Specifications
-const serializer = new msRest.Serializer(Mappers);
-const resolveOperationSpec: msRest.OperationSpec = {
+const serializer = new Serializer(Mappers);
+const resolveOperationSpec: OperationSpec = {
     httpMethod: 'POST',
     path: 'apps/{appId}',
     urlParameters: [Parameters.endpoint, Parameters.appId],
