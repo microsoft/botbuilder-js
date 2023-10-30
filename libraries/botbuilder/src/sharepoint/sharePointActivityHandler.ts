@@ -39,18 +39,12 @@ export class SharePointActivityHandler extends ActivityHandler {
                 switch (context.activity.name) {
                     case 'cardExtension/getCardView':
                         return ActivityHandler.createInvokeResponse(
-                            await this.onSharePointTaskGetCardViewAsync(
-                                context, 
-                                context.activity.value as AceRequest
-                            )
+                            await this.onSharePointTaskGetCardViewAsync(context, context.activity.value as AceRequest)
                         );
 
                     case 'cardExtension/getQuickView':
                         return ActivityHandler.createInvokeResponse(
-                            await this.onSharePointTaskGetQuickViewAsync(
-                                context, 
-                                context.activity.value as AceRequest
-                            )
+                            await this.onSharePointTaskGetQuickViewAsync(context, context.activity.value as AceRequest)
                         );
 
                     case 'cardExtension/getPropertyPaneConfiguration':
