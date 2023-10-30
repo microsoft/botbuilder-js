@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { WebResource, HttpOperationResponse, HttpClient } from '@azure/ms-rest-js';
+import { WebResource, HttpOperationResponse, HttpClient } from '@azure/core-http';
 import { IStreamingTransportServer, StreamingRequest } from 'botframework-streaming';
 
 /**

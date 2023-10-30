@@ -9,7 +9,7 @@
 import * as z from 'zod';
 import { BotFrameworkHttpAdapter } from './botFrameworkHttpAdapter';
 import { ConnectorClientBuilder, Request, Response, ResponseT, WebRequest, WebResponse } from './interfaces';
-import { HttpClient, RequestPolicyFactory, userAgentPolicy } from '@azure/ms-rest-js';
+import { HttpClient, RequestPolicyFactory, userAgentPolicy } from '@azure/core-http';
 import { INodeBufferT, INodeSocketT, LogicT } from './zod';
 import { arch, release, type } from 'os';
 import { delay, retry } from 'botbuilder-stdlib';
