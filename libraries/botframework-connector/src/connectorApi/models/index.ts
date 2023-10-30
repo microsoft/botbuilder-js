@@ -3,8 +3,8 @@
  * Licensed under the MIT License.
  */
 
-import * as msRest from "@azure/ms-rest-js";
-import { ServiceClientOptions } from "@azure/ms-rest-js";
+
+import { ServiceClientOptions, RequestOptionsBase, HttpResponse } from "@azure/core-http";
 import { AttachmentInfo, ChannelAccount, ConversationResourceResponse, ConversationsResult, PagedMembersResult, ResourceResponse } from "botframework-schema";
 export * from "botframework-schema";
 
@@ -22,7 +22,7 @@ export interface ConnectorClientOptions extends ServiceClientOptions {
 /**
  * Optional Parameters.
  */
-export interface ConversationsGetConversationsOptionalParams extends msRest.RequestOptionsBase {
+export interface ConversationsGetConversationsOptionalParams extends RequestOptionsBase {
   /**
    * skip or continuation token
    */
@@ -32,7 +32,7 @@ export interface ConversationsGetConversationsOptionalParams extends msRest.Requ
 /**
  * Optional Parameters.
  */
-export interface ConversationsGetConversationPagedMembersOptionalParams extends msRest.RequestOptionsBase {
+export interface ConversationsGetConversationPagedMembersOptionalParams extends RequestOptionsBase {
   /**
    * Suggested page size
    */
@@ -50,7 +50,7 @@ export type AttachmentsGetAttachmentInfoResponse = AttachmentInfo & {
   /**
    * The underlying HTTP response.
    */
-  _response: msRest.HttpResponse & {
+  _response: HttpResponse & {
     /**
      * The response body as text (string format)
      */
@@ -86,7 +86,7 @@ export type AttachmentsGetAttachmentResponse = {
   /**
    * The underlying HTTP response.
    */
-  _response: msRest.HttpResponse;
+  _response: HttpResponse;
 };
 
 /**
@@ -96,7 +96,7 @@ export type ConversationsGetConversationsResponse = ConversationsResult & {
   /**
    * The underlying HTTP response.
    */
-  _response: msRest.HttpResponse & {
+  _response: HttpResponse & {
     /**
      * The response body as text (string format)
      */
@@ -116,7 +116,7 @@ export type ConversationsCreateConversationResponse = ConversationResourceRespon
   /**
    * The underlying HTTP response.
    */
-  _response: msRest.HttpResponse & {
+  _response: HttpResponse & {
     /**
      * The response body as text (string format)
      */
@@ -136,7 +136,7 @@ export type ConversationsSendToConversationResponse = ResourceResponse & {
   /**
    * The underlying HTTP response.
    */
-  _response: msRest.HttpResponse & {
+  _response: HttpResponse & {
     /**
      * The response body as text (string format)
      */
@@ -156,7 +156,7 @@ export type ConversationsSendConversationHistoryResponse = ResourceResponse & {
   /**
    * The underlying HTTP response.
    */
-  _response: msRest.HttpResponse & {
+  _response: HttpResponse & {
     /**
      * The response body as text (string format)
      */
@@ -176,7 +176,7 @@ export type ConversationsUpdateActivityResponse = ResourceResponse & {
   /**
    * The underlying HTTP response.
    */
-  _response: msRest.HttpResponse & {
+  _response: HttpResponse & {
     /**
      * The response body as text (string format)
      */
@@ -196,7 +196,7 @@ export type ConversationsReplyToActivityResponse = ResourceResponse & {
   /**
    * The underlying HTTP response.
    */
-  _response: msRest.HttpResponse & {
+  _response: HttpResponse & {
     /**
      * The response body as text (string format)
      */
@@ -216,7 +216,7 @@ export type ConversationsGetConversationMembersResponse = Array<ChannelAccount> 
   /**
    * The underlying HTTP response.
    */
-  _response: msRest.HttpResponse & {
+  _response: HttpResponse & {
     /**
      * The response body as text (string format)
      */
@@ -233,21 +233,21 @@ export type ConversationsGetConversationMembersResponse = Array<ChannelAccount> 
  * Contains response data for the getConversationMember operation.
  */
 export type ConversationsGetConversationMemberResponse = ChannelAccount & {
+  /**
+   * The underlying HTTP response.
+   */
+  _response: HttpResponse & {
     /**
-     * The underlying HTTP response.
+     * The response body as text (string format)
      */
-    _response: msRest.HttpResponse & {
-      /**
-       * The response body as text (string format)
-       */
-      bodyAsText: string;
+    bodyAsText: string;
 
-      /**
-       * The response body as parsed JSON or XML
-       */
-      parsedBody: ChannelAccount;
-    };
+    /**
+     * The response body as parsed JSON or XML
+     */
+    parsedBody: ChannelAccount;
   };
+};
 
 /**
  * Contains response data for the getConversationPagedMembers operation.
@@ -256,7 +256,7 @@ export type ConversationsGetConversationPagedMembersResponse = PagedMembersResul
   /**
    * The underlying HTTP response.
    */
-  _response: msRest.HttpResponse & {
+  _response: HttpResponse & {
     /**
      * The response body as text (string format)
      */
@@ -276,7 +276,7 @@ export type ConversationsGetActivityMembersResponse = Array<ChannelAccount> & {
   /**
    * The underlying HTTP response.
    */
-  _response: msRest.HttpResponse & {
+  _response: HttpResponse & {
     /**
      * The response body as text (string format)
      */
@@ -296,7 +296,7 @@ export type ConversationsUploadAttachmentResponse = ResourceResponse & {
   /**
    * The underlying HTTP response.
    */
-  _response: msRest.HttpResponse & {
+  _response: HttpResponse & {
     /**
      * The response body as text (string format)
      */

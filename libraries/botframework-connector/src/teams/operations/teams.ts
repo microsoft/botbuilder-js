@@ -4,7 +4,7 @@
  * Licensed under the MIT License.
  */
 
-import * as msRest from '@azure/ms-rest-js';
+import { ServiceCallback, RequestOptionsBase, Serializer, OperationSpec } from "@azure/core-http"
 import * as Models from '../models';
 import * as Mappers from '../models/teamsMappers';
 import * as Parameters from '../models/parameters';
@@ -47,7 +47,7 @@ export class Teams {
      */
     fetchChannelList(
         teamId: string,
-        options?: msRest.RequestOptionsBase
+        options?: RequestOptionsBase
     ): Promise<Models.TeamsFetchChannelListResponse>;
     /**
      * Fetches channel list for a given team.
@@ -55,7 +55,7 @@ export class Teams {
      * @param teamId Team Id.
      * @param callback The callback.
      */
-    fetchChannelList(teamId: string, callback: msRest.ServiceCallback<ConversationList>): void;
+    fetchChannelList(teamId: string, callback: ServiceCallback<ConversationList>): void;
     /**
      * Fetches channel list for a given team.
      *
@@ -65,8 +65,8 @@ export class Teams {
      */
     fetchChannelList(
         teamId: string,
-        options: msRest.RequestOptionsBase,
-        callback: msRest.ServiceCallback<ConversationList>
+        options: RequestOptionsBase,
+        callback: ServiceCallback<ConversationList>
     ): void;
     /**
      * Fetches channel list for a given team.
@@ -78,8 +78,8 @@ export class Teams {
      */
     fetchChannelList(
         teamId: string,
-        options?: msRest.RequestOptionsBase | msRest.ServiceCallback<ConversationList>,
-        callback?: msRest.ServiceCallback<ConversationList>
+        options?: RequestOptionsBase | ServiceCallback<ConversationList>,
+        callback?: ServiceCallback<ConversationList>
     ): Promise<Models.TeamsFetchChannelListResponse> {
         return this.client.sendOperationRequest(
             {
@@ -100,7 +100,7 @@ export class Teams {
      */
     fetchTeamDetails(
         teamId: string,
-        options?: msRest.RequestOptionsBase
+        options?: RequestOptionsBase
     ): Promise<Models.TeamsFetchTeamDetailsResponse>;
     /**
      * Fetches details related to a team.
@@ -108,7 +108,7 @@ export class Teams {
      * @param teamId Team Id.
      * @param callback The callback.
      */
-    fetchTeamDetails(teamId: string, callback: msRest.ServiceCallback<TeamDetails>): void;
+    fetchTeamDetails(teamId: string, callback: ServiceCallback<TeamDetails>): void;
     /**
      * Fetches details related to a team.
      *
@@ -118,8 +118,8 @@ export class Teams {
      */
     fetchTeamDetails(
         teamId: string,
-        options: msRest.RequestOptionsBase,
-        callback: msRest.ServiceCallback<TeamDetails>
+        options: RequestOptionsBase,
+        callback: ServiceCallback<TeamDetails>
     ): void;
     /**
      * Fetches details related to a team.
@@ -131,8 +131,8 @@ export class Teams {
      */
     fetchTeamDetails(
         teamId: string,
-        options?: msRest.RequestOptionsBase | msRest.ServiceCallback<TeamDetails>,
-        callback?: msRest.ServiceCallback<TeamDetails>
+        options?: RequestOptionsBase | ServiceCallback<TeamDetails>,
+        callback?: ServiceCallback<TeamDetails>
     ): Promise<Models.TeamsFetchTeamDetailsResponse> {
         return this.client.sendOperationRequest(
             {
@@ -166,7 +166,7 @@ export class Teams {
     fetchMeetingParticipant(
         meetingId: string,
         participantId: string,
-        callback: msRest.ServiceCallback<TeamsMeetingParticipant>
+        callback: ServiceCallback<TeamsMeetingParticipant>
     ): void;
     /**
      * @param meetingId Meeting Id
@@ -178,7 +178,7 @@ export class Teams {
         meetingId: string,
         participantId: string,
         options: Models.TeamsFetchMeetingParticipantOptionalParams,
-        callback: msRest.ServiceCallback<TeamsMeetingParticipant>
+        callback: ServiceCallback<TeamsMeetingParticipant>
     ): void;
     /**
      * @param meetingId Meeting Id.
@@ -190,8 +190,8 @@ export class Teams {
     fetchMeetingParticipant(
         meetingId: string,
         participantId: string,
-        options?: Models.TeamsFetchMeetingParticipantOptionalParams | msRest.ServiceCallback<TeamsMeetingParticipant>,
-        callback?: msRest.ServiceCallback<TeamsMeetingParticipant>
+        options?: Models.TeamsFetchMeetingParticipantOptionalParams | ServiceCallback<TeamsMeetingParticipant>,
+        callback?: ServiceCallback<TeamsMeetingParticipant>
     ): Promise<Models.TeamsFetchMeetingParticipantResponse> {
         return this.client.sendOperationRequest(
             {
@@ -214,7 +214,7 @@ export class Teams {
      */
     fetchMeetingInfo(
         meetingId: string,
-        options?: msRest.RequestOptionsBase | msRest.ServiceCallback<TeamDetails>
+        options?: RequestOptionsBase | ServiceCallback<TeamDetails>
     ): Promise<Models.TeamsMeetingInfoResponse>;
     /**
      * @param meetingId Meeting Id, encoded as a BASE64 string.
@@ -222,7 +222,7 @@ export class Teams {
      */
     fetchMeetingInfo(
         meetingId: string,
-        callback: msRest.ServiceCallback<TeamsMeetingInfo>
+        callback: ServiceCallback<TeamsMeetingInfo>
     ): void;
     /**
      * @param meetingId Meeting Id, encoded as a BASE64 string.
@@ -231,8 +231,8 @@ export class Teams {
      */
     fetchMeetingInfo(
         meetingId: string,
-        options: msRest.RequestOptionsBase | msRest.ServiceCallback<TeamDetails>,
-        callback: msRest.ServiceCallback<TeamsMeetingInfo>
+        options: RequestOptionsBase | ServiceCallback<TeamDetails>,
+        callback: ServiceCallback<TeamsMeetingInfo>
     ): void;
     /**
      * @param meetingId Meeting Id.
@@ -242,8 +242,8 @@ export class Teams {
      */
     fetchMeetingInfo(
         meetingId: string,
-        options?: msRest.RequestOptionsBase | msRest.ServiceCallback<TeamDetails>,
-        callback?: msRest.ServiceCallback<TeamsMeetingInfo>
+        options?: RequestOptionsBase | ServiceCallback<TeamDetails>,
+        callback?: ServiceCallback<TeamsMeetingInfo>
     ): Promise<Models.TeamsMeetingInfoResponse> {
         return this.client.sendOperationRequest(
             {
@@ -265,7 +265,7 @@ export class Teams {
     sendMeetingNotification(
         meetingId: string,
         notification: MeetingNotification,
-        options?: msRest.RequestOptionsBase,
+        options?: RequestOptionsBase,
     ): Promise<Models.TeamsMeetingNotificationResponse>
     /**
      * @param meetingId Meeting Id.
@@ -275,7 +275,7 @@ export class Teams {
     sendMeetingNotification(
         meetingId: string,
         notification: MeetingNotification,
-        callback: msRest.ServiceCallback<MeetingNotificationResponse>
+        callback: ServiceCallback<MeetingNotificationResponse>
     ): void;
     /**
      * @param meetingId Meeting Id.
@@ -286,8 +286,8 @@ export class Teams {
     sendMeetingNotification(
         meetingId: string,
         notification: MeetingNotification,
-        options: msRest.RequestOptionsBase,
-        callback: msRest.ServiceCallback<MeetingNotificationResponse>
+        options: RequestOptionsBase,
+        callback: ServiceCallback<MeetingNotificationResponse>
     ): void;
     /**
      * @param meetingId Meeting Id.
@@ -299,8 +299,8 @@ export class Teams {
     sendMeetingNotification(
         meetingId: string,
         notification: MeetingNotification,
-        options?: msRest.RequestOptionsBase,
-        callback?: msRest.ServiceCallback<MeetingNotificationResponse>
+        options?: RequestOptionsBase,
+        callback?: ServiceCallback<MeetingNotificationResponse>
     ): Promise<Models.TeamsMeetingNotificationResponse> {
         return this.client.sendOperationRequest(
             {
@@ -328,8 +328,8 @@ export class Teams {
         activity: Activity,
         tenantId: string,
         members: TeamsMember[],
-        options?: msRest.RequestOptionsBase,
-        callback?: msRest.ServiceCallback<BatchOperationResponse>
+        options?: RequestOptionsBase,
+        callback?: ServiceCallback<BatchOperationResponse>
     ): Promise<Models.TeamsBatchOperationResponse> {
         const content = {
             activity,
@@ -358,8 +358,8 @@ export class Teams {
     sendMessageToAllUsersInTenant(
         activity: Activity,
         tenantId: string,
-        options?: msRest.RequestOptionsBase,
-        callback?: msRest.ServiceCallback<BatchOperationResponse>
+        options?: RequestOptionsBase,
+        callback?: ServiceCallback<BatchOperationResponse>
     ): Promise<Models.TeamsBatchOperationResponse> {
         const content = {
             activity,
@@ -389,8 +389,8 @@ export class Teams {
         activity: Activity,
         tenantId: string,
         teamId: string,
-        options?: msRest.RequestOptionsBase,
-        callback?: msRest.ServiceCallback<BatchOperationResponse>
+        options?: RequestOptionsBase,
+        callback?: ServiceCallback<BatchOperationResponse>
     ): Promise<Models.TeamsBatchOperationResponse> {
         const content = {
             activity,
@@ -421,8 +421,8 @@ export class Teams {
         activity: Activity,
         tenantId: string,
         members: TeamsMember[],
-        options?: msRest.RequestOptionsBase,
-        callback?: msRest.ServiceCallback<BatchOperationResponse>
+        options?: RequestOptionsBase,
+        callback?: ServiceCallback<BatchOperationResponse>
     ): Promise<Models.TeamsBatchOperationResponse> {
         const content = {
             activity,
@@ -449,8 +449,8 @@ export class Teams {
      */
     getOperationState(
         operationId: string,
-        options?: msRest.RequestOptionsBase,
-        callback?: msRest.ServiceCallback<BatchOperationStateResponse>
+        options?: RequestOptionsBase,
+        callback?: ServiceCallback<BatchOperationStateResponse>
     ): Promise<Models.BatchBatchOperationStateResponse> {
         return retryAction(() => this.client.sendOperationRequest(
             {
@@ -472,8 +472,8 @@ export class Teams {
      */
     getOperationFailedEntries(
         operationId: string,
-        options?: msRest.RequestOptionsBase,
-        callback?: msRest.ServiceCallback<BatchFailedEntriesResponse>
+        options?: RequestOptionsBase,
+        callback?: ServiceCallback<BatchFailedEntriesResponse>
     ): Promise<Models.BatchBatchFailedEntriesResponse> {
         return retryAction(() => this.client.sendOperationRequest(
             {
@@ -494,7 +494,7 @@ export class Teams {
      */
     cancelOperation(
         operationId: string,
-        options?: msRest.RequestOptionsBase,
+        options?: RequestOptionsBase,
     ): Promise<Models.CancelOperationResponse> {
         return retryAction(() => this.client.sendOperationRequest(
             {
@@ -507,8 +507,8 @@ export class Teams {
 }
 
 // Operation Specifications
-const serializer = new msRest.Serializer(Mappers);
-const fetchChannelListOperationSpec: msRest.OperationSpec = {
+const serializer = new Serializer(Mappers);
+const fetchChannelListOperationSpec: OperationSpec = {
     httpMethod: 'GET',
     path: 'v3/teams/{teamId}/conversations',
     urlParameters: [Parameters.teamId],
@@ -521,7 +521,7 @@ const fetchChannelListOperationSpec: msRest.OperationSpec = {
     serializer,
 };
 
-const fetchTeamDetailsOperationSpec: msRest.OperationSpec = {
+const fetchTeamDetailsOperationSpec: OperationSpec = {
     httpMethod: 'GET',
     path: 'v3/teams/{teamId}',
     urlParameters: [Parameters.teamId],
@@ -534,7 +534,7 @@ const fetchTeamDetailsOperationSpec: msRest.OperationSpec = {
     serializer,
 };
 
-const fetchMeetingParticipantOperationSpec: msRest.OperationSpec = {
+const fetchMeetingParticipantOperationSpec: OperationSpec = {
     httpMethod: 'GET',
     path: 'v1/meetings/{meetingId}/participants/{participantId}',
     urlParameters: [Parameters.meetingId, Parameters.participantId],
@@ -548,7 +548,7 @@ const fetchMeetingParticipantOperationSpec: msRest.OperationSpec = {
     serializer,
 };
 
-const fetchMeetingInfoOperationSpec: msRest.OperationSpec = {
+const fetchMeetingInfoOperationSpec: OperationSpec = {
     httpMethod: 'GET',
     path: 'v1/meetings/{meetingId}',
     urlParameters: [Parameters.meetingId],
@@ -561,7 +561,7 @@ const fetchMeetingInfoOperationSpec: msRest.OperationSpec = {
     serializer,
 };
 
-const sendMeetingNotificationOperationSpec: msRest.OperationSpec = {
+const sendMeetingNotificationOperationSpec: OperationSpec = {
     httpMethod: 'POST',
     path: 'v1/meetings/{meetingId}/notification',
     urlParameters: [Parameters.meetingId],
@@ -586,7 +586,7 @@ const sendMeetingNotificationOperationSpec: msRest.OperationSpec = {
     serializer
 }
 
-const sendMessageToListOfUsersOperationSpec: msRest.OperationSpec = {
+const sendMessageToListOfUsersOperationSpec: OperationSpec = {
     httpMethod: 'POST',
     path: 'v3/batch/conversation/users',
     requestBody: {
@@ -607,7 +607,7 @@ const sendMessageToListOfUsersOperationSpec: msRest.OperationSpec = {
     serializer
 }
 
-const sendMessageToAllUsersInTenantOperationSpec: msRest.OperationSpec = {
+const sendMessageToAllUsersInTenantOperationSpec: OperationSpec = {
     httpMethod: 'POST',
     path: 'v3/batch/conversation/tenant',
     requestBody: {
@@ -628,7 +628,7 @@ const sendMessageToAllUsersInTenantOperationSpec: msRest.OperationSpec = {
     serializer
 }
 
-const sendMessageToAllUsersInTeamOperationSpec: msRest.OperationSpec = {
+const sendMessageToAllUsersInTeamOperationSpec: OperationSpec = {
     httpMethod: 'POST',
     path: 'v3/batch/conversation/team',
     requestBody: {
@@ -649,7 +649,7 @@ const sendMessageToAllUsersInTeamOperationSpec: msRest.OperationSpec = {
     serializer
 }
 
-const sendMessageToListOfChannelsOperationSpec: msRest.OperationSpec = {
+const sendMessageToListOfChannelsOperationSpec: OperationSpec = {
     httpMethod: 'POST',
     path: 'v3/batch/conversation/channels',
     requestBody: {
@@ -670,7 +670,7 @@ const sendMessageToListOfChannelsOperationSpec: msRest.OperationSpec = {
     serializer
 }
 
-const getOperationStateSpec: msRest.OperationSpec = {
+const getOperationStateSpec: OperationSpec = {
     httpMethod: 'GET',
     path: 'v3/batch/conversation/{operationId}',
     urlParameters: [Parameters.operationId],
@@ -685,7 +685,7 @@ const getOperationStateSpec: msRest.OperationSpec = {
     serializer,
 };
 
-const getPagedFailedEntriesSpec: msRest.OperationSpec = {
+const getPagedFailedEntriesSpec: OperationSpec = {
     httpMethod: 'GET',
     path: 'v3/batch/conversation/failedentries/{operationId}',
     urlParameters: [Parameters.operationId],
@@ -700,7 +700,7 @@ const getPagedFailedEntriesSpec: msRest.OperationSpec = {
     serializer,
 };
 
-const cancelOperationSpec: msRest.OperationSpec = {
+const cancelOperationSpec: OperationSpec = {
     httpMethod: 'DELETE',
     path: 'v3/batch/conversation/{operationId}',
     urlParameters: [Parameters.operationId],

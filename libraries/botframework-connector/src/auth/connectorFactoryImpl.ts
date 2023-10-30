@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { getDefaultUserAgentValue, RequestPolicyFactory, userAgentPolicy } from '@azure/ms-rest-js';
+import { getDefaultUserAgentValue, RequestPolicyFactory, userAgentPolicy } from '@azure/core-http';
 import { ConnectorClient } from '../connectorApi/connectorClient';
 import { ConnectorClientOptions } from '../connectorApi/models';
 import { ConnectorFactory } from './connectorFactory';
@@ -9,9 +9,8 @@ import type { ServiceClientCredentialsFactory } from './serviceClientCredentials
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const packageInfo: Record<'name' | 'version', string> = require('../../package.json');
-export const USER_AGENT = `Microsoft-BotFramework/3.1 ${packageInfo.name}/${
-    packageInfo.version
-} ${getDefaultUserAgentValue()} `;
+export const USER_AGENT = `Microsoft-BotFramework/3.1 ${packageInfo.name}/${packageInfo.version
+    } ${getDefaultUserAgentValue()} `;
 
 /**
  * @internal

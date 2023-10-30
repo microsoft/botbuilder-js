@@ -3,7 +3,7 @@
  * Licensed under the MIT License.
  */
 
-import * as msRest from "@azure/ms-rest-js";
+import { RequestOptionsBase, ServiceCallback, OperationSpec, Serializer } from "@azure/core-http";
 import { ConnectorClientContext } from "../connectorClientContext";
 import * as Models from "../models";
 import * as Mappers from "../models/attachmentsMappers";
@@ -28,19 +28,19 @@ export class Attachments {
    * @param [options] The optional parameters
    * @returns Promise<Models.AttachmentsGetAttachmentInfoResponse>
    */
-  getAttachmentInfo(attachmentId: string, options?: msRest.RequestOptionsBase): Promise<Models.AttachmentsGetAttachmentInfoResponse>;
+  getAttachmentInfo(attachmentId: string, options?: RequestOptionsBase): Promise<Models.AttachmentsGetAttachmentInfoResponse>;
   /**
    * @param attachmentId attachment id
    * @param callback The callback
    */
-  getAttachmentInfo(attachmentId: string, callback: msRest.ServiceCallback<Models.AttachmentInfo>): void;
+  getAttachmentInfo(attachmentId: string, callback: ServiceCallback<Models.AttachmentInfo>): void;
   /**
    * @param attachmentId attachment id
    * @param options The optional parameters
    * @param callback The callback
    */
-  getAttachmentInfo(attachmentId: string, options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<Models.AttachmentInfo>): void;
-  getAttachmentInfo(attachmentId: string, options?: msRest.RequestOptionsBase | msRest.ServiceCallback<Models.AttachmentInfo>, callback?: msRest.ServiceCallback<Models.AttachmentInfo>): Promise<Models.AttachmentsGetAttachmentInfoResponse> {
+  getAttachmentInfo(attachmentId: string, options: RequestOptionsBase, callback: ServiceCallback<Models.AttachmentInfo>): void;
+  getAttachmentInfo(attachmentId: string, options?: RequestOptionsBase | ServiceCallback<Models.AttachmentInfo>, callback?: ServiceCallback<Models.AttachmentInfo>): Promise<Models.AttachmentsGetAttachmentInfoResponse> {
     return this.client.sendOperationRequest(
       {
         attachmentId,
@@ -58,21 +58,21 @@ export class Attachments {
    * @param [options] The optional parameters
    * @returns Promise<Models.AttachmentsGetAttachmentResponse>
    */
-  getAttachment(attachmentId: string, viewId: string, options?: msRest.RequestOptionsBase): Promise<Models.AttachmentsGetAttachmentResponse>;
+  getAttachment(attachmentId: string, viewId: string, options?: RequestOptionsBase): Promise<Models.AttachmentsGetAttachmentResponse>;
   /**
    * @param attachmentId attachment id
    * @param viewId View id from attachmentInfo
    * @param callback The callback
    */
-  getAttachment(attachmentId: string, viewId: string, callback: msRest.ServiceCallback<void>): void;
+  getAttachment(attachmentId: string, viewId: string, callback: ServiceCallback<void>): void;
   /**
    * @param attachmentId attachment id
    * @param viewId View id from attachmentInfo
    * @param options The optional parameters
    * @param callback The callback
    */
-  getAttachment(attachmentId: string, viewId: string, options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<void>): void;
-  getAttachment(attachmentId: string, viewId: string, options?: msRest.RequestOptionsBase | msRest.ServiceCallback<void>, callback?: msRest.ServiceCallback<void>): Promise<Models.AttachmentsGetAttachmentResponse> {
+  getAttachment(attachmentId: string, viewId: string, options: RequestOptionsBase, callback: ServiceCallback<void>): void;
+  getAttachment(attachmentId: string, viewId: string, options?: RequestOptionsBase | ServiceCallback<void>, callback?: ServiceCallback<void>): Promise<Models.AttachmentsGetAttachmentResponse> {
     return this.client.sendOperationRequest(
       {
         attachmentId,
@@ -85,8 +85,8 @@ export class Attachments {
 }
 
 // Operation Specifications
-const serializer = new msRest.Serializer(Mappers);
-const getAttachmentInfoOperationSpec: msRest.OperationSpec = {
+const serializer = new Serializer(Mappers);
+const getAttachmentInfoOperationSpec: OperationSpec = {
   httpMethod: "GET",
   path: "v3/attachments/{attachmentId}",
   urlParameters: [
@@ -103,7 +103,7 @@ const getAttachmentInfoOperationSpec: msRest.OperationSpec = {
   serializer
 };
 
-const getAttachmentOperationSpec: msRest.OperationSpec = {
+const getAttachmentOperationSpec: OperationSpec = {
   httpMethod: "GET",
   path: "v3/attachments/{attachmentId}/views/{viewId}",
   urlParameters: [

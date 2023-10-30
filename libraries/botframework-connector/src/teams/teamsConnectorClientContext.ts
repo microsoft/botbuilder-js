@@ -3,7 +3,7 @@
  * Licensed under the MIT License.
  */
 
-import { ServiceClientCredentials, ServiceClient } from '@azure/ms-rest-js';
+import { ServiceClientCredentials, ServiceClient } from '@azure/core-http';
 import { TeamsConnectorClientOptions } from './models';
 
 /**

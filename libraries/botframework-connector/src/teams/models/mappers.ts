@@ -3,9 +3,9 @@
  * Licensed under the MIT License.
  */
 
-import * as msRest from '@azure/ms-rest-js';
+import { CompositeMapper } from "@azure/core-http"
 
-export const ChannelInfo: msRest.CompositeMapper = {
+export const ChannelInfo: CompositeMapper = {
     serializedName: 'ChannelInfo',
     type: {
         name: 'Composite',
@@ -33,7 +33,7 @@ export const ChannelInfo: msRest.CompositeMapper = {
     },
 };
 
-export const ConversationList: msRest.CompositeMapper = {
+export const ConversationList: CompositeMapper = {
     serializedName: 'ConversationList',
     type: {
         name: 'Composite',
@@ -55,7 +55,7 @@ export const ConversationList: msRest.CompositeMapper = {
     },
 };
 
-export const TeamDetails: msRest.CompositeMapper = {
+export const TeamDetails: CompositeMapper = {
     serializedName: 'TeamDetails',
     type: {
         name: 'Composite',
@@ -89,7 +89,7 @@ export const TeamDetails: msRest.CompositeMapper = {
     },
 };
 
-export const TeamInfo: msRest.CompositeMapper = {
+export const TeamInfo: CompositeMapper = {
     serializedName: 'TeamInfo',
     type: {
         name: 'Composite',
@@ -117,7 +117,7 @@ export const TeamInfo: msRest.CompositeMapper = {
     },
 };
 
-export const NotificationInfo: msRest.CompositeMapper = {
+export const NotificationInfo: CompositeMapper = {
     serializedName: 'NotificationInfo',
     type: {
         name: 'Composite',
@@ -145,7 +145,7 @@ export const NotificationInfo: msRest.CompositeMapper = {
     },
 };
 
-export const TenantInfo: msRest.CompositeMapper = {
+export const TenantInfo: CompositeMapper = {
     serializedName: 'TenantInfo',
     type: {
         name: 'Composite',
@@ -161,7 +161,7 @@ export const TenantInfo: msRest.CompositeMapper = {
     },
 };
 
-export const TeamsChannelData: msRest.CompositeMapper = {
+export const TeamsChannelData: CompositeMapper = {
     serializedName: 'TeamsChannelData',
     type: {
         name: 'Composite',
@@ -212,7 +212,7 @@ export const TeamsChannelData: msRest.CompositeMapper = {
     },
 };
 
-export const TeamsChannelDataSettings: msRest.CompositeMapper = {
+export const TeamsChannelDataSettings: CompositeMapper = {
     serializedName: 'TeamsChannelDataSettings',
     type: {
         name: 'Composite',
@@ -229,7 +229,7 @@ export const TeamsChannelDataSettings: msRest.CompositeMapper = {
     },
 };
 
-export const ChannelAccount: msRest.CompositeMapper = {
+export const ChannelAccount: CompositeMapper = {
     serializedName: 'ChannelAccount',
     type: {
         name: 'Composite',
@@ -251,7 +251,7 @@ export const ChannelAccount: msRest.CompositeMapper = {
     },
 };
 
-export const TeamsChannelAccount: msRest.CompositeMapper = {
+export const TeamsChannelAccount: CompositeMapper = {
     serializedName: 'TeamsChannelAccount',
     type: {
         name: 'Composite',
@@ -298,7 +298,7 @@ export const TeamsChannelAccount: msRest.CompositeMapper = {
     },
 };
 
-export const Meeting: msRest.CompositeMapper = {
+export const Meeting: CompositeMapper = {
     serializedName: 'meeting',
     type: {
         name: 'Composite',
@@ -320,7 +320,7 @@ export const Meeting: msRest.CompositeMapper = {
     },
 };
 
-export const TeamsMeetingParticipant: msRest.CompositeMapper = {
+export const TeamsMeetingParticipant: CompositeMapper = {
     serializedName: 'TeamsMeetingParticipant',
     type: {
         name: 'Composite',
@@ -351,7 +351,7 @@ export const TeamsMeetingParticipant: msRest.CompositeMapper = {
     },
 };
 
-export const TeamsMeetingInfo: msRest.CompositeMapper = {
+export const TeamsMeetingInfo: CompositeMapper = {
     serializedName: 'TeamsMeetingInfo',
     type: {
         name: 'Composite',
@@ -382,7 +382,7 @@ export const TeamsMeetingInfo: msRest.CompositeMapper = {
     },
 };
 
-export const TeamsMeetingDetails: msRest.CompositeMapper = {
+export const TeamsMeetingDetails: CompositeMapper = {
     serializedName: 'TeamsMeetingDetails',
     type: {
         name: 'Composite',
@@ -434,7 +434,7 @@ export const TeamsMeetingDetails: msRest.CompositeMapper = {
     },
 };
 
-export const MeetingNotification: msRest.CompositeMapper = {
+export const MeetingNotification: CompositeMapper = {
     serializedName: 'MeetingNotification',
     type: {
         name: 'Composite',
@@ -485,7 +485,7 @@ export const MeetingNotificationChannelData = {
     },
 };
 
-export const OnBehalfOf: msRest.CompositeMapper = {
+export const OnBehalfOf: CompositeMapper = {
     serializedName: 'OnBehalfOf',
     type: {
         name: 'Composite',
@@ -519,7 +519,7 @@ export const OnBehalfOf: msRest.CompositeMapper = {
     },
 };
 
-export const MeetingNotificationRecipientFailureInfo: msRest.CompositeMapper = {
+export const MeetingNotificationRecipientFailureInfo: CompositeMapper = {
     serializedName: 'MeetingNotificationRecipientFailureInfo',
     type: {
         name: 'Composite',
@@ -547,7 +547,7 @@ export const MeetingNotificationRecipientFailureInfo: msRest.CompositeMapper = {
     },
 };
 
-export const MeetingNotificationResponse: msRest.CompositeMapper = {
+export const MeetingNotificationResponse: CompositeMapper = {
     serializedName: 'MeetingNotificationResponse',
     type: {
         name: 'Composite',
@@ -569,7 +569,7 @@ export const MeetingNotificationResponse: msRest.CompositeMapper = {
     },
 };
 
-export const CardAction: msRest.CompositeMapper = {
+export const CardAction: CompositeMapper = {
     serializedName: 'CardAction',
     type: {
         name: 'Composite',
@@ -603,7 +603,7 @@ export const CardAction: msRest.CompositeMapper = {
     },
 };
 
-export const CardImage: msRest.CompositeMapper = {
+export const CardImage: CompositeMapper = {
     serializedName: 'CardImage',
     type: {
         name: 'Composite',
@@ -632,7 +632,7 @@ export const CardImage: msRest.CompositeMapper = {
     },
 };
 
-export const O365ConnectorCardFact: msRest.CompositeMapper = {
+export const O365ConnectorCardFact: CompositeMapper = {
     serializedName: 'O365ConnectorCardFact',
     type: {
         name: 'Composite',
@@ -654,7 +654,7 @@ export const O365ConnectorCardFact: msRest.CompositeMapper = {
     },
 };
 
-export const O365ConnectorCardImage: msRest.CompositeMapper = {
+export const O365ConnectorCardImage: CompositeMapper = {
     serializedName: 'O365ConnectorCardImage',
     type: {
         name: 'Composite',
@@ -676,7 +676,7 @@ export const O365ConnectorCardImage: msRest.CompositeMapper = {
     },
 };
 
-export const O365ConnectorCardActionBase: msRest.CompositeMapper = {
+export const O365ConnectorCardActionBase: CompositeMapper = {
     serializedName: 'O365ConnectorCardActionBase',
     type: {
         name: 'Composite',
@@ -704,7 +704,7 @@ export const O365ConnectorCardActionBase: msRest.CompositeMapper = {
     },
 };
 
-export const O365ConnectorCardSection: msRest.CompositeMapper = {
+export const O365ConnectorCardSection: CompositeMapper = {
     serializedName: 'O365ConnectorCardSection',
     type: {
         name: 'Composite',
@@ -798,7 +798,7 @@ export const O365ConnectorCardSection: msRest.CompositeMapper = {
     },
 };
 
-export const O365ConnectorCard: msRest.CompositeMapper = {
+export const O365ConnectorCard: CompositeMapper = {
     serializedName: 'O365ConnectorCard',
     type: {
         name: 'Composite',
@@ -856,7 +856,7 @@ export const O365ConnectorCard: msRest.CompositeMapper = {
     },
 };
 
-export const O365ConnectorCardViewAction: msRest.CompositeMapper = {
+export const O365ConnectorCardViewAction: CompositeMapper = {
     serializedName: 'O365ConnectorCardViewAction',
     type: {
         name: 'Composite',
@@ -878,7 +878,7 @@ export const O365ConnectorCardViewAction: msRest.CompositeMapper = {
     },
 };
 
-export const O365ConnectorCardOpenUriTarget: msRest.CompositeMapper = {
+export const O365ConnectorCardOpenUriTarget: CompositeMapper = {
     serializedName: 'O365ConnectorCardOpenUriTarget',
     type: {
         name: 'Composite',
@@ -900,7 +900,7 @@ export const O365ConnectorCardOpenUriTarget: msRest.CompositeMapper = {
     },
 };
 
-export const O365ConnectorCardOpenUri: msRest.CompositeMapper = {
+export const O365ConnectorCardOpenUri: CompositeMapper = {
     serializedName: 'O365ConnectorCardOpenUri',
     type: {
         name: 'Composite',
@@ -923,7 +923,7 @@ export const O365ConnectorCardOpenUri: msRest.CompositeMapper = {
     },
 };
 
-export const O365ConnectorCardHttpPOST: msRest.CompositeMapper = {
+export const O365ConnectorCardHttpPOST: CompositeMapper = {
     serializedName: 'O365ConnectorCardHttpPOST',
     type: {
         name: 'Composite',
@@ -940,7 +940,7 @@ export const O365ConnectorCardHttpPOST: msRest.CompositeMapper = {
     },
 };
 
-export const O365ConnectorCardInputBase: msRest.CompositeMapper = {
+export const O365ConnectorCardInputBase: CompositeMapper = {
     serializedName: 'O365ConnectorCardInputBase',
     type: {
         name: 'Composite',
@@ -980,7 +980,7 @@ export const O365ConnectorCardInputBase: msRest.CompositeMapper = {
     },
 };
 
-export const O365ConnectorCardActionCard: msRest.CompositeMapper = {
+export const O365ConnectorCardActionCard: CompositeMapper = {
     serializedName: 'O365ConnectorCardActionCard',
     type: {
         name: 'Composite',
@@ -1015,7 +1015,7 @@ export const O365ConnectorCardActionCard: msRest.CompositeMapper = {
     },
 };
 
-export const O365ConnectorCardTextInput: msRest.CompositeMapper = {
+export const O365ConnectorCardTextInput: CompositeMapper = {
     serializedName: 'O365ConnectorCardTextInput',
     type: {
         name: 'Composite',
@@ -1038,7 +1038,7 @@ export const O365ConnectorCardTextInput: msRest.CompositeMapper = {
     },
 };
 
-export const O365ConnectorCardDateInput: msRest.CompositeMapper = {
+export const O365ConnectorCardDateInput: CompositeMapper = {
     serializedName: 'O365ConnectorCardDateInput',
     type: {
         name: 'Composite',
@@ -1055,7 +1055,7 @@ export const O365ConnectorCardDateInput: msRest.CompositeMapper = {
     },
 };
 
-export const O365ConnectorCardMultichoiceInputChoice: msRest.CompositeMapper = {
+export const O365ConnectorCardMultichoiceInputChoice: CompositeMapper = {
     serializedName: 'O365ConnectorCardMultichoiceInputChoice',
     type: {
         name: 'Composite',
@@ -1077,7 +1077,7 @@ export const O365ConnectorCardMultichoiceInputChoice: msRest.CompositeMapper = {
     },
 };
 
-export const O365ConnectorCardMultichoiceInput: msRest.CompositeMapper = {
+export const O365ConnectorCardMultichoiceInput: CompositeMapper = {
     serializedName: 'O365ConnectorCardMultichoiceInput',
     type: {
         name: 'Composite',
@@ -1112,7 +1112,7 @@ export const O365ConnectorCardMultichoiceInput: msRest.CompositeMapper = {
     },
 };
 
-export const O365ConnectorCardActionQuery: msRest.CompositeMapper = {
+export const O365ConnectorCardActionQuery: CompositeMapper = {
     serializedName: 'O365ConnectorCardActionQuery',
     type: {
         name: 'Composite',
@@ -1134,7 +1134,7 @@ export const O365ConnectorCardActionQuery: msRest.CompositeMapper = {
     },
 };
 
-export const SigninStateVerificationQuery: msRest.CompositeMapper = {
+export const SigninStateVerificationQuery: CompositeMapper = {
     serializedName: 'SigninStateVerificationQuery',
     type: {
         name: 'Composite',
@@ -1150,7 +1150,7 @@ export const SigninStateVerificationQuery: msRest.CompositeMapper = {
     },
 };
 
-export const MessagingExtensionQueryOptions: msRest.CompositeMapper = {
+export const MessagingExtensionQueryOptions: CompositeMapper = {
     serializedName: 'MessagingExtensionQueryOptions',
     type: {
         name: 'Composite',
@@ -1172,7 +1172,7 @@ export const MessagingExtensionQueryOptions: msRest.CompositeMapper = {
     },
 };
 
-export const MessagingExtensionParameter: msRest.CompositeMapper = {
+export const MessagingExtensionParameter: CompositeMapper = {
     serializedName: 'MessagingExtensionParameter',
     type: {
         name: 'Composite',
@@ -1194,7 +1194,7 @@ export const MessagingExtensionParameter: msRest.CompositeMapper = {
     },
 };
 
-export const MessagingExtensionQuery: msRest.CompositeMapper = {
+export const MessagingExtensionQuery: CompositeMapper = {
     serializedName: 'MessagingExtensionQuery',
     type: {
         name: 'Composite',
@@ -1235,7 +1235,7 @@ export const MessagingExtensionQuery: msRest.CompositeMapper = {
     },
 };
 
-export const Activity: msRest.CompositeMapper = {
+export const Activity: CompositeMapper = {
     serializedName: 'Activity',
     type: {
         name: 'Composite',
@@ -1257,7 +1257,7 @@ export const Activity: msRest.CompositeMapper = {
     },
 };
 
-export const MessageActionsPayloadUser: msRest.CompositeMapper = {
+export const MessageActionsPayloadUser: CompositeMapper = {
     serializedName: 'MessageActionsPayloadUser',
     type: {
         name: 'Composite',
@@ -1285,7 +1285,7 @@ export const MessageActionsPayloadUser: msRest.CompositeMapper = {
     },
 };
 
-export const MessageActionsPayloadApp: msRest.CompositeMapper = {
+export const MessageActionsPayloadApp: CompositeMapper = {
     serializedName: 'MessageActionsPayloadApp',
     type: {
         name: 'Composite',
@@ -1313,7 +1313,7 @@ export const MessageActionsPayloadApp: msRest.CompositeMapper = {
     },
 };
 
-export const MessageActionsPayloadConversation: msRest.CompositeMapper = {
+export const MessageActionsPayloadConversation: CompositeMapper = {
     serializedName: 'MessageActionsPayloadConversation',
     type: {
         name: 'Composite',
@@ -1341,7 +1341,7 @@ export const MessageActionsPayloadConversation: msRest.CompositeMapper = {
     },
 };
 
-export const MessageActionsPayloadFrom: msRest.CompositeMapper = {
+export const MessageActionsPayloadFrom: CompositeMapper = {
     serializedName: 'MessageActionsPayloadFrom',
     type: {
         name: 'Composite',
@@ -1372,7 +1372,7 @@ export const MessageActionsPayloadFrom: msRest.CompositeMapper = {
     },
 };
 
-export const MessageActionsPayloadBody: msRest.CompositeMapper = {
+export const MessageActionsPayloadBody: CompositeMapper = {
     serializedName: 'MessageActionsPayload_body',
     type: {
         name: 'Composite',
@@ -1400,7 +1400,7 @@ export const MessageActionsPayloadBody: msRest.CompositeMapper = {
     },
 };
 
-export const MessageActionsPayloadAttachment: msRest.CompositeMapper = {
+export const MessageActionsPayloadAttachment: CompositeMapper = {
     serializedName: 'MessageActionsPayloadAttachment',
     type: {
         name: 'Composite',
@@ -1446,7 +1446,7 @@ export const MessageActionsPayloadAttachment: msRest.CompositeMapper = {
     },
 };
 
-export const MessageActionsPayloadMention: msRest.CompositeMapper = {
+export const MessageActionsPayloadMention: CompositeMapper = {
     serializedName: 'MessageActionsPayloadMention',
     type: {
         name: 'Composite',
@@ -1475,7 +1475,7 @@ export const MessageActionsPayloadMention: msRest.CompositeMapper = {
     },
 };
 
-export const MessageActionsPayloadReaction: msRest.CompositeMapper = {
+export const MessageActionsPayloadReaction: CompositeMapper = {
     serializedName: 'MessageActionsPayloadReaction',
     type: {
         name: 'Composite',
@@ -1504,7 +1504,7 @@ export const MessageActionsPayloadReaction: msRest.CompositeMapper = {
     },
 };
 
-export const MessageActionsPayload: msRest.CompositeMapper = {
+export const MessageActionsPayload: CompositeMapper = {
     serializedName: 'MessageActionsPayload',
     type: {
         name: 'Composite',
@@ -1636,7 +1636,7 @@ export const MessageActionsPayload: msRest.CompositeMapper = {
     },
 };
 
-export const TaskModuleRequest: msRest.CompositeMapper = {
+export const TaskModuleRequest: CompositeMapper = {
     serializedName: 'TaskModuleRequest',
     type: {
         name: 'Composite',
@@ -1659,7 +1659,7 @@ export const TaskModuleRequest: msRest.CompositeMapper = {
     },
 };
 
-export const MessagingExtensionAction: msRest.CompositeMapper = {
+export const MessagingExtensionAction: CompositeMapper = {
     serializedName: 'MessagingExtensionAction',
     type: {
         name: 'Composite',
@@ -1707,7 +1707,7 @@ export const MessagingExtensionAction: msRest.CompositeMapper = {
     },
 };
 
-export const TaskModuleResponseBase: msRest.CompositeMapper = {
+export const TaskModuleResponseBase: CompositeMapper = {
     serializedName: 'TaskModuleResponseBase',
     type: {
         name: 'Composite',
@@ -1723,7 +1723,7 @@ export const TaskModuleResponseBase: msRest.CompositeMapper = {
     },
 };
 
-export const Attachment: msRest.CompositeMapper = {
+export const Attachment: CompositeMapper = {
     serializedName: 'Attachment',
     type: {
         name: 'Composite',
@@ -1763,7 +1763,7 @@ export const Attachment: msRest.CompositeMapper = {
     },
 };
 
-export const MessagingExtensionAttachment: msRest.CompositeMapper = {
+export const MessagingExtensionAttachment: CompositeMapper = {
     serializedName: 'MessagingExtensionAttachment',
     type: {
         name: 'Composite',
@@ -1781,7 +1781,7 @@ export const MessagingExtensionAttachment: msRest.CompositeMapper = {
     },
 };
 
-export const MessagingExtensionSuggestedAction: msRest.CompositeMapper = {
+export const MessagingExtensionSuggestedAction: CompositeMapper = {
     serializedName: 'MessagingExtensionSuggestedAction',
     type: {
         name: 'Composite',
@@ -1803,7 +1803,7 @@ export const MessagingExtensionSuggestedAction: msRest.CompositeMapper = {
     },
 };
 
-export const MessagingExtensionResult: msRest.CompositeMapper = {
+export const MessagingExtensionResult: CompositeMapper = {
     serializedName: 'MessagingExtensionResult',
     type: {
         name: 'Composite',
@@ -1857,7 +1857,7 @@ export const MessagingExtensionResult: msRest.CompositeMapper = {
     },
 };
 
-export const CacheInfo: msRest.CompositeMapper = {
+export const CacheInfo: CompositeMapper = {
     serializedName: 'cacheInfo',
     type: {
         name: 'Composite',
@@ -1879,7 +1879,7 @@ export const CacheInfo: msRest.CompositeMapper = {
     },
 };
 
-export const MessagingExtensionActionResponse: msRest.CompositeMapper = {
+export const MessagingExtensionActionResponse: CompositeMapper = {
     serializedName: 'MessagingExtensionActionResponse',
     type: {
         name: 'Composite',
@@ -1910,7 +1910,7 @@ export const MessagingExtensionActionResponse: msRest.CompositeMapper = {
     },
 };
 
-export const MessagingExtensionResponse: msRest.CompositeMapper = {
+export const MessagingExtensionResponse: CompositeMapper = {
     serializedName: 'MessagingExtensionResponse',
     type: {
         name: 'Composite',
@@ -1934,7 +1934,7 @@ export const MessagingExtensionResponse: msRest.CompositeMapper = {
     },
 };
 
-export const FileConsentCard: msRest.CompositeMapper = {
+export const FileConsentCard: CompositeMapper = {
     serializedName: 'FileConsentCard',
     type: {
         name: 'Composite',
@@ -1968,7 +1968,7 @@ export const FileConsentCard: msRest.CompositeMapper = {
     },
 };
 
-export const FileDownloadInfo: msRest.CompositeMapper = {
+export const FileDownloadInfo: CompositeMapper = {
     serializedName: 'FileDownloadInfo',
     type: {
         name: 'Composite',
@@ -2002,7 +2002,7 @@ export const FileDownloadInfo: msRest.CompositeMapper = {
     },
 };
 
-export const FileInfoCard: msRest.CompositeMapper = {
+export const FileInfoCard: CompositeMapper = {
     serializedName: 'FileInfoCard',
     type: {
         name: 'Composite',
@@ -2030,7 +2030,7 @@ export const FileInfoCard: msRest.CompositeMapper = {
     },
 };
 
-export const FileUploadInfo: msRest.CompositeMapper = {
+export const FileUploadInfo: CompositeMapper = {
     serializedName: 'FileUploadInfo',
     type: {
         name: 'Composite',
@@ -2070,7 +2070,7 @@ export const FileUploadInfo: msRest.CompositeMapper = {
     },
 };
 
-export const FileConsentCardResponse: msRest.CompositeMapper = {
+export const FileConsentCardResponse: CompositeMapper = {
     serializedName: 'FileConsentCardResponse',
     type: {
         name: 'Composite',
@@ -2099,7 +2099,7 @@ export const FileConsentCardResponse: msRest.CompositeMapper = {
     },
 };
 
-export const TaskModuleTaskInfo: msRest.CompositeMapper = {
+export const TaskModuleTaskInfo: CompositeMapper = {
     serializedName: 'TaskModuleTaskInfo',
     type: {
         name: 'Composite',
@@ -2152,7 +2152,7 @@ export const TaskModuleTaskInfo: msRest.CompositeMapper = {
     },
 };
 
-export const TaskModuleContinueResponse: msRest.CompositeMapper = {
+export const TaskModuleContinueResponse: CompositeMapper = {
     serializedName: 'TaskModuleContinueResponse',
     type: {
         name: 'Composite',
@@ -2170,7 +2170,7 @@ export const TaskModuleContinueResponse: msRest.CompositeMapper = {
     },
 };
 
-export const TaskModuleMessageResponse: msRest.CompositeMapper = {
+export const TaskModuleMessageResponse: CompositeMapper = {
     serializedName: 'TaskModuleMessageResponse',
     type: {
         name: 'Composite',
@@ -2187,7 +2187,7 @@ export const TaskModuleMessageResponse: msRest.CompositeMapper = {
     },
 };
 
-export const TaskModuleResponse: msRest.CompositeMapper = {
+export const TaskModuleResponse: CompositeMapper = {
     serializedName: 'TaskModuleResponse',
     type: {
         name: 'Composite',
@@ -2211,7 +2211,7 @@ export const TaskModuleResponse: msRest.CompositeMapper = {
     },
 };
 
-export const TaskModuleRequestContext: msRest.CompositeMapper = {
+export const TaskModuleRequestContext: CompositeMapper = {
     serializedName: 'TaskModuleRequest_context',
     type: {
         name: 'Composite',
@@ -2227,7 +2227,7 @@ export const TaskModuleRequestContext: msRest.CompositeMapper = {
     },
 };
 
-export const AppBasedLinkQuery: msRest.CompositeMapper = {
+export const AppBasedLinkQuery: CompositeMapper = {
     serializedName: 'AppBasedLinkQuery',
     type: {
         name: 'Composite',
@@ -2249,7 +2249,7 @@ export const AppBasedLinkQuery: msRest.CompositeMapper = {
     },
 };
 
-export const BatchOperationRequest: msRest.CompositeMapper = {
+export const BatchOperationRequest: CompositeMapper = {
     serializedName: 'BatchOperationRequest',
     type: {
         name: 'Composite',
@@ -2312,7 +2312,7 @@ export const BatchOperationRequest: msRest.CompositeMapper = {
     },
 };
 
-export const BatchOperationResponse: msRest.CompositeMapper = {
+export const BatchOperationResponse: CompositeMapper = {
     serializedName: 'BatchOperationResponse',
     type: {
         name: 'Composite',
@@ -2328,7 +2328,7 @@ export const BatchOperationResponse: msRest.CompositeMapper = {
     },
 };
 
-export const GetTeamsOperationStateResponse: msRest.CompositeMapper = {
+export const GetTeamsOperationStateResponse: CompositeMapper = {
     serializedName: 'GetTeamsOperationStateResponse',
     type: {
         name: 'Composite',
@@ -2367,7 +2367,7 @@ export const GetTeamsOperationStateResponse: msRest.CompositeMapper = {
     },
 };
 
-export const GetTeamsFailedEntriesResponse: msRest.CompositeMapper = {
+export const GetTeamsFailedEntriesResponse: CompositeMapper = {
     serializedName: 'BatchFailedEntriesResponse',
     type: {
         name: 'Composite',
@@ -2409,7 +2409,7 @@ export const GetTeamsFailedEntriesResponse: msRest.CompositeMapper = {
     },
 };
 
-export const TeamsMember: msRest.CompositeMapper = {
+export const TeamsMember: CompositeMapper = {
     serializedName: 'TeamsMember',
     type: {
         name: 'Composite',

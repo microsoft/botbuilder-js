@@ -3,9 +3,9 @@
  * Licensed under the MIT License.
  */
 
-import * as msRest from '@azure/ms-rest-js';
+import { OperationURLParameter, OperationQueryParameter } from "@azure/core-http"
 
-export const teamId: msRest.OperationURLParameter = {
+export const teamId: OperationURLParameter = {
     parameterPath: 'teamId',
     mapper: {
         required: true,
@@ -16,7 +16,7 @@ export const teamId: msRest.OperationURLParameter = {
     },
 };
 
-export const meetingId: msRest.OperationURLParameter = {
+export const meetingId: OperationURLParameter = {
     parameterPath: 'meetingId',
     mapper: {
         required: true,
@@ -27,7 +27,7 @@ export const meetingId: msRest.OperationURLParameter = {
     },
 };
 
-export const participantId: msRest.OperationURLParameter = {
+export const participantId: OperationURLParameter = {
     parameterPath: 'participantId',
     mapper: {
         required: true,
@@ -38,7 +38,7 @@ export const participantId: msRest.OperationURLParameter = {
     },
 };
 
-export const tenantId: msRest.OperationQueryParameter = {
+export const tenantId: OperationQueryParameter = {
     parameterPath: ['options', 'tenantId'],
     mapper: {
         serializedName: 'tenantId',
@@ -48,7 +48,7 @@ export const tenantId: msRest.OperationQueryParameter = {
     },
 };
 
-export const operationId: msRest.OperationURLParameter = {
+export const operationId: OperationURLParameter = {
     parameterPath: 'operationId',
     mapper: {
         serializedName: 'operationId',

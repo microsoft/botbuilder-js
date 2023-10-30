@@ -5,7 +5,7 @@
 
 import * as Mappers from './models/mappers';
 import * as Models from './models';
-import * as msRest from '@azure/ms-rest-js';
+import { ServiceClientCredentials } from "@azure/core-http"
 import * as operations from './operations';
 import { ConnectorClientContext } from './connectorClientContext';
 
@@ -20,7 +20,7 @@ class ConnectorClient extends ConnectorClientContext {
      * @param credentials Subscription credentials which uniquely identify client subscription.
      * @param [options] The parameter options
      */
-    constructor(credentials: msRest.ServiceClientCredentials, options?: Models.ConnectorClientOptions) {
+    constructor(credentials: ServiceClientCredentials, options?: Models.ConnectorClientOptions) {
         super(credentials, options);
         this.attachments = new operations.Attachments(this);
         this.conversations = new operations.Conversations(this);

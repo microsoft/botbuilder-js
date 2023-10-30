@@ -3,7 +3,7 @@
  * Licensed under the MIT License.
  */
 
-import * as msRest from '@azure/ms-rest-js';
+import { ServiceCallback, RequestOptionsBase, Serializer, OperationSpec } from "@azure/core-http";
 import * as Models from '../models';
 import * as Mappers from '../models/userTokenMappers';
 import * as Parameters from '../models/parameters';
@@ -39,7 +39,7 @@ export class UserToken {
      * @param connectionName
      * @param callback The callback
      */
-    getToken(userId: string, connectionName: string, callback: msRest.ServiceCallback<TokenResponse>): void;
+    getToken(userId: string, connectionName: string, callback: ServiceCallback<TokenResponse>): void;
     /**
      * @param userId
      * @param connectionName
@@ -50,13 +50,13 @@ export class UserToken {
         userId: string,
         connectionName: string,
         options: Models.UserTokenGetTokenOptionalParams,
-        callback: msRest.ServiceCallback<TokenResponse>
+        callback: ServiceCallback<TokenResponse>
     ): void;
     getToken(
         userId: string,
         connectionName: string,
-        options?: Models.UserTokenGetTokenOptionalParams | msRest.ServiceCallback<TokenResponse>,
-        callback?: msRest.ServiceCallback<TokenResponse>
+        options?: Models.UserTokenGetTokenOptionalParams | ServiceCallback<TokenResponse>,
+        callback?: ServiceCallback<TokenResponse>
     ): Promise<Models.UserTokenGetTokenResponse> {
         return this.client.sendOperationRequest(
             {
@@ -92,7 +92,7 @@ export class UserToken {
         userId: string,
         connectionName: string,
         aadResourceUrls: Models.AadResourceUrls,
-        callback: msRest.ServiceCallback<{ [propertyName: string]: TokenResponse }>
+        callback: ServiceCallback<{ [propertyName: string]: TokenResponse }>
     ): void;
     /**
      * @param userId
@@ -106,7 +106,7 @@ export class UserToken {
         connectionName: string,
         aadResourceUrls: Models.AadResourceUrls,
         options: Models.UserTokenGetAadTokensOptionalParams,
-        callback: msRest.ServiceCallback<{ [propertyName: string]: TokenResponse }>
+        callback: ServiceCallback<{ [propertyName: string]: TokenResponse }>
     ): void;
     getAadTokens(
         userId: string,
@@ -114,8 +114,8 @@ export class UserToken {
         aadResourceUrls: Models.AadResourceUrls,
         options?:
             | Models.UserTokenGetAadTokensOptionalParams
-            | msRest.ServiceCallback<{ [propertyName: string]: TokenResponse }>,
-        callback?: msRest.ServiceCallback<{ [propertyName: string]: TokenResponse }>
+            | ServiceCallback<{ [propertyName: string]: TokenResponse }>,
+        callback?: ServiceCallback<{ [propertyName: string]: TokenResponse }>
     ): Promise<Models.UserTokenGetAadTokensResponse> {
         return this.client.sendOperationRequest(
             {
@@ -139,7 +139,7 @@ export class UserToken {
      * @param userId
      * @param callback The callback
      */
-    signOut(userId: string, callback: msRest.ServiceCallback<any>): void;
+    signOut(userId: string, callback: ServiceCallback<any>): void;
     /**
      * @param userId
      * @param options The optional parameters
@@ -148,12 +148,12 @@ export class UserToken {
     signOut(
         userId: string,
         options: Models.UserTokenSignOutOptionalParams,
-        callback: msRest.ServiceCallback<any>
+        callback: ServiceCallback<any>
     ): void;
     signOut(
         userId: string,
-        options?: Models.UserTokenSignOutOptionalParams | msRest.ServiceCallback<any>,
-        callback?: msRest.ServiceCallback<any>
+        options?: Models.UserTokenSignOutOptionalParams | ServiceCallback<any>,
+        callback?: ServiceCallback<any>
     ): Promise<Models.UserTokenSignOutResponse> {
         return this.client.sendOperationRequest(
             {
@@ -178,7 +178,7 @@ export class UserToken {
      * @param userId
      * @param callback The callback
      */
-    getTokenStatus(userId: string, callback: msRest.ServiceCallback<TokenStatus[]>): void;
+    getTokenStatus(userId: string, callback: ServiceCallback<TokenStatus[]>): void;
     /**
      * @param userId
      * @param options The optional parameters
@@ -187,12 +187,12 @@ export class UserToken {
     getTokenStatus(
         userId: string,
         options: Models.UserTokenGetTokenStatusOptionalParams,
-        callback: msRest.ServiceCallback<TokenStatus[]>
+        callback: ServiceCallback<TokenStatus[]>
     ): void;
     getTokenStatus(
         userId: string,
-        options?: Models.UserTokenGetTokenStatusOptionalParams | msRest.ServiceCallback<TokenStatus[]>,
-        callback?: msRest.ServiceCallback<TokenStatus[]>
+        options?: Models.UserTokenGetTokenStatusOptionalParams | ServiceCallback<TokenStatus[]>,
+        callback?: ServiceCallback<TokenStatus[]>
     ): Promise<Models.UserTokenGetTokenStatusResponse> {
         return this.client.sendOperationRequest(
             {
@@ -217,7 +217,7 @@ export class UserToken {
         connectionName: string,
         channelId: string,
         exchangeRequest: TokenExchangeRequest,
-        options?: msRest.RequestOptionsBase
+        options?: RequestOptionsBase
     ): Promise<Models.UserTokenExchangeAsyncResponse>;
     /**
      * @param userId
@@ -231,7 +231,7 @@ export class UserToken {
         connectionName: string,
         channelId: string,
         exchangeRequest: TokenExchangeRequest,
-        callback: msRest.ServiceCallback<any>
+        callback: ServiceCallback<any>
     ): void;
     /**
      * @param userId
@@ -246,16 +246,16 @@ export class UserToken {
         connectionName: string,
         channelId: string,
         exchangeRequest: TokenExchangeRequest,
-        options: msRest.RequestOptionsBase,
-        callback: msRest.ServiceCallback<any>
+        options: RequestOptionsBase,
+        callback: ServiceCallback<any>
     ): void;
     exchangeAsync(
         userId: string,
         connectionName: string,
         channelId: string,
         exchangeRequest: TokenExchangeRequest,
-        options?: msRest.RequestOptionsBase | msRest.ServiceCallback<any>,
-        callback?: msRest.ServiceCallback<any>
+        options?: RequestOptionsBase | ServiceCallback<any>,
+        callback?: ServiceCallback<any>
     ): Promise<Models.UserTokenExchangeAsyncResponse> {
         return this.client.sendOperationRequest(
             {
@@ -272,8 +272,8 @@ export class UserToken {
 }
 
 // Operation Specifications
-const serializer = new msRest.Serializer(Mappers);
-const getTokenOperationSpec: msRest.OperationSpec = {
+const serializer = new Serializer(Mappers);
+const getTokenOperationSpec: OperationSpec = {
     httpMethod: 'GET',
     path: 'api/usertoken/GetToken',
     queryParameters: [Parameters.userId, Parameters.connectionName0, Parameters.channelId0, Parameters.code],
@@ -291,7 +291,7 @@ const getTokenOperationSpec: msRest.OperationSpec = {
     serializer,
 };
 
-const getAadTokensOperationSpec: msRest.OperationSpec = {
+const getAadTokensOperationSpec: OperationSpec = {
     httpMethod: 'POST',
     path: 'api/usertoken/GetAadTokens',
     queryParameters: [Parameters.userId, Parameters.connectionName0, Parameters.channelId0],
@@ -324,7 +324,7 @@ const getAadTokensOperationSpec: msRest.OperationSpec = {
     serializer,
 };
 
-const signOutOperationSpec: msRest.OperationSpec = {
+const signOutOperationSpec: OperationSpec = {
     httpMethod: 'DELETE',
     path: 'api/usertoken/SignOut',
     queryParameters: [Parameters.userId, Parameters.connectionName1, Parameters.channelId0],
@@ -345,7 +345,7 @@ const signOutOperationSpec: msRest.OperationSpec = {
     serializer,
 };
 
-const getTokenStatusOperationSpec: msRest.OperationSpec = {
+const getTokenStatusOperationSpec: OperationSpec = {
     httpMethod: 'GET',
     path: 'api/usertoken/GetTokenStatus',
     queryParameters: [Parameters.userId, Parameters.channelId0, Parameters.include],
@@ -371,7 +371,7 @@ const getTokenStatusOperationSpec: msRest.OperationSpec = {
     serializer,
 };
 
-const exchangeAsyncOperationSpec: msRest.OperationSpec = {
+const exchangeAsyncOperationSpec: OperationSpec = {
     httpMethod: 'POST',
     path: 'api/usertoken/exchange',
     queryParameters: [Parameters.userId, Parameters.connectionName0, Parameters.channelId1],
