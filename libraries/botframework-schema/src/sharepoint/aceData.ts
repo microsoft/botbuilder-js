@@ -10,8 +10,9 @@ export interface AceData {
      */
     cardSize: AceCardSize;
     /**
-     * The value of this property is stored in the serialized data of the Adaptive Card Extension. 
+     * The value of this property is stored in the serialized data of the Adaptive Card Extension.
      * It can be used to manage versioning of the Adaptive Card Extension.
+     *
      * @remarks - although there is no restriction on the format of this property, it is recommended to use semantic versioning.
      */
     dataVersion: string;
