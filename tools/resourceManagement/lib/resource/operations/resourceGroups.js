@@ -10,9 +10,8 @@
 
 'use strict';
 
-const msRest = require('@azure/ms-rest-js');
+const { stripRequest, stripResponse, WebResource } = require("@azure/core-http");
 const uuid = require('uuid');
-const WebResource = msRest.WebResource;
 
 /**
  * Checks whether a resource group exists.
@@ -38,9 +37,9 @@ const WebResource = msRest.WebResource;
  *                      {stream} [response] - The HTTP Response stream if an error did not occur.
  */
 function _checkExistence(resourceGroupName, options, callback) {
-   /* jshint validthis: true */
+  /* jshint validthis: true */
   let client = this.client;
-  if(!callback && typeof options === 'function') {
+  if (!callback && typeof options === 'function') {
     callback = options;
     options = null;
   }
@@ -53,16 +52,13 @@ function _checkExistence(resourceGroupName, options, callback) {
       throw new Error('resourceGroupName cannot be null or undefined and it must be of type string.');
     }
     if (resourceGroupName !== null && resourceGroupName !== undefined) {
-      if (resourceGroupName.length > 90)
-      {
+      if (resourceGroupName.length > 90) {
         throw new Error('"resourceGroupName" should satisfy the constraint - "MaxLength": 90');
       }
-      if (resourceGroupName.length < 1)
-      {
+      if (resourceGroupName.length < 1) {
         throw new Error('"resourceGroupName" should satisfy the constraint - "MinLength": 1');
       }
-      if (resourceGroupName.match(/^[-\w\._\(\)]+$/) === null)
-      {
+      if (resourceGroupName.match(/^[-\w\._\(\)]+$/) === null) {
         throw new Error('"resourceGroupName" should satisfy the constraint - "Pattern": /^[-\w\._\(\)]+$/');
       }
     }
@@ -98,13 +94,13 @@ function _checkExistence(resourceGroupName, options, callback) {
   // Set Headers
   httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
   if (this.client.generateClientRequestId) {
-      httpRequest.headers['x-ms-client-request-id'] = uuid.v4();
+    httpRequest.headers['x-ms-client-request-id'] = uuid.v4();
   }
   if (this.client.acceptLanguage !== undefined && this.client.acceptLanguage !== null) {
     httpRequest.headers['accept-language'] = this.client.acceptLanguage;
   }
-  if(options) {
-    for(let headerName in options['customHeaders']) {
+  if (options) {
+    for (let headerName in options['customHeaders']) {
       if (options['customHeaders'].hasOwnProperty(headerName)) {
         httpRequest.headers[headerName] = options['customHeaders'][headerName];
       }
@@ -120,8 +116,8 @@ function _checkExistence(resourceGroupName, options, callback) {
     if (statusCode !== 204 && statusCode !== 404) {
       let error = new Error(responseBody);
       error.statusCode = response.statusCode;
-      error.request = msRest.stripRequest(httpRequest);
-      error.response = msRest.stripResponse(response);
+      error.request = stripRequest(httpRequest);
+      error.response = stripResponse(response);
       if (responseBody === '') responseBody = null;
       let parsedErrorResponse;
       try {
@@ -137,7 +133,7 @@ function _checkExistence(resourceGroupName, options, callback) {
         }
       } catch (defaultError) {
         error.message = `Error "${defaultError.message}" occurred in deserializing the responseBody ` +
-                         `- "${responseBody}" for the default response.`;
+          `- "${responseBody}" for the default response.`;
         return callback(error);
       }
       return callback(error);
@@ -192,9 +188,9 @@ function _checkExistence(resourceGroupName, options, callback) {
  *                      {stream} [response] - The HTTP Response stream if an error did not occur.
  */
 function _createOrUpdate(resourceGroupName, parameters, options, callback) {
-   /* jshint validthis: true */
+  /* jshint validthis: true */
   let client = this.client;
-  if(!callback && typeof options === 'function') {
+  if (!callback && typeof options === 'function') {
     callback = options;
     options = null;
   }
@@ -207,16 +203,13 @@ function _createOrUpdate(resourceGroupName, parameters, options, callback) {
       throw new Error('resourceGroupName cannot be null or undefined and it must be of type string.');
     }
     if (resourceGroupName !== null && resourceGroupName !== undefined) {
-      if (resourceGroupName.length > 90)
-      {
+      if (resourceGroupName.length > 90) {
         throw new Error('"resourceGroupName" should satisfy the constraint - "MaxLength": 90');
       }
-      if (resourceGroupName.length < 1)
-      {
+      if (resourceGroupName.length < 1) {
         throw new Error('"resourceGroupName" should satisfy the constraint - "MinLength": 1');
       }
-      if (resourceGroupName.match(/^[-\w\._\(\)]+$/) === null)
-      {
+      if (resourceGroupName.match(/^[-\w\._\(\)]+$/) === null) {
         throw new Error('"resourceGroupName" should satisfy the constraint - "Pattern": /^[-\w\._\(\)]+$/');
       }
     }
@@ -255,13 +248,13 @@ function _createOrUpdate(resourceGroupName, parameters, options, callback) {
   // Set Headers
   httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
   if (this.client.generateClientRequestId) {
-      httpRequest.headers['x-ms-client-request-id'] = uuid.v4();
+    httpRequest.headers['x-ms-client-request-id'] = uuid.v4();
   }
   if (this.client.acceptLanguage !== undefined && this.client.acceptLanguage !== null) {
     httpRequest.headers['accept-language'] = this.client.acceptLanguage;
   }
-  if(options) {
-    for(let headerName in options['customHeaders']) {
+  if (options) {
+    for (let headerName in options['customHeaders']) {
       if (options['customHeaders'].hasOwnProperty(headerName)) {
         httpRequest.headers[headerName] = options['customHeaders'][headerName];
       }
@@ -278,7 +271,7 @@ function _createOrUpdate(resourceGroupName, parameters, options, callback) {
     }
   } catch (error) {
     let serializationError = new Error(`Error "${error.message}" occurred in serializing the ` +
-        `payload - ${JSON.stringify(parameters, null, 2)}.`);
+      `payload - ${JSON.stringify(parameters, null, 2)}.`);
     return callback(serializationError);
   }
   httpRequest.body = requestContent;
@@ -291,8 +284,8 @@ function _createOrUpdate(resourceGroupName, parameters, options, callback) {
     if (statusCode !== 201 && statusCode !== 200) {
       let error = new Error(responseBody);
       error.statusCode = response.statusCode;
-      error.request = msRest.stripRequest(httpRequest);
-      error.response = msRest.stripResponse(response);
+      error.request = stripRequest(httpRequest);
+      error.response = stripResponse(response);
       if (responseBody === '') responseBody = null;
       let parsedErrorResponse;
       try {
@@ -308,7 +301,7 @@ function _createOrUpdate(resourceGroupName, parameters, options, callback) {
         }
       } catch (defaultError) {
         error.message = `Error "${defaultError.message}" occurred in deserializing the responseBody ` +
-                         `- "${responseBody}" for the default response.`;
+          `- "${responseBody}" for the default response.`;
         return callback(error);
       }
       return callback(error);
@@ -328,8 +321,8 @@ function _createOrUpdate(resourceGroupName, parameters, options, callback) {
         }
       } catch (error) {
         let deserializationError = new Error(`Error ${error} occurred in deserializing the responseBody - ${responseBody}`);
-        deserializationError.request = msRest.stripRequest(httpRequest);
-        deserializationError.response = msRest.stripResponse(response);
+        deserializationError.request = stripRequest(httpRequest);
+        deserializationError.response = stripResponse(response);
         return callback(deserializationError);
       }
     }
@@ -345,8 +338,8 @@ function _createOrUpdate(resourceGroupName, parameters, options, callback) {
         }
       } catch (error) {
         let deserializationError1 = new Error(`Error ${error} occurred in deserializing the responseBody - ${responseBody}`);
-        deserializationError1.request = msRest.stripRequest(httpRequest);
-        deserializationError1.response = msRest.stripResponse(response);
+        deserializationError1.request = stripRequest(httpRequest);
+        deserializationError1.response = stripResponse(response);
         return callback(deserializationError1);
       }
     }
@@ -384,9 +377,9 @@ function _createOrUpdate(resourceGroupName, parameters, options, callback) {
  *                      {stream} [response] - The HTTP Response stream if an error did not occur.
  */
 function _deleteMethod(resourceGroupName, options, callback) {
-   /* jshint validthis: true */
+  /* jshint validthis: true */
   let client = this.client;
-  if(!callback && typeof options === 'function') {
+  if (!callback && typeof options === 'function') {
     callback = options;
     options = null;
   }
@@ -446,9 +439,9 @@ function _deleteMethod(resourceGroupName, options, callback) {
  *                      {stream} [response] - The HTTP Response stream if an error did not occur.
  */
 function _get(resourceGroupName, options, callback) {
-   /* jshint validthis: true */
+  /* jshint validthis: true */
   let client = this.client;
-  if(!callback && typeof options === 'function') {
+  if (!callback && typeof options === 'function') {
     callback = options;
     options = null;
   }
@@ -461,16 +454,13 @@ function _get(resourceGroupName, options, callback) {
       throw new Error('resourceGroupName cannot be null or undefined and it must be of type string.');
     }
     if (resourceGroupName !== null && resourceGroupName !== undefined) {
-      if (resourceGroupName.length > 90)
-      {
+      if (resourceGroupName.length > 90) {
         throw new Error('"resourceGroupName" should satisfy the constraint - "MaxLength": 90');
       }
-      if (resourceGroupName.length < 1)
-      {
+      if (resourceGroupName.length < 1) {
         throw new Error('"resourceGroupName" should satisfy the constraint - "MinLength": 1');
       }
-      if (resourceGroupName.match(/^[-\w\._\(\)]+$/) === null)
-      {
+      if (resourceGroupName.match(/^[-\w\._\(\)]+$/) === null) {
         throw new Error('"resourceGroupName" should satisfy the constraint - "Pattern": /^[-\w\._\(\)]+$/');
       }
     }
@@ -506,13 +496,13 @@ function _get(resourceGroupName, options, callback) {
   // Set Headers
   httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
   if (this.client.generateClientRequestId) {
-      httpRequest.headers['x-ms-client-request-id'] = uuid.v4();
+    httpRequest.headers['x-ms-client-request-id'] = uuid.v4();
   }
   if (this.client.acceptLanguage !== undefined && this.client.acceptLanguage !== null) {
     httpRequest.headers['accept-language'] = this.client.acceptLanguage;
   }
-  if(options) {
-    for(let headerName in options['customHeaders']) {
+  if (options) {
+    for (let headerName in options['customHeaders']) {
       if (options['customHeaders'].hasOwnProperty(headerName)) {
         httpRequest.headers[headerName] = options['customHeaders'][headerName];
       }
@@ -528,8 +518,8 @@ function _get(resourceGroupName, options, callback) {
     if (statusCode !== 200) {
       let error = new Error(responseBody);
       error.statusCode = response.statusCode;
-      error.request = msRest.stripRequest(httpRequest);
-      error.response = msRest.stripResponse(response);
+      error.request = stripRequest(httpRequest);
+      error.response = stripResponse(response);
       if (responseBody === '') responseBody = null;
       let parsedErrorResponse;
       try {
@@ -545,7 +535,7 @@ function _get(resourceGroupName, options, callback) {
         }
       } catch (defaultError) {
         error.message = `Error "${defaultError.message}" occurred in deserializing the responseBody ` +
-                         `- "${responseBody}" for the default response.`;
+          `- "${responseBody}" for the default response.`;
         return callback(error);
       }
       return callback(error);
@@ -565,8 +555,8 @@ function _get(resourceGroupName, options, callback) {
         }
       } catch (error) {
         let deserializationError = new Error(`Error ${error} occurred in deserializing the responseBody - ${responseBody}`);
-        deserializationError.request = msRest.stripRequest(httpRequest);
-        deserializationError.response = msRest.stripResponse(response);
+        deserializationError.request = stripRequest(httpRequest);
+        deserializationError.response = stripResponse(response);
         return callback(deserializationError);
       }
     }
@@ -615,9 +605,9 @@ function _get(resourceGroupName, options, callback) {
  *                      {stream} [response] - The HTTP Response stream if an error did not occur.
  */
 function _update(resourceGroupName, parameters, options, callback) {
-   /* jshint validthis: true */
+  /* jshint validthis: true */
   let client = this.client;
-  if(!callback && typeof options === 'function') {
+  if (!callback && typeof options === 'function') {
     callback = options;
     options = null;
   }
@@ -630,16 +620,13 @@ function _update(resourceGroupName, parameters, options, callback) {
       throw new Error('resourceGroupName cannot be null or undefined and it must be of type string.');
     }
     if (resourceGroupName !== null && resourceGroupName !== undefined) {
-      if (resourceGroupName.length > 90)
-      {
+      if (resourceGroupName.length > 90) {
         throw new Error('"resourceGroupName" should satisfy the constraint - "MaxLength": 90');
       }
-      if (resourceGroupName.length < 1)
-      {
+      if (resourceGroupName.length < 1) {
         throw new Error('"resourceGroupName" should satisfy the constraint - "MinLength": 1');
       }
-      if (resourceGroupName.match(/^[-\w\._\(\)]+$/) === null)
-      {
+      if (resourceGroupName.match(/^[-\w\._\(\)]+$/) === null) {
         throw new Error('"resourceGroupName" should satisfy the constraint - "Pattern": /^[-\w\._\(\)]+$/');
       }
     }
@@ -678,13 +665,13 @@ function _update(resourceGroupName, parameters, options, callback) {
   // Set Headers
   httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
   if (this.client.generateClientRequestId) {
-      httpRequest.headers['x-ms-client-request-id'] = uuid.v4();
+    httpRequest.headers['x-ms-client-request-id'] = uuid.v4();
   }
   if (this.client.acceptLanguage !== undefined && this.client.acceptLanguage !== null) {
     httpRequest.headers['accept-language'] = this.client.acceptLanguage;
   }
-  if(options) {
-    for(let headerName in options['customHeaders']) {
+  if (options) {
+    for (let headerName in options['customHeaders']) {
       if (options['customHeaders'].hasOwnProperty(headerName)) {
         httpRequest.headers[headerName] = options['customHeaders'][headerName];
       }
@@ -701,7 +688,7 @@ function _update(resourceGroupName, parameters, options, callback) {
     }
   } catch (error) {
     let serializationError = new Error(`Error "${error.message}" occurred in serializing the ` +
-        `payload - ${JSON.stringify(parameters, null, 2)}.`);
+      `payload - ${JSON.stringify(parameters, null, 2)}.`);
     return callback(serializationError);
   }
   httpRequest.body = requestContent;
@@ -714,8 +701,8 @@ function _update(resourceGroupName, parameters, options, callback) {
     if (statusCode !== 200) {
       let error = new Error(responseBody);
       error.statusCode = response.statusCode;
-      error.request = msRest.stripRequest(httpRequest);
-      error.response = msRest.stripResponse(response);
+      error.request = stripRequest(httpRequest);
+      error.response = stripResponse(response);
       if (responseBody === '') responseBody = null;
       let parsedErrorResponse;
       try {
@@ -731,7 +718,7 @@ function _update(resourceGroupName, parameters, options, callback) {
         }
       } catch (defaultError) {
         error.message = `Error "${defaultError.message}" occurred in deserializing the responseBody ` +
-                         `- "${responseBody}" for the default response.`;
+          `- "${responseBody}" for the default response.`;
         return callback(error);
       }
       return callback(error);
@@ -751,8 +738,8 @@ function _update(resourceGroupName, parameters, options, callback) {
         }
       } catch (error) {
         let deserializationError = new Error(`Error ${error} occurred in deserializing the responseBody - ${responseBody}`);
-        deserializationError.request = msRest.stripRequest(httpRequest);
-        deserializationError.response = msRest.stripResponse(response);
+        deserializationError.request = stripRequest(httpRequest);
+        deserializationError.response = stripResponse(response);
         return callback(deserializationError);
       }
     }
@@ -797,9 +784,9 @@ function _update(resourceGroupName, parameters, options, callback) {
  *                      {stream} [response] - The HTTP Response stream if an error did not occur.
  */
 function _exportTemplate(resourceGroupName, parameters, options, callback) {
-   /* jshint validthis: true */
+  /* jshint validthis: true */
   let client = this.client;
-  if(!callback && typeof options === 'function') {
+  if (!callback && typeof options === 'function') {
     callback = options;
     options = null;
   }
@@ -812,16 +799,13 @@ function _exportTemplate(resourceGroupName, parameters, options, callback) {
       throw new Error('resourceGroupName cannot be null or undefined and it must be of type string.');
     }
     if (resourceGroupName !== null && resourceGroupName !== undefined) {
-      if (resourceGroupName.length > 90)
-      {
+      if (resourceGroupName.length > 90) {
         throw new Error('"resourceGroupName" should satisfy the constraint - "MaxLength": 90');
       }
-      if (resourceGroupName.length < 1)
-      {
+      if (resourceGroupName.length < 1) {
         throw new Error('"resourceGroupName" should satisfy the constraint - "MinLength": 1');
       }
-      if (resourceGroupName.match(/^[-\w\._\(\)]+$/) === null)
-      {
+      if (resourceGroupName.match(/^[-\w\._\(\)]+$/) === null) {
         throw new Error('"resourceGroupName" should satisfy the constraint - "Pattern": /^[-\w\._\(\)]+$/');
       }
     }
@@ -860,13 +844,13 @@ function _exportTemplate(resourceGroupName, parameters, options, callback) {
   // Set Headers
   httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
   if (this.client.generateClientRequestId) {
-      httpRequest.headers['x-ms-client-request-id'] = uuid.v4();
+    httpRequest.headers['x-ms-client-request-id'] = uuid.v4();
   }
   if (this.client.acceptLanguage !== undefined && this.client.acceptLanguage !== null) {
     httpRequest.headers['accept-language'] = this.client.acceptLanguage;
   }
-  if(options) {
-    for(let headerName in options['customHeaders']) {
+  if (options) {
+    for (let headerName in options['customHeaders']) {
       if (options['customHeaders'].hasOwnProperty(headerName)) {
         httpRequest.headers[headerName] = options['customHeaders'][headerName];
       }
@@ -883,7 +867,7 @@ function _exportTemplate(resourceGroupName, parameters, options, callback) {
     }
   } catch (error) {
     let serializationError = new Error(`Error "${error.message}" occurred in serializing the ` +
-        `payload - ${JSON.stringify(parameters, null, 2)}.`);
+      `payload - ${JSON.stringify(parameters, null, 2)}.`);
     return callback(serializationError);
   }
   httpRequest.body = requestContent;
@@ -896,8 +880,8 @@ function _exportTemplate(resourceGroupName, parameters, options, callback) {
     if (statusCode !== 200) {
       let error = new Error(responseBody);
       error.statusCode = response.statusCode;
-      error.request = msRest.stripRequest(httpRequest);
-      error.response = msRest.stripResponse(response);
+      error.request = stripRequest(httpRequest);
+      error.response = stripResponse(response);
       if (responseBody === '') responseBody = null;
       let parsedErrorResponse;
       try {
@@ -913,7 +897,7 @@ function _exportTemplate(resourceGroupName, parameters, options, callback) {
         }
       } catch (defaultError) {
         error.message = `Error "${defaultError.message}" occurred in deserializing the responseBody ` +
-                         `- "${responseBody}" for the default response.`;
+          `- "${responseBody}" for the default response.`;
         return callback(error);
       }
       return callback(error);
@@ -933,8 +917,8 @@ function _exportTemplate(resourceGroupName, parameters, options, callback) {
         }
       } catch (error) {
         let deserializationError = new Error(`Error ${error} occurred in deserializing the responseBody - ${responseBody}`);
-        deserializationError.request = msRest.stripRequest(httpRequest);
-        deserializationError.response = msRest.stripResponse(response);
+        deserializationError.request = stripRequest(httpRequest);
+        deserializationError.response = stripResponse(response);
         return callback(deserializationError);
       }
     }
@@ -971,9 +955,9 @@ function _exportTemplate(resourceGroupName, parameters, options, callback) {
  *                      {stream} [response] - The HTTP Response stream if an error did not occur.
  */
 function _list(options, callback) {
-   /* jshint validthis: true */
+  /* jshint validthis: true */
   let client = this.client;
-  if(!callback && typeof options === 'function') {
+  if (!callback && typeof options === 'function') {
     callback = options;
     options = null;
   }
@@ -1027,13 +1011,13 @@ function _list(options, callback) {
   // Set Headers
   httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
   if (this.client.generateClientRequestId) {
-      httpRequest.headers['x-ms-client-request-id'] = uuid.v4();
+    httpRequest.headers['x-ms-client-request-id'] = uuid.v4();
   }
   if (this.client.acceptLanguage !== undefined && this.client.acceptLanguage !== null) {
     httpRequest.headers['accept-language'] = this.client.acceptLanguage;
   }
-  if(options) {
-    for(let headerName in options['customHeaders']) {
+  if (options) {
+    for (let headerName in options['customHeaders']) {
       if (options['customHeaders'].hasOwnProperty(headerName)) {
         httpRequest.headers[headerName] = options['customHeaders'][headerName];
       }
@@ -1049,8 +1033,8 @@ function _list(options, callback) {
     if (statusCode !== 200) {
       let error = new Error(responseBody);
       error.statusCode = response.statusCode;
-      error.request = msRest.stripRequest(httpRequest);
-      error.response = msRest.stripResponse(response);
+      error.request = stripRequest(httpRequest);
+      error.response = stripResponse(response);
       if (responseBody === '') responseBody = null;
       let parsedErrorResponse;
       try {
@@ -1066,7 +1050,7 @@ function _list(options, callback) {
         }
       } catch (defaultError) {
         error.message = `Error "${defaultError.message}" occurred in deserializing the responseBody ` +
-                         `- "${responseBody}" for the default response.`;
+          `- "${responseBody}" for the default response.`;
         return callback(error);
       }
       return callback(error);
@@ -1086,8 +1070,8 @@ function _list(options, callback) {
         }
       } catch (error) {
         let deserializationError = new Error(`Error ${error} occurred in deserializing the responseBody - ${responseBody}`);
-        deserializationError.request = msRest.stripRequest(httpRequest);
-        deserializationError.response = msRest.stripResponse(response);
+        deserializationError.request = stripRequest(httpRequest);
+        deserializationError.response = stripResponse(response);
         return callback(deserializationError);
       }
     }
@@ -1124,9 +1108,9 @@ function _list(options, callback) {
  *                      {stream} [response] - The HTTP Response stream if an error did not occur.
  */
 function _beginDeleteMethod(resourceGroupName, options, callback) {
-   /* jshint validthis: true */
+  /* jshint validthis: true */
   let client = this.client;
-  if(!callback && typeof options === 'function') {
+  if (!callback && typeof options === 'function') {
     callback = options;
     options = null;
   }
@@ -1139,16 +1123,13 @@ function _beginDeleteMethod(resourceGroupName, options, callback) {
       throw new Error('resourceGroupName cannot be null or undefined and it must be of type string.');
     }
     if (resourceGroupName !== null && resourceGroupName !== undefined) {
-      if (resourceGroupName.length > 90)
-      {
+      if (resourceGroupName.length > 90) {
         throw new Error('"resourceGroupName" should satisfy the constraint - "MaxLength": 90');
       }
-      if (resourceGroupName.length < 1)
-      {
+      if (resourceGroupName.length < 1) {
         throw new Error('"resourceGroupName" should satisfy the constraint - "MinLength": 1');
       }
-      if (resourceGroupName.match(/^[-\w\._\(\)]+$/) === null)
-      {
+      if (resourceGroupName.match(/^[-\w\._\(\)]+$/) === null) {
         throw new Error('"resourceGroupName" should satisfy the constraint - "Pattern": /^[-\w\._\(\)]+$/');
       }
     }
@@ -1184,13 +1165,13 @@ function _beginDeleteMethod(resourceGroupName, options, callback) {
   // Set Headers
   httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
   if (this.client.generateClientRequestId) {
-      httpRequest.headers['x-ms-client-request-id'] = uuid.v4();
+    httpRequest.headers['x-ms-client-request-id'] = uuid.v4();
   }
   if (this.client.acceptLanguage !== undefined && this.client.acceptLanguage !== null) {
     httpRequest.headers['accept-language'] = this.client.acceptLanguage;
   }
-  if(options) {
-    for(let headerName in options['customHeaders']) {
+  if (options) {
+    for (let headerName in options['customHeaders']) {
       if (options['customHeaders'].hasOwnProperty(headerName)) {
         httpRequest.headers[headerName] = options['customHeaders'][headerName];
       }
@@ -1206,8 +1187,8 @@ function _beginDeleteMethod(resourceGroupName, options, callback) {
     if (statusCode !== 202 && statusCode !== 200) {
       let error = new Error(responseBody);
       error.statusCode = response.statusCode;
-      error.request = msRest.stripRequest(httpRequest);
-      error.response = msRest.stripResponse(response);
+      error.request = stripRequest(httpRequest);
+      error.response = stripResponse(response);
       if (responseBody === '') responseBody = null;
       let parsedErrorResponse;
       try {
@@ -1223,7 +1204,7 @@ function _beginDeleteMethod(resourceGroupName, options, callback) {
         }
       } catch (defaultError) {
         error.message = `Error "${defaultError.message}" occurred in deserializing the responseBody ` +
-                         `- "${responseBody}" for the default response.`;
+          `- "${responseBody}" for the default response.`;
         return callback(error);
       }
       return callback(error);
@@ -1262,9 +1243,9 @@ function _beginDeleteMethod(resourceGroupName, options, callback) {
  *                      {stream} [response] - The HTTP Response stream if an error did not occur.
  */
 function _listNext(nextPageLink, options, callback) {
-   /* jshint validthis: true */
+  /* jshint validthis: true */
   let client = this.client;
-  if(!callback && typeof options === 'function') {
+  if (!callback && typeof options === 'function') {
     callback = options;
     options = null;
   }
@@ -1295,13 +1276,13 @@ function _listNext(nextPageLink, options, callback) {
   // Set Headers
   httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
   if (this.client.generateClientRequestId) {
-      httpRequest.headers['x-ms-client-request-id'] = uuid.v4();
+    httpRequest.headers['x-ms-client-request-id'] = uuid.v4();
   }
   if (this.client.acceptLanguage !== undefined && this.client.acceptLanguage !== null) {
     httpRequest.headers['accept-language'] = this.client.acceptLanguage;
   }
-  if(options) {
-    for(let headerName in options['customHeaders']) {
+  if (options) {
+    for (let headerName in options['customHeaders']) {
       if (options['customHeaders'].hasOwnProperty(headerName)) {
         httpRequest.headers[headerName] = options['customHeaders'][headerName];
       }
@@ -1317,8 +1298,8 @@ function _listNext(nextPageLink, options, callback) {
     if (statusCode !== 200) {
       let error = new Error(responseBody);
       error.statusCode = response.statusCode;
-      error.request = msRest.stripRequest(httpRequest);
-      error.response = msRest.stripResponse(response);
+      error.request = stripRequest(httpRequest);
+      error.response = stripResponse(response);
       if (responseBody === '') responseBody = null;
       let parsedErrorResponse;
       try {
@@ -1334,7 +1315,7 @@ function _listNext(nextPageLink, options, callback) {
         }
       } catch (defaultError) {
         error.message = `Error "${defaultError.message}" occurred in deserializing the responseBody ` +
-                         `- "${responseBody}" for the default response.`;
+          `- "${responseBody}" for the default response.`;
         return callback(error);
       }
       return callback(error);
@@ -1354,8 +1335,8 @@ function _listNext(nextPageLink, options, callback) {
         }
       } catch (error) {
         let deserializationError = new Error(`Error ${error} occurred in deserializing the responseBody - ${responseBody}`);
-        deserializationError.request = msRest.stripRequest(httpRequest);
-        deserializationError.response = msRest.stripResponse(response);
+        deserializationError.request = stripRequest(httpRequest);
+        deserializationError.response = stripResponse(response);
         return callback(deserializationError);
       }
     }
