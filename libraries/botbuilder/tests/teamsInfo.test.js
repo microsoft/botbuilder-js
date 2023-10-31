@@ -1081,7 +1081,7 @@ describe('TeamsInfo', function () {
             try {
                 await TeamsInfo.sendMeetingNotification(context, notification, meetingId);
             } catch (e) {
-                assert.deepEqual(errorResponse, e.details);
+                assert.deepEqual(errorResponse, e.body);
                 isErrorThrown = true;
             }
 
@@ -1214,7 +1214,7 @@ describe('TeamsInfo', function () {
             try {
                 await TeamsInfo.sendMessageToListOfUsers(context, activity, tenantId, members);
             } catch (e) {
-                assert.deepEqual(errorResponse, e.errors[0].details);
+                assert.deepEqual(errorResponse, e.errors[0].body);
                 isErrorThrown = true;
             }
 
@@ -1307,7 +1307,7 @@ describe('TeamsInfo', function () {
             try {
                 await TeamsInfo.sendMessageToAllUsersInTenant(context, activity, tenantId);
             } catch (e) {
-                assert.deepEqual(errorResponse, e.errors[0].details);
+                assert.deepEqual(errorResponse, e.errors[0].body);
                 isErrorThrown = true;
             }
 
@@ -1395,7 +1395,7 @@ describe('TeamsInfo', function () {
             try {
                 await TeamsInfo.sendMessageToAllUsersInTeam(context, activity, tenantId, teamId);
             } catch (e) {
-                assert.deepEqual(errorResponse, e.errors[0].details);
+                assert.deepEqual(errorResponse, e.errors[0].body);
                 isErrorThrown = true;
             }
 
@@ -1502,7 +1502,7 @@ describe('TeamsInfo', function () {
             try {
                 await TeamsInfo.sendMessageToListOfChannels(context, activity, tenantId, members);
             } catch (e) {
-                assert.deepEqual(errorResponse, e.errors[0].details);
+                assert.deepEqual(errorResponse, e.errors[0].body);
                 isErrorThrown = true;
             }
 
@@ -1579,7 +1579,7 @@ describe('TeamsInfo', function () {
             try {
                 await TeamsInfo.getOperationState(context, operationId);
             } catch (e) {
-                assert.deepEqual(errorResponse, e.errors[0].details);
+                assert.deepEqual(errorResponse, e.errors[0].body);
                 isErrorThrown = true;
             }
 
@@ -1648,7 +1648,7 @@ describe('TeamsInfo', function () {
             try {
                 await TeamsInfo.getFailedEntries(context, operationId);
             } catch (e) {
-                assert.deepEqual(errorResponse, e.errors[0].details);
+                assert.deepEqual(errorResponse, e.errors[0].body);
                 isErrorThrown = true;
             }
 
@@ -1697,7 +1697,7 @@ describe('TeamsInfo', function () {
             try {
                 await TeamsInfo.cancelOperation(context, operationId);
             } catch (e) {
-                assert.deepEqual(errorResponse, e.errors[0].details);
+                assert.deepEqual(errorResponse, e.errors[0].body);
                 isErrorThrown = true;
             }
 
