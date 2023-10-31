@@ -85,7 +85,7 @@ export class SharePointActivityHandler extends ActivityHandler {
      *
      * @param _context - A strongly-typed context object for this turn
      * @param _aceRequest - The Ace invoke request value payload
-     * @returns A task module response for the request
+     * @returns A Card View Response for the request
      */
     protected async onSharePointTaskGetCardViewAsync(
         _context: TurnContext,
@@ -99,7 +99,7 @@ export class SharePointActivityHandler extends ActivityHandler {
      *
      * @param _context - A strongly-typed context object for this turn
      * @param _aceRequest - The Ace invoke request value payload
-     * @returns A task module response for the request
+     * @returns A Quick View Response for the request
      */
     protected async onSharePointTaskGetQuickViewAsync(
         _context: TurnContext,
@@ -113,7 +113,7 @@ export class SharePointActivityHandler extends ActivityHandler {
      *
      * @param _context - A strongly-typed context object for this turn
      * @param _aceRequest - The Ace invoke request value payload
-     * @returns A task module response for the request
+     * @returns A Property Pane Configuration Response for the request
      */
     protected async onSharePointTaskGetPropertyPaneConfigurationAsync(
         _context: TurnContext,
@@ -127,7 +127,7 @@ export class SharePointActivityHandler extends ActivityHandler {
      *
      * @param _context - A strongly-typed context object for this turn
      * @param _aceRequest - The Ace invoke request value payload
-     * @returns A task module response for the request
+     * @returns A Card view or no-op action response
      */
     protected async onSharePointTaskSetPropertyPaneConfigurationAsync(
         _context: TurnContext,
@@ -141,7 +141,7 @@ export class SharePointActivityHandler extends ActivityHandler {
      *
      * @param _context - A strongly-typed context object for this turn
      * @param _aceRequest - The Ace invoke request value payload
-     * @returns A task module response for the request
+     * @returns A handle action response
      */
     protected async onSharePointTaskHandleActionAsync(
         _context: TurnContext,
