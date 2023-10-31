@@ -69,4 +69,3 @@ export {
     RankerTypes,
     ServiceType,
 } from './qnamaker-interfaces';
-

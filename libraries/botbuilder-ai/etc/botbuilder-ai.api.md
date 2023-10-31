@@ -23,12 +23,12 @@ import { DialogTurnResult } from 'botbuilder-dialogs';
 import { EnumExpression } from 'adaptive-expressions';
 import { Expression } from 'adaptive-expressions';
 import { IntExpression } from 'adaptive-expressions';
-import * as msRest from '@azure/ms-rest-js';
 import { NumberExpression } from 'adaptive-expressions';
 import { ObjectExpression } from 'adaptive-expressions';
 import { Recognizer } from 'botbuilder-dialogs';
 import { RecognizerConfiguration } from 'botbuilder-dialogs';
 import { RecognizerResult } from 'botbuilder-core';
+import { RequestOptionsBase } from '@azure/core-http';
 import { ServiceCollection } from 'botbuilder-dialogs-adaptive-runtime-core';
 import { StringExpression } from 'adaptive-expressions';
 import { TemplateInterface } from 'botbuilder-dialogs';
@@ -290,7 +290,7 @@ export class LuisComponentRegistration extends ComponentRegistration {
     }
 
 // @public
-export interface LuisPredictionOptions extends msRest.RequestOptionsBase {
+export interface LuisPredictionOptions extends RequestOptionsBase {
     bingSpellCheckSubscriptionKey?: string;
     includeAllIntents?: boolean;
     includeInstanceData?: boolean;

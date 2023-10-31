@@ -7,17 +7,21 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-import { ServiceClient, ServiceClientCredentials, ServiceClientOptions, getDefaultUserAgentValue } from "@azure/core-http";
+import { ServiceClient, ServiceClientCredentials, ServiceClientOptions } from '@azure/core-http';
 
+/**
+ * Client for LUIS context
+ */
 export class LUISRuntimeClientContext extends ServiceClient {
     endpoint: string;
     credentials: ServiceClientCredentials;
 
     /**
      * Initializes a new instance of the LUISRuntimeClientContext class.
+     *
+     * @param credentials Subscription credentials which uniquely identify client subscription.
      * @param endpoint Supported Cognitive Services endpoints (protocol and hostname, for example:
      * https://westus.api.cognitive.microsoft.com).
-     * @param credentials Subscription credentials which uniquely identify client subscription.
      * @param [options] The parameter options
      */
     constructor(credentials: ServiceClientCredentials, endpoint: string, options?: ServiceClientOptions) {
@@ -32,14 +36,10 @@ export class LUISRuntimeClientContext extends ServiceClient {
             options = {};
         }
 
-        if (!options.userAgent) {
-            const defaultUserAgent = getDefaultUserAgentValue();
-        }
-
         super(credentials, options);
 
-        this.baseUri = "{Endpoint}/luis/v3.0-preview";
-        this.requestContentType = "application/json; charset=utf-8";
+        this.baseUri = '{Endpoint}/luis/v3.0-preview';
+        this.requestContentType = 'application/json; charset=utf-8';
         this.endpoint = endpoint;
         this.credentials = credentials;
     }

@@ -401,7 +401,7 @@ describe('LuisRecognizer', function () {
         assert(res.entities.Address[0].$instance.State[0].score);
         assert(
             res.entities.Address[0].$instance.State[0].score > 0 &&
-            res.entities.Address[0].$instance.State[0].score <= 1
+                res.entities.Address[0].$instance.State[0].score <= 1
         );
     });
 
@@ -500,7 +500,8 @@ describe('LuisRecognizer', function () {
         returnStatusCode(400);
 
         const context = new TestContext({ text: 'Hello world!' });
-        const errorResponse = "Response 400: The request's body or parameters are incorrect, meaning they are missing, malformed, or too large.";
+        const errorResponse =
+            "Response 400: The request's body or parameters are incorrect, meaning they are missing, malformed, or too large.";
         try {
             await recognizer.recognize(context);
         } catch (error) {
@@ -560,7 +561,8 @@ describe('LuisRecognizer', function () {
         returnStatusCode(414);
 
         const context = new TestContext({ text: 'Hello world!' });
-        const errorResponse = 'Response 414: The query is too long. Please reduce the query length to 500 or less characters.';
+        const errorResponse =
+            'Response 414: The query is too long. Please reduce the query length to 500 or less characters.';
         try {
             await recognizer.recognize(context);
         } catch (error) {
