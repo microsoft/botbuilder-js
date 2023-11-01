@@ -27,6 +27,7 @@
     }
   },
   "dependencies": {
+    "@azure/core-http": "^3.0.2",
     "@azure/identity": "^2.0.4",
     "@azure/msal-node": "^1.2.0",
     "axios": "^0.25.0",
