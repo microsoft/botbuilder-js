@@ -16,7 +16,7 @@ export interface BaseHandleActionResponse {
     /**
      * The type of the view in the handle action response.
      */
-    type: ViewResponseType;
+    responseType: ViewResponseType;
     /**
      * The render arguments.
      */
@@ -30,7 +30,7 @@ export interface CardViewHandleActionResponse extends BaseHandleActionResponse {
     /**
      * Card view.
      */
-    type: 'Card';
+    responseType: 'Card';
     /**
      * Card view render arguments.
      */
@@ -44,7 +44,7 @@ export interface QuickViewHandleActionResponse extends BaseHandleActionResponse 
     /**
      * Quick view.
      */
-    type: 'QuickView';
+    responseType: 'QuickView';
     /**
      * Quick view render arguments.
      */
@@ -58,7 +58,7 @@ export interface NoOpHandleActionResponse extends BaseHandleActionResponse {
     /**
      * No op.
      */
-    type: 'NoOp';
+    responseType: 'NoOp';
     /**
      * No op doesn't have render arguments.
      */
