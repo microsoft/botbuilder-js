@@ -7,9 +7,8 @@
  */
 
 import { ConfidentialClientApplication } from '@azure/msal-node';
-import { ServiceClientCredentials, WebResource } from "@azure/core-http";
-import {TokenCredentials} from "./tokenCredentials"
-import * as adal from 'adal-node';
+import { ServiceClientCredentials, WebResource } from '@azure/core-http';
+import { TokenCredentials } from './tokenCredentials';
 import { AuthenticationConstants } from './authenticationConstants';
 import { AuthenticatorResult } from './authenticatorResult';
 

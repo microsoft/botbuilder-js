@@ -9,8 +9,9 @@ import type { ServiceClientCredentialsFactory } from './serviceClientCredentials
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const packageInfo: Record<'name' | 'version', string> = require('../../package.json');
-export const USER_AGENT = `Microsoft-BotFramework/3.1 ${packageInfo.name}/${packageInfo.version
-    } ${getDefaultUserAgentValue()} `;
+export const USER_AGENT = `Microsoft-BotFramework/3.1 ${packageInfo.name}/${
+    packageInfo.version
+} ${getDefaultUserAgentValue()} `;
 
 /**
  * @internal

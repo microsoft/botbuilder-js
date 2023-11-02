@@ -3,7 +3,7 @@
  * Licensed under the MIT License.
  */
 
-import { CompositeMapper } from "@azure/core-http"
+import { CompositeMapper } from '@azure/core-http';
 
 export const ChannelInfo: CompositeMapper = {
     serializedName: 'ChannelInfo',
