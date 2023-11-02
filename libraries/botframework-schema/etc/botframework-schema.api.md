@@ -393,7 +393,7 @@ export interface BaseCardViewParameters {
 // @public
 export interface BaseHandleActionResponse {
     renderArguments?: CardViewResponse | QuickViewResponse;
-    type: ViewResponseType;
+    responseType: ViewResponseType;
 }
 
 // @public
@@ -558,7 +558,7 @@ export type CardViewFooterParameters = CardViewActionsFooterParameters | [CardTe
 // @public
 export interface CardViewHandleActionResponse extends BaseHandleActionResponse {
     renderArguments: CardViewResponse;
-    type: 'Card';
+    responseType: 'Card';
 }
 
 // @public
@@ -1480,7 +1480,7 @@ export interface MicrosoftPayMethodData {
 // @public
 export interface NoOpHandleActionResponse extends BaseHandleActionResponse {
     renderArguments?: undefined;
-    type: 'NoOp';
+    responseType: 'NoOp';
 }
 
 // @public
@@ -1963,7 +1963,7 @@ export interface QuickViewData {
 // @public
 export interface QuickViewHandleActionResponse extends BaseHandleActionResponse {
     renderArguments: QuickViewResponse;
-    type: 'QuickView';
+    responseType: 'QuickView';
 }
 
 // @public
