@@ -8,7 +8,7 @@ import { BotFrameworkClient } from '../skills';
 import { ConversationIdHttpHeaderName } from '../conversationConstants';
 import { ServiceClientCredentialsFactory } from './serviceClientCredentialsFactory';
 import { USER_AGENT } from './connectorFactoryImpl';
-import { WebResource } from '@azure/ms-rest-js';
+import { WebResource } from '@azure/core-http';
 import { ok } from 'assert';
 
 const botFrameworkClientFetchImpl: typeof fetch = async (input, init) => {

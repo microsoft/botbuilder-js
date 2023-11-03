@@ -3,7 +3,7 @@
  * Licensed under the MIT License.
  */
 
-import { ServiceClientCredentials } from '@azure/ms-rest-js';
+import { ServiceClientCredentials } from '@azure/core-http';
 import * as Models from './models';
 import * as Mappers from './models/mappers';
 import * as operations from './operations';

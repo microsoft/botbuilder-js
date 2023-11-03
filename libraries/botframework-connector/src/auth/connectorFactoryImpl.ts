@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { getDefaultUserAgentValue, RequestPolicyFactory, userAgentPolicy } from '@azure/ms-rest-js';
+import { getDefaultUserAgentValue, RequestPolicyFactory, userAgentPolicy } from '@azure/core-http';
 import { ConnectorClient } from '../connectorApi/connectorClient';
 import { ConnectorClientOptions } from '../connectorApi/models';
 import { ConnectorFactory } from './connectorFactory';

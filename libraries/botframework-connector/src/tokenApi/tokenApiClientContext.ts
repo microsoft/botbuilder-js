@@ -3,18 +3,18 @@
  * Licensed under the MIT License.
  */
 
-import * as msRest from "@azure/ms-rest-js";
+import { ServiceClient, ServiceClientCredentials, getDefaultUserAgentValue } from "@azure/core-http";
 import * as Models from "./models";
 
 const packageName = "botframework-Token";
 const packageVersion = "4.0.0";
 
-export class TokenApiClientContext extends msRest.ServiceClient {
-  credentials: msRest.ServiceClientCredentials;
+export class TokenApiClientContext extends ServiceClient {
+  credentials: ServiceClientCredentials;
 
   // Protects against JSON.stringify leaking secrets
   private toJSON(): unknown {
-      return { name: this.constructor.name };
+    return { name: this.constructor.name };
   }
 
   /**
@@ -22,7 +22,7 @@ export class TokenApiClientContext extends msRest.ServiceClient {
    * @param credentials Subscription credentials which uniquely identify client subscription.
    * @param [options] The parameter options
    */
-  constructor(credentials: msRest.ServiceClientCredentials, options?: Models.TokenApiClientOptions) {
+  constructor(credentials: ServiceClientCredentials, options?: Models.TokenApiClientOptions) {
     if (credentials === null || credentials === undefined) {
       throw new Error('\'credentials\' cannot be null.');
     }
@@ -30,7 +30,7 @@ export class TokenApiClientContext extends msRest.ServiceClient {
     if (!options) {
       options = {};
     }
-    const defaultUserAgent = msRest.getDefaultUserAgentValue();
+    const defaultUserAgent = getDefaultUserAgentValue();
     options.userAgent = `${packageName}/${packageVersion} ${defaultUserAgent} ${options.userAgent || ''}`;
 
     super(credentials, options);

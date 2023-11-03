@@ -6,8 +6,9 @@
  * Licensed under the MIT License.
  */
 
-import * as msrest from '@azure/ms-rest-js';
 import { ConfidentialClientApplication } from '@azure/msal-node';
+import { ServiceClientCredentials, WebResource } from '@azure/core-http';
+import { TokenCredentials } from './tokenCredentials';
 import { AuthenticationConstants } from './authenticationConstants';
 import { AuthenticatorResult } from './authenticatorResult';
 
@@ -15,7 +16,7 @@ import { AuthenticatorResult } from './authenticatorResult';
  * General AppCredentials auth implementation and cache.
  * Subclasses can implement refreshToken to acquire the token.
  */
-export abstract class AppCredentials implements msrest.ServiceClientCredentials {
+export abstract class AppCredentials implements ServiceClientCredentials {
     private static readonly cache: Map<string, AuthenticatorResult> = new Map<string, AuthenticatorResult>();
 
     appId: string;
@@ -148,9 +149,9 @@ export abstract class AppCredentials implements msrest.ServiceClientCredentials 
      * @param webResource The WebResource HTTP request.
      * @returns A Promise representing the asynchronous operation.
      */
-    async signRequest(webResource: msrest.WebResource): Promise<msrest.WebResource> {
+    async signRequest(webResource: WebResource): Promise<WebResource> {
         if (this.shouldSetToken()) {
-            return new msrest.TokenCredentials(await this.getToken()).signRequest(webResource);
+            return new TokenCredentials(await this.getToken()).signRequest(webResource);
         }
 
         return webResource;
