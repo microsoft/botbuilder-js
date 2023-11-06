@@ -35,7 +35,7 @@
     "murmurhash-js": "^1.0.0",
     "nock": "^11.9.1",
     "url-parse": "^1.5.9",
-    "zod": "~1.11.17"
+    "zod": "^3.0.0"
   },
   "devDependencies": {
     "botbuilder": "4.1.6",
