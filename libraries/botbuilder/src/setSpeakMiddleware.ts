@@ -11,20 +11,20 @@ const supportedChannels = new Set<string>([Channels.DirectlineSpeech, Channels.E
 function hasTag(tag: string, nodes: unknown[]): boolean {
     while (nodes.length) {
         const item = nodes.shift();
+        const zObject = z
+            .object({ tagName: z.string(), children: z.array(z.unknown()) })
+            .partial()
+            .nonstrict();
 
-        if (
-            z
-                .object({ tagName: z.string(), children: z.array(z.unknown()) })
-                .partial()
-                .nonstrict()
-                .check(item)
-        ) {
-            if (item.tagName === tag) {
+        if (zObject.safeParse(item).success) {
+            const itemParsed = zObject.parse(item);
+
+            if (itemParsed.tagName === tag) {
                 return true;
             }
 
-            if (item.children) {
-                nodes.push(...item.children);
+            if (itemParsed.children) {
+                nodes.push(...itemParsed.children);
             }
         }
     }
