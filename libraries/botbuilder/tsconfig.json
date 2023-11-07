@@ -3,8 +3,7 @@
   "compilerOptions": {
     "lib": ["es2015", "dom"],
     "outDir": "lib",
-    "rootDir": "src",
-    "skipLibCheck": true,
+    "rootDir": "src"
   },
   "include": [
     "src/**/*"
