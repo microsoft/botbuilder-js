@@ -379,7 +379,7 @@ export class BotFrameworkAdapter
     async continueConversation(
         reference: Partial<ConversationReference>,
         oAuthScope: string,
-        logic: (context: TurnContext) => Promise<void>
+        logic?: (context: TurnContext) => Promise<void>
     ): Promise<void>;
 
     /**
@@ -391,7 +391,7 @@ export class BotFrameworkAdapter
         maybeLogic?: (context: TurnContext) => Promise<void>
     ): Promise<void> {
         let audience: string;
-        if (LogicT.check(oAuthScopeOrlogic)) {
+        if (LogicT.safeParse(oAuthScopeOrlogic).success) {
             // Because the OAuthScope parameter was not provided, get the correct value via the channelService.
             // In this scenario, the ConnectorClient for the continued conversation can only communicate with
             // official channels, not with other bots.
@@ -402,7 +402,7 @@ export class BotFrameworkAdapter
             audience = z.string().parse(oAuthScopeOrlogic);
         }
 
-        const logic = LogicT.check(oAuthScopeOrlogic) ? oAuthScopeOrlogic : LogicT.parse(maybeLogic);
+        const logic = LogicT.safeParse(oAuthScopeOrlogic).success ? oAuthScopeOrlogic : LogicT.parse(maybeLogic);
 
         let credentials = this.credentials;
 
@@ -431,8 +431,9 @@ export class BotFrameworkAdapter
 
         context.turnState.set(this.OAuthScopeKey, audience);
         context.turnState.set(this.ConnectorClientKey, connectorClient);
-
-        await this.runMiddleware(context, logic);
+        
+        if(LogicT.safeParse(logic).success)
+            await this.runMiddleware(context, LogicT.parse(logic));
     }
 
     /**
@@ -511,9 +512,9 @@ export class BotFrameworkAdapter
             throw new Error('BotFrameworkAdapter.createConversation(): missing serviceUrl.');
         }
 
-        const parameters = LogicT.check(parametersOrLogic) ? {} : parametersOrLogic;
+        const parameters = LogicT.safeParse(parametersOrLogic).success ? {} : parametersOrLogic;
 
-        const logic = LogicT.check(parametersOrLogic) ? parametersOrLogic : LogicT.parse(maybeLogic);
+        const logic = LogicT.safeParse(parametersOrLogic).success ? parametersOrLogic : LogicT.parse(maybeLogic);
 
         // Create conversation parameters, taking care to provide defaults that can be
         // overridden by passed in parameters
@@ -525,6 +526,7 @@ export class BotFrameworkAdapter
                 isGroup: false,
                 activity: null,
                 channelData: null,
+                tenantId: null
             },
             parameters
         );
@@ -565,7 +567,8 @@ export class BotFrameworkAdapter
 
         // Create context and run middleware
         const context = this.createContext(request);
-        await this.runMiddleware(context, logic);
+        if(LogicT.safeParse(logic).success)
+            await this.runMiddleware(context, LogicT.parse(logic));
     }
 
     /**

@@ -114,10 +114,11 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
                                                 z
                                                     .object({ startIndex: z.number(), endIndex: z.number() })
                                                     .nonstrict()
-                                                    .check(childInstance)
+                                                    .safeParse(childInstance).success
                                             ) {
-                                                const start = childInstance.startIndex;
-                                                const end = childInstance.endIndex;
+                                                const parsedInstance = z.object({ startIndex: z.number(), endIndex: z.number() }).parse(childInstance);
+                                                const start = parsedInstance.startIndex;
+                                                const end = parsedInstance.endIndex;
                                                 externalEntities.push({
                                                     entityName: key,
                                                     startIndex: start,

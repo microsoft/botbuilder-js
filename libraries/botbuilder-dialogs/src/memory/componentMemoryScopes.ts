@@ -28,5 +28,5 @@ const componentMemoryScopes = z.custom<ComponentMemoryScopes>((val: any) => type
  * @returns {boolean} Type check result.
  */
 export function isComponentMemoryScopes(component: unknown): component is ComponentMemoryScopes {
-    return componentMemoryScopes.check(component);
+    return componentMemoryScopes.safeParse(component).success;
 }

@@ -179,7 +179,7 @@ describe('CloudAdapter', function () {
 
             assert.equal(StatusCodes.UNAUTHORIZED, res.statusCode);
             expect(consoleStub.calledWithMatch({ message: 'The token has expired' })).to.be.true;
-        });
+       });
 
         it('calls processActivityDirect with string authorization', async function () {
             const logic = async (context) => {
@@ -257,7 +257,7 @@ describe('CloudAdapter', function () {
     describe('connectNamedPipe', function () {
         it('throws for bad args', async function () {
             const includesParam = (param) => (err) => {
-                assert(err.message.includes(`at ${param}`), err.message);
+                assert(err.message.includes(`${param}`), err.message);
                 return true;
             };
 

@@ -17,14 +17,15 @@ function hasTag(tag: string, nodes: unknown[]): boolean {
                 .object({ tagName: z.string(), children: z.array(z.unknown()) })
                 .partial()
                 .nonstrict()
-                .check(item)
+                .safeParse(item).success
         ) {
-            if (item.tagName === tag) {
+            const parsedItem = z.object({ tagName: z.string(), children: z.array(z.unknown()) }).partial().parse(item);
+            if (parsedItem.tagName === tag) {
                 return true;
             }
 
-            if (item.children) {
-                nodes.push(...item.children);
+            if (parsedItem.children) {
+                nodes.push(...parsedItem.children);
             }
         }
     }

@@ -43,6 +43,6 @@
     "botbuilder-dialogs-adaptive-runtime": "4.1.6",
     "botbuilder-dialogs-adaptive-runtime-core": "4.1.6",
     "express": "^4.17.3",
-    "zod": "~1.11.17"
+    "zod": "~3.22.4"
   }
 }
