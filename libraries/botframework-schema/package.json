@@ -28,7 +28,8 @@
   },
   "dependencies": {
     "uuid": "^8.3.2",
-    "zod": "~1.11.17"
+    "zod": "~1.11.17",
+    "adaptivecards": "1.2.3"
   },
   "scripts": {
     "build": "tsc -b",
