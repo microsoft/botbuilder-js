@@ -80,7 +80,7 @@ describe('CloudAdapter', function () {
                 return this.configuration;
             }
 
-            set(_path, _val) {}
+            set(_path, _val) { }
         }
 
         const activity = { type: ActivityTypes.Invoke, value: 'invoke' };
@@ -179,7 +179,7 @@ describe('CloudAdapter', function () {
 
             assert.equal(StatusCodes.UNAUTHORIZED, res.statusCode);
             expect(consoleStub.calledWithMatch({ message: 'The token has expired' })).to.be.true;
-       });
+        });
 
         it('calls processActivityDirect with string authorization', async function () {
             const logic = async (context) => {
