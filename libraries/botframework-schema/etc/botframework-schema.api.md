@@ -1390,7 +1390,7 @@ export interface PagedMembersResult {
 }
 
 // @public @deprecated
-interface PaymentAddress_2 {
+export interface PaymentAddress {
     addressLine: string[];
     city: string;
     country: string;
@@ -1404,15 +1404,12 @@ interface PaymentAddress_2 {
     sortingCode: string;
 }
 
-export { PaymentAddress_2 as PaymentAddress }
-
 // @public @deprecated
 interface PaymentCurrencyAmount_2 {
     currency: string;
     currencySystem: string;
     value: string;
 }
-
 export { PaymentCurrencyAmount_2 as PaymentCurrencyAmount }
 
 // @public @deprecated
@@ -1420,7 +1417,7 @@ export interface PaymentDetails {
     displayItems: PaymentItem_2[];
     error: string;
     modifiers: PaymentDetailsModifier_2[];
-    shippingOptions: PaymentShippingOption_2[];
+    shippingOptions: PaymentShippingOption[];
     total: PaymentItem_2;
 }
 
@@ -1431,7 +1428,6 @@ interface PaymentDetailsModifier_2 {
     supportedMethods: string[];
     total: PaymentItem_2;
 }
-
 export { PaymentDetailsModifier_2 as PaymentDetailsModifier }
 
 // @public @deprecated
@@ -1440,7 +1436,6 @@ interface PaymentItem_2 {
     label: string;
     pending: boolean;
 }
-
 export { PaymentItem_2 as PaymentItem }
 
 // @public @deprecated
@@ -1448,11 +1443,10 @@ interface PaymentMethodData_2 {
     data: any;
     supportedMethods: string[];
 }
-
 export { PaymentMethodData_2 as PaymentMethodData }
 
 // @public @deprecated
-interface PaymentOptions_2 {
+export interface PaymentOptions {
     requestPayerEmail: boolean;
     requestPayerName: boolean;
     requestPayerPhone: boolean;
@@ -1460,17 +1454,14 @@ interface PaymentOptions_2 {
     shippingType: string;
 }
 
-export { PaymentOptions_2 as PaymentOptions }
-
 // @public @deprecated
 interface PaymentRequest_2 {
     details: PaymentDetails;
     expires: string;
     id: string;
     methodData: PaymentMethodData_2[];
-    options: PaymentOptions_2;
+    options: PaymentOptions;
 }
-
 export { PaymentRequest_2 as PaymentRequest }
 
 // @public @deprecated
@@ -1489,7 +1480,7 @@ export interface PaymentRequestCompleteResult {
 export interface PaymentRequestUpdate {
     details: PaymentDetails;
     id: string;
-    shippingAddress: PaymentAddress_2;
+    shippingAddress: PaymentAddress;
     shippingOption: string;
 }
 
@@ -1504,21 +1495,18 @@ interface PaymentResponse_2 {
     methodName: string;
     payerEmail: string;
     payerPhone: string;
-    shippingAddress: PaymentAddress_2;
+    shippingAddress: PaymentAddress;
     shippingOption: string;
 }
-
 export { PaymentResponse_2 as PaymentResponse }
 
 // @public @deprecated
-interface PaymentShippingOption_2 {
+export interface PaymentShippingOption {
     amount: PaymentCurrencyAmount_2;
     id: string;
     label: string;
     selected: boolean;
 }
-
-export { PaymentShippingOption_2 as PaymentShippingOption }
 
 // @public
 export interface Place {
@@ -2019,7 +2007,6 @@ export interface VideoCard {
     title: string;
     value: any;
 }
-
 
 // (No @packageDocumentation comment for this package)
 
