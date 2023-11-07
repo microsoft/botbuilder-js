@@ -191,7 +191,7 @@ export abstract class BotComponent {
     // (undocumented)
     abstract configureServices(services: ServiceCollection, configuration: Configuration): void;
     // (undocumented)
-    static z: z.ZodType<BotComponent, z.ZodTypeDef>;
+    static z: z.ZodType<BotComponent, z.ZodTypeDef, BotComponent>;
 }
 
 export { BotFrameworkClient }
