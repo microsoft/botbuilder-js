@@ -4,6 +4,7 @@
 
 ```ts
 
+import { AceRequest } from 'botbuilder-core';
 import { Activity } from 'botbuilder-core';
 import { ActivityHandler } from 'botbuilder-core';
 import { ActivityHandlerBase } from 'botbuilder-core';
@@ -22,6 +23,7 @@ import { BotFrameworkClient } from 'botbuilder-core';
 import { BotFrameworkSkill } from 'botbuilder-core';
 import { BotState } from 'botbuilder-core';
 import { CancelOperationResponse } from 'botframework-connector';
+import { CardViewResponse } from 'botbuilder-core';
 import { ChannelAccount } from 'botbuilder-core';
 import { ChannelInfo } from 'botbuilder-core';
 import { ClaimsIdentity } from 'botframework-connector';
@@ -39,6 +41,8 @@ import { ConversationState } from 'botbuilder-core';
 import { CoreAppCredentials } from 'botbuilder-core';
 import { ExtendedUserTokenProvider } from 'botbuilder-core';
 import { FileConsentCardResponse } from 'botbuilder-core';
+import { GetPropertyPaneConfigurationResponse } from 'botbuilder-core';
+import { HandleActionResponse } from 'botbuilder-core';
 import { HttpClient } from '@azure/core-http';
 import { HttpOperationResponse } from '@azure/core-http';
 import { ICredentialProvider } from 'botframework-connector';
@@ -63,9 +67,11 @@ import { O365ConnectorCardActionQuery } from 'botbuilder-core';
 import { OnBehalfOf } from 'botbuilder-core';
 import { PagedMembersResult } from 'botbuilder-core';
 import { PagedResult } from 'botbuilder-core';
+import { QuickViewResponse } from 'botbuilder-core';
 import { ReadReceiptInfo } from 'botframework-connector';
 import { RequestHandler } from 'botframework-streaming';
 import { ResourceResponse } from 'botbuilder-core';
+import { SetPropertyPaneConfigurationResponse } from 'botbuilder-core';
 import { SigninStateVerificationQuery } from 'botbuilder-core';
 import { SignInUrlResponse } from 'botframework-connector';
 import { SimpleCredentialProvider } from 'botframework-connector';
@@ -337,6 +343,16 @@ export class SetSpeakMiddleware implements Middleware {
     constructor(voiceName: string | null, fallbackToTextForSpeak: boolean);
     onTurn(turnContext: TurnContext, next: () => Promise<void>): Promise<void>;
     }
+
+// @public
+export class SharePointActivityHandler extends ActivityHandler {
+    protected onInvokeActivity(context: TurnContext): Promise<InvokeResponse>;
+    protected onSharePointTaskGetCardViewAsync(_context: TurnContext, _aceRequest: AceRequest): Promise<CardViewResponse>;
+    protected onSharePointTaskGetPropertyPaneConfigurationAsync(_context: TurnContext, _aceRequest: AceRequest): Promise<GetPropertyPaneConfigurationResponse>;
+    protected onSharePointTaskGetQuickViewAsync(_context: TurnContext, _aceRequest: AceRequest): Promise<QuickViewResponse>;
+    protected onSharePointTaskHandleActionAsync(_context: TurnContext, _aceRequest: AceRequest): Promise<HandleActionResponse>;
+    protected onSharePointTaskSetPropertyPaneConfigurationAsync(_context: TurnContext, _aceRequest: AceRequest): Promise<SetPropertyPaneConfigurationResponse>;
+}
 
 // @public @deprecated (undocumented)
 export class SkillHandler extends ChannelServiceHandler {

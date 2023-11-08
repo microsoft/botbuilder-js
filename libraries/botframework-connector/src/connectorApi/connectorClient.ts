@@ -5,7 +5,7 @@
 
 import * as Mappers from './models/mappers';
 import * as Models from './models';
-import { ServiceClientCredentials } from "@azure/core-http"
+import { ServiceClientCredentials } from '@azure/core-http';
 import * as operations from './operations';
 import { ConnectorClientContext } from './connectorClientContext';
 
