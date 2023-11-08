@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { Sentiment } from './sentiment';
+import { Sentiment } from './luisModels';
 import { HttpResponse, RequestOptionsBase } from '@azure/core-http';
 
 /**
