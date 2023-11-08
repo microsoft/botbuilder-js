@@ -128,7 +128,7 @@ describe('CloudAdapter', function () {
             mock.verify();
         });
 
-        it.skip('throws exception on expired token', async function () {
+        it('throws exception on expired token', async function () {
             const consoleStub = sandbox.stub(console, 'error');
 
             // Expired token with removed AppID
