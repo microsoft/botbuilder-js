@@ -11,20 +11,19 @@ const supportedChannels = new Set<string>([Channels.DirectlineSpeech, Channels.E
 function hasTag(tag: string, nodes: unknown[]): boolean {
     while (nodes.length) {
         const item = nodes.shift();
-        const zObject = z
+        const itemParsed = z
             .object({ tagName: z.string(), children: z.array(z.unknown()) })
             .partial()
-            .nonstrict();
+            .nonstrict()
+            .safeParse(item);
 
-        if (zObject.safeParse(item).success) {
-            const itemParsed = zObject.parse(item);
-
-            if (itemParsed.tagName === tag) {
+        if (itemParsed.success) {
+            if (itemParsed.data.tagName === tag) {
                 return true;
             }
 
-            if (itemParsed.children) {
-                nodes.push(...itemParsed.children);
+            if (itemParsed.data.children) {
+                nodes.push(...itemParsed.data.children);
             }
         }
     }
@@ -43,7 +42,7 @@ export class SetSpeakMiddleware implements Middleware {
      * @param voiceName The SSML voice name attribute value.
      * @param fallbackToTextForSpeak true if an empty Activity.Speak is populated with Activity.Text.
      */
-    constructor(private readonly voiceName: string | null, private readonly fallbackToTextForSpeak: boolean) {}
+    constructor(private readonly voiceName: string | null, private readonly fallbackToTextForSpeak: boolean) { }
 
     /**
      * Processes an incoming activity.
@@ -74,9 +73,8 @@ export class SetSpeakMiddleware implements Middleware {
                                 activity.speak = `<voice name='${this.voiceName}'>${activity.speak}</voice>`;
                             }
 
-                            activity.speak = `<speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' xml:lang='${
-                                activity.locale ?? 'en-US'
-                            }'>${activity.speak}</speak>`;
+                            activity.speak = `<speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' xml:lang='${activity.locale ?? 'en-US'
+                                }'>${activity.speak}</speak>`;
                         }
                     }
                 })
