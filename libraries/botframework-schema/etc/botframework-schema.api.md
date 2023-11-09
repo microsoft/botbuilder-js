@@ -4,6 +4,28 @@
 
 ```ts
 
+import { AdaptiveCard } from 'adaptivecards';
+
+// @public
+export type AceCardSize = 'Medium' | 'Large';
+
+// @public
+export interface AceData {
+    cardSize: AceCardSize;
+    dataVersion: string;
+    description: string;
+    iconProperty: string;
+    id: string;
+    properties: any;
+    title: string;
+}
+
+// @public
+export interface AceRequest {
+    data?: any;
+    properties?: any;
+}
+
 // @public
 export type Action = 'accept' | 'decline';
 
@@ -358,6 +380,23 @@ export interface AudioCard {
 }
 
 // @public
+export interface BaseCardComponent {
+    componentName: CardComponentName;
+    id?: string;
+}
+
+// @public
+export interface BaseCardViewParameters {
+    cardBar: [CardBarComponent];
+}
+
+// @public
+export interface BaseHandleActionResponse {
+    renderArguments?: CardViewResponse | QuickViewResponse;
+    responseType: ViewResponseType;
+}
+
+// @public
 export interface BasicCard {
     buttons: CardAction[];
     images: CardImage[];
@@ -365,6 +404,42 @@ export interface BasicCard {
     tap: CardAction;
     text: string;
     title: string;
+}
+
+// @public
+export function BasicCardView(cardBar: CardBarComponent, header: CardTextComponent, footer?: CardViewFooterParameters): TextCardViewParameters;
+
+// @public
+export interface BatchFailedEntriesResponse {
+    continuationToken: string;
+    failedEntryResponses: BatchFailedEntry[];
+}
+
+// @public
+export interface BatchFailedEntry {
+    error: string;
+    id: string;
+}
+
+// @public
+export interface BatchOperationRequest {
+    activity: Activity;
+    members?: TeamsMember[];
+    teamId?: string;
+    tenantId: string;
+}
+
+// @public
+export interface BatchOperationResponse {
+    operationId: string;
+}
+
+// @public
+export interface BatchOperationStateResponse {
+    retryAfter?: Date;
+    state: string;
+    statusMap: Record<number, number>;
+    totalEntriesCount: number;
 }
 
 // @public
@@ -408,10 +483,93 @@ export interface CardAction {
 }
 
 // @public
+export interface CardBarComponent extends BaseCardComponent {
+    componentName: 'cardBar';
+    // Warning: (ae-forgotten-export) The symbol "CardImage_2" needs to be exported by the entry point index.d.ts
+    icon?: CardImage_2;
+    title?: string;
+}
+
+// @public
+export interface CardButtonBase {
+    // Warning: (ae-forgotten-export) The symbol "CardAction_2" needs to be exported by the entry point index.d.ts
+    action: CardAction_2;
+    id?: string;
+}
+
+// @public
+export interface CardButtonComponent extends BaseCardComponent, CardButtonBase {
+    componentName: 'cardButton';
+    style?: 'default' | 'positive';
+    title: string;
+}
+
+// @public
+export type CardComponentName = 'text' | 'cardButton' | 'cardBar' | 'textInput' | 'searchBox' | 'searchFooter';
+
+// @public
 export interface CardImage {
     alt?: string;
     tap?: CardAction;
     url: string;
+}
+
+// @public
+export interface CardSearchBoxComponent extends BaseCardComponent {
+    button: ICardSearchBoxButton;
+    componentName: 'searchBox';
+    defaultValue?: string;
+    placeholder?: string;
+}
+
+// @public
+export interface CardSearchFooterComponent extends BaseCardComponent {
+    componentName: 'searchFooter';
+    imageInitials?: string;
+    imageUrl?: string;
+    onSelection?: CardAction_2;
+    text: string;
+    title: string;
+}
+
+// @public
+export interface CardTextComponent extends BaseCardComponent {
+    componentName: 'text';
+    text: string;
+}
+
+// @public
+export interface CardTextInputComponent extends BaseCardComponent {
+    ariaLabel?: string;
+    button?: ICardTextInputIconButton | ICardTextInputTitleButton;
+    componentName: 'textInput';
+    defaultValue?: string;
+    iconAfter?: CardImage_2;
+    iconBefore?: CardImage_2;
+    placeholder?: string;
+}
+
+// @public
+export type CardViewActionsFooterParameters = [CardButtonComponent] | [CardButtonComponent, CardButtonComponent] | undefined;
+
+// @public
+export type CardViewFooterParameters = CardViewActionsFooterParameters | [CardTextInputComponent];
+
+// @public
+export interface CardViewHandleActionResponse extends BaseHandleActionResponse {
+    renderArguments: CardViewResponse;
+    responseType: 'Card';
+}
+
+// @public
+export type CardViewParameters = TextCardViewParameters | TextInputCardViewParameters | SearchCardViewParameters | SignInCardViewParameters;
+
+// @public
+export interface CardViewResponse {
+    aceData: AceData;
+    cardViewParameters: CardViewParameters;
+    onCardSelection?: OnCardSelectionAction;
+    viewId: string;
 }
 
 // @public
@@ -509,6 +667,12 @@ export interface ConfigTaskResponse extends ConfigResponse<TaskModuleResponse> {
 }
 
 // @public
+export interface ConfirmationDialog {
+    message: string;
+    title: string;
+}
+
+// @public
 export enum ContactRelationUpdateActionTypes {
     // (undocumented)
     Add = "add",
@@ -593,6 +757,13 @@ export enum DeliveryModes {
 }
 
 // @public
+export enum DropDownOptionType {
+    Divider = 1,
+    Header = 2,
+    Normal = 0
+}
+
+// @public
 export enum EndOfConversationCodes {
     // (undocumented)
     BotIssuedInvalidMessage = "botIssuedInvalidMessage",
@@ -627,14 +798,51 @@ export interface ErrorResponse {
 }
 
 // @public
+export interface ExecuteCardAction {
+    parameters: ExecuteCardParameters;
+    type: 'Execute';
+    verb?: string;
+}
+
+// @public
+export interface ExecuteCardParameters {
+    [key: string]: unknown;
+}
+
+// @public
 export interface ExpectedReplies {
     activities: Activity[];
+}
+
+// @public
+export interface ExternalLinkActionParameters {
+    isTeamsDeepLink?: boolean;
+    target: string;
+}
+
+// @public
+export interface ExternalLinkCardAction {
+    parameters: ExternalLinkActionParameters;
+    type: 'ExternalLink';
 }
 
 // @public
 export interface Fact {
     key: string;
     value: string;
+}
+
+// @public
+export enum FieldType {
+    CheckBox = 2,
+    ChoiceGroup = 10,
+    Dropdown = 6,
+    HorizontalRule = 12,
+    Label = 7,
+    Link = 13,
+    Slider = 8,
+    TextField = 3,
+    Toggle = 5
 }
 
 // @public
@@ -680,6 +888,12 @@ export interface FileUploadInfo {
 }
 
 // @public
+export interface FocusParameters {
+    ariaLive?: 'polite' | 'assertive' | 'off';
+    focusTarget?: string;
+}
+
+// @public
 export interface GeoCoordinates {
     elevation: number;
     latitude: number;
@@ -687,6 +901,28 @@ export interface GeoCoordinates {
     name: string;
     type: string;
 }
+
+// @public
+export interface GetLocationActionParameters {
+    chooseLocationOnMap?: boolean;
+}
+
+// @public
+export interface GetLocationCardAction {
+    parameters?: GetLocationActionParameters;
+    type: 'VivaAction.GetLocation';
+}
+
+// @public
+export interface GetPropertyPaneConfigurationResponse {
+    currentPage: number;
+    loadingIndicatorDelayTime: number;
+    pages: PropertyPanePage[];
+    showLoadingIndicator: boolean;
+}
+
+// @public
+export type HandleActionResponse = CardViewHandleActionResponse | QuickViewHandleActionResponse | NoOpHandleActionResponse;
 
 // @public
 export interface HeroCard {
@@ -712,6 +948,20 @@ export interface IActivity {
     serviceUrl: string;
     timestamp?: Date;
     type: ActivityTypes | string;
+}
+
+// @public
+export interface ICardSearchBoxButton extends CardButtonBase {
+}
+
+// @public
+export interface ICardTextInputIconButton extends CardButtonBase {
+    icon: CardImage_2;
+}
+
+// @public
+export interface ICardTextInputTitleButton extends CardButtonBase {
+    title: string;
 }
 
 // @public
@@ -768,6 +1018,9 @@ export interface IInvokeActivity extends IActivity {
     relatesTo?: ConversationReference;
     value?: any;
 }
+
+// @public
+export function ImageCardView(cardBar: CardBarComponent, header: CardTextComponent, image: CardImage_2, footer?: CardViewFooterParameters): TextCardViewParameters;
 
 // @public (undocumented)
 export interface IMessageActivity extends IActivity {
@@ -918,6 +1171,15 @@ export interface ITraceActivity extends IActivity {
 export type ITypingActivity = IActivity;
 
 // @public
+interface Location_2 {
+    accuracy?: number;
+    latitude: number;
+    longitude: number;
+    timestamp?: number;
+}
+export { Location_2 as Location }
+
+// @public
 export interface MediaCard {
     aspect: string;
     autoloop: boolean;
@@ -936,6 +1198,16 @@ export interface MediaCard {
 // @public
 export interface MediaEventValue {
     cardValue: any;
+}
+
+// @public
+export enum MediaType {
+    // (undocumented)
+    Audio = 4,
+    // (undocumented)
+    Document = 8,
+    // (undocumented)
+    Image = 1
 }
 
 // @public
@@ -1001,6 +1273,11 @@ export interface MeetingNotificationRecipientFailureInfo {
 // @public
 export interface MeetingNotificationResponse {
     recipientsFailureInfo?: MeetingNotificationRecipientFailureInfo[];
+}
+
+// @public
+export interface MeetingParticipantsEventDetails {
+    members: TeamsMeetingMember[];
 }
 
 // @public
@@ -1200,6 +1477,12 @@ export interface MicrosoftPayMethodData {
 }
 
 // @public
+export interface NoOpHandleActionResponse extends BaseHandleActionResponse {
+    renderArguments?: undefined;
+    responseType: 'NoOp';
+}
+
+// @public
 export interface NotificationInfo {
     alert?: boolean;
     alertInMeeting?: boolean;
@@ -1343,6 +1626,9 @@ export interface OnBehalfOf {
 }
 
 // @public
+export type OnCardSelectionAction = QuickViewCardAction | ExternalLinkCardAction | SelectMediaCardAction | GetLocationCardAction | ShowLocationCardAction | ExecuteCardAction | undefined;
+
+// @public
 export type Os = 'default' | 'iOS' | 'android' | 'windows';
 
 // @public
@@ -1352,7 +1638,7 @@ export interface PagedMembersResult {
 }
 
 // @public @deprecated
-interface PaymentAddress_2 {
+export interface PaymentAddress {
     addressLine: string[];
     city: string;
     country: string;
@@ -1366,15 +1652,12 @@ interface PaymentAddress_2 {
     sortingCode: string;
 }
 
-export { PaymentAddress_2 as PaymentAddress }
-
 // @public @deprecated
 interface PaymentCurrencyAmount_2 {
     currency: string;
     currencySystem: string;
     value: string;
 }
-
 export { PaymentCurrencyAmount_2 as PaymentCurrencyAmount }
 
 // @public @deprecated
@@ -1382,7 +1665,7 @@ export interface PaymentDetails {
     displayItems: PaymentItem_2[];
     error: string;
     modifiers: PaymentDetailsModifier_2[];
-    shippingOptions: PaymentShippingOption_2[];
+    shippingOptions: PaymentShippingOption[];
     total: PaymentItem_2;
 }
 
@@ -1393,7 +1676,6 @@ interface PaymentDetailsModifier_2 {
     supportedMethods: string[];
     total: PaymentItem_2;
 }
-
 export { PaymentDetailsModifier_2 as PaymentDetailsModifier }
 
 // @public @deprecated
@@ -1402,7 +1684,6 @@ interface PaymentItem_2 {
     label: string;
     pending: boolean;
 }
-
 export { PaymentItem_2 as PaymentItem }
 
 // @public @deprecated
@@ -1410,11 +1691,10 @@ interface PaymentMethodData_2 {
     data: any;
     supportedMethods: string[];
 }
-
 export { PaymentMethodData_2 as PaymentMethodData }
 
 // @public @deprecated
-interface PaymentOptions_2 {
+export interface PaymentOptions {
     requestPayerEmail: boolean;
     requestPayerName: boolean;
     requestPayerPhone: boolean;
@@ -1422,17 +1702,14 @@ interface PaymentOptions_2 {
     shippingType: string;
 }
 
-export { PaymentOptions_2 as PaymentOptions }
-
 // @public @deprecated
 interface PaymentRequest_2 {
     details: PaymentDetails;
     expires: string;
     id: string;
     methodData: PaymentMethodData_2[];
-    options: PaymentOptions_2;
+    options: PaymentOptions;
 }
-
 export { PaymentRequest_2 as PaymentRequest }
 
 // @public @deprecated
@@ -1451,7 +1728,7 @@ export interface PaymentRequestCompleteResult {
 export interface PaymentRequestUpdate {
     details: PaymentDetails;
     id: string;
-    shippingAddress: PaymentAddress_2;
+    shippingAddress: PaymentAddress;
     shippingOption: string;
 }
 
@@ -1466,21 +1743,18 @@ interface PaymentResponse_2 {
     methodName: string;
     payerEmail: string;
     payerPhone: string;
-    shippingAddress: PaymentAddress_2;
+    shippingAddress: PaymentAddress;
     shippingOption: string;
 }
-
 export { PaymentResponse_2 as PaymentResponse }
 
 // @public @deprecated
-interface PaymentShippingOption_2 {
+export interface PaymentShippingOption {
     amount: PaymentCurrencyAmount_2;
     id: string;
     label: string;
     selected: boolean;
 }
-
-export { PaymentShippingOption_2 as PaymentShippingOption }
 
 // @public
 export interface Place {
@@ -1489,6 +1763,209 @@ export interface Place {
     hasMap: any;
     name: string;
     type: string;
+}
+
+// @public
+export enum PopupWindowPosition {
+    Center = 0,
+    LeftBottom = 4,
+    LeftTop = 2,
+    RightBottom = 3,
+    RightTop = 1
+}
+
+// @public
+export function PrimaryTextCardView(cardBar: CardBarComponent, header: CardTextComponent, body: CardTextComponent, footer?: CardViewFooterParameters): TextCardViewParameters;
+
+// @public
+export interface PropertyPaneCheckboxProperties extends PropertyPaneFieldProperties {
+    checked?: boolean;
+    disabled?: boolean;
+    text?: string;
+}
+
+// @public
+export interface PropertyPaneChoiceGroupIconProperties {
+    officeFabricIconFontName?: string;
+}
+
+// @public
+export interface PropertyPaneChoiceGroupImageSize {
+    height: number;
+    width: number;
+}
+
+// @public
+export interface PropertyPaneChoiceGroupOption {
+    ariaLabel?: string;
+    checked?: boolean;
+    disabled?: boolean;
+    iconProps?: PropertyPaneChoiceGroupIconProperties;
+    imageSize?: PropertyPaneChoiceGroupImageSize;
+    imageSrc?: string;
+    key: string;
+    text: string;
+}
+
+// @public
+export interface PropertyPaneChoiceGroupProperties extends PropertyPaneFieldProperties {
+    label?: string;
+    options: PropertyPaneChoiceGroupOption[];
+}
+
+// @public
+export interface PropertyPaneDropDownOption {
+    index?: number;
+    key: string;
+    text: string;
+    type?: DropDownOptionType;
+}
+
+// @public
+export interface PropertyPaneDropDownProperties extends PropertyPaneFieldProperties {
+    ariaLabel?: string;
+    ariaPositionInSet?: number;
+    ariaSetSize?: number;
+    disabled?: boolean;
+    errorMessage?: string;
+    label: string;
+    options?: PropertyPaneDropDownOption[];
+    selectedKey?: string;
+}
+
+// @public
+export interface PropertyPaneFieldProperties {
+}
+
+// @public
+export interface PropertyPaneGroup extends PropertyPaneGroupOrConditionalGroup {
+    groupFields: PropertyPaneGroupField[];
+    groupName?: string;
+    isCollapsed?: boolean;
+    isGroupNameHidden?: boolean;
+}
+
+// @public
+export interface PropertyPaneGroupField {
+    properties: PropertyPaneFieldProperties;
+    shouldFocus?: boolean;
+    targetProperty: string;
+    type: FieldType;
+}
+
+// @public
+export interface PropertyPaneGroupOrConditionalGroup {
+}
+
+// @public
+export interface PropertyPaneLabelProperties extends PropertyPaneFieldProperties {
+    required?: boolean;
+    text: string;
+}
+
+// @public
+export interface PropertyPaneLinkPopupWindowProperties {
+    height: number;
+    positionWindowPosition: PopupWindowPosition;
+    title: string;
+    width: number;
+}
+
+// @public
+export interface PropertyPaneLinkProperties extends PropertyPaneFieldProperties {
+    ariaLabel?: string;
+    disabled?: boolean;
+    href: string;
+    popupWindowProps?: PropertyPaneLinkPopupWindowProperties;
+    target?: string;
+    text: string;
+}
+
+// @public
+export interface PropertyPanePage {
+    displayGroupsAsAccordion?: boolean;
+    groups: PropertyPaneGroupOrConditionalGroup[];
+    header?: PropertyPanePageHeader;
+}
+
+// @public
+export interface PropertyPanePageHeader {
+    description: string;
+}
+
+// @public
+export interface PropertyPaneSliderProperties extends PropertyPaneFieldProperties {
+    ariaLabel?: string;
+    disabled?: boolean;
+    label?: string;
+    max: number;
+    min: number;
+    showValue?: boolean;
+    step?: number;
+    value?: string;
+}
+
+// @public
+export interface PropertyPaneTextFieldProperties extends PropertyPaneFieldProperties {
+    ariaLabel?: string;
+    description?: string;
+    disabled?: boolean;
+    errorMessage?: string;
+    label?: string;
+    logName?: string;
+    maxLength?: number;
+    multiline?: boolean;
+    placeholder?: string;
+    resizable?: boolean;
+    rows?: number;
+    underlined?: boolean;
+    value?: string;
+}
+
+// @public
+export interface PropertyPaneToggleProperties extends PropertyPaneFieldProperties {
+    ariaLabel?: string;
+    checked?: boolean;
+    disabled?: boolean;
+    key?: string;
+    label?: string;
+    offAriaLabel?: string;
+    offText?: string;
+    onAriaLabel?: string;
+    onText?: string;
+}
+
+// @public
+export interface QuickViewCardAction {
+    parameters: QuickViewParameters;
+    type: 'QuickView';
+}
+
+// @public (undocumented)
+export interface QuickViewData {
+    // (undocumented)
+    [key: string]: unknown;
+}
+
+// @public
+export interface QuickViewHandleActionResponse extends BaseHandleActionResponse {
+    renderArguments: QuickViewResponse;
+    responseType: 'QuickView';
+}
+
+// @public
+export interface QuickViewParameters {
+    view: string;
+}
+
+// @public
+export interface QuickViewResponse {
+    data: QuickViewData;
+    externalLink: ExternalLinkActionParameters;
+    focusParameters: FocusParameters;
+    template: AdaptiveCard;
+    title: string;
+    viewId: string;
 }
 
 // @public
@@ -1533,6 +2010,17 @@ export enum RoleTypes {
 }
 
 // @public
+export function SearchCardView(cardBar: CardBarComponent, header: CardTextComponent, body: CardSearchBoxComponent, footer: CardSearchFooterComponent): SearchCardViewParameters;
+
+// @public
+export interface SearchCardViewParameters extends BaseCardViewParameters {
+    body: [CardSearchBoxComponent];
+    cardViewType: 'search';
+    footer?: [CardSearchFooterComponent];
+    header: [CardTextComponent];
+}
+
+// @public
 export interface SearchInvokeOptions {
     skip: number;
     top: number;
@@ -1548,6 +2036,20 @@ export interface SearchInvokeValue {
     kind: string;
     queryOptions: SearchInvokeOptions;
     queryText: string;
+}
+
+// @public
+export interface SelectMediaActionParameters {
+    allowMultipleCapture?: boolean;
+    maxSizePerFile?: number;
+    mediaType: MediaType;
+    supportedFileFormats?: string[];
+}
+
+// @public
+export interface SelectMediaCardAction {
+    parameters: SelectMediaActionParameters;
+    type: 'VivaAction.SelectMedia';
 }
 
 // @public
@@ -1569,10 +2071,35 @@ export enum SemanticActionStateTypes {
     Start = "start"
 }
 
+// @public (undocumented)
+export type SetPropertyPaneConfigurationResponse = CardViewHandleActionResponse | NoOpHandleActionResponse;
+
+// @public
+export interface ShowLocationActionParameters {
+    locationCoordinates?: Location_2;
+}
+
+// @public
+export interface ShowLocationCardAction {
+    parameters?: ShowLocationActionParameters;
+    type: 'VivaAction.ShowLocation';
+}
+
 // @public
 export interface SigninCard {
     buttons: CardAction[];
     text?: string;
+}
+
+// @public
+export function SignInCardView(cardBar: CardBarComponent, header: CardTextComponent, body: CardTextComponent, footer: CardButtonComponent): SignInCardViewParameters;
+
+// @public
+export interface SignInCardViewParameters extends BaseCardViewParameters {
+    body: [CardTextComponent] | undefined;
+    cardViewType: 'signIn';
+    footer?: [CardButtonComponent];
+    header: [CardTextComponent];
 }
 
 // @public
@@ -1624,6 +2151,18 @@ export enum StatusCodes {
 
 // @public
 export type Style = 'compact' | 'expanded';
+
+// @public
+export interface SubmitCardAction {
+    confirmationDialog?: ConfirmationDialog;
+    parameters: SubmitCardParameters;
+    type: 'Submit';
+}
+
+// @public
+export interface SubmitCardParameters {
+    [key: string]: unknown;
+}
 
 // @public
 export interface SuggestedActions {
@@ -1806,11 +2345,22 @@ export interface TeamsMeetingInfo {
 }
 
 // @public
+export interface TeamsMeetingMember {
+    meeting: UserMeetingDetails;
+    user: TeamsChannelAccount;
+}
+
+// @public
 export interface TeamsMeetingParticipant {
     conversation?: ConversationAccount;
     meeting?: Meeting;
     user?: TeamsChannelAccount;
 }
+
+// @public
+export type TeamsMember = {
+    id: string;
+};
 
 // @public (undocumented)
 export interface TeamsPagedMembersResult {
@@ -1821,6 +2371,15 @@ export interface TeamsPagedMembersResult {
 // @public
 export interface TenantInfo {
     id?: string;
+}
+
+// @public
+export interface TextCardViewParameters extends BaseCardViewParameters {
+    body: [CardTextComponent] | undefined;
+    cardViewType: 'text';
+    footer?: CardViewFooterParameters;
+    header: [CardTextComponent];
+    image?: CardImage_2;
 }
 
 // @public
@@ -1837,6 +2396,18 @@ export enum TextFormatTypes {
 export interface TextHighlight {
     occurrence: number;
     text: string;
+}
+
+// @public
+export function TextInputCardView(cardBar: CardBarComponent, header: CardTextComponent, body: CardTextInputComponent, footer?: CardViewActionsFooterParameters): TextInputCardViewParameters;
+
+// @public
+export interface TextInputCardViewParameters extends BaseCardViewParameters {
+    body: [CardTextInputComponent];
+    cardViewType: 'textInput';
+    footer?: CardViewActionsFooterParameters;
+    header: [CardTextComponent];
+    image?: CardImage_2;
 }
 
 // @public
@@ -1950,6 +2521,12 @@ export type Type3 = MessagingExtensionResultType;
 export type UserIdentityType = 'aadUser' | 'onPremiseAadUser' | 'anonymousGuest' | 'federatedUser';
 
 // @public
+export interface UserMeetingDetails {
+    inMeeting: boolean;
+    role: string;
+}
+
+// @public
 export interface VideoCard {
     aspect: string;
     autoloop: boolean;
@@ -1965,6 +2542,8 @@ export interface VideoCard {
     value: any;
 }
 
+// @public
+export type ViewResponseType = 'Card' | 'QuickView' | 'NoOp';
 
 // (No @packageDocumentation comment for this package)
 

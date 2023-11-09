@@ -29,5 +29,5 @@ const componentPathResolvers = z.custom<ComponentPathResolvers>(
  * @returns {boolean} Type check result.
  */
 export function isComponentPathResolvers(component: unknown): component is ComponentPathResolvers {
-    return componentPathResolvers.check(component);
+    return componentPathResolvers.safeParse(component).success;
 }

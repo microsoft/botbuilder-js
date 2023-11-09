@@ -154,7 +154,7 @@ export class BotFrameworkAdapter extends BotAdapter implements BotFrameworkHttpA
     updateActivity(context: TurnContext, activity: Partial<Activity>): Promise<ResourceResponse | void>;
     useNamedPipe(logic: (context: TurnContext) => Promise<any>, pipeName?: string, retryCount?: number, onListen?: () => void): Promise<void>;
     useWebSocket(req: WebRequest, socket: INodeSocket, head: INodeBuffer, logic: (context: TurnContext) => Promise<any>): Promise<void>;
-    }
+}
 
 // @public @deprecated (undocumented)
 export interface BotFrameworkAdapterSettings {
@@ -193,7 +193,7 @@ export class ChannelServiceHandler extends ChannelServiceHandlerBase {
     protected authenticate(authHeader: string): Promise<ClaimsIdentity>;
     // (undocumented)
     protected readonly channelService: string;
-    }
+}
 
 // @public
 export abstract class ChannelServiceHandlerBase {
@@ -266,7 +266,7 @@ export class FileTranscriptStore implements TranscriptStore {
     getTranscriptActivities(channelId: string, conversationId: string, continuationToken?: string, startDate?: Date): Promise<PagedResult<Activity>>;
     listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<TranscriptInfo>>;
     logActivity(activity: Activity): Promise<void>;
-    }
+}
 
 // @public
 export class HandoffEventNames {
@@ -285,7 +285,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
     protected outbound(turnContext: TurnContext, traceActivities: Partial<Activity>[]): Promise<any>;
     processCommand(turnContext: TurnContext): Promise<any>;
     protected traceState(turnContext: TurnContext): Promise<any>;
-    }
+}
 
 // @public @deprecated
 export class InspectionState extends BotState {
@@ -302,7 +302,6 @@ interface Request_2<Body extends Record<string, unknown> = Record<string, unknow
     // (undocumented)
     method?: string;
 }
-
 export { Request_2 as Request }
 
 // @public (undocumented)
@@ -318,7 +317,6 @@ interface Response_2 {
     // (undocumented)
     status(code: number): unknown;
 }
-
 export { Response_2 as Response }
 
 // @public (undocumented)
@@ -328,7 +326,7 @@ export type RouteHandler = (request: WebRequest, response: WebResponse) => void;
 export class SetSpeakMiddleware implements Middleware {
     constructor(voiceName: string | null, fallbackToTextForSpeak: boolean);
     onTurn(turnContext: TurnContext, next: () => Promise<void>): Promise<void>;
-    }
+}
 
 // @public @deprecated (undocumented)
 export class SkillHandler extends ChannelServiceHandler {
@@ -359,7 +357,7 @@ export class StatusCodeError extends Error {
 export class StreamingHttpClient implements HttpClient {
     constructor(server: IStreamingTransportServer);
     sendRequest(httpRequest: WebResource): Promise<HttpOperationResponse>;
-    }
+}
 
 // @public
 export class TeamsActivityHandler extends ActivityHandler {
@@ -478,12 +476,12 @@ export function teamsNotifyUser(activity: Partial<Activity>, alertInMeeting?: bo
 export class TeamsSSOTokenExchangeMiddleware implements Middleware {
     constructor(storage: Storage_2, oAuthConnectionName: string);
     onTurn(context: TurnContext, next: () => Promise<void>): Promise<void>;
-    }
+}
 
 // @public
 export class TokenResolver {
     static checkForOAuthCards(adapter: BotFrameworkAdapter, context: TurnContext, activity: Activity, log?: string[]): void;
-    }
+}
 
 // @public
 export interface WebRequest {

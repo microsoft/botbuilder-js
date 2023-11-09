@@ -63,8 +63,8 @@ export interface AnswerSpanResponse {
     text: string;
 }
 
-// Warning: (ae-forgotten-export) The symbol "QnAMakerClient" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "QnAMakerTelemetryClient" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "QnAMakerClient_2" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "QnAMakerTelemetryClient_2" needs to be exported by the entry point index.d.ts
 //
 // @public
 export class CustomQuestionAnswering implements QnAMakerClient_2, QnAMakerTelemetryClient_2 {
@@ -94,7 +94,7 @@ export class CustomQuestionAnswering implements QnAMakerClient_2, QnAMakerTeleme
         [key: string]: number;
     }): Promise<void>;
     get telemetryClient(): BotTelemetryClient;
-    }
+}
 
 // @public
 export interface DateTimeSpec {
@@ -228,7 +228,7 @@ export class LuisAdaptiveRecognizer extends Recognizer implements LuisAdaptiveRe
     // (undocumented)
     static $kind: string;
     applicationId: StringExpression;
-    // Warning: (ae-forgotten-export) The symbol "DynamicList" needs to be exported by the entry point index.d.ts
+    // Warning: (ae-forgotten-export) The symbol "DynamicList_2" needs to be exported by the entry point index.d.ts
     dynamicLists: ArrayExpression<DynamicList_2>;
     endpoint: StringExpression;
     endpointKey: StringExpression;
@@ -287,7 +287,7 @@ export class LuisBotComponent extends BotComponent {
 export class LuisComponentRegistration extends ComponentRegistration {
     constructor();
     getDeclarativeTypes(_resourceExplorer: unknown): ComponentDeclarativeTypes[];
-    }
+}
 
 // @public
 export interface LuisPredictionOptions extends msRest.RequestOptionsBase {
@@ -327,7 +327,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
     }>;
     get telemetryClient(): BotTelemetryClient;
     static topIntent(results?: RecognizerResult, defaultIntent?: string, minScore?: number): string;
-    }
+}
 
 // @public (undocumented)
 export interface LuisRecognizerOptions {
@@ -467,7 +467,7 @@ export class QnAMaker implements QnAMakerClient, QnAMakerTelemetryClient {
         [key: string]: number;
     }): Promise<void>;
     get telemetryClient(): BotTelemetryClient;
-    }
+}
 
 // @public (undocumented)
 export const QNAMAKER_TRACE_LABEL = "QnAMaker Trace";
@@ -499,7 +499,7 @@ export const QnAMakerClientKey: unique symbol;
 export class QnAMakerComponentRegistration extends ComponentRegistration {
     constructor();
     getDeclarativeTypes(_resourceExplorer: unknown): ComponentDeclarativeTypes[];
-    }
+}
 
 // Warning: (ae-forgotten-export) The symbol "QnAMakerDialogConfiguration" needs to be exported by the entry point index.d.ts
 //
@@ -741,7 +741,6 @@ export function validateExternalEntity(entity: ExternalEntity): void;
 
 // @public
 export function validateListElement(element: ListElement): void;
-
 
 // (No @packageDocumentation comment for this package)
 
