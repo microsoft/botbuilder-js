@@ -153,6 +153,8 @@ async function innerRun(
 
     if (result.status === DialogTurnStatus.complete || result.status === DialogTurnStatus.cancelled) {
         if (shouldSendEndOfConversationToParent(context, result)) {
+            console.log(`SendEndOfConversationToParent, skillConversationId=${context.activity.conversation.id}`);
+
             // Send End of conversation at the end.
             const code =
                 result.status == DialogTurnStatus.complete

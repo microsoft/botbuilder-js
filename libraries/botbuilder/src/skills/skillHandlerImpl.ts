@@ -32,6 +32,7 @@ export class SkillHandlerImpl {
         conversationId: string,
         activity: Activity
     ): Promise<ResourceResponse> {
+        console.log(`SkillHandlerImpl.onSendToConversation, conversationId=${conversationId}`);
         return this.processActivity(claimsIdentity, conversationId, null, activity);
     }
 
@@ -41,6 +42,7 @@ export class SkillHandlerImpl {
         activityId: string,
         activity: Activity
     ): Promise<ResourceResponse> {
+        console.log(`SkillHandlerImpl.onReplyToActivity, conversationId=${conversationId}`);
         return this.processActivity(claimsIdentity, conversationId, activityId, activity);
     }
 
@@ -51,6 +53,8 @@ export class SkillHandlerImpl {
         activity: Activity
     ): Promise<ResourceResponse> {
         let resourceResponse: ResourceResponse | void;
+
+        console.log(`SkillHandlerImpl.onUpdateActivity, conversationId=${conversationId}`);
 
         await this.continueConversation(claimsIdentity, conversationId, async (context, ref) => {
             const newActivity = TurnContext.applyConversationReference(activity, ref.conversationReference);
@@ -73,6 +77,8 @@ export class SkillHandlerImpl {
     }
 
     private async getSkillConversationReference(conversationId: string): Promise<SkillConversationReference> {
+        console.log(`SkillHandlerImpl.getSkillConversationReference, skillConversationId=${conversationId}`);
+
         let skillConversationReference: SkillConversationReference;
 
         try {
@@ -106,6 +112,8 @@ export class SkillHandlerImpl {
         replyToActivityId: string,
         activity: Activity
     ): Promise<ResourceResponse> {
+        console.log(`SkillHandlerImpl.processActivity START, conversationId=${conversationId}`);
+
         let resourceResponse: ResourceResponse;
 
         await this.continueConversation(claimsIdentity, conversationId, async (context, ref) => {
@@ -147,6 +155,8 @@ export class SkillHandlerImpl {
         if (!resourceResponse) {
             resourceResponse = { id: uuid() };
         }
+
+        console.log(`SkillHandlerImpl.processActivity END, conversationId=${conversationId}`);
 
         return resourceResponse;
     }

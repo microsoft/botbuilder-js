@@ -90,6 +90,8 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
         const skillConversationId = await this.createSkillConversationId(dc.context, dc.context.activity);
         dc.activeDialog.state[this.SkillConversationIdStateKey] = skillConversationId;
 
+        console.log(`SkillDialog.beginDialog, skillConversationId=${skillConversationId}`);
+
         // Send the activity to the skill.
         const eocActivity = await this.sendToSkill(dc.context, skillActivity, skillConversationId);
         if (eocActivity) {
@@ -286,6 +288,9 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
                     eocActivity = activityFromSkill;
 
                     // The conversation has ended, so cleanup the conversation id.
+                    console.log(
+                        `SkillHandlerImpl.sendToSkill, deleteConversationReference skillConversationId=${skillConversationId}`
+                    );
                     await this.dialogOptions.conversationIdFactory.deleteConversationReference(skillConversationId);
                 } else if (
                     !sentInvokeResponses &&

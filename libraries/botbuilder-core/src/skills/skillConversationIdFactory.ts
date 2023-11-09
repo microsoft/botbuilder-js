@@ -19,6 +19,10 @@ export class SkillConversationIdFactory extends SkillConversationIdFactoryBase {
 
         const skillConversationId = uuid();
 
+        console.log(
+            `SkillConversationIdFactory.createSkillConversationIdWithOptions, skillConversationId=${skillConversationId}`
+        );
+
         const skillConversationReference: SkillConversationReference = {
             conversationReference: conversationReference as ConversationReference,
             oAuthScope: options.fromBotOAuthScope,
@@ -44,6 +48,10 @@ export class SkillConversationIdFactory extends SkillConversationIdFactoryBase {
     }
 
     deleteConversationReference(skillConversationId: string): Promise<void> {
+        console.log(
+            `SkillConversationIdFactory.deleteConversationReference, skillConversationId=${skillConversationId}`
+        );
+
         return this.storage.delete([skillConversationId]);
     }
 }
