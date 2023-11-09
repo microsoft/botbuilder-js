@@ -504,8 +504,9 @@ describe('QnAMakerDialog', function () {
             await rejects(
                 adapter.send('QnaMaker_TopNAnswer.json').startTest(),
                 (thrown) =>
-                    thrown.message.includes('invalid_type at message') &&
-                    thrown.message.includes('Expected object, received number')
+                    thrown.message.includes('invalid_type') &&
+                    thrown.message.includes('"expected": "object"') &&
+                    thrown.message.includes('"received": "number"')
             );
         });
 
@@ -544,7 +545,7 @@ describe('QnAMakerDialog', function () {
 
             await rejects(
                 adapter.send('QnaMaker_TopNAnswer.json').startTest(),
-                (thrown) => thrown.message.includes('invalid_type at message') && thrown.message.includes('Required')
+                (thrown) => thrown.message.includes('invalid_type') && thrown.message.includes('Required')
             );
 
             sandbox.verify();
@@ -586,7 +587,7 @@ describe('QnAMakerDialog', function () {
 
             await rejects(
                 adapter.send('QnaMaker_TopNAnswer.json').startTest(),
-                (thrown) => thrown.message.includes('invalid_type at message') && thrown.message.includes('Required')
+                (thrown) => thrown.message.includes('invalid_type') && thrown.message.includes('Required')
             );
 
             sandbox.verify();

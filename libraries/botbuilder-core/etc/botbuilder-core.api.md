@@ -52,7 +52,7 @@ import * as z from 'zod';
 // @public
 export class ActivityFactory {
     static fromObject(lgResult: any): Partial<Activity>;
-    }
+}
 
 // @public
 export class ActivityHandler extends ActivityHandlerBase {
@@ -191,7 +191,7 @@ export abstract class BotComponent {
     // (undocumented)
     abstract configureServices(services: ServiceCollection, configuration: Configuration): void;
     // (undocumented)
-    static z: z.ZodType<BotComponent, z.ZodTypeDef>;
+    static z: z.ZodType<BotComponent, z.ZodTypeDef, BotComponent>;
 }
 
 export { BotFrameworkClient }
@@ -342,7 +342,7 @@ export abstract class CloudAdapterBase extends BotAdapter {
 export class ComponentRegistration {
     static add(componentRegistration: ComponentRegistration): void;
     static get components(): ComponentRegistration[];
-    }
+}
 
 // @public
 export class ConfigurationBotFrameworkAuthentication extends BotFrameworkAuthentication {
@@ -353,7 +353,7 @@ export class ConfigurationBotFrameworkAuthentication extends BotFrameworkAuthent
     createBotFrameworkClient(): BotFrameworkClient;
     createConnectorFactory(claimsIdentity: ClaimsIdentity): ConnectorFactory;
     createUserTokenClient(claimsIdentity: ClaimsIdentity): Promise<UserTokenClient>;
-    }
+}
 
 // Warning: (ae-forgotten-export) The symbol "TypedOptions" needs to be exported by the entry point index.d.ts
 //
@@ -385,7 +385,7 @@ export class ConsoleTranscriptLogger implements TranscriptLogger {
 export class ConversationState extends BotState {
     constructor(storage: Storage_2, namespace?: string);
     getStorageKey(context: TurnContext): string | undefined;
-    }
+}
 
 // @public
 export interface CoreAppCredentials {
@@ -436,7 +436,7 @@ export const INVOKE_RESPONSE_KEY: unique symbol;
 export class InvokeException<T = unknown> extends Error {
     constructor(status: StatusCodes, response?: T);
     createInvokeResponse(): InvokeResponse;
-    }
+}
 
 export { InvokeResponse }
 
@@ -473,7 +473,7 @@ export class MemoryTranscriptStore implements TranscriptStore {
     getTranscriptActivities(channelId: string, conversationId: string, continuationToken?: string, startDate?: Date): Promise<PagedResult<Activity>>;
     listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<TranscriptInfo>>;
     logActivity(activity: Activity): void | Promise<void>;
-    }
+}
 
 // @public
 export class MessageFactory {
@@ -528,7 +528,7 @@ export interface PagedResult<T> {
 export class PrivateConversationState extends BotState {
     constructor(storage: Storage_2, namespace?: string);
     getStorageKey(context: TurnContext): string | undefined;
-    }
+}
 
 // @public
 export interface PropertyManager {
@@ -577,7 +577,7 @@ export enum Severity {
 export class ShowTypingMiddleware implements Middleware {
     constructor(delay?: number, period?: number);
     onTurn(context: TurnContext, next: () => Promise<void>): Promise<void>;
-    }
+}
 
 // @public
 export class SkillConversationIdFactory extends SkillConversationIdFactoryBase {
@@ -585,7 +585,7 @@ export class SkillConversationIdFactory extends SkillConversationIdFactoryBase {
     createSkillConversationIdWithOptions(options: SkillConversationIdFactoryOptions): Promise<string>;
     deleteConversationReference(skillConversationId: string): Promise<void>;
     getSkillConversationReference(skillConversationId: string): Promise<SkillConversationReference>;
-    }
+}
 
 // @public
 export abstract class SkillConversationIdFactoryBase {
@@ -638,7 +638,6 @@ interface Storage_2 {
     read(keys: string[]): Promise<StoreItems>;
     write(changes: StoreItems): Promise<void>;
 }
-
 export { Storage_2 as Storage }
 
 // @public
@@ -730,7 +729,7 @@ export class TelemetryLoggerMiddleware implements Middleware {
     onTurn(context: TurnContext, next: () => Promise<void>): Promise<void>;
     protected onUpdateActivity(activity: Activity): Promise<void>;
     get telemetryClient(): BotTelemetryClient;
-    }
+}
 
 // @public (undocumented)
 export interface TelemetryPageView {
@@ -805,7 +804,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
     testActivities(activities: Partial<Activity>[], description?: string, timeout?: number): TestFlow;
     throwOnExchangeRequest(connectionName: string, channelId: string, userId: string, exchangeableItem: string): void;
     updateActivity(context: TurnContext, activity: Partial<Activity>): Promise<ResourceResponse | void>;
-    }
+}
 
 // @public
 export class TestFlow {
@@ -856,7 +855,7 @@ export interface TranscriptLogger {
 export class TranscriptLoggerMiddleware implements Middleware {
     constructor(logger: TranscriptLogger);
     onTurn(context: TurnContext, next: () => Promise<void>): Promise<void>;
-    }
+}
 
 // @public
 export interface TranscriptStore extends TranscriptLogger {
@@ -918,7 +917,7 @@ export function useBotState(botAdapter: BotAdapter, ...botStates: BotState[]): B
 export class UserState extends BotState {
     constructor(storage: Storage_2, namespace?: string);
     getStorageKey(context: TurnContext): string | undefined;
-    }
+}
 
 // @public
 export const verifyStateOperationName = "signin/verifyState";
