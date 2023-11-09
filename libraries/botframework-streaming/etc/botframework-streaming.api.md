@@ -4,6 +4,8 @@
 
 ```ts
 
+/// <reference types="node" />
+
 import { Duplex } from 'stream';
 import { DuplexOptions } from 'stream';
 import * as WebSocket_2 from 'ws';
@@ -21,7 +23,7 @@ export class ContentStream {
     get length(): number;
     readAsJson<T>(): Promise<T>;
     readAsString(): Promise<string>;
-    }
+}
 
 // @public
 export class HttpContent {
@@ -31,7 +33,7 @@ export class HttpContent {
     //
     // (undocumented)
     headers: IHttpContentHeaders;
-    }
+}
 
 // @public
 export interface INodeBuffer extends Uint8Array {
@@ -260,7 +262,7 @@ export interface INodeSocket {
     once(event: string | symbol, listener: (...args: any[]) => void): this;
     // (undocumented)
     pause(): this;
-    // Warning: (ae-forgotten-export) The symbol "WritableStream" needs to be exported by the entry point index.d.ts
+    // Warning: (ae-forgotten-export) The symbol "WritableStream_2" needs to be exported by the entry point index.d.ts
     //
     // (undocumented)
     pipe<T extends WritableStream_2>(destination: T, options?: {
@@ -430,7 +432,7 @@ export class NamedPipeClient implements IStreamingTransportClient {
     connect(): Promise<void>;
     disconnect(): void;
     send(request: StreamingRequest): Promise<IReceiveResponse>;
-    }
+}
 
 // @public
 export class NamedPipeServer implements IStreamingTransportServer {
@@ -454,7 +456,7 @@ export class NodeWebSocket implements ISocket {
     write(buffer: INodeBuffer): void;
     // (undocumented)
     protected wsServer: WebSocket_2.Server;
-    }
+}
 
 // @public
 export class NodeWebSocketFactory extends NodeWebSocketFactoryBase {
@@ -515,7 +517,7 @@ export class WebSocketClient implements IStreamingTransportClient {
     connect(): Promise<void>;
     disconnect(): void;
     send(request: StreamingRequest): Promise<IReceiveResponse>;
-    }
+}
 
 // @public
 export class WebSocketServer implements IStreamingTransportServer {
@@ -524,8 +526,7 @@ export class WebSocketServer implements IStreamingTransportServer {
     get isConnected(): boolean;
     send(request: StreamingRequest): Promise<IReceiveResponse>;
     start(): Promise<string>;
-    }
-
+}
 
 // (No @packageDocumentation comment for this package)
 

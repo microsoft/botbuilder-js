@@ -185,7 +185,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
     get schema(): object;
     selector: TriggerSelector;
     triggers: OnCondition[];
-    }
+}
 
 // @public (undocumented)
 export interface AdaptiveDialogConfiguration extends DialogConfiguration {
@@ -538,7 +538,7 @@ export class ChoiceOptionsSet implements ChoiceFactoryOptions, TemplateInterface
     inlineOrMore?: string;
     // (undocumented)
     inlineSeparator?: string;
-    }
+}
 
 // @public (undocumented)
 export enum ChoiceOutputFormat {
@@ -552,7 +552,7 @@ export enum ChoiceOutputFormat {
 export class ChoiceSet extends Array<Choice> implements TemplateInterface<ChoiceSet, DialogStateManager> {
     constructor(obj: any);
     bind(dialogContext: DialogContext, data?: DialogStateManager): Promise<ChoiceSet>;
-    }
+}
 
 // @public
 export class CodeAction<O extends object = {}> extends Dialog<O> {
@@ -827,7 +827,7 @@ export class DialogExpression extends ExpressionProperty<Dialog> {
 export class DialogExpressionConverter implements Converter<Input, DialogExpression> {
     constructor(_resourceExplorer: ResourceExplorer);
     convert(value: Input | DialogExpression): DialogExpression;
-    }
+}
 
 // @public (undocumented)
 export type DialogProperty = Dialog | DialogExpression | Property;
@@ -1251,7 +1251,7 @@ export class IfCondition<O extends object = {}> extends Dialog<O> implements Dia
     getDependencies(): Dialog[];
     protected onComputeId(): string;
     protected get trueScope(): ActionScope;
-    }
+}
 
 // @public (undocumented)
 export interface IfConditionConfiguration extends DialogConfiguration {
@@ -1395,7 +1395,7 @@ export class LanguageGeneratorManager<T = unknown, D extends Record<string, unkn
     constructor(resourceManager: ResourceExplorer);
     languageGenerators: Map<string, LanguageGenerator<T, D>>;
     static resourceExplorerResolver(locale: string, resourceMapping: Map<string, Resource[]>): ImportResolverDelegate;
-    }
+}
 
 // @public
 export const languageGeneratorManagerKey: unique symbol;
@@ -1468,7 +1468,7 @@ export class MostSpecificSelector extends TriggerSelector implements MostSpecifi
     select(context: ActionContext): Promise<OnCondition[]>;
     // (undocumented)
     selector: TriggerSelector;
-    }
+}
 
 // @public (undocumented)
 export interface MostSpecificSelectorConfiguration {
@@ -2360,7 +2360,7 @@ export class TemplateEngineLanguageGenerator<T = unknown, D extends Record<strin
     generate(dialogContext: DialogContext, template: string, data: D): Promise<T>;
     // (undocumented)
     id: string;
-    }
+}
 
 // @public (undocumented)
 export interface TemplateEngineLanguageGeneratorConfiguration {
@@ -2494,7 +2494,7 @@ export class UpdateActivity<O extends object = {}> extends Dialog<O> implements 
     // (undocumented)
     static $kind: string;
     constructor();
-    // Warning: (ae-forgotten-export) The symbol "D" needs to be exported by the entry point index.d.ts
+    // Warning: (ae-forgotten-export) The symbol "D_2" needs to be exported by the entry point index.d.ts
     activity: TemplateInterface<Partial<Activity>, D_2 & O>;
     activityId: StringExpression;
     beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
@@ -2523,7 +2523,6 @@ export class UrlEntityRecognizer extends TextEntityRecognizer {
 
 // @public
 export function useTelemetry(dialogManager: DialogManager, telemetryClient: BotTelemetryClient): DialogManager;
-
 
 // (No @packageDocumentation comment for this package)
 

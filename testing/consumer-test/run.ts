@@ -5,7 +5,7 @@ import { promisify } from 'util';
 
 const execp = promisify(exec);
 
-const versions = ['3.8', '3.9', '4.0', '4.1', '4.2', '4.3'];
+const versions = ['4.3', '4.4', '4.5', '4.6', '4.7', '4.8'];
 
 (async () => {
     const flags = minimist(process.argv.slice(2), {
