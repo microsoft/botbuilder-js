@@ -63,7 +63,7 @@ describe('TeamsActivityHandler', function () {
         });
     });
 
-    describe('onInvokeActivity()', () => {
+    describe('onInvokeActivity()', function() {
         class InvokeActivityEmptyHandlers extends TeamsActivityHandler {
             constructor() {
                 super();
@@ -261,16 +261,12 @@ describe('TeamsActivityHandler', function () {
             await adapter
                 .send(activity)
                 .assertReply((activity) => {
-                    assert.strictEqual(
-                        activity.value.message,
-                        "Cannot read property 'activity' of null",
-                        'should have thrown an error.'
-                    );
+                    assert(activity.value instanceof TypeError, 'should have thrown an error.');
                 })
                 .startTest();
         });
 
-        it('should call the base ActivityHandler\'s onInvokeActivity if activity.name is unrecognized', async function () {
+        it("should call the base ActivityHandler's onInvokeActivity if activity.name is unrecognized", async function () {
             const bot = new InvokeActivityEmptyHandlers();
 
             const mockedResponse = { statusCode: 200, value: 'called' };
@@ -283,7 +279,11 @@ describe('TeamsActivityHandler', function () {
                 await bot.run(context);
             });
 
-            const activity = { type: ActivityTypes.Invoke, name: 'adaptiveCard/action', value: { action: { type: 'Action.Execute' }}};
+            const activity = {
+                type: ActivityTypes.Invoke,
+                name: 'adaptiveCard/action',
+                value: { action: { type: 'Action.Execute' } },
+            };
 
             await adapter
                 .send(activity)

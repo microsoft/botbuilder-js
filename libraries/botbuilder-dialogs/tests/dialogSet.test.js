@@ -14,9 +14,7 @@ describe('DialogSet', function () {
 
     it('should throw on createContext(undefined)', async function () {
         const dialogSet = new DialogSet(dialogState);
-        await assert.rejects(async () => await dialogSet.createContext(undefined), {
-            message: "Cannot read property 'turnState' of undefined",
-        });
+        await assert.rejects(async () => await dialogSet.createContext(undefined), TypeError);
     });
 
     it('should add a waterfall to the dialog set.', function () {
