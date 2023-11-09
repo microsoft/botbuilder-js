@@ -3,7 +3,7 @@
 name: $(Build.BuildId)
 
 pool:
-  vmImage: 'ubuntu-18.04'
+  vmImage: 'ubuntu-latest'
 
 variables:
   NodeVersion: 12.x
