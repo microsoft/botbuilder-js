@@ -6,7 +6,7 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  NodeVersion: 12.x
+  NodeVersion: 16.x
   YARN_CACHE_FOLDER: $(Pipeline.Workspace)/.yarn
 
 steps:
