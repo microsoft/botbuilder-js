@@ -448,17 +448,21 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         if (top) {
             this.top = new IntExpression(top);
         }
-
-        if (qnaSuggestionsActivityFactory.check(activeLearningTitleOrFactory)) {
+        const qnaSuggestionsActivityFactoryParsed = qnaSuggestionsActivityFactory.safeParse(
+            activeLearningTitleOrFactory
+        );
+        if (qnaSuggestionsActivityFactoryParsed.success) {
             if (!cardNoMatchText) {
                 // Without a developer-provided cardNoMatchText, the end user will not be able to tell the convey to the bot and QnA Maker that the suggested alternative questions were not correct.
                 // When the user's reply to a suggested alternatives Activity matches the cardNoMatchText, the QnAMakerDialog sends this information to the QnA Maker service for active learning.
                 throw new Error('cardNoMatchText is required when using the suggestionsActivityFactory.');
             }
 
-            this.suggestionsActivityFactory = activeLearningTitleOrFactory;
+            this.suggestionsActivityFactory = qnaSuggestionsActivityFactoryParsed.data;
         } else {
-            this.activeLearningCardTitle = new StringExpression(activeLearningTitleOrFactory ?? this.defaultCardTitle);
+            this.activeLearningCardTitle = new StringExpression(
+                activeLearningTitleOrFactory?.toString() ?? this.defaultCardTitle
+            );
         }
 
         if (cardNoMatchText) {

@@ -110,14 +110,13 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
                                     const values: unknown[] = Array.isArray(value) ? value : [];
                                     if (instances?.length === values?.length) {
                                         instances.forEach((childInstance) => {
-                                            if (
-                                                z
-                                                    .object({ startIndex: z.number(), endIndex: z.number() })
-                                                    .nonstrict()
-                                                    .check(childInstance)
-                                            ) {
-                                                const start = childInstance.startIndex;
-                                                const end = childInstance.endIndex;
+                                            const childInstanceParsed = z
+                                                .object({ startIndex: z.number(), endIndex: z.number() })
+                                                .nonstrict()
+                                                .safeParse(childInstance);
+                                            if (childInstanceParsed.success) {
+                                                const start = childInstanceParsed.data.startIndex;
+                                                const end = childInstanceParsed.data.endIndex;
                                                 externalEntities.push({
                                                     entityName: key,
                                                     startIndex: start,

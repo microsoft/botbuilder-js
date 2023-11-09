@@ -173,7 +173,7 @@ export class ConfigurationBotFrameworkAuthentication extends BotFrameworkAuthent
             );
         } catch (err) {
             // Throw a new error with the validation details prominently featured.
-            if (z.instanceof(z.ZodError).check(err)) {
+            if (z.instanceof(z.ZodError).safeParse(err).success) {
                 throw new Error(JSON.stringify(err.errors, null, 2));
             }
             throw err;
