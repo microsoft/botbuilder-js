@@ -38,7 +38,7 @@ import {
 } from 'botframework-streaming';
 
 // Note: this is _okay_ because we pass the result through `validateAndFixActivity`. Should not be used otherwise.
-const ActivityT = z.custom<Activity>((val) => z.record(z.unknown()).check(val), { message: 'Activity' });
+const ActivityT = z.custom<Activity>((val) => z.record(z.unknown()).safeParse(val).success, { message: 'Activity' });
 
 /**
  * An adapter that implements the Bot Framework Protocol and can be hosted in different cloud environmens both public and private.
@@ -118,7 +118,7 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
         // Ensure we have a parsed request body already. We rely on express/restify middleware to parse
         // request body and azure functions, which does it for us before invoking our code. Warn the user
         // to update their code and return an error.
-        if (!z.record(z.unknown()).check(req.body)) {
+        if (!z.record(z.unknown()).safeParse(req.body).success) {
             return end(
                 StatusCodes.BAD_REQUEST,
                 '`req.body` not an object, make sure you are using middleware to parse incoming requests.'

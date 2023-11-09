@@ -50,7 +50,7 @@ export function assertAttachmentView(val: unknown, ..._args: unknown[]): asserts
  * @internal
  */
 export function isAttachmentView(val: unknown): val is AttachmentView {
-    return attachmentView.check(val);
+    return attachmentView.safeParse(val).success;
 }
 
 /**
@@ -88,7 +88,7 @@ export function assertAttachmentInfo(val: unknown, ..._args: unknown[]): asserts
  * @internal
  */
 export function isAttachmentInfo(val: unknown): val is AttachmentInfo {
-    return attachmentInfo.check(val);
+    return attachmentInfo.safeParse(val).success;
 }
 
 /**
@@ -175,7 +175,7 @@ export function assertChannelAccount(val: unknown, ..._args: unknown[]): asserts
  * @internal
  */
 export function isChannelAccount(val: unknown): val is ChannelAccount {
-    return channelAccount.check(val);
+    return channelAccount.safeParse(val).success;
 }
 
 /**
@@ -241,7 +241,7 @@ export function assertConversationAccount(val: unknown, ..._args: unknown[]): as
  * @internal
  */
 export function isConversationAccount(val: unknown): val is ConversationAccount {
-    return conversationAccount.check(val);
+    return conversationAccount.safeParse(val).success;
 }
 
 /**
@@ -269,7 +269,7 @@ export function assertMessageReaction(val: unknown, ..._args: unknown[]): assert
  * @internal
  */
 export function isMessageReaction(val: unknown): val is MessageReaction {
-    return messageReaction.check(val);
+    return messageReaction.safeParse(val).success;
 }
 
 /**
@@ -334,7 +334,7 @@ export function assertCardAction(val: unknown, ..._args: unknown[]): asserts val
  * @internal
  */
 export function isCardAction(val: unknown): val is CardAction {
-    return cardAction.check(val);
+    return cardAction.safeParse(val).success;
 }
 
 /**
@@ -368,7 +368,7 @@ export function assertSuggestedActions(val: unknown, ..._args: unknown[]): asser
  * @internal
  */
 export function isSuggestedActions(val: unknown): val is SuggestedActions {
-    return suggestedActions.check(val);
+    return suggestedActions.safeParse(val).success;
 }
 
 /**
@@ -416,7 +416,7 @@ export function assertAttachment(val: unknown, ..._args: unknown[]): asserts val
  * @internal
  */
 export function isAttachment(val: unknown): val is Attachment {
-    return attachment.check(val);
+    return attachment.safeParse(val).success;
 }
 
 /**
@@ -446,7 +446,7 @@ export function assertEntity(val: unknown, ..._args: unknown[]): asserts val is 
  * @internal
  */
 export function isEntity(val: unknown): val is Entity {
-    return entity.check(val);
+    return entity.safeParse(val).success;
 }
 
 /**
@@ -508,7 +508,7 @@ export function assertConversationReference(val: unknown, ..._args: unknown[]): 
  * @internal
  */
 export function isConversationReference(val: unknown): val is ConversationReference {
-    return conversationReference.check(val);
+    return conversationReference.safeParse(val).success;
 }
 
 /**
@@ -565,7 +565,7 @@ export function assertSemanticAction(val: unknown, ..._args: unknown[]): asserts
  * @internal
  */
 export function isSemanticAction(val: unknown): val is SemanticAction {
-    return semanticAction.check(val);
+    return semanticAction.safeParse(val).success;
 }
 
 /**
@@ -816,7 +816,7 @@ export function assertActivity(val: unknown, ..._args: unknown[]): asserts val i
  * @internal
  */
 export function isActivity(val: unknown): val is Activity {
-    return activity.check(val);
+    return activity.safeParse(val).success;
 }
 
 /**
@@ -829,6 +829,16 @@ export interface ActivityTimestamps extends Activity {
     rawExpiration?: string;
     rawLocalTimestamp?: string;
 }
+
+export const conversationParametersObject = z.object({
+    isGroup: z.boolean(),
+    bot: channelAccount,
+    members: z.array(channelAccount).optional(),
+    topicName: z.string().optional(),
+    tenantId: z.string().optional(),
+    activity: activity,
+    channelData: z.unknown().optional(),
+});
 
 /**
  * Parameters for creating a new conversation

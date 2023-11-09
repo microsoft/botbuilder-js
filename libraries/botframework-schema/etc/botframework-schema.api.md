@@ -5,6 +5,7 @@
 ```ts
 
 import { AdaptiveCard } from 'adaptivecards';
+import * as z from 'zod';
 
 // @public
 export type AceCardSize = 'Medium' | 'Large';
@@ -719,6 +720,944 @@ export interface ConversationParameters {
     tenantId?: string;
     topicName?: string;
 }
+
+// @public (undocumented)
+export const conversationParametersObject: z.ZodObject<{
+    isGroup: z.ZodBoolean;
+    bot: z.ZodObject<{
+        id: z.ZodString;
+        name: z.ZodString;
+        aadObjectId: z.ZodOptional<z.ZodString>;
+        role: z.ZodOptional<z.ZodString>;
+    }, "strip", z.ZodTypeAny, {
+        id?: string;
+        name?: string;
+        aadObjectId?: string;
+        role?: string;
+    }, {
+        id?: string;
+        name?: string;
+        aadObjectId?: string;
+        role?: string;
+    }>;
+    members: z.ZodOptional<z.ZodArray<z.ZodObject<{
+        id: z.ZodString;
+        name: z.ZodString;
+        aadObjectId: z.ZodOptional<z.ZodString>;
+        role: z.ZodOptional<z.ZodString>;
+    }, "strip", z.ZodTypeAny, {
+        id?: string;
+        name?: string;
+        aadObjectId?: string;
+        role?: string;
+    }, {
+        id?: string;
+        name?: string;
+        aadObjectId?: string;
+        role?: string;
+    }>, "many">>;
+    topicName: z.ZodOptional<z.ZodString>;
+    tenantId: z.ZodOptional<z.ZodString>;
+    activity: z.ZodObject<{
+        type: z.ZodString;
+        id: z.ZodOptional<z.ZodString>;
+        timestamp: z.ZodOptional<z.ZodType<Date, z.ZodTypeDef, Date>>;
+        localTimestamp: z.ZodOptional<z.ZodType<Date, z.ZodTypeDef, Date>>;
+        localTimezone: z.ZodString;
+        callerId: z.ZodString;
+        serviceUrl: z.ZodString;
+        channelId: z.ZodString;
+        from: z.ZodObject<{
+            id: z.ZodString;
+            name: z.ZodString;
+            aadObjectId: z.ZodOptional<z.ZodString>;
+            role: z.ZodOptional<z.ZodString>;
+        }, "strip", z.ZodTypeAny, {
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+        }, {
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+        }>;
+        conversation: z.ZodObject<{
+            isGroup: z.ZodBoolean;
+            conversationType: z.ZodString;
+            tenantId: z.ZodOptional<z.ZodString>;
+            id: z.ZodString;
+            name: z.ZodString;
+            aadObjectId: z.ZodOptional<z.ZodString>;
+            role: z.ZodOptional<z.ZodString>;
+            properties: z.ZodOptional<z.ZodUnknown>;
+        }, "strip", z.ZodTypeAny, {
+            isGroup?: boolean;
+            conversationType?: string;
+            tenantId?: string;
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+            properties?: unknown;
+        }, {
+            isGroup?: boolean;
+            conversationType?: string;
+            tenantId?: string;
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+            properties?: unknown;
+        }>;
+        recipient: z.ZodObject<{
+            id: z.ZodString;
+            name: z.ZodString;
+            aadObjectId: z.ZodOptional<z.ZodString>;
+            role: z.ZodOptional<z.ZodString>;
+        }, "strip", z.ZodTypeAny, {
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+        }, {
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+        }>;
+        textFormat: z.ZodOptional<z.ZodString>;
+        attachmentLayout: z.ZodOptional<z.ZodString>;
+        membersAdded: z.ZodOptional<z.ZodArray<z.ZodObject<{
+            id: z.ZodString;
+            name: z.ZodString;
+            aadObjectId: z.ZodOptional<z.ZodString>;
+            role: z.ZodOptional<z.ZodString>;
+        }, "strip", z.ZodTypeAny, {
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+        }, {
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+        }>, "many">>;
+        membersRemoved: z.ZodOptional<z.ZodArray<z.ZodObject<{
+            id: z.ZodString;
+            name: z.ZodString;
+            aadObjectId: z.ZodOptional<z.ZodString>;
+            role: z.ZodOptional<z.ZodString>;
+        }, "strip", z.ZodTypeAny, {
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+        }, {
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+        }>, "many">>;
+        reactionsAdded: z.ZodOptional<z.ZodArray<z.ZodObject<{
+            type: z.ZodString;
+        }, "strip", z.ZodTypeAny, {
+            type?: string;
+        }, {
+            type?: string;
+        }>, "many">>;
+        reactionsRemoved: z.ZodOptional<z.ZodArray<z.ZodObject<{
+            type: z.ZodString;
+        }, "strip", z.ZodTypeAny, {
+            type?: string;
+        }, {
+            type?: string;
+        }>, "many">>;
+        topicName: z.ZodOptional<z.ZodString>;
+        historyDisclosed: z.ZodOptional<z.ZodBoolean>;
+        locale: z.ZodOptional<z.ZodString>;
+        text: z.ZodString;
+        speak: z.ZodOptional<z.ZodString>;
+        inputHint: z.ZodOptional<z.ZodString>;
+        summary: z.ZodOptional<z.ZodString>;
+        suggestedActions: z.ZodOptional<z.ZodObject<{
+            to: z.ZodArray<z.ZodString, "many">;
+            actions: z.ZodArray<z.ZodObject<{
+                type: z.ZodString;
+                title: z.ZodString;
+                image: z.ZodOptional<z.ZodString>;
+                text: z.ZodOptional<z.ZodString>;
+                displayText: z.ZodOptional<z.ZodString>;
+                value: z.ZodUnknown;
+                channelData: z.ZodUnknown;
+                imageAltText: z.ZodOptional<z.ZodString>;
+            }, "strip", z.ZodTypeAny, {
+                type?: string;
+                title?: string;
+                image?: string;
+                text?: string;
+                displayText?: string;
+                value?: unknown;
+                channelData?: unknown;
+                imageAltText?: string;
+            }, {
+                type?: string;
+                title?: string;
+                image?: string;
+                text?: string;
+                displayText?: string;
+                value?: unknown;
+                channelData?: unknown;
+                imageAltText?: string;
+            }>, "many">;
+        }, "strip", z.ZodTypeAny, {
+            to?: string[];
+            actions?: {
+                type?: string;
+                title?: string;
+                image?: string;
+                text?: string;
+                displayText?: string;
+                value?: unknown;
+                channelData?: unknown;
+                imageAltText?: string;
+            }[];
+        }, {
+            to?: string[];
+            actions?: {
+                type?: string;
+                title?: string;
+                image?: string;
+                text?: string;
+                displayText?: string;
+                value?: unknown;
+                channelData?: unknown;
+                imageAltText?: string;
+            }[];
+        }>>;
+        attachments: z.ZodOptional<z.ZodArray<z.ZodObject<{
+            contentType: z.ZodString;
+            contentUrl: z.ZodOptional<z.ZodString>;
+            content: z.ZodOptional<z.ZodUnknown>;
+            name: z.ZodOptional<z.ZodString>;
+            thumbnailUrl: z.ZodOptional<z.ZodString>;
+        }, "strip", z.ZodTypeAny, {
+            contentType?: string;
+            contentUrl?: string;
+            content?: unknown;
+            name?: string;
+            thumbnailUrl?: string;
+        }, {
+            contentType?: string;
+            contentUrl?: string;
+            content?: unknown;
+            name?: string;
+            thumbnailUrl?: string;
+        }>, "many">>;
+        entities: z.ZodOptional<z.ZodArray<z.ZodEffects<z.ZodRecord<z.ZodString, z.ZodUnknown>, Record<string, unknown>, Record<string, unknown>>, "many">>;
+        channelData: z.ZodOptional<z.ZodUnknown>;
+        action: z.ZodOptional<z.ZodString>;
+        replyToId: z.ZodOptional<z.ZodString>;
+        label: z.ZodString;
+        valueType: z.ZodString;
+        value: z.ZodOptional<z.ZodUnknown>;
+        name: z.ZodOptional<z.ZodString>;
+        relatesTo: z.ZodOptional<z.ZodObject<{
+            ActivityId: z.ZodOptional<z.ZodString>;
+            user: z.ZodOptional<z.ZodObject<{
+                id: z.ZodString;
+                name: z.ZodString;
+                aadObjectId: z.ZodOptional<z.ZodString>;
+                role: z.ZodOptional<z.ZodString>;
+            }, "strip", z.ZodTypeAny, {
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
+            }, {
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
+            }>>;
+            locale: z.ZodOptional<z.ZodString>;
+            bot: z.ZodObject<{
+                id: z.ZodString;
+                name: z.ZodString;
+                aadObjectId: z.ZodOptional<z.ZodString>;
+                role: z.ZodOptional<z.ZodString>;
+            }, "strip", z.ZodTypeAny, {
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
+            }, {
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
+            }>;
+            conversation: z.ZodObject<{
+                isGroup: z.ZodBoolean;
+                conversationType: z.ZodString;
+                tenantId: z.ZodOptional<z.ZodString>;
+                id: z.ZodString;
+                name: z.ZodString;
+                aadObjectId: z.ZodOptional<z.ZodString>;
+                role: z.ZodOptional<z.ZodString>;
+                properties: z.ZodOptional<z.ZodUnknown>;
+            }, "strip", z.ZodTypeAny, {
+                isGroup?: boolean;
+                conversationType?: string;
+                tenantId?: string;
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
+                properties?: unknown;
+            }, {
+                isGroup?: boolean;
+                conversationType?: string;
+                tenantId?: string;
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
+                properties?: unknown;
+            }>;
+            channelId: z.ZodString;
+            serviceUrl: z.ZodString;
+        }, "strip", z.ZodTypeAny, {
+            ActivityId?: string;
+            user?: {
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
+            };
+            locale?: string;
+            bot?: {
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
+            };
+            conversation?: {
+                isGroup?: boolean;
+                conversationType?: string;
+                tenantId?: string;
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
+                properties?: unknown;
+            };
+            channelId?: string;
+            serviceUrl?: string;
+        }, {
+            ActivityId?: string;
+            user?: {
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
+            };
+            locale?: string;
+            bot?: {
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
+            };
+            conversation?: {
+                isGroup?: boolean;
+                conversationType?: string;
+                tenantId?: string;
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
+                properties?: unknown;
+            };
+            channelId?: string;
+            serviceUrl?: string;
+        }>>;
+        code: z.ZodOptional<z.ZodString>;
+        importance: z.ZodOptional<z.ZodString>;
+        deliveryMode: z.ZodOptional<z.ZodString>;
+        listenFor: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
+        textHighlights: z.ZodOptional<z.ZodArray<z.ZodObject<{
+            text: z.ZodString;
+            occurrence: z.ZodNumber;
+        }, "strip", z.ZodTypeAny, {
+            text?: string;
+            occurrence?: number;
+        }, {
+            text?: string;
+            occurrence?: number;
+        }>, "many">>;
+        semanticAction: z.ZodOptional<z.ZodObject<{
+            id: z.ZodString;
+            state: z.ZodString;
+            entities: z.ZodRecord<z.ZodString, z.ZodEffects<z.ZodRecord<z.ZodString, z.ZodUnknown>, Record<string, unknown>, Record<string, unknown>>>;
+        }, "strip", z.ZodTypeAny, {
+            id?: string;
+            state?: string;
+            entities?: Record<string, Record<string, unknown>>;
+        }, {
+            id?: string;
+            state?: string;
+            entities?: Record<string, Record<string, unknown>>;
+        }>>;
+    }, "strip", z.ZodTypeAny, {
+        type?: string;
+        id?: string;
+        timestamp?: Date;
+        localTimestamp?: Date;
+        localTimezone?: string;
+        callerId?: string;
+        serviceUrl?: string;
+        channelId?: string;
+        from?: {
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+        };
+        conversation?: {
+            isGroup?: boolean;
+            conversationType?: string;
+            tenantId?: string;
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+            properties?: unknown;
+        };
+        recipient?: {
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+        };
+        textFormat?: string;
+        attachmentLayout?: string;
+        membersAdded?: {
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+        }[];
+        membersRemoved?: {
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+        }[];
+        reactionsAdded?: {
+            type?: string;
+        }[];
+        reactionsRemoved?: {
+            type?: string;
+        }[];
+        topicName?: string;
+        historyDisclosed?: boolean;
+        locale?: string;
+        text?: string;
+        speak?: string;
+        inputHint?: string;
+        summary?: string;
+        suggestedActions?: {
+            to?: string[];
+            actions?: {
+                type?: string;
+                title?: string;
+                image?: string;
+                text?: string;
+                displayText?: string;
+                value?: unknown;
+                channelData?: unknown;
+                imageAltText?: string;
+            }[];
+        };
+        attachments?: {
+            contentType?: string;
+            contentUrl?: string;
+            content?: unknown;
+            name?: string;
+            thumbnailUrl?: string;
+        }[];
+        entities?: Record<string, unknown>[];
+        channelData?: unknown;
+        action?: string;
+        replyToId?: string;
+        label?: string;
+        valueType?: string;
+        value?: unknown;
+        name?: string;
+        relatesTo?: {
+            ActivityId?: string;
+            user?: {
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
+            };
+            locale?: string;
+            bot?: {
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
+            };
+            conversation?: {
+                isGroup?: boolean;
+                conversationType?: string;
+                tenantId?: string;
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
+                properties?: unknown;
+            };
+            channelId?: string;
+            serviceUrl?: string;
+        };
+        code?: string;
+        importance?: string;
+        deliveryMode?: string;
+        listenFor?: string[];
+        textHighlights?: {
+            text?: string;
+            occurrence?: number;
+        }[];
+        semanticAction?: {
+            id?: string;
+            state?: string;
+            entities?: Record<string, Record<string, unknown>>;
+        };
+    }, {
+        type?: string;
+        id?: string;
+        timestamp?: Date;
+        localTimestamp?: Date;
+        localTimezone?: string;
+        callerId?: string;
+        serviceUrl?: string;
+        channelId?: string;
+        from?: {
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+        };
+        conversation?: {
+            isGroup?: boolean;
+            conversationType?: string;
+            tenantId?: string;
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+            properties?: unknown;
+        };
+        recipient?: {
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+        };
+        textFormat?: string;
+        attachmentLayout?: string;
+        membersAdded?: {
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+        }[];
+        membersRemoved?: {
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+        }[];
+        reactionsAdded?: {
+            type?: string;
+        }[];
+        reactionsRemoved?: {
+            type?: string;
+        }[];
+        topicName?: string;
+        historyDisclosed?: boolean;
+        locale?: string;
+        text?: string;
+        speak?: string;
+        inputHint?: string;
+        summary?: string;
+        suggestedActions?: {
+            to?: string[];
+            actions?: {
+                type?: string;
+                title?: string;
+                image?: string;
+                text?: string;
+                displayText?: string;
+                value?: unknown;
+                channelData?: unknown;
+                imageAltText?: string;
+            }[];
+        };
+        attachments?: {
+            contentType?: string;
+            contentUrl?: string;
+            content?: unknown;
+            name?: string;
+            thumbnailUrl?: string;
+        }[];
+        entities?: Record<string, unknown>[];
+        channelData?: unknown;
+        action?: string;
+        replyToId?: string;
+        label?: string;
+        valueType?: string;
+        value?: unknown;
+        name?: string;
+        relatesTo?: {
+            ActivityId?: string;
+            user?: {
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
+            };
+            locale?: string;
+            bot?: {
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
+            };
+            conversation?: {
+                isGroup?: boolean;
+                conversationType?: string;
+                tenantId?: string;
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
+                properties?: unknown;
+            };
+            channelId?: string;
+            serviceUrl?: string;
+        };
+        code?: string;
+        importance?: string;
+        deliveryMode?: string;
+        listenFor?: string[];
+        textHighlights?: {
+            text?: string;
+            occurrence?: number;
+        }[];
+        semanticAction?: {
+            id?: string;
+            state?: string;
+            entities?: Record<string, Record<string, unknown>>;
+        };
+    }>;
+    channelData: z.ZodOptional<z.ZodUnknown>;
+}, "strip", z.ZodTypeAny, {
+    isGroup?: boolean;
+    bot?: {
+        id?: string;
+        name?: string;
+        aadObjectId?: string;
+        role?: string;
+    };
+    members?: {
+        id?: string;
+        name?: string;
+        aadObjectId?: string;
+        role?: string;
+    }[];
+    topicName?: string;
+    tenantId?: string;
+    activity?: {
+        type?: string;
+        id?: string;
+        timestamp?: Date;
+        localTimestamp?: Date;
+        localTimezone?: string;
+        callerId?: string;
+        serviceUrl?: string;
+        channelId?: string;
+        from?: {
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+        };
+        conversation?: {
+            isGroup?: boolean;
+            conversationType?: string;
+            tenantId?: string;
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+            properties?: unknown;
+        };
+        recipient?: {
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+        };
+        textFormat?: string;
+        attachmentLayout?: string;
+        membersAdded?: {
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+        }[];
+        membersRemoved?: {
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+        }[];
+        reactionsAdded?: {
+            type?: string;
+        }[];
+        reactionsRemoved?: {
+            type?: string;
+        }[];
+        topicName?: string;
+        historyDisclosed?: boolean;
+        locale?: string;
+        text?: string;
+        speak?: string;
+        inputHint?: string;
+        summary?: string;
+        suggestedActions?: {
+            to?: string[];
+            actions?: {
+                type?: string;
+                title?: string;
+                image?: string;
+                text?: string;
+                displayText?: string;
+                value?: unknown;
+                channelData?: unknown;
+                imageAltText?: string;
+            }[];
+        };
+        attachments?: {
+            contentType?: string;
+            contentUrl?: string;
+            content?: unknown;
+            name?: string;
+            thumbnailUrl?: string;
+        }[];
+        entities?: Record<string, unknown>[];
+        channelData?: unknown;
+        action?: string;
+        replyToId?: string;
+        label?: string;
+        valueType?: string;
+        value?: unknown;
+        name?: string;
+        relatesTo?: {
+            ActivityId?: string;
+            user?: {
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
+            };
+            locale?: string;
+            bot?: {
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
+            };
+            conversation?: {
+                isGroup?: boolean;
+                conversationType?: string;
+                tenantId?: string;
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
+                properties?: unknown;
+            };
+            channelId?: string;
+            serviceUrl?: string;
+        };
+        code?: string;
+        importance?: string;
+        deliveryMode?: string;
+        listenFor?: string[];
+        textHighlights?: {
+            text?: string;
+            occurrence?: number;
+        }[];
+        semanticAction?: {
+            id?: string;
+            state?: string;
+            entities?: Record<string, Record<string, unknown>>;
+        };
+    };
+    channelData?: unknown;
+}, {
+    isGroup?: boolean;
+    bot?: {
+        id?: string;
+        name?: string;
+        aadObjectId?: string;
+        role?: string;
+    };
+    members?: {
+        id?: string;
+        name?: string;
+        aadObjectId?: string;
+        role?: string;
+    }[];
+    topicName?: string;
+    tenantId?: string;
+    activity?: {
+        type?: string;
+        id?: string;
+        timestamp?: Date;
+        localTimestamp?: Date;
+        localTimezone?: string;
+        callerId?: string;
+        serviceUrl?: string;
+        channelId?: string;
+        from?: {
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+        };
+        conversation?: {
+            isGroup?: boolean;
+            conversationType?: string;
+            tenantId?: string;
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+            properties?: unknown;
+        };
+        recipient?: {
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+        };
+        textFormat?: string;
+        attachmentLayout?: string;
+        membersAdded?: {
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+        }[];
+        membersRemoved?: {
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+        }[];
+        reactionsAdded?: {
+            type?: string;
+        }[];
+        reactionsRemoved?: {
+            type?: string;
+        }[];
+        topicName?: string;
+        historyDisclosed?: boolean;
+        locale?: string;
+        text?: string;
+        speak?: string;
+        inputHint?: string;
+        summary?: string;
+        suggestedActions?: {
+            to?: string[];
+            actions?: {
+                type?: string;
+                title?: string;
+                image?: string;
+                text?: string;
+                displayText?: string;
+                value?: unknown;
+                channelData?: unknown;
+                imageAltText?: string;
+            }[];
+        };
+        attachments?: {
+            contentType?: string;
+            contentUrl?: string;
+            content?: unknown;
+            name?: string;
+            thumbnailUrl?: string;
+        }[];
+        entities?: Record<string, unknown>[];
+        channelData?: unknown;
+        action?: string;
+        replyToId?: string;
+        label?: string;
+        valueType?: string;
+        value?: unknown;
+        name?: string;
+        relatesTo?: {
+            ActivityId?: string;
+            user?: {
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
+            };
+            locale?: string;
+            bot?: {
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
+            };
+            conversation?: {
+                isGroup?: boolean;
+                conversationType?: string;
+                tenantId?: string;
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
+                properties?: unknown;
+            };
+            channelId?: string;
+            serviceUrl?: string;
+        };
+        code?: string;
+        importance?: string;
+        deliveryMode?: string;
+        listenFor?: string[];
+        textHighlights?: {
+            text?: string;
+            occurrence?: number;
+        }[];
+        semanticAction?: {
+            id?: string;
+            state?: string;
+            entities?: Record<string, Record<string, unknown>>;
+        };
+    };
+    channelData?: unknown;
+}>;
 
 // @public
 export interface ConversationReference {
