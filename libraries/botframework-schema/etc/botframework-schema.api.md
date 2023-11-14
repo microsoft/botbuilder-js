@@ -652,20 +652,15 @@ export interface CommandValue<T = unknown> {
     data?: T;
 }
 
-// @public (undocumented)
-export interface ConfigAuthResponse extends ConfigResponse<BotConfigAuth> {
-}
-
 // @public
-export interface ConfigResponse<T> {
+export interface ConfigResponse {
     cacheInfo?: CacheInfo;
-    config: T;
+    config: ConfigResponseConfig;
     responseType: 'config';
 }
 
 // @public (undocumented)
-export interface ConfigTaskResponse extends ConfigResponse<TaskModuleResponse> {
-}
+export type ConfigResponseConfig = BotConfigAuth | TaskModuleResponse;
 
 // @public
 export interface ConfirmationDialog {
