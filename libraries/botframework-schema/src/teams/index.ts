@@ -24,11 +24,8 @@ export interface BotConfigAuth {
     type: 'auth';
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface ConfigAuthResponse extends ConfigResponse<BotConfigAuth> {}
+export type ConfigResponseConfig = BotConfigAuth | TaskModuleResponse;
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface ConfigTaskResponse extends ConfigResponse<TaskModuleResponse> {}
 /**
  * @interface
  * An interface representing ChannelInfo.
@@ -53,16 +50,15 @@ export interface ChannelInfo {
  * @interface
  * An interface container for the Config response payload
  */
-export interface ConfigResponse<T> {
+export interface ConfigResponse {
     /**
      * @member {CacheInfo} [cacheInfo] The data of the ConfigResponse cache, including cache type and cache duration.
      */
     cacheInfo?: CacheInfo;
     /**
-     * @template T
-     * @member {T} [config] The response to a configuration message.
+     * @member {ConfigResponseConfig} [config] The ConfigResponse config of BotConfigAuth or TaskModuleResponse
      */
-    config: T;
+    config: ConfigResponseConfig;
     /**
      * @member {string} [responseType] The type of response 'config'.
      */
