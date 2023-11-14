@@ -4,6 +4,29 @@
 
 ```ts
 
+import { AdaptiveCard } from 'adaptivecards';
+import * as z from 'zod';
+
+// @public
+export type AceCardSize = 'Medium' | 'Large';
+
+// @public
+export interface AceData {
+    cardSize: AceCardSize;
+    dataVersion: string;
+    description: string;
+    iconProperty: string;
+    id: string;
+    properties: any;
+    title: string;
+}
+
+// @public
+export interface AceRequest {
+    data?: any;
+    properties?: any;
+}
+
 // @public
 export type Action = 'accept' | 'decline';
 
@@ -358,6 +381,23 @@ export interface AudioCard {
 }
 
 // @public
+export interface BaseCardComponent {
+    componentName: CardComponentName;
+    id?: string;
+}
+
+// @public
+export interface BaseCardViewParameters {
+    cardBar: [CardBarComponent];
+}
+
+// @public
+export interface BaseHandleActionResponse {
+    renderArguments?: CardViewResponse | QuickViewResponse;
+    responseType: ViewResponseType;
+}
+
+// @public
 export interface BasicCard {
     buttons: CardAction[];
     images: CardImage[];
@@ -366,6 +406,9 @@ export interface BasicCard {
     text: string;
     title: string;
 }
+
+// @public
+export function BasicCardView(cardBar: CardBarComponent, header: CardTextComponent, footer?: CardViewFooterParameters): TextCardViewParameters;
 
 // @public
 export interface BatchFailedEntriesResponse {
@@ -441,10 +484,93 @@ export interface CardAction {
 }
 
 // @public
+export interface CardBarComponent extends BaseCardComponent {
+    componentName: 'cardBar';
+    // Warning: (ae-forgotten-export) The symbol "CardImage_2" needs to be exported by the entry point index.d.ts
+    icon?: CardImage_2;
+    title?: string;
+}
+
+// @public
+export interface CardButtonBase {
+    // Warning: (ae-forgotten-export) The symbol "CardAction_2" needs to be exported by the entry point index.d.ts
+    action: CardAction_2;
+    id?: string;
+}
+
+// @public
+export interface CardButtonComponent extends BaseCardComponent, CardButtonBase {
+    componentName: 'cardButton';
+    style?: 'default' | 'positive';
+    title: string;
+}
+
+// @public
+export type CardComponentName = 'text' | 'cardButton' | 'cardBar' | 'textInput' | 'searchBox' | 'searchFooter';
+
+// @public
 export interface CardImage {
     alt?: string;
     tap?: CardAction;
     url: string;
+}
+
+// @public
+export interface CardSearchBoxComponent extends BaseCardComponent {
+    button: ICardSearchBoxButton;
+    componentName: 'searchBox';
+    defaultValue?: string;
+    placeholder?: string;
+}
+
+// @public
+export interface CardSearchFooterComponent extends BaseCardComponent {
+    componentName: 'searchFooter';
+    imageInitials?: string;
+    imageUrl?: string;
+    onSelection?: CardAction_2;
+    text: string;
+    title: string;
+}
+
+// @public
+export interface CardTextComponent extends BaseCardComponent {
+    componentName: 'text';
+    text: string;
+}
+
+// @public
+export interface CardTextInputComponent extends BaseCardComponent {
+    ariaLabel?: string;
+    button?: ICardTextInputIconButton | ICardTextInputTitleButton;
+    componentName: 'textInput';
+    defaultValue?: string;
+    iconAfter?: CardImage_2;
+    iconBefore?: CardImage_2;
+    placeholder?: string;
+}
+
+// @public
+export type CardViewActionsFooterParameters = [CardButtonComponent] | [CardButtonComponent, CardButtonComponent] | undefined;
+
+// @public
+export type CardViewFooterParameters = CardViewActionsFooterParameters | [CardTextInputComponent];
+
+// @public
+export interface CardViewHandleActionResponse extends BaseHandleActionResponse {
+    renderArguments: CardViewResponse;
+    responseType: 'Card';
+}
+
+// @public
+export type CardViewParameters = TextCardViewParameters | TextInputCardViewParameters | SearchCardViewParameters | SignInCardViewParameters;
+
+// @public
+export interface CardViewResponse {
+    aceData: AceData;
+    cardViewParameters: CardViewParameters;
+    onCardSelection?: OnCardSelectionAction;
+    viewId: string;
 }
 
 // @public
@@ -542,6 +668,12 @@ export interface ConfigTaskResponse extends ConfigResponse<TaskModuleResponse> {
 }
 
 // @public
+export interface ConfirmationDialog {
+    message: string;
+    title: string;
+}
+
+// @public
 export enum ContactRelationUpdateActionTypes {
     // (undocumented)
     Add = "add",
@@ -589,6 +721,944 @@ export interface ConversationParameters {
     topicName?: string;
 }
 
+// @public (undocumented)
+export const conversationParametersObject: z.ZodObject<{
+    isGroup: z.ZodBoolean;
+    bot: z.ZodObject<{
+        id: z.ZodString;
+        name: z.ZodString;
+        aadObjectId: z.ZodOptional<z.ZodString>;
+        role: z.ZodOptional<z.ZodString>;
+    }, "strip", z.ZodTypeAny, {
+        id?: string;
+        name?: string;
+        aadObjectId?: string;
+        role?: string;
+    }, {
+        id?: string;
+        name?: string;
+        aadObjectId?: string;
+        role?: string;
+    }>;
+    members: z.ZodOptional<z.ZodArray<z.ZodObject<{
+        id: z.ZodString;
+        name: z.ZodString;
+        aadObjectId: z.ZodOptional<z.ZodString>;
+        role: z.ZodOptional<z.ZodString>;
+    }, "strip", z.ZodTypeAny, {
+        id?: string;
+        name?: string;
+        aadObjectId?: string;
+        role?: string;
+    }, {
+        id?: string;
+        name?: string;
+        aadObjectId?: string;
+        role?: string;
+    }>, "many">>;
+    topicName: z.ZodOptional<z.ZodString>;
+    tenantId: z.ZodOptional<z.ZodString>;
+    activity: z.ZodObject<{
+        type: z.ZodString;
+        id: z.ZodOptional<z.ZodString>;
+        timestamp: z.ZodOptional<z.ZodType<Date, z.ZodTypeDef, Date>>;
+        localTimestamp: z.ZodOptional<z.ZodType<Date, z.ZodTypeDef, Date>>;
+        localTimezone: z.ZodString;
+        callerId: z.ZodString;
+        serviceUrl: z.ZodString;
+        channelId: z.ZodString;
+        from: z.ZodObject<{
+            id: z.ZodString;
+            name: z.ZodString;
+            aadObjectId: z.ZodOptional<z.ZodString>;
+            role: z.ZodOptional<z.ZodString>;
+        }, "strip", z.ZodTypeAny, {
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+        }, {
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+        }>;
+        conversation: z.ZodObject<{
+            isGroup: z.ZodBoolean;
+            conversationType: z.ZodString;
+            tenantId: z.ZodOptional<z.ZodString>;
+            id: z.ZodString;
+            name: z.ZodString;
+            aadObjectId: z.ZodOptional<z.ZodString>;
+            role: z.ZodOptional<z.ZodString>;
+            properties: z.ZodOptional<z.ZodUnknown>;
+        }, "strip", z.ZodTypeAny, {
+            isGroup?: boolean;
+            conversationType?: string;
+            tenantId?: string;
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+            properties?: unknown;
+        }, {
+            isGroup?: boolean;
+            conversationType?: string;
+            tenantId?: string;
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+            properties?: unknown;
+        }>;
+        recipient: z.ZodObject<{
+            id: z.ZodString;
+            name: z.ZodString;
+            aadObjectId: z.ZodOptional<z.ZodString>;
+            role: z.ZodOptional<z.ZodString>;
+        }, "strip", z.ZodTypeAny, {
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+        }, {
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+        }>;
+        textFormat: z.ZodOptional<z.ZodString>;
+        attachmentLayout: z.ZodOptional<z.ZodString>;
+        membersAdded: z.ZodOptional<z.ZodArray<z.ZodObject<{
+            id: z.ZodString;
+            name: z.ZodString;
+            aadObjectId: z.ZodOptional<z.ZodString>;
+            role: z.ZodOptional<z.ZodString>;
+        }, "strip", z.ZodTypeAny, {
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+        }, {
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+        }>, "many">>;
+        membersRemoved: z.ZodOptional<z.ZodArray<z.ZodObject<{
+            id: z.ZodString;
+            name: z.ZodString;
+            aadObjectId: z.ZodOptional<z.ZodString>;
+            role: z.ZodOptional<z.ZodString>;
+        }, "strip", z.ZodTypeAny, {
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+        }, {
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+        }>, "many">>;
+        reactionsAdded: z.ZodOptional<z.ZodArray<z.ZodObject<{
+            type: z.ZodString;
+        }, "strip", z.ZodTypeAny, {
+            type?: string;
+        }, {
+            type?: string;
+        }>, "many">>;
+        reactionsRemoved: z.ZodOptional<z.ZodArray<z.ZodObject<{
+            type: z.ZodString;
+        }, "strip", z.ZodTypeAny, {
+            type?: string;
+        }, {
+            type?: string;
+        }>, "many">>;
+        topicName: z.ZodOptional<z.ZodString>;
+        historyDisclosed: z.ZodOptional<z.ZodBoolean>;
+        locale: z.ZodOptional<z.ZodString>;
+        text: z.ZodString;
+        speak: z.ZodOptional<z.ZodString>;
+        inputHint: z.ZodOptional<z.ZodString>;
+        summary: z.ZodOptional<z.ZodString>;
+        suggestedActions: z.ZodOptional<z.ZodObject<{
+            to: z.ZodArray<z.ZodString, "many">;
+            actions: z.ZodArray<z.ZodObject<{
+                type: z.ZodString;
+                title: z.ZodString;
+                image: z.ZodOptional<z.ZodString>;
+                text: z.ZodOptional<z.ZodString>;
+                displayText: z.ZodOptional<z.ZodString>;
+                value: z.ZodUnknown;
+                channelData: z.ZodUnknown;
+                imageAltText: z.ZodOptional<z.ZodString>;
+            }, "strip", z.ZodTypeAny, {
+                type?: string;
+                title?: string;
+                image?: string;
+                text?: string;
+                displayText?: string;
+                value?: unknown;
+                channelData?: unknown;
+                imageAltText?: string;
+            }, {
+                type?: string;
+                title?: string;
+                image?: string;
+                text?: string;
+                displayText?: string;
+                value?: unknown;
+                channelData?: unknown;
+                imageAltText?: string;
+            }>, "many">;
+        }, "strip", z.ZodTypeAny, {
+            to?: string[];
+            actions?: {
+                type?: string;
+                title?: string;
+                image?: string;
+                text?: string;
+                displayText?: string;
+                value?: unknown;
+                channelData?: unknown;
+                imageAltText?: string;
+            }[];
+        }, {
+            to?: string[];
+            actions?: {
+                type?: string;
+                title?: string;
+                image?: string;
+                text?: string;
+                displayText?: string;
+                value?: unknown;
+                channelData?: unknown;
+                imageAltText?: string;
+            }[];
+        }>>;
+        attachments: z.ZodOptional<z.ZodArray<z.ZodObject<{
+            contentType: z.ZodString;
+            contentUrl: z.ZodOptional<z.ZodString>;
+            content: z.ZodOptional<z.ZodUnknown>;
+            name: z.ZodOptional<z.ZodString>;
+            thumbnailUrl: z.ZodOptional<z.ZodString>;
+        }, "strip", z.ZodTypeAny, {
+            contentType?: string;
+            contentUrl?: string;
+            content?: unknown;
+            name?: string;
+            thumbnailUrl?: string;
+        }, {
+            contentType?: string;
+            contentUrl?: string;
+            content?: unknown;
+            name?: string;
+            thumbnailUrl?: string;
+        }>, "many">>;
+        entities: z.ZodOptional<z.ZodArray<z.ZodEffects<z.ZodRecord<z.ZodString, z.ZodUnknown>, Record<string, unknown>, Record<string, unknown>>, "many">>;
+        channelData: z.ZodOptional<z.ZodUnknown>;
+        action: z.ZodOptional<z.ZodString>;
+        replyToId: z.ZodOptional<z.ZodString>;
+        label: z.ZodString;
+        valueType: z.ZodString;
+        value: z.ZodOptional<z.ZodUnknown>;
+        name: z.ZodOptional<z.ZodString>;
+        relatesTo: z.ZodOptional<z.ZodObject<{
+            ActivityId: z.ZodOptional<z.ZodString>;
+            user: z.ZodOptional<z.ZodObject<{
+                id: z.ZodString;
+                name: z.ZodString;
+                aadObjectId: z.ZodOptional<z.ZodString>;
+                role: z.ZodOptional<z.ZodString>;
+            }, "strip", z.ZodTypeAny, {
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
+            }, {
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
+            }>>;
+            locale: z.ZodOptional<z.ZodString>;
+            bot: z.ZodObject<{
+                id: z.ZodString;
+                name: z.ZodString;
+                aadObjectId: z.ZodOptional<z.ZodString>;
+                role: z.ZodOptional<z.ZodString>;
+            }, "strip", z.ZodTypeAny, {
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
+            }, {
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
+            }>;
+            conversation: z.ZodObject<{
+                isGroup: z.ZodBoolean;
+                conversationType: z.ZodString;
+                tenantId: z.ZodOptional<z.ZodString>;
+                id: z.ZodString;
+                name: z.ZodString;
+                aadObjectId: z.ZodOptional<z.ZodString>;
+                role: z.ZodOptional<z.ZodString>;
+                properties: z.ZodOptional<z.ZodUnknown>;
+            }, "strip", z.ZodTypeAny, {
+                isGroup?: boolean;
+                conversationType?: string;
+                tenantId?: string;
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
+                properties?: unknown;
+            }, {
+                isGroup?: boolean;
+                conversationType?: string;
+                tenantId?: string;
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
+                properties?: unknown;
+            }>;
+            channelId: z.ZodString;
+            serviceUrl: z.ZodString;
+        }, "strip", z.ZodTypeAny, {
+            ActivityId?: string;
+            user?: {
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
+            };
+            locale?: string;
+            bot?: {
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
+            };
+            conversation?: {
+                isGroup?: boolean;
+                conversationType?: string;
+                tenantId?: string;
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
+                properties?: unknown;
+            };
+            channelId?: string;
+            serviceUrl?: string;
+        }, {
+            ActivityId?: string;
+            user?: {
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
+            };
+            locale?: string;
+            bot?: {
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
+            };
+            conversation?: {
+                isGroup?: boolean;
+                conversationType?: string;
+                tenantId?: string;
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
+                properties?: unknown;
+            };
+            channelId?: string;
+            serviceUrl?: string;
+        }>>;
+        code: z.ZodOptional<z.ZodString>;
+        importance: z.ZodOptional<z.ZodString>;
+        deliveryMode: z.ZodOptional<z.ZodString>;
+        listenFor: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
+        textHighlights: z.ZodOptional<z.ZodArray<z.ZodObject<{
+            text: z.ZodString;
+            occurrence: z.ZodNumber;
+        }, "strip", z.ZodTypeAny, {
+            text?: string;
+            occurrence?: number;
+        }, {
+            text?: string;
+            occurrence?: number;
+        }>, "many">>;
+        semanticAction: z.ZodOptional<z.ZodObject<{
+            id: z.ZodString;
+            state: z.ZodString;
+            entities: z.ZodRecord<z.ZodString, z.ZodEffects<z.ZodRecord<z.ZodString, z.ZodUnknown>, Record<string, unknown>, Record<string, unknown>>>;
+        }, "strip", z.ZodTypeAny, {
+            id?: string;
+            state?: string;
+            entities?: Record<string, Record<string, unknown>>;
+        }, {
+            id?: string;
+            state?: string;
+            entities?: Record<string, Record<string, unknown>>;
+        }>>;
+    }, "strip", z.ZodTypeAny, {
+        type?: string;
+        id?: string;
+        timestamp?: Date;
+        localTimestamp?: Date;
+        localTimezone?: string;
+        callerId?: string;
+        serviceUrl?: string;
+        channelId?: string;
+        from?: {
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+        };
+        conversation?: {
+            isGroup?: boolean;
+            conversationType?: string;
+            tenantId?: string;
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+            properties?: unknown;
+        };
+        recipient?: {
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+        };
+        textFormat?: string;
+        attachmentLayout?: string;
+        membersAdded?: {
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+        }[];
+        membersRemoved?: {
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+        }[];
+        reactionsAdded?: {
+            type?: string;
+        }[];
+        reactionsRemoved?: {
+            type?: string;
+        }[];
+        topicName?: string;
+        historyDisclosed?: boolean;
+        locale?: string;
+        text?: string;
+        speak?: string;
+        inputHint?: string;
+        summary?: string;
+        suggestedActions?: {
+            to?: string[];
+            actions?: {
+                type?: string;
+                title?: string;
+                image?: string;
+                text?: string;
+                displayText?: string;
+                value?: unknown;
+                channelData?: unknown;
+                imageAltText?: string;
+            }[];
+        };
+        attachments?: {
+            contentType?: string;
+            contentUrl?: string;
+            content?: unknown;
+            name?: string;
+            thumbnailUrl?: string;
+        }[];
+        entities?: Record<string, unknown>[];
+        channelData?: unknown;
+        action?: string;
+        replyToId?: string;
+        label?: string;
+        valueType?: string;
+        value?: unknown;
+        name?: string;
+        relatesTo?: {
+            ActivityId?: string;
+            user?: {
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
+            };
+            locale?: string;
+            bot?: {
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
+            };
+            conversation?: {
+                isGroup?: boolean;
+                conversationType?: string;
+                tenantId?: string;
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
+                properties?: unknown;
+            };
+            channelId?: string;
+            serviceUrl?: string;
+        };
+        code?: string;
+        importance?: string;
+        deliveryMode?: string;
+        listenFor?: string[];
+        textHighlights?: {
+            text?: string;
+            occurrence?: number;
+        }[];
+        semanticAction?: {
+            id?: string;
+            state?: string;
+            entities?: Record<string, Record<string, unknown>>;
+        };
+    }, {
+        type?: string;
+        id?: string;
+        timestamp?: Date;
+        localTimestamp?: Date;
+        localTimezone?: string;
+        callerId?: string;
+        serviceUrl?: string;
+        channelId?: string;
+        from?: {
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+        };
+        conversation?: {
+            isGroup?: boolean;
+            conversationType?: string;
+            tenantId?: string;
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+            properties?: unknown;
+        };
+        recipient?: {
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+        };
+        textFormat?: string;
+        attachmentLayout?: string;
+        membersAdded?: {
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+        }[];
+        membersRemoved?: {
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+        }[];
+        reactionsAdded?: {
+            type?: string;
+        }[];
+        reactionsRemoved?: {
+            type?: string;
+        }[];
+        topicName?: string;
+        historyDisclosed?: boolean;
+        locale?: string;
+        text?: string;
+        speak?: string;
+        inputHint?: string;
+        summary?: string;
+        suggestedActions?: {
+            to?: string[];
+            actions?: {
+                type?: string;
+                title?: string;
+                image?: string;
+                text?: string;
+                displayText?: string;
+                value?: unknown;
+                channelData?: unknown;
+                imageAltText?: string;
+            }[];
+        };
+        attachments?: {
+            contentType?: string;
+            contentUrl?: string;
+            content?: unknown;
+            name?: string;
+            thumbnailUrl?: string;
+        }[];
+        entities?: Record<string, unknown>[];
+        channelData?: unknown;
+        action?: string;
+        replyToId?: string;
+        label?: string;
+        valueType?: string;
+        value?: unknown;
+        name?: string;
+        relatesTo?: {
+            ActivityId?: string;
+            user?: {
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
+            };
+            locale?: string;
+            bot?: {
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
+            };
+            conversation?: {
+                isGroup?: boolean;
+                conversationType?: string;
+                tenantId?: string;
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
+                properties?: unknown;
+            };
+            channelId?: string;
+            serviceUrl?: string;
+        };
+        code?: string;
+        importance?: string;
+        deliveryMode?: string;
+        listenFor?: string[];
+        textHighlights?: {
+            text?: string;
+            occurrence?: number;
+        }[];
+        semanticAction?: {
+            id?: string;
+            state?: string;
+            entities?: Record<string, Record<string, unknown>>;
+        };
+    }>;
+    channelData: z.ZodOptional<z.ZodUnknown>;
+}, "strip", z.ZodTypeAny, {
+    isGroup?: boolean;
+    bot?: {
+        id?: string;
+        name?: string;
+        aadObjectId?: string;
+        role?: string;
+    };
+    members?: {
+        id?: string;
+        name?: string;
+        aadObjectId?: string;
+        role?: string;
+    }[];
+    topicName?: string;
+    tenantId?: string;
+    activity?: {
+        type?: string;
+        id?: string;
+        timestamp?: Date;
+        localTimestamp?: Date;
+        localTimezone?: string;
+        callerId?: string;
+        serviceUrl?: string;
+        channelId?: string;
+        from?: {
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+        };
+        conversation?: {
+            isGroup?: boolean;
+            conversationType?: string;
+            tenantId?: string;
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+            properties?: unknown;
+        };
+        recipient?: {
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+        };
+        textFormat?: string;
+        attachmentLayout?: string;
+        membersAdded?: {
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+        }[];
+        membersRemoved?: {
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+        }[];
+        reactionsAdded?: {
+            type?: string;
+        }[];
+        reactionsRemoved?: {
+            type?: string;
+        }[];
+        topicName?: string;
+        historyDisclosed?: boolean;
+        locale?: string;
+        text?: string;
+        speak?: string;
+        inputHint?: string;
+        summary?: string;
+        suggestedActions?: {
+            to?: string[];
+            actions?: {
+                type?: string;
+                title?: string;
+                image?: string;
+                text?: string;
+                displayText?: string;
+                value?: unknown;
+                channelData?: unknown;
+                imageAltText?: string;
+            }[];
+        };
+        attachments?: {
+            contentType?: string;
+            contentUrl?: string;
+            content?: unknown;
+            name?: string;
+            thumbnailUrl?: string;
+        }[];
+        entities?: Record<string, unknown>[];
+        channelData?: unknown;
+        action?: string;
+        replyToId?: string;
+        label?: string;
+        valueType?: string;
+        value?: unknown;
+        name?: string;
+        relatesTo?: {
+            ActivityId?: string;
+            user?: {
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
+            };
+            locale?: string;
+            bot?: {
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
+            };
+            conversation?: {
+                isGroup?: boolean;
+                conversationType?: string;
+                tenantId?: string;
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
+                properties?: unknown;
+            };
+            channelId?: string;
+            serviceUrl?: string;
+        };
+        code?: string;
+        importance?: string;
+        deliveryMode?: string;
+        listenFor?: string[];
+        textHighlights?: {
+            text?: string;
+            occurrence?: number;
+        }[];
+        semanticAction?: {
+            id?: string;
+            state?: string;
+            entities?: Record<string, Record<string, unknown>>;
+        };
+    };
+    channelData?: unknown;
+}, {
+    isGroup?: boolean;
+    bot?: {
+        id?: string;
+        name?: string;
+        aadObjectId?: string;
+        role?: string;
+    };
+    members?: {
+        id?: string;
+        name?: string;
+        aadObjectId?: string;
+        role?: string;
+    }[];
+    topicName?: string;
+    tenantId?: string;
+    activity?: {
+        type?: string;
+        id?: string;
+        timestamp?: Date;
+        localTimestamp?: Date;
+        localTimezone?: string;
+        callerId?: string;
+        serviceUrl?: string;
+        channelId?: string;
+        from?: {
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+        };
+        conversation?: {
+            isGroup?: boolean;
+            conversationType?: string;
+            tenantId?: string;
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+            properties?: unknown;
+        };
+        recipient?: {
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+        };
+        textFormat?: string;
+        attachmentLayout?: string;
+        membersAdded?: {
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+        }[];
+        membersRemoved?: {
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+        }[];
+        reactionsAdded?: {
+            type?: string;
+        }[];
+        reactionsRemoved?: {
+            type?: string;
+        }[];
+        topicName?: string;
+        historyDisclosed?: boolean;
+        locale?: string;
+        text?: string;
+        speak?: string;
+        inputHint?: string;
+        summary?: string;
+        suggestedActions?: {
+            to?: string[];
+            actions?: {
+                type?: string;
+                title?: string;
+                image?: string;
+                text?: string;
+                displayText?: string;
+                value?: unknown;
+                channelData?: unknown;
+                imageAltText?: string;
+            }[];
+        };
+        attachments?: {
+            contentType?: string;
+            contentUrl?: string;
+            content?: unknown;
+            name?: string;
+            thumbnailUrl?: string;
+        }[];
+        entities?: Record<string, unknown>[];
+        channelData?: unknown;
+        action?: string;
+        replyToId?: string;
+        label?: string;
+        valueType?: string;
+        value?: unknown;
+        name?: string;
+        relatesTo?: {
+            ActivityId?: string;
+            user?: {
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
+            };
+            locale?: string;
+            bot?: {
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
+            };
+            conversation?: {
+                isGroup?: boolean;
+                conversationType?: string;
+                tenantId?: string;
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
+                properties?: unknown;
+            };
+            channelId?: string;
+            serviceUrl?: string;
+        };
+        code?: string;
+        importance?: string;
+        deliveryMode?: string;
+        listenFor?: string[];
+        textHighlights?: {
+            text?: string;
+            occurrence?: number;
+        }[];
+        semanticAction?: {
+            id?: string;
+            state?: string;
+            entities?: Record<string, Record<string, unknown>>;
+        };
+    };
+    channelData?: unknown;
+}>;
+
 // @public
 export interface ConversationReference {
     activityId?: string;
@@ -626,6 +1696,13 @@ export enum DeliveryModes {
 }
 
 // @public
+export enum DropDownOptionType {
+    Divider = 1,
+    Header = 2,
+    Normal = 0
+}
+
+// @public
 export enum EndOfConversationCodes {
     // (undocumented)
     BotIssuedInvalidMessage = "botIssuedInvalidMessage",
@@ -660,14 +1737,51 @@ export interface ErrorResponse {
 }
 
 // @public
+export interface ExecuteCardAction {
+    parameters: ExecuteCardParameters;
+    type: 'Execute';
+    verb?: string;
+}
+
+// @public
+export interface ExecuteCardParameters {
+    [key: string]: unknown;
+}
+
+// @public
 export interface ExpectedReplies {
     activities: Activity[];
+}
+
+// @public
+export interface ExternalLinkActionParameters {
+    isTeamsDeepLink?: boolean;
+    target: string;
+}
+
+// @public
+export interface ExternalLinkCardAction {
+    parameters: ExternalLinkActionParameters;
+    type: 'ExternalLink';
 }
 
 // @public
 export interface Fact {
     key: string;
     value: string;
+}
+
+// @public
+export enum FieldType {
+    CheckBox = 2,
+    ChoiceGroup = 10,
+    Dropdown = 6,
+    HorizontalRule = 12,
+    Label = 7,
+    Link = 13,
+    Slider = 8,
+    TextField = 3,
+    Toggle = 5
 }
 
 // @public
@@ -713,6 +1827,12 @@ export interface FileUploadInfo {
 }
 
 // @public
+export interface FocusParameters {
+    ariaLive?: 'polite' | 'assertive' | 'off';
+    focusTarget?: string;
+}
+
+// @public
 export interface GeoCoordinates {
     elevation: number;
     latitude: number;
@@ -720,6 +1840,28 @@ export interface GeoCoordinates {
     name: string;
     type: string;
 }
+
+// @public
+export interface GetLocationActionParameters {
+    chooseLocationOnMap?: boolean;
+}
+
+// @public
+export interface GetLocationCardAction {
+    parameters?: GetLocationActionParameters;
+    type: 'VivaAction.GetLocation';
+}
+
+// @public
+export interface GetPropertyPaneConfigurationResponse {
+    currentPage: number;
+    loadingIndicatorDelayTime: number;
+    pages: PropertyPanePage[];
+    showLoadingIndicator: boolean;
+}
+
+// @public
+export type HandleActionResponse = CardViewHandleActionResponse | QuickViewHandleActionResponse | NoOpHandleActionResponse;
 
 // @public
 export interface HeroCard {
@@ -745,6 +1887,20 @@ export interface IActivity {
     serviceUrl: string;
     timestamp?: Date;
     type: ActivityTypes | string;
+}
+
+// @public
+export interface ICardSearchBoxButton extends CardButtonBase {
+}
+
+// @public
+export interface ICardTextInputIconButton extends CardButtonBase {
+    icon: CardImage_2;
+}
+
+// @public
+export interface ICardTextInputTitleButton extends CardButtonBase {
+    title: string;
 }
 
 // @public
@@ -801,6 +1957,9 @@ export interface IInvokeActivity extends IActivity {
     relatesTo?: ConversationReference;
     value?: any;
 }
+
+// @public
+export function ImageCardView(cardBar: CardBarComponent, header: CardTextComponent, image: CardImage_2, footer?: CardViewFooterParameters): TextCardViewParameters;
 
 // @public (undocumented)
 export interface IMessageActivity extends IActivity {
@@ -951,6 +2110,15 @@ export interface ITraceActivity extends IActivity {
 export type ITypingActivity = IActivity;
 
 // @public
+interface Location_2 {
+    accuracy?: number;
+    latitude: number;
+    longitude: number;
+    timestamp?: number;
+}
+export { Location_2 as Location }
+
+// @public
 export interface MediaCard {
     aspect: string;
     autoloop: boolean;
@@ -969,6 +2137,16 @@ export interface MediaCard {
 // @public
 export interface MediaEventValue {
     cardValue: any;
+}
+
+// @public
+export enum MediaType {
+    // (undocumented)
+    Audio = 4,
+    // (undocumented)
+    Document = 8,
+    // (undocumented)
+    Image = 1
 }
 
 // @public
@@ -1238,6 +2416,12 @@ export interface MicrosoftPayMethodData {
 }
 
 // @public
+export interface NoOpHandleActionResponse extends BaseHandleActionResponse {
+    renderArguments?: undefined;
+    responseType: 'NoOp';
+}
+
+// @public
 export interface NotificationInfo {
     alert?: boolean;
     alertInMeeting?: boolean;
@@ -1381,6 +2565,9 @@ export interface OnBehalfOf {
 }
 
 // @public
+export type OnCardSelectionAction = QuickViewCardAction | ExternalLinkCardAction | SelectMediaCardAction | GetLocationCardAction | ShowLocationCardAction | ExecuteCardAction | undefined;
+
+// @public
 export type Os = 'default' | 'iOS' | 'android' | 'windows';
 
 // @public
@@ -1390,7 +2577,7 @@ export interface PagedMembersResult {
 }
 
 // @public @deprecated
-interface PaymentAddress_2 {
+export interface PaymentAddress {
     addressLine: string[];
     city: string;
     country: string;
@@ -1404,15 +2591,12 @@ interface PaymentAddress_2 {
     sortingCode: string;
 }
 
-export { PaymentAddress_2 as PaymentAddress }
-
 // @public @deprecated
 interface PaymentCurrencyAmount_2 {
     currency: string;
     currencySystem: string;
     value: string;
 }
-
 export { PaymentCurrencyAmount_2 as PaymentCurrencyAmount }
 
 // @public @deprecated
@@ -1420,7 +2604,7 @@ export interface PaymentDetails {
     displayItems: PaymentItem_2[];
     error: string;
     modifiers: PaymentDetailsModifier_2[];
-    shippingOptions: PaymentShippingOption_2[];
+    shippingOptions: PaymentShippingOption[];
     total: PaymentItem_2;
 }
 
@@ -1431,7 +2615,6 @@ interface PaymentDetailsModifier_2 {
     supportedMethods: string[];
     total: PaymentItem_2;
 }
-
 export { PaymentDetailsModifier_2 as PaymentDetailsModifier }
 
 // @public @deprecated
@@ -1440,7 +2623,6 @@ interface PaymentItem_2 {
     label: string;
     pending: boolean;
 }
-
 export { PaymentItem_2 as PaymentItem }
 
 // @public @deprecated
@@ -1448,11 +2630,10 @@ interface PaymentMethodData_2 {
     data: any;
     supportedMethods: string[];
 }
-
 export { PaymentMethodData_2 as PaymentMethodData }
 
 // @public @deprecated
-interface PaymentOptions_2 {
+export interface PaymentOptions {
     requestPayerEmail: boolean;
     requestPayerName: boolean;
     requestPayerPhone: boolean;
@@ -1460,17 +2641,14 @@ interface PaymentOptions_2 {
     shippingType: string;
 }
 
-export { PaymentOptions_2 as PaymentOptions }
-
 // @public @deprecated
 interface PaymentRequest_2 {
     details: PaymentDetails;
     expires: string;
     id: string;
     methodData: PaymentMethodData_2[];
-    options: PaymentOptions_2;
+    options: PaymentOptions;
 }
-
 export { PaymentRequest_2 as PaymentRequest }
 
 // @public @deprecated
@@ -1489,7 +2667,7 @@ export interface PaymentRequestCompleteResult {
 export interface PaymentRequestUpdate {
     details: PaymentDetails;
     id: string;
-    shippingAddress: PaymentAddress_2;
+    shippingAddress: PaymentAddress;
     shippingOption: string;
 }
 
@@ -1504,21 +2682,18 @@ interface PaymentResponse_2 {
     methodName: string;
     payerEmail: string;
     payerPhone: string;
-    shippingAddress: PaymentAddress_2;
+    shippingAddress: PaymentAddress;
     shippingOption: string;
 }
-
 export { PaymentResponse_2 as PaymentResponse }
 
 // @public @deprecated
-interface PaymentShippingOption_2 {
+export interface PaymentShippingOption {
     amount: PaymentCurrencyAmount_2;
     id: string;
     label: string;
     selected: boolean;
 }
-
-export { PaymentShippingOption_2 as PaymentShippingOption }
 
 // @public
 export interface Place {
@@ -1527,6 +2702,209 @@ export interface Place {
     hasMap: any;
     name: string;
     type: string;
+}
+
+// @public
+export enum PopupWindowPosition {
+    Center = 0,
+    LeftBottom = 4,
+    LeftTop = 2,
+    RightBottom = 3,
+    RightTop = 1
+}
+
+// @public
+export function PrimaryTextCardView(cardBar: CardBarComponent, header: CardTextComponent, body: CardTextComponent, footer?: CardViewFooterParameters): TextCardViewParameters;
+
+// @public
+export interface PropertyPaneCheckboxProperties extends PropertyPaneFieldProperties {
+    checked?: boolean;
+    disabled?: boolean;
+    text?: string;
+}
+
+// @public
+export interface PropertyPaneChoiceGroupIconProperties {
+    officeFabricIconFontName?: string;
+}
+
+// @public
+export interface PropertyPaneChoiceGroupImageSize {
+    height: number;
+    width: number;
+}
+
+// @public
+export interface PropertyPaneChoiceGroupOption {
+    ariaLabel?: string;
+    checked?: boolean;
+    disabled?: boolean;
+    iconProps?: PropertyPaneChoiceGroupIconProperties;
+    imageSize?: PropertyPaneChoiceGroupImageSize;
+    imageSrc?: string;
+    key: string;
+    text: string;
+}
+
+// @public
+export interface PropertyPaneChoiceGroupProperties extends PropertyPaneFieldProperties {
+    label?: string;
+    options: PropertyPaneChoiceGroupOption[];
+}
+
+// @public
+export interface PropertyPaneDropDownOption {
+    index?: number;
+    key: string;
+    text: string;
+    type?: DropDownOptionType;
+}
+
+// @public
+export interface PropertyPaneDropDownProperties extends PropertyPaneFieldProperties {
+    ariaLabel?: string;
+    ariaPositionInSet?: number;
+    ariaSetSize?: number;
+    disabled?: boolean;
+    errorMessage?: string;
+    label: string;
+    options?: PropertyPaneDropDownOption[];
+    selectedKey?: string;
+}
+
+// @public
+export interface PropertyPaneFieldProperties {
+}
+
+// @public
+export interface PropertyPaneGroup extends PropertyPaneGroupOrConditionalGroup {
+    groupFields: PropertyPaneGroupField[];
+    groupName?: string;
+    isCollapsed?: boolean;
+    isGroupNameHidden?: boolean;
+}
+
+// @public
+export interface PropertyPaneGroupField {
+    properties: PropertyPaneFieldProperties;
+    shouldFocus?: boolean;
+    targetProperty: string;
+    type: FieldType;
+}
+
+// @public
+export interface PropertyPaneGroupOrConditionalGroup {
+}
+
+// @public
+export interface PropertyPaneLabelProperties extends PropertyPaneFieldProperties {
+    required?: boolean;
+    text: string;
+}
+
+// @public
+export interface PropertyPaneLinkPopupWindowProperties {
+    height: number;
+    positionWindowPosition: PopupWindowPosition;
+    title: string;
+    width: number;
+}
+
+// @public
+export interface PropertyPaneLinkProperties extends PropertyPaneFieldProperties {
+    ariaLabel?: string;
+    disabled?: boolean;
+    href: string;
+    popupWindowProps?: PropertyPaneLinkPopupWindowProperties;
+    target?: string;
+    text: string;
+}
+
+// @public
+export interface PropertyPanePage {
+    displayGroupsAsAccordion?: boolean;
+    groups: PropertyPaneGroupOrConditionalGroup[];
+    header?: PropertyPanePageHeader;
+}
+
+// @public
+export interface PropertyPanePageHeader {
+    description: string;
+}
+
+// @public
+export interface PropertyPaneSliderProperties extends PropertyPaneFieldProperties {
+    ariaLabel?: string;
+    disabled?: boolean;
+    label?: string;
+    max: number;
+    min: number;
+    showValue?: boolean;
+    step?: number;
+    value?: string;
+}
+
+// @public
+export interface PropertyPaneTextFieldProperties extends PropertyPaneFieldProperties {
+    ariaLabel?: string;
+    description?: string;
+    disabled?: boolean;
+    errorMessage?: string;
+    label?: string;
+    logName?: string;
+    maxLength?: number;
+    multiline?: boolean;
+    placeholder?: string;
+    resizable?: boolean;
+    rows?: number;
+    underlined?: boolean;
+    value?: string;
+}
+
+// @public
+export interface PropertyPaneToggleProperties extends PropertyPaneFieldProperties {
+    ariaLabel?: string;
+    checked?: boolean;
+    disabled?: boolean;
+    key?: string;
+    label?: string;
+    offAriaLabel?: string;
+    offText?: string;
+    onAriaLabel?: string;
+    onText?: string;
+}
+
+// @public
+export interface QuickViewCardAction {
+    parameters: QuickViewParameters;
+    type: 'QuickView';
+}
+
+// @public (undocumented)
+export interface QuickViewData {
+    // (undocumented)
+    [key: string]: unknown;
+}
+
+// @public
+export interface QuickViewHandleActionResponse extends BaseHandleActionResponse {
+    renderArguments: QuickViewResponse;
+    responseType: 'QuickView';
+}
+
+// @public
+export interface QuickViewParameters {
+    view: string;
+}
+
+// @public
+export interface QuickViewResponse {
+    data: QuickViewData;
+    externalLink: ExternalLinkActionParameters;
+    focusParameters: FocusParameters;
+    template: AdaptiveCard;
+    title: string;
+    viewId: string;
 }
 
 // @public
@@ -1571,6 +2949,17 @@ export enum RoleTypes {
 }
 
 // @public
+export function SearchCardView(cardBar: CardBarComponent, header: CardTextComponent, body: CardSearchBoxComponent, footer: CardSearchFooterComponent): SearchCardViewParameters;
+
+// @public
+export interface SearchCardViewParameters extends BaseCardViewParameters {
+    body: [CardSearchBoxComponent];
+    cardViewType: 'search';
+    footer?: [CardSearchFooterComponent];
+    header: [CardTextComponent];
+}
+
+// @public
 export interface SearchInvokeOptions {
     skip: number;
     top: number;
@@ -1586,6 +2975,20 @@ export interface SearchInvokeValue {
     kind: string;
     queryOptions: SearchInvokeOptions;
     queryText: string;
+}
+
+// @public
+export interface SelectMediaActionParameters {
+    allowMultipleCapture?: boolean;
+    maxSizePerFile?: number;
+    mediaType: MediaType;
+    supportedFileFormats?: string[];
+}
+
+// @public
+export interface SelectMediaCardAction {
+    parameters: SelectMediaActionParameters;
+    type: 'VivaAction.SelectMedia';
 }
 
 // @public
@@ -1607,10 +3010,35 @@ export enum SemanticActionStateTypes {
     Start = "start"
 }
 
+// @public (undocumented)
+export type SetPropertyPaneConfigurationResponse = CardViewHandleActionResponse | NoOpHandleActionResponse;
+
+// @public
+export interface ShowLocationActionParameters {
+    locationCoordinates?: Location_2;
+}
+
+// @public
+export interface ShowLocationCardAction {
+    parameters?: ShowLocationActionParameters;
+    type: 'VivaAction.ShowLocation';
+}
+
 // @public
 export interface SigninCard {
     buttons: CardAction[];
     text?: string;
+}
+
+// @public
+export function SignInCardView(cardBar: CardBarComponent, header: CardTextComponent, body: CardTextComponent, footer: CardButtonComponent): SignInCardViewParameters;
+
+// @public
+export interface SignInCardViewParameters extends BaseCardViewParameters {
+    body: [CardTextComponent] | undefined;
+    cardViewType: 'signIn';
+    footer?: [CardButtonComponent];
+    header: [CardTextComponent];
 }
 
 // @public
@@ -1662,6 +3090,18 @@ export enum StatusCodes {
 
 // @public
 export type Style = 'compact' | 'expanded';
+
+// @public
+export interface SubmitCardAction {
+    confirmationDialog?: ConfirmationDialog;
+    parameters: SubmitCardParameters;
+    type: 'Submit';
+}
+
+// @public
+export interface SubmitCardParameters {
+    [key: string]: unknown;
+}
 
 // @public
 export interface SuggestedActions {
@@ -1873,6 +3313,15 @@ export interface TenantInfo {
 }
 
 // @public
+export interface TextCardViewParameters extends BaseCardViewParameters {
+    body: [CardTextComponent] | undefined;
+    cardViewType: 'text';
+    footer?: CardViewFooterParameters;
+    header: [CardTextComponent];
+    image?: CardImage_2;
+}
+
+// @public
 export enum TextFormatTypes {
     // (undocumented)
     Markdown = "markdown",
@@ -1886,6 +3335,18 @@ export enum TextFormatTypes {
 export interface TextHighlight {
     occurrence: number;
     text: string;
+}
+
+// @public
+export function TextInputCardView(cardBar: CardBarComponent, header: CardTextComponent, body: CardTextInputComponent, footer?: CardViewActionsFooterParameters): TextInputCardViewParameters;
+
+// @public
+export interface TextInputCardViewParameters extends BaseCardViewParameters {
+    body: [CardTextInputComponent];
+    cardViewType: 'textInput';
+    footer?: CardViewActionsFooterParameters;
+    header: [CardTextComponent];
+    image?: CardImage_2;
 }
 
 // @public
@@ -2020,6 +3481,8 @@ export interface VideoCard {
     value: any;
 }
 
+// @public
+export type ViewResponseType = 'Card' | 'QuickView' | 'NoOp';
 
 // (No @packageDocumentation comment for this package)
 
