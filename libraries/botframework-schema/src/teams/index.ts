@@ -57,16 +57,16 @@ export interface ConfigResponse<T> {
     /**
      * @member {CacheInfo} [cacheInfo] The data of the ConfigResponse cache, including cache type and cache duration.
      */
-    cacheInfo: CacheInfo;
+    cacheInfo?: CacheInfo;
     /**
      * @template T
      * @member {T} [config] The response to a configuration message.
      */
     config: T;
     /**
-     * @member {string} [responseType] The type of config response. Possible values are 'auth' and 'continue'
+     * @member {string} [responseType] The type of response 'config'.
      */
-    responseType: string;
+    responseType: 'config';
 }
 
 /**
@@ -1612,7 +1612,7 @@ export type ActivityImageType = 'avatar' | 'article';
  * @enum {string}
  */
 
-export type BotConfigAuthType = 'auth' | 'task';
+export type BotConfigAuthType = 'auth';
 
 /**
  * Defines values for Os.

@@ -450,7 +450,7 @@ export interface BotConfigAuth {
 }
 
 // @public
-export type BotConfigAuthType = 'auth' | 'task';
+export type BotConfigAuthType = 'auth';
 
 // @public
 export type BotMessagePreviewActionType = 'edit' | 'send';
@@ -658,9 +658,9 @@ export interface ConfigAuthResponse extends ConfigResponse<BotConfigAuth> {
 
 // @public
 export interface ConfigResponse<T> {
-    cacheInfo: CacheInfo;
+    cacheInfo?: CacheInfo;
     config: T;
-    responseType: string;
+    responseType: 'config';
 }
 
 // @public (undocumented)
