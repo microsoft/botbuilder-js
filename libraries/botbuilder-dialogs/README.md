@@ -132,7 +132,7 @@ See this module in action in these example apps:
 
 [DialogSet](https://docs.microsoft.com/en-us/javascript/api/botbuilder-dialogs/dialogset) DialogSet is a container for multiple dialogs. Once added to a DialogSet, dialogs can be called and interlinked.
 
-[WaterfallDialog](https://docs.microsoft.com/en-us/javascript/api/botbuilder-dialogs/waterfalldialog) WaterfallDialogs execute a series of step functions in order, passing the resulting user input from each steo into the next step's function.
+[WaterfallDialog](https://docs.microsoft.com/en-us/javascript/api/botbuilder-dialogs/waterfalldialog) WaterfallDialogs execute a series of step functions in order, passing the resulting user input from each step into the next step's function.
 
 [Track Waterfall Dialogs with Application Insights](https://github.com/Microsoft/botbuilder-js/tree/main/libraries/botbuilder-applicationinsights#use-with-waterfall-dialogs).
 
