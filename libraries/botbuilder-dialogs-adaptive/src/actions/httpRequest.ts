@@ -318,11 +318,6 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Htt
             switch (this.method) {
                 case HttpMethod.DELETE:
                 case HttpMethod.GET:
-                    response = await fetch(instanceUrl, {
-                        method: instanceMethod,
-                        headers: instanceHeaders,
-                    });
-                    break;
                 case HttpMethod.HEAD:
                     response = await fetch(instanceUrl, {
                         method: instanceMethod,
