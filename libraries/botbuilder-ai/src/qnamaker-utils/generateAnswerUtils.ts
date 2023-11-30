@@ -165,7 +165,7 @@ export class GenerateAnswerUtils {
      *
      * @param {QnAMakerResult[]} answers Answers returned by QnA Maker.
      * @param {QnAMakerOptions} queryOptions (Optional) The options for the QnA Maker knowledge base. If null, constructor option is used for this instance.
-     * @returns {QnAMakerResult[]} the sorted and filtered results
+     * @returns {QnAMakerResult[]} the sorted and filtered results.
      */
     static sortAnswersWithinThreshold(
         answers: QnAMakerResult[] = [] as QnAMakerResult[],
