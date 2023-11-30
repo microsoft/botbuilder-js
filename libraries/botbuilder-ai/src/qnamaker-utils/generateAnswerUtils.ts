@@ -159,6 +159,30 @@ export class GenerateAnswerUtils {
         }
     }
 
+    /**
+     * Sorts all QnAMakerResult from highest-to-lowest scoring.
+     * Filters QnAMakerResults within threshold specified (default threshold: .001).
+     *
+     * @param {QnAMakerResult[]} answers Answers returned by QnA Maker.
+     * @param {QnAMakerOptions} queryOptions (Optional) The options for the QnA Maker knowledge base. If null, constructor option is used for this instance.
+     * @returns {QnAMakerResult[]} the sorted and filtered results.
+     */
+    static sortAnswersWithinThreshold(
+        answers: QnAMakerResult[] = [] as QnAMakerResult[],
+        queryOptions: QnAMakerOptions
+    ): QnAMakerResult[] {
+        const minScore: number = typeof queryOptions.scoreThreshold === 'number' ? queryOptions.scoreThreshold : 0.001;
+
+        if (answers.length === 1 && answers[0].id === -1) {
+            // if the answer is the default answer, don't filter it by score.
+            return answers;
+        }
+
+        return answers
+            .filter((ans: QnAMakerResult) => ans.score >= minScore)
+            .sort((a: QnAMakerResult, b: QnAMakerResult) => b.score - a.score);
+    }
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private formatQnaResult(qnaResult: QnAMakerResults | any): QnAMakerResults {
         qnaResult.answers = qnaResult.answers.map((answer: QnAMakerResult & { qnaId?: number }) => {
