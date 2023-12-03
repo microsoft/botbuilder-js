@@ -9,6 +9,7 @@ import * as restify from 'restify';
 // Import required bot services.
 // See https://aka.ms/bot-services to learn more about the different parts of a bot.
 import {
+    ActivityTypes,
     CloudAdapter,
     ConfigurationBotFrameworkAuthentication,
     ConfigurationBotFrameworkAuthenticationOptions,
@@ -61,14 +62,20 @@ server.listen(process.env.port || process.env.PORT || 3978, () => {
     console.log( '\nTo talk to your bot, open the emulator select "Open Bot"' );
 });
 
-import { Application, ConversationHistoryTracker, DefaultTurnState, OpenAIPredictionEngine } from 'botbuilder-m365';
+import { AI, Application, ConversationHistoryTracker, DefaultTurnState, OpenAIPredictionEngine } from 'botbuilder-m365';
+
+interface ConversationState {
+    lightsOn: boolean;
+    count: number;
+}
+type ApplicationTurnState = DefaultTurnState<ConversationState>;
 
 // Create prediction engine
 const predictionEngine = new OpenAIPredictionEngine({
     configuration: {
         apiKey: process.env.OPENAI_API_KEY
     },
-    prompt: path.join(__dirname, '../src/prompt.txt'),
+    prompt: path.join(__dirname, '../src/lightPrompt.txt'),
     promptConfig: {
         model: "text-davinci-003",
         temperature: 0.0,
@@ -77,14 +84,87 @@ const predictionEngine = new OpenAIPredictionEngine({
         frequency_penalty: 0,
         presence_penalty: 0.6,
         stop: [" Human:", " AI:"],
-    }
+    },
+    // topicFilter: path.join(__dirname, '../src/lightTopicFilter.txt'),
+    // topicFilterConfig: {
+    //     model: "text-davinci-003",
+    //     temperature: 0.0,
+    //     max_tokens: 2048,
+    //     top_p: 1,
+    //     frequency_penalty: 0,
+    //     presence_penalty: 0.6,
+    //     stop: [" Human:", " AI:"],
+    // },
 });
 
 // Define storage and application
 const storage = new MemoryStorage();
-const app = new Application({
+const app = new Application<ApplicationTurnState>({
     storage,
     predictionEngine
+});
+
+app.message("/history", async (context, state) => {
+    state.conversation.value[ConversationHistoryTracker.StatePropertyName];
+
+    const history = ConversationHistoryTracker.getHistoryAsText(context, state);
+    await context.sendActivity(history)
+});
+
+app.ai.action(AI.UnknownActionName, async (context, state, data, action) => {
+    await context.sendActivity(`I don't know how to do '${action}'.`);
+    return false;
+});
+
+app.ai.action(AI.OffTopicActionName, async (context, state) => {
+    await context.sendActivity(`I'm sorry, I'm not allowed to talk about such things...`);
+    return false;
+});
+
+app.ai.action('LightsOn', async (context, state) => {
+    state.conversation.value.lightsOn = true;
+    await context.sendActivity(`[lights on]`);
+    return true;    
+});
+
+app.ai.action('LightsOff', async (context, state) => {
+    state.conversation.value.lightsOn = false;
+    await context.sendActivity(`[lights off]`);
+    return true;
+});
+
+app.ai.action('Pause', async (context, state, data) => {
+    const time = data.time ? parseInt(data.time) : 1000;
+    await context.sendActivity(`[pausing for ${time / 1000} seconds]`);
+    await new Promise((resolve) => setTimeout(resolve, time));
+    return true;
+});
+
+app.ai.action('LightStatus', async (context, state) => {
+    // Create data to pass into prompt
+    const data = {
+        lightStatus: state.conversation.value.lightsOn ? 'on' : 'off'
+    };
+
+    // Chain into a new prompt
+    await app.ai.chain(
+        context, 
+        state, 
+        data, 
+        {
+            prompt: path.join(__dirname, '../src/lightStatus.txt'),
+            promptConfig: {
+                model: "text-davinci-003",
+                temperature: 0.7,
+                max_tokens: 256,
+                top_p: 1,
+                frequency_penalty: 0,
+                presence_penalty: 0
+            }
+        });
+
+    // End the previous chain
+    return false;
 });
 
 // Listen for incoming server requests.
@@ -96,11 +176,8 @@ server.post('/api/messages', async (req, res) => {
     });
 });
 
+
 /*
-interface ConversationState {
-    lightsOn: boolean;
-}
-type ApplicationTurnState = DefaultTurnState<ConversationState>;
 
 app.ai.action('LightsOn', async (context, state) => {
     state.conversation.value.lightsOn = true;

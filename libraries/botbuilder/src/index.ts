@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-export * from 'botbuilder-core';
+export * from '@microsoft/teams-connector/src/schema';
 
 export * from './fileTranscriptStore';
 export * from './inspectionMiddleware';

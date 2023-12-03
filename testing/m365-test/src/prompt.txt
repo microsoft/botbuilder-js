@@ -3,5 +3,12 @@ The following is a conversation with an AI assistant. The assistant is helpful, 
 Human: Hello, who are you?
 AI: I am an AI created by OpenAI. How can I help you today?
 
+The state of the world is:
+
+lightsOn={{conversation.lightsOn}}
+
+Here's teh conversation history with the user:
+
 {{conversation.history}}
+
 Human:  {{activity.text}}

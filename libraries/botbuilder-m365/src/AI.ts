@@ -15,19 +15,26 @@ import { TurnState } from './TurnState';
 export class AI<TState extends TurnState, TPredictionOptions, TPredictionEngine extends PredictionEngine<TState, TPredictionOptions>> {
     private readonly _app: Application<TState>;
     private readonly _predictionEngine: TPredictionEngine;
-    private readonly _actions: Map<string, (context: TurnContext, state: TState, data?: Record<string, any>, action?: string) => Promise<boolean>> = new Map();
+    private readonly _actions: Map<string, ActionEntry<TState>> = new Map();
 
-    public readonly UnknownActionName = '***UnknownAction***';
+    public static readonly UnknownActionName = '___UnknownAction___';
+    public static readonly OffTopicActionName = '___OffTopic___';
 
     public constructor(app: Application<TState>, predictionEngine: TPredictionEngine) {
         this._app = app;
         this._predictionEngine = predictionEngine;
 
         // Register default UnknownAction handler
-        this.action(this.UnknownActionName, (context, state, data, action) => {
-            console.warn(`An AI action named "${action}" was predicted but no handler was registered.`);
+        this.action(AI.UnknownActionName, (context, state, data, action) => {
+            console.error(`An AI action named "${action}" was predicted but no handler was registered.`);
             return Promise.resolve(true);
-        });
+        }, true);
+
+        // Register default OffTopicAction handler
+        this.action(AI.OffTopicActionName, (context, state, data, action) => {
+            console.error(`A Topic Filter was configured but no handler was registered for 'AI.OffTopicActionName'.`);
+            return Promise.resolve(true);
+        }, true);
     }
 
     public get predictionEngine(): TPredictionEngine {
@@ -41,13 +48,19 @@ export class AI<TState extends TurnState, TPredictionOptions, TPredictionEngine 
      * Actions can be triggered by a Prediction Engine returning a DO command.
      * @param name Unique name of the action.
      * @param handler Function to call when the action is triggered.
+     * @param allowOverrides Optional. If true 
      * @returns The application instance for chaining purposes.
      */
-    public action(name: string, handler: (context: TurnContext, state: TState, data?: Record<string, any>, action?: string) => Promise<boolean>): this {
-        if (!this._actions.has(name) || name == this.UnknownActionName) {
-            this._actions.set(name, handler);
+    public action(name: string, handler: (context: TurnContext, state: TState, data?: Record<string, any>, action?: string) => Promise<boolean>, allowOverrides = false): this {
+        if (!this._actions.has(name) || allowOverrides) {
+            this._actions.set(name, { handler, allowOverrides });
         } else {
-            throw new Error(`The AI.action() was called with a previously registered action named "${name}".`);
+            const entry = this._actions.get(name);
+            if (entry.allowOverrides) {
+                entry.handler = handler;
+            } else {
+                throw new Error(`The AI.action() method was called with a previously registered action named "${name}".`);
+            }
         }
         return this;
     }
@@ -102,11 +115,11 @@ export class AI<TState extends TurnState, TPredictionOptions, TPredictionEngine 
                             const { action, data } = (cmd as PredictedDoCommand);
                             if (this._actions.has(action)) {
                                 // Call action handler
-                                const handler = this._actions.get(action);
+                                const handler = this._actions.get(action).handler;
                                 continueChain = await handler(context, state, data, action);
                             } else {
                                 // Redirect to UnknownAction handler
-                                continueChain = await this._actions.get(this.UnknownActionName)(context, state, data, action);
+                                continueChain = await this._actions.get(AI.UnknownActionName).handler(context, state, data, action);
                             }
                             break;
                         case 'SAY':
@@ -129,4 +142,9 @@ export class AI<TState extends TurnState, TPredictionOptions, TPredictionEngine 
         return continueChain;
     }
 
+}
+
+interface ActionEntry<TState> {
+    handler: (context: TurnContext, state: TState, data?: Record<string, any>, action?: string) => Promise<boolean>;
+    allowOverrides: boolean;
 }

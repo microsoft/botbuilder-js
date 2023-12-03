@@ -55,7 +55,7 @@ const predictionEngine = new botbuilder_m365_1.OpenAIPredictionEngine({
     configuration: {
         apiKey: process.env.OPENAI_API_KEY
     },
-    prompt: path.join(__dirname, '../src/prompt.txt'),
+    prompt: path.join(__dirname, '../src/lightPrompt.txt'),
     promptConfig: {
         model: "text-davinci-003",
         temperature: 0.0,
@@ -64,7 +64,17 @@ const predictionEngine = new botbuilder_m365_1.OpenAIPredictionEngine({
         frequency_penalty: 0,
         presence_penalty: 0.6,
         stop: [" Human:", " AI:"],
-    }
+    },
+    // topicFilter: path.join(__dirname, '../src/lightTopicFilter.txt'),
+    // topicFilterConfig: {
+    //     model: "text-davinci-003",
+    //     temperature: 0.0,
+    //     max_tokens: 2048,
+    //     top_p: 1,
+    //     frequency_penalty: 0,
+    //     presence_penalty: 0.6,
+    //     stop: [" Human:", " AI:"],
+    // },
 });
 // Define storage and application
 const storage = new botbuilder_1.MemoryStorage();
@@ -72,6 +82,55 @@ const app = new botbuilder_m365_1.Application({
     storage,
     predictionEngine
 });
+app.message("/history", (context, state) => __awaiter(void 0, void 0, void 0, function* () {
+    state.conversation.value[botbuilder_m365_1.ConversationHistoryTracker.StatePropertyName];
+    const history = botbuilder_m365_1.ConversationHistoryTracker.getHistoryAsText(context, state);
+    yield context.sendActivity(history);
+}));
+app.ai.action(botbuilder_m365_1.AI.UnknownActionName, (context, state, data, action) => __awaiter(void 0, void 0, void 0, function* () {
+    yield context.sendActivity(`I don't know how to do '${action}'.`);
+    return false;
+}));
+app.ai.action(botbuilder_m365_1.AI.OffTopicActionName, (context, state) => __awaiter(void 0, void 0, void 0, function* () {
+    yield context.sendActivity(`I'm sorry, I'm not allowed to talk about such things...`);
+    return false;
+}));
+app.ai.action('LightsOn', (context, state) => __awaiter(void 0, void 0, void 0, function* () {
+    state.conversation.value.lightsOn = true;
+    yield context.sendActivity(`[lights on]`);
+    return true;
+}));
+app.ai.action('LightsOff', (context, state) => __awaiter(void 0, void 0, void 0, function* () {
+    state.conversation.value.lightsOn = false;
+    yield context.sendActivity(`[lights off]`);
+    return true;
+}));
+app.ai.action('Pause', (context, state, data) => __awaiter(void 0, void 0, void 0, function* () {
+    const time = data.time ? parseInt(data.time) : 1000;
+    yield context.sendActivity(`[pausing for ${time / 1000} seconds]`);
+    yield new Promise((resolve) => setTimeout(resolve, time));
+    return true;
+}));
+app.ai.action('LightStatus', (context, state) => __awaiter(void 0, void 0, void 0, function* () {
+    // Create data to pass into prompt
+    const data = {
+        lightStatus: state.conversation.value.lightsOn ? 'on' : 'off'
+    };
+    // Chain into a new prompt
+    yield app.ai.chain(context, state, data, {
+        prompt: path.join(__dirname, '../src/lightStatus.txt'),
+        promptConfig: {
+            model: "text-davinci-003",
+            temperature: 0.7,
+            max_tokens: 256,
+            top_p: 1,
+            frequency_penalty: 0,
+            presence_penalty: 0
+        }
+    });
+    // End the previous chain
+    return false;
+}));
 // Listen for incoming server requests.
 server.post('/api/messages', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // Route received a request to adapter for processing
@@ -81,10 +140,6 @@ server.post('/api/messages', (req, res) => __awaiter(void 0, void 0, void 0, fun
     }));
 }));
 /*
-interface ConversationState {
-    lightsOn: boolean;
-}
-type ApplicationTurnState = DefaultTurnState<ConversationState>;
 
 app.ai.action('LightsOn', async (context, state) => {
     state.conversation.value.lightsOn = true;

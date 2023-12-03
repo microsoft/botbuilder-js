@@ -22,8 +22,11 @@ export class PromptParser {
         let promptTemplate: string;
         if (typeof prompt == 'function') {
             promptTemplate = await prompt(context, state);
+        } else if (promptFileCache.has(prompt)) {
+            promptTemplate = promptFileCache.get(prompt);
         } else {
             promptTemplate = await readFile(prompt, { encoding: 'utf8' });
+            promptFileCache.set(prompt, promptTemplate);
         }
 
         // Expand template
@@ -100,3 +103,5 @@ export class PromptParser {
         }
     }
 }
+
+const promptFileCache: Map<string, string> = new Map();

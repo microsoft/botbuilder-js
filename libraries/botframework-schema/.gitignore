@@ -1,6 +1,0 @@
-/**/node_modules
-/**/.vscode
-/**/lib
-#coverage
-**/*/coverage
-**/*/.nyc_output
