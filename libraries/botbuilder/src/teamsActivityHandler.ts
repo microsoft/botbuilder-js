@@ -9,14 +9,13 @@
 import {
     ActivityHandler,
     AppBasedLinkQuery,
-    BotConfigAuth,
     ChannelInfo,
     Channels,
     ConfigResponse,
-    ConfigTaskResponse,
     FileConsentCardResponse,
     InvokeResponse,
     MeetingEndEventDetails,
+    MeetingParticipantsEventDetails,
     MeetingStartEventDetails,
     MessagingExtensionAction,
     MessagingExtensionActionResponse,
@@ -35,7 +34,6 @@ import {
     tokenExchangeOperationName,
     TurnContext,
     verifyStateOperationName,
-    MeetingParticipantsEventDetails,
 } from 'botbuilder-core';
 import { ReadReceiptInfo } from 'botframework-connector';
 import { TeamsInfo } from './teamsInfo';
@@ -212,10 +210,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param _configData The object representing the configuration.
      * @returns A Config Response for the activity.
      */
-    protected async handleTeamsConfigFetch(
-        _context: TurnContext,
-        _configData: any
-    ): Promise<ConfigResponse<BotConfigAuth | ConfigTaskResponse>> {
+    protected async handleTeamsConfigFetch(_context: TurnContext, _configData: any): Promise<ConfigResponse> {
         throw new Error('NotImplemented');
     }
 
@@ -226,10 +221,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param _configData The object representing the configuration.
      * @returns A Config Response for the activity.
      */
-    protected async handleTeamsConfigSubmit(
-        _context: TurnContext,
-        _configData: any
-    ): Promise<ConfigResponse<BotConfigAuth | ConfigTaskResponse>> {
+    protected async handleTeamsConfigSubmit(_context: TurnContext, _configData: any): Promise<ConfigResponse> {
         throw new Error('NotImplemented');
     }
 

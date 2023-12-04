@@ -171,8 +171,9 @@ export class Configuration implements CoreConfiguration {
         try {
             return t.optional().parse(this.get(path));
         } catch (err) {
-            if (z.instanceof(z.ZodError).check(err)) {
-                err.errors.forEach((error) => (error.path = [...this.prefix, ...path, ...error.path]));
+            const zodError = z.instanceof(z.ZodError).safeParse(err);
+            if (zodError.success) {
+                zodError.data.errors.forEach((error) => (error.path = [...this.prefix, ...path, ...error.path]));
             }
 
             throw err;

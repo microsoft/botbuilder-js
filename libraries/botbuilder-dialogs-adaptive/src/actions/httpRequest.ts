@@ -107,6 +107,11 @@ export enum HttpMethod {
      * Http DELETE
      */
     DELETE = 'DELETE',
+
+    /**
+     * Http HEAD
+     */
+    HEAD = 'HEAD',
 }
 
 /**
@@ -313,6 +318,7 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Htt
             switch (this.method) {
                 case HttpMethod.DELETE:
                 case HttpMethod.GET:
+                case HttpMethod.HEAD:
                     response = await fetch(instanceUrl, {
                         method: instanceMethod,
                         headers: instanceHeaders,
