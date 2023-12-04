@@ -270,6 +270,7 @@ export class QnAMaker implements QnAMakerClient, QnAMakerTelemetryClient {
     ): Promise<QnAMakerResults> {
         const question: string = this.getTrimmedMessageText(context);
         const queryOptions: QnAMakerOptions = { ...this._options, ...options } as QnAMakerOptions;
+        const queryResult: QnAMakerResult[] = [] as QnAMakerResult[];
 
         this.generateAnswerUtils.validateOptions(queryOptions);
 
@@ -279,19 +280,25 @@ export class QnAMaker implements QnAMakerClient, QnAMakerTelemetryClient {
             result = await this.generateAnswerUtils.queryQnaServiceRaw(this.endpoint, question, queryOptions);
         }
 
+        const sortedQnaAnswers: QnAMakerResult[] = GenerateAnswerUtils.sortAnswersWithinThreshold(
+            result?.answers,
+            queryOptions
+        );
+        queryResult.push(...sortedQnaAnswers);
+
         if (!result) {
             return result;
         }
 
         await Promise.all([
             // Log telemetry
-            this.onQnaResults(result?.answers, context, telemetryProperties, telemetryMetrics),
-            this.generateAnswerUtils.emitTraceInfo(context, result?.answers, queryOptions),
+            this.onQnaResults(queryResult, context, telemetryProperties, telemetryMetrics),
+            this.generateAnswerUtils.emitTraceInfo(context, queryResult, queryOptions),
         ]);
 
         const qnaResponse: QnAMakerResults = {
             activeLearningEnabled: result.activeLearningEnabled,
-            answers: result?.answers,
+            answers: queryResult,
         };
 
         return qnaResponse;
