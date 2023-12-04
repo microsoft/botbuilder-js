@@ -4,6 +4,8 @@
 
 ```ts
 
+/// <reference types="node" />
+
 import { Activity } from 'botbuilder-core';
 import { BotComponent } from 'botbuilder-core';
 import { ClientRequest } from 'http';
@@ -155,7 +157,6 @@ class CustomEvent_2<T = unknown> extends TestAction implements CustomEventConfig
     name: string;
     value?: T;
 }
-
 export { CustomEvent_2 as CustomEvent }
 
 // @public (undocumented)
@@ -215,14 +216,14 @@ export class MockLuisLoader implements CustomDeserializer<MockLuisRecognizer, Lu
     constructor(_resourceExplorer: ResourceExplorer, _configuration?: Record<string, string>);
     // (undocumented)
     load(config: LuisAdaptiveRecognizerConfiguration, type: Newable<MockLuisRecognizer>): MockLuisRecognizer;
-    }
+}
 
 // @public
 export class MockLuisRecognizer extends Recognizer {
     constructor(recognizer: LuisAdaptiveRecognizer, resourceDir: string, name: string);
     // (undocumented)
     recognize(dialogContext: DialogContext, activity: Activity, telemetryProperties?: Record<string, string>, telemetryMetrics?: Record<string, number>): Promise<RecognizerResult>;
-    }
+}
 
 // @public
 export class MockSettingsMiddleware implements Middleware {
@@ -385,7 +386,6 @@ export interface UserTypingConfiguration {
     // (undocumented)
     user?: string;
 }
-
 
 // (No @packageDocumentation comment for this package)
 

@@ -37,6 +37,7 @@ import {
     StatusCodes,
     TokenResponse,
     TurnContext,
+    conversationParametersObject,
 } from 'botbuilder-core';
 
 import {
@@ -391,7 +392,7 @@ export class BotFrameworkAdapter
         maybeLogic?: (context: TurnContext) => Promise<void>
     ): Promise<void> {
         let audience: string;
-        if (LogicT.check(oAuthScopeOrlogic)) {
+        if (LogicT.safeParse(oAuthScopeOrlogic).success) {
             // Because the OAuthScope parameter was not provided, get the correct value via the channelService.
             // In this scenario, the ConnectorClient for the continued conversation can only communicate with
             // official channels, not with other bots.
@@ -401,8 +402,8 @@ export class BotFrameworkAdapter
         } else {
             audience = z.string().parse(oAuthScopeOrlogic);
         }
-
-        const logic = LogicT.check(oAuthScopeOrlogic) ? oAuthScopeOrlogic : LogicT.parse(maybeLogic);
+        const logicParse = LogicT.safeParse(oAuthScopeOrlogic);
+        const logic = logicParse.success ? logicParse.data : LogicT.parse(maybeLogic);
 
         let credentials = this.credentials;
 
@@ -510,10 +511,12 @@ export class BotFrameworkAdapter
         if (!reference.serviceUrl) {
             throw new Error('BotFrameworkAdapter.createConversation(): missing serviceUrl.');
         }
+        const logicParse = LogicT.safeParse(parametersOrLogic);
+        const parameterParse = conversationParametersObject.partial().safeParse(parametersOrLogic);
 
-        const parameters = LogicT.check(parametersOrLogic) ? {} : parametersOrLogic;
+        const parameters = parameterParse.success ? parameterParse.data : {};
 
-        const logic = LogicT.check(parametersOrLogic) ? parametersOrLogic : LogicT.parse(maybeLogic);
+        const logic = logicParse.success ? logicParse.data : LogicT.parse(maybeLogic);
 
         // Create conversation parameters, taking care to provide defaults that can be
         // overridden by passed in parameters

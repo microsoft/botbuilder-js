@@ -53,6 +53,8 @@ export async function getUserToken(
     const userTokenClient = context.turnState.get<UserTokenClient>(
         (context.adapter as CloudAdapterBase).UserTokenClientKey
     );
+    const extendedUserTokenProvider = ExtendedUserTokenProviderT.safeParse(context.adapter);
+
     if (userTokenClient) {
         return userTokenClient.getUserToken(
             context.activity?.from?.id,
@@ -60,8 +62,13 @@ export async function getUserToken(
             context.activity?.channelId,
             magicCode
         );
-    } else if (ExtendedUserTokenProviderT.check(context.adapter)) {
-        return context.adapter.getUserToken(context, settings.connectionName, magicCode, settings.oAuthAppCredentials);
+    } else if (extendedUserTokenProvider.success) {
+        return extendedUserTokenProvider.data.getUserToken(
+            context,
+            settings.connectionName,
+            magicCode,
+            settings.oAuthAppCredentials
+        );
     } else {
         throw new Error('OAuth prompt is not supported by the current adapter');
     }
@@ -77,10 +84,11 @@ export async function getSignInResource(
     const userTokenClient = context.turnState.get<UserTokenClient>(
         (context.adapter as CloudAdapterBase).UserTokenClientKey
     );
+    const extendedUserTokenProvider = ExtendedUserTokenProviderT.safeParse(context.adapter);
     if (userTokenClient) {
         return userTokenClient.getSignInResource(settings.connectionName, context.activity, undefined);
-    } else if (ExtendedUserTokenProviderT.check(context.adapter)) {
-        return context.adapter.getSignInResource(
+    } else if (extendedUserTokenProvider.success) {
+        return extendedUserTokenProvider.data.getSignInResource(
             context,
             settings.connectionName,
             context.activity?.from?.id,
@@ -99,14 +107,15 @@ export async function signOutUser(context: TurnContext, settings: OAuthPromptSet
     const userTokenClient = context.turnState.get<UserTokenClient>(
         (context.adapter as CloudAdapterBase).UserTokenClientKey
     );
+    const extendedUserTokenProvider = ExtendedUserTokenProviderT.safeParse(context.adapter);
     if (userTokenClient) {
         await userTokenClient.signOutUser(
             context.activity?.from?.id,
             settings.connectionName,
             context.activity?.channelId
         );
-    } else if (ExtendedUserTokenProviderT.check(context.adapter)) {
-        await context.adapter.signOutUser(
+    } else if (extendedUserTokenProvider.success) {
+        await extendedUserTokenProvider.data.signOutUser(
             context,
             settings.connectionName,
             context.activity?.from?.id,
@@ -128,6 +137,8 @@ export async function exchangeToken(
     const userTokenClient = context.turnState.get<UserTokenClient>(
         (context.adapter as CloudAdapterBase).UserTokenClientKey
     );
+    const extendedUserTokenProvider = ExtendedUserTokenProviderT.safeParse(context.adapter);
+
     if (userTokenClient) {
         return userTokenClient.exchangeToken(
             context.activity?.from?.id,
@@ -135,8 +146,8 @@ export async function exchangeToken(
             context.activity?.channelId,
             tokenExchangeRequest
         );
-    } else if (ExtendedUserTokenProviderT.check(context.adapter)) {
-        return context.adapter.exchangeToken(
+    } else if (extendedUserTokenProvider.success) {
+        return extendedUserTokenProvider.data.exchangeToken(
             context,
             settings.connectionName,
             context.activity?.from?.id,
@@ -159,10 +170,11 @@ export async function createConnectorClient(
     const connectorFactory = context.turnState.get<ConnectorFactory>(
         (context.adapter as CloudAdapterBase).ConnectorFactoryKey
     );
+    const connectorClientBuilder = ConnectorClientBuilderT.safeParse(context.adapter);
     if (connectorFactory) {
         return connectorFactory.create(serviceUrl, audience);
-    } else if (ConnectorClientBuilderT.check(context.adapter)) {
-        return context.adapter.createConnectorClientWithIdentity(serviceUrl, claimsIdentity, audience);
+    } else if (connectorClientBuilder.success) {
+        return connectorClientBuilder.data.createConnectorClientWithIdentity(serviceUrl, claimsIdentity, audience);
     } else {
         throw new Error('OAuth prompt is not supported by the current adapter');
     }
