@@ -75,7 +75,7 @@ export class CertificateServiceClientCredentialsFactory extends ServiceClientCre
             this.x5c = certificateThumbprintOrx5c;
         } else {
             ok(
-                certificateThumbprintOrx5c.trim(),
+                certificateThumbprintOrx5c?.trim(),
                 'CertificateServiceClientCredentialsFactory.constructor(): missing certificateThumbprint or x5c value.'
             );
             this.certificateThumbprint = certificateThumbprintOrx5c;
