@@ -71,16 +71,12 @@ export class CertificateServiceClientCredentialsFactory extends ServiceClientCre
             'CertificateServiceClientCredentialsFactory.constructor(): missing certificatePrivateKey.'
         );
 
-        if (certificateThumbprintOrx5c.includes('-----BEGIN CERTIFICATE-----')) {
+        if (certificateThumbprintOrx5c?.includes('-----BEGIN CERTIFICATE-----')) {
             this.x5c = certificateThumbprintOrx5c;
-            ok(
-                certificateThumbprintOrx5c.trim(),
-                'CertificateServiceClientCredentialsFactory.constructor(): missing x5c.'
-            );
         } else {
             ok(
                 certificateThumbprintOrx5c.trim(),
-                'CertificateServiceClientCredentialsFactory.constructor(): missing certificateThumbprint.'
+                'CertificateServiceClientCredentialsFactory.constructor(): missing certificateThumbprint or x5c value.'
             );
             this.certificateThumbprint = certificateThumbprintOrx5c;
             this.x5c = x5c;
