@@ -3,21 +3,21 @@
  * Licensed under the MIT License.
  */
 
-import * as msRest from "@azure/ms-rest-js";
+import { ServiceClient, ServiceClientCredentials, getDefaultUserAgentValue } from "@azure/core-http";
 import * as Models from "./models";
 
 const packageName = "botframework-connector";
 const packageVersion = "4.0.0";
 
-export class ConnectorClientContext extends msRest.ServiceClient {
-  credentials: msRest.ServiceClientCredentials;
+export class ConnectorClientContext extends ServiceClient {
+  credentials: ServiceClientCredentials;
 
   /**
    * Initializes a new instance of the ConnectorClientContext class.
    * @param credentials Subscription credentials which uniquely identify client subscription.
    * @param [options] The parameter options
    */
-  constructor(credentials: msRest.ServiceClientCredentials, options?: Models.ConnectorClientOptions) {
+  constructor(credentials: ServiceClientCredentials, options?: Models.ConnectorClientOptions) {
     if (credentials === null || credentials === undefined) {
       throw new Error('\'credentials\' cannot be null.');
     }
@@ -27,7 +27,7 @@ export class ConnectorClientContext extends msRest.ServiceClient {
       options = {} as Models.ConnectorClientOptions;
     }
     // TODO  This is to workaround fact that AddUserAgent() was removed.  
-    const defaultUserAgent = msRest.getDefaultUserAgentValue();
+    const defaultUserAgent = getDefaultUserAgentValue();
     options.userAgent = `${packageName}/${packageVersion} ${defaultUserAgent} ${options.userAgent || ''}`;
 
     super(credentials, options);

@@ -27,7 +27,7 @@
     }
   },
   "dependencies": {
-    "@azure/ms-rest-js": "^2.7.0",
+    "@azure/core-http": "^3.0.2",
     "@azure/msal-node": "^1.2.0",
     "axios": "^0.25.0",
     "botbuilder-core": "4.1.6",
