@@ -3,7 +3,7 @@
  * Licensed under the MIT License.
  */
 
-import { HttpResponse, ServiceClientOptions, RequestOptionsBase } from '@azure/ms-rest-js';
+import { HttpResponse, ServiceClientOptions, RequestOptionsBase } from '@azure/core-http';
 import {
     ConversationList,
     TeamDetails,

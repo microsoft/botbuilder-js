@@ -14,10 +14,9 @@
 
 'use strict';
 
-const msRest = require('@azure/ms-rest-js');
+const { ServiceClient, Serializer } = require("@azure/core-http");
 const fs = require('fs');
 const path = require('path');
-const ServiceClient = msRest.ServiceClient;
 
 const models = require('./models');
 const operations = require('./operations');
@@ -88,7 +87,7 @@ class ResourceManagementClient extends ServiceClient {
 
   addSerializationMixin(destObject) {
     ['serialize', 'serializeObject', 'deserialize'].forEach((property) => {
-      destObject[property] = msRest.Serializer[property];
+      destObject[property] = Serializer[property];
     });
   };
 

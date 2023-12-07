@@ -7,7 +7,7 @@
  */
 
 import type { IJwtTokenProviderFactory } from './jwtTokenProviderFactory';
-import type { ServiceClientCredentials } from '@azure/ms-rest-js';
+import type { ServiceClientCredentials } from '@azure/core-http';
 import { ManagedIdentityAppCredentials } from './managedIdentityAppCredentials';
 import { ServiceClientCredentialsFactory } from './serviceClientCredentialsFactory';
 import { ok } from 'assert';

@@ -11,7 +11,7 @@ const {
     PasswordServiceClientCredentialFactory,
     SkillValidation,
 } = require('..');
-const { HttpHeaders } = require('@azure/ms-rest-js');
+const { HttpHeaders } = require('@azure/core-http');
 
 describe('BotFrameworkAuthenticationFactory', function () {
     it('should create anonymous BotFrameworkAuthentication', function () {
