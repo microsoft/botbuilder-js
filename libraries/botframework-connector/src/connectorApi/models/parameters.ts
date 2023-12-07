@@ -3,9 +3,9 @@
  * Licensed under the MIT License.
  */
 
-import * as msRest from "@azure/ms-rest-js";
+import { OperationURLParameter, OperationQueryParameter } from "@azure/core-http"
 
-export const activityId: msRest.OperationURLParameter = {
+export const activityId: OperationURLParameter = {
   parameterPath: "activityId",
   mapper: {
     required: true,
@@ -15,7 +15,7 @@ export const activityId: msRest.OperationURLParameter = {
     }
   }
 };
-export const attachmentId: msRest.OperationURLParameter = {
+export const attachmentId: OperationURLParameter = {
   parameterPath: "attachmentId",
   mapper: {
     required: true,
@@ -25,7 +25,7 @@ export const attachmentId: msRest.OperationURLParameter = {
     }
   }
 };
-export const continuationToken: msRest.OperationQueryParameter = {
+export const continuationToken: OperationQueryParameter = {
   parameterPath: [
     "options",
     "continuationToken"
@@ -37,7 +37,7 @@ export const continuationToken: msRest.OperationQueryParameter = {
     }
   }
 };
-export const conversationId: msRest.OperationURLParameter = {
+export const conversationId: OperationURLParameter = {
   parameterPath: "conversationId",
   mapper: {
     required: true,
@@ -47,7 +47,7 @@ export const conversationId: msRest.OperationURLParameter = {
     }
   }
 };
-export const memberId: msRest.OperationURLParameter = {
+export const memberId: OperationURLParameter = {
   parameterPath: "memberId",
   mapper: {
     required: true,
@@ -57,7 +57,7 @@ export const memberId: msRest.OperationURLParameter = {
     }
   }
 };
-export const pageSize: msRest.OperationQueryParameter = {
+export const pageSize: OperationQueryParameter = {
   parameterPath: [
     "options",
     "pageSize"
@@ -69,7 +69,7 @@ export const pageSize: msRest.OperationQueryParameter = {
     }
   }
 };
-export const viewId: msRest.OperationURLParameter = {
+export const viewId: OperationURLParameter = {
   parameterPath: "viewId",
   mapper: {
     required: true,

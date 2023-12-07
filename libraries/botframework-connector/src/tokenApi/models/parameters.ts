@@ -3,9 +3,9 @@
  * Licensed under the MIT License.
  */
 
-import * as msRest from "@azure/ms-rest-js";
+import { OperationQueryParameter } from "@azure/core-http"
 
-export const channelId0: msRest.OperationQueryParameter = {
+export const channelId0: OperationQueryParameter = {
   parameterPath: [
     "options",
     "channelId"
@@ -17,7 +17,7 @@ export const channelId0: msRest.OperationQueryParameter = {
     }
   }
 };
-export const channelId1: msRest.OperationQueryParameter = {
+export const channelId1: OperationQueryParameter = {
   parameterPath: "channelId",
   mapper: {
     required: true,
@@ -27,7 +27,7 @@ export const channelId1: msRest.OperationQueryParameter = {
     }
   }
 };
-export const code: msRest.OperationQueryParameter = {
+export const code: OperationQueryParameter = {
   parameterPath: [
     "options",
     "code"
@@ -39,7 +39,7 @@ export const code: msRest.OperationQueryParameter = {
     }
   }
 };
-export const codeChallenge: msRest.OperationQueryParameter = {
+export const codeChallenge: OperationQueryParameter = {
   parameterPath: [
     "options",
     "codeChallenge"
@@ -51,7 +51,7 @@ export const codeChallenge: msRest.OperationQueryParameter = {
     }
   }
 };
-export const connectionName0: msRest.OperationQueryParameter = {
+export const connectionName0: OperationQueryParameter = {
   parameterPath: "connectionName",
   mapper: {
     required: true,
@@ -61,7 +61,7 @@ export const connectionName0: msRest.OperationQueryParameter = {
     }
   }
 };
-export const connectionName1: msRest.OperationQueryParameter = {
+export const connectionName1: OperationQueryParameter = {
   parameterPath: [
     "options",
     "connectionName"
@@ -73,7 +73,7 @@ export const connectionName1: msRest.OperationQueryParameter = {
     }
   }
 };
-export const emulatorUrl: msRest.OperationQueryParameter = {
+export const emulatorUrl: OperationQueryParameter = {
   parameterPath: [
     "options",
     "emulatorUrl"
@@ -85,7 +85,7 @@ export const emulatorUrl: msRest.OperationQueryParameter = {
     }
   }
 };
-export const finalRedirect: msRest.OperationQueryParameter = {
+export const finalRedirect: OperationQueryParameter = {
   parameterPath: [
     "options",
     "finalRedirect"
@@ -97,7 +97,7 @@ export const finalRedirect: msRest.OperationQueryParameter = {
     }
   }
 };
-export const include: msRest.OperationQueryParameter = {
+export const include: OperationQueryParameter = {
   parameterPath: [
     "options",
     "include"
@@ -109,7 +109,7 @@ export const include: msRest.OperationQueryParameter = {
     }
   }
 };
-export const state: msRest.OperationQueryParameter = {
+export const state: OperationQueryParameter = {
   parameterPath: "state",
   mapper: {
     required: true,
@@ -119,7 +119,7 @@ export const state: msRest.OperationQueryParameter = {
     }
   }
 };
-export const userId: msRest.OperationQueryParameter = {
+export const userId: OperationQueryParameter = {
   parameterPath: "userId",
   mapper: {
     required: true,

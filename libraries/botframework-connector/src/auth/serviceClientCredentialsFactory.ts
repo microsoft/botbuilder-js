@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { ServiceClientCredentials } from '@azure/ms-rest-js';
+import { ServiceClientCredentials } from '@azure/core-http';
 
 // Export underlying type for convenience
 export { ServiceClientCredentials };
