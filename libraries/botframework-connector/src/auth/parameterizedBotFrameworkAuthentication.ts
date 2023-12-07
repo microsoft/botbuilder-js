@@ -298,7 +298,8 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
         const tokenExtractor = new JwtTokenExtractor(
             verifyOptions,
             this.toBotFromEmulatorOpenIdMetadataUrl,
-            AuthenticationConstants.AllowedSigningAlgorithms
+            AuthenticationConstants.AllowedSigningAlgorithms,
+            this.connectorClientOptions?.proxySettings
         );
 
         const parts: string[] = authHeader.split(' ');
@@ -384,7 +385,8 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
         const tokenExtractor: JwtTokenExtractor = new JwtTokenExtractor(
             verifyOptions,
             this.toBotFromEmulatorOpenIdMetadataUrl,
-            AuthenticationConstants.AllowedSigningAlgorithms
+            AuthenticationConstants.AllowedSigningAlgorithms,
+            this.connectorClientOptions?.proxySettings
         );
 
         const identity: ClaimsIdentity = await tokenExtractor.getIdentityFromAuthHeader(
@@ -470,7 +472,8 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
         const tokenExtractor: JwtTokenExtractor = new JwtTokenExtractor(
             tokenValidationParameters,
             this.toBotFromChannelOpenIdMetadataUrl,
-            AuthenticationConstants.AllowedSigningAlgorithms
+            AuthenticationConstants.AllowedSigningAlgorithms,
+            this.connectorClientOptions?.proxySettings
         );
 
         const identity: ClaimsIdentity = await tokenExtractor.getIdentityFromAuthHeader(

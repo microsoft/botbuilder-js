@@ -12,6 +12,7 @@ import { EndorsementsValidator } from './endorsementsValidator';
 import { OpenIdMetadata } from './openIdMetadata';
 import { AuthenticationError } from './authenticationError';
 import { StatusCodes } from 'botframework-schema';
+import { ProxySettings } from '@azure/ms-rest-js';
 
 /**
  * A JWT token processing class that gets identity information and performs security token validation.
@@ -32,17 +33,23 @@ export class JwtTokenExtractor {
      * @param tokenValidationParameters Token validation parameters.
      * @param metadataUrl Metadata Url.
      * @param allowedSigningAlgorithms Allowed signing algorithms.
+     * @param proxySettings The proxy settings for the request.
      */
-    constructor(tokenValidationParameters: VerifyOptions, metadataUrl: string, allowedSigningAlgorithms: string[]) {
+    constructor(
+        tokenValidationParameters: VerifyOptions,
+        metadataUrl: string,
+        allowedSigningAlgorithms: string[],
+        proxySettings?: ProxySettings
+    ) {
         this.tokenValidationParameters = { ...tokenValidationParameters };
         this.tokenValidationParameters.algorithms = allowedSigningAlgorithms;
-        this.openIdMetadata = JwtTokenExtractor.getOrAddOpenIdMetadata(metadataUrl);
+        this.openIdMetadata = JwtTokenExtractor.getOrAddOpenIdMetadata(metadataUrl, proxySettings);
     }
 
-    private static getOrAddOpenIdMetadata(metadataUrl: string): OpenIdMetadata {
+    private static getOrAddOpenIdMetadata(metadataUrl: string, proxySettings?: ProxySettings): OpenIdMetadata {
         let metadata = this.openIdMetadataCache.get(metadataUrl);
         if (!metadata) {
-            metadata = new OpenIdMetadata(metadataUrl);
+            metadata = new OpenIdMetadata(metadataUrl, proxySettings);
             this.openIdMetadataCache.set(metadataUrl, metadata);
         }
 
