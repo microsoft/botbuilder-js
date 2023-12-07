@@ -2,7 +2,7 @@ const assert = require('assert');
 const fs = require('fs-extra');
 const nock = require('nock');
 const { LUISRuntimeClientV2 } = require('../lib/luisV2-models/luisRuntimeClientV2');
-const msRest = require('@azure/ms-rest-js');
+const { TokenCredentials } = require('botframework-connector');
 
 const applicationId = '00000000-0000-0000-0000-000000000000';
 // This can be any endpoint key for calling LUIS
@@ -13,7 +13,7 @@ const k = process.env.LUISAPPKEY || 'test';
 const mockLuis = true;
 
 const baseUrl = 'https://westus.api.cognitive.microsoft.com';
-const creds = new msRest.TokenCredentials(k);
+const creds = new TokenCredentials(k);
 
 function ExpectedPath(file) {
     return __dirname + '/TestData/LuisSdk/' + file;
