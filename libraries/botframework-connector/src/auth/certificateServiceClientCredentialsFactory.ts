@@ -6,10 +6,13 @@
  * Licensed under the MIT License.
  */
 
-import type { ServiceClientCredentials } from '@azure/ms-rest-js';
+import type { ServiceClientCredentials } from '@azure/core-http';
 import { ServiceClientCredentialsFactory } from './serviceClientCredentialsFactory';
 import { ok } from 'assert';
 import { CertificateAppCredentials } from './certificateAppCredentials';
+import { promisify } from 'util';
+import * as opensslWrapper from 'openssl-wrapper';
+const openssl = promisify(opensslWrapper.default);
 
 /**
  * A Certificate implementation of the [ServiceClientCredentialsFactory](xref:botframework-connector.ServiceClientCredentialsFactory) abstract class.
@@ -37,23 +40,51 @@ export class CertificateServiceClientCredentialsFactory extends ServiceClientCre
         certificatePrivateKey: string,
         tenantId?: string,
         x5c?: string
+    );
+
+    /**
+     * Initializes a new instance of the CertificateServiceClientCredentialsFactory class.
+     *
+     * @param appId Microsoft application Id related to the certificate.
+     * @param x5c Value that enables application developers to achieve easy certificates roll-over in Azure AD
+     * set this parameter to send the public certificate (BEGIN CERTIFICATE) to Azure AD, so that Azure AD can use it to validate the subject name based on a trusted issuer policy.
+     * @param certificatePrivateKey A PEM encoded certificate private key.
+     * @param tenantId Optional. The oauth token tenant.
+     */
+    constructor(appId: string, x5c: string, certificatePrivateKey: string, tenantId?: string);
+
+    /**
+     * @internal
+     */
+    constructor(
+        appId: string,
+        certificateThumbprintOrx5c: string,
+        certificatePrivateKey: string,
+        tenantId?: string,
+        x5c?: string
     ) {
         super();
+
         ok(appId?.trim(), 'CertificateServiceClientCredentialsFactory.constructor(): missing appId.');
-        ok(
-            certificateThumbprint?.trim(),
-            'CertificateServiceClientCredentialsFactory.constructor(): missing certificateThumbprint.'
-        );
         ok(
             certificatePrivateKey?.trim(),
             'CertificateServiceClientCredentialsFactory.constructor(): missing certificatePrivateKey.'
         );
 
+        if (certificateThumbprintOrx5c?.includes('-----BEGIN CERTIFICATE-----')) {
+            this.x5c = certificateThumbprintOrx5c;
+        } else {
+            ok(
+                certificateThumbprintOrx5c?.trim(),
+                'CertificateServiceClientCredentialsFactory.constructor(): missing certificateThumbprint or x5c value.'
+            );
+            this.certificateThumbprint = certificateThumbprintOrx5c;
+            this.x5c = x5c;
+        }
+
         this.appId = appId;
-        this.certificateThumbprint = certificateThumbprint;
         this.certificatePrivateKey = certificatePrivateKey;
         this.tenantId = tenantId;
-        this.x5c = x5c;
     }
 
     /**
@@ -63,6 +94,18 @@ export class CertificateServiceClientCredentialsFactory extends ServiceClientCre
         return appId === this.appId;
     }
 
+    /**
+     * @param cert Value with the certificate content.
+     * @returns The thumbprint value calculated from the cert content.
+     */
+    private async getThumbprint(cert) {
+        const fingerprintResponse = await openssl('x509', Buffer.from(cert), { fingerprint: true, noout: true });
+        return Buffer.from(fingerprintResponse)
+            .toString()
+            .replace(/^.*Fingerprint=/, '')
+            .replace(/:/g, '')
+            .trim();
+    }
     /**
      * @inheritdoc
      */
@@ -82,7 +125,7 @@ export class CertificateServiceClientCredentialsFactory extends ServiceClientCre
 
         return new CertificateAppCredentials(
             this.appId,
-            this.certificateThumbprint,
+            this.certificateThumbprint ?? (await this.getThumbprint(this.x5c)),
             this.certificatePrivateKey,
             this.tenantId,
             audience,

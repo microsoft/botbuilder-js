@@ -6,7 +6,7 @@ const sinon = require('sinon');
 const { BotFrameworkAdapter } = require('../');
 const { Conversations } = require('botframework-connector/lib/connectorApi/operations');
 const { UserToken, BotSignIn } = require('botframework-connector/lib/tokenApi/operations');
-const { userAgentPolicy, HttpHeaders } = require('@azure/ms-rest-js');
+const { userAgentPolicy, HttpHeaders } = require('@azure/core-http');
 
 const {
     ActivityTypes,

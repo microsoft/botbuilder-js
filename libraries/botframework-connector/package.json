@@ -27,9 +27,10 @@
     }
   },
   "dependencies": {
+    "@azure/core-http": "^3.0.2",
     "@azure/identity": "^2.0.4",
-    "@azure/ms-rest-js": "^2.7.0",
     "@azure/msal-node": "^1.2.0",
+    "@azure/core-http": "^3.0.2",
     "axios": "^0.25.0",
     "base64url": "^3.0.0",
     "botbuilder-stdlib": "4.1.6",
@@ -39,7 +40,8 @@
     "jsonwebtoken": "^9.0.0",
     "node-fetch": "^2.6.7",
     "rsa-pem-from-mod-exp": "^0.8.4",
-    "zod": "^3.22.4"
+    "zod": "^3.22.4",
+    "openssl-wrapper": "^0.3.4"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "8.3.5",

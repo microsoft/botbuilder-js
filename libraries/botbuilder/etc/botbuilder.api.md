@@ -41,8 +41,8 @@ import { ExtendedUserTokenProvider } from 'botbuilder-core';
 import { FileConsentCardResponse } from 'botbuilder-core';
 import { GetPropertyPaneConfigurationResponse } from 'botbuilder-core';
 import { HandleActionResponse } from 'botbuilder-core';
-import { HttpClient } from '@azure/ms-rest-js';
-import { HttpOperationResponse } from '@azure/ms-rest-js';
+import { HttpClient } from '@azure/core-http';
+import { HttpOperationResponse } from '@azure/core-http';
 import { ICredentialProvider } from 'botframework-connector';
 import { INodeBuffer } from 'botframework-streaming';
 import { INodeSocket } from 'botframework-streaming';
@@ -99,7 +99,7 @@ import { TranscriptInfo } from 'botbuilder-core';
 import { TranscriptStore } from 'botbuilder-core';
 import { TurnContext } from 'botbuilder-core';
 import { UserState } from 'botbuilder-core';
-import { WebResource } from '@azure/ms-rest-js';
+import { WebResource } from '@azure/core-http';
 
 // Warning: (ae-forgotten-export) The symbol "ConnectorClientBuilder" needs to be exported by the entry point index.d.ts
 //

@@ -6,9 +6,9 @@
  * Licensed under the MIT License.
  */
 
-import * as msRest from '@azure/ms-rest-js';
+import { OperationURLParameter, OperationQueryParameter } from '@azure/core-http';
 
-export const appId: msRest.OperationURLParameter = {
+export const appId: OperationURLParameter = {
     parameterPath: 'appId',
     mapper: {
         required: true,
@@ -18,7 +18,7 @@ export const appId: msRest.OperationURLParameter = {
         },
     },
 };
-export const bingSpellCheckSubscriptionKey: msRest.OperationQueryParameter = {
+export const bingSpellCheckSubscriptionKey: OperationQueryParameter = {
     parameterPath: ['options', 'bingSpellCheckSubscriptionKey'],
     mapper: {
         serializedName: 'bing-spell-check-subscription-key',
@@ -27,7 +27,7 @@ export const bingSpellCheckSubscriptionKey: msRest.OperationQueryParameter = {
         },
     },
 };
-export const endpoint: msRest.OperationURLParameter = {
+export const endpoint: OperationURLParameter = {
     parameterPath: 'endpoint',
     mapper: {
         required: true,
@@ -39,7 +39,7 @@ export const endpoint: msRest.OperationURLParameter = {
     },
     skipEncoding: true,
 };
-export const log: msRest.OperationQueryParameter = {
+export const log: OperationQueryParameter = {
     parameterPath: ['options', 'log'],
     mapper: {
         serializedName: 'log',
@@ -48,7 +48,7 @@ export const log: msRest.OperationQueryParameter = {
         },
     },
 };
-export const spellCheck: msRest.OperationQueryParameter = {
+export const spellCheck: OperationQueryParameter = {
     parameterPath: ['options', 'spellCheck'],
     mapper: {
         serializedName: 'spellCheck',
@@ -57,7 +57,7 @@ export const spellCheck: msRest.OperationQueryParameter = {
         },
     },
 };
-export const staging: msRest.OperationQueryParameter = {
+export const staging: OperationQueryParameter = {
     parameterPath: ['options', 'staging'],
     mapper: {
         serializedName: 'staging',
@@ -66,7 +66,7 @@ export const staging: msRest.OperationQueryParameter = {
         },
     },
 };
-export const timezoneOffset: msRest.OperationQueryParameter = {
+export const timezoneOffset: OperationQueryParameter = {
     parameterPath: ['options', 'timezoneOffset'],
     mapper: {
         serializedName: 'timezoneOffset',
@@ -75,7 +75,7 @@ export const timezoneOffset: msRest.OperationQueryParameter = {
         },
     },
 };
-export const verbose: msRest.OperationQueryParameter = {
+export const verbose: OperationQueryParameter = {
     parameterPath: ['options', 'verbose'],
     mapper: {
         serializedName: 'verbose',

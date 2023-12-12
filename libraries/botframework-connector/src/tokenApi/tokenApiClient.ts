@@ -3,7 +3,7 @@
  * Licensed under the MIT License.
  */
 
-import * as msRest from "@azure/ms-rest-js";
+import { ServiceClientCredentials } from "@azure/core-http";
 import * as Models from "./models";
 import * as Mappers from "./models/mappers";
 import * as operations from "./operations";
@@ -19,7 +19,7 @@ class TokenApiClient extends TokenApiClientContext {
    * @param credentials Subscription credentials which uniquely identify client subscription.
    * @param [options] The parameter options
    */
-  constructor(credentials: msRest.ServiceClientCredentials, options?: Models.TokenApiClientOptions) {
+  constructor(credentials: ServiceClientCredentials, options?: Models.TokenApiClientOptions) {
     super(credentials, options);
     this.botSignIn = new operations.BotSignIn(this);
     this.userToken = new operations.UserToken(this);

@@ -3,10 +3,9 @@
  * Licensed under the MIT License.
  */
 
-import * as msRest from "@azure/ms-rest-js";
+import { CompositeMapper } from "@azure/core-http";
 
-
-export const TokenExchangeResource: msRest.CompositeMapper = {
+export const TokenExchangeResource: CompositeMapper = {
   serializedName: "TokenExchangeResource",
   type: {
     name: "Composite",
@@ -34,7 +33,7 @@ export const TokenExchangeResource: msRest.CompositeMapper = {
   }
 };
 
-export const SignInUrlResponse: msRest.CompositeMapper = {
+export const SignInUrlResponse: CompositeMapper = {
   serializedName: "SignInUrlResponse",
   type: {
     name: "Composite",
@@ -57,7 +56,7 @@ export const SignInUrlResponse: msRest.CompositeMapper = {
   }
 };
 
-export const TokenResponse: msRest.CompositeMapper = {
+export const TokenResponse: CompositeMapper = {
   serializedName: "TokenResponse",
   type: {
     name: "Composite",
@@ -91,7 +90,7 @@ export const TokenResponse: msRest.CompositeMapper = {
   }
 };
 
-export const InnerHttpError: msRest.CompositeMapper = {
+export const InnerHttpError: CompositeMapper = {
   serializedName: "InnerHttpError",
   type: {
     name: "Composite",
@@ -113,7 +112,7 @@ export const InnerHttpError: msRest.CompositeMapper = {
   }
 };
 
-export const ErrorModel: msRest.CompositeMapper = {
+export const ErrorModel: CompositeMapper = {
   serializedName: "Error",
   type: {
     name: "Composite",
@@ -142,7 +141,7 @@ export const ErrorModel: msRest.CompositeMapper = {
   }
 };
 
-export const ErrorResponse: msRest.CompositeMapper = {
+export const ErrorResponse: CompositeMapper = {
   serializedName: "ErrorResponse",
   type: {
     name: "Composite",
@@ -159,7 +158,7 @@ export const ErrorResponse: msRest.CompositeMapper = {
   }
 };
 
-export const AadResourceUrls: msRest.CompositeMapper = {
+export const AadResourceUrls: CompositeMapper = {
   serializedName: "AadResourceUrls",
   type: {
     name: "Composite",
@@ -180,7 +179,7 @@ export const AadResourceUrls: msRest.CompositeMapper = {
   }
 };
 
-export const TokenStatus: msRest.CompositeMapper = {
+export const TokenStatus: CompositeMapper = {
   serializedName: "TokenStatus",
   type: {
     name: "Composite",
@@ -214,7 +213,7 @@ export const TokenStatus: msRest.CompositeMapper = {
   }
 };
 
-export const TokenExchangeRequest: msRest.CompositeMapper = {
+export const TokenExchangeRequest: CompositeMapper = {
   serializedName: "TokenExchangeRequest",
   type: {
     name: "Composite",

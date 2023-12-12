@@ -39,3 +39,4 @@ export * from './userTokenClient';
 
 export { MsalAppCredentials } from './msalAppCredentials';
 export { MsalServiceClientCredentialsFactory } from './msalServiceClientCredentialsFactory';
+export { TokenCredentials } from './tokenCredentials';
