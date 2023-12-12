@@ -12,7 +12,7 @@ import fetch from 'node-fetch';
 import { HttpsProxyAgent } from 'https-proxy-agent';
 import { AuthenticationError } from './authenticationError';
 import { StatusCodes } from 'botframework-schema';
-import { ProxySettings } from '@azure/ms-rest-js';
+import { ProxySettings } from '@azure/core-http';
 
 /**
  * Class in charge of manage OpenId metadata.
