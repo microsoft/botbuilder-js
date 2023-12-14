@@ -165,6 +165,7 @@ export class BlobsStorage implements Storage {
 
                 return blob.upload(serialized, serialized.length, {
                     conditions: typeof eTag === 'string' && eTag !== '*' ? { ifMatch: eTag } : {},
+                    blobHTTPHeaders: { blobContentType: 'application/json' },
                 });
             },
             {
