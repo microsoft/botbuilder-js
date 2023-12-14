@@ -1,11 +1,13 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+import http from 'http';
+import https from 'https';
+
 import * as z from 'zod';
 import fs from 'fs';
 import path from 'path';
 import { Configuration } from './configuration';
-
 import LuisBotComponent from 'botbuilder-ai-luis';
 import QnAMakerBotComponent from 'botbuilder-ai-qna';
 import { AdaptiveBotComponent, LanguageGenerationBotComponent } from 'botbuilder-dialogs-adaptive';
@@ -585,7 +587,22 @@ export async function getRuntimeServices(
 
     const services = new ServiceCollection({
         botFrameworkClientFetch: undefined,
-        connectorClientOptions: undefined,
+        connectorClientOptions: {
+            agentSettings: {
+                http: new http.Agent({
+                    keepAlive: true,
+                    maxSockets: 128,
+                    maxFreeSockets: 32,
+                    timeout: 60000,
+                }),
+                https: new https.Agent({
+                    keepAlive: true,
+                    maxSockets: 128,
+                    maxFreeSockets: 32,
+                    timeout: 60000,
+                }),
+            },
+        },
         customAdapters: new Map(),
         declarativeTypes: [],
         memoryScopes: [],
