@@ -48,7 +48,7 @@ export abstract class AppCredentials implements ServiceClientCredentials {
     constructor(
         appId: string,
         channelAuthTenant?: string,
-        oAuthScope: string = AuthenticationConstants.ToBotFromChannelTokenIssuer
+        oAuthScope: string = AuthenticationConstants.ToBotFromChannelTokenIssuer + "/.default"
     ) {
         this.appId = appId;
         this.tenant = channelAuthTenant;
