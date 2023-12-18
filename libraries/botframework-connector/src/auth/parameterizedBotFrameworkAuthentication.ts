@@ -22,6 +22,7 @@ import { ToBotFromBotOrEmulatorTokenValidationParameters } from './tokenValidati
 import { UserTokenClientImpl } from './userTokenClientImpl';
 import type { UserTokenClient } from './userTokenClient';
 import { VerifyOptions } from 'jsonwebtoken';
+import { AseChannelValidation } from './aseChannelValidation';
 
 function getAppId(claimsIdentity: ClaimsIdentity): string | undefined {
     // For requests from channel App Id is in Audience claim of JWT token. For emulator it is in AppId claim. For
@@ -270,6 +271,11 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
         channelId: string,
         serviceUrl: string
     ): Promise<ClaimsIdentity | undefined> {
+
+        if (AseChannelValidation.isTokenFromAseChannel(channelId)) {
+            return AseChannelValidation.authenticateAseChannelToken(authHeader);
+        }
+
         if (SkillValidation.isSkillToken(authHeader)) {
             return this.SkillValidation_authenticateChannelToken(authHeader, channelId);
         }
