@@ -8,6 +8,7 @@ import type { ServiceClientCredentials } from '@azure/core-http';
 import { AuthenticationConstants } from './authenticationConstants';
 import { GovernmentConstants } from './governmentConstants';
 import { MicrosoftAppCredentials } from './microsoftAppCredentials';
+import { MicrosoftGovernmentAppCredentials } from './microsoftGovernmentAppCredentials';
 import { ServiceClientCredentialsFactory } from './serviceClientCredentialsFactory';
 import { stringExt } from 'botbuilder-stdlib';
 
@@ -111,9 +112,8 @@ export class PasswordServiceClientCredentialFactory implements ServiceClientCred
 
         if (normalizedEndpoint?.startsWith(AuthenticationConstants.ToChannelFromBotLoginUrlPrefix)) {
             credentials = new MicrosoftAppCredentials(appId, this.password, this.tenantId, audience);
-        } else if (normalizedEndpoint === GovernmentConstants.ToChannelFromBotLoginUrl.toLowerCase()) {
-            credentials = new MicrosoftAppCredentials(appId, this.password, this.tenantId, audience);
-            credentials.oAuthEndpoint = loginEndpoint;
+        } else if (normalizedEndpoint?.startsWith(GovernmentConstants.ToChannelFromBotLoginUrlPrefix)) {
+            credentials = new MicrosoftGovernmentAppCredentials(appId, this.password, this.tenantId, audience);
         } else {
             credentials = new PrivateCloudAppCredentials(
                 appId,

@@ -15,8 +15,20 @@ export namespace GovernmentConstants {
 
     /**
      * TO CHANNEL FROM BOT: Login URL
+     *
+     * DEPRECATED: DO NOT USE
      */
     export const ToChannelFromBotLoginUrl = 'https://login.microsoftonline.us/MicrosoftServices.onmicrosoft.us';
+
+    /**
+     * TO CHANNEL FROM BOT: Login URL prefix
+     */
+    export const ToChannelFromBotLoginUrlPrefix = 'https://login.microsoftonline.us/';
+
+    /**
+     * TO CHANNEL FROM BOT: Default tenant from which to obtain a token for bot to channel communication
+     */
+    export const DefaultChannelAuthTenant = 'MicrosoftServices.onmicrosoft.us';
 
     /**
      * TO CHANNEL FROM BOT: OAuth scope to request
