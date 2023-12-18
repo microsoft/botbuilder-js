@@ -69,7 +69,7 @@ export class OpenIdMetadata {
         if (res.ok) {
             const openIdConfig = (await res.json()) as IOpenIdConfig;
 
-            const getKeyResponse = await fetch(openIdConfig.jwks_uri);
+            const getKeyResponse = await fetch(openIdConfig.jwks_uri, { agent: agent });
             if (getKeyResponse.ok) {
                 this.lastUpdated = new Date().getTime();
                 this.keys = (await getKeyResponse.json()).keys as IKey[];
