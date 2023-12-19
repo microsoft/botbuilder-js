@@ -16,7 +16,7 @@ import {
     ICredentialProvider,
     JwtTokenValidation,
     MicrosoftAppCredentials,
-    MicrosoftGovernmentAppCredentials
+    MicrosoftGovernmentAppCredentials,
 } from 'botframework-connector';
 
 import { USER_AGENT } from './botFrameworkAdapter';
