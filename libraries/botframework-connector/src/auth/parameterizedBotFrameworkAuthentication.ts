@@ -271,7 +271,6 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
         channelId: string,
         serviceUrl: string
     ): Promise<ClaimsIdentity | undefined> {
-
         if (AseChannelValidation.isTokenFromAseChannel(channelId)) {
             return AseChannelValidation.authenticateAseChannelToken(authHeader);
         }

@@ -129,7 +129,6 @@ export namespace JwtTokenValidation {
         authConfig: AuthenticationConfiguration,
         serviceUrl: string
     ): Promise<ClaimsIdentity> {
-
         if (AseChannelValidation.isTokenFromAseChannel(channelId)) {
             return AseChannelValidation.authenticateAseChannelToken(authHeader);
         }
