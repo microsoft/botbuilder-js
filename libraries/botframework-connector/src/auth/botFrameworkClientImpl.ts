@@ -9,11 +9,18 @@ import { ServiceClientCredentialsFactory } from './serviceClientCredentialsFacto
 import { USER_AGENT } from './connectorFactoryImpl';
 import { WebResource } from '@azure/ms-rest-js';
 import { assert } from 'botbuilder-stdlib';
+import { AgentSettings } from '@azure/ms-rest-js/es/lib/serviceClient';
 
-const botFrameworkClientFetchImpl = async (input: RequestInfo, init?: RequestInit): Promise<Response> => {
+const botFrameworkClientFetchImpl = async (
+    input: RequestInfo,
+    init?: RequestInit,
+    agentSettings?: AgentSettings
+): Promise<Response> => {
     const config = {
         headers: init.headers as Record<string, string>,
         validateStatus: (): boolean => true,
+        httpAgent: agentSettings?.http,
+        httpsAgent: agentSettings?.https,
     };
 
     assert.string(input, ['input']);
@@ -34,8 +41,10 @@ export class BotFrameworkClientImpl implements BotFrameworkClient {
         private readonly loginEndpoint: string,
         private readonly botFrameworkClientFetch: (
             input: RequestInfo,
-            init?: RequestInit
-        ) => Promise<Response> = botFrameworkClientFetchImpl
+            init?: RequestInit,
+            agentSettings?: AgentSettings
+        ) => Promise<Response> = botFrameworkClientFetchImpl,
+        private readonly agentSettings?: AgentSettings
     ) {
         assert.maybeFunc(botFrameworkClientFetch, ['botFrameworkClientFetch']);
     }
@@ -107,7 +116,7 @@ export class BotFrameworkClientImpl implements BotFrameworkClient {
                 body: request.body,
                 headers: request.headers.rawHeaders(),
             };
-            const response = await this.botFrameworkClientFetch(request.url, config);
+            const response = await this.botFrameworkClientFetch(request.url, config, this.agentSettings);
 
             return { status: response.status, body: await response.json() };
         } finally {
