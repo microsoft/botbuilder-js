@@ -261,8 +261,7 @@ export class BotFrameworkAdapter
                     this.settings.appPassword || '',
                     this.settings.channelAuthTenant
                 );
-            }
-            else{
+            } else {
                 this.credentials = new MicrosoftAppCredentials(
                     this.settings.appId,
                     this.settings.appPassword || '',
@@ -1634,10 +1633,19 @@ export class BotFrameworkAdapter
             );
         } else {
             if (JwtTokenValidation.isGovernment(this.settings.channelService)) {
-                credentials = new MicrosoftGovernmentAppCredentials(appId, appPassword, this.settings.channelAuthTenant, oAuthScope);
-            }
-            else{
-                credentials = new MicrosoftAppCredentials(appId, appPassword, this.settings.channelAuthTenant, oAuthScope);
+                credentials = new MicrosoftGovernmentAppCredentials(
+                    appId,
+                    appPassword,
+                    this.settings.channelAuthTenant,
+                    oAuthScope
+                );
+            } else {
+                credentials = new MicrosoftAppCredentials(
+                    appId,
+                    appPassword,
+                    this.settings.channelAuthTenant,
+                    oAuthScope
+                );
             }
         }
 

@@ -13,8 +13,7 @@ import { MicrosoftAppCredentials } from './microsoftAppCredentials';
  * MicrosoftGovermentAppCredentials auth implementation
  */
 export class MicrosoftGovernmentAppCredentials extends MicrosoftAppCredentials {
-
-      /**
+    /**
      * Initializes a new instance of the [MicrosoftGovernmentAppCredentials](xref:botframework-connector.MicrosoftGovernmentAppCredentials) class.
      *
      * @param {string} appId The Microsoft app ID.

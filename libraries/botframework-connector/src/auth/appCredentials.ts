@@ -45,17 +45,11 @@ export abstract class AppCredentials implements ServiceClientCredentials {
      * @param channelAuthTenant Optional. The oauth token tenant.
      * @param oAuthScope The scope for the token.
      */
-    constructor(
-        appId: string,
-        channelAuthTenant?: string,
-        oAuthScope: string = null
-    ) {
+    constructor(appId: string, channelAuthTenant?: string, oAuthScope: string = null) {
         this.appId = appId;
         this.tenant = channelAuthTenant;
         this.oAuthEndpoint = this.GetToChannelFromBotLoginUrlPrefix() + this.tenant;
-        this.oAuthScope = (oAuthScope && oAuthScope.length > 0)
-            ? oAuthScope
-            : this.GetToChannelFromBotOAuthScope();
+        this.oAuthScope = oAuthScope && oAuthScope.length > 0 ? oAuthScope : this.GetToChannelFromBotOAuthScope();
     }
 
     /**
