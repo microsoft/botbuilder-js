@@ -13,10 +13,10 @@ import {
     AppCredentials,
     AuthenticationConstants,
     ConversationConstants,
-    GovernmentConstants,
     ICredentialProvider,
     JwtTokenValidation,
     MicrosoftAppCredentials,
+    MicrosoftGovernmentAppCredentials,
 } from 'botframework-connector';
 
 import { USER_AGENT } from './botFrameworkAdapter';
@@ -158,9 +158,7 @@ export class BotFrameworkHttpClient implements BotFrameworkClient {
     protected async buildCredentials(appId: string, oAuthScope?: string): Promise<AppCredentials> {
         const appPassword = await this.credentialProvider.getAppPassword(appId);
         if (JwtTokenValidation.isGovernment(this.channelService)) {
-            const appCredentials = new MicrosoftAppCredentials(appId, appPassword, undefined, oAuthScope);
-            appCredentials.oAuthEndpoint = GovernmentConstants.ToChannelFromBotLoginUrl;
-            return appCredentials;
+            return new MicrosoftGovernmentAppCredentials(appId, appPassword, undefined, oAuthScope);
         } else {
             return new MicrosoftAppCredentials(appId, appPassword, undefined, oAuthScope);
         }
