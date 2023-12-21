@@ -22,6 +22,7 @@ export * from './claimsIdentity';
 export * from './connectorFactory';
 export * from './credentialProvider';
 export * from './emulatorValidation';
+export * from './aseChannelValidation';
 export * from './endorsementsValidator';
 export * from './enterpriseChannelValidation';
 export * from './governmentChannelValidation';
@@ -36,6 +37,7 @@ export * from './microsoftGovernmentAppCredentials';
 export * from './passwordServiceClientCredentialFactory';
 export * from './serviceClientCredentialsFactory';
 export * from './skillValidation';
+export * from './tokenValidationParameters';
 export * from './userTokenClient';
 
 export { MsalAppCredentials } from './msalAppCredentials';
