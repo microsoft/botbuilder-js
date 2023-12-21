@@ -45,15 +45,11 @@ export abstract class AppCredentials implements ServiceClientCredentials {
      * @param channelAuthTenant Optional. The oauth token tenant.
      * @param oAuthScope The scope for the token.
      */
-    constructor(
-        appId: string,
-        channelAuthTenant?: string,
-        oAuthScope: string = AuthenticationConstants.ToBotFromChannelTokenIssuer
-    ) {
+    constructor(appId: string, channelAuthTenant?: string, oAuthScope: string = null) {
         this.appId = appId;
         this.tenant = channelAuthTenant;
-        this.oAuthEndpoint = AuthenticationConstants.ToChannelFromBotLoginUrlPrefix + this.tenant;
-        this.oAuthScope = oAuthScope;
+        this.oAuthEndpoint = this.GetToChannelFromBotLoginUrlPrefix() + this.tenant;
+        this.oAuthScope = oAuthScope && oAuthScope.length > 0 ? oAuthScope : this.GetToChannelFromBotOAuthScope();
     }
 
     /**
@@ -69,7 +65,7 @@ export abstract class AppCredentials implements ServiceClientCredentials {
      * Sets tenant to be used for channel authentication.
      */
     private set tenant(value: string) {
-        this._tenant = value && value.length > 0 ? value : AuthenticationConstants.DefaultChannelAuthTenant;
+        this._tenant = value && value.length > 0 ? value : this.GetDefaultChannelAuthTenant();
     }
 
     /**
@@ -189,6 +185,18 @@ export abstract class AppCredentials implements ServiceClientCredentials {
         } else {
             throw new Error('Authentication: No response or error received from MSAL.');
         }
+    }
+
+    protected GetToChannelFromBotOAuthScope(): string {
+        return AuthenticationConstants.ToChannelFromBotOAuthScope;
+    }
+
+    protected GetToChannelFromBotLoginUrlPrefix(): string {
+        return AuthenticationConstants.ToChannelFromBotLoginUrlPrefix;
+    }
+
+    protected GetDefaultChannelAuthTenant(): string {
+        return AuthenticationConstants.DefaultChannelAuthTenant;
     }
 
     protected abstract refreshToken(): Promise<AuthenticatorResult>;

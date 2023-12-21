@@ -32,6 +32,7 @@ export * from './managedIdentityAppCredentials';
 export * from './managedIdentityAuthenticator';
 export * from './managedIdentityServiceClientCredentialsFactory';
 export * from './microsoftAppCredentials';
+export * from './microsoftGovernmentAppCredentials';
 export * from './passwordServiceClientCredentialFactory';
 export * from './serviceClientCredentialsFactory';
 export * from './skillValidation';

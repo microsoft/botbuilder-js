@@ -70,11 +70,11 @@ export class MsalServiceClientCredentialsFactory implements ServiceClientCredent
             );
         }
 
-        if (normalizedEndpoint === GovernmentConstants.ToChannelFromBotLoginUrl.toLowerCase()) {
+        if (normalizedEndpoint.startsWith(GovernmentConstants.ToChannelFromBotLoginUrlPrefix)) {
             return new MsalAppCredentials(
                 this.clientApplication,
                 appId,
-                GovernmentConstants.ToChannelFromBotLoginUrl,
+                undefined,
                 audience || GovernmentConstants.ToChannelFromBotOAuthScope
             );
         }

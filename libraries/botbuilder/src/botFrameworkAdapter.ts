@@ -56,6 +56,7 @@ import {
     GovernmentConstants,
     JwtTokenValidation,
     MicrosoftAppCredentials,
+    MicrosoftGovernmentAppCredentials,
     SignInUrlResponse,
     SimpleCredentialProvider,
     SkillValidation,
@@ -254,11 +255,19 @@ export class BotFrameworkAdapter
             );
             this.credentialsProvider = new SimpleCredentialProvider(this.credentials.appId, '');
         } else {
-            this.credentials = new MicrosoftAppCredentials(
-                this.settings.appId,
-                this.settings.appPassword || '',
-                this.settings.channelAuthTenant
-            );
+            if (JwtTokenValidation.isGovernment(this.settings.channelService)) {
+                this.credentials = new MicrosoftGovernmentAppCredentials(
+                    this.settings.appId,
+                    this.settings.appPassword || '',
+                    this.settings.channelAuthTenant
+                );
+            } else {
+                this.credentials = new MicrosoftAppCredentials(
+                    this.settings.appId,
+                    this.settings.appPassword || '',
+                    this.settings.channelAuthTenant
+                );
+            }
             this.credentialsProvider = new SimpleCredentialProvider(
                 this.credentials.appId,
                 this.settings.appPassword || ''
@@ -279,10 +288,6 @@ export class BotFrameworkAdapter
         if (this.settings.openIdMetadata) {
             ChannelValidation.OpenIdMetadataEndpoint = this.settings.openIdMetadata;
             GovernmentChannelValidation.OpenIdMetadataEndpoint = this.settings.openIdMetadata;
-        }
-        if (JwtTokenValidation.isGovernment(this.settings.channelService)) {
-            this.credentials.oAuthEndpoint = GovernmentConstants.ToChannelFromBotLoginUrl;
-            this.credentials.oAuthScope = GovernmentConstants.ToChannelFromBotOAuthScope;
         }
 
         // If a NodeWebSocketFactoryBase was passed in, set it on the BotFrameworkAdapter.
@@ -1627,12 +1632,21 @@ export class BotFrameworkAdapter
                 this.settings.channelAuthTenant
             );
         } else {
-            credentials = new MicrosoftAppCredentials(appId, appPassword, this.settings.channelAuthTenant, oAuthScope);
-        }
-
-        if (JwtTokenValidation.isGovernment(this.settings.channelService)) {
-            credentials.oAuthEndpoint = GovernmentConstants.ToChannelFromBotLoginUrl;
-            credentials.oAuthScope = oAuthScope || GovernmentConstants.ToChannelFromBotOAuthScope;
+            if (JwtTokenValidation.isGovernment(this.settings.channelService)) {
+                credentials = new MicrosoftGovernmentAppCredentials(
+                    appId,
+                    appPassword,
+                    this.settings.channelAuthTenant,
+                    oAuthScope
+                );
+            } else {
+                credentials = new MicrosoftAppCredentials(
+                    appId,
+                    appPassword,
+                    this.settings.channelAuthTenant,
+                    oAuthScope
+                );
+            }
         }
 
         return credentials;
