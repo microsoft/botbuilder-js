@@ -19,6 +19,7 @@ import { EnterpriseChannelValidation } from './enterpriseChannelValidation';
 import { GovernmentChannelValidation } from './governmentChannelValidation';
 import { GovernmentConstants } from './governmentConstants';
 import { SkillValidation } from './skillValidation';
+import { AseChannelValidation } from './aseChannelValidation';
 
 /**
  * @deprecated Use `ConfigurationBotFrameworkAuthentication` instead to perform JWT token validation.
@@ -128,6 +129,10 @@ export namespace JwtTokenValidation {
         authConfig: AuthenticationConfiguration,
         serviceUrl: string
     ): Promise<ClaimsIdentity> {
+        if (AseChannelValidation.isTokenFromAseChannel(channelId)) {
+            return AseChannelValidation.authenticateAseChannelToken(authHeader);
+        }
+
         if (SkillValidation.isSkillToken(authHeader)) {
             return await SkillValidation.authenticateChannelToken(
                 authHeader,
@@ -138,9 +143,7 @@ export namespace JwtTokenValidation {
             );
         }
 
-        const usingEmulator = EmulatorValidation.isTokenFromEmulator(authHeader);
-
-        if (usingEmulator) {
+        if (EmulatorValidation.isTokenFromEmulator(authHeader)) {
             return await EmulatorValidation.authenticateEmulatorToken(
                 authHeader,
                 credentials,
