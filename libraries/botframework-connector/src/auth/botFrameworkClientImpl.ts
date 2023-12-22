@@ -9,13 +9,15 @@ import { ServiceClientCredentialsFactory } from './serviceClientCredentialsFacto
 import { USER_AGENT } from './connectorFactoryImpl';
 import { WebResource } from '@azure/core-http';
 import { ok } from 'assert';
+import fetch from 'cross-fetch';
 
 const botFrameworkClientFetchImpl: typeof fetch = async (input, init) => {
     const url = z.string().parse(input);
     const { body, headers } = z.object({ body: z.string(), headers: z.record(z.string()).optional() }).parse(init);
 
     const response = await fetch(url, {
-        body: JSON.parse(body),
+        method: 'POST',
+        body,
         headers,
     });
 
