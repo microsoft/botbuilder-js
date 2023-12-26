@@ -126,6 +126,18 @@ export class BotState implements PropertyManager {
                 return this.storage.write(changes).then(() => {
                     // Update change hash and cache
                     cached.hash = calculateChangeHash(state);
+
+                    // why does this happen in JS?  It doesn't in the other platforms.
+                    // the issue is related to 'skipProperties', which nulls out those
+                    // properties in 'cached'.  This replaces the state in 'context',
+                    // and could change the values of references.
+                    //
+                    // Should 'calculateChangeHash' also consider the skipProperties?
+                    //
+                    // See SkillDialog.sendToSkill
+                    //
+                    // At any rate, would not expect saveChanges to alter the members
+                    // of a class in use.
                     context.turnState.set(this.stateKey, cached);
                 });
             });

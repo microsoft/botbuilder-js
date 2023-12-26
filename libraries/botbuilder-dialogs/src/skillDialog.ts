@@ -259,9 +259,18 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
         // Always save state before forwarding
         // (the dialog stack won't get updated with the skillDialog and things won't work if you don't)
         const skillInfo = this.dialogOptions.skill;
+
+        // this is to compensate for an undesirable side-effeft of saveChanges, which
+        // skips specific properties, which results in those properties being nulled out.
+        // after saveChanges, this.dialogOptions is missing some required values.
+        // this work`around allows this method to work, but 'interceptOAuthCards' (below)
+        // could encounter problems (not currently used by UHG).
+        const skillClient = this.dialogOptions.skillClient;
+        const conversationIdFactory = this.dialogOptions.conversationIdFactory;
+
         await this.dialogOptions.conversationState.saveChanges(context, true);
 
-        const response = await this.dialogOptions.skillClient.postActivity<ExpectedReplies>(
+        const response = await skillClient.postActivity<ExpectedReplies>(
             this.dialogOptions.botId,
             skillInfo.appId,
             skillInfo.skillEndpoint,
@@ -291,7 +300,7 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
                     console.log(
                         `SkillHandlerImpl.sendToSkill, deleteConversationReference skillConversationId=${skillConversationId}`
                     );
-                    await this.dialogOptions.conversationIdFactory.deleteConversationReference(skillConversationId);
+                    await conversationIdFactory.deleteConversationReference(skillConversationId);
                 } else if (
                     !sentInvokeResponses &&
                     (await this.interceptOAuthCards(context, activityFromSkill, this.dialogOptions.connectionName))

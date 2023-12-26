@@ -202,7 +202,7 @@ export class BeginSkill extends SkillDialog implements BeginSkillConfiguration {
         // Store the initialized dialogOptions in state so we can restore these values when the dialog is resumed.
         dc.activeDialog.state[this._dialogOptionsStateKey] = this.dialogOptions;
         const skipProperties = dc.context.turnState.get(CACHED_BOT_STATE_SKIP_PROPERTIES_HANDLER_KEY);
-        const props: (keyof SkillDialogOptions)[] = ['conversationIdFactory', 'conversationState'];
+        const props: (keyof SkillDialogOptions)[] = ['conversationIdFactory', 'conversationState', 'skillClient'];
         skipProperties(this._dialogOptionsStateKey, props);
 
         // Get the activity to send to the skill.
