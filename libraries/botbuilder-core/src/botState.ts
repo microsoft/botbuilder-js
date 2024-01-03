@@ -206,6 +206,7 @@ export class BotState implements PropertyManager {
     /**
      * Skips properties from the cached state object.
      *
+     * @remarks Primarily used to skip properties before calculating the hash value in the calculateChangeHash function.
      * @param state Dictionary of state values.
      * @returns Dictionary of state values, without the skipped properties.
      */
@@ -221,7 +222,7 @@ export class BotState implements PropertyManager {
         };
 
         const inner = ([key, value], skip = []) => {
-            if (skip.includes(key)) {
+            if (value === null || value === undefined || skip.includes(key)) {
                 return;
             }
 
@@ -230,14 +231,14 @@ export class BotState implements PropertyManager {
             }
 
             if (typeof value !== 'object') {
-                return value;
+                return value.valueOf();
             }
 
             return Object.entries(value).reduce((acc, [k, v]) => {
                 const skipResult = skipHandler(k) ?? [];
                 acc[k] = inner([k, v], [...skip, ...skipResult]);
                 return acc;
-            }, value);
+            }, {});
         };
 
         return inner([null, state]);
