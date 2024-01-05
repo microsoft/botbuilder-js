@@ -35,8 +35,8 @@ module.exports = {
             webdriver: {
                 start_process: true,
                 //The tests with the chrome browser are performed with the chromedriver binary 
-                //which in the future should be updated to maintain compatibility with the browser.
-                //Current version 120.0.6.
+                //which in the future should be updated manually to maintain compatibility with the browser.
+                //Current version 120.0.6. Extract binary from: https://googlechromelabs.github.io/chrome-for-testing
                 server_path: "./chromedriver.exe",
                 port: 9515,
             },
