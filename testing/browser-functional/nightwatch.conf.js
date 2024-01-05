@@ -1,4 +1,3 @@
-const chromedriver = require('chromedriver');
 const seleniumServer = require('selenium-server');
 const geckodriver = require('geckodriver');
 
@@ -21,7 +20,6 @@ module.exports = {
                 server_path: seleniumServer.path,
                 cli_args: {
                     'webdriver.gecko.driver': geckodriver.path,
-                    'webdriver.chrome.driver': chromedriver.path,
                 },
             },
             webdriver: {
@@ -30,14 +28,19 @@ module.exports = {
         },
 
         chrome: {
-            extends: 'selenium',
+            silent: true,
+            selenium: {
+                start_process: false,
+            },
+            webdriver: {
+                start_process: true,
+                server_path: "./chromedriver.exe",
+                port: 9515,
+            },
             desiredCapabilities: {
                 browserName: 'chrome',
                 javascriptEnabled: true,
-                acceptSslCerts: true,
-                chromeOptions: {
-                    w3c: false,
-                },
+                acceptSslCerts: true
             },
         },
 
