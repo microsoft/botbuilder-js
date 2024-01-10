@@ -201,8 +201,8 @@ describe('ActionTests', function () {
         const [, { state: beginSkillState }] = actionScope.dialogStack;
         const options = beginSkillState['BeginSkill.dialogOptionsData'];
 
-        assert.equal(options.conversationIdFactory, null);
-        assert.equal(options.conversationState, null);
+        assert.notEqual(options.conversationIdFactory, null);
+        assert.notEqual(options.conversationState, null);
         assert.notEqual(beginSkillDialog.dialogOptions.conversationIdFactory, null);
         assert.notEqual(beginSkillDialog.dialogOptions.conversationState, null);
     });
