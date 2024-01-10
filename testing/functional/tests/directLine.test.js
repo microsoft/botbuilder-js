@@ -12,25 +12,31 @@ const userMessage = 'Contoso';
 const directLineSecret = process.env.DIRECT_LINE_KEY || null;
 
 const auths = {
-    AuthorizationBotConnector: new Swagger.ApiKeyAuthorization(
-        'Authorization',
-        'BotConnector ' + directLineSecret,
-        'header'
-    ),
+    type: 'apiKey',
+    in: 'header',
+    name: 'Authorization',
+    value: 'BotConnector ' + directLineSecret,
 };
 
-function getDirectLineClient() {
-    return new Swagger({
+async function getDirectLineClient() {
+    const client = await Swagger({
         spec: directLineSpec,
         usePromise: true,
-        authorizations: auths,
+        requestInterceptor: (req) => {
+            if (auths && auths.in === 'header') {
+                req.headers[auths.name] = auths.value;
+            }
+            return req;
+        },
     });
+
+    return client;
 }
 
 async function sendMessage(client, conversationId) {
     let status;
     do {
-        await client.Conversations.Conversations_PostMessage({
+        return client.apis.Conversations.Conversations_PostMessage({
             conversationId: conversationId,
             message: {
                 from: directLineClientName,
@@ -48,7 +54,7 @@ async function sendMessage(client, conversationId) {
 
 function getMessages(client, conversationId) {
     const watermark = null;
-    return client.Conversations.Conversations_GetMessages({
+    return client.apis.Conversations.Conversations_GetMessages({
         conversationId: conversationId,
         watermark: watermark,
     }).then((response) => {
@@ -56,8 +62,8 @@ function getMessages(client, conversationId) {
     });
 }
 
-function getConversationId(client) {
-    return client.Conversations.Conversations_NewConversation().then((response) => response.obj.conversationId);
+async function getConversationId(client) {
+    return client.apis.Conversations.Conversations_NewConversation().then((response) => response.obj.conversationId);
 }
 
 describe('Test Azure Bot', function () {
