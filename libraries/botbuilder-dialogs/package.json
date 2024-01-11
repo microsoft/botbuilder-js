@@ -43,6 +43,9 @@
     "@types/globalize": "^1.5.0",
     "line-reader": "^0.4.0"
   },
+  "resolutions": {
+    "@microsoft/recognizers-text-number": "1.3.1"
+  },
   "scripts": {
     "build": "tsc -b",
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder-dialogs --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-dialogs .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Dialogs\" --readme none",
