@@ -25,14 +25,14 @@ export class EndorsementsValidator {
      * some specific channels. That list is the endorsement list, and is validated here against the channelId.
      * @returns {boolean} True is the channelId is found in the Endorsement set. False if the channelId is not found.
      */
-    static validate(channelId: string, endorsements: Set<string>): boolean {
+    static validate(channelId: string, endorsements: string[]): boolean {
         // If the Activity came in and doesn't have a Channel ID then it's making no
         // assertions as to who endorses it. This means it should pass.
         if (channelId === null || channelId.trim() === '') {
             return true;
         }
 
-        if (!endorsements) {
+        if (endorsements === null) {
             throw new AuthenticationError('endorsements required', StatusCodes.UNAUTHORIZED);
         }
 
@@ -47,6 +47,6 @@ export class EndorsementsValidator {
 
         // Does the set of endorsements match the channelId that was passed in?
 
-        return endorsements.has(channelId);
+        return new Set(endorsements).has(channelId);
     }
 }
