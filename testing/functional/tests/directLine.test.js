@@ -36,7 +36,7 @@ async function getDirectLineClient() {
 async function sendMessage(client, conversationId) {
     let status;
     do {
-        return client.apis.Conversations.Conversations_PostMessage({
+        await client.apis.Conversations.Conversations_PostMessage({
             conversationId: conversationId,
             message: {
                 from: directLineClientName,
@@ -52,7 +52,7 @@ async function sendMessage(client, conversationId) {
     } while (status == 502);
 }
 
-function getMessages(client, conversationId) {
+async function getMessages(client, conversationId) {
     const watermark = null;
     return client.apis.Conversations.Conversations_GetMessages({
         conversationId: conversationId,
