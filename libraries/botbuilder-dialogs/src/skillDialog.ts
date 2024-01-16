@@ -265,12 +265,9 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
         // after saveChanges, this.dialogOptions is missing some required values.
         // this work`around allows this method to work, but 'interceptOAuthCards' (below)
         // could encounter problems (not currently used by UHG).
-        const skillClient = this.dialogOptions.skillClient;
-        const conversationIdFactory = this.dialogOptions.conversationIdFactory;
-
         await this.dialogOptions.conversationState.saveChanges(context, true);
 
-        const response = await skillClient.postActivity<ExpectedReplies>(
+        const response = await this.dialogOptions.skillClient.postActivity<ExpectedReplies>(
             this.dialogOptions.botId,
             skillInfo.appId,
             skillInfo.skillEndpoint,
@@ -300,7 +297,7 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
                     console.log(
                         `SkillHandlerImpl.sendToSkill, deleteConversationReference skillConversationId=${skillConversationId}`
                     );
-                    await conversationIdFactory.deleteConversationReference(skillConversationId);
+                    await this.dialogOptions.conversationIdFactory.deleteConversationReference(skillConversationId);
                 } else if (
                     !sentInvokeResponses &&
                     (await this.interceptOAuthCards(context, activityFromSkill, this.dialogOptions.connectionName))
