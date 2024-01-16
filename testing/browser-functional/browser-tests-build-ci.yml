@@ -31,53 +31,6 @@ steps:
   displayName: 'Create DateTimeTag for Resource Group'
   # Get-Date on Azure DevOps returns a datetime relative to UTC-0, so "Z" is being used instead of the dynamic "K".
 
-- task: PowerShell@2
-  inputs:
-    targetType: inline
-    script: |
-      $packageName = "chromedriver";
-      Write-Host "Get $packageName second latest version from npmjs.com";
-      $versions = npm view $packageName versions | ConvertFrom-Json;
-      $versionToUse = $versions[-2];
-      Write-Host "$packageName second latest = $versionToUse";
-      " "
-
-      if ($null -ne $Env:ChromeDriverVersionOverride -and $Env:ChromeDriverVersionOverride.Trim() -ne '') {
-        Write-Host "Pipeline var ChromeDriverVersionOverride is set.";
-        $versionToUse = $Env:ChromeDriverVersionOverride;
-        Write-Host "Use override value = $versionToUse";
-      } else {
-        Write-Host "Pipeline var ChromeDriverVersionOverride is not set.";
-        Write-Host "Use value = $versionToUse";
-      }
-
-      "##vso[task.setvariable variable=DriverVersion;]$versionToUse";
-  displayName: 'Get chromedriver version number to use'
-
-- task: PowerShell@2
-  inputs:
-    targetType: inline
-    script: |
-      # This lets the pipeline automatically keep up with Chrome browser upgrades.
-      # Chrome browser upgrades on ADO agents lag behind chromedriver upgrades, so
-      # if we use the second latest chromedriver, that should keep the tests working.
-
-      $path = "$(System.DefaultWorkingDirectory)/testing/browser-functional/package.json";
-      $package = 'chromedriver';
-      $newVersion = "$(DriverVersion)";
-
-      $find = "$package`": `"\S*`"";
-      $replace = "$package`": `"$newVersion`"";
-
-      Get-ChildItem -Path "$path" | % {
-          $_.FullName;
-          $content = Get-Content -Raw $_.FullName;
-
-          $content -Replace "$find", "$replace" | Set-Content $_.FullName;
-          '-------------'; get-content $_.FullName; '==================='
-      }
-  displayName: 'Upgrade chromedriver version reference'
-
 - task: NodeTool@0
   displayName: use node 16.x
   inputs:
