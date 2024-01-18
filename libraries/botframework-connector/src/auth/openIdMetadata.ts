@@ -8,9 +8,11 @@
 
 import * as getPem from 'rsa-pem-from-mod-exp';
 import base64url from 'base64url';
-import fetch from 'cross-fetch';
+import fetch from 'node-fetch';
+import { HttpsProxyAgent } from 'https-proxy-agent';
 import { AuthenticationError } from './authenticationError';
 import { StatusCodes } from 'botframework-schema';
+import { ProxySettings } from '@azure/core-http';
 
 /**
  * Class in charge of manage OpenId metadata.
@@ -23,8 +25,9 @@ export class OpenIdMetadata {
      * Initializes a new instance of the [OpenIdMetadata](xref:botframework-connector.OpenIdMetadata) class.
      *
      * @param url Metadata Url.
+     * @param proxySettings The proxy settings for the request.
      */
-    constructor(private url: string) {}
+    constructor(private url: string, private proxySettings?: ProxySettings) {}
 
     /**
      * Gets the Signing key.
@@ -56,12 +59,17 @@ export class OpenIdMetadata {
      * @private
      */
     private async refreshCache(): Promise<void> {
-        const res = await fetch(this.url);
+        let agent = null;
+        if (this.proxySettings) {
+            const proxyUrl = `http://${this.proxySettings.host}:${this.proxySettings.port}`;
+            agent = new HttpsProxyAgent(proxyUrl);
+        }
+        const res = await fetch(this.url, { agent: agent });
 
         if (res.ok) {
             const openIdConfig = (await res.json()) as IOpenIdConfig;
 
-            const getKeyResponse = await fetch(openIdConfig.jwks_uri);
+            const getKeyResponse = await fetch(openIdConfig.jwks_uri, { agent: agent });
             if (getKeyResponse.ok) {
                 this.lastUpdated = new Date().getTime();
                 this.keys = (await getKeyResponse.json()).keys as IKey[];
