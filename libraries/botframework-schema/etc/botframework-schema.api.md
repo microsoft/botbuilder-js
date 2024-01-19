@@ -17,6 +17,7 @@ export interface AceData {
     description: string;
     iconProperty: string;
     id: string;
+    isVisible?: boolean;
     properties: any;
     title: string;
 }
