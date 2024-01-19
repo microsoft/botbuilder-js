@@ -34,6 +34,7 @@ export interface AceData {
     description: string;
     /**
      * The visibility of the Adaptive Card Extension.
+     * true if not specified.
      */
     isVisible?: boolean;
     /**
