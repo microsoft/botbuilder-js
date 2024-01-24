@@ -78,8 +78,10 @@ export class BotState implements PropertyManager {
     public load(context: TurnContext, force = false): Promise<any> {
         const cached: CachedBotState = context.turnState.get(this.stateKey);
         if (!context.turnState.get(CACHED_BOT_STATE_SKIP_PROPERTIES_HANDLER_KEY)) {
-            context.turnState.set(CACHED_BOT_STATE_SKIP_PROPERTIES_HANDLER_KEY, (key, properties) =>
-                this.skippedProperties.set(key, properties)
+            context.turnState.set(
+                CACHED_BOT_STATE_SKIP_PROPERTIES_HANDLER_KEY,
+                (state: BotState, key: string, properties: string[] = null) =>
+                    state.skippedProperties.set(key, properties)
             );
         }
         if (force || !cached || !cached.state) {
