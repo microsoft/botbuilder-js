@@ -6,7 +6,7 @@ const sinon = require('sinon');
 const { JwtTokenProviderFactory, ManagedIdentityAuthenticator } = require('../../lib');
 
 const testAppId = 'foo';
-const testAudience = 'bar';
+const testAudience = 'bar/.default';
 const authResult = {
     token: '123',
     expiresOnTimestamp: 3000,
