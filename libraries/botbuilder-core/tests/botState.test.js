@@ -165,8 +165,8 @@ describe(`BotState`, function () {
 
         // Save changes into storage.
         const skipProperties = context.turnState.get(CACHED_BOT_STATE_SKIP_PROPERTIES_HANDLER_KEY);
-        skipProperties('house', ['refrigerator', 'table', 'pants']); // Multiple props.
-        skipProperties('chair'); // Single prop (key used as prop).
+        skipProperties(botState, 'house', ['refrigerator', 'table', 'pants']); // Multiple props.
+        skipProperties(botState, 'chair'); // Single prop (key used as prop).
         await botState.saveChanges(context);
         const updatedState = context.turnState.get(botState.stateKey);
         const storageState = await storage.read([storageKey]);
