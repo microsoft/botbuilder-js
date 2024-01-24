@@ -30,6 +30,11 @@ export class ManagedIdentityAuthenticator {
         ok(resource?.trim(), 'ManagedIdentityAuthenticator.constructor(): missing resource.');
         ok(tokenProviderFactory, 'ManagedIdentityAuthenticator.constructor(): missing tokenProviderFactory.');
 
+        const scopePostfix = '/.default';
+        if (!resource.endsWith(scopePostfix)) {
+            resource = `${resource}${scopePostfix}`;
+        }
+
         this.resource = resource;
         this.tokenProvider = tokenProviderFactory.createAzureServiceTokenProvider(appId);
     }
