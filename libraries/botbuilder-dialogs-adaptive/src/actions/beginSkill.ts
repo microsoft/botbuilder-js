@@ -204,7 +204,7 @@ export class BeginSkill extends SkillDialog implements BeginSkillConfiguration {
         // Skip properties from the bot's state cache hash due to unwanted conversationState behavior.
         const skipProperties = dc.context.turnState.get(CACHED_BOT_STATE_SKIP_PROPERTIES_HANDLER_KEY);
         const props: (keyof SkillDialogOptions)[] = ['conversationIdFactory', 'conversationState', 'skillClient'];
-        skipProperties(this._dialogOptionsStateKey, props);
+        skipProperties(this.dialogOptions.conversationState, this._dialogOptionsStateKey, props);
 
         // Get the activity to send to the skill.
         options = {} as BeginSkillDialogOptions;
