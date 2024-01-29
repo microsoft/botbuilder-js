@@ -88,22 +88,7 @@
   dependencies:
     "@azure/core-asynciterator-polyfill" "^1.0.0"
 
-"@azure/core-rest-pipeline@^1.1.0":
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/@azure/core-rest-pipeline/-/core-rest-pipeline-1.3.0.tgz#cce1623383f2ed622f0b13ef53a7ed5239acfd23"
-  integrity sha512-XdGCm4sVfLvFbd3x17Aw6XNA8SK+sWFvVlOnNSSL2OJGJ4g10LspCpGnIqB+V6OZAaVwOx/eQQN2rOfZzf4Q5w==
-  dependencies:
-    "@azure/abort-controller" "^1.0.0"
-    "@azure/core-auth" "^1.3.0"
-    "@azure/core-tracing" "1.0.0-preview.13"
-    "@azure/logger" "^1.0.0"
-    form-data "^4.0.0"
-    http-proxy-agent "^4.0.1"
-    https-proxy-agent "^5.0.0"
-    tslib "^2.2.0"
-    uuid "^8.3.0"
-
-"@azure/core-rest-pipeline@^1.5.0":
+"@azure/core-rest-pipeline@1.6.0", "@azure/core-rest-pipeline@^1.1.0", "@azure/core-rest-pipeline@^1.5.0":
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/@azure/core-rest-pipeline/-/core-rest-pipeline-1.6.0.tgz#f833a0836779a40300a3633fa73ad8a63186ca73"
   integrity sha512-9Euoat1TPR97Q1l5aylxhDyKbtp2hv15AoFeOwC5frQAFNJegtDDf6BUBr7OiAggzjGAYidxkyhL0T6Yu05XWQ==
