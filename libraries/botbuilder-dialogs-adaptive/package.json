@@ -60,7 +60,7 @@
     "postbuild": "downlevel-dts lib _ts3.4/lib --checksum",
     "test": "yarn build && nyc mocha tests/",
     "test:compat": "api-extractor run --verbose",
-    "postinstall": "yarn text-suite && yarn date-time && yarn number-with-unit",
+    "postinstall": "npm run text-suite && npm run date-time && npm run number-with-unit",
     "text-suite": "npx rimraf ../@microsoft/recognizers-text-suite/node_modules/@microsoft/recognizers-text-number",
     "date-time": "npx rimraf ../@microsoft/recognizers-text-date-time/node_modules/@microsoft/recognizers-text-number",
     "number-with-unit": "npx rimraf ../@microsoft/recognizers-text-number-with-unit/node_modules/@microsoft/recognizers-text-number"
