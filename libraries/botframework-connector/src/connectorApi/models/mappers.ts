@@ -158,6 +158,17 @@ export const ChannelAccount: CompositeMapper = {
         type: {
           name: "String"
         }
+      },
+      properties: {
+        serializedName: "properties",
+        type: {
+          name: "Dictionary",
+          value: {
+            type: {
+              name: "any"
+            }
+          }
+        }
       }
     }
   }
