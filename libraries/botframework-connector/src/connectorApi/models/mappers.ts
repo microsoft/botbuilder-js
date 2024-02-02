@@ -162,12 +162,7 @@ export const ChannelAccount: CompositeMapper = {
       properties: {
         serializedName: "properties",
         type: {
-          name: "Dictionary",
-          value: {
-            type: {
-              name: "any"
-            }
-          }
+          name: "Object"
         }
       }
     }

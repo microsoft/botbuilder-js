@@ -579,6 +579,7 @@ export interface ChannelAccount {
     aadObjectId?: string;
     id: string;
     name: string;
+    properties?: any;
     role?: RoleTypes | string;
 }
 

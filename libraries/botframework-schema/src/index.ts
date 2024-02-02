@@ -157,9 +157,9 @@ export interface ChannelAccount {
     role?: RoleTypes | string;
 
     /**
-     * Properties not represented in a defined type
+     * Custom properties object (optional)
      */
-    properties: { [key: string]: any };
+    properties?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 const channelAccount = z.object({
@@ -2461,7 +2461,7 @@ export interface SearchInvokeOptions {
  * Name of 'application/search'.
  */
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface SearchInvokeResponse extends AdaptiveCardInvokeResponse { }
+export interface SearchInvokeResponse extends AdaptiveCardInvokeResponse {}
 
 /**
  * Represents a response returned by a bot when it receives an `invoke` activity.
