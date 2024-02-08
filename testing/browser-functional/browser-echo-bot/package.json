@@ -35,5 +35,8 @@
     "webpack": "^4.35.3",
     "webpack-cli": "^3.3.6",
     "webpack-dev-server": "^3.7.2"
+  },
+  "resolutions": {
+    "follow-redirects": "^1.15.4"
   }
 }
