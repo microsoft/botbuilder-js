@@ -57,7 +57,9 @@
     "**/istanbul-lib-instrument/@babel/core": "^7.23.2",
     "**/@babel/plugin-proposal-class-properties/@babel/core": "^7.23.2",
     "follow-redirects": "^1.14.8",
-    "@types/ramda": "0.26.0"
+    "@types/ramda": "0.26.0",
+    "@azure/msal-browser": "^2.38.3",
+    "@azure/msal-node": "1.18.4"
   },
   "devDependencies": {
     "@azure/logger": "^1.0.2",

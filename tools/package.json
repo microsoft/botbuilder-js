@@ -30,7 +30,7 @@
   "license": "(MIT OR Apache-2.0)",
   "dependencies": {
     "@azure/identity": "^2.0.4",
-    "@azure/ms-rest-azure-env":"^2.0.0",
+    "@azure/ms-rest-azure-env": "^2.0.0",
     "@types/request": "^2.47.1",
     "botframework-connector": "4.1.6",
     "dotenv": "^4.0.0",
@@ -39,7 +39,7 @@
     "uuid": "^3.3.2"
   },
   "devDependencies": {
-    "@azure/msal-node": "^1.2.0",
+    "@azure/msal-node": "1.18.4",
     "async": "^2.6.1",
     "colors": "1.1.2",
     "fs-extra": "^5.0.0",
