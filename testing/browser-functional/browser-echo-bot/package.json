@@ -38,5 +38,8 @@
   },
   "resolutions": {
     "follow-redirects": "^1.15.4"
+  },
+  "overrides": {
+    "follow-redirects": "^1.15.4"
   }
 }
