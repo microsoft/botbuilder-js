@@ -155,6 +155,11 @@ export interface ChannelAccount {
      * 'user', 'bot', 'skill'
      */
     role?: RoleTypes | string;
+
+    /**
+     * Custom properties object (optional)
+     */
+    properties?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 const channelAccount = z.object({
