@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "@azure/core-http": "^3.0.2",
-    "@azure/msal-node": "^1.2.0",
+    "@azure/msal-node": "^1.18.4",
     "axios": "^1.6.0",
     "botbuilder-core": "4.1.6",
     "botbuilder-stdlib": "4.1.6",
