@@ -5,13 +5,9 @@ on:
   push:
     branches:
     - main
-    - '4.12'
-    - '4.13'
   pull_request:
     branches:
     - main
-    - '4.12'
-    - '4.13'
 
 jobs:
   ci:
@@ -21,10 +17,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: use node 14.x
+      - name: use node 16.x
         uses: actions/setup-node@v2-beta
         with:
-          node-version: 14.x
+          node-version: 16.x
 
       - name: yarn cache dir
         id: yarn-cache-dir
