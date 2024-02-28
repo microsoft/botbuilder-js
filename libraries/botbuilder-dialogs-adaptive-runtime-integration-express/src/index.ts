@@ -9,6 +9,7 @@ import type { Server } from 'http';
 import type { ServiceCollection } from 'botbuilder-dialogs-adaptive-runtime-core';
 import { Configuration, getRuntimeServices } from 'botbuilder-dialogs-adaptive-runtime';
 import { json, urlencoded } from 'body-parser';
+import type { ConnectorClientOptions } from 'botframework-connector';
 
 // Explicitly fails checks for `""`
 const NonEmptyString = z.string().refine((str) => str.length > 0, { message: 'must be non-empty string' });
@@ -38,6 +39,11 @@ const TypedOptions = z.object({
      * Path inside applicationRoot that should be served as static files
      */
     staticDirectory: NonEmptyString,
+
+    /**
+     * Used when creating ConnectorClients.
+     */
+    connectorClientOptions: z.object({}).nonstrict() as z.ZodObject<any, any, ConnectorClientOptions>,
 });
 
 /**
@@ -51,6 +57,7 @@ const defaultOptions: Options = {
     skillsEndpointPrefix: '/api/skills',
     port: 3978,
     staticDirectory: 'wwwroot',
+    connectorClientOptions: {},
 };
 
 /**
@@ -65,7 +72,9 @@ export async function start(
     settingsDirectory: string,
     options: Partial<Options> = {}
 ): Promise<void> {
-    const [services, configuration] = await getRuntimeServices(applicationRoot, settingsDirectory);
+    const [services, configuration] = await getRuntimeServices(applicationRoot, settingsDirectory, {
+        connectorClientOptions: options.connectorClientOptions,
+    });
     const [, listen] = await makeApp(services, configuration, applicationRoot, options);
 
     listen();

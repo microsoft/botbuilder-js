@@ -4,34 +4,39 @@
 import axios from 'axios';
 import { Activity, ChannelAccount, InvokeResponse, RoleTypes } from 'botframework-schema';
 import { BotFrameworkClient } from '../skills';
+import { ConnectorClientOptions } from '../connectorApi/models';
 import { ConversationIdHttpHeaderName } from '../conversationConstants';
 import { ServiceClientCredentialsFactory } from './serviceClientCredentialsFactory';
 import { USER_AGENT } from './connectorFactoryImpl';
 import { WebResource } from '@azure/ms-rest-js';
 import { assert } from 'botbuilder-stdlib';
-import { AgentSettings } from '@azure/ms-rest-js/es/lib/serviceClient';
 
-const botFrameworkClientFetchImpl = async (
-    input: RequestInfo,
-    init?: RequestInit,
-    agentSettings?: AgentSettings
-): Promise<Response> => {
-    const config = {
-        headers: init.headers as Record<string, string>,
-        validateStatus: (): boolean => true,
-        httpAgent: agentSettings?.http,
-        httpsAgent: agentSettings?.https,
+const botFrameworkClientFetchImpl = (connectorClientOptions: ConnectorClientOptions) => {
+    const { http: httpAgent, https: httpsAgent } = connectorClientOptions?.agentSettings ?? {
+        http: undefined,
+        https: undefined,
     };
+    const axiosInstance = axios.create({
+        httpAgent,
+        httpsAgent,
+        validateStatus: (): boolean => true,
+    });
 
-    assert.string(input, ['input']);
-    assert.string(init.body, ['init']);
-    const activity = JSON.parse(init.body) as Activity;
+    return async (input: RequestInfo, init?: RequestInit): Promise<Response> => {
+        const config = {
+            headers: init.headers as Record<string, string>,
+        };
 
-    const response = await axios.post(input, activity, config);
-    return {
-        status: response.status,
-        json: async () => response.data,
-    } as Response;
+        assert.string(input, ['input']);
+        assert.string(init.body, ['init']);
+        const activity = JSON.parse(init.body) as Activity;
+
+        const response = await axiosInstance.post(input, activity, config);
+        return {
+            status: response.status,
+            json: async () => response.data,
+        } as Response;
+    };
 };
 
 // Internal
@@ -39,14 +44,23 @@ export class BotFrameworkClientImpl implements BotFrameworkClient {
     constructor(
         private readonly credentialsFactory: ServiceClientCredentialsFactory,
         private readonly loginEndpoint: string,
-        private readonly botFrameworkClientFetch: (
+        private readonly botFrameworkClientFetch?: (
             input: RequestInfo,
             init?: RequestInit,
-            agentSettings?: AgentSettings
-        ) => Promise<Response> = botFrameworkClientFetchImpl,
-        private readonly agentSettings?: AgentSettings
+            options?: ConnectorClientOptions
+        ) => Promise<Response>,
+        private readonly connectorClientOptions?: ConnectorClientOptions
     ) {
         assert.maybeFunc(botFrameworkClientFetch, ['botFrameworkClientFetch']);
+
+        this.botFrameworkClientFetch ??= botFrameworkClientFetchImpl(this.connectorClientOptions);
+    }
+
+    private toJSON() {
+        // Ignore ConnectorClientOptions, as it could contain Circular Structure behavior.
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { connectorClientOptions, ...rest } = this;
+        return rest;
     }
 
     async postActivity<T>(
@@ -116,7 +130,7 @@ export class BotFrameworkClientImpl implements BotFrameworkClient {
                 body: request.body,
                 headers: request.headers.rawHeaders(),
             };
-            const response = await this.botFrameworkClientFetch(request.url, config, this.agentSettings);
+            const response = await this.botFrameworkClientFetch(request.url, config, this.connectorClientOptions);
 
             return { status: response.status, body: await response.json() };
         } finally {

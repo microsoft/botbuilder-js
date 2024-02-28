@@ -6,7 +6,8 @@
  * Licensed under the MIT License.
  */
 import { TurnContext } from './turnContext';
-import { Assertion, assert } from 'botbuilder-stdlib';
+import { Assertion, assert, stringify } from 'botbuilder-stdlib';
+import { createHash } from 'crypto';
 
 /**
  * Callback to calculate a storage key.
@@ -115,10 +116,11 @@ export const assertStoreItems: Assertion<StoreItems> = (val, path) => {
  * @param item Item to calculate the change hash for.
  */
 export function calculateChangeHash(item: StoreItem): string {
-    const cpy: any = { ...item };
-    if (cpy.eTag) {
-        delete cpy.eTag;
-    }
+    // eslint-disable-next-line  @typescript-eslint/no-unused-vars
+    const { eTag, ...rest } = item;
 
-    return JSON.stringify(cpy);
+    const result = stringify(rest);
+    const hash = createHash('sha256', { encoding: 'utf-8' });
+    const hashed = hash.update(result).digest('hex');
+    return hashed;
 }
