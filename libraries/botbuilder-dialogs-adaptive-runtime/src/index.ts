@@ -541,6 +541,7 @@ function registerQnAComponents(services: ServiceCollection, configuration: Confi
 export async function getRuntimeServices(
     applicationRoot: string,
     settingsDirectory: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     defaultServices?: Record<string, any>
 ): Promise<[ServiceCollection, Configuration]>;
 
@@ -555,6 +556,7 @@ export async function getRuntimeServices(
 export async function getRuntimeServices(
     applicationRoot: string,
     configuration: Configuration,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     defaultServices?: Record<string, any>
 ): Promise<[ServiceCollection, Configuration]>;
 
@@ -564,6 +566,7 @@ export async function getRuntimeServices(
 export async function getRuntimeServices(
     applicationRoot: string,
     configurationOrSettingsDirectory: Configuration | string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     defaultServices: Record<string, any> = {}
 ): Promise<[ServiceCollection, Configuration]> {
     // Resolve configuration

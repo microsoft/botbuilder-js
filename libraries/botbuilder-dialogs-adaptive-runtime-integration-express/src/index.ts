@@ -43,6 +43,7 @@ const TypedOptions = z.object({
     /**
      * Used when creating ConnectorClients.
      */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     connectorClientOptions: z.object({}).nonstrict() as z.ZodObject<any, any, ConnectorClientOptions>,
 });
 
