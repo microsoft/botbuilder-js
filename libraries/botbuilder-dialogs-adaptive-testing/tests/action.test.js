@@ -10,8 +10,6 @@ const {
     ConversationState,
     UserState,
     useBotState,
-    BotState,
-    calculateChangeHash,
 } = require('botbuilder-core');
 const { TestUtils } = require('..');
 const { createHash } = require('crypto');

@@ -1,11 +1,13 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+// eslint-disable @typescript-eslint/no-explicit-any
+
 /**
  * Encapsulates JSON.stringify function to detect and handle different types of errors (eg. Circular Structure).
  * @remarks
  * Circular Structure:
- *   - It detects when the provided value has circular references and replace them with [Circular *.{path to the value being referenced}].
+ *   - It detects when the provided value has circular references and replaces them with [Circular *.{path to the value being referenced}].
  * @example
  * // Circular Structure:
  *     {
@@ -22,10 +24,9 @@
  * @param value — A JavaScript value, usually an object or array, to be converted.
  * @param replacer — A function that transforms the results.
  * @param space — Adds indentation, white space, and line break characters to the return-value JSON text to make it easier to read.
- * @returns The converted JavaScript value to a JavaScript Object Notation (JSON) string.
+ * @returns {string} The converted JavaScript value to a JavaScript Object Notation (JSON) string.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function stringify(value: any, replacer?: (key: string, value: any) => any, space?: string | number) {
+export function stringify(value: any, replacer?: (key: string, value: any) => any, space?: string | number): string {
     if (!value) {
         return '';
     }
@@ -57,9 +58,7 @@ export function stringify(value: any, replacer?: (key: string, value: any) => an
     }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function stringifyReplacer(replacer?: (key: string, value: any) => any) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return function stringifyReplacer(this: any, key: string, val: any) {
         const replacerValue = replacer ? replacer(key, val).bind(this) : val;
         if (replacerValue === null || replacerValue === undefined || typeof replacerValue !== 'object') {
