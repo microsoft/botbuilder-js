@@ -60,8 +60,9 @@
     "@types/ramda": "0.26.0",
     "@azure/msal-browser": "^2.38.3",
     "@azure/msal-node": "^1.18.4",
-    "axios": "0.21.2",
-    "tar": "6.1.9"
+    "axios": "0.28.0",
+    "tar": "6.1.9",
+    "ws": "7.4.6"
   },
   "devDependencies": {
     "@azure/logger": "^1.0.2",
