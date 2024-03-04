@@ -145,7 +145,7 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
             this.credentialsFactory,
             this.toChannelFromBotLoginUrl,
             this.botFrameworkClientFetch,
-            this.connectorClientOptions?.agentSettings
+            this.connectorClientOptions
         );
     }
 

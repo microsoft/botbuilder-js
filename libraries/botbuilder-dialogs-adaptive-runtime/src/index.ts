@@ -1,8 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import http from 'http';
-import https from 'https';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import * as z from 'zod';
 import fs from 'fs';
@@ -504,6 +503,7 @@ function registerQnAComponents(services: ServiceCollection, configuration: Confi
  *
  * @param applicationRoot absolute path to root of application
  * @param settingsDirectory directory where settings files are located
+ * @param defaultServices services to use as default
  * @returns service collection and configuration
  *
  * @remarks
@@ -542,7 +542,8 @@ function registerQnAComponents(services: ServiceCollection, configuration: Confi
  */
 export async function getRuntimeServices(
     applicationRoot: string,
-    settingsDirectory: string
+    settingsDirectory: string,
+    defaultServices?: Record<string, any>
 ): Promise<[ServiceCollection, Configuration]>;
 
 /**
@@ -550,11 +551,13 @@ export async function getRuntimeServices(
  *
  * @param applicationRoot absolute path to root of application
  * @param configuration a fully initialized configuration instance to use
+ * @param defaultServices services to use as default
  * @returns service collection and configuration
  */
 export async function getRuntimeServices(
     applicationRoot: string,
-    configuration: Configuration
+    configuration: Configuration,
+    defaultServices?: Record<string, any>
 ): Promise<[ServiceCollection, Configuration]>;
 
 /**
@@ -562,7 +565,8 @@ export async function getRuntimeServices(
  */
 export async function getRuntimeServices(
     applicationRoot: string,
-    configurationOrSettingsDirectory: Configuration | string
+    configurationOrSettingsDirectory: Configuration | string,
+    defaultServices: Record<string, any> = {}
 ): Promise<[ServiceCollection, Configuration]> {
     // Resolve configuration
     let configuration: Configuration;
@@ -587,28 +591,14 @@ export async function getRuntimeServices(
 
     const services = new ServiceCollection({
         botFrameworkClientFetch: undefined,
-        connectorClientOptions: {
-            agentSettings: {
-                http: new http.Agent({
-                    keepAlive: true,
-                    maxSockets: 128,
-                    maxFreeSockets: 32,
-                    timeout: 60000,
-                }),
-                https: new https.Agent({
-                    keepAlive: true,
-                    maxSockets: 128,
-                    maxFreeSockets: 32,
-                    timeout: 60000,
-                }),
-            },
-        },
+        connectorClientOptions: undefined,
         customAdapters: new Map(),
         declarativeTypes: [],
         memoryScopes: [],
         middlewares: new MiddlewareSet(),
         pathResolvers: [],
         serviceClientCredentialsFactory: undefined,
+        ...defaultServices,
     });
 
     services.addFactory<ResourceExplorer, { declarativeTypes: ComponentDeclarativeTypes[] }>(
