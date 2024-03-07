@@ -6,6 +6,8 @@
 
 import { ServiceClientOptions, RequestOptionsBase, HttpResponse } from "@azure/core-http";
 import { AttachmentInfo, ChannelAccount, ConversationResourceResponse, ConversationsResult, PagedMembersResult, ResourceResponse } from "botframework-schema";
+import type { Agent as HttpAgent } from "http";
+import type { Agent as HttpsAgent } from "https";
 export * from "botframework-schema";
 
 /**
@@ -17,6 +19,19 @@ export interface ConnectorClientOptions extends ServiceClientOptions {
    * but is required if using the ConnectorClient outside of the adapter.
    */
   baseUri?: string;
+
+  /**
+   * HTTP and HTTPS agents which will be used for every HTTP request (Node.js only).
+   */
+  agentSettings?: AgentSettings;
+}
+
+/**
+ * HTTP and HTTPS agents (Node.js only)
+ */
+export interface AgentSettings {
+  http: HttpAgent;
+  https: HttpsAgent;
 }
 
 /**

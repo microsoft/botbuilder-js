@@ -277,9 +277,6 @@ export class BrowserSessionStorage extends MemoryStorage {
     constructor();
 }
 
-// @public (undocumented)
-export const CACHED_BOT_STATE_SKIP_PROPERTIES_HANDLER_KEY: unique symbol;
-
 // @public
 export interface CachedBotState {
     hash: string;
