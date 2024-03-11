@@ -9,6 +9,10 @@
  * @remarks
  * Circular Structure:
  *   - It detects when the provided value has circular references and replaces them with [Circular *.{path to the value being referenced}].
+ *
+ * _replacer internal function:
+ *   - Have similar functionality as the JSON.stringify internal toJSON function, but with the difference that only affects this stringify functionality.
+ *
  * @example
  * // Circular Structure:
  *     {
@@ -43,15 +47,21 @@ export function stringify(value: any, replacer?: (key: string, value: any) => an
         return JSON.stringify(
             value,
             function stringifyCircularReplacer(key, val) {
-                const value = stringifyReplacer(replacer)(key, val);
-
-                const path = seen.get(value);
-                if (path) {
-                    return `[Circular *${path.join('.')}]`;
+                if (val === null || val === undefined || typeof val !== 'object') {
+                    return val;
                 }
 
-                const parent = seen.get(this) ?? [];
-                seen.set(value, [...parent, key]);
+                if (key) {
+                    const path = seen.get(val);
+                    if (path) {
+                        return `[Circular *.${path.join('.')}]`;
+                    }
+
+                    const parent = seen.get(this) ?? [];
+                    seen.set(val, [...parent, key]);
+                }
+
+                const value = stringifyReplacer(replacer)(key, val);
                 return value;
             },
             space
@@ -61,12 +71,12 @@ export function stringify(value: any, replacer?: (key: string, value: any) => an
 
 function stringifyReplacer(replacer?: (key: string, value: any) => any) {
     return function stringifyReplacerInternal(this: any, key: string, val: any) {
-        const replacerValue = replacer ? replacer(key, val).bind(this) : val;
+        const replacerValue = replacer ? replacer.call(this, key, val) : val;
         if (replacerValue === null || replacerValue === undefined || typeof replacerValue !== 'object') {
             return replacerValue;
         }
 
-        const toJSONValue = replacerValue.toJSON ? replacerValue.toJSON(key) : replacerValue;
-        return toJSONValue._replace ? toJSONValue._replace() : toJSONValue;
+        const result = replacerValue._replacer ? replacerValue._replacer(key) : replacerValue;
+        return result;
     };
 }
