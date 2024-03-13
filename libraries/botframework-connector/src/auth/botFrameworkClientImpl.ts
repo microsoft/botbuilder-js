@@ -5,25 +5,36 @@ import * as z from 'zod';
 import axios from 'axios';
 import { Activity, ChannelAccount, InvokeResponse, RoleTypes } from 'botframework-schema';
 import { BotFrameworkClient } from '../skills';
+import type { ConnectorClientOptions } from '../connectorApi/models';
 import { ConversationIdHttpHeaderName } from '../conversationConstants';
 import { ServiceClientCredentialsFactory } from './serviceClientCredentialsFactory';
 import { USER_AGENT } from './connectorFactoryImpl';
 import { WebResource } from '@azure/ms-rest-js';
 import { ok } from 'assert';
 
-const botFrameworkClientFetchImpl: typeof fetch = async (input, init) => {
-    const url = z.string().parse(input);
-    const { body, headers } = z.object({ body: z.string(), headers: z.record(z.string()).optional() }).parse(init);
-
-    const response = await axios.post(url, JSON.parse(body), {
-        headers,
-        validateStatus: () => true,
+const botFrameworkClientFetchImpl = (connectorClientOptions: ConnectorClientOptions): typeof fetch => {
+    const { http: httpAgent, https: httpsAgent } = connectorClientOptions?.agentSettings ?? {
+        http: undefined,
+        https: undefined,
+    };
+    const axiosInstance = axios.create({
+        httpAgent,
+        httpsAgent,
+        validateStatus: (): boolean => true,
     });
 
-    return {
-        status: response.status,
-        json: async () => response.data,
-    } as Response;
+    return async (input, init?): Promise<Response> => {
+        const url = z.string().parse(input);
+        const { body, headers } = z.object({ body: z.string(), headers: z.record(z.string()).optional() }).parse(init);
+
+        const response = await axiosInstance.post(url, body, {
+            headers,
+        });
+        return {
+            status: response.status,
+            json: () => response.data,
+        } as Response;
+    };
 };
 
 /**
@@ -35,13 +46,24 @@ export class BotFrameworkClientImpl implements BotFrameworkClient {
      * @param credentialsFactory A [ServiceClientCredentialsFactory](xref:botframework-connector.ServiceClientCredentialsFactory) instance.
      * @param loginEndpoint The login url.
      * @param botFrameworkClientFetch A custom Fetch implementation to be used in the [BotFrameworkClient](xref:botframework-connector.BotFrameworkClient).
+     * @param connectorClientOptions A [ConnectorClientOptions](xref:botframework-connector.ConnectorClientOptions) object.
      */
     constructor(
         private readonly credentialsFactory: ServiceClientCredentialsFactory,
         private readonly loginEndpoint: string,
-        private readonly botFrameworkClientFetch = botFrameworkClientFetchImpl
+        private readonly botFrameworkClientFetch?: ReturnType<typeof botFrameworkClientFetchImpl>,
+        private readonly connectorClientOptions?: ConnectorClientOptions
     ) {
+        this.botFrameworkClientFetch ??= botFrameworkClientFetchImpl(this.connectorClientOptions);
+
         ok(typeof botFrameworkClientFetch === 'function');
+    }
+
+    private toJSON() {
+        // Ignore ConnectorClientOptions, as it could contain Circular Structure behavior.
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { connectorClientOptions, ...rest } = this;
+        return rest;
     }
 
     /**
