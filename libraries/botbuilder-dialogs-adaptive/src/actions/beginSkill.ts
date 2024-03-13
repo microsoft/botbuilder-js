@@ -156,7 +156,17 @@ export class BeginSkill extends SkillDialog implements BeginSkillConfiguration {
      * @param options Optional options used to configure the skill dialog.
      */
     constructor(options?: SkillDialogOptions) {
-        super(Object.assign({ skill: {} } as SkillDialogOptions, options));
+        super(
+            Object.assign({ skill: {} } as SkillDialogOptions, options, {
+                // This is an alternative to the toJSON function because when the SkillDialogOptions are saved into the Storage,
+                // when the information is retrieved, it doesn't have the properties that were declared in the toJSON function.
+                _replacer(): Omit<SkillDialogOptions, 'conversationState' | 'skillClient' | 'conversationIdFactory'> {
+                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                    const { conversationState, skillClient, conversationIdFactory, ...rest } = this;
+                    return rest;
+                },
+            })
+        );
     }
 
     /**
