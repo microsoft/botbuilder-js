@@ -56,7 +56,7 @@ export class BotFrameworkClientImpl implements BotFrameworkClient {
     ) {
         this.botFrameworkClientFetch ??= botFrameworkClientFetchImpl(this.connectorClientOptions);
 
-        ok(typeof botFrameworkClientFetch === 'function');
+        ok(typeof this.botFrameworkClientFetch === 'function');
     }
 
     private toJSON() {
