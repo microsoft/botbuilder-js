@@ -75,6 +75,15 @@ export namespace EmulatorValidation {
             return false;
         }
 
+        if (Array.isArray(ToBotFromBotOrEmulatorTokenValidationParameters.issuer)) {
+            const tid = '/' + token.payload.tid + '/';
+
+            if (ToBotFromBotOrEmulatorTokenValidationParameters.issuer.find((issuer) => issuer.includes(tid)) == null) {
+                const newIssuer = 'https://sts.windows.net' + tid;
+                ToBotFromBotOrEmulatorTokenValidationParameters.issuer.push(newIssuer);
+            }
+        }
+
         // Is the token issues by a source we consider to be the emulator?
         if (
             ToBotFromEmulatorTokenValidationParameters.issuer &&
