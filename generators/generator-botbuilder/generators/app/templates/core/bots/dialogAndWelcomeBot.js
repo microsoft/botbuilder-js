@@ -1,6 +1,3 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License.
-
 const { CardFactory } = require('botbuilder-core');
 const { DialogBot } = require('./dialogBot');
 const WelcomeCard = require('../resources/welcomeCard.json');

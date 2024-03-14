@@ -10,9 +10,8 @@
 
 'use strict';
 
-const msRest = require('@azure/ms-rest-js');
+const { stripRequest, stripResponse, WebResource } = require("@azure/core-http");
 const uuid = require('uuid');
-const WebResource = msRest.WebResource;
 
 /**
  * Deletes a tag value.
@@ -39,9 +38,9 @@ const WebResource = msRest.WebResource;
  *                      {stream} [response] - The HTTP Response stream if an error did not occur.
  */
 function _deleteValue(tagName, tagValue, options, callback) {
-   /* jshint validthis: true */
+  /* jshint validthis: true */
   let client = this.client;
-  if(!callback && typeof options === 'function') {
+  if (!callback && typeof options === 'function') {
     callback = options;
     options = null;
   }
@@ -89,13 +88,13 @@ function _deleteValue(tagName, tagValue, options, callback) {
   // Set Headers
   httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
   if (this.client.generateClientRequestId) {
-      httpRequest.headers['x-ms-client-request-id'] = uuid.v4();
+    httpRequest.headers['x-ms-client-request-id'] = uuid.v4();
   }
   if (this.client.acceptLanguage !== undefined && this.client.acceptLanguage !== null) {
     httpRequest.headers['accept-language'] = this.client.acceptLanguage;
   }
-  if(options) {
-    for(let headerName in options['customHeaders']) {
+  if (options) {
+    for (let headerName in options['customHeaders']) {
       if (options['customHeaders'].hasOwnProperty(headerName)) {
         httpRequest.headers[headerName] = options['customHeaders'][headerName];
       }
@@ -111,8 +110,8 @@ function _deleteValue(tagName, tagValue, options, callback) {
     if (statusCode !== 200 && statusCode !== 204) {
       let error = new Error(responseBody);
       error.statusCode = response.statusCode;
-      error.request = msRest.stripRequest(httpRequest);
-      error.response = msRest.stripResponse(response);
+      error.request = stripRequest(httpRequest);
+      error.response = stripResponse(response);
       if (responseBody === '') responseBody = null;
       let parsedErrorResponse;
       try {
@@ -128,7 +127,7 @@ function _deleteValue(tagName, tagValue, options, callback) {
         }
       } catch (defaultError) {
         error.message = `Error "${defaultError.message}" occurred in deserializing the responseBody ` +
-                         `- "${responseBody}" for the default response.`;
+          `- "${responseBody}" for the default response.`;
         return callback(error);
       }
       return callback(error);
@@ -167,9 +166,9 @@ function _deleteValue(tagName, tagValue, options, callback) {
  *                      {stream} [response] - The HTTP Response stream if an error did not occur.
  */
 function _createOrUpdateValue(tagName, tagValue, options, callback) {
-   /* jshint validthis: true */
+  /* jshint validthis: true */
   let client = this.client;
-  if(!callback && typeof options === 'function') {
+  if (!callback && typeof options === 'function') {
     callback = options;
     options = null;
   }
@@ -217,13 +216,13 @@ function _createOrUpdateValue(tagName, tagValue, options, callback) {
   // Set Headers
   httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
   if (this.client.generateClientRequestId) {
-      httpRequest.headers['x-ms-client-request-id'] = uuid.v4();
+    httpRequest.headers['x-ms-client-request-id'] = uuid.v4();
   }
   if (this.client.acceptLanguage !== undefined && this.client.acceptLanguage !== null) {
     httpRequest.headers['accept-language'] = this.client.acceptLanguage;
   }
-  if(options) {
-    for(let headerName in options['customHeaders']) {
+  if (options) {
+    for (let headerName in options['customHeaders']) {
       if (options['customHeaders'].hasOwnProperty(headerName)) {
         httpRequest.headers[headerName] = options['customHeaders'][headerName];
       }
@@ -239,8 +238,8 @@ function _createOrUpdateValue(tagName, tagValue, options, callback) {
     if (statusCode !== 200 && statusCode !== 201) {
       let error = new Error(responseBody);
       error.statusCode = response.statusCode;
-      error.request = msRest.stripRequest(httpRequest);
-      error.response = msRest.stripResponse(response);
+      error.request = stripRequest(httpRequest);
+      error.response = stripResponse(response);
       if (responseBody === '') responseBody = null;
       let parsedErrorResponse;
       try {
@@ -256,7 +255,7 @@ function _createOrUpdateValue(tagName, tagValue, options, callback) {
         }
       } catch (defaultError) {
         error.message = `Error "${defaultError.message}" occurred in deserializing the responseBody ` +
-                         `- "${responseBody}" for the default response.`;
+          `- "${responseBody}" for the default response.`;
         return callback(error);
       }
       return callback(error);
@@ -276,8 +275,8 @@ function _createOrUpdateValue(tagName, tagValue, options, callback) {
         }
       } catch (error) {
         let deserializationError = new Error(`Error ${error} occurred in deserializing the responseBody - ${responseBody}`);
-        deserializationError.request = msRest.stripRequest(httpRequest);
-        deserializationError.response = msRest.stripResponse(response);
+        deserializationError.request = stripRequest(httpRequest);
+        deserializationError.response = stripResponse(response);
         return callback(deserializationError);
       }
     }
@@ -293,8 +292,8 @@ function _createOrUpdateValue(tagName, tagValue, options, callback) {
         }
       } catch (error) {
         let deserializationError1 = new Error(`Error ${error} occurred in deserializing the responseBody - ${responseBody}`);
-        deserializationError1.request = msRest.stripRequest(httpRequest);
-        deserializationError1.response = msRest.stripResponse(response);
+        deserializationError1.request = stripRequest(httpRequest);
+        deserializationError1.response = stripResponse(response);
         return callback(deserializationError1);
       }
     }
@@ -331,9 +330,9 @@ function _createOrUpdateValue(tagName, tagValue, options, callback) {
  *                      {stream} [response] - The HTTP Response stream if an error did not occur.
  */
 function _createOrUpdate(tagName, options, callback) {
-   /* jshint validthis: true */
+  /* jshint validthis: true */
   let client = this.client;
-  if(!callback && typeof options === 'function') {
+  if (!callback && typeof options === 'function') {
     callback = options;
     options = null;
   }
@@ -377,13 +376,13 @@ function _createOrUpdate(tagName, options, callback) {
   // Set Headers
   httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
   if (this.client.generateClientRequestId) {
-      httpRequest.headers['x-ms-client-request-id'] = uuid.v4();
+    httpRequest.headers['x-ms-client-request-id'] = uuid.v4();
   }
   if (this.client.acceptLanguage !== undefined && this.client.acceptLanguage !== null) {
     httpRequest.headers['accept-language'] = this.client.acceptLanguage;
   }
-  if(options) {
-    for(let headerName in options['customHeaders']) {
+  if (options) {
+    for (let headerName in options['customHeaders']) {
       if (options['customHeaders'].hasOwnProperty(headerName)) {
         httpRequest.headers[headerName] = options['customHeaders'][headerName];
       }
@@ -399,8 +398,8 @@ function _createOrUpdate(tagName, options, callback) {
     if (statusCode !== 200 && statusCode !== 201) {
       let error = new Error(responseBody);
       error.statusCode = response.statusCode;
-      error.request = msRest.stripRequest(httpRequest);
-      error.response = msRest.stripResponse(response);
+      error.request = stripRequest(httpRequest);
+      error.response = stripResponse(response);
       if (responseBody === '') responseBody = null;
       let parsedErrorResponse;
       try {
@@ -416,7 +415,7 @@ function _createOrUpdate(tagName, options, callback) {
         }
       } catch (defaultError) {
         error.message = `Error "${defaultError.message}" occurred in deserializing the responseBody ` +
-                         `- "${responseBody}" for the default response.`;
+          `- "${responseBody}" for the default response.`;
         return callback(error);
       }
       return callback(error);
@@ -436,8 +435,8 @@ function _createOrUpdate(tagName, options, callback) {
         }
       } catch (error) {
         let deserializationError = new Error(`Error ${error} occurred in deserializing the responseBody - ${responseBody}`);
-        deserializationError.request = msRest.stripRequest(httpRequest);
-        deserializationError.response = msRest.stripResponse(response);
+        deserializationError.request = stripRequest(httpRequest);
+        deserializationError.response = stripResponse(response);
         return callback(deserializationError);
       }
     }
@@ -453,8 +452,8 @@ function _createOrUpdate(tagName, options, callback) {
         }
       } catch (error) {
         let deserializationError1 = new Error(`Error ${error} occurred in deserializing the responseBody - ${responseBody}`);
-        deserializationError1.request = msRest.stripRequest(httpRequest);
-        deserializationError1.response = msRest.stripResponse(response);
+        deserializationError1.request = stripRequest(httpRequest);
+        deserializationError1.response = stripResponse(response);
         return callback(deserializationError1);
       }
     }
@@ -488,9 +487,9 @@ function _createOrUpdate(tagName, options, callback) {
  *                      {stream} [response] - The HTTP Response stream if an error did not occur.
  */
 function _deleteMethod(tagName, options, callback) {
-   /* jshint validthis: true */
+  /* jshint validthis: true */
   let client = this.client;
-  if(!callback && typeof options === 'function') {
+  if (!callback && typeof options === 'function') {
     callback = options;
     options = null;
   }
@@ -534,13 +533,13 @@ function _deleteMethod(tagName, options, callback) {
   // Set Headers
   httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
   if (this.client.generateClientRequestId) {
-      httpRequest.headers['x-ms-client-request-id'] = uuid.v4();
+    httpRequest.headers['x-ms-client-request-id'] = uuid.v4();
   }
   if (this.client.acceptLanguage !== undefined && this.client.acceptLanguage !== null) {
     httpRequest.headers['accept-language'] = this.client.acceptLanguage;
   }
-  if(options) {
-    for(let headerName in options['customHeaders']) {
+  if (options) {
+    for (let headerName in options['customHeaders']) {
       if (options['customHeaders'].hasOwnProperty(headerName)) {
         httpRequest.headers[headerName] = options['customHeaders'][headerName];
       }
@@ -556,8 +555,8 @@ function _deleteMethod(tagName, options, callback) {
     if (statusCode !== 200 && statusCode !== 204) {
       let error = new Error(responseBody);
       error.statusCode = response.statusCode;
-      error.request = msRest.stripRequest(httpRequest);
-      error.response = msRest.stripResponse(response);
+      error.request = stripRequest(httpRequest);
+      error.response = stripResponse(response);
       if (responseBody === '') responseBody = null;
       let parsedErrorResponse;
       try {
@@ -573,7 +572,7 @@ function _deleteMethod(tagName, options, callback) {
         }
       } catch (defaultError) {
         error.message = `Error "${defaultError.message}" occurred in deserializing the responseBody ` +
-                         `- "${responseBody}" for the default response.`;
+          `- "${responseBody}" for the default response.`;
         return callback(error);
       }
       return callback(error);
@@ -609,9 +608,9 @@ function _deleteMethod(tagName, options, callback) {
  *                      {stream} [response] - The HTTP Response stream if an error did not occur.
  */
 function _list(options, callback) {
-   /* jshint validthis: true */
+  /* jshint validthis: true */
   let client = this.client;
-  if(!callback && typeof options === 'function') {
+  if (!callback && typeof options === 'function') {
     callback = options;
     options = null;
   }
@@ -651,13 +650,13 @@ function _list(options, callback) {
   // Set Headers
   httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
   if (this.client.generateClientRequestId) {
-      httpRequest.headers['x-ms-client-request-id'] = uuid.v4();
+    httpRequest.headers['x-ms-client-request-id'] = uuid.v4();
   }
   if (this.client.acceptLanguage !== undefined && this.client.acceptLanguage !== null) {
     httpRequest.headers['accept-language'] = this.client.acceptLanguage;
   }
-  if(options) {
-    for(let headerName in options['customHeaders']) {
+  if (options) {
+    for (let headerName in options['customHeaders']) {
       if (options['customHeaders'].hasOwnProperty(headerName)) {
         httpRequest.headers[headerName] = options['customHeaders'][headerName];
       }
@@ -673,8 +672,8 @@ function _list(options, callback) {
     if (statusCode !== 200) {
       let error = new Error(responseBody);
       error.statusCode = response.statusCode;
-      error.request = msRest.stripRequest(httpRequest);
-      error.response = msRest.stripResponse(response);
+      error.request = stripRequest(httpRequest);
+      error.response = stripResponse(response);
       if (responseBody === '') responseBody = null;
       let parsedErrorResponse;
       try {
@@ -690,7 +689,7 @@ function _list(options, callback) {
         }
       } catch (defaultError) {
         error.message = `Error "${defaultError.message}" occurred in deserializing the responseBody ` +
-                         `- "${responseBody}" for the default response.`;
+          `- "${responseBody}" for the default response.`;
         return callback(error);
       }
       return callback(error);
@@ -710,8 +709,8 @@ function _list(options, callback) {
         }
       } catch (error) {
         let deserializationError = new Error(`Error ${error} occurred in deserializing the responseBody - ${responseBody}`);
-        deserializationError.request = msRest.stripRequest(httpRequest);
-        deserializationError.response = msRest.stripResponse(response);
+        deserializationError.request = stripRequest(httpRequest);
+        deserializationError.response = stripResponse(response);
         return callback(deserializationError);
       }
     }
@@ -746,9 +745,9 @@ function _list(options, callback) {
  *                      {stream} [response] - The HTTP Response stream if an error did not occur.
  */
 function _listNext(nextPageLink, options, callback) {
-   /* jshint validthis: true */
+  /* jshint validthis: true */
   let client = this.client;
-  if(!callback && typeof options === 'function') {
+  if (!callback && typeof options === 'function') {
     callback = options;
     options = null;
   }
@@ -779,13 +778,13 @@ function _listNext(nextPageLink, options, callback) {
   // Set Headers
   httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
   if (this.client.generateClientRequestId) {
-      httpRequest.headers['x-ms-client-request-id'] = uuid.v4();
+    httpRequest.headers['x-ms-client-request-id'] = uuid.v4();
   }
   if (this.client.acceptLanguage !== undefined && this.client.acceptLanguage !== null) {
     httpRequest.headers['accept-language'] = this.client.acceptLanguage;
   }
-  if(options) {
-    for(let headerName in options['customHeaders']) {
+  if (options) {
+    for (let headerName in options['customHeaders']) {
       if (options['customHeaders'].hasOwnProperty(headerName)) {
         httpRequest.headers[headerName] = options['customHeaders'][headerName];
       }
@@ -801,8 +800,8 @@ function _listNext(nextPageLink, options, callback) {
     if (statusCode !== 200) {
       let error = new Error(responseBody);
       error.statusCode = response.statusCode;
-      error.request = msRest.stripRequest(httpRequest);
-      error.response = msRest.stripResponse(response);
+      error.request = stripRequest(httpRequest);
+      error.response = stripResponse(response);
       if (responseBody === '') responseBody = null;
       let parsedErrorResponse;
       try {
@@ -818,7 +817,7 @@ function _listNext(nextPageLink, options, callback) {
         }
       } catch (defaultError) {
         error.message = `Error "${defaultError.message}" occurred in deserializing the responseBody ` +
-                         `- "${responseBody}" for the default response.`;
+          `- "${responseBody}" for the default response.`;
         return callback(error);
       }
       return callback(error);
@@ -838,8 +837,8 @@ function _listNext(nextPageLink, options, callback) {
         }
       } catch (error) {
         let deserializationError = new Error(`Error ${error} occurred in deserializing the responseBody - ${responseBody}`);
-        deserializationError.request = msRest.stripRequest(httpRequest);
-        deserializationError.response = msRest.stripResponse(response);
+        deserializationError.request = stripRequest(httpRequest);
+        deserializationError.response = stripResponse(response);
         return callback(deserializationError);
       }
     }

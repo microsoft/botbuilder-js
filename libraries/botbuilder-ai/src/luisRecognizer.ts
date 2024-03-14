@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import * as msRest from '@azure/ms-rest-js';
+import { RequestOptionsBase } from '@azure/core-http';
 
 import Url from 'url-parse';
 import { BotTelemetryClient, NullTelemetryClient, RecognizerResult, TurnContext } from 'botbuilder-core';
@@ -41,7 +41,7 @@ export interface LuisApplication {
  *
  * Options per LUIS prediction.
  */
-export interface LuisPredictionOptions extends msRest.RequestOptionsBase {
+export interface LuisPredictionOptions extends RequestOptionsBase {
     /**
      * If true, return all intents instead of just the top scoring intent.
      */

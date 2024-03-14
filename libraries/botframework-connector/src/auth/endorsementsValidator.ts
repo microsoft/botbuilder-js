@@ -47,11 +47,6 @@ export class EndorsementsValidator {
 
         // Does the set of endorsements match the channelId that was passed in?
 
-        // ToDo: Consider moving this to a HashSet instead of a string
-        // array, to make lookups O(1) instead of O(N). To give a sense
-        // of scope, tokens from WebChat have about 10 endorsements, and
-        // tokens coming from Teams have about 20.
-
-        return endorsements.some((value: string) => value === channelId);
+        return new Set(endorsements).has(channelId);
     }
 }

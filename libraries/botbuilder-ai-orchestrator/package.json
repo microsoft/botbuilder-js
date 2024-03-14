@@ -47,7 +47,8 @@
     "lint": "eslint . --ext .js,.ts",
     "postbuild": "downlevel-dts lib _ts3.4/lib --checksum",
     "test": "yarn build && nyc mocha tests/",
-    "test:compat": "api-extractor run --verbose"
+    "test:compat": "api-extractor run --verbose",
+    "postinstall": "npx rimraf node_modules/@microsoft/orchestrator-core/node_modules/@babel/traverse"
   },
   "files": [
     "_ts3.4",

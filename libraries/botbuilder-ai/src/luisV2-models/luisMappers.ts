@@ -6,9 +6,9 @@
  * Licensed under the MIT License.
  */
 
-import * as msRest from '@azure/ms-rest-js';
+import { CompositeMapper } from '@azure/core-http';
 
-export const IntentModel: msRest.CompositeMapper = {
+export const IntentModel: CompositeMapper = {
     serializedName: 'IntentModel',
     type: {
         name: 'Composite',
@@ -34,7 +34,7 @@ export const IntentModel: msRest.CompositeMapper = {
     },
 };
 
-export const EntityModel: msRest.CompositeMapper = {
+export const EntityModel: CompositeMapper = {
     serializedName: 'EntityModel',
     type: {
         name: 'Composite',
@@ -77,7 +77,7 @@ export const EntityModel: msRest.CompositeMapper = {
     },
 };
 
-export const CompositeChildModel: msRest.CompositeMapper = {
+export const CompositeChildModel: CompositeMapper = {
     serializedName: 'CompositeChildModel',
     type: {
         name: 'Composite',
@@ -101,7 +101,7 @@ export const CompositeChildModel: msRest.CompositeMapper = {
     },
 };
 
-export const CompositeEntityModel: msRest.CompositeMapper = {
+export const CompositeEntityModel: CompositeMapper = {
     serializedName: 'CompositeEntityModel',
     type: {
         name: 'Composite',
@@ -138,7 +138,7 @@ export const CompositeEntityModel: msRest.CompositeMapper = {
     },
 };
 
-export const Sentiment: msRest.CompositeMapper = {
+export const Sentiment: CompositeMapper = {
     serializedName: 'Sentiment',
     type: {
         name: 'Composite',
@@ -160,7 +160,7 @@ export const Sentiment: msRest.CompositeMapper = {
     },
 };
 
-export const LuisResult: msRest.CompositeMapper = {
+export const LuisResult: CompositeMapper = {
     serializedName: 'LuisResult',
     type: {
         name: 'Composite',
@@ -244,7 +244,7 @@ export const LuisResult: msRest.CompositeMapper = {
     },
 };
 
-export const EntityWithScore: msRest.CompositeMapper = {
+export const EntityWithScore: CompositeMapper = {
     serializedName: 'EntityWithScore',
     type: {
         name: 'Composite',
@@ -267,7 +267,7 @@ export const EntityWithScore: msRest.CompositeMapper = {
     },
 };
 
-export const EntityWithResolution: msRest.CompositeMapper = {
+export const EntityWithResolution: CompositeMapper = {
     serializedName: 'EntityWithResolution',
     type: {
         name: 'Composite',
@@ -286,7 +286,7 @@ export const EntityWithResolution: msRest.CompositeMapper = {
     },
 };
 
-export const APIError: msRest.CompositeMapper = {
+export const APIError: CompositeMapper = {
     serializedName: 'APIError',
     type: {
         name: 'Composite',

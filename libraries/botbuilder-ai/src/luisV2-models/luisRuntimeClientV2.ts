@@ -6,11 +6,11 @@
  * Licensed under the MIT License.
  */
 
-import * as msRest from '@azure/ms-rest-js';
+import { ServiceClientCredentials, ServiceClientOptions } from '@azure/core-http';
 import * as Models from './luisResult';
 import * as Mappers from './luisMappers';
 import { LuisPrediction } from './luisPrediction';
-import { LUISRuntimeClientContext } from '@azure/cognitiveservices-luis-runtime';
+import { LUISRuntimeClientContext } from '../luisRuntimeClientContext';
 
 /**
  * Represents the LUIS client for V2 of the runtime.
@@ -29,7 +29,7 @@ class LUISRuntimeClientV2 extends LUISRuntimeClientContext {
      * https://westus.api.cognitive.microsoft.com).
      * @param [options] The parameter options
      */
-    constructor(credentials: msRest.ServiceClientCredentials, endpoint: string, options?: msRest.ServiceClientOptions) {
+    constructor(credentials: ServiceClientCredentials, endpoint: string, options?: ServiceClientOptions) {
         super(credentials, endpoint, options);
         this.prediction = new LuisPrediction(this);
         super.baseUri = '{Endpoint}/luis/v2.0';

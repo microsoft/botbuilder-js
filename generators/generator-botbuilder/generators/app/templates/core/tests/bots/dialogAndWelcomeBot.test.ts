@@ -1,7 +1,3 @@
-/**
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
 import { ActivityTypes, ConversationState, MemoryStorage, TestAdapter, TurnContext, UserState } from 'botbuilder';
 import { Dialog, DialogSet, DialogTurnStatus } from 'botbuilder-dialogs';
 import { DialogAndWelcomeBot } from '../../bots/dialogAndWelcomeBot';

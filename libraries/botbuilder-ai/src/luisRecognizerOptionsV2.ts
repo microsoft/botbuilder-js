@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import * as msRest from '@azure/ms-rest-js';
+import { TokenCredentials } from 'botframework-connector';
 import * as os from 'os';
 import { LuisApplication, LuisRecognizerOptionsV2 } from './luisRecognizer';
 import { CompositeChildModel, CompositeEntityModel, EntityModel, LuisResult } from './luisV2-models/luisResult';
@@ -50,7 +50,7 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
         // - We have to cast "creds as any" to avoid a build break relating to different versions
         //   of autorest being used by our various components.  This is just a build issue and
         //   shouldn't effect production bots.
-        const creds = new msRest.TokenCredentials(application.endpointKey);
+        const creds = new TokenCredentials(application.endpointKey);
         const baseUri = application.endpoint || 'https://westus.api.cognitive.microsoft.com';
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         this.luisClient = new LuisClient(creds as any, baseUri);
