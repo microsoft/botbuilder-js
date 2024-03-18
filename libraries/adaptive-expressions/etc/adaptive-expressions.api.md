@@ -206,7 +206,7 @@ export class BoolExpression extends ExpressionProperty<boolean> {
 
 // @public
 export class BoolExpressionConverter {
-    // Warning: (ae-forgotten-export) The symbol "Input" needs to be exported by the entry point index.d.ts
+    // Warning: (ae-forgotten-export) The symbol "Input_2" needs to be exported by the entry point index.d.ts
     convert(value: Input_2 | BoolExpression): BoolExpression;
 }
 
@@ -330,7 +330,7 @@ export class Clause extends Expression {
 // @public
 export class CommonRegex {
     static CreateRegex(pattern: string): RegExp;
-    }
+}
 
 // @public (undocumented)
 export class CommonRegexLexer extends Lexer {
@@ -1010,7 +1010,7 @@ export interface CommonRegexVisitor<Result> extends ParseTreeVisitor<Result> {
 // @public
 export class ComparisonEvaluator extends ExpressionEvaluator {
     constructor(type: string, func: (arg0: any[]) => boolean, validator: ValidateExpressionDelegate, verify?: VerifyExpression);
-    }
+}
 
 // @public
 export class Constant extends Expression {
@@ -1018,7 +1018,7 @@ export class Constant extends Expression {
     deepEquals(other: Expression): boolean;
     toString(): string;
     value: any;
-    }
+}
 
 // @public
 export function convertCSharpDateTimeToDayjs(fmtString: string): string;
@@ -1099,9 +1099,9 @@ export class EnumExpression<T> extends ExpressionProperty<T> {
 // @public
 export class EnumExpressionConverter<T> {
     constructor(enumValue: unknown);
-    // Warning: (ae-forgotten-export) The symbol "Input" needs to be exported by the entry point index.d.ts
+    // Warning: (ae-forgotten-export) The symbol "Input_3" needs to be exported by the entry point index.d.ts
     convert(value: Input_3<T> | EnumExpression<T>): EnumExpression<T>;
-    }
+}
 
 // @public
 export type EvaluateExpressionDelegate = (expression: Expression, state: MemoryInterface, options: Options) => ValueWithError;
@@ -1518,7 +1518,7 @@ export class ExpressionEvaluator {
     tryEvaluate: (expression: Expression, state: MemoryInterface, options: Options) => ValueWithError;
     type: string;
     validateExpression: (expression: Expression) => void;
-    }
+}
 
 // @public
 export class ExpressionFunctions {
@@ -2054,7 +2054,7 @@ export class IntExpression extends ExpressionProperty<number> {
 
 // @public
 export class IntExpressionConverter {
-    // Warning: (ae-forgotten-export) The symbol "Input" needs to be exported by the entry point index.d.ts
+    // Warning: (ae-forgotten-export) The symbol "Input_4" needs to be exported by the entry point index.d.ts
     convert(value: Input_4 | IntExpression): IntExpression;
 }
 
@@ -2677,7 +2677,7 @@ export interface MemoryInterface {
 // @public
 export class MultivariateNumericEvaluator extends ExpressionEvaluator {
     constructor(type: string, func: (args: any[]) => number, verify?: VerifyExpression);
-    }
+}
 
 // @public (undocumented)
 export class NameContext extends ParserRuleContext {
@@ -2707,8 +2707,7 @@ class Node_2 {
     toString(builder?: string[], indent?: number): string;
     tree: TriggerTree;
     readonly triggers: Trigger[];
-    }
-
+}
 export { Node_2 as Node }
 
 // @public (undocumented)
@@ -2789,14 +2788,14 @@ export class NumberExpression extends ExpressionProperty<number> {
 
 // @public
 export class NumberExpressionConverter {
-    // Warning: (ae-forgotten-export) The symbol "Input" needs to be exported by the entry point index.d.ts
+    // Warning: (ae-forgotten-export) The symbol "Input_5" needs to be exported by the entry point index.d.ts
     convert(value: Input_5 | NumberExpression): NumberExpression;
 }
 
 // @public
 export class NumberTransformEvaluator extends ExpressionEvaluator {
     constructor(type: string, func: (args: any[]) => number);
-    }
+}
 
 // @public (undocumented)
 export class NumericAtomContext extends PrimaryExpressionContext {
@@ -2814,7 +2813,7 @@ export class NumericAtomContext extends PrimaryExpressionContext {
 // @public
 export class NumericEvaluator extends ExpressionEvaluator {
     constructor(type: string, func: (args: any[]) => any);
-    }
+}
 
 // @public
 export class ObjectExpression<T> extends ExpressionProperty<T> {
@@ -2823,7 +2822,7 @@ export class ObjectExpression<T> extends ExpressionProperty<T> {
 
 // @public
 export class ObjectExpressionConverter<T extends object = {}> {
-    // Warning: (ae-forgotten-export) The symbol "Input" needs to be exported by the entry point index.d.ts
+    // Warning: (ae-forgotten-export) The symbol "Input_6" needs to be exported by the entry point index.d.ts
     convert(value: Input_6<T> | ObjectExpression<T>): ObjectExpression<T>;
 }
 
@@ -3102,7 +3101,6 @@ enum ReturnType_2 {
     Object = 4,
     String = 8
 }
-
 export { ReturnType_2 as ReturnType }
 
 // @public (undocumented)
@@ -3240,7 +3238,7 @@ export class StringExpression extends ExpressionProperty<string> {
 
 // @public
 export class StringExpressionConverter {
-    // Warning: (ae-forgotten-export) The symbol "Input" needs to be exported by the entry point index.d.ts
+    // Warning: (ae-forgotten-export) The symbol "Input_7" needs to be exported by the entry point index.d.ts
     convert(value: Input_7 | StringExpression): StringExpression;
 }
 
@@ -3311,14 +3309,14 @@ export class TextContentContext extends ParserRuleContext {
 // @public
 export class TimeTransformEvaluator extends ExpressionEvaluator {
     constructor(type: string, func: (timestamp: Date, numOfTransformation: number) => Date);
-    }
+}
 
 // @public
 export class TimeZoneConverter {
     static ianaToWindows(ianaTimeZoneId: string): string;
     static verifyTimeZoneStr(timezoneStr: string): boolean;
     static windowsToIana(windowsTimeZoneId: string): string;
-    }
+}
 
 // @public
 export class Trigger {
@@ -3329,7 +3327,7 @@ export class Trigger {
     readonly originalExpression: Expression;
     relationship(other: Trigger, comparers: PredicateComparers): RelationshipType;
     toString(builder?: string[], indent?: number): string;
-    }
+}
 
 // @public
 export class TriggerTree {
@@ -3345,7 +3343,7 @@ export class TriggerTree {
     totalTriggers: number;
     treeToString(indent?: number): string;
     verifyTree(): Node_2;
-    }
+}
 
 // @public (undocumented)
 export class TripleOpExpContext extends ExpressionContext {
@@ -3412,7 +3410,6 @@ export type ValueWithError = {
 
 // @public
 export type VerifyExpression = (value: any, expression: Expression, child: number) => string | undefined;
-
 
 // (No @packageDocumentation comment for this package)
 

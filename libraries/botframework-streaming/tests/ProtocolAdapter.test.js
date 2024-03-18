@@ -127,10 +127,10 @@ describe('Streaming Extensions ProtocolAdapter', function () {
             onCompleted: function () {},
         });
 
-        expect(protocolAdapter.onCancelStream(assembler)).to.not.throw;
+        expect(() => protocolAdapter.onCancelStream(assembler)).to.not.throw();
     });
 
-    it('sends requests.', async function (done) {
+    it('sends requests.', async function () {
         const requestHandler = new TestRequestHandler();
         const requestManager = new TestRequestManager();
         const payloadSender = new TestPayloadSender();
@@ -142,8 +142,7 @@ describe('Streaming Extensions ProtocolAdapter', function () {
             payloadReceiver
         );
 
-        expect(protocolAdapter.sendRequest(new Request.StreamingRequest())).to.not.throw;
-        done();
+        expect(() => protocolAdapter.sendRequest(new Request.StreamingRequest())).to.not.throw();
     });
 
     it('payloadreceiver ignores duplicate connections', function () {

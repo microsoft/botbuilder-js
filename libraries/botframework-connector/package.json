@@ -27,17 +27,19 @@
     }
   },
   "dependencies": {
+    "@azure/core-http": "^3.0.2",
     "@azure/identity": "^2.0.4",
-    "@azure/ms-rest-js": "^2.6.1",
-    "adal-node": "0.2.3",
-    "axios": "^0.25.0",
+    "@azure/msal-node": "^1.18.4",
     "base64url": "^3.0.0",
     "botbuilder-stdlib": "4.1.6",
     "botframework-schema": "4.1.6",
     "cross-fetch": "^3.0.5",
+    "https-proxy-agent": "^7.0.2",
     "jsonwebtoken": "^9.0.0",
+    "node-fetch": "^2.6.7",
     "rsa-pem-from-mod-exp": "^0.8.4",
-    "zod": "~1.11.17"
+    "zod": "^3.22.4",
+    "openssl-wrapper": "^0.3.4"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "8.3.5",

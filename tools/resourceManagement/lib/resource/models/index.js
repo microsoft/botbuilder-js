@@ -14,10 +14,8 @@
 
 'use strict';
 
-var msRestAzure = require('ms-rest-azure');
-
-exports.BaseResource = msRestAzure.BaseResource;
-exports.CloudError = msRestAzure.CloudError;
+exports.BaseResource = require('./baseResource');
+exports.CloudError = require('./cloudError');
 exports.DeploymentExtendedFilter = require('./deploymentExtendedFilter');
 exports.GenericResourceFilter = require('./genericResourceFilter');
 exports.ResourceGroupFilter = require('./resourceGroupFilter');
@@ -63,3 +61,4 @@ exports.ResourceListResult = require('./resourceListResult');
 exports.ResourceGroupListResult = require('./resourceGroupListResult');
 exports.TagsListResult = require('./tagsListResult');
 exports.DeploymentOperationsListResult = require('./deploymentOperationsListResult');
+exports.HttpOperationResponse = require("./HttpOperationResponse");

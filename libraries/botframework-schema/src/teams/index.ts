@@ -6,8 +6,25 @@
 // The Teams schemas was manually added to botframework-schema. This file has been updated import from the botframework-schema and the extension folder.
 // The ChannelCount and MemberCount fields were manually added to the TeamDetails definition.
 import { MessageActionsPayloadBody, O365ConnectorCardActionBase, O365ConnectorCardInputBase } from './extension';
-import { Activity, Attachment, CardAction, ChannelAccount, ConversationAccount } from '../';
+import { Activity, Attachment, CardAction, ChannelAccount, ConversationAccount, SuggestedActions } from '../';
 export * from './extension';
+
+/**
+ * @interface
+ * An interface the bot's authentication config for SuggestedActions
+ */
+export interface BotConfigAuth {
+    /**
+     * @member {SuggestedActions} [suggestedActions] SuggestedActions for the Bot Config Auth
+     */
+    suggestedActions?: SuggestedActions;
+    /**
+     * @member {BotConfigAuthType} [type] Type of the Bot Config Auth
+     */
+    type: 'auth';
+}
+
+export type ConfigResponseConfig = BotConfigAuth | TaskModuleResponse;
 
 /**
  * @interface
@@ -28,6 +45,24 @@ export interface ChannelInfo {
      * @member {string} [type] The type of the channel. Valid values are standard, shared and private.
      */
     type?: string;
+}
+/**
+ * @interface
+ * An interface container for the Config response payload
+ */
+export interface ConfigResponse {
+    /**
+     * @member {CacheInfo} [cacheInfo] The data of the ConfigResponse cache, including cache type and cache duration.
+     */
+    cacheInfo?: CacheInfo;
+    /**
+     * @member {ConfigResponseConfig} [config] The ConfigResponse config of BotConfigAuth or TaskModuleResponse
+     */
+    config: ConfigResponseConfig;
+    /**
+     * @member {string} [responseType] The type of response 'config'.
+     */
+    responseType: 'config';
 }
 
 /**
@@ -189,8 +224,11 @@ export interface TeamsChannelData {
      * message was sent.
      */
     settings?: TeamsChannelDataSettings;
+    /**
+     * @member {OnBehalfOf} [onBehalfOf] The OnBehalfOf information of the message.
+     */
+    onBehalfOf?: OnBehalfOf[];
 }
-
 /**
  * @interface
  * An interface representing TeamsChannelAccount.
@@ -1563,6 +1601,16 @@ export type Type = 'ViewAction' | 'OpenUri' | 'HttpPOST' | 'ActionCard';
 export type ActivityImageType = 'avatar' | 'article';
 
 /**
+ * Defines possible values for BotConfigAuth type.
+ * Possible values include: "auth"
+ *
+ * @readonly
+ * @enum {string}
+ */
+
+export type BotConfigAuthType = 'auth';
+
+/**
  * Defines values for Os.
  * Possible values include: 'default', 'iOS', 'android', 'windows'
  *
@@ -1876,7 +1924,7 @@ export interface TargetedMeetingNotificationValue {
  * @type {MeetingSurface}
  * Defines the generic Teams meeting surface type.
  */
-export type MeetingSurface = MeetingStageSurface<any>;
+export type MeetingSurface = MeetingStageSurface<any> | MeetingTabIconSurface;
 
 /**
  * @interface
@@ -1896,6 +1944,22 @@ export interface MeetingStageSurface<T> {
      * @member {T} [content] The content to display in the meeting notification.
      */
     content: T;
+}
+
+/**
+ * @interface
+ * Specifies the meeting tab icon surface in a Teams meeting notification.
+ */
+export interface MeetingTabIconSurface {
+    /**
+     * @member {string} [surface] The surface type.
+     */
+    surface: 'meetingTabIcon';
+
+    /**
+     * @member {string} [tabEntityId] The tab entity ID.
+     */
+    tabEntityId?: string;
 }
 
 /**
@@ -1960,4 +2024,143 @@ export interface MeetingNotificationResponse {
      * @member {string} [recipientsFailureInfo] The list of recipients that failed to recieve the sent meetings notification.
      */
     recipientsFailureInfo?: MeetingNotificationRecipientFailureInfo[];
+}
+
+/**
+ * @interface
+ * Specific details about the meeting participants.
+ */
+export interface MeetingParticipantsEventDetails {
+    /**
+     * @member {TeamsMeetingMember[]} [members] The participants info.
+     */
+    members: TeamsMeetingMember[];
+}
+
+/**
+ * @interface
+ * Specific details about the meeting participants.
+ */
+export interface TeamsMeetingMember {
+    /**
+     * @member {TeamsChannelAccount} [user] The participant account.
+     */
+    user: TeamsChannelAccount;
+    /**
+     * @member {UserMeetingDetails} [meeting] The participants info.
+     */
+    meeting: UserMeetingDetails;
+}
+
+/**
+ * @interface
+ * Specific details of a user in a Teams meeting.
+ */
+export interface UserMeetingDetails {
+    /**
+     * @member {boolean} [inMeeting] The user in meeting indicator.
+     */
+    inMeeting: boolean;
+    /**
+     * @member {string} [role] The user's role.
+     */
+    role: string;
+}
+
+/**
+ * @type {TeamsMember}
+ * Defines the TeamsMember type.
+ */
+export type TeamsMember = {
+    /**
+     * @member {string} [id] The member id.
+     */
+    id: string;
+};
+
+/**
+ * @interface
+ * Specifies the body of the teams batch operation request.
+ */
+export interface BatchOperationRequest {
+    /**
+     * @member {Activity} [activity] The activity of the request.
+     */
+    activity: Activity;
+    /**
+     * @member {string} [tenantId] The id of the Teams tenant.
+     */
+    tenantId: string;
+    /**
+     * @member {string} [teamId] The id of the team.
+     */
+    teamId?: string;
+    /**
+     * @member {TeamsMember[]} [members] The list of members.
+     */
+    members?: TeamsMember[];
+}
+
+/**
+ * @interface
+ * Specifies the body of the teams batch operation response.
+ */
+export interface BatchOperationResponse {
+    /**
+     * @member {string} [operationId] The id of the operation executed.
+     */
+    operationId: string;
+}
+
+/**
+ * @interface
+ * Specifies the body of the teams batch operation state response.
+ */
+export interface BatchOperationStateResponse {
+    /**
+     * @member {string} [state] The state of the operation.
+     */
+    state: string;
+    /**
+     * @member {Record<number, number>} [statusMap] The status map for processed operations.
+     */
+    statusMap: Record<number, number>;
+    /**
+     * @member {Date} [retryAfter] The datetime value to retry the operation.
+     */
+    retryAfter?: Date;
+    /**
+     * @member {number} [totalEntriesCount] The number of entries.
+     */
+    totalEntriesCount: number;
+}
+
+/**
+ * @interface
+ * Specifies the failed entry with its id and error.
+ */
+export interface BatchFailedEntry {
+    /**
+     * @member {string} [id] The id of the failed entry.
+     */
+    id: string;
+    /**
+     * @member {string} [error] The error of the failed entry.
+     */
+    error: string;
+}
+
+/**
+ * @interface
+ * Specifies the body of the batch failed entries response.
+ */
+export interface BatchFailedEntriesResponse {
+    /**
+     * @member {string} [continuationToken] The continuation token for paginated results.
+     */
+    continuationToken: string;
+    /**
+     * @member {BatchFailedEntry[]} [failedEntryResponses] The list of failed entries result of a batch operation.
+     */
+    failedEntryResponses: BatchFailedEntry[];
 }

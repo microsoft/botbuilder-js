@@ -1,6 +1,3 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License.
-
 import { ActivityHandler, MessageFactory } from 'botbuilder';
 
 export class EchoBot extends ActivityHandler {

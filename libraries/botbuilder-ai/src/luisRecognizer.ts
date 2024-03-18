@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { LUISRuntimeModels as LuisModels } from '@azure/cognitiveservices-luis-runtime';
+import { RequestOptionsBase } from '@azure/core-http';
 
 import Url from 'url-parse';
 import { BotTelemetryClient, NullTelemetryClient, RecognizerResult, TurnContext } from 'botbuilder-core';
@@ -41,7 +41,11 @@ export interface LuisApplication {
  *
  * Options per LUIS prediction.
  */
-export interface LuisPredictionOptions extends LuisModels.PredictionResolveOptionalParams {
+export interface LuisPredictionOptions extends RequestOptionsBase {
+    /**
+     * If true, return all intents instead of just the top scoring intent.
+     */
+    verbose?: boolean;
     /**
      * (Optional) Bing Spell Check subscription key.
      */
@@ -239,7 +243,7 @@ export interface LuisRecognizerOptionsV2 extends LuisRecognizerOptions {
 // This is just meant to operate as a simple type assertion.
 const UnsafeLuisRecognizerUnion = z.custom<LuisRecognizerOptionsV3 | LuisRecognizerOptionsV2 | LuisPredictionOptions>(
     (val: unknown): val is LuisRecognizerOptionsV3 | LuisRecognizerOptionsV2 | LuisPredictionOptions =>
-        z.record(z.unknown()).check(val),
+        z.record(z.unknown()).safeParse(val).success,
     {
         message: 'LuisRecognizerOptionsV3 | LuisRecognizerOptionsV2 | LuisPredictionOptions',
     }

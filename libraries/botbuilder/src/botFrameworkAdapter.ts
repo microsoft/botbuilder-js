@@ -9,7 +9,7 @@
 import * as z from 'zod';
 import { BotFrameworkHttpAdapter } from './botFrameworkHttpAdapter';
 import { ConnectorClientBuilder, Request, Response, ResponseT, WebRequest, WebResponse } from './interfaces';
-import { HttpClient, RequestPolicyFactory, userAgentPolicy } from '@azure/ms-rest-js';
+import { HttpClient, RequestPolicyFactory, userAgentPolicy } from '@azure/core-http';
 import { INodeBufferT, INodeSocketT, LogicT } from './zod';
 import { arch, release, type } from 'os';
 import { delay, retry } from 'botbuilder-stdlib';
@@ -37,6 +37,7 @@ import {
     StatusCodes,
     TokenResponse,
     TurnContext,
+    conversationParametersObject,
 } from 'botbuilder-core';
 
 import {
@@ -55,6 +56,7 @@ import {
     GovernmentConstants,
     JwtTokenValidation,
     MicrosoftAppCredentials,
+    MicrosoftGovernmentAppCredentials,
     SignInUrlResponse,
     SimpleCredentialProvider,
     SkillValidation,
@@ -253,11 +255,19 @@ export class BotFrameworkAdapter
             );
             this.credentialsProvider = new SimpleCredentialProvider(this.credentials.appId, '');
         } else {
-            this.credentials = new MicrosoftAppCredentials(
-                this.settings.appId,
-                this.settings.appPassword || '',
-                this.settings.channelAuthTenant
-            );
+            if (JwtTokenValidation.isGovernment(this.settings.channelService)) {
+                this.credentials = new MicrosoftGovernmentAppCredentials(
+                    this.settings.appId,
+                    this.settings.appPassword || '',
+                    this.settings.channelAuthTenant
+                );
+            } else {
+                this.credentials = new MicrosoftAppCredentials(
+                    this.settings.appId,
+                    this.settings.appPassword || '',
+                    this.settings.channelAuthTenant
+                );
+            }
             this.credentialsProvider = new SimpleCredentialProvider(
                 this.credentials.appId,
                 this.settings.appPassword || ''
@@ -278,10 +288,6 @@ export class BotFrameworkAdapter
         if (this.settings.openIdMetadata) {
             ChannelValidation.OpenIdMetadataEndpoint = this.settings.openIdMetadata;
             GovernmentChannelValidation.OpenIdMetadataEndpoint = this.settings.openIdMetadata;
-        }
-        if (JwtTokenValidation.isGovernment(this.settings.channelService)) {
-            this.credentials.oAuthEndpoint = GovernmentConstants.ToChannelFromBotLoginUrl;
-            this.credentials.oAuthScope = GovernmentConstants.ToChannelFromBotOAuthScope;
         }
 
         // If a NodeWebSocketFactoryBase was passed in, set it on the BotFrameworkAdapter.
@@ -391,7 +397,7 @@ export class BotFrameworkAdapter
         maybeLogic?: (context: TurnContext) => Promise<void>
     ): Promise<void> {
         let audience: string;
-        if (LogicT.check(oAuthScopeOrlogic)) {
+        if (LogicT.safeParse(oAuthScopeOrlogic).success) {
             // Because the OAuthScope parameter was not provided, get the correct value via the channelService.
             // In this scenario, the ConnectorClient for the continued conversation can only communicate with
             // official channels, not with other bots.
@@ -401,8 +407,8 @@ export class BotFrameworkAdapter
         } else {
             audience = z.string().parse(oAuthScopeOrlogic);
         }
-
-        const logic = LogicT.check(oAuthScopeOrlogic) ? oAuthScopeOrlogic : LogicT.parse(maybeLogic);
+        const logicParse = LogicT.safeParse(oAuthScopeOrlogic);
+        const logic = logicParse.success ? logicParse.data : LogicT.parse(maybeLogic);
 
         let credentials = this.credentials;
 
@@ -510,10 +516,12 @@ export class BotFrameworkAdapter
         if (!reference.serviceUrl) {
             throw new Error('BotFrameworkAdapter.createConversation(): missing serviceUrl.');
         }
+        const logicParse = LogicT.safeParse(parametersOrLogic);
+        const parameterParse = conversationParametersObject.partial().safeParse(parametersOrLogic);
 
-        const parameters = LogicT.check(parametersOrLogic) ? {} : parametersOrLogic;
+        const parameters = parameterParse.success ? parameterParse.data : {};
 
-        const logic = LogicT.check(parametersOrLogic) ? parametersOrLogic : LogicT.parse(maybeLogic);
+        const logic = logicParse.success ? logicParse.data : LogicT.parse(maybeLogic);
 
         // Create conversation parameters, taking care to provide defaults that can be
         // overridden by passed in parameters
@@ -1280,6 +1288,8 @@ export class BotFrameworkAdapter
     /**
      * Asynchronously creates a turn context and runs the middleware pipeline for an incoming activity.
      *
+     * Use [CloudAdapter.processActivityDirect] instead.
+     *
      * @param activity The activity to process.
      * @param logic The function to call at the end of the middleware pipeline.
      *
@@ -1622,12 +1632,21 @@ export class BotFrameworkAdapter
                 this.settings.channelAuthTenant
             );
         } else {
-            credentials = new MicrosoftAppCredentials(appId, appPassword, this.settings.channelAuthTenant, oAuthScope);
-        }
-
-        if (JwtTokenValidation.isGovernment(this.settings.channelService)) {
-            credentials.oAuthEndpoint = GovernmentConstants.ToChannelFromBotLoginUrl;
-            credentials.oAuthScope = oAuthScope || GovernmentConstants.ToChannelFromBotOAuthScope;
+            if (JwtTokenValidation.isGovernment(this.settings.channelService)) {
+                credentials = new MicrosoftGovernmentAppCredentials(
+                    appId,
+                    appPassword,
+                    this.settings.channelAuthTenant,
+                    oAuthScope
+                );
+            } else {
+                credentials = new MicrosoftAppCredentials(
+                    appId,
+                    appPassword,
+                    this.settings.channelAuthTenant,
+                    oAuthScope
+                );
+            }
         }
 
         return credentials;

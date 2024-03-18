@@ -5,7 +5,7 @@ import * as z from 'zod';
 import type { BotFrameworkHttpAdapter } from './botFrameworkHttpAdapter';
 import { Activity, CloudAdapterBase, InvokeResponse, StatusCodes, TurnContext } from 'botbuilder-core';
 import { GET, POST, VERSION_PATH } from './streaming';
-import { HttpClient, HttpHeaders, HttpOperationResponse, WebResource } from '@azure/ms-rest-js';
+import { HttpClient, HttpHeaders, HttpOperationResponse, WebResource } from '@azure/core-http';
 import { INodeBufferT, INodeSocketT, LogicT } from './zod';
 import { Request, Response, ResponseT } from './interfaces';
 import { USER_AGENT } from './botFrameworkAdapter';
@@ -38,7 +38,7 @@ import {
 } from 'botframework-streaming';
 
 // Note: this is _okay_ because we pass the result through `validateAndFixActivity`. Should not be used otherwise.
-const ActivityT = z.custom<Activity>((val) => z.record(z.unknown()).check(val), { message: 'Activity' });
+const ActivityT = z.custom<Activity>((val) => z.record(z.unknown()).safeParse(val).success, { message: 'Activity' });
 
 /**
  * An adapter that implements the Bot Framework Protocol and can be hosted in different cloud environmens both public and private.
@@ -118,7 +118,7 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
         // Ensure we have a parsed request body already. We rely on express/restify middleware to parse
         // request body and azure functions, which does it for us before invoking our code. Warn the user
         // to update their code and return an error.
-        if (!z.record(z.unknown()).check(req.body)) {
+        if (!z.record(z.unknown()).safeParse(req.body).success) {
             return end(
                 StatusCodes.BAD_REQUEST,
                 '`req.body` not an object, make sure you are using middleware to parse incoming requests.'
@@ -133,15 +133,37 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
         }
 
         const authHeader = z.string().parse(req.headers.Authorization ?? req.headers.authorization ?? '');
-
         try {
             const invokeResponse = await this.processActivity(authHeader, activity, logic);
             return end(invokeResponse?.status ?? StatusCodes.OK, invokeResponse?.body);
         } catch (err) {
+            console.error(err);
             return end(
                 err instanceof AuthenticationError ? StatusCodes.UNAUTHORIZED : StatusCodes.INTERNAL_SERVER_ERROR,
                 err.message ?? err
             );
+        }
+    }
+
+    /**
+     * Asynchronously process an activity running the provided logic function.
+     *
+     * @param authorization The authorization header in the format: "Bearer [longString]" or the AuthenticateRequestResult for this turn.
+     * @param activity The activity to process.
+     * @param logic The logic function to apply.
+     * @returns a promise representing the asynchronous operation.
+     */
+    async processActivityDirect(
+        authorization: string | AuthenticateRequestResult,
+        activity: Activity,
+        logic: (context: TurnContext) => Promise<void>
+    ): Promise<void> {
+        try {
+            typeof authorization === 'string'
+                ? await this.processActivity(authorization, activity, logic)
+                : await this.processActivity(authorization, activity, logic);
+        } catch (err) {
+            throw new Error(`CloudAdapter.processActivityDirect(): ERROR\n ${err.stack}`);
         }
     }
 

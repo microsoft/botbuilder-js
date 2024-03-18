@@ -30,5 +30,5 @@ const componentDeclarativeTypes = z.custom<ComponentDeclarativeTypes>(
  * @returns {boolean} Type check result.
  */
 export function isComponentDeclarativeTypes(component: unknown): component is ComponentDeclarativeTypes {
-    return componentDeclarativeTypes.check(component);
+    return componentDeclarativeTypes.safeParse(component).success;
 }

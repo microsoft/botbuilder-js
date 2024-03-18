@@ -4,22 +4,30 @@
 
 ```ts
 
+import { AceRequest } from 'botbuilder-core';
 import { Activity } from 'botbuilder-core';
 import { ActivityHandler } from 'botbuilder-core';
 import { ActivityHandlerBase } from 'botbuilder-core';
 import { AppBasedLinkQuery } from 'botbuilder-core';
 import { AppCredentials } from 'botframework-connector';
 import { AttachmentData } from 'botbuilder-core';
+import { AuthenticateRequestResult } from 'botframework-connector';
 import { AuthenticationConfiguration } from 'botframework-connector';
+import { BatchFailedEntriesResponse } from 'botbuilder-core';
+import { BatchOperationResponse } from 'botbuilder-core';
+import { BatchOperationStateResponse } from 'botbuilder-core';
 import { BotAdapter } from 'botbuilder-core';
 import { BotFrameworkAuthentication } from 'botframework-connector';
 import { BotFrameworkClient } from 'botbuilder-core';
 import { BotFrameworkSkill } from 'botbuilder-core';
 import { BotState } from 'botbuilder-core';
+import { CancelOperationResponse } from 'botframework-connector';
+import { CardViewResponse } from 'botbuilder-core';
 import { ChannelAccount } from 'botbuilder-core';
 import { ChannelInfo } from 'botbuilder-core';
 import { ClaimsIdentity } from 'botframework-connector';
 import { CloudAdapterBase } from 'botbuilder-core';
+import { ConfigResponse } from 'botbuilder-core';
 import { ConnectorClient } from 'botframework-connector';
 import { ConnectorClientOptions } from 'botframework-connector';
 import { ConversationAccount } from 'botbuilder-core';
@@ -31,8 +39,10 @@ import { ConversationState } from 'botbuilder-core';
 import { CoreAppCredentials } from 'botbuilder-core';
 import { ExtendedUserTokenProvider } from 'botbuilder-core';
 import { FileConsentCardResponse } from 'botbuilder-core';
-import { HttpClient } from '@azure/ms-rest-js';
-import { HttpOperationResponse } from '@azure/ms-rest-js';
+import { GetPropertyPaneConfigurationResponse } from 'botbuilder-core';
+import { HandleActionResponse } from 'botbuilder-core';
+import { HttpClient } from '@azure/core-http';
+import { HttpOperationResponse } from '@azure/core-http';
 import { ICredentialProvider } from 'botframework-connector';
 import { INodeBuffer } from 'botframework-streaming';
 import { INodeSocket } from 'botframework-streaming';
@@ -43,6 +53,7 @@ import { MeetingEndEventDetails } from 'botbuilder-core';
 import { MeetingInfo } from 'botbuilder-core';
 import { MeetingNotification } from 'botbuilder-core';
 import { MeetingNotificationResponse } from 'botbuilder-core';
+import { MeetingParticipantsEventDetails } from 'botbuilder-core';
 import { MeetingStartEventDetails } from 'botbuilder-core';
 import { MessagingExtensionAction } from 'botbuilder-core';
 import { MessagingExtensionActionResponse } from 'botbuilder-core';
@@ -52,11 +63,14 @@ import { MicrosoftAppCredentials } from 'botframework-connector';
 import { Middleware } from 'botbuilder-core';
 import { NodeWebSocketFactoryBase } from 'botframework-streaming';
 import { O365ConnectorCardActionQuery } from 'botbuilder-core';
+import { OnBehalfOf } from 'botbuilder-core';
 import { PagedMembersResult } from 'botbuilder-core';
 import { PagedResult } from 'botbuilder-core';
+import { QuickViewResponse } from 'botbuilder-core';
 import { ReadReceiptInfo } from 'botframework-connector';
 import { RequestHandler } from 'botframework-streaming';
 import { ResourceResponse } from 'botbuilder-core';
+import { SetPropertyPaneConfigurationResponse } from 'botbuilder-core';
 import { SigninStateVerificationQuery } from 'botbuilder-core';
 import { SignInUrlResponse } from 'botframework-connector';
 import { SimpleCredentialProvider } from 'botframework-connector';
@@ -74,6 +88,7 @@ import { TeamInfo } from 'botbuilder-core';
 import { TeamsChannelAccount } from 'botbuilder-core';
 import { TeamsMeetingInfo } from 'botbuilder-core';
 import { TeamsMeetingParticipant } from 'botbuilder-core';
+import { TeamsMember } from 'botbuilder-core';
 import { TeamsPagedMembersResult } from 'botbuilder-core';
 import { TenantInfo } from 'botbuilder-core';
 import { TokenApiClient } from 'botframework-connector';
@@ -85,7 +100,7 @@ import { TranscriptInfo } from 'botbuilder-core';
 import { TranscriptStore } from 'botbuilder-core';
 import { TurnContext } from 'botbuilder-core';
 import { UserState } from 'botbuilder-core';
-import { WebResource } from '@azure/ms-rest-js';
+import { WebResource } from '@azure/core-http';
 
 // Warning: (ae-forgotten-export) The symbol "ConnectorClientBuilder" needs to be exported by the entry point index.d.ts
 //
@@ -151,7 +166,7 @@ export class BotFrameworkAdapter extends BotAdapter implements BotFrameworkHttpA
     updateActivity(context: TurnContext, activity: Partial<Activity>): Promise<ResourceResponse | void>;
     useNamedPipe(logic: (context: TurnContext) => Promise<any>, pipeName?: string, retryCount?: number, onListen?: () => void): Promise<void>;
     useWebSocket(req: WebRequest, socket: INodeSocket, head: INodeBuffer, logic: (context: TurnContext) => Promise<any>): Promise<void>;
-    }
+}
 
 // @public @deprecated (undocumented)
 export interface BotFrameworkAdapterSettings {
@@ -190,7 +205,7 @@ export class ChannelServiceHandler extends ChannelServiceHandlerBase {
     protected authenticate(authHeader: string): Promise<ClaimsIdentity>;
     // (undocumented)
     protected readonly channelService: string;
-    }
+}
 
 // @public
 export abstract class ChannelServiceHandlerBase {
@@ -235,6 +250,7 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
     connectNamedPipe(pipeName: string, logic: (context: TurnContext) => Promise<void>, appId: string, audience: string, callerId?: string, retryCount?: number): Promise<void>;
     process(req: Request_2, res: Response_2, logic: (context: TurnContext) => Promise<void>): Promise<void>;
     process(req: Request_2, socket: INodeSocket, head: INodeBuffer, logic: (context: TurnContext) => Promise<void>): Promise<void>;
+    processActivityDirect(authorization: string | AuthenticateRequestResult, activity: Activity, logic: (context: TurnContext) => Promise<void>): Promise<void>;
 }
 
 // Warning: (ae-forgotten-export) The symbol "CloudChannelServiceHandler" needs to be exported by the entry point index.d.ts
@@ -263,7 +279,7 @@ export class FileTranscriptStore implements TranscriptStore {
     getTranscriptActivities(channelId: string, conversationId: string, continuationToken?: string, startDate?: Date): Promise<PagedResult<Activity>>;
     listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<TranscriptInfo>>;
     logActivity(activity: Activity): Promise<void>;
-    }
+}
 
 // @public
 export class HandoffEventNames {
@@ -282,7 +298,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
     protected outbound(turnContext: TurnContext, traceActivities: Partial<Activity>[]): Promise<any>;
     processCommand(turnContext: TurnContext): Promise<any>;
     protected traceState(turnContext: TurnContext): Promise<any>;
-    }
+}
 
 // @public @deprecated
 export class InspectionState extends BotState {
@@ -299,7 +315,6 @@ interface Request_2<Body extends Record<string, unknown> = Record<string, unknow
     // (undocumented)
     method?: string;
 }
-
 export { Request_2 as Request }
 
 // @public (undocumented)
@@ -315,7 +330,6 @@ interface Response_2 {
     // (undocumented)
     status(code: number): unknown;
 }
-
 export { Response_2 as Response }
 
 // @public (undocumented)
@@ -325,7 +339,17 @@ export type RouteHandler = (request: WebRequest, response: WebResponse) => void;
 export class SetSpeakMiddleware implements Middleware {
     constructor(voiceName: string | null, fallbackToTextForSpeak: boolean);
     onTurn(turnContext: TurnContext, next: () => Promise<void>): Promise<void>;
-    }
+}
+
+// @public
+export class SharePointActivityHandler extends ActivityHandler {
+    protected onInvokeActivity(context: TurnContext): Promise<InvokeResponse>;
+    protected onSharePointTaskGetCardViewAsync(_context: TurnContext, _aceRequest: AceRequest): Promise<CardViewResponse>;
+    protected onSharePointTaskGetPropertyPaneConfigurationAsync(_context: TurnContext, _aceRequest: AceRequest): Promise<GetPropertyPaneConfigurationResponse>;
+    protected onSharePointTaskGetQuickViewAsync(_context: TurnContext, _aceRequest: AceRequest): Promise<QuickViewResponse>;
+    protected onSharePointTaskHandleActionAsync(_context: TurnContext, _aceRequest: AceRequest): Promise<HandleActionResponse>;
+    protected onSharePointTaskSetPropertyPaneConfigurationAsync(_context: TurnContext, _aceRequest: AceRequest): Promise<SetPropertyPaneConfigurationResponse>;
+}
 
 // @public @deprecated (undocumented)
 export class SkillHandler extends ChannelServiceHandler {
@@ -356,7 +380,7 @@ export class StatusCodeError extends Error {
 export class StreamingHttpClient implements HttpClient {
     constructor(server: IStreamingTransportServer);
     sendRequest(httpRequest: WebResource): Promise<HttpOperationResponse>;
-    }
+}
 
 // @public
 export class TeamsActivityHandler extends ActivityHandler {
@@ -367,6 +391,8 @@ export class TeamsActivityHandler extends ActivityHandler {
     protected handleTeamsAnonymousAppBasedLinkQuery(_context: TurnContext, _query: AppBasedLinkQuery): Promise<MessagingExtensionResponse>;
     protected handleTeamsAppBasedLinkQuery(_context: TurnContext, _query: AppBasedLinkQuery): Promise<MessagingExtensionResponse>;
     protected handleTeamsCardActionInvoke(_context: TurnContext): Promise<InvokeResponse>;
+    protected handleTeamsConfigFetch(_context: TurnContext, _configData: any): Promise<ConfigResponse>;
+    protected handleTeamsConfigSubmit(_context: TurnContext, _configData: any): Promise<ConfigResponse>;
     protected handleTeamsFileConsent(context: TurnContext, fileConsentCardResponse: FileConsentCardResponse): Promise<void>;
     protected handleTeamsFileConsentAccept(_context: TurnContext, _fileConsentCardResponse: FileConsentCardResponse): Promise<void>;
     protected handleTeamsFileConsentDecline(_context: TurnContext, _fileConsentCardResponse: FileConsentCardResponse): Promise<void>;
@@ -389,16 +415,20 @@ export class TeamsActivityHandler extends ActivityHandler {
     protected handleTeamsTaskModuleSubmit(_context: TurnContext, _taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse>;
     protected onInvokeActivity(context: TurnContext): Promise<InvokeResponse>;
     protected onSignInInvoke(context: TurnContext): Promise<void>;
-    protected onTeamsChannelCreated(context: any): Promise<void>;
+    protected onTeamsChannelCreated(context: TurnContext): Promise<void>;
     onTeamsChannelCreatedEvent(handler: (channelInfo: ChannelInfo, teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
-    protected onTeamsChannelDeleted(context: any): Promise<void>;
+    protected onTeamsChannelDeleted(context: TurnContext): Promise<void>;
     onTeamsChannelDeletedEvent(handler: (channelInfo: ChannelInfo, teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
-    protected onTeamsChannelRenamed(context: any): Promise<void>;
+    protected onTeamsChannelRenamed(context: TurnContext): Promise<void>;
     onTeamsChannelRenamedEvent(handler: (channelInfo: ChannelInfo, teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
-    protected onTeamsChannelRestored(context: any): Promise<void>;
+    protected onTeamsChannelRestored(context: TurnContext): Promise<void>;
     onTeamsChannelRestoredEvent(handler: (channelInfo: ChannelInfo, teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
     protected onTeamsMeetingEnd(context: TurnContext): Promise<void>;
     onTeamsMeetingEndEvent(handler: (meeting: MeetingEndEventDetails, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
+    protected onTeamsMeetingParticipantsJoin(context: TurnContext): Promise<void>;
+    onTeamsMeetingParticipantsJoinEvent(handler: (meeting: MeetingParticipantsEventDetails, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
+    protected onTeamsMeetingParticipantsLeave(context: TurnContext): Promise<void>;
+    onTeamsMeetingParticipantsLeaveEvent(handler: (meeting: MeetingParticipantsEventDetails, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
     protected onTeamsMeetingStart(context: TurnContext): Promise<void>;
     onTeamsMeetingStartEvent(handler: (meeting: MeetingStartEventDetails, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
     protected onTeamsMembersAdded(context: TurnContext): Promise<void>;
@@ -413,17 +443,17 @@ export class TeamsActivityHandler extends ActivityHandler {
     onTeamsMessageUndeleteEvent(handler: (context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
     protected onTeamsReadReceipt(context: TurnContext): Promise<void>;
     onTeamsReadReceiptEvent(handler: (receiptInfo: ReadReceiptInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
-    protected onTeamsTeamArchived(context: any): Promise<void>;
+    protected onTeamsTeamArchived(context: TurnContext): Promise<void>;
     onTeamsTeamArchivedEvent(handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
-    protected onTeamsTeamDeleted(context: any): Promise<void>;
+    protected onTeamsTeamDeleted(context: TurnContext): Promise<void>;
     onTeamsTeamDeletedEvent(handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
-    protected onTeamsTeamHardDeleted(context: any): Promise<void>;
+    protected onTeamsTeamHardDeleted(context: TurnContext): Promise<void>;
     onTeamsTeamHardDeletedEvent(handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
-    protected onTeamsTeamRenamed(context: any): Promise<void>;
+    protected onTeamsTeamRenamed(context: TurnContext): Promise<void>;
     onTeamsTeamRenamedEvent(handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
-    protected onTeamsTeamRestored(context: any): Promise<void>;
+    protected onTeamsTeamRestored(context: TurnContext): Promise<void>;
     onTeamsTeamRestoredEvent(handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
-    protected onTeamsTeamUnarchived(context: any): Promise<void>;
+    protected onTeamsTeamUnarchived(context: TurnContext): Promise<void>;
     onTeamsTeamUnarchivedEvent(handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
 }
 
@@ -442,16 +472,22 @@ export function teamsGetTeamInfo(activity: Activity): TeamInfo | null;
 // @public
 export function teamsGetTeamMeetingInfo(activity: Activity): TeamsMeetingInfo | null;
 
+// @public (undocumented)
+export function teamsGetTeamOnBehalfOf(activity: Activity): OnBehalfOf[];
+
 // @public
 export function teamsGetTenant(activity: Activity): TenantInfo | null;
 
 // @public
 export class TeamsInfo {
     static getMeetingInfo(context: TurnContext, meetingId?: string): Promise<MeetingInfo>;
+    static cancelOperation(context: TurnContext, operationId: string): Promise<CancelOperationResponse>;
+    static getFailedEntries(context: TurnContext, operationId: string): Promise<BatchFailedEntriesResponse>;
     static getMeetingParticipant(context: TurnContext, meetingId?: string, participantId?: string, tenantId?: string): Promise<TeamsMeetingParticipant>;
     static getMember(context: TurnContext, userId: string): Promise<TeamsChannelAccount>;
     // @deprecated
     static getMembers(context: TurnContext): Promise<TeamsChannelAccount[]>;
+    static getOperationState(context: TurnContext, operationId: string): Promise<BatchOperationStateResponse>;
     static getPagedMembers(context: TurnContext, pageSize?: number, continuationToken?: string): Promise<TeamsPagedMembersResult>;
     static getPagedTeamMembers(context: TurnContext, teamId?: string, pageSize?: number, continuationToken?: string): Promise<TeamsPagedMembersResult>;
     static getTeamChannels(context: TurnContext, teamId?: string): Promise<ChannelInfo[]>;
@@ -460,6 +496,10 @@ export class TeamsInfo {
     // @deprecated
     static getTeamMembers(context: TurnContext, teamId?: string): Promise<TeamsChannelAccount[]>;
     static sendMeetingNotification(context: TurnContext, notification: MeetingNotification, meetingId?: string): Promise<MeetingNotificationResponse>;
+    static sendMessageToAllUsersInTeam(context: TurnContext, activity: Activity, tenantId: string, teamId: string): Promise<BatchOperationResponse>;
+    static sendMessageToAllUsersInTenant(context: TurnContext, activity: Activity, tenantId: string): Promise<BatchOperationResponse>;
+    static sendMessageToListOfChannels(context: TurnContext, activity: Activity, tenantId: string, members: TeamsMember[]): Promise<BatchOperationResponse>;
+    static sendMessageToListOfUsers(context: TurnContext, activity: Activity, tenantId: string, members: TeamsMember[]): Promise<BatchOperationResponse>;
     static sendMessageToTeamsChannel(context: TurnContext, activity: Activity, teamsChannelId: string, botAppId?: string): Promise<[ConversationReference, string]>;
 }
 
@@ -470,12 +510,12 @@ export function teamsNotifyUser(activity: Partial<Activity>, alertInMeeting?: bo
 export class TeamsSSOTokenExchangeMiddleware implements Middleware {
     constructor(storage: Storage_2, oAuthConnectionName: string);
     onTurn(context: TurnContext, next: () => Promise<void>): Promise<void>;
-    }
+}
 
 // @public
 export class TokenResolver {
     static checkForOAuthCards(adapter: BotFrameworkAdapter, context: TurnContext, activity: Activity, log?: string[]): void;
-    }
+}
 
 // @public
 export interface WebRequest {

@@ -64,7 +64,10 @@ class FauxSock {
         if (this.receiver.isConnected) this.receiver.disconnect();
     }
     close() {
-        this.connected = false;
+        if (this.connected) {
+            this.connected = false;
+            this.closeHandler && this.closeHandler();
+        }
     }
     end() {
         this.exists = false;

@@ -83,4 +83,9 @@ export interface QnAMakerOptions {
      * includeUnstructuredSources - option to fetch answers from unsrtuctured sources
      */
     includeUnstructuredSources?: boolean;
+
+    /**
+     * Channel id for the user or bot on this channel
+     */
+    userId?: string;
 }

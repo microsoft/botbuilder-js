@@ -724,6 +724,42 @@ describe('TeamsActivityHandler', function () {
     });
 
     describe('should send a NotImplemented status code if', function () {
+        it('handleTeamsBotConfigFetch is not overridden', async function () {
+            const bot = new TeamsActivityHandler();
+
+            const adapter = new TestAdapter(async (context) => {
+                await bot.run(context);
+            });
+
+            const taskSubmitActivity = createInvokeActivity('config/fetch');
+            await adapter
+                .send(taskSubmitActivity)
+                .assertReply((activity) => {
+                    assert.strictEqual(activity.type, 'invokeResponse');
+                    assert.strictEqual(activity.value.status, 501);
+                    assert.strictEqual(activity.value.body, undefined);
+                })
+                .startTest();
+        });
+
+        it('handleTeamsBotConfigSubmit is not overridden', async function () {
+            const bot = new TeamsActivityHandler();
+
+            const adapter = new TestAdapter(async (context) => {
+                await bot.run(context);
+            });
+
+            const taskSubmitActivity = createInvokeActivity('config/submit');
+            await adapter
+                .send(taskSubmitActivity)
+                .assertReply((activity) => {
+                    assert.strictEqual(activity.type, 'invokeResponse');
+                    assert.strictEqual(activity.value.status, 501);
+                    assert.strictEqual(activity.value.body, undefined);
+                })
+                .startTest();
+        });
+
         it('handleTeamsMessagingExtensionSubmitAction is not overridden', async function () {
             const bot = new TeamsActivityHandler();
 
@@ -2567,6 +2603,34 @@ describe('TeamsActivityHandler', function () {
             return activity;
         }
 
+        function createMeetingParticipantEventActivity(join = true) {
+            const value = {
+                members: [
+                    {
+                        user: {
+                            id: 'id',
+                            name: 'name',
+                        },
+                        meeting: {
+                            role: 'role',
+                            inMeeting: join,
+                        },
+                    },
+                ],
+            };
+
+            const activity = {
+                channelId: Channels.Msteams,
+                type: 'event',
+                value: value,
+                name: join
+                    ? 'application/vnd.microsoft.meetingParticipantJoin'
+                    : 'application/vnd.microsoft.meetingParticipantLeave',
+            };
+
+            return activity;
+        }
+
         let onEventCalled;
         let onDialogCalled;
         this.beforeEach(function () {
@@ -2756,6 +2820,90 @@ describe('TeamsActivityHandler', function () {
                 .send(activity)
                 .then(() => {
                     assert(onTeamsReadReceiptCalled);
+                    assert(onEventCalled, 'onConversationUpdate handler not called');
+                    assert(onDialogCalled, 'onDialog handler not called');
+                })
+                .startTest();
+        });
+
+        it('onTeamsMeetingParticipantsJoin routed activity', async function () {
+            let onTeamsMeetingParticipantsJoinCalled = false;
+            const bot = new TeamsActivityHandler();
+            const activity = createMeetingParticipantEventActivity();
+
+            bot.onEvent(async (context, next) => {
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                onEventCalled = true;
+                await next();
+            });
+
+            bot.onTeamsMeetingParticipantsJoinEvent(async (meeting, context, next) => {
+                assert(meeting, 'meeting not found');
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                assert.deepStrictEqual(meeting, activity.value);
+                onTeamsMeetingParticipantsJoinCalled = true;
+                await next();
+            });
+
+            bot.onDialog(async (context, next) => {
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                onDialogCalled = true;
+                await next();
+            });
+
+            const adapter = new TestAdapter(async (context) => {
+                await bot.run(context);
+            });
+
+            await adapter
+                .send(activity)
+                .then(() => {
+                    assert(onTeamsMeetingParticipantsJoinCalled);
+                    assert(onEventCalled, 'onConversationUpdate handler not called');
+                    assert(onDialogCalled, 'onDialog handler not called');
+                })
+                .startTest();
+        });
+
+        it('onTeamsMeetingParticipantsLeave routed activity', async function () {
+            let onTeamsMeetingParticipantsLeaveCalled = false;
+            const bot = new TeamsActivityHandler();
+            const activity = createMeetingParticipantEventActivity(false);
+
+            bot.onEvent(async (context, next) => {
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                onEventCalled = true;
+                await next();
+            });
+
+            bot.onTeamsMeetingParticipantsLeaveEvent(async (meeting, context, next) => {
+                assert(meeting, 'meeting not found');
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                assert.deepStrictEqual(meeting, activity.value);
+                onTeamsMeetingParticipantsLeaveCalled = true;
+                await next();
+            });
+
+            bot.onDialog(async (context, next) => {
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                onDialogCalled = true;
+                await next();
+            });
+
+            const adapter = new TestAdapter(async (context) => {
+                await bot.run(context);
+            });
+
+            await adapter
+                .send(activity)
+                .then(() => {
+                    assert(onTeamsMeetingParticipantsLeaveCalled);
                     assert(onEventCalled, 'onConversationUpdate handler not called');
                     assert(onDialogCalled, 'onDialog handler not called');
                 })

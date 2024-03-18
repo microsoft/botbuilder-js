@@ -4,6 +4,7 @@
 const assert = require('assert');
 const sinon = require('sinon');
 const { BlobsStorage } = require('../');
+const { StorageSharedKeyCredential } = require('@azure/storage-blob');
 
 const connectionString = process.env.AZURE_BLOB_STORAGE_CONNECTION_STRING;
 const containerName = process.env.AZURE_BLOB_STORAGE_CONTAINER;
@@ -22,10 +23,25 @@ describe('BlobsStorage', function () {
         it('throws for bad args', function () {
             assert.throws(() => new BlobsStorage(), 'throws for missing connectionString');
             assert.throws(() => new BlobsStorage('connectionString'), 'throws for missing containerName');
+            assert.throws(() => new BlobsStorage(null, null, null, [], {}), 'throws for missing url');
+            assert.throws(
+                () => new BlobsStorage(null, null, null, 'url', {}),
+                ReferenceError('Invalid credential type.')
+            );
         });
 
-        it('succeeds for good args', function () {
+        it('succeeds for good args using connection string', function () {
             new BlobsStorage('UseDevelopmentStorage=true;', 'container');
+        });
+
+        it('succeeds for good args using credential', function () {
+            new BlobsStorage(
+                null,
+                null,
+                null,
+                'https://test.blob.core.windows.net/blob',
+                new StorageSharedKeyCredential('accountName', 'accountKey')
+            );
         });
     });
 

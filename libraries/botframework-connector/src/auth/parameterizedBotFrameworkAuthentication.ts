@@ -22,6 +22,7 @@ import { ToBotFromBotOrEmulatorTokenValidationParameters } from './tokenValidati
 import { UserTokenClientImpl } from './userTokenClientImpl';
 import type { UserTokenClient } from './userTokenClient';
 import { VerifyOptions } from 'jsonwebtoken';
+import { AseChannelValidation } from './aseChannelValidation';
 
 function getAppId(claimsIdentity: ClaimsIdentity): string | undefined {
     // For requests from channel App Id is in Audience claim of JWT token. For emulator it is in AppId claim. For
@@ -123,7 +124,8 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
             this.toChannelFromBotOAuthScope,
             this.toChannelFromBotLoginUrl,
             this.validateAuthority,
-            this.credentialsFactory
+            this.credentialsFactory,
+            this.connectorClientOptions
         );
 
         return {
@@ -188,7 +190,8 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
             this.toChannelFromBotOAuthScope,
             this.toChannelFromBotLoginUrl,
             this.validateAuthority,
-            this.credentialsFactory
+            this.credentialsFactory,
+            this.connectorClientOptions
         );
     }
 
@@ -268,6 +271,10 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
         channelId: string,
         serviceUrl: string
     ): Promise<ClaimsIdentity | undefined> {
+        if (AseChannelValidation.isTokenFromAseChannel(channelId)) {
+            return AseChannelValidation.authenticateAseChannelToken(authHeader);
+        }
+
         if (SkillValidation.isSkillToken(authHeader)) {
             return this.SkillValidation_authenticateChannelToken(authHeader, channelId);
         }
@@ -296,7 +303,8 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
         const tokenExtractor = new JwtTokenExtractor(
             verifyOptions,
             this.toBotFromEmulatorOpenIdMetadataUrl,
-            AuthenticationConstants.AllowedSigningAlgorithms
+            AuthenticationConstants.AllowedSigningAlgorithms,
+            this.connectorClientOptions?.proxySettings
         );
 
         const parts: string[] = authHeader.split(' ');
@@ -382,7 +390,8 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
         const tokenExtractor: JwtTokenExtractor = new JwtTokenExtractor(
             verifyOptions,
             this.toBotFromEmulatorOpenIdMetadataUrl,
-            AuthenticationConstants.AllowedSigningAlgorithms
+            AuthenticationConstants.AllowedSigningAlgorithms,
+            this.connectorClientOptions?.proxySettings
         );
 
         const identity: ClaimsIdentity = await tokenExtractor.getIdentityFromAuthHeader(
@@ -468,7 +477,8 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
         const tokenExtractor: JwtTokenExtractor = new JwtTokenExtractor(
             tokenValidationParameters,
             this.toBotFromChannelOpenIdMetadataUrl,
-            AuthenticationConstants.AllowedSigningAlgorithms
+            AuthenticationConstants.AllowedSigningAlgorithms,
+            this.connectorClientOptions?.proxySettings
         );
 
         const identity: ClaimsIdentity = await tokenExtractor.getIdentityFromAuthHeader(

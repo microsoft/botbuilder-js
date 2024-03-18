@@ -140,7 +140,7 @@ export async function makeServer(
             await adapter.process(req, res, async (turnContext) => {
                 await bot.run(turnContext);
             });
-        } catch (err) {
+        } catch (err: any) {
             return errorHandler(err, res);
         }
     });
@@ -169,7 +169,7 @@ export async function makeServer(
                         await adapter.process(req, res, async (turnContext) => {
                             await bot.run(turnContext);
                         });
-                    } catch (err) {
+                    } catch (err: any) {
                         return errorHandler(err, res);
                     }
                 });
@@ -197,7 +197,7 @@ export async function makeServer(
             await adapter.process(req, socket, head, async (context) => {
                 await bot.run(context);
             });
-        } catch (err) {
+        } catch (err: any) {
             return errorHandler(err);
         }
     });

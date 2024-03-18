@@ -9,11 +9,11 @@ const path = require('path');
 const url = require('url');
 const promisify = require('util').promisify;
 const readFileAsync = promisify(fs.readFile);
-const request = require('request');
+const axios = require('axios');
 const unzip = require('unzipper');
 const rimraf = require('rimraf');
 
-const chatdown = require('chatdown');
+const chatdown = require('@microsoft/bf-chatdown');
 
 const { TestAdapter, MemoryStorage, UserState, ConversationState, AutoSaveStateMiddleware } = require('../');
 
@@ -138,33 +138,37 @@ function downloadAndExtractOnce(url) {
                 const writeStream = fs.createWriteStream(zipPath);
 
                 // download
-                request
-                    .get(url)
-                    .on('end', function () {
-                        // unzip
-                        console.log(`\tUnzipping ${zipPath} into ${outputPath}`);
-                        decompressZip(zipPath, outputPath, function (unzipErr) {
-                            fs.unlinkSync(zipPath); // delete zip
-                            if (unzipErr) {
-                                // error while extracting
-                                return reject(unzipErr);
-                            }
+                axios
+                    .get(url, { responseType: 'stream' })
+                    .then((response) => {
+                        response.data
+                            .on('end', function () {
+                                // unzip
+                                console.log(`\tUnzipping ${zipPath} into ${outputPath}`);
+                                decompressZip(zipPath, outputPath, function (unzipErr) {
+                                    fs.unlinkSync(zipPath); // delete zip
+                                    if (unzipErr) {
+                                        // error while extracting
+                                        return reject(unzipErr);
+                                    }
 
-                            // get branch's inner folder
-                            const childDirectories = getDirectories(outputPath);
-                            let firstDirectory = childDirectories[0];
-                            if (!firstDirectory) {
-                                return reject('Downloaded ZIP did not contain a branch folder.');
-                            }
+                                    // get branch's inner folder
+                                    const childDirectories = getDirectories(outputPath);
+                                    let firstDirectory = childDirectories[0];
+                                    if (!firstDirectory) {
+                                        return reject('Downloaded ZIP did not contain a branch folder.');
+                                    }
 
-                            firstDirectory = path.join(firstDirectory, zipTranscriptsRelativePath);
+                                    firstDirectory = path.join(firstDirectory, zipTranscriptsRelativePath);
 
-                            console.log(`\tTranscripts extracted at ${firstDirectory}`);
-                            return resolve(firstDirectory);
-                        });
+                                    console.log(`\tTranscripts extracted at ${firstDirectory}`);
+                                    return resolve(firstDirectory);
+                                });
+                            })
+                            .on('error', (e) => reject(e)) // reject on download error
+                            .pipe(writeStream);
                     })
-                    .on('error', (e) => reject(e)) // reject on download error
-                    .pipe(writeStream);
+                    .catch((e) => reject(e));
             });
         });
     }

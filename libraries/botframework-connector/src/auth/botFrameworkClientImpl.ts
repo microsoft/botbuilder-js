@@ -2,27 +2,28 @@
 // Licensed under the MIT License.
 
 import * as z from 'zod';
-import axios from 'axios';
 import { Activity, ChannelAccount, InvokeResponse, RoleTypes } from 'botframework-schema';
 import { BotFrameworkClient } from '../skills';
 import { ConversationIdHttpHeaderName } from '../conversationConstants';
 import { ServiceClientCredentialsFactory } from './serviceClientCredentialsFactory';
 import { USER_AGENT } from './connectorFactoryImpl';
-import { WebResource } from '@azure/ms-rest-js';
+import { WebResource } from '@azure/core-http';
 import { ok } from 'assert';
+import fetch from 'cross-fetch';
 
 const botFrameworkClientFetchImpl: typeof fetch = async (input, init) => {
     const url = z.string().parse(input);
     const { body, headers } = z.object({ body: z.string(), headers: z.record(z.string()).optional() }).parse(init);
 
-    const response = await axios.post(url, JSON.parse(body), {
+    const response = await fetch(url, {
+        method: 'POST',
+        body,
         headers,
-        validateStatus: () => true,
     });
 
     return {
         status: response.status,
-        json: async () => response.data,
+        json: async () => response.body,
     } as Response;
 };
 

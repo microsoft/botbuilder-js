@@ -63,7 +63,7 @@ export class UserActivity extends TestAction implements UserActivityConfiguratio
             activity.from = { ...activity.from };
             activity.from.id = this.user;
             activity.from.name = this.user;
-        } else if (z.record(z.unknown()).check(this.activity?.from)) {
+        } else if (z.record(z.unknown()).safeParse(this.activity?.from).success) {
             activity.from = { ...this.activity.from };
         }
 

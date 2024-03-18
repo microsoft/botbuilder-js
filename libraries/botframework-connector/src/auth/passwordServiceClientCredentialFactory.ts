@@ -4,11 +4,11 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import * as adal from 'adal-node';
-import type { ServiceClientCredentials } from '@azure/ms-rest-js';
+import type { ServiceClientCredentials } from '@azure/core-http';
 import { AuthenticationConstants } from './authenticationConstants';
 import { GovernmentConstants } from './governmentConstants';
 import { MicrosoftAppCredentials } from './microsoftAppCredentials';
+import { MicrosoftGovernmentAppCredentials } from './microsoftGovernmentAppCredentials';
 import { ServiceClientCredentialsFactory } from './serviceClientCredentialsFactory';
 import { stringExt } from 'botbuilder-stdlib';
 
@@ -112,9 +112,8 @@ export class PasswordServiceClientCredentialFactory implements ServiceClientCred
 
         if (normalizedEndpoint?.startsWith(AuthenticationConstants.ToChannelFromBotLoginUrlPrefix)) {
             credentials = new MicrosoftAppCredentials(appId, this.password, this.tenantId, audience);
-        } else if (normalizedEndpoint === GovernmentConstants.ToChannelFromBotLoginUrl.toLowerCase()) {
-            credentials = new MicrosoftAppCredentials(appId, this.password, this.tenantId, audience);
-            credentials.oAuthEndpoint = loginEndpoint;
+        } else if (normalizedEndpoint?.startsWith(GovernmentConstants.ToChannelFromBotLoginUrlPrefix)) {
+            credentials = new MicrosoftGovernmentAppCredentials(appId, this.password, this.tenantId, audience);
         } else {
             credentials = new PrivateCloudAppCredentials(
                 appId,
@@ -171,6 +170,5 @@ class PrivateCloudAppCredentials extends MicrosoftAppCredentials {
         // aadApiVersion is set to '1.5' to avoid the "spn:" concatenation on the audience claim
         // For more info, see https://github.com/AzureAD/azure-activedirectory-library-for-nodejs/issues/128
         this.__oAuthEndpoint = value;
-        this.authenticationContext = new adal.AuthenticationContext(value, this.validateAuthority, undefined, '1.5');
     }
 }

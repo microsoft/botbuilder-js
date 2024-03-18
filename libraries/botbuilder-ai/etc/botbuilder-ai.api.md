@@ -6,6 +6,7 @@
 
 import { Activity } from 'botbuilder-core';
 import { ArrayExpression } from 'adaptive-expressions';
+import { Attachment } from 'botbuilder-core';
 import { BoolExpression } from 'adaptive-expressions';
 import { BotComponent } from 'botbuilder-core';
 import { BotTelemetryClient } from 'botbuilder-core';
@@ -22,12 +23,12 @@ import { DialogTurnResult } from 'botbuilder-dialogs';
 import { EnumExpression } from 'adaptive-expressions';
 import { Expression } from 'adaptive-expressions';
 import { IntExpression } from 'adaptive-expressions';
-import { LUISRuntimeModels } from '@azure/cognitiveservices-luis-runtime';
 import { NumberExpression } from 'adaptive-expressions';
 import { ObjectExpression } from 'adaptive-expressions';
 import { Recognizer } from 'botbuilder-dialogs';
 import { RecognizerConfiguration } from 'botbuilder-dialogs';
 import { RecognizerResult } from 'botbuilder-core';
+import { RequestOptionsBase } from '@azure/core-http';
 import { ServiceCollection } from 'botbuilder-dialogs-adaptive-runtime-core';
 import { StringExpression } from 'adaptive-expressions';
 import { TemplateInterface } from 'botbuilder-dialogs';
@@ -62,8 +63,8 @@ export interface AnswerSpanResponse {
     text: string;
 }
 
-// Warning: (ae-forgotten-export) The symbol "QnAMakerClient" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "QnAMakerTelemetryClient" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "QnAMakerClient_2" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "QnAMakerTelemetryClient_2" needs to be exported by the entry point index.d.ts
 //
 // @public
 export class CustomQuestionAnswering implements QnAMakerClient_2, QnAMakerTelemetryClient_2 {
@@ -93,7 +94,7 @@ export class CustomQuestionAnswering implements QnAMakerClient_2, QnAMakerTeleme
         [key: string]: number;
     }): Promise<void>;
     get telemetryClient(): BotTelemetryClient;
-    }
+}
 
 // @public
 export interface DateTimeSpec {
@@ -227,7 +228,7 @@ export class LuisAdaptiveRecognizer extends Recognizer implements LuisAdaptiveRe
     // (undocumented)
     static $kind: string;
     applicationId: StringExpression;
-    // Warning: (ae-forgotten-export) The symbol "DynamicList" needs to be exported by the entry point index.d.ts
+    // Warning: (ae-forgotten-export) The symbol "DynamicList_2" needs to be exported by the entry point index.d.ts
     dynamicLists: ArrayExpression<DynamicList_2>;
     endpoint: StringExpression;
     endpointKey: StringExpression;
@@ -286,10 +287,10 @@ export class LuisBotComponent extends BotComponent {
 export class LuisComponentRegistration extends ComponentRegistration {
     constructor();
     getDeclarativeTypes(_resourceExplorer: unknown): ComponentDeclarativeTypes[];
-    }
+}
 
 // @public
-export interface LuisPredictionOptions extends LUISRuntimeModels.PredictionResolveOptionalParams {
+export interface LuisPredictionOptions extends RequestOptionsBase {
     bingSpellCheckSubscriptionKey?: string;
     includeAllIntents?: boolean;
     includeInstanceData?: boolean;
@@ -299,6 +300,7 @@ export interface LuisPredictionOptions extends LUISRuntimeModels.PredictionResol
     staging?: boolean;
     telemetryClient?: BotTelemetryClient;
     timezoneOffset?: number;
+    verbose?: boolean;
 }
 
 // @public
@@ -325,7 +327,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
     }>;
     get telemetryClient(): BotTelemetryClient;
     static topIntent(results?: RecognizerResult, defaultIntent?: string, minScore?: number): string;
-    }
+}
 
 // @public (undocumented)
 export interface LuisRecognizerOptions {
@@ -425,9 +427,11 @@ export interface OrdinalV2 {
 
 // @public
 export class QnACardBuilder {
-    static getQnAAnswerCard(result: QnAMakerResult, displayPreciseAnswerOnly: boolean): Partial<Activity>;
+    static getHeroCard(cardText: string, buttonList: any[]): Attachment;
+    static getQnAAnswerCard(result: QnAMakerResult, displayPreciseAnswerOnly: boolean, useTeamsAdaptiveCard?: boolean): Partial<Activity>;
     static getQnAPromptsCard(result: QnAMakerResult): Partial<Activity>;
-    static getSuggestionsCard(suggestionsList: string[], cardTitle: string, cardNoMatchText: string): Partial<Activity>;
+    static getSuggestionsCard(suggestionsList: string[], cardTitle: string, cardNoMatchText: string, useTeamsAdaptiveCard?: boolean): Partial<Activity>;
+    static getTeamsAdaptiveCard(cardText: string, buttonList: any[]): Attachment;
 }
 
 // @public
@@ -463,7 +467,7 @@ export class QnAMaker implements QnAMakerClient, QnAMakerTelemetryClient {
         [key: string]: number;
     }): Promise<void>;
     get telemetryClient(): BotTelemetryClient;
-    }
+}
 
 // @public (undocumented)
 export const QNAMAKER_TRACE_LABEL = "QnAMaker Trace";
@@ -495,7 +499,7 @@ export const QnAMakerClientKey: unique symbol;
 export class QnAMakerComponentRegistration extends ComponentRegistration {
     constructor();
     getDeclarativeTypes(_resourceExplorer: unknown): ComponentDeclarativeTypes[];
-    }
+}
 
 // Warning: (ae-forgotten-export) The symbol "QnAMakerDialogConfiguration" needs to be exported by the entry point index.d.ts
 //
@@ -503,8 +507,8 @@ export class QnAMakerComponentRegistration extends ComponentRegistration {
 export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogConfiguration {
     // (undocumented)
     static $kind: string;
-    constructor(knowledgeBaseId?: string, endpointKey?: string, hostname?: string, noAnswer?: Activity, threshold?: number, activeLearningCardTitle?: string, cardNoMatchText?: string, top?: number, cardNoMatchResponse?: Activity, rankerType?: RankerTypes, strictFilters?: QnAMakerMetadata[], dialogId?: string, strictFiltersJoinOperator?: JoinOperator, enablePreciseAnswer?: boolean, displayPreciseAnswerOnly?: boolean, qnaServiceType?: ServiceType);
-    constructor(knowledgeBaseId?: string, endpointKey?: string, hostname?: string, noAnswer?: Activity, threshold?: number, suggestionsActivityFactory?: QnASuggestionsActivityFactory, cardNoMatchText?: string, top?: number, cardNoMatchResponse?: Activity, rankerType?: RankerTypes, strictFilters?: QnAMakerMetadata[], dialogId?: string, strictFiltersJoinOperator?: JoinOperator, enablePreciseAnswer?: boolean, displayPreciseAnswerOnly?: boolean, qnaServiceType?: ServiceType);
+    constructor(knowledgeBaseId?: string, endpointKey?: string, hostname?: string, noAnswer?: Activity, threshold?: number, activeLearningCardTitle?: string, cardNoMatchText?: string, top?: number, cardNoMatchResponse?: Activity, rankerType?: RankerTypes, strictFilters?: QnAMakerMetadata[], dialogId?: string, strictFiltersJoinOperator?: JoinOperator, enablePreciseAnswer?: boolean, displayPreciseAnswerOnly?: boolean, qnaServiceType?: ServiceType, useTeamsAdaptiveCard?: boolean);
+    constructor(knowledgeBaseId?: string, endpointKey?: string, hostname?: string, noAnswer?: Activity, threshold?: number, suggestionsActivityFactory?: QnASuggestionsActivityFactory, cardNoMatchText?: string, top?: number, cardNoMatchResponse?: Activity, rankerType?: RankerTypes, strictFilters?: QnAMakerMetadata[], dialogId?: string, strictFiltersJoinOperator?: JoinOperator, enablePreciseAnswer?: boolean, displayPreciseAnswerOnly?: boolean, qnaServiceType?: ServiceType, useTeamsAdaptiveCard?: boolean);
     activeLearningCardTitle: StringExpression;
     beginDialog(dc: DialogContext, options?: object): Promise<DialogTurnResult>;
     cardNoMatchResponse: TemplateInterface<Partial<Activity>, DialogStateManager>;
@@ -538,7 +542,8 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
     strictFiltersJoinOperator: JoinOperator;
     threshold: NumberExpression;
     top: IntExpression;
-    }
+    useTeamsAdaptiveCard: boolean;
+}
 
 // @public
 export interface QnAMakerDialogOptions {
@@ -585,6 +590,7 @@ export interface QnAMakerOptions {
     strictFiltersJoinOperator?: JoinOperator;
     timeout?: number;
     top?: number;
+    userId?: string;
 }
 
 // @public
@@ -735,7 +741,6 @@ export function validateExternalEntity(entity: ExternalEntity): void;
 
 // @public
 export function validateListElement(element: ListElement): void;
-
 
 // (No @packageDocumentation comment for this package)
 

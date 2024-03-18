@@ -3,13 +3,16 @@
  * Licensed under the MIT License.
  */
 
-import { HttpResponse, ServiceClientOptions, RequestOptionsBase } from '@azure/ms-rest-js';
+import { HttpResponse, ServiceClientOptions, RequestOptionsBase } from '@azure/core-http';
 import {
     ConversationList,
     TeamDetails,
     MeetingInfo,
     MeetingNotificationResponse,
     TeamsMeetingParticipant,
+    BatchOperationResponse,
+    BatchOperationStateResponse,
+    BatchFailedEntriesResponse,
 } from 'botframework-schema';
 
 /**
@@ -141,5 +144,81 @@ export type TeamsMeetingNotificationResponse = MeetingNotificationResponse & {
          * The response body as parsed JSON or XML
          */
         parsedBody: MeetingNotificationResponse | {};
+    };
+};
+
+/**
+ * Contains response data for the Teams batch operations.
+ */
+export type TeamsBatchOperationResponse = BatchOperationResponse & {
+    /**
+     * The underlying HTTP response.
+     */
+    _response: HttpResponse & {
+        /**
+         * The response body as text (string format)
+         */
+        bodyAsText: string;
+        /**
+         * The response body as parsed JSON or XML
+         */
+        parsedBody: BatchOperationResponse | {};
+    };
+};
+
+/**
+ * Contains response data for the Teams batch operation state.
+ */
+export type BatchBatchOperationStateResponse = BatchOperationStateResponse & {
+    /**
+     * The underlying HTTP response.
+     */
+    _response: HttpResponse & {
+        /**
+         * The response body as text (string format)
+         */
+        bodyAsText: string;
+        /**
+         * The response body as parsed JSON or XML
+         */
+        parsedBody: BatchOperationStateResponse | {};
+    };
+};
+
+/**
+ * Contains response data for the Teams batch failed entries.
+ */
+export type BatchBatchFailedEntriesResponse = BatchFailedEntriesResponse & {
+    /**
+     * The underlying HTTP response.
+     */
+    _response: HttpResponse & {
+        /**
+         * The response body as text (string format)
+         */
+        bodyAsText: string;
+        /**
+         * The response body as parsed JSON or XML
+         */
+        parsedBody: BatchFailedEntriesResponse | {};
+    };
+};
+
+/**
+ * Contains response data for the Teams batch cancel operation.
+ */
+export type CancelOperationResponse = {
+    /**
+     * The underlying HTTP response.
+     */
+    _response: HttpResponse & {
+        /**
+         * The response body as text (string format)
+         */
+        bodyAsText: string;
+        /**
+         * The response body as parsed JSON or XML
+         */
+        parsedBody: {};
     };
 };

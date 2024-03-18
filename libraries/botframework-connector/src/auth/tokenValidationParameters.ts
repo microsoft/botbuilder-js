@@ -23,3 +23,14 @@ export const ToBotFromBotOrEmulatorTokenValidationParameters: VerifyOptions = {
     clockTolerance: 5 * 60,
     ignoreExpiration: false,
 };
+
+// Internal
+/**
+ * Default options for validating incoming tokens from the Bot Ase Channel.
+ */
+export const BetweenBotAndAseChannelTokenValidationParameters: VerifyOptions = {
+    issuer: [],
+    audience: undefined, // Audience validation takes place manually in code.
+    clockTolerance: 5 * 60,
+    ignoreExpiration: false,
+};

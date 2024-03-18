@@ -39,7 +39,8 @@ export class DialogsBotComponent extends BotComponent {
     configureServices(services: ServiceCollection, configuration: Configuration): void {
         services.composeFactory<MemoryScope[]>('memoryScopes', (memoryScopes) => {
             const rootConfiguration = configuration.get();
-            const initialSettings = InitialSettings.check(rootConfiguration) ? rootConfiguration : undefined;
+            const rootConfigurationParse = InitialSettings.safeParse(rootConfiguration);
+            const initialSettings = rootConfigurationParse.success ? rootConfigurationParse.data : undefined;
 
             return memoryScopes.concat(
                 new TurnMemoryScope(),

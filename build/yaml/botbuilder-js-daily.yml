@@ -10,6 +10,7 @@ variables:
   Packaging.EnableSBOMSigning: true
   YARN_CACHE_FOLDER: $(Pipeline.Workspace)/.yarn
 #  SDK_JS_org_registry_Url: define this in Azure
+#  SDK_JS_org Service Connection: PAT in ConversationalAI with scope 'Packaging' R/W and 'Service Connections' Read & Query
 
 steps:
 - template: templates/build.yml

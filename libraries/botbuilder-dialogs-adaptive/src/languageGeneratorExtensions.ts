@@ -36,7 +36,7 @@ export const languagePolicyKey = Symbol('LanguagePolicy');
  * Extension methods for language generator.
  */
 export class LanguageGeneratorExtensions {
-    private static readonly _languageGeneratorManagers = new Map<ResourceExplorer, LanguageGeneratorManager>();
+    private static readonly _languageGeneratorManagers = new WeakMap<ResourceExplorer, LanguageGeneratorManager>();
 
     /**
      * Register default LG file or a language generator as default language generator.

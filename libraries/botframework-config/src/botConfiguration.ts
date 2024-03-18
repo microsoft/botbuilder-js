@@ -5,9 +5,9 @@
  * Licensed under the MIT License.
  */
 import * as fsx from 'fs-extra';
+import * as fs from 'fs';
 import * as path from 'path';
 import * as process from 'process';
-import * as txtfile from 'read-text-file';
 import { v4 as uuidv4 } from 'uuid';
 import { BotConfigurationBase } from './botConfigurationBase';
 import * as encrypt from './encrypt';
@@ -106,7 +106,8 @@ export class BotConfiguration extends BotConfigurationBase {
      * @returns A Promise with the new BotConfiguration instance.
      */
     static async load(botpath: string, secret?: string): Promise<BotConfiguration> {
-        const json: string = await txtfile.read(botpath);
+        // eslint-disable-next-line security/detect-non-literal-fs-filename
+        const json: string = await fs.promises.readFile(botpath, 'utf8');
         const bot: BotConfiguration = BotConfiguration.internalLoad(json, secret);
         bot.internal.location = botpath;
 
@@ -121,7 +122,8 @@ export class BotConfiguration extends BotConfigurationBase {
      * @returns A new BotConfiguration instance.
      */
     static loadSync(botpath: string, secret?: string): BotConfiguration {
-        const json: string = txtfile.readSync(botpath);
+        // eslint-disable-next-line security/detect-non-literal-fs-filename
+        const json: string = fs.readFileSync(botpath, 'utf8');
         const bot: BotConfiguration = BotConfiguration.internalLoad(json, secret);
         bot.internal.location = botpath;
 

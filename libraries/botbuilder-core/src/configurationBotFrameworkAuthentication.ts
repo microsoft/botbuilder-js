@@ -17,6 +17,7 @@ import {
     ConnectorFactory,
     ServiceClientCredentialsFactory,
     UserTokenClient,
+    AseChannelValidation,
 } from 'botframework-connector';
 
 import {
@@ -26,6 +27,16 @@ import {
 
 const TypedOptions = z
     .object({
+        /**
+         * The ID assigned to your bot in the [Bot Framework Portal](https://dev.botframework.com/).
+         */
+        MicrosoftAppId: z.string(),
+
+        /**
+         * The tenant id assigned to your bot in the [Bot Framework Portal](https://dev.botframework.com/).
+         */
+        MicrosoftAppTenantId: z.string(),
+
         /**
          * (Optional) The OAuth URL used to get a token from OAuthApiClient. The "OAuthUrl" member takes precedence over this value.
          */
@@ -88,6 +99,16 @@ const TypedOptions = z
          * A value for the CallerId.
          */
         CallerId: z.string(),
+
+        /**
+         * Certificate thumbprint to authenticate the appId against AAD.
+         */
+        [AuthenticationConstants.CertificateThumbprint]: z.string(),
+
+        /**
+         * Certificate key to authenticate the appId against AAD.
+         */
+        [AuthenticationConstants.CertificatePrivateKey]: z.string(),
     })
     .partial();
 
@@ -121,6 +142,7 @@ export class ConfigurationBotFrameworkAuthentication extends BotFrameworkAuthent
         super();
 
         try {
+            AseChannelValidation.init(botFrameworkAuthConfig);
             const typedBotFrameworkAuthConfig = TypedOptions.nonstrict().parse(botFrameworkAuthConfig);
 
             const {
@@ -163,7 +185,7 @@ export class ConfigurationBotFrameworkAuthentication extends BotFrameworkAuthent
             );
         } catch (err) {
             // Throw a new error with the validation details prominently featured.
-            if (z.instanceof(z.ZodError).check(err)) {
+            if (z.instanceof(z.ZodError).safeParse(err).success) {
                 throw new Error(JSON.stringify(err.errors, null, 2));
             }
             throw err;

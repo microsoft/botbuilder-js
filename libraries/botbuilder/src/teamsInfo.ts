@@ -24,8 +24,17 @@ import {
     Channels,
     MeetingNotification,
     MeetingNotificationResponse,
+    TeamsMember,
+    BatchOperationResponse,
+    BatchOperationStateResponse,
+    BatchFailedEntriesResponse,
 } from 'botbuilder-core';
-import { ConnectorClient, TeamsConnectorClient, TeamsConnectorModels } from 'botframework-connector';
+import {
+    CancelOperationResponse,
+    ConnectorClient,
+    TeamsConnectorClient,
+    TeamsConnectorModels,
+} from 'botframework-connector';
 
 import { BotFrameworkAdapter } from './botFrameworkAdapter';
 import { CloudAdapter } from './cloudAdapter';
@@ -362,6 +371,166 @@ export class TeamsInfo {
         }
 
         return await this.getTeamsConnectorClient(context).teams.sendMeetingNotification(meetingId, notification);
+    }
+
+    /**
+     * Sends a message to the provided users in the list of Teams members.
+     *
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
+     * @param activity The activity to send.
+     * @param tenantId The tenant ID.
+     * @param members The list of users recipients for the message.
+     * @returns Promise with operationId.
+     */
+    static async sendMessageToListOfUsers(
+        context: TurnContext,
+        activity: Activity,
+        tenantId: string,
+        members: TeamsMember[]
+    ): Promise<BatchOperationResponse> {
+        if (!activity) {
+            throw new Error('activity is required.');
+        }
+        if (!tenantId) {
+            throw new Error('tenantId is required.');
+        }
+        if (!members || members.length == 0) {
+            throw new Error('members list is required.');
+        }
+
+        return await this.getTeamsConnectorClient(context).teams.sendMessageToListOfUsers(activity, tenantId, members);
+    }
+
+    /**
+     * Sends a message to all the users in a tenant.
+     *
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
+     * @param activity The activity to send.
+     * @param tenantId The tenant ID.
+     * @returns Promise with operationId.
+     */
+    static async sendMessageToAllUsersInTenant(
+        context: TurnContext,
+        activity: Activity,
+        tenantId: string
+    ): Promise<BatchOperationResponse> {
+        if (!activity) {
+            throw new Error('activity is required.');
+        }
+        if (!tenantId) {
+            throw new Error('tenantId is required.');
+        }
+
+        return await this.getTeamsConnectorClient(context).teams.sendMessageToAllUsersInTenant(activity, tenantId);
+    }
+
+    /**
+     * Sends a message to all the users in a team.
+     *
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
+     * @param activity The activity to send.
+     * @param tenantId The tenant ID.
+     * @param teamId The team ID.
+     * @returns Promise with operationId.
+     */
+    static async sendMessageToAllUsersInTeam(
+        context: TurnContext,
+        activity: Activity,
+        tenantId: string,
+        teamId: string
+    ): Promise<BatchOperationResponse> {
+        if (!activity) {
+            throw new Error('activity is required.');
+        }
+        if (!tenantId) {
+            throw new Error('tenantId is required.');
+        }
+        if (!teamId) {
+            throw new Error('teamId is required.');
+        }
+
+        return await this.getTeamsConnectorClient(context).teams.sendMessageToAllUsersInTeam(
+            activity,
+            tenantId,
+            teamId
+        );
+    }
+
+    /**
+     * Sends a message to the provided list of Teams channels.
+     *
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
+     * @param activity The activity to send.
+     * @param tenantId The tenant ID.
+     * @param members The list of channels recipients for the message.
+     * @returns Promise with operationId.
+     */
+    static async sendMessageToListOfChannels(
+        context: TurnContext,
+        activity: Activity,
+        tenantId: string,
+        members: TeamsMember[]
+    ): Promise<BatchOperationResponse> {
+        if (!activity) {
+            throw new Error('activity is required.');
+        }
+        if (!tenantId) {
+            throw new Error('tenantId is required.');
+        }
+        if (!members || members.length == 0) {
+            throw new Error('members list is required.');
+        }
+
+        return await this.getTeamsConnectorClient(context).teams.sendMessageToListOfChannels(
+            activity,
+            tenantId,
+            members
+        );
+    }
+
+    /**
+     * Gets the operation state.
+     *
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
+     * @param operationId The operationId to get the state of.
+     * @returns Promise with The state and responses of the operation.
+     */
+    static async getOperationState(context: TurnContext, operationId: string): Promise<BatchOperationStateResponse> {
+        if (!operationId) {
+            throw new Error('operationId is required.');
+        }
+
+        return await this.getTeamsConnectorClient(context).teams.getOperationState(operationId);
+    }
+
+    /**
+     * Gets the failed entries of an executed operation.
+     *
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
+     * @param operationId The operationId to get the failed entries of.
+     * @returns Promise with the list of failed entries of the operation.
+     */
+    static async getFailedEntries(context: TurnContext, operationId: string): Promise<BatchFailedEntriesResponse> {
+        if (!operationId) {
+            throw new Error('operationId is required.');
+        }
+
+        return await this.getTeamsConnectorClient(context).teams.getOperationFailedEntries(operationId);
+    }
+
+    /**
+     * Cancels a pending operation.
+     *
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
+     * @param operationId The id of the operation to cancel.
+     * @returns Promise representing the asynchronous operation.
+     */
+    static async cancelOperation(context: TurnContext, operationId: string): Promise<CancelOperationResponse> {
+        if (!operationId) {
+            throw new Error('operationId is required.');
+        }
+
+        return await this.getTeamsConnectorClient(context).teams.cancelOperation(operationId);
     }
 
     /**

@@ -28,11 +28,15 @@
     }
   },
   "dependencies": {
-    "@azure/cosmos": "^3.3.1",
-    "azure-storage": "2.10.7",
+    "@azure/cosmos": "3.10.0",
+    "@azure/core-auth": "^1.4.0",
+    "@azure/storage-blob": "^12.15.0",
     "botbuilder": "4.1.6",
-    "lodash": "^4.17.20",
+    "botbuilder-stdlib": "4.1.6",
+    "get-stream": "^6.0.0",
     "bcrypt": "^5.0.1",
+    "lodash": "^4.17.20",
+    "p-map": "^4.0.0",
     "@types/bcrypt": "^5.0.0"
   },
   "devDependencies": {

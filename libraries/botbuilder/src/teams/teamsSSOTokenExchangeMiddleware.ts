@@ -144,6 +144,8 @@ export class TeamsSSOTokenExchangeMiddleware implements Middleware {
             const userTokenClient = context.turnState.get<UserTokenClient>(
                 (context.adapter as CloudAdapterBase).UserTokenClientKey
             );
+            const exchangeToken = ExchangeToken.safeParse(context.adapter);
+
             if (userTokenClient) {
                 tokenExchangeResponse = await userTokenClient.exchangeToken(
                     context.activity.from.id,
@@ -151,11 +153,11 @@ export class TeamsSSOTokenExchangeMiddleware implements Middleware {
                     context.activity.channelId,
                     { token: tokenExchangeRequest.token }
                 );
-            } else if (ExchangeToken.check(context.adapter)) {
-                tokenExchangeResponse = await context.adapter.exchangeToken(
+            } else if (exchangeToken.success) {
+                tokenExchangeResponse = await exchangeToken.data.exchangeToken(
                     context,
                     this.oAuthConnectionName,
-                    context.activity.channelId,
+                    context.activity.from.id,
                     { token: tokenExchangeRequest.token }
                 );
             } else {

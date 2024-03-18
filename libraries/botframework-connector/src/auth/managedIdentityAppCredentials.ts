@@ -6,11 +6,11 @@
  * Licensed under the MIT License.
  */
 
+import { ok } from 'assert';
 import { AppCredentials } from './appCredentials';
 import type { IJwtTokenProviderFactory } from './jwtTokenProviderFactory';
 import { ManagedIdentityAuthenticator } from './managedIdentityAuthenticator';
-import { TokenResponse } from 'adal-node';
-import { ok } from 'assert';
+import { AuthenticatorResult } from './authenticatorResult';
 
 /**
  * Managed Service Identity auth implementation.
@@ -40,14 +40,11 @@ export class ManagedIdentityAppCredentials extends AppCredentials {
     /**
      * @inheritdoc
      */
-    protected async refreshToken(): Promise<TokenResponse> {
+    protected async refreshToken(): Promise<AuthenticatorResult> {
         const token = await this.authenticator.getToken();
         return {
             accessToken: token.token,
             expiresOn: new Date(token.expiresOnTimestamp),
-            tokenType: 'Bearer',
-            expiresIn: (token.expiresOnTimestamp - Date.now()) / 1000,
-            resource: this.oAuthScope,
         };
     }
 }

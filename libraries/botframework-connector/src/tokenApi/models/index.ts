@@ -3,8 +3,7 @@
  * Licensed under the MIT License.
  */
 
-import { ServiceClientOptions } from "@azure/ms-rest-js";
-import * as msRest from "@azure/ms-rest-js";
+import { ServiceClientOptions, RequestOptionsBase, HttpResponse } from "@azure/core-http";
 import { SignInUrlResponse, TokenResponse, TokenStatus } from "botframework-schema";
 
 /**
@@ -82,7 +81,7 @@ export interface TokenApiClientOptions extends ServiceClientOptions {
  *
  * @extends RequestOptionsBase
  */
-export interface BotSignInGetSignInUrlOptionalParams extends msRest.RequestOptionsBase {
+export interface BotSignInGetSignInUrlOptionalParams extends RequestOptionsBase {
   /**
    * @member {string} [codeChallenge]
    */
@@ -104,7 +103,7 @@ export interface BotSignInGetSignInUrlOptionalParams extends msRest.RequestOptio
  *
  * @extends RequestOptionsBase
  */
-export interface BotSignInGetSignInResourceOptionalParams extends msRest.RequestOptionsBase {
+export interface BotSignInGetSignInResourceOptionalParams extends RequestOptionsBase {
   /**
    * @member {string} [codeChallenge]
    */
@@ -126,7 +125,7 @@ export interface BotSignInGetSignInResourceOptionalParams extends msRest.Request
  *
  * @extends RequestOptionsBase
  */
-export interface UserTokenGetTokenOptionalParams extends msRest.RequestOptionsBase {
+export interface UserTokenGetTokenOptionalParams extends RequestOptionsBase {
   /**
    * @member {string} [channelId]
    */
@@ -144,7 +143,7 @@ export interface UserTokenGetTokenOptionalParams extends msRest.RequestOptionsBa
  *
  * @extends RequestOptionsBase
  */
-export interface UserTokenGetAadTokensOptionalParams extends msRest.RequestOptionsBase {
+export interface UserTokenGetAadTokensOptionalParams extends RequestOptionsBase {
   /**
    * @member {string} [channelId]
    */
@@ -158,7 +157,7 @@ export interface UserTokenGetAadTokensOptionalParams extends msRest.RequestOptio
  *
  * @extends RequestOptionsBase
  */
-export interface UserTokenSignOutOptionalParams extends msRest.RequestOptionsBase {
+export interface UserTokenSignOutOptionalParams extends RequestOptionsBase {
   /**
    * @member {string} [connectionName]
    */
@@ -176,7 +175,7 @@ export interface UserTokenSignOutOptionalParams extends msRest.RequestOptionsBas
  *
  * @extends RequestOptionsBase
  */
-export interface UserTokenGetTokenStatusOptionalParams extends msRest.RequestOptionsBase {
+export interface UserTokenGetTokenStatusOptionalParams extends RequestOptionsBase {
   /**
    * @member {string} [channelId]
    */
@@ -198,16 +197,16 @@ export type BotSignInGetSignInUrlResponse = {
   /**
    * The underlying HTTP response.
    */
-  _response: msRest.HttpResponse & {
-      /**
-       * The response body as text (string format)
-       */
-      bodyAsText: string;
-      /**
-       * The response body as parsed JSON or XML
-       */
-      parsedBody: string;
-    };
+  _response: HttpResponse & {
+    /**
+     * The response body as text (string format)
+     */
+    bodyAsText: string;
+    /**
+     * The response body as parsed JSON or XML
+     */
+    parsedBody: string;
+  };
 };
 
 /**
@@ -217,16 +216,16 @@ export type BotSignInGetSignInResourceResponse = SignInUrlResponse & {
   /**
    * The underlying HTTP response.
    */
-  _response: msRest.HttpResponse & {
-      /**
-       * The response body as text (string format)
-       */
-      bodyAsText: string;
-      /**
-       * The response body as parsed JSON or XML
-       */
-      parsedBody: SignInUrlResponse;
-    };
+  _response: HttpResponse & {
+    /**
+     * The response body as text (string format)
+     */
+    bodyAsText: string;
+    /**
+     * The response body as parsed JSON or XML
+     */
+    parsedBody: SignInUrlResponse;
+  };
 };
 
 /**
@@ -236,16 +235,16 @@ export type UserTokenGetTokenResponse = TokenResponse & {
   /**
    * The underlying HTTP response.
    */
-  _response: msRest.HttpResponse & {
-      /**
-       * The response body as text (string format)
-       */
-      bodyAsText: string;
-      /**
-       * The response body as parsed JSON or XML
-       */
-      parsedBody: TokenResponse;
-    };
+  _response: HttpResponse & {
+    /**
+     * The response body as text (string format)
+     */
+    bodyAsText: string;
+    /**
+     * The response body as parsed JSON or XML
+     */
+    parsedBody: TokenResponse;
+  };
 };
 
 /**
@@ -260,16 +259,16 @@ export type UserTokenGetAadTokensResponse = {
   /**
    * The underlying HTTP response.
    */
-  _response: msRest.HttpResponse & {
-      /**
-       * The response body as text (string format)
-       */
-      bodyAsText: string;
-      /**
-       * The response body as parsed JSON or XML
-       */
-      parsedBody: { [propertyName: string]: TokenResponse };
-    };
+  _response: HttpResponse & {
+    /**
+     * The response body as text (string format)
+     */
+    bodyAsText: string;
+    /**
+     * The response body as parsed JSON or XML
+     */
+    parsedBody: { [propertyName: string]: TokenResponse };
+  };
 };
 
 /**
@@ -283,16 +282,16 @@ export type UserTokenSignOutResponse = {
   /**
    * The underlying HTTP response.
    */
-  _response: msRest.HttpResponse & {
-      /**
-       * The response body as text (string format)
-       */
-      bodyAsText: string;
-      /**
-       * The response body as parsed JSON or XML
-       */
-      parsedBody: any;
-    };
+  _response: HttpResponse & {
+    /**
+     * The response body as text (string format)
+     */
+    bodyAsText: string;
+    /**
+     * The response body as parsed JSON or XML
+     */
+    parsedBody: any;
+  };
 };
 
 /**
@@ -302,16 +301,16 @@ export type UserTokenGetTokenStatusResponse = Array<TokenStatus> & {
   /**
    * The underlying HTTP response.
    */
-  _response: msRest.HttpResponse & {
-      /**
-       * The response body as text (string format)
-       */
-      bodyAsText: string;
-      /**
-       * The response body as parsed JSON or XML
-       */
-      parsedBody: TokenStatus[];
-    };
+  _response: HttpResponse & {
+    /**
+     * The response body as text (string format)
+     */
+    bodyAsText: string;
+    /**
+     * The response body as parsed JSON or XML
+     */
+    parsedBody: TokenStatus[];
+  };
 };
 
 /**
@@ -325,14 +324,14 @@ export type UserTokenExchangeAsyncResponse = {
   /**
    * The underlying HTTP response.
    */
-  _response: msRest.HttpResponse & {
-      /**
-       * The response body as text (string format)
-       */
-      bodyAsText: string;
-      /**
-       * The response body as parsed JSON or XML
-       */
-      parsedBody: any;
-    };
+  _response: HttpResponse & {
+    /**
+     * The response body as text (string format)
+     */
+    bodyAsText: string;
+    /**
+     * The response body as parsed JSON or XML
+     */
+    parsedBody: any;
+  };
 };
