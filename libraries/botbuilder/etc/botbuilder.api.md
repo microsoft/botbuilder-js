@@ -480,9 +480,9 @@ export function teamsGetTenant(activity: Activity): TenantInfo | null;
 
 // @public
 export class TeamsInfo {
-    static getMeetingInfo(context: TurnContext, meetingId?: string): Promise<MeetingInfo>;
     static cancelOperation(context: TurnContext, operationId: string): Promise<CancelOperationResponse>;
     static getFailedEntries(context: TurnContext, operationId: string): Promise<BatchFailedEntriesResponse>;
+    static getMeetingInfo(context: TurnContext, meetingId?: string): Promise<MeetingInfo>;
     static getMeetingParticipant(context: TurnContext, meetingId?: string, participantId?: string, tenantId?: string): Promise<TeamsMeetingParticipant>;
     static getMember(context: TurnContext, userId: string): Promise<TeamsChannelAccount>;
     // @deprecated
