@@ -20,7 +20,7 @@ import {
     ConversationParameters,
     ConversationReference,
     TeamsMeetingParticipant,
-    TeamsMeetingInfo,
+    MeetingInfo,
     Channels,
     MeetingNotification,
     MeetingNotificationResponse,
@@ -101,9 +101,9 @@ export class TeamsInfo {
      *
      * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      * @param meetingId The BASE64-encoded id of the Teams meeting.
-     * @returns The [TeamsMeetingInfo](xref:botbuilder-core.TeamsMeetingInfo) fetched
+     * @returns The [MeetingInfo](xref:botframework-schema.MeetingInfo) fetched
      */
-    static async getMeetingInfo(context: TurnContext, meetingId?: string): Promise<TeamsMeetingInfo> {
+    static async getMeetingInfo(context: TurnContext, meetingId?: string): Promise<MeetingInfo> {
         if (!context) {
             throw new Error('context is required.');
         }
