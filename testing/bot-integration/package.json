@@ -18,7 +18,7 @@
   "devDependencies": {
     "@types/express": "^4.17.7",
     "@types/restify": "^8.4.2",
-    "express": "^4.17.3",
+    "express": "^4.19.2",
     "restify": "^8.5.1"
   }
 }
