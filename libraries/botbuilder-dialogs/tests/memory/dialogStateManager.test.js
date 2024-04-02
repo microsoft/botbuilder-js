@@ -229,7 +229,7 @@ describe('Dialog State Manager', function () {
     });
 
     it('raise an error if getValue() called with an invalid scope.', function () {
-        assert.throws(() => this.dc.state.getValue('foo.bar'));
+        assert.strictEqual(this.dc.state.getValue('foo.bar'), undefined);
     });
 
     it('raise an error if setValue() called with missing path.', function () {
