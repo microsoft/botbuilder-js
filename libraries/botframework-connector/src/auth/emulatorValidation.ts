@@ -77,16 +77,16 @@ export namespace EmulatorValidation {
 
         //Validation to manage the issuer object as a string[].
         if (Array.isArray(ToBotFromBotOrEmulatorTokenValidationParameters.issuer)) {
-            const tid = token?.payload?.tid ? '/' + token.payload.tid + '/' : '';
+            const tenantId = token?.payload?.tid ?? '';
 
             //Validate if there is an existing issuer with the same tid value.
             if (
-                tid != '' &&
-                ToBotFromBotOrEmulatorTokenValidationParameters.issuer.find((issuer) => issuer.includes(tid)) == null
+                tenantId != '' &&
+                ToBotFromBotOrEmulatorTokenValidationParameters.issuer.find((issuer) => issuer.includes(tenantId)) == null
             ) {
                 //If the issuer doesn't exist, this is added using the Emulator token issuer structure.
                 //This allows use of the SingleTenant authentication through Emulator.
-                const newIssuer = 'https://sts.windows.net' + tid;
+                const newIssuer = AuthenticationConstants.ValidTokenIssuerUrlTemplateV1 + `${tenantId}/`;
                 ToBotFromBotOrEmulatorTokenValidationParameters.issuer.push(newIssuer);
             }
         }
