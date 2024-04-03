@@ -7,7 +7,7 @@ import { HttpResponse, ServiceClientOptions, RequestOptionsBase } from '@azure/c
 import {
     ConversationList,
     TeamDetails,
-    TeamsMeetingInfo,
+    MeetingInfo,
     MeetingNotificationResponse,
     TeamsMeetingParticipant,
     BatchOperationResponse,
@@ -112,7 +112,7 @@ export interface TeamsFetchMeetingParticipantOptionalParams extends RequestOptio
 /**
  * Contains response data for the fetchMeetingInfo operation.
  */
-export type TeamsMeetingInfoResponse = TeamsMeetingInfo & {
+export type TeamsMeetingInfoResponse = MeetingInfo & {
     /**
      * The underlying HTTP response.
      */

@@ -118,7 +118,10 @@ export class DialogStateManager {
         // Get memory scope to search over
         const scope = this.getMemoryScope(segments[0].toString());
         if (scope == undefined) {
-            throw new Error(`DialogStateManager.getValue: a scope of '${segments[0]}' wasn't found.`);
+            console.warn(
+                `DialogStateManager.getValue: a scope of '${segments[0]}' wasn't found for '${pathExpression}'.`
+            );
+            return returnDefault();
         }
 
         // Search over path
