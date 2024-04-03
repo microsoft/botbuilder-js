@@ -82,7 +82,8 @@ export namespace EmulatorValidation {
             //Validate if there is an existing issuer with the same tid value.
             if (
                 tenantId != '' &&
-                ToBotFromBotOrEmulatorTokenValidationParameters.issuer.find((issuer) => issuer.includes(tenantId)) == null
+                ToBotFromBotOrEmulatorTokenValidationParameters.issuer.find((issuer) => issuer.includes(tenantId)) ==
+                    null
             ) {
                 //If the issuer doesn't exist, this is added using the Emulator token issuer structure.
                 //This allows use of the SingleTenant authentication through Emulator.
