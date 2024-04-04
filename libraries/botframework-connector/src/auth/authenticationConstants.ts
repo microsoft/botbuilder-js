@@ -175,7 +175,7 @@ export namespace AuthenticationConstants {
     /**
      * Tenant ID claim name. As used in Microsoft AAD tokens.
      */
-    export const TenantIdClaim = "tid";
+    export const TenantIdClaim = 'tid';
 
     /**
      * AppId used for creating skill claims when there is no appId and password configured.
