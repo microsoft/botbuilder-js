@@ -173,6 +173,11 @@ export namespace AuthenticationConstants {
     export const ServiceUrlClaim = 'serviceurl';
 
     /**
+     * Tenant ID claim name. As used in Microsoft AAD tokens.
+     */
+    export const TenantIdClaim = "tid";
+
+    /**
      * AppId used for creating skill claims when there is no appId and password configured.
      */
     export const AnonymousSkillAppId = 'AnonymousSkill';

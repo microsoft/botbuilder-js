@@ -69,21 +69,21 @@ export namespace EmulatorValidation {
         }
 
         // Is there an Issuer?
-        const issuer: string = token.payload.iss;
+        const issuer: string = token.payload[AuthenticationConstants.IssuerClaim];
         if (!issuer) {
             // No Issuer, means it's not from the Emulator.
             return false;
         }
 
-        //Validation to manage the issuer object as a string[].
+        //Validation to manage the issuer object as a string.
         if (Array.isArray(ToBotFromBotOrEmulatorTokenValidationParameters.issuer)) {
-            const tenantId = token?.payload?.tid ?? '';
+            const tenantId = token?.payload[AuthenticationConstants.TenantIdClaim] ?? '';
 
             //Validate if there is an existing issuer with the same tid value.
             if (
                 tenantId != '' &&
                 ToBotFromBotOrEmulatorTokenValidationParameters.issuer.find((issuer) => issuer.includes(tenantId)) ==
-                    null
+                null
             ) {
                 //If the issuer doesn't exist, this is added using the Emulator token issuer structure.
                 //This allows use of the SingleTenant authentication through Emulator.
