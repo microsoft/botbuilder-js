@@ -45,4 +45,7 @@ export class TurnPath {
 
     /// This is a bool which if set means that the turncontext.activity has been consumed by some component in the system.
     static readonly activityProcessed = 'turn.activityProcessed';
+
+    /// Used to limit the execution of a trigger avoiding infinite loops in case of errors.
+    static readonly executionLimit = 'turn.executionLimit';
 }
