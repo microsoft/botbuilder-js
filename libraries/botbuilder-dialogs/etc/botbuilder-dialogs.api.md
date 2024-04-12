@@ -823,6 +823,8 @@ export class TurnPath {
     // (undocumented)
     static readonly dialogEvent = "turn.dialogEvent";
     // (undocumented)
+    static readonly executionLimit = "turn.executionLimit";
+    // (undocumented)
     static readonly interrupted = "turn.interrupted";
     // (undocumented)
     static readonly lastResult = "turn.lastresult";
