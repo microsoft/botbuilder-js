@@ -35,7 +35,7 @@
     "botbuilder-dialogs-declarative": "4.1.6",
     "botframework-connector": "4.1.6",
     "lodash": "^4.17.21",
-    "node-fetch": "^2.6.7",
+    "node-fetch": "^3.3.2",
     "url-parse": "^1.5.9",
     "zod": "^3.22.4"
   },
