@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import * as z from 'zod';
 import fs from 'fs';
 import path from 'path';
@@ -529,6 +531,7 @@ function registerQnAComponents(services: ServiceCollection, configuration: Confi
  *
  * @param applicationRoot absolute path to root of application
  * @param settingsDirectory directory where settings files are located
+ * @param defaultServices services to use as default
  * @returns service collection and configuration
  *
  * @remarks
@@ -567,7 +570,8 @@ function registerQnAComponents(services: ServiceCollection, configuration: Confi
  */
 export async function getRuntimeServices(
     applicationRoot: string,
-    settingsDirectory: string
+    settingsDirectory: string,
+    defaultServices?: Record<string, any>
 ): Promise<[ServiceCollection, Configuration]>;
 
 /**
@@ -575,11 +579,13 @@ export async function getRuntimeServices(
  *
  * @param applicationRoot absolute path to root of application
  * @param configuration a fully initialized configuration instance to use
+ * @param defaultServices services to use as default
  * @returns service collection and configuration
  */
 export async function getRuntimeServices(
     applicationRoot: string,
-    configuration: Configuration
+    configuration: Configuration,
+    defaultServices?: Record<string, any>
 ): Promise<[ServiceCollection, Configuration]>;
 
 /**
@@ -587,7 +593,8 @@ export async function getRuntimeServices(
  */
 export async function getRuntimeServices(
     applicationRoot: string,
-    configurationOrSettingsDirectory: Configuration | string
+    configurationOrSettingsDirectory: Configuration | string,
+    defaultServices: Record<string, any> = {}
 ): Promise<[ServiceCollection, Configuration]> {
     // Resolve configuration
     let configuration: Configuration;
@@ -619,6 +626,7 @@ export async function getRuntimeServices(
         middlewares: new MiddlewareSet(),
         pathResolvers: [],
         serviceClientCredentialsFactory: undefined,
+        ...defaultServices,
     });
 
     services.addFactory<ResourceExplorer, { declarativeTypes: ComponentDeclarativeTypes[] }>(

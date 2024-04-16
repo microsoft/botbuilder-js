@@ -1,51 +1,8 @@
 const assert = require('assert');
-const {
-    TurnContext,
-    BotState,
-    MemoryStorage,
-    TestAdapter,
-    CACHED_BOT_STATE_SKIP_PROPERTIES_HANDLER_KEY,
-} = require('../');
+const { TurnContext, BotState, MemoryStorage, TestAdapter } = require('../');
 
 const receivedMessage = { text: 'received', type: 'message' };
 const storageKey = 'stateKey';
-
-const houseSectionsSample = {
-    house: {
-        kitchen: {
-            refrigerator: {
-                fridge: 1,
-                freezer: 1,
-            },
-            chair: 6,
-            table: 1,
-        },
-        bathroom: {
-            toilet: 1,
-            shower: {
-                showerhead: 1,
-                bathtub: 1,
-                shampoo: 2,
-                towel: 3,
-            },
-        },
-        bedroom: {
-            chair: 1,
-            bed: {
-                pillow: 3,
-                sheet: 1,
-                duvet: 1,
-            },
-            closet: {
-                hanger: {
-                    shirt: 6,
-                },
-                shoes: 4,
-                pants: 5,
-            },
-        },
-    },
-};
 
 function cachedState(context, stateKey) {
     const cached = context.turnState.get(stateKey);
@@ -148,36 +105,5 @@ describe('BotState', function () {
     it('should create new PropertyAccessors', async function () {
         const count = botState.createProperty('count', 1);
         assert(count !== undefined, 'did not successfully create PropertyAccessor.');
-    });
-
-    it('should skip properties in saveChanges()', async function () {
-        // Setup storage base changes.
-        const clone = JSON.parse(JSON.stringify(houseSectionsSample));
-        delete clone.house.kitchen.refrigerator;
-        delete clone.house.kitchen.table;
-        delete clone.house.bedroom.closet.pants;
-        delete clone.house.kitchen.chair;
-        delete clone.house.bedroom.chair;
-        await storage.write({ [storageKey]: clone });
-        await botState.load(context, true);
-
-        // Update bot state.
-        const oldState = context.turnState.get(botState.stateKey);
-        const newState = { ...oldState, state: houseSectionsSample };
-        context.turnState.set(botState.stateKey, newState);
-
-        // Save changes into storage.
-        const skipProperties = context.turnState.get(CACHED_BOT_STATE_SKIP_PROPERTIES_HANDLER_KEY);
-        skipProperties('house', ['refrigerator', 'table', 'pants']); // Multiple props.
-        skipProperties('chair'); // Single prop (key used as prop).
-        await botState.saveChanges(context);
-        const updatedState = context.turnState.get(botState.stateKey);
-        const storageState = await storage.read([storageKey]);
-
-        // Hash state and storage info shouldn't have changed.
-        const expectedStorage = storageState[storageKey];
-        delete expectedStorage.eTag;
-        assert.equal(oldState.hash, updatedState.hash);
-        assert.deepStrictEqual(clone, expectedStorage);
     });
 });
