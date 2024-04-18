@@ -44,4 +44,12 @@ describe('ConditionalsTests', function () {
     it('OnRepromptDialog', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'ConditionalsTests_OnRepromptDialog');
     });
+
+    it('OnError loop limit', async function () {
+        await TestUtils.runTestScript(resourceExplorer, 'ConditionalsTests_OnErrorLoop');
+    });
+
+    it('OnError default loop limit', async function () {
+        await TestUtils.runTestScript(resourceExplorer, 'ConditionalsTests_OnErrorLoopDefaultLimit');
+    });
 });
