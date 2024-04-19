@@ -53,6 +53,10 @@ export class PasswordServiceClientCredentialFactory implements ServiceClientCred
      * @param appId The app ID.
      * @param password The app password.
      * @param tenantId Tenant ID of the Azure AD tenant where the bot is created.
+     *   * Required for SingleTenant app types.
+     *   * Optional for MultiTenant app types. **Note**: '_botframework.com_' is the default tenant when no value is provided.
+     *
+     * More information: https://learn.microsoft.com/en-us/security/zero-trust/develop/identity-supported-account-types.
      */
     constructor(appId: string, password: string, tenantId: string);
 
