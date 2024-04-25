@@ -416,7 +416,7 @@ export class ChannelServiceRoutes {
             } else {
                 let requestData = '';
                 // eslint-disable-next-line prettier/prettier
-                req.on('data', (chunk) => { // lgtm[js/stack-trace-exposure]
+                req.on('data', (chunk) => { // CodeQL [SM1524] validation of the data is being made in the 'end' event
                     requestData += chunk;
                 });
                 req.on('end', () => {
