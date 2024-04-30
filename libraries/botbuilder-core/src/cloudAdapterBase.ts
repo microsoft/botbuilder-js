@@ -349,49 +349,54 @@ export abstract class CloudAdapterBase extends BotAdapter {
         activity: Activity,
         logic: (context: TurnContext) => Promise<void>
     ): Promise<InvokeResponse | undefined> {
-        // Authenticate the inbound request, extracting parameters and create a ConnectorFactory for creating a Connector for outbound requests.
-        const authenticateRequestResult =
-            typeof authHeaderOrAuthenticateRequestResult === 'string'
-                ? await this.botFrameworkAuthentication.authenticateRequest(
-                      activity,
-                      authHeaderOrAuthenticateRequestResult
-                  )
-                : authHeaderOrAuthenticateRequestResult;
+        try {
+            // Authenticate the inbound request, extracting parameters and create a ConnectorFactory for creating a Connector for outbound requests.
+            const authenticateRequestResult =
+                typeof authHeaderOrAuthenticateRequestResult === 'string'
+                    ? await this.botFrameworkAuthentication.authenticateRequest(
+                        activity,
+                        authHeaderOrAuthenticateRequestResult
+                    )
+                    : authHeaderOrAuthenticateRequestResult;
 
-        // Set the callerId on the activity.
-        activity.callerId = authenticateRequestResult.callerId;
+            // Set the callerId on the activity.
+            activity.callerId = authenticateRequestResult.callerId;
 
-        // Create the connector client to use for outbound requests.
-        const connectorClient = await authenticateRequestResult.connectorFactory?.create(
-            activity.serviceUrl,
-            authenticateRequestResult.audience
-        );
+            // Create the connector client to use for outbound requests.
+            const connectorClient = await authenticateRequestResult.connectorFactory?.create(
+                activity.serviceUrl,
+                authenticateRequestResult.audience
+            );
 
-        if (!connectorClient) {
-            throw new Error('Unable to extract ConnectorClient from turn context.');
+            if (!connectorClient) {
+                throw new Error('Unable to extract ConnectorClient from turn context.');
+            }
+
+            // Create a UserTokenClient instance for the application to use. (For example, it would be used in a sign-in prompt.)
+            const userTokenClient = await this.botFrameworkAuthentication.createUserTokenClient(
+                authenticateRequestResult.claimsIdentity
+            );
+
+            // Create a turn context and run the pipeline.
+            const context = this.createTurnContext(
+                activity,
+                authenticateRequestResult.claimsIdentity,
+                authenticateRequestResult.audience,
+                connectorClient,
+                userTokenClient,
+                logic,
+                authenticateRequestResult.connectorFactory
+            );
+
+            // Run the pipeline.
+            await this.runMiddleware(context, logic);
+
+            // If there are any results they will have been left on the TurnContext.
+            return this.processTurnResults(context);
         }
-
-        // Create a UserTokenClient instance for the application to use. (For example, it would be used in a sign-in prompt.)
-        const userTokenClient = await this.botFrameworkAuthentication.createUserTokenClient(
-            authenticateRequestResult.claimsIdentity
-        );
-
-        // Create a turn context and run the pipeline.
-        const context = this.createTurnContext(
-            activity,
-            authenticateRequestResult.claimsIdentity,
-            authenticateRequestResult.audience,
-            connectorClient,
-            userTokenClient,
-            logic,
-            authenticateRequestResult.connectorFactory
-        );
-
-        // Run the pipeline.
-        await this.runMiddleware(context, logic);
-
-        // If there are any results they will have been left on the TurnContext.
-        return this.processTurnResults(context);
+        catch (err) {
+            return Promise.reject(err);
+        }
     }
 
     /**
