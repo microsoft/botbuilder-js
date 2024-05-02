@@ -354,9 +354,9 @@ export abstract class CloudAdapterBase extends BotAdapter {
             const authenticateRequestResult =
                 typeof authHeaderOrAuthenticateRequestResult === 'string'
                     ? await this.botFrameworkAuthentication.authenticateRequest(
-                        activity,
-                        authHeaderOrAuthenticateRequestResult
-                    )
+                          activity,
+                          authHeaderOrAuthenticateRequestResult
+                      )
                     : authHeaderOrAuthenticateRequestResult;
 
             // Set the callerId on the activity.
@@ -393,8 +393,7 @@ export abstract class CloudAdapterBase extends BotAdapter {
 
             // If there are any results they will have been left on the TurnContext.
             return this.processTurnResults(context);
-        }
-        catch (err) {
+        } catch (err) {
             return Promise.reject(err);
         }
     }
