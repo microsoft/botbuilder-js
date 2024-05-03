@@ -8,8 +8,6 @@ import path from 'path';
 import { Package } from './package';
 import { readJsonFile } from './file';
 
-export const glob = (paths: string[]): Promise<string[]> => globby(paths);
-
 // Represents a workspace
 export interface Workspace {
     absPath: string;
@@ -41,7 +39,10 @@ export async function collectWorkspacePackages(
     filters: Partial<Filters> = {}
 ): Promise<Array<Workspace>> {
     // Note: posix is required, this emits absolute paths that are platform specific
-    const paths = await glob(workspaces.map((workspace) => path.posix.join(repoRoot, workspace, 'package.json')));
+    const paths = await globby(
+        workspaces.map((workspace) => path.posix.join(repoRoot, workspace, 'package.json')),
+        { gitignore: true, cwd: process.env['INIT_CWD'] }
+    );
 
     const maybeWorkspaces = await Promise.all(
         paths.map(

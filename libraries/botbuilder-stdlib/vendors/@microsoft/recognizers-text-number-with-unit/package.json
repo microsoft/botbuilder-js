@@ -1,0 +1,29 @@
+{
+  "internal": true,
+  "name": "@microsoft/recognizers-text-number-with-unit",
+  "version": "1.1.4",
+  "description": "recognizers-text-number-with-unit provides robust recognition and resolution of numbers with units expressed in multiple languages.",
+  "author": "Microsoft Corp.",
+  "license": "MIT",
+  "keywords": [
+    "nlp",
+    "nlp-entity-extraction",
+    "entity-extraction",
+    "numex",
+    "parser-library"
+  ],
+  "main": "dist/recognizers-text-number-with-unit.umd.js",
+  "module": "dist/recognizers-text-number-with-unit.es5.js",
+  "typings": "dist/types/recognizers-text-number-with-unit.d.ts",
+  "browser": "dist/recognizers-text-number-with-unit.browser.js",
+  "bugs": {
+    "url": "https://github.com/Microsoft/botbuilder-js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Microsoft/botbuilder-js.git"
+  },
+  "engines": {
+    "node": ">=6.0.0"
+  }
+}

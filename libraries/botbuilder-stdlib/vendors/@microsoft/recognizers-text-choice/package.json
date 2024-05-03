@@ -1,0 +1,31 @@
+{
+  "internal": true,
+  "name": "@microsoft/recognizers-text-choice",
+  "version": "1.1.4",
+  "description": "recognizers-text-choice provides recognition of Boolean (yes/no) answers expressed in multiple languages, as well as base classes to support lists of alternative choices.",
+  "author": "Microsoft Corp.",
+  "license": "MIT",
+  "keywords": [
+    "nlp",
+    "nlp-entity-extraction",
+    "entity-extraction",
+    "boolean",
+    "alternatives",
+    "choices",
+    "parser-library"
+  ],
+  "main": "dist/recognizers-text-choice.umd.js",
+  "module": "dist/recognizers-text-choice.es5.js",
+  "typings": "dist/types/recognizers-text-choice.d.ts",
+  "browser": "dist/recognizers-text-choice.browser.js",
+  "bugs": {
+    "url": "https://github.com/Microsoft/botbuilder-js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Microsoft/botbuilder-js.git"
+  },
+  "engines": {
+    "node": ">=6.0.0"
+  }
+}

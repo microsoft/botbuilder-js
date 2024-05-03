@@ -21,6 +21,20 @@
     "postbuild": "downlevel-dts lib _ts3.4/lib",
     "test": "yarn build && nyc mocha --check-leaks tests"
   },
+  "dependencies": {
+    "bignumber.js": "^7.2.1",
+    "grapheme-splitter": "^1.0.2",
+    "lodash.escaperegexp": "^4.1.2",
+    "lodash.isequal": "^4.5.0",
+    "lodash.last": "^3.0.0",
+    "lodash.max": "^4.0.1",
+    "lodash.tonumber": "^4.0.3",
+    "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "chai-as-promised": "^7.1.1"
+  },
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "typesVersions": {
@@ -33,6 +47,7 @@
   "files": [
     "_ts3.4",
     "lib",
-    "src"
+    "src",
+    "vendors"
   ]
 }

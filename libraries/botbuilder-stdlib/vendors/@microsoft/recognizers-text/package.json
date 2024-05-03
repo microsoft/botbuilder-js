@@ -1,0 +1,28 @@
+{
+  "internal": true,
+  "name": "@microsoft/recognizers-text",
+  "version": "1.1.4",
+  "description": "recognizers-text provides base classes for robust recognition and resolution of text entities.",
+  "author": "Microsoft Corp.",
+  "license": "MIT",
+  "keywords": [
+    "nlp",
+    "nlp-entity-extraction",
+    "entity-extraction",
+    "parser-library"
+  ],
+  "main": "dist/recognizers-text.umd.js",
+  "module": "dist/recognizers-text.es5.js",
+  "typings": "dist/types/recognizers-text.d.ts",
+  "browser": "dist/recognizers-text.browser.js",
+  "bugs": {
+    "url": "https://github.com/Microsoft/botbuilder-js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Microsoft/botbuilder-js.git"
+  },
+  "engines": {
+    "node": ">=6.0.0"
+  }
+}

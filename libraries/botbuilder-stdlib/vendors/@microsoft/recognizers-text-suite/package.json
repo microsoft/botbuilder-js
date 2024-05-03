@@ -1,0 +1,31 @@
+{
+  "internal": true,
+  "name": "@microsoft/recognizers-text-suite",
+  "version": "1.1.4",
+  "description": "recognizers-text-suite provides robust recognition and resolution of numbers, units, date/time, and more; expressed in multiple languages.",
+  "author": "Microsoft Corp.",
+  "license": "MIT",
+  "keywords": [
+    "nlp",
+    "nlp-entity-extraction",
+    "datetime",
+    "entity-extraction",
+    "timex",
+    "numex",
+    "parser-library"
+  ],
+  "main": "dist/recognizers-text-suite.umd.js",
+  "module": "dist/recognizers-text-suite.es5.js",
+  "typings": "dist/types/recognizers-text-suite.d.ts",
+  "browser": "dist/recognizers-text-suite.browser.js",
+  "bugs": {
+    "url": "https://github.com/Microsoft/botbuilder-js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Microsoft/botbuilder-js.git"
+  },
+  "engines": {
+    "node": ">=6.0.0"
+  }
+}

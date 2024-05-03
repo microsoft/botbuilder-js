@@ -1,0 +1,31 @@
+{
+  "internal": true,
+  "name": "@microsoft/recognizers-text-date-time",
+  "version": "1.1.4",
+  "description": "recognizers-text provides robust recognition and resolution of date/time expressed in multiple languages.",
+  "author": "Microsoft Corp.",
+  "license": "MIT",
+  "keywords": [
+    "nlp",
+    "nlp-entity-extraction",
+    "datetime",
+    "entity-extraction",
+    "timex",
+    "numex",
+    "parser-library"
+  ],
+  "main": "dist/recognizers-text-date-time.umd.js",
+  "module": "dist/recognizers-text-date-time.es5.js",
+  "typings": "dist/types/recognizers-text-date-time.d.ts",
+  "browser": "dist/recognizers-text-date-time.browser.js",
+  "bugs": {
+    "url": "https://github.com/Microsoft/botbuilder-js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Microsoft/botbuilder-js.git"
+  },
+  "engines": {
+    "node": ">=6.0.0"
+  }
+}
