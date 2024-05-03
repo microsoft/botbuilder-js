@@ -1,3 +1,10 @@
 {
-    "extends": "../../.eslintrc.json"
+    "extends": "../../.eslintrc.json",
+    "ignorePatterns": [
+      "_ts3.4/",
+      "dist/",
+      "lib/",
+      "node_modules/",
+      "vendors/"
+    ]
 }

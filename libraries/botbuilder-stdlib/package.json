@@ -16,7 +16,7 @@
   "scripts": {
     "build": "tsc -b",
     "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
-    "depcheck": "depcheck --config ../../.depcheckrc",
+    "depcheck": "depcheck --config ../../.depcheckrc --ignores sinon,bignumber.js,grapheme-splitter,lodash.escaperegexp,lodash.isequal,lodash.last,lodash.max,lodash.tonumber,lodash,chai,chai-as-promised",
     "lint": "eslint . --ext .js,.ts",
     "postbuild": "downlevel-dts lib _ts3.4/lib",
     "test": "yarn build && nyc mocha --check-leaks tests"
