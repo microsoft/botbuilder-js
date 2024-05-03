@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { recognizeDimension } from '@microsoft/recognizers-text-number-with-unit';
+import { recognizeDimension } from 'botbuilder-stdlib/vendors/@microsoft/recognizers-text-number-with-unit';
 import { ModelResult } from 'botbuilder-dialogs';
 import { TextEntityRecognizer } from './textEntityRecognizer';
 

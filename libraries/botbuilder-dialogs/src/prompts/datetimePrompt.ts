@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import * as Recognizers from '@microsoft/recognizers-text-date-time';
+import * as Recognizers from 'botbuilder-stdlib/vendors/@microsoft/recognizers-text-date-time';
 import { Activity, InputHints, TurnContext } from 'botbuilder-core';
 import { Prompt, PromptOptions, PromptRecognizerResult, PromptValidator } from './prompt';
 

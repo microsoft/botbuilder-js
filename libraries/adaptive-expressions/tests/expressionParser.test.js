@@ -2,7 +2,7 @@
 const assert = require('assert');
 const bigInt = require('big-integer');
 const { Expression, SimpleObjectMemory, FunctionUtils, Options, NumericEvaluator, StackedMemory } = require('../lib');
-const { TimexProperty } = require('@microsoft/recognizers-text-data-types-timex-expression');
+const { TimexProperty } = require('botbuilder-stdlib/vendors/@microsoft/recognizers-text-data-types-timex-expression');
 const { useFakeTimers } = require('sinon');
 const os = require('os');
 

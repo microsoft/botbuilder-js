@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-const { TimexProperty } = require('@microsoft/recognizers-text-data-types-timex-expression');
+const { TimexProperty } = require('botbuilder-stdlib/vendors/@microsoft/recognizers-text-data-types-timex-expression');
 const { InputHints, MessageFactory} = require('botbuilder');
 const { ConfirmPrompt, TextPrompt, WaterfallDialog } = require('botbuilder-dialogs');
 const { CancelAndHelpDialog } = require('./cancelAndHelpDialog');

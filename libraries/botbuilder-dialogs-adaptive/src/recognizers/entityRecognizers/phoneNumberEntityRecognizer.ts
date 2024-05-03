@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { recognizePhoneNumber } from '@microsoft/recognizers-text-sequence';
+import { recognizePhoneNumber } from 'botbuilder-stdlib/vendors/@microsoft/recognizers-text-sequence';
 import { ModelResult } from 'botbuilder-dialogs';
 import { TextEntityRecognizer } from './textEntityRecognizer';
 

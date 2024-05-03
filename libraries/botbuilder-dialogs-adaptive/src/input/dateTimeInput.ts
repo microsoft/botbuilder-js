@@ -12,7 +12,7 @@ import { InputDialog, InputDialogConfiguration, InputState } from './inputDialog
 import { StringProperty } from '../properties';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
-import * as Recognizers from '@microsoft/recognizers-text-date-time';
+import * as Recognizers from 'botbuilder-stdlib/vendors/@microsoft/recognizers-text-date-time';
 
 export interface DateTimeInputConfiguration extends InputDialogConfiguration {
     defaultLocale?: StringProperty;

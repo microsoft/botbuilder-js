@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { recognizeMention } from '@microsoft/recognizers-text-sequence';
+import { recognizeMention } from 'botbuilder-stdlib/vendors/@microsoft/recognizers-text-sequence';
 import { ModelResult } from 'botbuilder-dialogs';
 import { TextEntityRecognizer } from './textEntityRecognizer';
 

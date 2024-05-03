@@ -18,7 +18,7 @@ import { TimeZoneConverter } from '../timeZoneConverter';
 import dayjs from 'dayjs';
 import timezone from 'dayjs/plugin/timezone';
 dayjs.extend(timezone);
-import { TimexProperty, Time } from '@microsoft/recognizers-text-data-types-timex-expression';
+import { TimexProperty, Time } from 'botbuilder-stdlib/vendors/@microsoft/recognizers-text-data-types-timex-expression';
 /**
  * Return the previous viable time of a timex expression based on the current time and user's timezone.
  */

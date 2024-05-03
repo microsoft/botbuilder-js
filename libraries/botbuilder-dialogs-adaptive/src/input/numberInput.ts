@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import * as Recognizers from '@microsoft/recognizers-text-number';
+import * as Recognizers from 'botbuilder-stdlib/vendors/@microsoft/recognizers-text-number';
 import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
 import { InputDialog, InputDialogConfiguration, InputState } from './inputDialog';
 import { NumberProperty, StringProperty } from '../properties';

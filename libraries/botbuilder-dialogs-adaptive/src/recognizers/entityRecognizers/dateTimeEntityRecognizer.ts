@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { recognizeDateTime } from '@microsoft/recognizers-text-date-time';
+import { recognizeDateTime } from 'botbuilder-stdlib/vendors/@microsoft/recognizers-text-date-time';
 import { ModelResult } from 'botbuilder-dialogs';
 import { TextEntityRecognizer } from './textEntityRecognizer';
 

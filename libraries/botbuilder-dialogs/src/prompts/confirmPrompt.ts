@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import * as Recognizers from '@microsoft/recognizers-text-choice';
+import * as Recognizers from 'botbuilder-stdlib/vendors/@microsoft/recognizers-text-choice';
 import { Activity, TurnContext } from 'botbuilder-core';
 import { Choice, ChoiceFactoryOptions, recognizeChoices } from '../choices';
 import { ListStyle, Prompt, PromptOptions, PromptRecognizerResult, PromptValidator } from './prompt';

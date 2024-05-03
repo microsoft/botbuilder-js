@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { TimexProperty } from '@microsoft/recognizers-text-data-types-timex-expression';
+import { TimexProperty } from 'botbuilder-stdlib/vendors/@microsoft/recognizers-text-data-types-timex-expression';
 
 import { Expression } from '../expression';
 import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
