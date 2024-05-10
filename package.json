@@ -41,7 +41,7 @@
     "postinstall": "npx rimraf node_modules/@microsoft/orchestrator-core/node_modules/@babel/traverse"
   },
   "resolutions": {
-    "async": "3.2.3",
+    "async": "^3.2.3",
     "minimist": "^1.2.6",
     "mixme": "0.5.2",
     "node-fetch": "2.6.7",
@@ -58,12 +58,12 @@
     "**/istanbul-lib-instrument/@babel/core": "^7.23.2",
     "**/@babel/plugin-proposal-class-properties/@babel/core": "^7.23.2",
     "follow-redirects": "^1.15.4",
-    "@types/ramda": "0.26.0",
+    "@types/ramda": "0.29.6",
     "@azure/msal-browser": "^2.38.3",
     "@azure/msal-node": "^1.18.4",
-    "axios": "0.28.0",
+    "axios": "^0.28.0",
     "tar": "6.1.9",
-    "ws": "7.4.6"
+    "ws": "8.17.0"
   },
   "devDependencies": {
     "@azure/logger": "^1.0.2",
