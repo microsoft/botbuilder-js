@@ -41,7 +41,7 @@
     "botframework-connector": "4.1.6",
     "nconf": "0.11.4",
     "yargs-parser": "^20.2.7",
-    "zod": "^3.22.5"
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@types/nconf": "0.10.0",

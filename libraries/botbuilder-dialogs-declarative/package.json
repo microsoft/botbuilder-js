@@ -31,7 +31,7 @@
     "botbuilder-dialogs": "4.1.6",
     "botbuilder-stdlib": "4.1.6",
     "chokidar": "^3.4.0",
-    "zod": "^3.22.5"
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "adaptive-expressions": "4.1.6",

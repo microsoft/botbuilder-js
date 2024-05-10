@@ -32,7 +32,7 @@
     "botframework-connector": "4.1.6",
     "botframework-schema": "4.1.6",
     "uuid": "^8.3.2",
-    "zod": "^3.22.5"
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@microsoft/bf-chatdown": "^4.15.0",

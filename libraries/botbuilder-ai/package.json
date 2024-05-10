@@ -37,7 +37,7 @@
     "lodash": "^4.17.21",
     "node-fetch": "^2.6.7",
     "url-parse": "^1.5.9",
-    "zod": "^3.22.5"
+    "zod": "^3.22.4"
   },
   "resolutions": {
     "follow-redirects": "^1.14.8"
