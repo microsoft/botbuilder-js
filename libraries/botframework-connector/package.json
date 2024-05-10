@@ -44,7 +44,7 @@
     "openssl-wrapper": "^0.3.4"
   },
   "devDependencies": {
-    "@types/node": "^14.14.6",
+    "@types/node": "^10.17.27",
     "botbuilder-test-utils": "0.0.0",
     "dotenv": "^6.2.0",
     "nock": "^11.9.1",

@@ -42,7 +42,7 @@
   "devDependencies": {
     "fs-extra": "^7.0.1",
     "nock": "^11.9.1",
-    "node-fetch": "^3.3.2"
+    "node-fetch": "^2.6.7"
   },
   "scripts": {
     "build": "tsc -b",
