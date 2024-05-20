@@ -90,7 +90,7 @@ export class EvaluationOptions {
                                 // eslint-disable-next-line @typescript-eslint/no-unused-vars
                                 this.nullSubstitution = (path) =>
                                     // eslint-disable-next-line security/detect-eval-with-expression
-                                    eval('`' + value.replace(this.nullKeyReplaceStrRegex, '${path}') + '`');
+                                    eval('`' + value.replace(this.nullKeyReplaceStrRegex, '${path}') + '`'); // CodeQL [SM04509] Eval on content that is from a trusted source
                             } else if (key.toLowerCase() === this.lineBreakKey.toLowerCase()) {
                                 this.LineBreakStyle =
                                     value.toLowerCase() === LGLineBreakStyle.Markdown.toString().toLowerCase()
