@@ -47,7 +47,8 @@ export namespace JwtTokenValidation {
             authConfig = new AuthenticationConfiguration();
         }
 
-        if (!authHeader.trim()) {
+        // eslint-disable-next-line prettier/prettier
+        if (!authHeader.trim()) {  // CodeQL [SM01513] We manually validate incoming tokens.  Checking for empty header as part of that.
             const isAuthDisabled = await credentials.isAuthenticationDisabled();
             if (!isAuthDisabled) {
                 throw new AuthenticationError(
@@ -153,7 +154,8 @@ export namespace JwtTokenValidation {
         }
 
         if (isPublicAzure(channelService)) {
-            if (serviceUrl.trim()) {
+            // eslint-disable-next-line prettier/prettier
+            if (serviceUrl.trim()) { // CodeQL [SM01513] We manually validate incoming tokens.  Checking for empty serviceUrl as part of that.
                 return await ChannelValidation.authenticateChannelTokenWithServiceUrl(
                     authHeader,
                     credentials,
@@ -166,7 +168,8 @@ export namespace JwtTokenValidation {
         }
 
         if (isGovernment(channelService)) {
-            if (serviceUrl.trim()) {
+            // eslint-disable-next-line prettier/prettier
+            if (serviceUrl.trim()) { // CodeQL [SM01513] We manually validate incoming tokens.  Checking for empty serviceUrl as part of that.
                 return await GovernmentChannelValidation.authenticateChannelTokenWithServiceUrl(
                     authHeader,
                     credentials,
@@ -179,7 +182,8 @@ export namespace JwtTokenValidation {
         }
 
         // Otherwise use Enterprise Channel Validation
-        if (serviceUrl.trim()) {
+        // eslint-disable-next-line prettier/prettier
+        if (serviceUrl.trim()) { // CodeQL [SM01513] We manually validate incoming tokens.  Checking for empty serviceUrl as part of that.
             return await EnterpriseChannelValidation.authenticateChannelTokenWithServiceUrl(
                 authHeader,
                 credentials,
