@@ -34,10 +34,9 @@
     "botbuilder": "4.1.6",
     "botbuilder-stdlib": "4.1.6",
     "get-stream": "^6.0.0",
-    "bcrypt": "^5.0.1",
+    "bcryptjs": "^2.4.3",
     "lodash": "^4.17.20",
-    "p-map": "^4.0.0",
-    "@types/bcrypt": "^5.0.0"
+    "p-map": "^4.0.0"
   },
   "devDependencies": {
     "fs-extra": "^7.0.1",
