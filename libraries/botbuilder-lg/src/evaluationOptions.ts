@@ -87,7 +87,7 @@ export class EvaluationOptions {
                                     this.strictMode = true;
                                 }
                             } else if (key.toLowerCase() === this.replaceNullKey.toLowerCase()) {
-                                this.nullSubstitution = (path) => value.replace(this.nullKeyReplaceStrRegex, path);
+                                this.nullSubstitution = (path) => value.replace(this.nullKeyReplaceStrRegex, `${path}`);
                             } else if (key.toLowerCase() === this.lineBreakKey.toLowerCase()) {
                                 this.LineBreakStyle =
                                     value.toLowerCase() === LGLineBreakStyle.Markdown.toString().toLowerCase()
