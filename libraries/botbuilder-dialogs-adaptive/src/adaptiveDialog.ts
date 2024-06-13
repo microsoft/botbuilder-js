@@ -555,7 +555,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
                             activityProcessed &&
                             Object.prototype.hasOwnProperty.call(recognized?.intents, OnQnAMatch.qnaMatchIntent) ===
                                 true;
-                                
+
                         if (!isOnQnAMatchProcessed) {
                             // Recognize utterance (ignore handled)
                             const recognizeUtteranceEvent: DialogEvent = {
