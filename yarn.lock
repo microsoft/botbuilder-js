@@ -4090,20 +4090,6 @@ body-parser@1.20.2, body-parser@^1.19.0:
     type-is "~1.6.18"
     unpipe "1.0.0"
 
-botbuilder-stdlib@^4.22.2-internal:
-  version "4.22.2-internal"
-  resolved "https://registry.yarnpkg.com/botbuilder-stdlib/-/botbuilder-stdlib-4.22.2-internal.tgz#862d396c95a0ebec80132f4d32431c805f960305"
-  integrity sha512-ny6rFD/KM63XtiIITrYdwM+1qh9A5m83bf9E8O0cTrFQjvHLP+zHAHslbl1/Wpv7j6nEnAoLUJB6IVBEkb53Kw==
-
-botframework-schema@^4.22.2:
-  version "4.22.2"
-  resolved "https://registry.yarnpkg.com/botframework-schema/-/botframework-schema-4.22.2.tgz#9a8748704eada397e99d4537e0591ad42bb1f794"
-  integrity sha512-D2SauTdimpfN6TRfDS94GYrRGn/dpTq/n24yAR1cQ9GcV8qq1MydxCYyVbsgzdlkNOFSRJHYJMAp85VKUoYUGg==
-  dependencies:
-    adaptivecards "1.2.3"
-    uuid "^8.3.2"
-    zod "^3.22.4"
-
 botframework-schema@^4.5.1:
   version "4.20.0"
   resolved "https://registry.yarnpkg.com/botframework-schema/-/botframework-schema-4.20.0.tgz#cf691599aa23cb5e7b1aa6e7d8bda87c0e1d9ac1"
@@ -4603,9 +4589,9 @@ caniuse-lite@^1.0.30001541:
   integrity sha512-N0ttd6TrFfuqKNi+pMgWJTb9qrdJu4JSpgPFLe/lrD19ugC6fZgF0pUewRowDwzdDnb9V41mFcdlYgl/PyKf4A==
 
 caniuse-lite@^1.0.30001629:
-  version "1.0.30001634"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001634.tgz#aa563c8e7aeaf552f7ead60371bc8d803425deaa"
-  integrity sha512-fbBYXQ9q3+yp1q1gBk86tOFs4pyn/yxFm5ZNP18OXJDfA3txImOY9PhfxVggZ4vRHDqoU8NrKU81eN0OtzOgRA==
+  version "1.0.30001636"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001636.tgz#b15f52d2bdb95fad32c2f53c0b68032b85188a78"
+  integrity sha512-bMg2vmr8XBsbL6Lr0UHXy/21m84FTxDLWn2FSqMd5PrlbMxwJlQnC2YWYxVgp66PZE+BBNF2jYQUBKCo1FDeZg==
 
 capture-stack-trace@^1.0.0:
   version "1.0.1"
@@ -5981,9 +5967,9 @@ electron-to-chromium@^1.4.535:
   integrity sha512-XbMoT6yIvg2xzcbs5hCADi0dXBh4//En3oFXmtPX+jiyyiCTiM9DGFT2SLottjpEs9Z8Mh8SqahbR96MaHfuSg==
 
 electron-to-chromium@^1.4.796:
-  version "1.4.802"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.802.tgz#49b397eadc95a49b1ac33eebee146b8e5a93773f"
-  integrity sha512-TnTMUATbgNdPXVSHsxvNVSG0uEd6cSZsANjm8c9HbvflZVVn1yTRcmVXYT1Ma95/ssB/Dcd30AHweH2TE+dNpA==
+  version "1.4.803"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.803.tgz#cf55808a5ee12e2a2778bbe8cdc941ef87c2093b"
+  integrity sha512-61H9mLzGOCLLVsnLiRzCbc63uldP0AniRYPV3hbGVtONA1pI7qSGILdbofR7A8TMbOypDocEAjH/e+9k1QIe3g==
 
 elliptic@^6.5.3:
   version "6.5.3"

@@ -45,11 +45,10 @@
   },
   "devDependencies": {
     "@types/node": "^10.17.27",
+    "botbuilder-test-utils": "0.0.0",
     "dotenv": "^6.2.0",
     "nock": "^11.9.1",
-    "should": "^13.2.3",
-    "esmify": "^2.1.1",
-    "babelify": "^10.0.0"
+    "should": "^13.2.3"
   },
   "scripts": {
     "build": "tsc -b",
