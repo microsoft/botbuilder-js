@@ -33,7 +33,7 @@
     "@types/node": "^10.17.27",
     "@types/ws": "^6.0.3",
     "uuid": "^8.3.2",
-    "ws": "^7.1.2"
+    "ws": "^7.5.10"
   },
   "devDependencies": {
     "chai": "^4.2.0"
