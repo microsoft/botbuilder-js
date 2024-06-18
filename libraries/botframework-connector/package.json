@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "@azure/core-http": "^3.0.2",
-    "@azure/identity": "^2.0.4",
+    "@azure/identity": "^4.2.1",
     "@azure/msal-node": "^1.18.4",
     "axios": "^0.28.0",
     "base64url": "^3.0.0",
@@ -38,7 +38,7 @@
     "https-proxy-agent": "^7.0.2",
     "jsonwebtoken": "^9.0.2",
     "@types/jsonwebtoken": "8.3.5",
-    "node-fetch": "^2.6.7",
+    "node-fetch": "^3.3.2",
     "rsa-pem-from-mod-exp": "^0.8.4",
     "zod": "^3.22.4",
     "openssl-wrapper": "^0.3.4"
