@@ -63,7 +63,6 @@
     "@azure/msal-node": "^1.18.4",
     "axios": "^1.7.2",
     "tar": "6.1.9",
-    "ws": "7.4.6",
     "glob-parent": "5.1.2"
   },
   "devDependencies": {
