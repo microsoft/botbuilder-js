@@ -16,7 +16,7 @@
         "botbuilder-dialogs": "4.1.6"
     },
     "devDependencies": {
-        "mocha": "^6.2.3",
+        "mocha": "^10.4.0",
         "nyc": "^15.1.0"
     }
 }
