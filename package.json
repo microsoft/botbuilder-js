@@ -68,7 +68,7 @@
   "devDependencies": {
     "@azure/logger": "^1.0.2",
     "@microsoft/api-extractor": "^7.38.2",
-    "@standardlabs/downlevel-dts": "^0.7.5",
+    "downlevel-dts": "^0.11.0",
     "@standardlabs/is-private": "^1.0.1",
     "@types/lodash": "^4.14.134",
     "@types/mocha": "^5.2.7",
