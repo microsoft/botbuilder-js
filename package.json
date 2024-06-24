@@ -63,7 +63,8 @@
     "@azure/msal-node": "^1.18.4",
     "axios": "^1.7.2",
     "tar": "6.1.9",
-    "glob-parent": "5.1.2"
+    "glob-parent": "5.1.2",
+    "babel-traverse": "npm:@babel/traverse@^7.24.7"
   },
   "devDependencies": {
     "@azure/logger": "^1.0.2",
