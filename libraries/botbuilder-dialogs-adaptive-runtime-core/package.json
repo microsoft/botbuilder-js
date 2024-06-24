@@ -31,7 +31,7 @@
     "dependency-graph": "^0.10.0"
   },
   "devDependencies": {
-    "mocha": "^9.2.2",
+    "mocha": "^10.4.0",
     "nyc": "^15.1.0"
   },
   "scripts": {
