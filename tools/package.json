@@ -56,8 +56,7 @@
     "random-js": "1.0.4",
     "should": "^8.3.1",
     "sinon": "^2.1.0",
-    "xmlbuilder": "0.4.3",
-    "yargs": "3.29.0"
+    "xmlbuilder": "0.4.3"
   },
   "homepage": "http://github.com/azure/azure-sdk-for-node",
   "repository": {
