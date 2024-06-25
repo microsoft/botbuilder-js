@@ -1483,7 +1483,7 @@
     debug "^4.1.0"
     globals "^11.1.0"
 
-"@babel/traverse@^7.24.7", babel-traverse@^6.26.0, "babel-traverse@npm:@babel/traverse@^7.0.0":
+"@babel/traverse@^7.24.7":
   version "7.24.7"
   resolved "https://registry.yarnpkg.com/@babel/traverse/-/traverse-7.24.7.tgz#de2b900163fa741721ba382163fe46a936c40cf5"
   integrity sha512-yb65Ed5S/QAcewNPh0nZczy9JdYXkkAbIsEo+P7BE7yO3txAY30Y/oPa3QkQ5It3xVG2kpKMg9MsdxZaO31uKA==
@@ -2788,13 +2788,6 @@
   resolved "https://registry.yarnpkg.com/@types/nconf/-/nconf-0.10.0.tgz#a5c9753a09c59d44c8e6dc94b57d73f70eb12ebe"
   integrity sha512-Qh0/DWkz7fQm5h+IPFBIO5ixaFdv86V6gpbA8TPA1hhgXYtzGviv9yriqN1B+KTtmLweemKZD5XxY1cTAQPNMg==
 
-"@types/nock@^11.1.0":
-  version "11.1.0"
-  resolved "https://registry.yarnpkg.com/@types/nock/-/nock-11.1.0.tgz#0a8c1056a31ba32a959843abccf99626dd90a538"
-  integrity sha512-jI/ewavBQ7X5178262JQR0ewicPAcJhXS/iFaNJl0VHLfyosZ/kwSrsa6VNQNSO8i9d8SqdRgOtZSOKJ/+iNMw==
-  dependencies:
-    nock "*"
-
 "@types/node-fetch@^2.5.0", "@types/node-fetch@^2.5.3", "@types/node-fetch@^2.5.7":
   version "2.5.7"
   resolved "https://registry.yarnpkg.com/@types/node-fetch/-/node-fetch-2.5.7.tgz#20a2afffa882ab04d44ca786449a276f9f6bbf3c"
@@ -3917,6 +3910,22 @@ babel-template@^6.26.0:
     babel-types "^6.26.0"
     babylon "^6.18.0"
     lodash "^4.17.4"
+
+babel-traverse@^6.26.0, "babel-traverse@npm:@babel/traverse@^7.24.7":
+  version "7.24.7"
+  resolved "https://registry.yarnpkg.com/@babel/traverse/-/traverse-7.24.7.tgz#de2b900163fa741721ba382163fe46a936c40cf5"
+  integrity sha512-yb65Ed5S/QAcewNPh0nZczy9JdYXkkAbIsEo+P7BE7yO3txAY30Y/oPa3QkQ5It3xVG2kpKMg9MsdxZaO31uKA==
+  dependencies:
+    "@babel/code-frame" "^7.24.7"
+    "@babel/generator" "^7.24.7"
+    "@babel/helper-environment-visitor" "^7.24.7"
+    "@babel/helper-function-name" "^7.24.7"
+    "@babel/helper-hoist-variables" "^7.24.7"
+    "@babel/helper-split-export-declaration" "^7.24.7"
+    "@babel/parser" "^7.24.7"
+    "@babel/types" "^7.24.7"
+    debug "^4.3.1"
+    globals "^11.1.0"
 
 babel-types@^6.26.0:
   version "6.26.0"
@@ -9291,11 +9300,6 @@ lodash.pick@4.4.0:
   resolved "https://registry.yarnpkg.com/lodash.pick/-/lodash.pick-4.4.0.tgz#52f05610fff9ded422611441ed1fc123a03001b3"
   integrity sha512-hXt6Ul/5yWjfklSGvLQl8vM//l3FtyHZeuelpzK6mm99pNvN9yTDruNZPEJZD1oWrqo+izBmB7oUfWgcCX7s4Q==
 
-lodash.set@^4.3.2:
-  version "4.3.2"
-  resolved "https://registry.yarnpkg.com/lodash.set/-/lodash.set-4.3.2.tgz#d8757b1da807dde24816b0d6a84bea1a76230b23"
-  integrity sha1-2HV7HagH3eJIFrDWqEvqGnYjCyM=
-
 lodash.template@^4.4.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/lodash.template/-/lodash.template-4.5.0.tgz#f976195cf3f347d0d5f52483569fe8031ccce8ab"
@@ -10155,16 +10159,6 @@ nise@^4.0.4:
     "@sinonjs/text-encoding" "^0.7.1"
     just-extend "^4.0.2"
     path-to-regexp "^1.7.0"
-
-nock@*:
-  version "13.0.5"
-  resolved "https://registry.yarnpkg.com/nock/-/nock-13.0.5.tgz#a618c6f86372cb79fac04ca9a2d1e4baccdb2414"
-  integrity sha512-1ILZl0zfFm2G4TIeJFW0iHknxr2NyA+aGCMTjDVUsBY4CkMRispF1pfIYkTRdAR/3Bg+UzdEuK0B6HczMQZcCg==
-  dependencies:
-    debug "^4.1.0"
-    json-stringify-safe "^5.0.1"
-    lodash.set "^4.3.2"
-    propagate "^2.0.0"
 
 nock@^11.9.1:
   version "11.9.1"
