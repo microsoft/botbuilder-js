@@ -26,8 +26,8 @@ module.exports = () => {
         resolve: {
             extensions: ['.ts', '.js'],
             fallback: {
-                "adaptive-expressions": require.resolve("adaptive-expressions"),
-            }
+                'adaptive-expressions': require.resolve('adaptive-expressions'),
+            },
         },
         module: {
             rules: [
