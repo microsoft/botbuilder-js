@@ -20,9 +20,9 @@
   "types": "./dist/index.d.ts",
   "dependencies": {
     "adaptive-expressions": "4.1.6",
-    "clean-webpack-plugin": "^3.0.0",
+    "clean-webpack-plugin": "^4.0.0",
     "core-js": "^3.3.2",
-    "terser-webpack-plugin": "^4.2.3"
+    "terser-webpack-plugin": "^5.3.10"
   },
   "devDependencies": {
     "@babel/core": "^7.23.2",
@@ -35,8 +35,8 @@
     "babel-loader": "^8.0.6",
     "ts-loader": "^7.0.5",
     "typescript": "3.5.3",
-    "webpack": "^4.43.0",
-    "webpack-cli": "^3.3.12"
+    "webpack": "^5.92.0",
+    "webpack-cli": "^5.1.4"
   },
   "scripts": {
     "build": "webpack",
