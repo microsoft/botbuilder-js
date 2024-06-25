@@ -63,9 +63,7 @@
     "@azure/msal-node": "^1.18.4",
     "axios": "^1.7.2",
     "tar": "6.1.9",
-    "glob-parent": "5.1.2",
-    "wsrun/**/y18n": "^4.0.1",
-    "nyc/**/y18n": "^4.0.1"
+    "glob-parent": "5.1.2"
   },
   "devDependencies": {
     "@azure/logger": "^1.0.2",
