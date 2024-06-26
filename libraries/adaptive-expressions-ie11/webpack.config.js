@@ -23,9 +23,11 @@ module.exports = () => {
             minimize: true,
             minimizer: [new TerserPlugin()],
         },
-        devtool: 'none',
         resolve: {
             extensions: ['.ts', '.js'],
+            fallback: {
+                'adaptive-expressions': require.resolve('adaptive-expressions'),
+            },
         },
         module: {
             rules: [
@@ -37,7 +39,7 @@ module.exports = () => {
                 {
                     test: /\.js$/,
                     loader: 'babel-loader',
-                    query: { compact: false },
+                    options: { compact: false },
                     include: [
                         resolvePackageRoot('adaptive-expressions'),
                         resolvePackageRoot('@microsoft/recognizers-text-data-types-timex-expression'),
