@@ -40,7 +40,7 @@
     "fs-extra": "^7.0.1",
     "htmlparser2": "^6.0.1",
     "uuid": "^8.3.2",
-    "zod": "^3.22.4"
+    "zod": "^3.22.5"
   },
   "devDependencies": {
     "chai": "^4.2.0",
