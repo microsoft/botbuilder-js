@@ -25,8 +25,6 @@ export interface CachedBotState {
     hash: string;
 }
 
-export const CACHED_BOT_STATE_SKIP_PROPERTIES_HANDLER_KEY = Symbol('cachedBotStateSkipPropertiesHandler');
-
 /**
  * Base class for the frameworks state persistance scopes.
  *
@@ -40,7 +38,6 @@ export const CACHED_BOT_STATE_SKIP_PROPERTIES_HANDLER_KEY = Symbol('cachedBotSta
  */
 export class BotState implements PropertyManager {
     private stateKey = Symbol('state');
-    private skippedProperties = new Map();
 
     /**
      * Creates a new BotState instance.
@@ -81,11 +78,6 @@ export class BotState implements PropertyManager {
      */
     load(context: TurnContext, force = false): Promise<any> {
         const cached: CachedBotState = context.turnState.get(this.stateKey);
-        if (!context.turnState.get(CACHED_BOT_STATE_SKIP_PROPERTIES_HANDLER_KEY)) {
-            context.turnState.set(CACHED_BOT_STATE_SKIP_PROPERTIES_HANDLER_KEY, (key, properties) =>
-                this.skippedProperties.set(key, properties)
-            );
-        }
         if (force || !cached || !cached.state) {
             return Promise.resolve(this.storageKey(context)).then((key: string) => {
                 return this.storage.read([key]).then((items: StoreItems) => {
@@ -118,8 +110,7 @@ export class BotState implements PropertyManager {
      */
     saveChanges(context: TurnContext, force = false): Promise<void> {
         let cached: CachedBotState = context.turnState.get(this.stateKey);
-        const state = this.skipProperties(cached?.state);
-        if (force || (cached && cached.hash !== calculateChangeHash(state))) {
+        if (force || (cached && cached.hash !== calculateChangeHash(cached?.state))) {
             return Promise.resolve(this.storageKey(context)).then((key: string) => {
                 if (!cached) {
                     cached = { state: {}, hash: '' };
@@ -130,7 +121,7 @@ export class BotState implements PropertyManager {
 
                 return this.storage.write(changes).then(() => {
                     // Update change hash and cache
-                    cached.hash = calculateChangeHash(state);
+                    cached.hash = calculateChangeHash(cached.state);
                     context.turnState.set(this.stateKey, cached);
                 });
             });
@@ -197,46 +188,5 @@ export class BotState implements PropertyManager {
         const cached: CachedBotState = context.turnState.get(this.stateKey);
 
         return typeof cached === 'object' && typeof cached.state === 'object' ? cached.state : undefined;
-    }
-
-    /**
-     * Skips properties from the cached state object.
-     *
-     * @remarks Primarily used to skip properties before calculating the hash value in the calculateChangeHash function.
-     * @param state Dictionary of state values.
-     * @returns Dictionary of state values, without the skipped properties.
-     */
-    private skipProperties(state: CachedBotState['state']): CachedBotState['state'] {
-        if (!state || !this.skippedProperties.size) {
-            return state;
-        }
-
-        const skipHandler = (key: string) => {
-            if (this.skippedProperties.has(key)) {
-                return this.skippedProperties.get(key) ?? [key];
-            }
-        };
-
-        const inner = ([key, value], skip = []) => {
-            if (value === null || value === undefined || skip.includes(key)) {
-                return;
-            }
-
-            if (Array.isArray(value)) {
-                return value.map((e) => inner([null, e], skip));
-            }
-
-            if (typeof value !== 'object') {
-                return value.valueOf();
-            }
-
-            return Object.entries(value).reduce((acc, [k, v]) => {
-                const skipResult = skipHandler(k) ?? [];
-                acc[k] = inner([k, v], [...skip, ...skipResult]);
-                return acc;
-            }, {});
-        };
-
-        return inner([null, state]);
     }
 }

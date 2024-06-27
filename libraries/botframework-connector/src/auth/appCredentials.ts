@@ -42,7 +42,11 @@ export abstract class AppCredentials implements ServiceClientCredentials {
      * Initializes a new instance of the [AppCredentials](xref:botframework-connector.AppCredentials) class.
      *
      * @param appId The App ID.
-     * @param channelAuthTenant Optional. The oauth token tenant.
+     * @param channelAuthTenant Tenant ID of the Azure AD tenant where the bot is created.
+     *   * Required for SingleTenant app types.
+     *   * Optional for MultiTenant app types. **Note**: '_botframework.com_' is the default tenant when no value is provided.
+     *
+     * More information: https://learn.microsoft.com/en-us/security/zero-trust/develop/identity-supported-account-types.
      * @param oAuthScope The scope for the token.
      */
     constructor(appId: string, channelAuthTenant?: string, oAuthScope: string = null) {
