@@ -1877,6 +1877,8 @@ export class OnQnAMatch extends OnIntent {
     // (undocumented)
     static $kind: string;
     constructor(actions?: Dialog[], condition?: string);
+    // (undocumented)
+    static qnaMatchIntent: string;
 }
 
 // @public
