@@ -42,7 +42,7 @@ module.exports = () => {
                     options: { compact: false },
                     include: [
                         resolvePackageRoot('adaptive-expressions'),
-                        resolvePackageRoot('@microsoft/recognizers-text-data-types-timex-expression'),
+                        resolvePackageRoot('botbuilder-stdlib'),
                         resolvePackageRoot('antlr4ts'),
                         resolvePackageRoot('lru-cache'),
                         resolvePackageRoot('yallist'),

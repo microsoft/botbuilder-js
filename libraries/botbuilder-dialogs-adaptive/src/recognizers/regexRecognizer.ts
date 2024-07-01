@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Culture } from '@microsoft/recognizers-text-suite';
+import { Culture } from 'botbuilder-stdlib/vendors/@microsoft/recognizers-text-suite';
 import { Activity, Entity, RecognizerResult } from 'botbuilder';
 import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
 import { IntentPattern } from './intentPattern';

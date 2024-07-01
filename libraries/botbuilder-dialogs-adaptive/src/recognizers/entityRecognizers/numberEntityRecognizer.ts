@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { recognizeNumber } from '@microsoft/recognizers-text-number';
+import { recognizeNumber } from 'botbuilder-stdlib/vendors/@microsoft/recognizers-text-number';
 import { ModelResult } from 'botbuilder-dialogs';
 import { TextEntityRecognizer } from './textEntityRecognizer';
 

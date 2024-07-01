@@ -4,7 +4,7 @@
 const { InputHints, MessageFactory } = require('botbuilder');
 const { DateTimePrompt, WaterfallDialog } = require('botbuilder-dialogs');
 const { CancelAndHelpDialog } = require('./cancelAndHelpDialog');
-const { TimexProperty } = require('@microsoft/recognizers-text-data-types-timex-expression');
+const { TimexProperty } = require('botbuilder-stdlib/vendors/@microsoft/recognizers-text-data-types-timex-expression');
 
 const DATETIME_PROMPT = 'datetimePrompt';
 const WATERFALL_DIALOG = 'waterfallDialog';

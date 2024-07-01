@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { recognizeTemperature } from '@microsoft/recognizers-text-number-with-unit';
+import { recognizeTemperature } from 'botbuilder-stdlib/vendors/@microsoft/recognizers-text-number-with-unit';
 import { ModelResult } from 'botbuilder-dialogs';
 import { TextEntityRecognizer } from './textEntityRecognizer';
 

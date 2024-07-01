@@ -20,7 +20,7 @@ import timezone from 'dayjs/plugin/timezone';
 dayjs.extend(timezone);
 import utc from 'dayjs/plugin/utc';
 dayjs.extend(utc);
-import { TimexProperty } from '@microsoft/recognizers-text-data-types-timex-expression';
+import { TimexProperty } from 'botbuilder-stdlib/vendors/@microsoft/recognizers-text-data-types-timex-expression';
 
 /**
  * Return the previous viable date of a timex expression based on the current date and user's timezone.

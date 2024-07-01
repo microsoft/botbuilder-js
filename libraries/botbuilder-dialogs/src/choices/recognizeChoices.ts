@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import * as Recognizers from '@microsoft/recognizers-text-number';
+import * as Recognizers from 'botbuilder-stdlib/vendors/@microsoft/recognizers-text-number';
 import { Choice, findChoices, FindChoicesOptions, FoundChoice } from './findChoices';
 import { ModelResult } from './modelResult';
 

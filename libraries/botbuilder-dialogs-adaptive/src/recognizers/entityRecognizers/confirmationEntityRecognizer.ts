@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { recognizeBoolean } from '@microsoft/recognizers-text-choice';
+import { recognizeBoolean } from 'botbuilder-stdlib/vendors/@microsoft/recognizers-text-choice';
 import { ModelResult } from 'botbuilder-dialogs';
 import { TextEntityRecognizer } from './textEntityRecognizer';
 

@@ -32,7 +32,7 @@ import {
 } from 'botbuilder-dialogs';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
-import * as Recognizers from '@microsoft/recognizers-text-choice';
+import * as Recognizers from 'botbuilder-stdlib/vendors/@microsoft/recognizers-text-choice';
 import { ChoiceOptionsSet } from './choiceOptionsSet';
 
 export interface ConfirmInputConfiguration extends InputDialogConfiguration {

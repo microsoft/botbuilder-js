@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { recognizeIpAddress } from '@microsoft/recognizers-text-sequence';
+import { recognizeIpAddress } from 'botbuilder-stdlib/vendors/@microsoft/recognizers-text-sequence';
 import { ModelResult } from 'botbuilder-dialogs';
 import { TextEntityRecognizer } from './textEntityRecognizer';
 

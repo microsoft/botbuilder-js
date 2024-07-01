@@ -32,7 +32,7 @@ const {
 } = require('./recognizerTelemetryUtils');
 const { createContext, createMessageActivity } = require('./activityUtils');
 const { validateCodeIntent, validateColorIntent } = require('./intentValidations');
-const { Culture } = require('@microsoft/recognizers-text-suite');
+const { Culture } = require('botbuilder-stdlib/vendors/@microsoft/recognizers-text-suite');
 
 describe('RegexRecognizer Tests', function () {
     const recognizer = new RegexRecognizer().configure({

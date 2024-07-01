@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import * as Globalize from 'globalize';
-import * as Recognizers from '@microsoft/recognizers-text-number';
+import * as Recognizers from 'botbuilder-stdlib/vendors/@microsoft/recognizers-text-number';
 import * as locales from '../i18n';
 import { InputHints, TurnContext } from 'botbuilder-core';
 import { Prompt, PromptOptions, PromptRecognizerResult, PromptValidator } from './prompt';

@@ -11,7 +11,7 @@
   "author": "Microsoft Corp.",
   "license": "MIT",
   "dependencies": {
-    "@microsoft/recognizers-text-data-types-timex-expression": "1.1.4",
+    "botbuilder-stdlib": "4.1.6",
     "botbuilder": "4.1.6",
     "botbuilder-ai": "4.1.6",
     "botbuilder-dialogs": "4.1.6",
