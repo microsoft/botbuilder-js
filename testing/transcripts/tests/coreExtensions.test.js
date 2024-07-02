@@ -31,12 +31,10 @@ function TestLogic(botState) {
         switch (cmd.name) {
             case 'delete':
                 delete state.value;
-                // await botState.write(context);
                 await botState.saveChanges(context);
                 break;
             case 'set':
                 state.value = cmd.value;
-                // await botState.write(context);
                 await botState.saveChanges(context);
                 break;
             case 'read':
