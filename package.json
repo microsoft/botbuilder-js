@@ -105,7 +105,6 @@
     "sinon": "^9.2.4",
     "source-map-support": "^0.5.19",
     "sponge": "^0.1.0",
-    "tinyify": "^3.0.0",
     "ts-node": "^10.0.0",
     "typedoc": "^0.24.8",
     "typedoc-plugin-external-module-name": "^4.0.6",
