@@ -42,7 +42,7 @@ import isEqual from 'lodash/isEqual';
 import { ActionContext } from './actionContext';
 import { AdaptiveDialogState } from './adaptiveDialogState';
 import { AdaptiveEvents } from './adaptiveEvents';
-import { OnCondition, OnIntent } from './conditions';
+import { OnCondition, OnIntent, OnQnAMatch } from './conditions';
 import { DialogSetConverter, LanguageGeneratorConverter, RecognizerConverter } from './converters';
 import { EntityAssignment } from './entityAssignment';
 import { EntityAssignmentComparer } from './entityAssignmentComparer';
@@ -547,16 +547,28 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
                     break;
                 case AdaptiveEvents.activityReceived:
                     if (activity.type === ActivityTypes.Message) {
-                        // Recognize utterance (ignore handled)
-                        const recognizeUtteranceEvent: DialogEvent = {
-                            name: AdaptiveEvents.recognizeUtterance,
-                            value: activity,
-                            bubble: false,
-                        };
-                        await this.processEvent(actionContext, recognizeUtteranceEvent, true);
+                        let recognized = actionContext.state.getValue<RecognizerResult>(TurnPath.recognized);
+                        const activityProcessed = actionContext.state.getValue<boolean>(TurnPath.activityProcessed);
 
-                        // Emit leading RecognizedIntent event
-                        const recognized = actionContext.state.getValue<RecognizerResult>(TurnPath.recognized);
+                        // Avoid reprocessing recognized activity for OnQnAMatch.
+                        const isOnQnAMatchProcessed =
+                            activityProcessed &&
+                            Object.prototype.hasOwnProperty.call(recognized?.intents, OnQnAMatch.qnaMatchIntent) ===
+                                true;
+
+                        if (!isOnQnAMatchProcessed) {
+                            // Recognize utterance (ignore handled)
+                            const recognizeUtteranceEvent: DialogEvent = {
+                                name: AdaptiveEvents.recognizeUtterance,
+                                value: activity,
+                                bubble: false,
+                            };
+                            await this.processEvent(actionContext, recognizeUtteranceEvent, true);
+
+                            // Emit leading RecognizedIntent event
+                            recognized = actionContext.state.getValue<RecognizerResult>(TurnPath.recognized);
+                        }
+
                         const recognizedIntentEvent: DialogEvent = {
                             name: AdaptiveEvents.recognizedIntent,
                             value: recognized,
