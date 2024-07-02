@@ -13,7 +13,7 @@ const axios = require('axios');
 const unzip = require('unzipper');
 const rimraf = require('rimraf');
 
-const chatdown = require('@microsoft/bf-chatdown');
+const chatdown = require('./chatdown');
 
 const { TestAdapter, MemoryStorage, UserState, ConversationState, AutoSaveStateMiddleware } = require('../');
 
@@ -39,19 +39,10 @@ function getActivitiesFromTranscript(transcriptFilePath) {
  *
  * @param {string} chatFilePath Relative or absolute path to .chat file.
  */
-function getActivitiesFromChat(chatFilePath) {
-    return readFileAsync(chatFilePath, { encoding: 'utf8' })
-        .then((chat) => chatdown(chat, { in: chatFilePath }))
-        .then((activities) => {
-            // Clean the last line break (\n) from the last activity.text
-            // TODO: Remove once issue is resolved: https://github.com/Microsoft/botbuilder-tools/issues/200
-            const last = activities[activities.length - 1];
-            if (last) {
-                last.text = last.text.trimRight('\n');
-            }
-
-            return activities;
-        });
+async function getActivitiesFromChat(chatFilePath) {
+    const chat = await readFileAsync(chatFilePath, { encoding: 'utf8' });
+    const activities = await chatdown(chat, { in: chatFilePath });
+    return activities;
 }
 
 /**
@@ -63,17 +54,10 @@ function getActivitiesFromChat(chatFilePath) {
  * @param {Function} middlewareRegistrationFun (Optional) Function which accepts the testAdapter, conversationState and userState.
  */
 function assertBotLogicWithBotBuilderTranscript(relativeTranscriptPath, botLogicFactoryFun, middlewareRegistrationFun) {
-    return function (mochaDoneCallback) {
-        checkTranscriptResourcesExist()
-            .then((transcriptsBasePath) => {
-                const transcriptPath = path.join(transcriptsBasePath, relativeTranscriptPath);
-                assertBotLogicWithTranscript(
-                    transcriptPath,
-                    botLogicFactoryFun,
-                    middlewareRegistrationFun
-                )(mochaDoneCallback);
-            })
-            .catch(mochaDoneCallback);
+    return async function () {
+        const transcriptsBasePath = await checkTranscriptResourcesExist();
+        const transcriptPath = path.join(transcriptsBasePath, relativeTranscriptPath);
+        return assertBotLogicWithTranscript(transcriptPath, botLogicFactoryFun, middlewareRegistrationFun);
     };
 }
 
@@ -88,28 +72,25 @@ function assertBotLogicWithBotBuilderTranscript(relativeTranscriptPath, botLogic
 async function assertBotLogicWithTranscript(transcriptPath, botLogicFactoryFun, middlewareRegistrationFun) {
     const loadFun = transcriptPath.endsWith('.chat') ? getActivitiesFromChat : getActivitiesFromTranscript;
 
-    // return a Mocha Test Definition, which accepts the done callback to indicate success or error
-    return async function () {
-        const activities = loadFun(transcriptPath);
-        // State
-        const storage = new MemoryStorage();
-        const conversationState = new ConversationState(storage);
-        const userState = new UserState(storage);
-        const state = new AutoSaveStateMiddleware(conversationState, userState);
+    const activities = await loadFun(transcriptPath);
+    // State
+    const storage = new MemoryStorage();
+    const conversationState = new ConversationState(storage);
+    const userState = new UserState(storage);
+    const state = new AutoSaveStateMiddleware(conversationState, userState);
 
-        // Bot logic + adapter
-        const botLogic = botLogicFactoryFun(conversationState, userState);
-        const adapter = new TestAdapter(botLogic);
-        adapter.use(state);
+    // Bot logic + adapter
+    const botLogic = botLogicFactoryFun(conversationState, userState);
+    const adapter = new TestAdapter(botLogic);
+    adapter.use(state);
 
-        // Middleware registration
-        if (typeof middlewareRegistrationFun === 'function') {
-            middlewareRegistrationFun(adapter, conversationState, userState);
-        }
+    // Middleware registration
+    if (typeof middlewareRegistrationFun === 'function') {
+        middlewareRegistrationFun(adapter, conversationState, userState);
+    }
 
-        // Assert chain of activities
-        return adapter.testActivities(activities);
-    };
+    // Assert chain of activities
+    return adapter.testActivities(activities);
 }
 
 // **** PRIVATE **** //

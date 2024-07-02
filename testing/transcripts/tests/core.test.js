@@ -1,7 +1,7 @@
-const assert = require('assert');
-const assertBotLogicWithTranscript = require('../../libraries/botbuilder-core/tests/transcriptUtilities').assertBotLogicWithBotBuilderTranscript;
+const { ActivityTypes } = require('botframework-schema');
+const assertBotLogicWithTranscript = require('../../../libraries/botbuilder-core/tests/transcriptUtilities').assertBotLogicWithBotBuilderTranscript;
 
-xdescribe(`Core Tests using transcripts`, function () {
+describe(`Core Tests using transcripts`, function () {
     this.timeout(10000);
 
     it('BotAdapted_Bracketing', assertBotLogicWithTranscript('CoreTests/BotAdapted_Bracketing.chat', BotAdapted_Bracketing_Logic, (adapter) => {
@@ -12,6 +12,11 @@ xdescribe(`Core Tests using transcripts`, function () {
 
 function BotAdapted_Bracketing_Logic(state) {
     return async (context) => {
+        if(context.activity.type == ActivityTypes.ConversationUpdate){
+            await context.sendActivity(context.activity.type);
+            return;
+        }
+
         var userMessage = context.activity.text;
         switch (userMessage) {
             case 'use middleware':

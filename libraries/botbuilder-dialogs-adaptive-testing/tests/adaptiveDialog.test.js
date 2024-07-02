@@ -147,6 +147,10 @@ describe('AdaptiveDialogTests', function () {
         await TestUtils.runTestScript(resourceExplorer, 'AdaptiveDialog_TopLevelFallbackMultipleActivities');
     });
 
+    it('TestOnQnAMatch', async function () {
+        await TestUtils.runTestScript(resourceExplorer, 'AdaptiveDialog_OnQnAMatch');
+    });
+
     it('TestBindingTwoWayAcrossAdaptiveDialogs', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'TestBindingTwoWayAcrossAdaptiveDialogs');
     });

@@ -39,8 +39,7 @@
   },
   "devDependencies": {
     "botbuilder": "4.1.6",
-    "@microsoft/recognizers-text-suite": "1.1.4",
-    "@types/nock": "^11.1.0"
+    "@microsoft/recognizers-text-suite": "1.1.4"
   },
   "author": "Microsoft",
   "license": "MIT",

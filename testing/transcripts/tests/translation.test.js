@@ -1,9 +1,9 @@
 const assert = require('assert');
 const { LanguageTranslator, LocaleConverter } = require('botbuilder-ai');
-const assertBotLogicWithTranscript = require('../../libraries/botbuilder-core/tests/transcriptUtilities').assertBotLogicWithBotBuilderTranscript;
+const assertBotLogicWithTranscript = require('../../../libraries/botbuilder-core/tests/transcriptUtilities').assertBotLogicWithBotBuilderTranscript;
 
 var translatorKey = process.env['TRANSLATORKEY_TRANSCRIPT'];
-xdescribe(`Translation Tests using transcripts`, function () {
+describe(`Translation Tests using transcripts`, function () {
     if (!translatorKey) {
         console.warn('* Missing Translator Environment variable (TRANSLATORKEY_TRANSCRIPT) - Skipping Translation Tests');
         return;
