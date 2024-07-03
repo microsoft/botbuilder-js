@@ -11,6 +11,6 @@
   "dependencies": {
     "botbuilder": "4.1.6",
     "botbuilder-dialogs": "4.1.6",
-    "restify": "^8.5.1"
+    "restify": "^11.1.0"
   }
 }
