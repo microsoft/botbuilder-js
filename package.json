@@ -64,7 +64,6 @@
     "@azure/msal-node": "^1.18.4",
     "axios": "^1.7.2",
     "tar": "6.1.9",
-    "glob-parent": "5.1.2",
     "babel-traverse": "npm:@babel/traverse@^7.24.7",
     "lodash.pick": "npm:lodash@^4.17.21"
   },
