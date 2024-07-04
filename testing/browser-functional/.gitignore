@@ -1,2 +1,4 @@
 *.xml
 *.log
+drivers
+tests_output

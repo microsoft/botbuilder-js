@@ -1,9 +1,10 @@
+const { drivers, browsers } = require('./globals');
 const seleniumServer = require('selenium-server');
-const geckodriver = require('geckodriver');
 
 module.exports = {
     src_folders: ['tests'],
     page_objects_path: 'tests/tests_pages',
+    globals_path: './globals.js',
     test_settings: {
         default: {
             request_timeout_options: {
@@ -16,10 +17,10 @@ module.exports = {
             selenium: {
                 start_process: true,
                 check_process_delay: 10000,
-                port: 9515,
+                port: drivers[browsers.FIREFOX].port,
                 server_path: seleniumServer.path,
                 cli_args: {
-                    'webdriver.gecko.driver': geckodriver.path,
+                    'webdriver.gecko.driver': drivers[browsers.FIREFOX].path,
                 },
             },
             webdriver: {
@@ -27,31 +28,28 @@ module.exports = {
             },
         },
 
-        chrome: {
+        [browsers.CHROME]: {
             silent: true,
             selenium: {
                 start_process: false,
             },
             webdriver: {
                 start_process: true,
-                //The tests with the chrome browser are performed with the chromedriver binary 
-                //which in the future should be updated manually to maintain compatibility with the browser.
-                //Current version 120.0.6. Extract binary from: https://googlechromelabs.github.io/chrome-for-testing
-                server_path: "./chromedriver.exe",
-                port: 9515,
+                server_path: drivers[browsers.CHROME].path,
+                port: drivers[browsers.CHROME].port,
             },
             desiredCapabilities: {
-                browserName: 'chrome',
+                browserName: browsers.CHROME,
                 javascriptEnabled: true,
-                acceptSslCerts: true
+                acceptSslCerts: true,
             },
         },
 
-        firefox: {
+        [browsers.FIREFOX]: {
             extends: 'selenium',
             silent: true,
             desiredCapabilities: {
-                browserName: 'firefox',
+                browserName: browsers.FIREFOX,
                 javascriptEnabled: true,
                 acceptSslCerts: true,
             },
