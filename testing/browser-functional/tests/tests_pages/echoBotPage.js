@@ -15,13 +15,13 @@ module.exports = {
             selector: 'div[id=webchat]>div'
         },
         webchatMessagesList: {
-            selector: 'ul p'
+            selector: 'section.webchat__basic-transcript__transcript'
         },
         webchatMessageInput: {
             selector: 'input[data-id=webchat-sendbox-input]'
         },
         webchatMessageInputSubmitButton: {
-            selector: 'div.main > div:nth-child(3) > button'
+            selector: 'button.webchat__send-button'
         }
     }
 }

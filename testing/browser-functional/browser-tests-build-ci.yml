@@ -3,7 +3,7 @@
 #
 
 pool:
-  vmImage: 'windows-latest'
+  vmImage: 'windows-2022'
 
 trigger:
 - main
@@ -35,6 +35,12 @@ steps:
   displayName: use node 16.x
   inputs:
     versionSpec: 16.x
+
+- script: |
+    mkdir "testing/browser-functional/drivers"
+    cp "%CHROMEWEBDRIVER%/chromedriver.exe" "testing/browser-functional/drivers"
+    cp "%GECKOWEBDRIVER%/geckodriver.exe" "testing/browser-functional/drivers"
+  displayName: use browser drivers
 
 - script: cd testing/browser-functional/browser-echo-bot && yarn && yarn build
   displayName: yarn install and build browser-echo-bot
@@ -69,7 +75,7 @@ steps:
      echo "# Deploy source code"
      call az webapp deployment source config-zip --resource-group "$(TestResourceGroup)" --name "$(TestWebApp)" --src "$(System.DefaultWorkingDirectory)/testing/browser-functional/browser-echo-bot/browser-echo-bot.zip"
 
-- script: yarn
+- script: yarn --network-timeout 600000
   displayName: yarn install
 
 - script: yarn browser-functional-test chrome
