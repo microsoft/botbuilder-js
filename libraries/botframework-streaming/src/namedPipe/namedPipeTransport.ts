@@ -85,7 +85,11 @@ export class NamedPipeTransport implements ITransportSender, ITransportReceiver 
      * @returns The buffer containing the data from the transport.
      */
     receive(count: number): Promise<INodeBuffer> {
-        if (this._activeReceiveResolve) {
+        if (!this.socket) {
+            throw new Error('Cannot receive data over an unavailable/null socket.');
+        } else if (this.socket.destroyed) {
+            throw new Error('Cannot receive data over a dead/destroyed socket.');
+        } else if (this._activeReceiveResolve) {
             throw new Error('Cannot call receive more than once before it has returned.');
         }
 
