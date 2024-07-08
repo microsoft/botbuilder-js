@@ -48,8 +48,6 @@
     "node-fetch": "2.6.7",
     "underscore": "1.13.1",
     "json-schema": "0.4.0",
-    "jsonwebtoken": "9.0.2",
-    "@types/jsonwebtoken": "8.3.5",
     "@microsoft/recognizers-text-number": "~1.3.1",
     "@xmldom/xmldom": "0.8.6",
     "**/botbuilder-azure/@azure/core-auth/@azure/core-tracing": "1.0.0-preview.9",
@@ -66,10 +64,10 @@
     "tar": "6.1.9",
     "glob-parent": "5.1.2",
     "babel-traverse": "npm:@babel/traverse@^7.24.7",
-    "lodash.pick": "npm:lodash@^4.17.21"
+    "lodash.pick": "file:overrides/lodash.pick"
   },
   "resolutionComments": {
-    "lodash.pick": "Because we can't update nightwatch due to jsdom requires node >= 18. https://github.com/lodash/lodash/issues/5809#issuecomment-1910560681"
+    "lodash.pick": "Remove the resolution and override project when supporting Node >=18. Because we can't update nightwatch due to jsdom requires node >= 18. https://github.com/lodash/lodash/issues/5809#issuecomment-1910560681"
   },
   "devDependencies": {
     "@azure/logger": "^1.0.2",

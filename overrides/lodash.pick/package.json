@@ -1,0 +1,8 @@
+{
+    "name": "lodash.pick",
+    "version": "0.0.1",
+    "main": "pick.js",
+    "peerDependencies": {
+        "lodash": "^4.17.21"
+    }
+}

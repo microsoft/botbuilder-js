@@ -9,7 +9,7 @@ module.exports = {
     before: function(browser) {
         botPage = browser.page.echoBotPage();
     },
-    afer: function(browser) {
+    after: function(browser) {
         // End current page session
         botPage.end();
     },
