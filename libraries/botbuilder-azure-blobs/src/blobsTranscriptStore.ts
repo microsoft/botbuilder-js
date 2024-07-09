@@ -9,10 +9,13 @@ import { maybeCast } from 'botbuilder-stdlib';
 import { sanitizeBlobKey } from './sanitizeBlobKey';
 
 import {
+    AnonymousCredential,
     ContainerClient,
     ContainerListBlobHierarchySegmentResponse,
     StoragePipelineOptions,
+    StorageSharedKeyCredential,
 } from '@azure/storage-blob';
+import { isTokenCredential, TokenCredential } from '@azure/core-http';
 
 // Formats a timestamp in a way that is consistent with the C# SDK
 function formatTicks(timestamp: Date): string {
@@ -42,6 +45,12 @@ function getBlobKey(activity: Activity, options?: BlobsTranscriptStoreOptions): 
     return sanitizeBlobKey(
         [activity.channelId, activity.conversation.id, `${formatTicks(timestamp)}-${activity.id}.json`].join('/'),
         options
+    );
+}
+
+function isCredentialType(value: any): value is TokenCredential {
+    return (
+        isTokenCredential(value) || value instanceof StorageSharedKeyCredential || value instanceof AnonymousCredential
     );
 }
 
@@ -85,21 +94,54 @@ export class BlobsTranscriptStore implements TranscriptStore {
      * @param {string} connectionString Azure Blob Storage connection string
      * @param {string} containerName Azure Blob Storage container name
      * @param {BlobsTranscriptStoreOptions} options Other options for BlobsTranscriptStore
+     * @param {string} blobServiceUri A Uri referencing the blob container that includes the name of the account and the name of the container
+     * @param {StorageSharedKeyCredential | AnonymousCredential | TokenCredential} tokenCredential The token credential to authenticate to the Azure storage
      */
-    constructor(connectionString: string, containerName: string, options?: BlobsTranscriptStoreOptions) {
-        z.object({ connectionString: z.string(), containerName: z.string() }).parse({
-            connectionString,
-            containerName,
-        });
+    constructor(
+        connectionString: string,
+        containerName: string,
+        options?: BlobsTranscriptStoreOptions,
+        blobServiceUri = '',
+        tokenCredential?: StorageSharedKeyCredential | AnonymousCredential | TokenCredential
+    ) {
+        if (blobServiceUri != '' && tokenCredential != null) {
+            z.object({ blobServiceUri: z.string() }).parse({
+                blobServiceUri,
+            });
 
-        this._containerClient = new ContainerClient(connectionString, containerName, options?.storagePipelineOptions);
+            if (typeof tokenCredential != 'object' || !isCredentialType(tokenCredential)) {
+                throw new ReferenceError('Invalid credential type.');
+            }
+
+            this._containerClient = new ContainerClient(
+                blobServiceUri,
+                tokenCredential,
+                options?.storagePipelineOptions
+            );
+
+            // At most one promise at a time to be friendly to local emulator users
+            if (blobServiceUri.trim() === 'UseDevelopmentStorage=true;') {
+                this._concurrency = 1;
+            }
+        } else {
+            z.object({ connectionString: z.string(), containerName: z.string() }).parse({
+                connectionString,
+                containerName,
+            });
+
+            this._containerClient = new ContainerClient(
+                connectionString,
+                containerName,
+                options?.storagePipelineOptions
+            );
+
+            // At most one promise at a time to be friendly to local emulator users
+            if (connectionString.trim() === 'UseDevelopmentStorage=true;') {
+                this._concurrency = 1;
+            }
+        }
 
         this._isDecodeTranscriptKey = options?.decodeTranscriptKey;
-
-        // At most one promise at a time to be friendly to local emulator users
-        if (connectionString.trim() === 'UseDevelopmentStorage=true;') {
-            this._concurrency = 1;
-        }
     }
 
     // Protects against JSON.stringify cycles
