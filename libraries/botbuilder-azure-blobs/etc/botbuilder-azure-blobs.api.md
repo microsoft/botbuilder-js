@@ -30,19 +30,18 @@ export interface BlobsStorageOptions {
 
 // @public
 export class BlobsTranscriptStore implements TranscriptStore {
-    constructor(connectionString: string, containerName: string, options?: BlobsTranscriptStoreOptions);
+    constructor(connectionString: string, containerName: string, options?: BlobsTranscriptStoreOptions, blobServiceUri?: string, tokenCredential?: StorageSharedKeyCredential | AnonymousCredential | TokenCredential);
     deleteTranscript(channelId: string, conversationId: string): Promise<void>;
     getTranscriptActivities(channelId: string, conversationId: string, continuationToken?: string, startDate?: Date): Promise<PagedResult<Activity>>;
     listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<TranscriptInfo>>;
     logActivity(activity: Activity, options?: BlobsTranscriptStoreOptions): Promise<void>;
-    }
+}
 
 // @public
 export interface BlobsTranscriptStoreOptions {
     decodeTranscriptKey?: boolean;
     storagePipelineOptions?: StoragePipelineOptions;
 }
-
 
 // (No @packageDocumentation comment for this package)
 
