@@ -94,6 +94,9 @@ export async function internalRun(
     // or we have had an exception AND there was an OnError action which captured the error. We need to continue the
     // turn based on the actions the OnError handler introduced.
     let endOfTurn = false;
+    let errorHandlerCalled = 0;
+    const TURN_STATE = 'turn';
+
     while (!endOfTurn) {
         try {
             dialogTurnResult = await innerRun(context, dialogId, dialogContext);
@@ -101,8 +104,19 @@ export async function internalRun(
             // turn successfully completed, break the loop
             endOfTurn = true;
         } catch (err) {
+            errorHandlerCalled++;
+
             // fire error event, bubbling from the leaf.
-            const handled = await dialogContext.emitEvent(DialogEvents.error, err, true, true);
+            let handled = await dialogContext.emitEvent(DialogEvents.error, err, true, true);
+
+            let executionLimit = 0;
+            executionLimit = context.turnState.get(TURN_STATE).executionLimit;
+
+            if (executionLimit > 0 && errorHandlerCalled > executionLimit) {
+                // if the errorHandler has being called multiple times, there's an error inside the onError.
+                // We should throw the exception and break the loop.
+                handled = false;
+            }
 
             if (!handled) {
                 // error was NOT handled, throw the exception and end the turn.
