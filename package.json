@@ -61,12 +61,14 @@
     "@azure/msal-browser": "^2.38.3",
     "@azure/msal-node": "^1.18.4",
     "axios": "^1.7.2",
-    "tar": "6.1.9",
+    "glob-parent": "5.1.2",
     "babel-traverse": "npm:@babel/traverse@^7.24.7",
-    "lodash.pick": "file:overrides/lodash.pick"
+    "lodash.pick": "file:overrides/lodash.pick",
+    "**/nightwatch/ejs": "^3.1.10"
   },
   "resolutionComments": {
-    "lodash.pick": "Remove the resolution and override project when supporting Node >=18. Because we can't update nightwatch due to jsdom requires node >= 18. https://github.com/lodash/lodash/issues/5809#issuecomment-1910560681"
+    "lodash.pick": "Remove the resolution and override project when supporting Node >=18. Because we can't update nightwatch due to jsdom requires node >= 18. https://github.com/lodash/lodash/issues/5809#issuecomment-1910560681",
+    "**/nightwatch/ejs": "Remove the resolution when supporting Node >=18. Because we can't update nightwatch due to jsdom requires node >= 18. https://github.com/lodash/lodash/issues/5809#issuecomment-1910560681"
   },
   "devDependencies": {
     "@azure/logger": "^1.0.2",
