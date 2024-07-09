@@ -3,17 +3,23 @@
  * Licensed under the MIT License.
  */
 
-const { join, resolve } = require('path');
+const { join, resolve, dirname } = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const webpack = require('webpack');
+
+// Returns absolute path to package.json file for a package
+const resolvePackageJson = (name) => require.resolve(`${name}/package.json`);
+
+// Returns absolute path to directory containing package.json file for a package
+const resolvePackageRoot = (name) => dirname(resolvePackageJson(name));
 
 module.exports = {
     entry: './src/app.ts',
     devtool: 'source-map',
     devServer: {
         static: './dist',
-        hot: true
+        hot: true,
     },
     mode: 'development',
     module: {
@@ -22,22 +28,21 @@ module.exports = {
                 test: /\.[jt]s$/,
                 include: [
                     join(__dirname, 'src'),
-                    join(__dirname, 'node_modules/botbuilder-core/lib'),
+                    resolvePackageRoot('botbuilder-core'),
+                    resolvePackageRoot('botbuilder-dialogs'),
                 ],
-                use: ['babel-loader']
+                use: ['babel-loader'],
             },
             {
                 test: /\.css$/,
-                use: ['style-loader', 'css-loader']
-            }
-        ]
+                use: ['style-loader', 'css-loader'],
+            },
+        ],
     },
     plugins: [
         new CleanWebpackPlugin(),
         new CopyWebpackPlugin({
-            patterns: [
-                { from: resolve(__dirname, 'index.html'), to: '' }
-            ]
+            patterns: [{ from: resolve(__dirname, 'index.html'), to: '' }],
         }),
         // Work around for Buffer is undefined:
         // https://github.com/webpack/changelog-v5/issues/10
@@ -57,12 +62,12 @@ module.exports = {
             vm: false,
             path: false,
             crypto: false,
-            stream: require.resolve("stream-browserify"),
-            buffer: require.resolve("buffer")
-        }
+            stream: require.resolve('stream-browserify'),
+            buffer: require.resolve('buffer')
+        },
     },
     output: {
         filename: 'app.js',
-        path: resolve(__dirname, 'dist')
-    }
+        path: resolve(__dirname, 'dist'),
+    },
 };
