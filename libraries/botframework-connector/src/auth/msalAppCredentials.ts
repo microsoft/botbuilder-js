@@ -70,8 +70,8 @@ export class MsalAppCredentials extends AppCredentials {
             typeof maybeClientApplicationOrAppId === 'string'
                 ? maybeClientApplicationOrAppId
                 : typeof maybeAppIdOrAppPasswordOrCertificate === 'string'
-                ? maybeAppIdOrAppPasswordOrCertificate
-                : undefined;
+                    ? maybeAppIdOrAppPasswordOrCertificate
+                    : undefined;
 
         super(appId, undefined, maybeScope);
 
@@ -91,7 +91,7 @@ export class MsalAppCredentials extends AppCredentials {
             auth.clientSecret =
                 typeof maybeAppIdOrAppPasswordOrCertificate === 'string'
                     ? maybeAppIdOrAppPasswordOrCertificate
-                    : undefined;
+                    : "";
 
             this.clientApplication = new ConfidentialClientApplication({ auth });
         }
