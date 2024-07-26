@@ -40,11 +40,9 @@
     "webpack-dev-server": "^4.15.2"
   },
   "resolutions": {
-    "follow-redirects": "^1.15.4",
     "botframework-webchat/sanitize-html": "^2.13.0"
   },
   "overrides": {
-    "follow-redirects": "^1.15.4",
     "botframework-webchat/sanitize-html": "^2.13.0"
   }
 }
