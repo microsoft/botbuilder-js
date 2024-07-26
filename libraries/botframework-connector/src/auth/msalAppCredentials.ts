@@ -89,9 +89,7 @@ export class MsalAppCredentials extends AppCredentials {
                     : undefined;
 
             auth.clientSecret =
-                typeof maybeAppIdOrAppPasswordOrCertificate === 'string'
-                    ? maybeAppIdOrAppPasswordOrCertificate
-                    : undefined;
+                typeof maybeAppIdOrAppPasswordOrCertificate === 'string' ? maybeAppIdOrAppPasswordOrCertificate : '';
 
             this.clientApplication = new ConfidentialClientApplication({ auth });
         }
