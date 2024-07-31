@@ -2,13 +2,14 @@
 // Licensed under the MIT License.
 
 import compact from 'lodash/compact';
-import globby from 'globby';
+import globby, { GlobbyOptions } from 'globby';
 import minimatch from 'minimatch';
 import path from 'path';
 import { Package } from './package';
 import { readJsonFile } from './file';
 
-export const glob = (paths: string[]): Promise<string[]> => globby(paths);
+export const glob = (paths: string[], options: GlobbyOptions = {}): Promise<string[]> =>
+    globby(paths, { gitignore: true, cwd: process.env['INIT_CWD'], ...options });
 
 // Represents a workspace
 export interface Workspace {

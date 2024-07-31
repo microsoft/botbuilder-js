@@ -1,0 +1,30 @@
+{
+  "internal": true,
+  "name": "@microsoft/recognizers-text-sequence",
+  "version": "1.1.4",
+  "description": "recognizers-text-sequence provides robust recognition and resolution of series entities like phone numbers and IP addresses.",
+  "author": "Microsoft Corp.",
+  "license": "MIT",
+  "keywords": [
+    "nlp",
+    "nlp-entity-extraction",
+    "entity-extraction",
+    "phonenumber",
+    "ipaddress",
+    "parser-library"
+  ],
+  "main": "dist/recognizers-text-sequence.umd.js",
+  "module": "dist/recognizers-text-sequence.es5.js",
+  "typings": "dist/types/recognizers-text-sequence.d.ts",
+  "browser": "dist/recognizers-text-sequence.browser.js",
+  "bugs": {
+    "url": "https://github.com/Microsoft/botbuilder-js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Microsoft/botbuilder-js.git"
+  },
+  "engines": {
+    "node": ">=6.0.0"
+  }
+}
