@@ -11,7 +11,7 @@ const containerName = process.env.AZURE_BLOB_STORAGE_CONTAINER;
 const maybeClient = () =>
     connectionString && containerName ? new BlobsTranscriptStore(connectionString, containerName) : null;
 
-describe('BlobsStorage', function () {
+describe('BlobsTranscriptStore', function () {
     const client = maybeClient();
     const maybeIt = client ? it : it.skip;
 
@@ -69,6 +69,11 @@ describe('BlobsStorage', function () {
         it('throws for bad args', function () {
             assert.throws(() => new BlobsTranscriptStore(), 'throws for missing connectionString');
             assert.throws(() => new BlobsTranscriptStore('connectionString'), 'throws for missing containerName');
+            assert.throws(() => new BlobsTranscriptStore(null, null, null, [], {}), 'throws for missing url');
+            assert.throws(
+                () => new BlobsTranscriptStore(null, null, null, 'url', {}),
+                ReferenceError('Invalid credential type.')
+            );
         });
 
         it('succeeds for good args', function () {
