@@ -35,7 +35,7 @@
     "botbuilder-dialogs-adaptive": "4.1.6",
     "botbuilder-dialogs-adaptive-runtime-core": "4.1.6",
     "botbuilder-dialogs-declarative": "4.1.6",
-    "@microsoft/orchestrator-core": "~4.14.4",
+    "@microsoft/orchestrator-core": "~4.15.1",
     "uuid": "^8.3.2"
   },
   "scripts": {
@@ -47,8 +47,7 @@
     "lint": "eslint . --ext .js,.ts",
     "postbuild": "downlevel-dts lib _ts3.4/lib --checksum",
     "test": "yarn build && nyc mocha tests/",
-    "test:compat": "api-extractor run --verbose",
-    "postinstall": "npx rimraf node_modules/@microsoft/orchestrator-core/node_modules/@babel/traverse"
+    "test:compat": "api-extractor run --verbose"
   },
   "files": [
     "_ts3.4",

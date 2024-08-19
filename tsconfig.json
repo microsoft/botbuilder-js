@@ -5,6 +5,8 @@
     "declarationMap": true,
     "module": "commonjs",
     "sourceMap": true,
-    "target": "es6"
+    "target": "es6",
+    "esModuleInterop": true,
+    "resolveJsonModule": true
   }
 }
