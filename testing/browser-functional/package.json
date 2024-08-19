@@ -5,7 +5,7 @@
   "description": "Test to check browser compatibility",
   "main": "",
   "devDependencies": {
-    "axios": "^1.7.2",
+    "axios": "^1.7.4",
     "dotenv": "^8.6.0",
     "nightwatch": "^2.6.21",
     "selenium-server": "^3.141.59"
