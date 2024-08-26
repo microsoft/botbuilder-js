@@ -32,9 +32,9 @@ steps:
   # Get-Date on Azure DevOps returns a datetime relative to UTC-0, so "Z" is being used instead of the dynamic "K".
 
 - task: NodeTool@0
-  displayName: use node 16.x
+  displayName: use node 20.x
   inputs:
-    versionSpec: 16.x
+    versionSpec: 20.x
 
 - script: |
     mkdir "testing/browser-functional/drivers"

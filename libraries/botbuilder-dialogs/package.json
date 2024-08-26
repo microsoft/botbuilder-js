@@ -34,13 +34,13 @@
     "botbuilder-core": "4.1.6",
     "botbuilder-dialogs-adaptive-runtime-core": "4.1.6",
     "botframework-connector": "4.1.6",
-    "globalize": "^1.4.2",
+    "globalize": "^1.7.0",
     "lodash": "^4.17.21",
     "uuid": "^8.3.2",
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@types/globalize": "^1.5.0",
+    "@types/globalize": "^1.5.5",
     "line-reader": "^0.4.0"
   },
   "scripts": {

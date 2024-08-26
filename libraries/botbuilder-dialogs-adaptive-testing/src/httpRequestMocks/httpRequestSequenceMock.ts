@@ -7,8 +7,8 @@
  */
 
 import { HttpMethod } from 'botbuilder-dialogs-adaptive';
-import * as nock from 'nock';
-import * as parse from 'url-parse';
+import nock from 'nock';
+import parse from 'url-parse';
 import { HttpRequestMock } from './httpRequestMock';
 import { HttpResponseMock } from './httpResponseMock';
 import { SequenceResponseManager } from './sequenceResponseManager';

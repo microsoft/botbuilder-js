@@ -8,7 +8,7 @@
 
 import { Duplex } from 'stream';
 import { DuplexOptions } from 'stream';
-import * as WebSocket_2 from 'ws';
+import { default as WebSocket_2 } from 'ws';
 
 // @public
 export class ContentStream {

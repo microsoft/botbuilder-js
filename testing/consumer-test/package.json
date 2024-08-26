@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "scripts": {
     "lint": "eslint . --ext .js,.ts",
-    "test": "ts-node run.ts"
+    "test": "ts-node run.ts --verbose"
   },
   "dependencies": {
     "adaptive-expressions": "4.1.6",
