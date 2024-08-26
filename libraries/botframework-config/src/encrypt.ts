@@ -5,7 +5,7 @@
  * Licensed under the MIT License.
  */
 
-import * as crypto from 'crypto';
+import crypto from 'crypto';
 
 /**
  * @private

@@ -38,8 +38,7 @@
     "test:runtime": "wsrun -m -p \"botbuilder-dialogs-adaptive-runtime*\" -t test",
     "test:runtime:min": "wsrun -m -p \"botbuilder-dialogs-adaptive-runtime*\" -t test:min",
     "test:schemas": "mocha libraries/botbuilder-dialogs-declarative/tests/schemaMergeTest.js --exit --bail",
-    "update-versions": "yarn workspace botbuilder-repo-utils update-versions",
-    "postinstall": "npx rimraf node_modules/@microsoft/orchestrator-core/node_modules/@babel/traverse"
+    "update-versions": "yarn workspace botbuilder-repo-utils update-versions"
   },
   "resolutions": {
     "@microsoft/recognizers-text-number": "~1.3.1",

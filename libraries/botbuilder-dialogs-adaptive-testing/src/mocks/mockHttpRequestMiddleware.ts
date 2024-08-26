@@ -9,8 +9,8 @@
 import { Middleware, TurnContext } from 'botbuilder-core';
 import { HttpMethod } from 'botbuilder-dialogs-adaptive';
 import { ClientRequest } from 'http';
-import * as nock from 'nock';
-import * as parse from 'url-parse';
+import nock from 'nock';
+import parse from 'url-parse';
 import { HttpRequestMock } from '../httpRequestMocks/httpRequestMock';
 import { HttpRequestSequenceMock } from '../httpRequestMocks/httpRequestSequenceMock';
 import { HttpResponseMessage } from '../httpRequestMocks/httpResponseMock';

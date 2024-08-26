@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import * as getPem from 'rsa-pem-from-mod-exp';
+import getPem from 'rsa-pem-from-mod-exp';
 import base64url from 'base64url';
 import fetch from 'node-fetch';
 import { HttpsProxyAgent } from 'https-proxy-agent';

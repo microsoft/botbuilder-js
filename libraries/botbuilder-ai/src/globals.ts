@@ -17,12 +17,9 @@ const window = require('./custom.window');
  * @returns {any} The fetch library.
  */
 export function getFetch() {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const env: Record<'fetch', any> = global ?? window;
-
-    if (!Object.hasOwnProperty.call(env, 'fetch')) {
-        env.fetch = require('node-fetch');
+    if (global) {
+        return (global.fetch = require('node-fetch'));
     }
 
-    return env.fetch;
+    return window?.fetch;
 }
