@@ -29,7 +29,7 @@
   "dependencies": {
     "@azure/core-http": "^3.0.2",
     "@azure/msal-node": "^2.13.0",
-    "axios": "^1.7.2",
+    "axios": "^1.7.4",
     "botbuilder-core": "4.1.6",
     "botbuilder-stdlib": "4.1.6",
     "botframework-connector": "4.1.6",
