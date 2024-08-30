@@ -35,7 +35,6 @@
     "base64url": "^3.0.0",
     "botbuilder-stdlib": "4.1.6",
     "botframework-schema": "4.1.6",
-    "browserify-fs": "^1.0.0",
     "buffer": "^6.0.3",
     "cross-fetch": "^3.0.5",
     "crypto-browserify": "^3.12.0",
