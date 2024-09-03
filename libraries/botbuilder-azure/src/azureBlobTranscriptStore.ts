@@ -16,7 +16,7 @@ import {
 import { Activity, PagedResult, TranscriptInfo, TranscriptStore } from 'botbuilder';
 import { maybeCast } from 'botbuilder-stdlib';
 import { escape } from 'querystring';
-import getStream from 'get-stream';
+import StreamConsumers from 'stream/consumers';
 import pmap from 'p-map';
 import { BlobStorageSettings } from './blobStorage';
 
@@ -185,14 +185,12 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
                         const blobClient = this.containerClient.getBlobClient(blobItem.name);
                         const blob = await blobClient.download();
 
-                        const { readableStreamBody: stream } = blob;
-                        if (!stream) {
+                        const { readableStreamBody } = blob;
+                        if (!readableStreamBody) {
                             return null;
                         }
 
-                        const contents = await getStream(stream);
-
-                        const activity = JSON.parse(contents);
+                        const activity = (await StreamConsumers.json(readableStreamBody)) as any;
                         return { ...activity, timestamp: new Date(activity.timestamp) } as Activity;
                     },
                     { concurrency: this.concurrency }

@@ -32,7 +32,7 @@ export class Concat extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applySequence((args: any[]): string => {
+        return FunctionUtils.applySequence((args: any[]) => {
             const firstItem = args[0];
             const secondItem = args[1];
             const isFirstList = Array.isArray(firstItem);
