@@ -1,14 +1,14 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+import fg from 'fast-glob';
 import compact from 'lodash/compact';
-import globby from 'globby';
 import minimatch from 'minimatch';
 import path from 'path';
 import { Package } from './package';
 import { readJsonFile } from './file';
 
-export const glob = (paths: string[]): Promise<string[]> => globby(paths);
+export const glob = (paths: string[]): Promise<string[]> => fg(paths);
 
 // Represents a workspace
 export interface Workspace {
