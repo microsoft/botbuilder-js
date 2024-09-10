@@ -36,7 +36,7 @@
     "botbuilder-dialogs-adaptive-runtime-core": "4.1.6",
     "botbuilder-dialogs-declarative": "4.1.6",
     "@microsoft/orchestrator-core": "~4.15.1",
-    "uuid": "^8.3.2"
+    "uuid": "^10.0.0"
   },
   "scripts": {
     "build": "tsc -b",

@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "adaptive-expressions": "4.1.6",
-    "bitwise": "^2.0.4",
+    "bitwise": "^2.2.1",
     "botbuilder-ai": "4.1.6",
     "botbuilder-core": "4.1.6",
     "botbuilder-dialogs": "4.1.6",
@@ -34,8 +34,8 @@
     "botbuilder-stdlib": "4.1.6",
     "murmurhash-js": "^1.0.0",
     "nock": "^11.9.1",
-    "url-parse": "^1.5.9",
-    "zod": "^3.22.4"
+    "url-parse": "^1.5.10",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "botbuilder": "4.1.6",

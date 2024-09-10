@@ -40,15 +40,11 @@ export class NodeWebSocket implements ISocket {
         this.wsServer = new WebSocket.Server({ noServer: true });
         return new Promise<void>((resolve, reject) => {
             try {
-                this.wsServer.handleUpgrade(
-                    req as IncomingMessage,
-                    socket as INodeSocket,
-                    head as INodeBuffer,
-                    (websocket) => {
-                        this.wsSocket = websocket;
-                        resolve();
-                    }
-                );
+                // TODO: Fix INodeSocket type. Related issue https://github.com/microsoft/botbuilder-js/issues/4684.
+                this.wsServer.handleUpgrade(req as IncomingMessage, socket as any, head as any, (websocket) => {
+                    this.wsSocket = websocket;
+                    resolve();
+                });
             } catch (err) {
                 reject(err);
             }

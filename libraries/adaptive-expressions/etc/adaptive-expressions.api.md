@@ -38,7 +38,7 @@ export class Alpha_numsContext extends ParserRuleContext {
     // (undocumented)
     letter(i: number): LetterContext;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
     // (undocumented)
     Underscore(): TerminalNode[];
     // (undocumented)
@@ -63,7 +63,7 @@ export class AlternationContext extends ParserRuleContext {
     // (undocumented)
     Pipe(i: number): TerminalNode;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
 }
 
 // @public (undocumented)
@@ -88,7 +88,7 @@ export class ArgsListContext extends ParserRuleContext {
     // (undocumented)
     lambda(i: number): LambdaContext;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
 }
 
 // @public (undocumented)
@@ -146,7 +146,7 @@ export class AtomContext extends ParserRuleContext {
     // (undocumented)
     option(): OptionContext | undefined;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
     // (undocumented)
     shared_atom(): Shared_atomContext | undefined;
 }
@@ -234,7 +234,7 @@ export class CaptureContext extends ParserRuleContext {
     // (undocumented)
     QuestionMark(): TerminalNode | undefined;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
 }
 
 // @public (undocumented)
@@ -253,7 +253,7 @@ export class Cc_atomContext extends ParserRuleContext {
     // (undocumented)
     Hyphen(): TerminalNode | undefined;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
     // (undocumented)
     shared_atom(): Shared_atomContext | undefined;
 }
@@ -286,7 +286,7 @@ export class Cc_literalContext extends ParserRuleContext {
     // (undocumented)
     QuestionMark(): TerminalNode | undefined;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
     // (undocumented)
     shared_literal(): Shared_literalContext | undefined;
     // (undocumented)
@@ -313,7 +313,7 @@ export class Character_classContext extends ParserRuleContext {
     // (undocumented)
     exitRule(listener: CommonRegexListener): void;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
 }
 
 // @public
@@ -342,7 +342,7 @@ export class CommonRegexLexer extends Lexer {
     // (undocumented)
     static readonly Ampersand = 43;
     // (undocumented)
-    static readonly _ATN: ATN;
+    static get _ATN(): ATN;
     // (undocumented)
     static readonly AUC = 70;
     // (undocumented)
@@ -362,7 +362,7 @@ export class CommonRegexLexer extends Lexer {
     // (undocumented)
     static readonly channelNames: string[];
     // (undocumented)
-    readonly channelNames: string[];
+    get channelNames(): string[];
     // (undocumented)
     static readonly CharacterClassEnd = 22;
     // (undocumented)
@@ -434,7 +434,7 @@ export class CommonRegexLexer extends Lexer {
     // (undocumented)
     static readonly GLC = 50;
     // (undocumented)
-    readonly grammarFileName: string;
+    get grammarFileName(): string;
     // (undocumented)
     static readonly GreaterThan = 36;
     // (undocumented)
@@ -472,7 +472,7 @@ export class CommonRegexLexer extends Lexer {
     // (undocumented)
     static readonly modeNames: string[];
     // (undocumented)
-    readonly modeNames: string[];
+    get modeNames(): string[];
     // (undocumented)
     static readonly MUC = 82;
     // (undocumented)
@@ -520,9 +520,9 @@ export class CommonRegexLexer extends Lexer {
     // (undocumented)
     static readonly ruleNames: string[];
     // (undocumented)
-    readonly ruleNames: string[];
+    get ruleNames(): string[];
     // (undocumented)
-    readonly serializedATN: string;
+    get serializedATN(): string;
     // (undocumented)
     static readonly _serializedATN: string;
     // (undocumented)
@@ -550,7 +550,7 @@ export class CommonRegexLexer extends Lexer {
     // (undocumented)
     static readonly VOCABULARY: Vocabulary;
     // (undocumented)
-    readonly vocabulary: Vocabulary;
+    get vocabulary(): Vocabulary;
     // (undocumented)
     static readonly VUC = 91;
     // (undocumented)
@@ -647,7 +647,7 @@ export class CommonRegexParser extends Parser {
     // (undocumented)
     static readonly Ampersand = 43;
     // (undocumented)
-    static readonly _ATN: ATN;
+    static get _ATN(): ATN;
     // (undocumented)
     atom(): AtomContext;
     // (undocumented)
@@ -753,7 +753,7 @@ export class CommonRegexParser extends Parser {
     // (undocumented)
     static readonly GLC = 50;
     // (undocumented)
-    readonly grammarFileName: string;
+    get grammarFileName(): string;
     // (undocumented)
     static readonly GreaterThan = 36;
     // (undocumented)
@@ -917,9 +917,9 @@ export class CommonRegexParser extends Parser {
     // (undocumented)
     static readonly ruleNames: string[];
     // (undocumented)
-    readonly ruleNames: string[];
+    get ruleNames(): string[];
     // (undocumented)
-    readonly serializedATN: string;
+    get serializedATN(): string;
     // (undocumented)
     static readonly _serializedATN: string;
     // (undocumented)
@@ -951,7 +951,7 @@ export class CommonRegexParser extends Parser {
     // (undocumented)
     static readonly VOCABULARY: Vocabulary;
     // (undocumented)
-    readonly vocabulary: Vocabulary;
+    get vocabulary(): Vocabulary;
     // (undocumented)
     static readonly VUC = 91;
     // (undocumented)
@@ -1017,7 +1017,9 @@ export class Constant extends Expression {
     constructor(value: any);
     deepEquals(other: Expression): boolean;
     toString(): string;
-    value: any;
+    get value(): any;
+    // Warning: (ae-setter-with-docs) The doc comment for the property "value" must appear on the getter, not the setter.
+    set value(theValue: any);
 }
 
 // @public
@@ -1053,7 +1055,7 @@ export class DigitContext extends ParserRuleContext {
     // (undocumented)
     exitRule(listener: CommonRegexListener): void;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
 }
 
 // @public (undocumented)
@@ -1070,7 +1072,7 @@ export class DigitsContext extends ParserRuleContext {
     // (undocumented)
     exitRule(listener: CommonRegexListener): void;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
 }
 
 // @public (undocumented)
@@ -1087,7 +1089,7 @@ export class ElementContext extends ParserRuleContext {
     // (undocumented)
     quantifier(): QuantifierContext | undefined;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
 }
 
 // @public
@@ -1123,7 +1125,7 @@ export class ExprContext extends ParserRuleContext {
     // (undocumented)
     exitRule(listener: CommonRegexListener): void;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
 }
 
 // @public
@@ -1147,11 +1149,11 @@ export class Expression {
         path: string;
         refs: Set<string>;
     };
-    readonly returnType: ReturnType_2;
+    get returnType(): ReturnType_2;
     static setPathToValue(property: Expression, value: any): Expression;
     toString(): string;
     tryEvaluate(state: MemoryInterface | any, options?: Options): ValueWithError;
-    readonly type: string;
+    get type(): string;
     validate: () => void;
     validateTree(): void;
 }
@@ -1168,11 +1170,11 @@ export class ExpressionAntlrLexer extends Lexer {
     // (undocumented)
     static readonly ASTERISK = 6;
     // (undocumented)
-    static readonly _ATN: ATN;
+    static get _ATN(): ATN;
     // (undocumented)
     static readonly channelNames: string[];
     // (undocumented)
-    readonly channelNames: string[];
+    get channelNames(): string[];
     // (undocumented)
     static readonly CLOSE_BRACKET = 19;
     // (undocumented)
@@ -1194,7 +1196,7 @@ export class ExpressionAntlrLexer extends Lexer {
     // (undocumented)
     static readonly ESCAPE_CHARACTER = 37;
     // (undocumented)
-    readonly grammarFileName: string;
+    get grammarFileName(): string;
     // (undocumented)
     static readonly IDENTIFIER = 32;
     // (undocumented)
@@ -1208,7 +1210,7 @@ export class ExpressionAntlrLexer extends Lexer {
     // (undocumented)
     static readonly modeNames: string[];
     // (undocumented)
-    readonly modeNames: string[];
+    get modeNames(): string[];
     // (undocumented)
     static readonly MORE_OR_EQUAL = 17;
     // (undocumented)
@@ -1238,11 +1240,11 @@ export class ExpressionAntlrLexer extends Lexer {
     // (undocumented)
     static readonly ruleNames: string[];
     // (undocumented)
-    readonly ruleNames: string[];
+    get ruleNames(): string[];
     // (undocumented)
     sempred(_localctx: RuleContext, ruleIndex: number, predIndex: number): boolean;
     // (undocumented)
-    readonly serializedATN: string;
+    get serializedATN(): string;
     // (undocumented)
     static readonly _serializedATN: string;
     // (undocumented)
@@ -1264,7 +1266,7 @@ export class ExpressionAntlrLexer extends Lexer {
     // (undocumented)
     static readonly VOCABULARY: Vocabulary;
     // (undocumented)
-    readonly vocabulary: Vocabulary;
+    get vocabulary(): Vocabulary;
     // (undocumented)
     static readonly WHITESPACE = 31;
     // (undocumented)
@@ -1283,7 +1285,7 @@ export class ExpressionAntlrParser extends Parser {
     // (undocumented)
     static readonly ASTERISK = 6;
     // (undocumented)
-    static readonly _ATN: ATN;
+    static get _ATN(): ATN;
     // (undocumented)
     static readonly CLOSE_BRACKET = 19;
     // (undocumented)
@@ -1311,7 +1313,7 @@ export class ExpressionAntlrParser extends Parser {
     // (undocumented)
     file(): FileContext;
     // (undocumented)
-    readonly grammarFileName: string;
+    get grammarFileName(): string;
     // (undocumented)
     static readonly IDENTIFIER = 32;
     // (undocumented)
@@ -1381,11 +1383,11 @@ export class ExpressionAntlrParser extends Parser {
     // (undocumented)
     static readonly ruleNames: string[];
     // (undocumented)
-    readonly ruleNames: string[];
+    get ruleNames(): string[];
     // (undocumented)
     sempred(_localctx: RuleContext, ruleIndex: number, predIndex: number): boolean;
     // (undocumented)
-    readonly serializedATN: string;
+    get serializedATN(): string;
     // (undocumented)
     static readonly _serializedATN: string;
     // (undocumented)
@@ -1409,7 +1411,7 @@ export class ExpressionAntlrParser extends Parser {
     // (undocumented)
     static readonly VOCABULARY: Vocabulary;
     // (undocumented)
-    readonly vocabulary: Vocabulary;
+    get vocabulary(): Vocabulary;
     // (undocumented)
     static readonly WHITESPACE = 31;
     // (undocumented)
@@ -1502,7 +1504,7 @@ export class ExpressionContext extends ParserRuleContext {
     // (undocumented)
     copyFrom(ctx: ExpressionContext): void;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
 }
 
 // @public
@@ -1513,7 +1515,9 @@ export class ExpressionConverter {
 // @public
 export class ExpressionEvaluator {
     constructor(type: string, evaluator: EvaluateExpressionDelegate, returnType?: ReturnType_2, validator?: ValidateExpressionDelegate);
-    negation: ExpressionEvaluator;
+    get negation(): ExpressionEvaluator;
+    // Warning: (ae-setter-with-docs) The doc comment for the property "negation" must appear on the getter, not the setter.
+    set negation(value: ExpressionEvaluator);
     returnType: ReturnType_2;
     tryEvaluate: (expression: Expression, state: MemoryInterface, options: Options) => ValueWithError;
     type: string;
@@ -1897,7 +1901,7 @@ export class FileContext extends ParserRuleContext {
     // (undocumented)
     expression(): ExpressionContext;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
 }
 
 // @public (undocumented)
@@ -1923,8 +1927,8 @@ export class FuncInvokeExpContext extends PrimaryExpressionContext {
 
 // @public
 export class FunctionTable implements Map<string, ExpressionEvaluator> {
-    readonly [Symbol.iterator]: () => IterableIterator<[string, ExpressionEvaluator]>;
-    readonly [Symbol.toStringTag]: string;
+    get [Symbol.iterator](): () => IterableIterator<[string, ExpressionEvaluator]>;
+    get [Symbol.toStringTag](): string;
     // (undocumented)
     add(item: {
         key: string;
@@ -1942,10 +1946,10 @@ export class FunctionTable implements Map<string, ExpressionEvaluator> {
     forEach(_callbackfn: (value: ExpressionEvaluator, key: string, map: Map<string, ExpressionEvaluator>) => void, _thisArg?: any): void;
     get(key: string): ExpressionEvaluator;
     has(key: string): boolean;
-    readonly isReadOnly: boolean;
+    get isReadOnly(): boolean;
     keys(): IterableIterator<string>;
     set(key: string, value: ExpressionEvaluator): this;
-    readonly size: number;
+    get size(): number;
     values(): IterableIterator<ExpressionEvaluator>;
 }
 
@@ -2087,7 +2091,7 @@ export class KeyContext extends ParserRuleContext {
     // (undocumented)
     IDENTIFIER(): TerminalNode | undefined;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
     // (undocumented)
     STRING(): TerminalNode | undefined;
 }
@@ -2108,7 +2112,7 @@ export class KeyValuePairContext extends ParserRuleContext {
     // (undocumented)
     key(): KeyContext;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
 }
 
 // @public (undocumented)
@@ -2129,7 +2133,7 @@ export class KeyValuePairListContext extends ParserRuleContext {
     // (undocumented)
     keyValuePair(i: number): KeyValuePairContext;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
 }
 
 // @public (undocumented)
@@ -2148,7 +2152,7 @@ export class LambdaContext extends ParserRuleContext {
     // (undocumented)
     IDENTIFIER(): TerminalNode;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
 }
 
 // @public (undocumented)
@@ -2233,7 +2237,7 @@ export class LetterContext extends ParserRuleContext {
     // (undocumented)
     RUC(): TerminalNode | undefined;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
     // (undocumented)
     SLC(): TerminalNode | undefined;
     // (undocumented)
@@ -2280,7 +2284,7 @@ export class LiteralContext extends ParserRuleContext {
     // (undocumented)
     exitRule(listener: CommonRegexListener): void;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
     // (undocumented)
     shared_literal(): Shared_literalContext | undefined;
 }
@@ -2691,22 +2695,22 @@ export class NameContext extends ParserRuleContext {
     // (undocumented)
     exitRule(listener: CommonRegexListener): void;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
 }
 
 // @public
 class Node_2 {
     constructor(clause: Clause, tree: TriggerTree, trigger?: Trigger);
     addNode(triggerNode: Node_2): boolean;
-    readonly allTriggers: Trigger[];
+    get allTriggers(): Trigger[];
     clause: Clause;
     matches(state: MemoryInterface | any): Trigger[];
     relationship(other: Node_2): RelationshipType;
     removeTrigger(trigger: Trigger): boolean;
-    readonly specializations: Node_2[];
+    get specializations(): Node_2[];
     toString(builder?: string[], indent?: number): string;
     tree: TriggerTree;
-    readonly triggers: Trigger[];
+    get triggers(): Trigger[];
 }
 export { Node_2 as Node }
 
@@ -2730,7 +2734,7 @@ export class Non_captureContext extends ParserRuleContext {
     // (undocumented)
     QuestionMark(): TerminalNode;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
 }
 
 // @public (undocumented)
@@ -2745,7 +2749,7 @@ export class Non_close_parenContext extends ParserRuleContext {
     // (undocumented)
     exitRule(listener: CommonRegexListener): void;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
 }
 
 // @public (undocumented)
@@ -2762,7 +2766,7 @@ export class Non_close_parensContext extends ParserRuleContext {
     // (undocumented)
     non_close_paren(i: number): Non_close_parenContext;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
 }
 
 // @public (undocumented)
@@ -2777,7 +2781,7 @@ export class NumberContext extends ParserRuleContext {
     // (undocumented)
     exitRule(listener: CommonRegexListener): void;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
 }
 
 // @public
@@ -2850,7 +2854,7 @@ export class Octal_charContext extends ParserRuleContext {
     // (undocumented)
     octal_digit(i: number): Octal_digitContext;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
 }
 
 // @public (undocumented)
@@ -2879,7 +2883,7 @@ export class Octal_digitContext extends ParserRuleContext {
     // (undocumented)
     exitRule(listener: CommonRegexListener): void;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
 }
 
 // @public
@@ -2901,7 +2905,7 @@ export class Option_flagContext extends ParserRuleContext {
     // (undocumented)
     MLC(): TerminalNode | undefined;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
     // (undocumented)
     SLC(): TerminalNode | undefined;
 }
@@ -2926,7 +2930,7 @@ export class OptionContext extends ParserRuleContext {
     // (undocumented)
     QuestionMark(): TerminalNode;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
 }
 
 // @public
@@ -2968,7 +2972,7 @@ export class ParseContext extends ParserRuleContext {
     // (undocumented)
     exitRule(listener: CommonRegexListener): void;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
 }
 
 // @public
@@ -3008,7 +3012,7 @@ export class PrimaryExpressionContext extends ParserRuleContext {
     // (undocumented)
     copyFrom(ctx: PrimaryExpressionContext): void;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
 }
 
 // @public
@@ -3038,7 +3042,7 @@ export class Quantifier_typeContext extends ParserRuleContext {
     // (undocumented)
     QuestionMark(): TerminalNode | undefined;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
 }
 
 // @public (undocumented)
@@ -3067,7 +3071,7 @@ export class QuantifierContext extends ParserRuleContext {
     // (undocumented)
     QuestionMark(): TerminalNode | undefined;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
     // (undocumented)
     Star(): TerminalNode | undefined;
 }
@@ -3127,7 +3131,7 @@ export class Shared_atomContext extends ParserRuleContext {
     // (undocumented)
     NotWordChar(): TerminalNode | undefined;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
     // (undocumented)
     WhiteSpace(): TerminalNode | undefined;
     // (undocumented)
@@ -3190,7 +3194,7 @@ export class Shared_literalContext extends ParserRuleContext {
     // (undocumented)
     Quoted(): TerminalNode | undefined;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
     // (undocumented)
     SingleQuote(): TerminalNode | undefined;
     // (undocumented)
@@ -3269,7 +3273,7 @@ export class StringInterpolationContext extends ParserRuleContext {
     // (undocumented)
     exitRule(listener: ExpressionAntlrParserListener): void;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
     // (undocumented)
     STRING_INTERPOLATION_START(): TerminalNode[];
     // (undocumented)
@@ -3299,7 +3303,7 @@ export class TextContentContext extends ParserRuleContext {
     // (undocumented)
     exitRule(listener: ExpressionAntlrParserListener): void;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
     // (undocumented)
     TEXT_CONTENT(): TerminalNode[];
     // (undocumented)
@@ -3322,7 +3326,7 @@ export class TimeZoneConverter {
 export class Trigger {
     constructor(tree: TriggerTree, expression?: Expression, action?: any, ...quantifiers: Quantifier[]);
     readonly action: any;
-    readonly clauses: Clause[];
+    get clauses(): Clause[];
     matches(nodeClause: Clause, state: MemoryInterface | any): boolean;
     readonly originalExpression: Expression;
     relationship(other: Trigger, comparers: PredicateComparers): RelationshipType;

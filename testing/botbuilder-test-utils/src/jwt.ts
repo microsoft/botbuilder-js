@@ -3,7 +3,7 @@
 
 import * as z from 'zod';
 import forge from 'node-forge';
-import jwt from 'jsonwebtoken'; // eslint-disable-line import/no-extraneous-dependencies
+import jwt, { Algorithm } from 'jsonwebtoken'; // eslint-disable-line import/no-extraneous-dependencies
 import nock from 'nock'; // eslint-disable-line import/no-extraneous-dependencies
 import url from 'url';
 import { nanoid } from 'nanoid';
@@ -20,7 +20,7 @@ export function mocha(): void {
 }
 
 export type Options = {
-    algorithm: string;
+    algorithm: Algorithm;
     bits: number;
     expiresIn: number;
     host: string;

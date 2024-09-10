@@ -27,26 +27,26 @@
     }
   },
   "dependencies": {
-    "@azure/core-http": "^3.0.2",
+    "@azure/core-http": "^3.0.4",
     "@azure/msal-node": "^2.13.0",
-    "axios": "^1.7.4",
+    "axios": "^1.7.5",
     "botbuilder-core": "4.1.6",
     "botbuilder-stdlib": "4.1.6",
     "botframework-connector": "4.1.6",
     "botframework-schema": "4.1.6",
     "botframework-streaming": "4.1.6",
-    "dayjs": "^1.10.3",
-    "filenamify": "^4.1.0",
-    "fs-extra": "^7.0.1",
-    "htmlparser2": "^6.0.1",
-    "uuid": "^8.3.2",
-    "zod": "^3.22.4"
+    "dayjs": "^1.11.13",
+    "filenamify": "^4.3.0",
+    "fs-extra": "^11.2.0",
+    "htmlparser2": "^9.0.1",
+    "uuid": "^10.0.0",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
-    "chai": "^4.2.0",
+    "chai": "^4.5.0",
     "lodash": "^4.17.20",
     "nock": "^11.9.1",
-    "node-mocks-http": "^1.10.1"
+    "node-mocks-http": "^1.15.1"
   },
   "scripts": {
     "build": "tsc -b",

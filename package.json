@@ -54,6 +54,7 @@
     "**/nightwatch/semver": "Remove the resolution when nightwatch is updated to a latest version"
   },
   "devDependencies": {
+    "@types/node": "18.19.47",
     "@azure/logger": "^1.0.2",
     "@microsoft/api-extractor": "^7.38.2",
     "@standardlabs/downlevel-dts": "^0.7.5",
@@ -91,7 +92,7 @@
     "typedoc": "^0.24.8",
     "typedoc-plugin-external-module-name": "^4.0.6",
     "typedoc-plugin-markdown": "^3.11.17",
-    "typescript": "^4.1.0",
+    "typescript": "~4.7",
     "wsrun": "^5.2.4",
     "esmify": "^2.1.1",
     "babelify": "^10.0.0"

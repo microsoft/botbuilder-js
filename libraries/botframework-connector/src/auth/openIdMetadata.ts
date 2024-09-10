@@ -72,7 +72,7 @@ export class OpenIdMetadata {
             const getKeyResponse = await fetch(openIdConfig.jwks_uri, { agent: agent });
             if (getKeyResponse.ok) {
                 this.lastUpdated = new Date().getTime();
-                this.keys = (await getKeyResponse.json()).keys as IKey[];
+                this.keys = (await (getKeyResponse.json() as Promise<IOpenIdResponse>)).keys;
             } else {
                 throw new AuthenticationError(
                     `Failed to load Keys: ${getKeyResponse.status}`,
@@ -122,6 +122,10 @@ interface IOpenIdConfig {
     jwks_uri: string;
     id_token_signing_alg_values_supported: string[];
     token_endpoint_auth_methods_supported: string[];
+}
+
+interface IOpenIdResponse {
+    keys: IKey[];
 }
 
 interface IKey {
