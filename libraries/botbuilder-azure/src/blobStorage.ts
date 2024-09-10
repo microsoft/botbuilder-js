@@ -16,7 +16,7 @@ import {
 } from '@azure/storage-blob';
 import { Storage, StoreItems } from 'botbuilder';
 import { escape } from 'querystring';
-import getStream from 'get-stream';
+import StreamConsumers from 'stream/consumers';
 
 // A host address.
 export interface Host {
@@ -182,14 +182,12 @@ export class BlobStorage implements Storage {
                             const blob = this.containerClient.getBlobClient(key);
                             if (await blob.exists()) {
                                 const result = await blob.download();
-                                const { etag: eTag, readableStreamBody: stream } = result;
-                                if (!stream) {
+                                const { etag: eTag, readableStreamBody } = result;
+                                if (!readableStreamBody) {
                                     return { document: {} } as DocumentStoreItem;
                                 }
 
-                                const contents = await getStream(stream);
-                                const parsed = JSON.parse(contents);
-                                const document: DocumentStoreItem = parsed;
+                                const document = (await StreamConsumers.json(readableStreamBody)) as DocumentStoreItem;
                                 document.document.eTag = eTag;
                                 return document;
                             } else {

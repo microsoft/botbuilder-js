@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 import * as z from 'zod';
-import getStream from 'get-stream';
+import StreamConsumers from 'stream/consumers';
 import pmap from 'p-map';
 import { Activity, PagedResult, TranscriptInfo, TranscriptStore } from 'botbuilder-core';
 import { maybeCast } from 'botbuilder-stdlib';
@@ -205,14 +205,12 @@ export class BlobsTranscriptStore implements TranscriptStore {
                     async (blobItem) => {
                         const blob = await this._containerClient.getBlobClient(blobItem.name).download();
 
-                        const { readableStreamBody: stream } = blob;
-                        if (!stream) {
+                        const { readableStreamBody } = blob;
+                        if (!readableStreamBody) {
                             return null;
                         }
 
-                        const contents = await getStream(stream);
-
-                        const activity = JSON.parse(contents);
+                        const activity = (await StreamConsumers.json(readableStreamBody)) as any;
                         return { ...activity, timestamp: new Date(activity.timestamp) } as Activity;
                     },
                     { concurrency: this._concurrency }

@@ -44,7 +44,7 @@ export class AnalyzerOptions {
     constructor(options?: AnalyzerOptions | string[]);
     Merge(opt: AnalyzerOptions): AnalyzerOptions;
     ThrowOnRecursive?: boolean;
-    }
+}
 
 // @public
 export class AnalyzerResult {
@@ -60,7 +60,7 @@ export class BodyContext extends ParserRuleContext_2 {
     // (undocumented)
     copyFrom(ctx: BodyContext): void;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
 }
 
 // @public (undocumented)
@@ -77,7 +77,7 @@ export class CommentDefinitionContext extends ParserRuleContext_2 {
     // (undocumented)
     NEWLINE(): TerminalNode | undefined;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
 }
 
 // @public
@@ -132,7 +132,7 @@ export class ErrorDefinitionContext extends ParserRuleContext_2 {
     // (undocumented)
     NEWLINE(): TerminalNode | undefined;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
 }
 
 // @public
@@ -151,7 +151,7 @@ export class ErrorStructuredNameContext extends ParserRuleContext_2 {
     // (undocumented)
     exitRule(listener: LGTemplateParserListener): void;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
     // (undocumented)
     STRUCTURE_NAME(): TerminalNode[];
     // (undocumented)
@@ -180,7 +180,7 @@ export class ErrorStructureLineContext extends ParserRuleContext_2 {
     // (undocumented)
     expressionInStructure(i: number): ExpressionInStructureContext;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
     // (undocumented)
     STRUCTURE_EQUALS(): TerminalNode[];
     // (undocumented)
@@ -213,7 +213,7 @@ export class ErrorTemplateStringContext extends ParserRuleContext_2 {
     // (undocumented)
     INVALID_TOKEN(i: number): TerminalNode;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
 }
 
 // @public
@@ -228,7 +228,7 @@ export class EvaluationOptions {
     nullSubstitution: (path: string) => unknown;
     // (undocumented)
     strictMode: boolean | undefined;
-    }
+}
 
 // @public
 export class EvaluationTarget {
@@ -305,7 +305,7 @@ export class ExpressionContext extends ParserRuleContext_2 {
     // (undocumented)
     EXPRESSION(): TerminalNode;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
 }
 
 // @public (undocumented)
@@ -320,7 +320,7 @@ export class ExpressionInStructureContext extends ParserRuleContext_2 {
     // (undocumented)
     EXPRESSION_IN_STRUCTURE_BODY(): TerminalNode;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
 }
 
 // @public
@@ -354,7 +354,7 @@ export class FileContext extends ParserRuleContext_2 {
     // (undocumented)
     paragraph(i: number): ParagraphContext;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
 }
 
 // @public
@@ -386,7 +386,7 @@ export class IfConditionContext extends ParserRuleContext_2 {
     // (undocumented)
     IF(): TerminalNode | undefined;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
     // (undocumented)
     TEXT(): TerminalNode[];
     // (undocumented)
@@ -411,7 +411,7 @@ export class IfConditionRuleContext extends ParserRuleContext_2 {
     // (undocumented)
     normalTemplateBody(): NormalTemplateBodyContext | undefined;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
 }
 
 // @public (undocumented)
@@ -441,7 +441,7 @@ export class IfElseTemplateBodyContext extends ParserRuleContext_2 {
     // (undocumented)
     ifConditionRule(i: number): IfConditionRuleContext;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
 }
 
 // @public (undocumented)
@@ -458,7 +458,7 @@ export class ImportDefinitionContext extends ParserRuleContext_2 {
     // (undocumented)
     NEWLINE(): TerminalNode | undefined;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
 }
 
 // @public (undocumented)
@@ -478,7 +478,7 @@ export class KeyValueStructureLineContext extends ParserRuleContext_2 {
     // (undocumented)
     keyValueStructureValue(i: number): KeyValueStructureValueContext;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
     // (undocumented)
     STRUCTURE_EQUALS(): TerminalNode;
     // (undocumented)
@@ -507,7 +507,7 @@ export class KeyValueStructureValueContext extends ParserRuleContext_2 {
     // (undocumented)
     expressionInStructure(i: number): ExpressionInStructureContext;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
     // (undocumented)
     TEXT_IN_STRUCTURE_BODY(): TerminalNode[];
     // (undocumented)
@@ -529,17 +529,17 @@ export class LGFileLexer extends Lexer {
     // (undocumented)
     action(_localctx: RuleContext, ruleIndex: number, actionIndex: number): void;
     // (undocumented)
-    static readonly _ATN: ATN;
+    static get _ATN(): ATN;
     // (undocumented)
     static readonly channelNames: string[];
     // (undocumented)
-    readonly channelNames: string[];
+    get channelNames(): string[];
     // (undocumented)
     static readonly COMMENT = 3;
     // (undocumented)
     static readonly ESCAPE_CHARACTER = 11;
     // (undocumented)
-    readonly grammarFileName: string;
+    get grammarFileName(): string;
     // (undocumented)
     static readonly IMPORT = 4;
     // (undocumented)
@@ -549,7 +549,7 @@ export class LGFileLexer extends Lexer {
     // (undocumented)
     static readonly modeNames: string[];
     // (undocumented)
-    readonly modeNames: string[];
+    get modeNames(): string[];
     // (undocumented)
     static readonly MULTILINE_MODE = 1;
     // (undocumented)
@@ -565,11 +565,11 @@ export class LGFileLexer extends Lexer {
     // (undocumented)
     static readonly ruleNames: string[];
     // (undocumented)
-    readonly ruleNames: string[];
+    get ruleNames(): string[];
     // (undocumented)
     sempred(_localctx: RuleContext, ruleIndex: number, predIndex: number): boolean;
     // (undocumented)
-    readonly serializedATN: string;
+    get serializedATN(): string;
     // (undocumented)
     static readonly _serializedATN: string;
     // (undocumented)
@@ -581,7 +581,7 @@ export class LGFileLexer extends Lexer {
     // (undocumented)
     static readonly VOCABULARY: Vocabulary;
     // (undocumented)
-    readonly vocabulary: Vocabulary;
+    get vocabulary(): Vocabulary;
 }
 
 // @public (undocumented)
@@ -590,7 +590,7 @@ export class LGFileParser extends Parser {
     static __ATN: ATN;
     constructor(input: TokenStream);
     // (undocumented)
-    static readonly _ATN: ATN;
+    static get _ATN(): ATN;
     // (undocumented)
     static readonly COMMENT = 3;
     // (undocumented)
@@ -602,7 +602,7 @@ export class LGFileParser extends Parser {
     // (undocumented)
     file(): FileContext;
     // (undocumented)
-    readonly grammarFileName: string;
+    get grammarFileName(): string;
     // (undocumented)
     static readonly IMPORT = 4;
     // (undocumented)
@@ -648,9 +648,9 @@ export class LGFileParser extends Parser {
     // (undocumented)
     static readonly ruleNames: string[];
     // (undocumented)
-    readonly ruleNames: string[];
+    get ruleNames(): string[];
     // (undocumented)
-    readonly serializedATN: string;
+    get serializedATN(): string;
     // (undocumented)
     static readonly _serializedATN: string;
     // (undocumented)
@@ -668,7 +668,7 @@ export class LGFileParser extends Parser {
     // (undocumented)
     static readonly VOCABULARY: Vocabulary;
     // (undocumented)
-    readonly vocabulary: Vocabulary;
+    get vocabulary(): Vocabulary;
 }
 
 // @public
@@ -733,7 +733,7 @@ export class LGTemplateLexer extends Lexer {
     // (undocumented)
     action(_localctx: RuleContext, ruleIndex: number, actionIndex: number): void;
     // (undocumented)
-    static readonly _ATN: ATN;
+    static get _ATN(): ATN;
     // (undocumented)
     beginOfStructureProperty: boolean;
     // (undocumented)
@@ -745,7 +745,7 @@ export class LGTemplateLexer extends Lexer {
     // (undocumented)
     static readonly channelNames: string[];
     // (undocumented)
-    readonly channelNames: string[];
+    get channelNames(): string[];
     // (undocumented)
     static readonly COMMENTS = 3;
     // (undocumented)
@@ -765,7 +765,7 @@ export class LGTemplateLexer extends Lexer {
     // (undocumented)
     static readonly EXPRESSION_IN_STRUCTURE_BODY = 32;
     // (undocumented)
-    readonly grammarFileName: string;
+    get grammarFileName(): string;
     // (undocumented)
     static readonly IF = 10;
     // (undocumented)
@@ -781,7 +781,7 @@ export class LGTemplateLexer extends Lexer {
     // (undocumented)
     static readonly modeNames: string[];
     // (undocumented)
-    readonly modeNames: string[];
+    get modeNames(): string[];
     // (undocumented)
     static readonly MULTILINE_MODE = 2;
     // (undocumented)
@@ -799,11 +799,11 @@ export class LGTemplateLexer extends Lexer {
     // (undocumented)
     static readonly ruleNames: string[];
     // (undocumented)
-    readonly ruleNames: string[];
+    get ruleNames(): string[];
     // (undocumented)
     sempred(_localctx: RuleContext, ruleIndex: number, predIndex: number): boolean;
     // (undocumented)
-    readonly serializedATN: string;
+    get serializedATN(): string;
     // (undocumented)
     static readonly _serializedATN: string;
     // (undocumented)
@@ -835,7 +835,7 @@ export class LGTemplateLexer extends Lexer {
     // (undocumented)
     static readonly VOCABULARY: Vocabulary;
     // (undocumented)
-    readonly vocabulary: Vocabulary;
+    get vocabulary(): Vocabulary;
     // (undocumented)
     static readonly WS = 1;
     // (undocumented)
@@ -852,7 +852,7 @@ export class LGTemplateParser extends Parser {
     static __ATN: ATN;
     constructor(input: TokenStream);
     // (undocumented)
-    static readonly _ATN: ATN;
+    static get _ATN(): ATN;
     // (undocumented)
     body(): BodyContext;
     // (undocumented)
@@ -886,7 +886,7 @@ export class LGTemplateParser extends Parser {
     // (undocumented)
     expressionInStructure(): ExpressionInStructureContext;
     // (undocumented)
-    readonly grammarFileName: string;
+    get grammarFileName(): string;
     // (undocumented)
     static readonly IF = 10;
     // (undocumented)
@@ -964,9 +964,9 @@ export class LGTemplateParser extends Parser {
     // (undocumented)
     static readonly ruleNames: string[];
     // (undocumented)
-    readonly ruleNames: string[];
+    get ruleNames(): string[];
     // (undocumented)
-    readonly serializedATN: string;
+    get serializedATN(): string;
     // (undocumented)
     static readonly _serializedATN: string;
     // (undocumented)
@@ -1012,7 +1012,7 @@ export class LGTemplateParser extends Parser {
     // (undocumented)
     static readonly VOCABULARY: Vocabulary;
     // (undocumented)
-    readonly vocabulary: Vocabulary;
+    get vocabulary(): Vocabulary;
     // (undocumented)
     static readonly WS = 1;
     // (undocumented)
@@ -1117,7 +1117,7 @@ export class MultiLanguageLG {
     languagePolicy: Map<string, string[]>;
     // (undocumented)
     lgPerLocale: Map<string, Templates>;
-    }
+}
 
 // @public (undocumented)
 export class NormalBodyContext extends BodyContext {
@@ -1142,7 +1142,7 @@ export class NormalTemplateBodyContext extends ParserRuleContext_2 {
     // (undocumented)
     exitRule(listener: LGTemplateParserListener): void;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
     // (undocumented)
     templateString(): TemplateStringContext[];
     // (undocumented)
@@ -1173,7 +1173,7 @@ export class NormalTemplateStringContext extends ParserRuleContext_2 {
     // (undocumented)
     MULTILINE_SUFFIX(): TerminalNode | undefined;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
     // (undocumented)
     TEXT(): TerminalNode[];
     // (undocumented)
@@ -1194,7 +1194,7 @@ export class OptionDefinitionContext extends ParserRuleContext_2 {
     // (undocumented)
     OPTION(): TerminalNode;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
 }
 
 // @public (undocumented)
@@ -1219,7 +1219,7 @@ export class ParagraphContext extends ParserRuleContext_2 {
     // (undocumented)
     optionDefinition(): OptionDefinitionContext | undefined;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
     // (undocumented)
     templateDefinition(): TemplateDefinitionContext | undefined;
 }
@@ -1248,7 +1248,6 @@ class Range_2 {
     // (undocumented)
     toString: () => string;
 }
-
 export { Range_2 as Range }
 
 // @public
@@ -1277,7 +1276,7 @@ export class StructuredBodyContentLineContext extends ParserRuleContext_2 {
     // (undocumented)
     keyValueStructureLine(): KeyValueStructureLineContext | undefined;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
 }
 
 // @public (undocumented)
@@ -1303,7 +1302,7 @@ export class StructuredBodyEndLineContext extends ParserRuleContext_2 {
     // (undocumented)
     exitRule(listener: LGTemplateParserListener): void;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
     // (undocumented)
     STRUCTURED_BODY_END(): TerminalNode;
 }
@@ -1322,7 +1321,7 @@ export class StructuredBodyNameLineContext extends ParserRuleContext_2 {
     // (undocumented)
     LEFT_SQUARE_BRACKET(): TerminalNode;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
     // (undocumented)
     STRUCTURE_NAME(): TerminalNode | undefined;
 }
@@ -1341,7 +1340,7 @@ export class StructuredTemplateBodyContext extends ParserRuleContext_2 {
     // (undocumented)
     exitRule(listener: LGTemplateParserListener): void;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
     // (undocumented)
     STRUCTURED_NEWLINE(): TerminalNode[];
     // (undocumented)
@@ -1381,7 +1380,7 @@ export class SwitchCaseRuleContext extends ParserRuleContext_2 {
     // (undocumented)
     normalTemplateBody(): NormalTemplateBodyContext | undefined;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
     // (undocumented)
     switchCaseStat(): SwitchCaseStatContext;
 }
@@ -1406,7 +1405,7 @@ export class SwitchCaseStatContext extends ParserRuleContext_2 {
     // (undocumented)
     expression(i: number): ExpressionContext;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
     // (undocumented)
     SWITCH(): TerminalNode | undefined;
     // (undocumented)
@@ -1429,7 +1428,7 @@ export class SwitchCaseTemplateBodyContext extends ParserRuleContext_2 {
     // (undocumented)
     exitRule(listener: LGTemplateParserListener): void;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
     // (undocumented)
     switchCaseRule(): SwitchCaseRuleContext[];
     // (undocumented)
@@ -1459,7 +1458,7 @@ export class TemplateBodyContext extends ParserRuleContext_2 {
     // (undocumented)
     exitRule(listener: LGFileParserListener): void;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
     // (undocumented)
     templateBodyLine(): TemplateBodyLineContext[];
     // (undocumented)
@@ -1492,7 +1491,7 @@ export class TemplateBodyLineContext extends ParserRuleContext_2 {
     // (undocumented)
     NEWLINE(): TerminalNode | undefined;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
     // (undocumented)
     TEMPLATE_BODY(): TerminalNode | undefined;
 }
@@ -1511,7 +1510,7 @@ export class TemplateContext extends ParserRuleContext_2 {
     // (undocumented)
     exitRule(listener: LGTemplateParserListener): void;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
 }
 
 // @public (undocumented)
@@ -1524,7 +1523,7 @@ export class TemplateDefinitionContext extends ParserRuleContext_2 {
     // (undocumented)
     exitRule(listener: LGFileParserListener): void;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
     // (undocumented)
     templateBody(): TemplateBodyContext;
     // (undocumented)
@@ -1660,7 +1659,7 @@ export class TemplateNameLineContext extends ParserRuleContext_2 {
     // (undocumented)
     NEWLINE(): TerminalNode | undefined;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
     // (undocumented)
     TEMPLATE_NAME_LINE(): TerminalNode;
 }
@@ -1670,8 +1669,8 @@ export class Templates implements Iterable<Template> {
     [Symbol.iterator](): Iterator<Template>;
     constructor(items?: Template[], imports?: TemplateImport[], diagnostics?: Diagnostic[], references?: Templates[], content?: string, id?: string, expressionParser?: ExpressionParser, importResolverDelegate?: ImportResolverDelegate, options?: string[], source?: string, namedReferences?: Record<string, Templates>);
     addTemplate(templateName: string, parameters: string[], templateBody: string): Templates;
-    readonly allDiagnostics: Diagnostic[];
-    readonly allTemplates: Template[];
+    get allDiagnostics(): Diagnostic[];
+    get allTemplates(): Template[];
     analyzeTemplate(templateName: string, analyzerOptions?: AnalyzerOptions): AnalyzerResult;
     content: string;
     deleteTemplate(templateName: string): Templates;
@@ -1685,9 +1684,9 @@ export class Templates implements Iterable<Template> {
     importResolver: ImportResolverDelegate;
     imports: TemplateImport[];
     static readonly inlineTemplateIdPrefix: string;
-    readonly lgOptions: EvaluationOptions;
+    get lgOptions(): EvaluationOptions;
     namedReferences: Record<string, Templates>;
-    readonly namespace: string;
+    get namespace(): string;
     options: string[];
     static parseFile(filePath: string, importResolver?: ImportResolverDelegate, expressionParser?: ExpressionParser): Templates;
     static parseResource(resource: LGResource, importResolver?: ImportResolverDelegate, expressionParser?: ExpressionParser): Templates;
@@ -1713,7 +1712,7 @@ export class TemplatesParser {
     // @deprecated
     static parseText(content: string, id?: string, importResolver?: ImportResolverDelegate, expressionParser?: ExpressionParser): Templates;
     static parseTextWithRef(content: string, originalTemplates: Templates): Templates;
-    }
+}
 
 // @public
 export class TemplatesTransformer extends AbstractParseTreeVisitor<void> implements LGTemplateParserVisitor<void> {
@@ -1740,9 +1739,8 @@ export class TemplateStringContext extends ParserRuleContext_2 {
     // (undocumented)
     normalTemplateString(): NormalTemplateStringContext | undefined;
     // (undocumented)
-    readonly ruleIndex: number;
+    get ruleIndex(): number;
 }
-
 
 // (No @packageDocumentation comment for this package)
 

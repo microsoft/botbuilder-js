@@ -31,7 +31,7 @@ export class PayloadAssembler {
     private stream: SubscribableStream;
     private readonly _onCompleted: (id: string, receiveResponse: IReceiveResponse | IReceiveRequest) => Promise<void>;
     private readonly _byteOrderMark = 0xfeff;
-    private readonly _utf: string = 'utf8';
+    private readonly _utf: BufferEncoding = 'utf8';
 
     /**
      * Initializes a new instance of the [PayloadAssembler](xref:botframework-streaming.PayloadAssembler) class.

@@ -149,7 +149,7 @@ export const command = (argv: string[], quiet = false) => async (): Promise<Resu
             try {
                 await writeJsonFile(absPath, pkg);
                 return success();
-            } catch (err) {
+            } catch (err: any) {
                 return failure(err instanceof Error ? err.message : err, 22);
             }
         })

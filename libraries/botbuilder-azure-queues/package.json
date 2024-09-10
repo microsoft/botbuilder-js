@@ -28,12 +28,12 @@
     }
   },
   "dependencies": {
-    "@azure/storage-queue": "^12.14.0",
+    "@azure/storage-queue": "^12.23.0",
     "botbuilder-core": "4.1.6"
   },
   "devDependencies": {
     "botbuilder-dialogs": "4.1.6",
-    "node-fetch": "^2.6.7"
+    "node-fetch": "^2.7.0"
   },
   "scripts": {
     "build": "tsc -b",
