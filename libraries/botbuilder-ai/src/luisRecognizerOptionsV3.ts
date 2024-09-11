@@ -158,7 +158,7 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
         const httpOptions = this.buildRequestBody(utterance, options);
 
         const data = await fetch(uri, httpOptions);
-        const response = await data.json();
+        const response = (await data.json()) as any;
         if (response.error) {
             const errObj = response.error;
             const errMessage = errObj.code ? `${errObj.code}: ${errObj.message}` : errObj.message;

@@ -28,7 +28,6 @@ export default defineConfig({
         };
         options.alias = {
             crypto: 'crypto-browserify',
-            fs: 'browserify-fs',
             http: 'stream-http',
             https: 'https-browserify',
             stream: 'stream-browserify',
@@ -40,7 +39,7 @@ export default defineConfig({
                 buffer: false,
                 child_process: true,
                 crypto: false,
-                fs: false,
+                fs: true,
                 http: false,
                 https: false,
                 net: true,

@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { decode, verify, VerifyOptions } from 'jsonwebtoken';
+import { Algorithm, decode, JwtHeader, verify, VerifyOptions } from 'jsonwebtoken';
 import { Claim, ClaimsIdentity } from './claimsIdentity';
 import { EndorsementsValidator } from './endorsementsValidator';
 import { OpenIdMetadata } from './openIdMetadata';
@@ -38,11 +38,11 @@ export class JwtTokenExtractor {
     constructor(
         tokenValidationParameters: VerifyOptions,
         metadataUrl: string,
-        allowedSigningAlgorithms: string[],
+        allowedSigningAlgorithms: string[] | Algorithm[],
         proxySettings?: ProxySettings
     ) {
         this.tokenValidationParameters = { ...tokenValidationParameters };
-        this.tokenValidationParameters.algorithms = allowedSigningAlgorithms;
+        this.tokenValidationParameters.algorithms = allowedSigningAlgorithms as Algorithm[];
         this.openIdMetadata = JwtTokenExtractor.getOrAddOpenIdMetadata(metadataUrl, proxySettings);
     }
 
@@ -141,7 +141,7 @@ export class JwtTokenExtractor {
         channelId: string,
         requiredEndorsements: string[]
     ): Promise<ClaimsIdentity> {
-        let header: Partial<Record<'kid' | 'alg', string>> = {};
+        let header: Partial<JwtHeader> = {};
         const decodedToken = decode(jwtToken, { complete: true });
         if (decodedToken && typeof decodedToken === 'object') {
             header = decodedToken.header;
@@ -189,7 +189,7 @@ export class JwtTokenExtractor {
             }
 
             if (this.tokenValidationParameters.algorithms) {
-                if (this.tokenValidationParameters.algorithms.indexOf(header.alg) === -1) {
+                if (this.tokenValidationParameters.algorithms.indexOf(header.alg as Algorithm) === -1) {
                     throw new AuthenticationError(
                         `"Token signing algorithm '${header.alg}' not in allowed list`,
                         StatusCodes.UNAUTHORIZED

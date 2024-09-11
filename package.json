@@ -45,13 +45,16 @@
     "@types/ramda": "0.26.0",
     "babel-traverse": "npm:@babel/traverse@^7.24.7",
     "lodash.pick": "file:overrides/lodash.pick",
-    "**/nightwatch/ejs": "^3.1.10"
+    "**/nightwatch/ejs": "^3.1.10",
+    "**/nightwatch/semver": "^7.5.2"
   },
   "resolutionComments": {
     "lodash.pick": "Remove the resolution and override project when supporting Node >=18. Because we can't update nightwatch due to jsdom requires node >= 18. https://github.com/lodash/lodash/issues/5809#issuecomment-1910560681",
-    "**/nightwatch/ejs": "Remove the resolution when supporting Node >=18. Because we can't update nightwatch due to jsdom requires node >= 18. https://github.com/lodash/lodash/issues/5809#issuecomment-1910560681"
+    "**/nightwatch/ejs": "Remove the resolution when supporting Node >=18. Because we can't update nightwatch due to jsdom requires node >= 18. https://github.com/lodash/lodash/issues/5809#issuecomment-1910560681",
+    "**/nightwatch/semver": "Remove the resolution when nightwatch is updated to a latest version"
   },
   "devDependencies": {
+    "@types/node": "18.19.47",
     "@azure/logger": "^1.0.2",
     "@microsoft/api-extractor": "^7.38.2",
     "@standardlabs/downlevel-dts": "^0.7.5",
@@ -89,7 +92,7 @@
     "typedoc": "^0.24.8",
     "typedoc-plugin-external-module-name": "^4.0.6",
     "typedoc-plugin-markdown": "^3.11.17",
-    "typescript": "^4.1.0",
+    "typescript": "~4.7",
     "wsrun": "^5.2.4",
     "esmify": "^2.1.1",
     "babelify": "^10.0.0"

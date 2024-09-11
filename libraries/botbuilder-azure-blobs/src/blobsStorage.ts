@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 import * as z from 'zod';
-import getStream from 'get-stream';
+import StreamConsumers from 'stream/consumers';
 import pmap from 'p-map';
 import {
     AnonymousCredential,
@@ -128,13 +128,12 @@ export class BlobsStorage implements Storage {
                         return result;
                     }
 
-                    const { etag: eTag, readableStreamBody: stream } = blob;
-                    if (!stream) {
+                    const { etag: eTag, readableStreamBody } = blob;
+                    if (!readableStreamBody) {
                         return result;
                     }
 
-                    const contents = await getStream(stream);
-                    const parsed = JSON.parse(contents);
+                    const parsed = (await StreamConsumers.json(readableStreamBody)) as any;
                     result.value = { ...parsed, eTag };
 
                     return result;

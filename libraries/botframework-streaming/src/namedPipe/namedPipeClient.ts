@@ -61,8 +61,9 @@ export class NamedPipeClient implements IStreamingTransportClient {
         const incomingPipeName: string =
             NamedPipeTransport.PipePath + this._baseName + NamedPipeTransport.ServerOutgoingPath;
         const incoming = connect(incomingPipeName);
-        this._sender.connect(new NamedPipeTransport(outgoing));
-        this._receiver.connect(new NamedPipeTransport(incoming));
+        // TODO: Fix INodeSocket type. Related issue https://github.com/microsoft/botbuilder-js/issues/4684.
+        this._sender.connect(new NamedPipeTransport(outgoing as any));
+        this._receiver.connect(new NamedPipeTransport(incoming as any));
     }
 
     /**

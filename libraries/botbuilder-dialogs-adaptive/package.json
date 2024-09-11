@@ -44,10 +44,10 @@
     "botbuilder-lg": "4.1.6",
     "botframework-connector": "4.1.6",
     "lodash": "^4.17.21",
-    "node-fetch": "^2.6.7"
+    "node-fetch": "^2.7.0"
   },
   "devDependencies": {
-    "@types/node-fetch": "^2.5.3"
+    "@types/node-fetch": "^2.6.11"
   },
   "scripts": {
     "build": "npm-run-all build:src build:tests",

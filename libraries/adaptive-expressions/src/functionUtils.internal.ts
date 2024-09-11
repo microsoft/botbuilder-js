@@ -7,7 +7,7 @@
  */
 
 import { Constant } from './constant';
-import dayjs, { OpUnitType } from 'dayjs';
+import dayjs, { ManipulateType } from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 dayjs.extend(utc);
 import { Expression } from './expression';
@@ -421,7 +421,7 @@ export class InternalFunctionUtils {
      * @param cSharpStr C# unit.
      * @returns The transformed timeUnit.
      */
-    static timeUnitTransformer(duration: number, cSharpStr: string): { duration: number; tsStr: OpUnitType } {
+    static timeUnitTransformer(duration: number, cSharpStr: string): { duration: number; tsStr: ManipulateType } {
         switch (cSharpStr) {
             case 'Day':
                 return { duration, tsStr: 'day' };
