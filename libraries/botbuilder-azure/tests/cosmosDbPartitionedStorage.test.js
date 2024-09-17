@@ -29,14 +29,15 @@ const pjson = require('../package.json');
 const mode = process.env.MOCK_MODE ? process.env.MOCK_MODE : MockMode.lockdown;
 
 // Endpoint and authKey for the CosmosDB Emulator running locally
-let containerIdSuffix = 0;
-const emulatorEndpoint = 'https://localhost:8081';
-const getSettings = () => {
+const emulatorEndpoint = 'https://127.0.0.1:8081';
+const getSettings = (test = null) => {
+    const testId = `${test?.parent?.title} ${test?.title}`.replace(/ /g, '_');
+
     return {
         cosmosDbEndpoint: emulatorEndpoint,
         authKey: 'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==',
         databaseId: 'CosmosPartitionedStorageTestDb',
-        containerId: `CosmosPartitionedStorageTestContainer-${containerIdSuffix++}`,
+        containerId: `CosmosPartitionedStorageTestContainer-${testId}`,
         cosmosClientOptions: {
             agent: new https.Agent({ rejectUnauthorized: false }), // rejectUnauthorized disables the SSL verification for the locally-hosted Emulator
         },
@@ -94,11 +95,11 @@ const cleanup = async () => {
 };
 
 // called before each test
-const prep = async () => {
+const prep = async function () {
     nock.cleanAll();
     await checkEmulator();
 
-    const settings = getSettings();
+    const settings = getSettings(this.test);
 
     if (mode !== MockMode.lockdown) {
         nock.enableNetConnect();
@@ -138,7 +139,7 @@ describe('CosmosDbPartitionedStorage - Constructor Tests', function () {
     });
 
     it('throws when no endpoint provided', function () {
-        const noEndpoint = getSettings();
+        const noEndpoint = getSettings(this.test);
         noEndpoint.cosmosDbEndpoint = null;
         assert.throws(
             () => new CosmosDbPartitionedStorage(noEndpoint),
@@ -147,7 +148,7 @@ describe('CosmosDbPartitionedStorage - Constructor Tests', function () {
     });
 
     it('throws when no authKey or tokenCredential provided', function () {
-        const noAuthKey = getSettings();
+        const noAuthKey = getSettings(this.test);
         noAuthKey.authKey = null;
         assert.throws(
             () => new CosmosDbPartitionedStorage(noAuthKey),
@@ -156,7 +157,7 @@ describe('CosmosDbPartitionedStorage - Constructor Tests', function () {
     });
 
     it('throws when no databaseId provided', function () {
-        const noDatabaseId = getSettings();
+        const noDatabaseId = getSettings(this.test);
         noDatabaseId.databaseId = null;
         assert.throws(
             () => new CosmosDbPartitionedStorage(noDatabaseId),
@@ -165,7 +166,7 @@ describe('CosmosDbPartitionedStorage - Constructor Tests', function () {
     });
 
     it('throws when no containerId provided', function () {
-        const noContainerId = getSettings();
+        const noContainerId = getSettings(this.test);
         noContainerId.containerId = null;
         assert.throws(
             () => new CosmosDbPartitionedStorage(noContainerId),
@@ -183,7 +184,7 @@ describe('CosmosDbPartitionedStorage - Base Storage Tests', function () {
     it('passes cosmosClientOptions to CosmosClient', async function () {
         const { nockDone } = await usingNock(this.test, mode, options);
 
-        const settingsWithClientOptions = getSettings();
+        const settingsWithClientOptions = getSettings(this.test);
         settingsWithClientOptions.cosmosClientOptions = {
             agent: new https.Agent({ rejectUnauthorized: false }),
             connectionPolicy: { requestTimeout: 999 },
@@ -202,7 +203,7 @@ describe('CosmosDbPartitionedStorage - Base Storage Tests', function () {
     it('passes cosmosClientOptions with default userAgentSuffix', async function () {
         const { nockDone } = await usingNock(this.test, mode, options);
 
-        const settingsWithClientOptions = getSettings();
+        const settingsWithClientOptions = getSettings(this.test);
         settingsWithClientOptions.cosmosClientOptions = {
             agent: new https.Agent({ rejectUnauthorized: false }),
             connectionPolicy: { requestTimeout: 999 },
@@ -325,8 +326,8 @@ describe('CosmosDbPartitionedStorage - Base Storage Tests', function () {
 
         const newDb = 'new-db';
 
-        const defaultSettings = getSettings();
-        const settingsWithNewDb = getSettings();
+        const defaultSettings = getSettings(this.test);
+        const settingsWithNewDb = getSettings(this.test);
         settingsWithNewDb.databaseId = newDb;
 
         // cosmosDbPartitionedStorage requires the user creates the db,
@@ -363,8 +364,8 @@ describe('CosmosDbPartitionedStorage - Base Storage Tests', function () {
 
         const newContainer = 'new-container';
 
-        const defaultSettings = getSettings();
-        const settingsWithNewContainer = getSettings();
+        const defaultSettings = getSettings(this.test);
+        const settingsWithNewContainer = getSettings(this.test);
         settingsWithNewContainer.containerId = newContainer;
 
         const defaultClient = new CosmosDbPartitionedStorage(defaultSettings);

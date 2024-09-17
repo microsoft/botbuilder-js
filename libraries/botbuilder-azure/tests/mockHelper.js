@@ -45,23 +45,7 @@ function usingNock(test, mode, options = null) {
     };
 
     const replaceRecordedInstanceId = function (requests) {
-        requests.map((req) => {
-            if (
-                req.body &&
-                req.body.document &&
-                req.body.document.dialogState &&
-                req.body.document.dialogState.dialogStack
-            ) {
-                req.body.document.dialogState.dialogStack.forEach((stack) => {
-                    if (stack.state && stack.state.values && stack.state.values.instanceId) {
-                        stack.state.values.instanceId = instanceIdReplacement;
-                    }
-                });
-            }
-            return req;
-        });
-
-        return requests;
+        return JSON.parse(JSON.stringify(requests).replace(instanceIdRegEx, `"instanceId":"${instanceIdReplacement}"`));
     };
 
     const setFixedScope = function (requests) {

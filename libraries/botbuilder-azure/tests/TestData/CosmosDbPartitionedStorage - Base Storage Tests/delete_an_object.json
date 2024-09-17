@@ -1,6 +1,6 @@
 [
     {
-        "scope": "https://localhost:8081",
+        "scope": "https://127.0.0.1:8081/",
         "method": "GET",
         "path": "/",
         "body": "",
@@ -8,7 +8,7 @@
         "response": {
             "_self": "",
             "id": "localhost",
-            "_rid": "localhost",
+            "_rid": "127.0.0.1",
             "media": "//media/",
             "addresses": "//addresses/",
             "_dbs": "//dbs/",
@@ -41,7 +41,7 @@
                 "primaryReadCoefficient": 1,
                 "secondaryReadCoefficient": 1
             },
-            "queryEngineConfiguration": "{\"maxSqlQueryInputLength\":262144,\"maxJoinsPerSqlQuery\":5,\"maxLogicalAndPerSqlQuery\":500,\"maxLogicalOrPerSqlQuery\":500,\"maxUdfRefPerSqlQuery\":10,\"maxInExpressionItemsCount\":16000,\"queryMaxInMemorySortDocumentCount\":500,\"maxQueryRequestTimeoutFraction\":0.9,\"sqlAllowNonFiniteNumbers\":false,\"sqlAllowAggregateFunctions\":true,\"sqlAllowSubQuery\":true,\"sqlAllowScalarSubQuery\":true,\"allowNewKeywords\":true,\"sqlAllowLike\":false,\"sqlAllowGroupByClause\":true,\"maxSpatialQueryCells\":12,\"spatialMaxGeometryPointCount\":256,\"sqlDisableQueryILOptimization\":false,\"sqlAllowTop\":true,\"enableSpatialIndexing\":true}"
+            "queryEngineConfiguration": "{\"allowNewKeywords\":true,\"maxJoinsPerSqlQuery\":10,\"maxQueryRequestTimeoutFraction\":0.9,\"maxSqlQueryInputLength\":524288,\"maxUdfRefPerSqlQuery\":10,\"queryMaxInMemorySortDocumentCount\":-500,\"spatialMaxGeometryPointCount\":256,\"sqlAllowNonFiniteNumbers\":false,\"sqlDisableOptimizationFlags\":0,\"enableSpatialIndexing\":true,\"maxInExpressionItemsCount\":2147483647,\"maxLogicalAndPerSqlQuery\":2147483647,\"maxLogicalOrPerSqlQuery\":2147483647,\"maxSpatialQueryCells\":2147483647,\"sqlAllowAggregateFunctions\":true,\"sqlAllowGroupByClause\":true,\"sqlAllowLike\":true,\"sqlAllowSubQuery\":true,\"sqlAllowScalarSubQuery\":true,\"sqlAllowTop\":true}"
         },
         "rawHeaders": [
             "Cache-Control",
@@ -53,7 +53,7 @@
             "Content-Type",
             "application/json",
             "Content-Location",
-            "https://localhost:8081/",
+            "https://127.0.0.1:8081/",
             "Server",
             "Microsoft-HTTPAPI/2.0",
             "Access-Control-Allow-Origin",
@@ -71,23 +71,103 @@
             "x-ms-databaseaccount-provisioned-mb",
             "0",
             "x-ms-gatewayversion",
-            "version=2.9.2",
+            "version=2.14.0",
             "Date",
-            "Tue, 21 Jul 2020 00:00:15 GMT",
+            "Mon, 16 Sep 2024 19:36:25 GMT",
             "Connection",
             "close"
         ],
         "responseIsBinary": false
     },
     {
-        "scope": "https://localhost:8081",
+        "scope": "https://127.0.0.1:8081/",
         "method": "GET",
-        "path": "/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-27",
+        "path": "/",
+        "body": "",
+        "status": 200,
+        "response": {
+            "_self": "",
+            "id": "localhost",
+            "_rid": "127.0.0.1",
+            "media": "//media/",
+            "addresses": "//addresses/",
+            "_dbs": "//dbs/",
+            "writableLocations": [
+                {
+                    "name": "South Central US",
+                    "databaseAccountEndpoint": "https://127.0.0.1:8081/"
+                }
+            ],
+            "readableLocations": [
+                {
+                    "name": "South Central US",
+                    "databaseAccountEndpoint": "https://127.0.0.1:8081/"
+                }
+            ],
+            "enableMultipleWriteLocations": false,
+            "userReplicationPolicy": {
+                "asyncReplication": false,
+                "minReplicaSetSize": 1,
+                "maxReplicasetSize": 4
+            },
+            "userConsistencyPolicy": {
+                "defaultConsistencyLevel": "Session"
+            },
+            "systemReplicationPolicy": {
+                "minReplicaSetSize": 1,
+                "maxReplicasetSize": 4
+            },
+            "readPolicy": {
+                "primaryReadCoefficient": 1,
+                "secondaryReadCoefficient": 1
+            },
+            "queryEngineConfiguration": "{\"allowNewKeywords\":true,\"maxJoinsPerSqlQuery\":10,\"maxQueryRequestTimeoutFraction\":0.9,\"maxSqlQueryInputLength\":524288,\"maxUdfRefPerSqlQuery\":10,\"queryMaxInMemorySortDocumentCount\":-500,\"spatialMaxGeometryPointCount\":256,\"sqlAllowNonFiniteNumbers\":false,\"sqlDisableOptimizationFlags\":0,\"enableSpatialIndexing\":true,\"maxInExpressionItemsCount\":2147483647,\"maxLogicalAndPerSqlQuery\":2147483647,\"maxLogicalOrPerSqlQuery\":2147483647,\"maxSpatialQueryCells\":2147483647,\"sqlAllowAggregateFunctions\":true,\"sqlAllowGroupByClause\":true,\"sqlAllowLike\":true,\"sqlAllowSubQuery\":true,\"sqlAllowScalarSubQuery\":true,\"sqlAllowTop\":true}"
+        },
+        "rawHeaders": [
+            "Cache-Control",
+            "no-store, no-cache",
+            "Pragma",
+            "no-cache",
+            "Transfer-Encoding",
+            "chunked",
+            "Content-Type",
+            "application/json",
+            "Content-Location",
+            "https://127.0.0.1:8081/",
+            "Server",
+            "Microsoft-HTTPAPI/2.0",
+            "Access-Control-Allow-Origin",
+            "",
+            "Access-Control-Allow-Credentials",
+            "true",
+            "x-ms-max-media-storage-usage-mb",
+            "10240",
+            "x-ms-media-storage-usage-mb",
+            "0",
+            "x-ms-databaseaccount-consumed-mb",
+            "0",
+            "x-ms-databaseaccount-reserved-mb",
+            "0",
+            "x-ms-databaseaccount-provisioned-mb",
+            "0",
+            "x-ms-gatewayversion",
+            "version=2.14.0",
+            "Date",
+            "Mon, 16 Sep 2024 19:36:25 GMT",
+            "Connection",
+            "close"
+        ],
+        "responseIsBinary": false
+    },
+    {
+        "scope": "https://127.0.0.1:8081/",
+        "method": "GET",
+        "path": "/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-CosmosDbPartitionedStorage_-_Base_Storage_Tests_%22before_each%22_hook:_prep_for_%22delete_an_object%22",
         "body": "",
         "status": 404,
         "response": {
             "code": "NotFound",
-            "message": "Message: {\"Errors\":[\"Resource Not Found\"]}\r\nActivityId: 31e1d581-5912-4cce-a8e4-1a69b7ab39d0, Request URI: /apps/DocDbApp/services/DocDbMaster0/partitions/780e44f4-38c8-11e6-8106-8cdcd42c33be/replicas/1p/, RequestStats: \r\nRequestStartTime: 2020-07-21T00:00:15.4006101Z, RequestEndTime: 2020-07-21T00:00:15.4026111Z,  Number of regions attempted:1\r\nResponseTime: 2020-07-21T00:00:15.4026111Z, StoreResult: StorePhysicalAddress: rntbd://127.0.0.1:10251/apps/DocDbApp/services/DocDbMaster0/partitions/780e44f4-38c8-11e6-8106-8cdcd42c33be/replicas/1p/, LSN: 5660, GlobalCommittedLsn: -1, PartitionKeyRangeId: , IsValid: True, StatusCode: 404, SubStatusCode: 0, RequestCharge: 1, ItemLSN: -1, SessionToken: -1#5660, UsingLocalLSN: False, TransportException: null, ResourceType: Collection, OperationType: Read\r\nResponseTime: 2020-07-21T00:00:15.4026111Z, StoreResult: StorePhysicalAddress: rntbd://127.0.0.1:10251/apps/DocDbApp/services/DocDbMaster0/partitions/780e44f4-38c8-11e6-8106-8cdcd42c33be/replicas/1p/, LSN: 5660, GlobalCommittedLsn: -1, PartitionKeyRangeId: , IsValid: True, StatusCode: 404, SubStatusCode: 0, RequestCharge: 1, ItemLSN: -1, SessionToken: -1#5660, UsingLocalLSN: False, TransportException: null, ResourceType: Collection, OperationType: Read\r\n, SDK: Microsoft.Azure.Documents.Common/2.9.2"
+            "message": "Message: {\"Errors\":[\"Resource Not Found. Learn more: https:\\/\\/aka.ms\\/cosmosdb-tsg-not-found\"]}\r\nActivityId: ff2bfd82-cd55-40ad-bd28-d8e13e3b31f8, Request URI: /apps/DocDbApp/services/DocDbMaster0/partitions/780e44f4-38c8-11e6-8106-8cdcd42c33be/replicas/1p/, RequestStats: \r\nRequestStartTime: 2024-09-16T19:36:25.7910486Z, RequestEndTime: 2024-09-16T19:36:25.7920448Z,  Number of regions attempted:1\r\n{\"systemHistory\":[{\"dateUtc\":\"2024-09-16T19:35:35.1876950Z\",\"cpu\":1.112,\"memory\":3245664.000,\"threadInfo\":{\"isThreadStarving\":\"False\",\"threadWaitIntervalInMs\":0.1166,\"availableThreads\":32766,\"minThreads\":8,\"maxThreads\":32767},\"numberOfOpenTcpConnection\":2},{\"dateUtc\":\"2024-09-16T19:35:45.1941910Z\",\"cpu\":1.504,\"memory\":3223508.000,\"threadInfo\":{\"isThreadStarving\":\"False\",\"threadWaitIntervalInMs\":0.1421,\"availableThreads\":32766,\"minThreads\":8,\"maxThreads\":32767},\"numberOfOpenTcpConnection\":2},{\"dateUtc\":\"2024-09-16T19:35:55.2146074Z\",\"cpu\":1.034,\"memory\":3232856.000,\"threadInfo\":{\"isThreadStarving\":\"False\",\"threadWaitIntervalInMs\":0.2002,\"availableThreads\":32765,\"minThreads\":8,\"maxThreads\":32767},\"numberOfOpenTcpConnection\":2},{\"dateUtc\":\"2024-09-16T19:36:05.2254102Z\",\"cpu\":0.819,\"memory\":3247968.000,\"threadInfo\":{\"isThreadStarving\":\"False\",\"threadWaitIntervalInMs\":0.0278,\"availableThreads\":32765,\"minThreads\":8,\"maxThreads\":32767},\"numberOfOpenTcpConnection\":2},{\"dateUtc\":\"2024-09-16T19:36:15.2311024Z\",\"cpu\":5.577,\"memory\":3325036.000,\"threadInfo\":{\"isThreadStarving\":\"False\",\"threadWaitIntervalInMs\":0.0925,\"availableThreads\":32765,\"minThreads\":8,\"maxThreads\":32767},\"numberOfOpenTcpConnection\":2},{\"dateUtc\":\"2024-09-16T19:36:25.2395178Z\",\"cpu\":8.223,\"memory\":3182784.000,\"threadInfo\":{\"isThreadStarving\":\"False\",\"threadWaitIntervalInMs\":0.052,\"availableThreads\":32766,\"minThreads\":8,\"maxThreads\":32767},\"numberOfOpenTcpConnection\":2}]}\r\nRequestStart: 2024-09-16T19:36:25.7910486Z; ResponseTime: 2024-09-16T19:36:25.7920448Z; StoreResult: StorePhysicalAddress: rntbd://127.0.0.1:10251/apps/DocDbApp/services/DocDbMaster0/partitions/780e44f4-38c8-11e6-8106-8cdcd42c33be/replicas/1p/, LSN: 1596, GlobalCommittedLsn: -1, PartitionKeyRangeId: , IsValid: True, StatusCode: 404, SubStatusCode: 0, RequestCharge: 1, ItemLSN: -1, SessionToken: -1#1596, UsingLocalLSN: False, TransportException: null, BELatencyMs: 0.361, ActivityId: ff2bfd82-cd55-40ad-bd28-d8e13e3b31f8, RetryAfterInMs: , TransportRequestTimeline: {\"requestTimeline\":[{\"event\": \"Created\", \"startTimeUtc\": \"2024-09-16T19:36:25.7910486Z\", \"durationInMs\": 0.0123},{\"event\": \"ChannelAcquisitionStarted\", \"startTimeUtc\": \"2024-09-16T19:36:25.7910609Z\", \"durationInMs\": 0.0036},{\"event\": \"Pipelined\", \"startTimeUtc\": \"2024-09-16T19:36:25.7910645Z\", \"durationInMs\": 0.2352},{\"event\": \"Transit Time\", \"startTimeUtc\": \"2024-09-16T19:36:25.7912997Z\", \"durationInMs\": 0.8557},{\"event\": \"Received\", \"startTimeUtc\": \"2024-09-16T19:36:25.7921554Z\", \"durationInMs\": 0.1903},{\"event\": \"Completed\", \"startTimeUtc\": \"2024-09-16T19:36:25.7923457Z\", \"durationInMs\": 0}],\"serviceEndpointStats\":{\"inflightRequests\":1,\"openConnections\":1},\"connectionStats\":{\"waitforConnectionInit\":\"False\",\"callsPendingReceive\":0,\"lastSendAttempt\":\"2024-09-16T19:36:25.7589608Z\",\"lastSend\":\"2024-09-16T19:36:25.7589608Z\",\"lastReceive\":\"2024-09-16T19:36:25.7669672Z\"},\"requestSizeInBytes\":558,\"responseMetadataSizeInBytes\":173,\"responseBodySizeInBytes\":87};\r\n ResourceType: Collection, OperationType: Read\r\nRequestStart: 2024-09-16T19:36:25.7910486Z; ResponseTime: 2024-09-16T19:36:25.7920448Z; StoreResult: StorePhysicalAddress: rntbd://127.0.0.1:10251/apps/DocDbApp/services/DocDbMaster0/partitions/780e44f4-38c8-11e6-8106-8cdcd42c33be/replicas/1p/, LSN: 1596, GlobalCommittedLsn: -1, PartitionKeyRangeId: , IsValid: True, StatusCode: 404, SubStatusCode: 0, RequestCharge: 1, ItemLSN: -1, SessionToken: -1#1596, UsingLocalLSN: False, TransportException: null, BELatencyMs: 0.2, ActivityId: ff2bfd82-cd55-40ad-bd28-d8e13e3b31f8, RetryAfterInMs: , TransportRequestTimeline: {\"requestTimeline\":[{\"event\": \"Created\", \"startTimeUtc\": \"2024-09-16T19:36:25.7910486Z\", \"durationInMs\": 0.0032},{\"event\": \"ChannelAcquisitionStarted\", \"startTimeUtc\": \"2024-09-16T19:36:25.7910518Z\", \"durationInMs\": 0.0013},{\"event\": \"Pipelined\", \"startTimeUtc\": \"2024-09-16T19:36:25.7910531Z\", \"durationInMs\": 0.1648},{\"event\": \"Transit Time\", \"startTimeUtc\": \"2024-09-16T19:36:25.7912179Z\", \"durationInMs\": 1.2246},{\"event\": \"Received\", \"startTimeUtc\": \"2024-09-16T19:36:25.7924425Z\", \"durationInMs\": 0.0649},{\"event\": \"Completed\", \"startTimeUtc\": \"2024-09-16T19:36:25.7925074Z\", \"durationInMs\": 0}],\"serviceEndpointStats\":{\"inflightRequests\":2,\"openConnections\":1},\"connectionStats\":{\"waitforConnectionInit\":\"False\",\"callsPendingReceive\":1,\"lastSendAttempt\":\"2024-09-16T19:36:25.7910486Z\",\"lastSend\":\"2024-09-16T19:36:25.7589608Z\",\"lastReceive\":\"2024-09-16T19:36:25.7669672Z\"},\"requestSizeInBytes\":558,\"responseMetadataSizeInBytes\":173,\"responseBodySizeInBytes\":87};\r\n ResourceType: Collection, OperationType: Read\r\n, SDK: Microsoft.Azure.Documents.Common/2.14.0"
         },
         "rawHeaders": [
             "Transfer-Encoding",
@@ -95,21 +175,25 @@
             "Content-Type",
             "application/json",
             "Content-Location",
-            "https://localhost:8081/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-27",
+            "https://127.0.0.1:8081/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-CosmosDbPartitionedStorage_-_Base_Storage_Tests_%22before_each%22_hook:_prep_for_%22delete_an_object%22",
             "Server",
             "Microsoft-HTTPAPI/2.0",
             "Access-Control-Allow-Origin",
             "",
             "Access-Control-Allow-Credentials",
             "true",
+            "x-ms-activity-id",
+            "ff2bfd82-cd55-40ad-bd28-d8e13e3b31f8",
             "x-ms-last-state-change-utc",
-            "Mon, 20 Jul 2020 23:59:34.506 GMT",
-            "lsn",
-            "5660",
+            "Mon, 16 Sep 2024 13:28:00.721 GMT",
             "x-ms-schemaversion",
-            "1.9",
+            "1.15",
+            "lsn",
+            "1596",
+            "x-ms-request-charge",
+            "2",
             "x-ms-quorum-acked-lsn",
-            "5660",
+            "1596",
             "x-ms-current-write-quorum",
             "1",
             "x-ms-current-replica-set-size",
@@ -121,98 +205,192 @@
             "x-ms-number-of-read-regions",
             "0",
             "x-ms-transport-request-id",
-            "282",
+            "16738",
             "x-ms-cosmos-llsn",
-            "5660",
+            "1596",
             "x-ms-cosmos-quorum-acked-llsn",
-            "5660",
+            "1596",
             "x-ms-session-token",
-            "0:-1#5660",
-            "x-ms-request-charge",
-            "2",
+            "0:-1#1596",
+            "x-ms-request-duration-ms",
+            "0.361",
             "x-ms-serviceversion",
-            "version=2.9.0.0",
-            "x-ms-activity-id",
-            "31e1d581-5912-4cce-a8e4-1a69b7ab39d0",
+            "version=2.14.0.0",
             "x-ms-gatewayversion",
-            "version=2.9.2",
+            "version=2.14.0",
             "Date",
-            "Tue, 21 Jul 2020 00:00:15 GMT",
+            "Mon, 16 Sep 2024 19:36:25 GMT",
             "Connection",
             "close"
         ],
         "responseIsBinary": false
     },
     {
-        "scope": "https://localhost:8081",
+        "scope": "https://127.0.0.1:8081/",
         "method": "GET",
-        "path": "/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-27",
+        "path": "/",
         "body": "",
-        "status": 404,
+        "status": 200,
         "response": {
-            "code": "NotFound",
-            "message": "Message: {\"Errors\":[\"Resource Not Found\"]}\r\nActivityId: 611612c3-8c53-4255-ba40-4cda35612ccd, Request URI: /apps/DocDbApp/services/DocDbMaster0/partitions/780e44f4-38c8-11e6-8106-8cdcd42c33be/replicas/1p/, RequestStats: \r\nRequestStartTime: 2020-07-21T00:00:15.4116110Z, RequestEndTime: 2020-07-21T00:00:15.4136095Z,  Number of regions attempted:1\r\nResponseTime: 2020-07-21T00:00:15.4136095Z, StoreResult: StorePhysicalAddress: rntbd://127.0.0.1:10251/apps/DocDbApp/services/DocDbMaster0/partitions/780e44f4-38c8-11e6-8106-8cdcd42c33be/replicas/1p/, LSN: 5660, GlobalCommittedLsn: -1, PartitionKeyRangeId: , IsValid: True, StatusCode: 404, SubStatusCode: 0, RequestCharge: 1, ItemLSN: -1, SessionToken: -1#5660, UsingLocalLSN: False, TransportException: null, ResourceType: Collection, OperationType: Read\r\nResponseTime: 2020-07-21T00:00:15.4136095Z, StoreResult: StorePhysicalAddress: rntbd://127.0.0.1:10251/apps/DocDbApp/services/DocDbMaster0/partitions/780e44f4-38c8-11e6-8106-8cdcd42c33be/replicas/1p/, LSN: 5660, GlobalCommittedLsn: -1, PartitionKeyRangeId: , IsValid: True, StatusCode: 404, SubStatusCode: 0, RequestCharge: 1, ItemLSN: -1, SessionToken: -1#5660, UsingLocalLSN: False, TransportException: null, ResourceType: Collection, OperationType: Read\r\n, SDK: Microsoft.Azure.Documents.Common/2.9.2"
+            "_self": "",
+            "id": "localhost",
+            "_rid": "127.0.0.1",
+            "media": "//media/",
+            "addresses": "//addresses/",
+            "_dbs": "//dbs/",
+            "writableLocations": [
+                {
+                    "name": "South Central US",
+                    "databaseAccountEndpoint": "https://127.0.0.1:8081/"
+                }
+            ],
+            "readableLocations": [
+                {
+                    "name": "South Central US",
+                    "databaseAccountEndpoint": "https://127.0.0.1:8081/"
+                }
+            ],
+            "enableMultipleWriteLocations": false,
+            "userReplicationPolicy": {
+                "asyncReplication": false,
+                "minReplicaSetSize": 1,
+                "maxReplicasetSize": 4
+            },
+            "userConsistencyPolicy": {
+                "defaultConsistencyLevel": "Session"
+            },
+            "systemReplicationPolicy": {
+                "minReplicaSetSize": 1,
+                "maxReplicasetSize": 4
+            },
+            "readPolicy": {
+                "primaryReadCoefficient": 1,
+                "secondaryReadCoefficient": 1
+            },
+            "queryEngineConfiguration": "{\"allowNewKeywords\":true,\"maxJoinsPerSqlQuery\":10,\"maxQueryRequestTimeoutFraction\":0.9,\"maxSqlQueryInputLength\":524288,\"maxUdfRefPerSqlQuery\":10,\"queryMaxInMemorySortDocumentCount\":-500,\"spatialMaxGeometryPointCount\":256,\"sqlAllowNonFiniteNumbers\":false,\"sqlDisableOptimizationFlags\":0,\"enableSpatialIndexing\":true,\"maxInExpressionItemsCount\":2147483647,\"maxLogicalAndPerSqlQuery\":2147483647,\"maxLogicalOrPerSqlQuery\":2147483647,\"maxSpatialQueryCells\":2147483647,\"sqlAllowAggregateFunctions\":true,\"sqlAllowGroupByClause\":true,\"sqlAllowLike\":true,\"sqlAllowSubQuery\":true,\"sqlAllowScalarSubQuery\":true,\"sqlAllowTop\":true}"
         },
         "rawHeaders": [
+            "Cache-Control",
+            "no-store, no-cache",
+            "Pragma",
+            "no-cache",
             "Transfer-Encoding",
             "chunked",
             "Content-Type",
             "application/json",
             "Content-Location",
-            "https://localhost:8081/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-27",
+            "https://127.0.0.1:8081/",
             "Server",
             "Microsoft-HTTPAPI/2.0",
             "Access-Control-Allow-Origin",
             "",
             "Access-Control-Allow-Credentials",
             "true",
-            "x-ms-last-state-change-utc",
-            "Mon, 20 Jul 2020 23:59:34.506 GMT",
-            "lsn",
-            "5660",
-            "x-ms-schemaversion",
-            "1.9",
-            "x-ms-quorum-acked-lsn",
-            "5660",
-            "x-ms-current-write-quorum",
-            "1",
-            "x-ms-current-replica-set-size",
-            "1",
-            "x-ms-xp-role",
+            "x-ms-max-media-storage-usage-mb",
+            "10240",
+            "x-ms-media-storage-usage-mb",
             "0",
-            "x-ms-global-Committed-lsn",
-            "-1",
-            "x-ms-number-of-read-regions",
+            "x-ms-databaseaccount-consumed-mb",
             "0",
-            "x-ms-transport-request-id",
-            "284",
-            "x-ms-cosmos-llsn",
-            "5660",
-            "x-ms-cosmos-quorum-acked-llsn",
-            "5660",
-            "x-ms-session-token",
-            "0:-1#5660",
-            "x-ms-request-charge",
-            "2",
-            "x-ms-serviceversion",
-            "version=2.9.0.0",
-            "x-ms-activity-id",
-            "611612c3-8c53-4255-ba40-4cda35612ccd",
+            "x-ms-databaseaccount-reserved-mb",
+            "0",
+            "x-ms-databaseaccount-provisioned-mb",
+            "0",
             "x-ms-gatewayversion",
-            "version=2.9.2",
+            "version=2.14.0",
             "Date",
-            "Tue, 21 Jul 2020 00:00:15 GMT",
+            "Mon, 16 Sep 2024 19:36:25 GMT",
             "Connection",
             "close"
         ],
         "responseIsBinary": false
     },
     {
-        "scope": "https://localhost:8081",
+        "scope": "https://127.0.0.1:8081/",
+        "method": "GET",
+        "path": "/",
+        "body": "",
+        "status": 200,
+        "response": {
+            "_self": "",
+            "id": "localhost",
+            "_rid": "127.0.0.1",
+            "media": "//media/",
+            "addresses": "//addresses/",
+            "_dbs": "//dbs/",
+            "writableLocations": [
+                {
+                    "name": "South Central US",
+                    "databaseAccountEndpoint": "https://127.0.0.1:8081/"
+                }
+            ],
+            "readableLocations": [
+                {
+                    "name": "South Central US",
+                    "databaseAccountEndpoint": "https://127.0.0.1:8081/"
+                }
+            ],
+            "enableMultipleWriteLocations": false,
+            "userReplicationPolicy": {
+                "asyncReplication": false,
+                "minReplicaSetSize": 1,
+                "maxReplicasetSize": 4
+            },
+            "userConsistencyPolicy": {
+                "defaultConsistencyLevel": "Session"
+            },
+            "systemReplicationPolicy": {
+                "minReplicaSetSize": 1,
+                "maxReplicasetSize": 4
+            },
+            "readPolicy": {
+                "primaryReadCoefficient": 1,
+                "secondaryReadCoefficient": 1
+            },
+            "queryEngineConfiguration": "{\"allowNewKeywords\":true,\"maxJoinsPerSqlQuery\":10,\"maxQueryRequestTimeoutFraction\":0.9,\"maxSqlQueryInputLength\":524288,\"maxUdfRefPerSqlQuery\":10,\"queryMaxInMemorySortDocumentCount\":-500,\"spatialMaxGeometryPointCount\":256,\"sqlAllowNonFiniteNumbers\":false,\"sqlDisableOptimizationFlags\":0,\"enableSpatialIndexing\":true,\"maxInExpressionItemsCount\":2147483647,\"maxLogicalAndPerSqlQuery\":2147483647,\"maxLogicalOrPerSqlQuery\":2147483647,\"maxSpatialQueryCells\":2147483647,\"sqlAllowAggregateFunctions\":true,\"sqlAllowGroupByClause\":true,\"sqlAllowLike\":true,\"sqlAllowSubQuery\":true,\"sqlAllowScalarSubQuery\":true,\"sqlAllowTop\":true}"
+        },
+        "rawHeaders": [
+            "Cache-Control",
+            "no-store, no-cache",
+            "Pragma",
+            "no-cache",
+            "Transfer-Encoding",
+            "chunked",
+            "Content-Type",
+            "application/json",
+            "Content-Location",
+            "https://127.0.0.1:8081/",
+            "Server",
+            "Microsoft-HTTPAPI/2.0",
+            "Access-Control-Allow-Origin",
+            "",
+            "Access-Control-Allow-Credentials",
+            "true",
+            "x-ms-max-media-storage-usage-mb",
+            "10240",
+            "x-ms-media-storage-usage-mb",
+            "0",
+            "x-ms-databaseaccount-consumed-mb",
+            "0",
+            "x-ms-databaseaccount-reserved-mb",
+            "0",
+            "x-ms-databaseaccount-provisioned-mb",
+            "0",
+            "x-ms-gatewayversion",
+            "version=2.14.0",
+            "Date",
+            "Mon, 16 Sep 2024 19:36:25 GMT",
+            "Connection",
+            "close"
+        ],
+        "responseIsBinary": false
+    },
+    {
+        "scope": "https://127.0.0.1:8081/",
         "method": "POST",
         "path": "/dbs/CosmosPartitionedStorageTestDb/colls",
         "body": {
-            "id": "CosmosPartitionedStorageTestContainer-27",
+            "id": "CosmosPartitionedStorageTestContainer-CosmosDbPartitionedStorage_-_Base_Storage_Tests_\"before_each\"_hook:_prep_for_\"delete_an_object\"",
             "partitionKey": {
                 "paths": [
                     "/id"
@@ -221,7 +399,7 @@
         },
         "status": 201,
         "response": {
-            "id": "CosmosPartitionedStorageTestContainer-27",
+            "id": "CosmosPartitionedStorageTestContainer-CosmosDbPartitionedStorage_-_Base_Storage_Tests_\"before_each\"_hook:_prep_for_\"delete_an_object\"",
             "indexingPolicy": {
                 "indexingMode": "consistent",
                 "automatic": true,
@@ -250,10 +428,10 @@
             "geospatialConfig": {
                 "type": "Geography"
             },
-            "_rid": "FWVRANuELxc=",
-            "_ts": 1595289615,
-            "_self": "dbs/FWVRAA==/colls/FWVRANuELxc=/",
-            "_etag": "\"00000000-0000-0000-5ef1-e9b048f901d6\"",
+            "_rid": "feJcAOMYF-k=",
+            "_ts": 1726515385,
+            "_self": "dbs/feJcAA==/colls/feJcAOMYF-k=/",
+            "_etag": "\"00000000-0000-0000-086f-b7fbe8f801db\"",
             "_docs": "docs/",
             "_sprocs": "sprocs/",
             "_triggers": "triggers/",
@@ -275,26 +453,32 @@
             "",
             "Access-Control-Allow-Credentials",
             "true",
+            "x-ms-activity-id",
+            "47c832e8-3d5e-46f0-bc38-f0ef5f1157a2",
             "x-ms-last-state-change-utc",
-            "Mon, 20 Jul 2020 23:59:38.738 GMT",
+            "Mon, 16 Sep 2024 13:27:46.376 GMT",
             "etag",
-            "\"00000000-0000-0000-5ef1-e9b048f901d6\"",
+            "\"00000000-0000-0000-086f-b7fbe8f801db\"",
+            "x-ms-schemaversion",
+            "1.15",
             "collection-partition-index",
             "0",
             "collection-service-index",
             "0",
             "lsn",
-            "61",
-            "x-ms-schemaversion",
-            "1.9",
+            "985",
+            "x-ms-request-charge",
+            "1",
             "x-ms-alt-content-path",
             "dbs/CosmosPartitionedStorageTestDb",
             "x-ms-quorum-acked-lsn",
-            "61",
+            "985",
             "x-ms-current-write-quorum",
             "1",
             "x-ms-current-replica-set-size",
             "1",
+            "x-ms-documentdb-partitionkeyrangeid",
+            "0",
             "x-ms-xp-role",
             "0",
             "x-ms-global-Committed-lsn",
@@ -302,40 +486,200 @@
             "x-ms-number-of-read-regions",
             "0",
             "x-ms-item-lsn",
-            "61",
+            "985",
             "x-ms-transport-request-id",
-            "109",
+            "4338",
             "x-ms-cosmos-llsn",
-            "61",
+            "985",
             "x-ms-cosmos-quorum-acked-llsn",
-            "61",
+            "985",
             "x-ms-cosmos-item-llsn",
-            "61",
+            "985",
             "x-ms-session-token",
-            "0:-1#61",
-            "x-ms-request-charge",
-            "1",
+            "0:-1#985",
+            "x-ms-request-duration-ms",
+            "0.436",
             "x-ms-serviceversion",
-            "version=2.9.0.0",
-            "x-ms-activity-id",
-            "123506ce-2855-4e26-a871-e95c68e6280b",
+            "version=2.14.0.0",
+            "x-ms-cosmos-max-content-length",
+            "2097152",
             "x-ms-gatewayversion",
-            "version=2.9.2",
+            "version=2.14.0",
             "Date",
-            "Tue, 21 Jul 2020 00:00:15 GMT",
+            "Mon, 16 Sep 2024 19:36:25 GMT",
             "Connection",
             "close"
         ],
         "responseIsBinary": false
     },
     {
-        "scope": "https://localhost:8081",
+        "scope": "https://127.0.0.1:8081/",
         "method": "GET",
-        "path": "/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-27",
+        "path": "/",
         "body": "",
         "status": 200,
         "response": {
-            "id": "CosmosPartitionedStorageTestContainer-27",
+            "_self": "",
+            "id": "localhost",
+            "_rid": "127.0.0.1",
+            "media": "//media/",
+            "addresses": "//addresses/",
+            "_dbs": "//dbs/",
+            "writableLocations": [
+                {
+                    "name": "South Central US",
+                    "databaseAccountEndpoint": "https://127.0.0.1:8081/"
+                }
+            ],
+            "readableLocations": [
+                {
+                    "name": "South Central US",
+                    "databaseAccountEndpoint": "https://127.0.0.1:8081/"
+                }
+            ],
+            "enableMultipleWriteLocations": false,
+            "userReplicationPolicy": {
+                "asyncReplication": false,
+                "minReplicaSetSize": 1,
+                "maxReplicasetSize": 4
+            },
+            "userConsistencyPolicy": {
+                "defaultConsistencyLevel": "Session"
+            },
+            "systemReplicationPolicy": {
+                "minReplicaSetSize": 1,
+                "maxReplicasetSize": 4
+            },
+            "readPolicy": {
+                "primaryReadCoefficient": 1,
+                "secondaryReadCoefficient": 1
+            },
+            "queryEngineConfiguration": "{\"allowNewKeywords\":true,\"maxJoinsPerSqlQuery\":10,\"maxQueryRequestTimeoutFraction\":0.9,\"maxSqlQueryInputLength\":524288,\"maxUdfRefPerSqlQuery\":10,\"queryMaxInMemorySortDocumentCount\":-500,\"spatialMaxGeometryPointCount\":256,\"sqlAllowNonFiniteNumbers\":false,\"sqlDisableOptimizationFlags\":0,\"enableSpatialIndexing\":true,\"maxInExpressionItemsCount\":2147483647,\"maxLogicalAndPerSqlQuery\":2147483647,\"maxLogicalOrPerSqlQuery\":2147483647,\"maxSpatialQueryCells\":2147483647,\"sqlAllowAggregateFunctions\":true,\"sqlAllowGroupByClause\":true,\"sqlAllowLike\":true,\"sqlAllowSubQuery\":true,\"sqlAllowScalarSubQuery\":true,\"sqlAllowTop\":true}"
+        },
+        "rawHeaders": [
+            "Cache-Control",
+            "no-store, no-cache",
+            "Pragma",
+            "no-cache",
+            "Transfer-Encoding",
+            "chunked",
+            "Content-Type",
+            "application/json",
+            "Content-Location",
+            "https://127.0.0.1:8081/",
+            "Server",
+            "Microsoft-HTTPAPI/2.0",
+            "Access-Control-Allow-Origin",
+            "",
+            "Access-Control-Allow-Credentials",
+            "true",
+            "x-ms-max-media-storage-usage-mb",
+            "10240",
+            "x-ms-media-storage-usage-mb",
+            "0",
+            "x-ms-databaseaccount-consumed-mb",
+            "0",
+            "x-ms-databaseaccount-reserved-mb",
+            "0",
+            "x-ms-databaseaccount-provisioned-mb",
+            "0",
+            "x-ms-gatewayversion",
+            "version=2.14.0",
+            "Date",
+            "Mon, 16 Sep 2024 19:36:25 GMT",
+            "Connection",
+            "close"
+        ],
+        "responseIsBinary": false
+    },
+    {
+        "scope": "https://127.0.0.1:8081/",
+        "method": "GET",
+        "path": "/",
+        "body": "",
+        "status": 200,
+        "response": {
+            "_self": "",
+            "id": "localhost",
+            "_rid": "127.0.0.1",
+            "media": "//media/",
+            "addresses": "//addresses/",
+            "_dbs": "//dbs/",
+            "writableLocations": [
+                {
+                    "name": "South Central US",
+                    "databaseAccountEndpoint": "https://127.0.0.1:8081/"
+                }
+            ],
+            "readableLocations": [
+                {
+                    "name": "South Central US",
+                    "databaseAccountEndpoint": "https://127.0.0.1:8081/"
+                }
+            ],
+            "enableMultipleWriteLocations": false,
+            "userReplicationPolicy": {
+                "asyncReplication": false,
+                "minReplicaSetSize": 1,
+                "maxReplicasetSize": 4
+            },
+            "userConsistencyPolicy": {
+                "defaultConsistencyLevel": "Session"
+            },
+            "systemReplicationPolicy": {
+                "minReplicaSetSize": 1,
+                "maxReplicasetSize": 4
+            },
+            "readPolicy": {
+                "primaryReadCoefficient": 1,
+                "secondaryReadCoefficient": 1
+            },
+            "queryEngineConfiguration": "{\"allowNewKeywords\":true,\"maxJoinsPerSqlQuery\":10,\"maxQueryRequestTimeoutFraction\":0.9,\"maxSqlQueryInputLength\":524288,\"maxUdfRefPerSqlQuery\":10,\"queryMaxInMemorySortDocumentCount\":-500,\"spatialMaxGeometryPointCount\":256,\"sqlAllowNonFiniteNumbers\":false,\"sqlDisableOptimizationFlags\":0,\"enableSpatialIndexing\":true,\"maxInExpressionItemsCount\":2147483647,\"maxLogicalAndPerSqlQuery\":2147483647,\"maxLogicalOrPerSqlQuery\":2147483647,\"maxSpatialQueryCells\":2147483647,\"sqlAllowAggregateFunctions\":true,\"sqlAllowGroupByClause\":true,\"sqlAllowLike\":true,\"sqlAllowSubQuery\":true,\"sqlAllowScalarSubQuery\":true,\"sqlAllowTop\":true}"
+        },
+        "rawHeaders": [
+            "Cache-Control",
+            "no-store, no-cache",
+            "Pragma",
+            "no-cache",
+            "Transfer-Encoding",
+            "chunked",
+            "Content-Type",
+            "application/json",
+            "Content-Location",
+            "https://127.0.0.1:8081/",
+            "Server",
+            "Microsoft-HTTPAPI/2.0",
+            "Access-Control-Allow-Origin",
+            "",
+            "Access-Control-Allow-Credentials",
+            "true",
+            "x-ms-max-media-storage-usage-mb",
+            "10240",
+            "x-ms-media-storage-usage-mb",
+            "0",
+            "x-ms-databaseaccount-consumed-mb",
+            "0",
+            "x-ms-databaseaccount-reserved-mb",
+            "0",
+            "x-ms-databaseaccount-provisioned-mb",
+            "0",
+            "x-ms-gatewayversion",
+            "version=2.14.0",
+            "Date",
+            "Mon, 16 Sep 2024 19:36:25 GMT",
+            "Connection",
+            "close"
+        ],
+        "responseIsBinary": false
+    },
+    {
+        "scope": "https://127.0.0.1:8081/",
+        "method": "GET",
+        "path": "/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-CosmosDbPartitionedStorage_-_Base_Storage_Tests_%22before_each%22_hook:_prep_for_%22delete_an_object%22",
+        "body": "",
+        "status": 200,
+        "response": {
+            "id": "CosmosPartitionedStorageTestContainer-CosmosDbPartitionedStorage_-_Base_Storage_Tests_\"before_each\"_hook:_prep_for_\"delete_an_object\"",
             "indexingPolicy": {
                 "indexingMode": "consistent",
                 "automatic": true,
@@ -364,10 +708,10 @@
             "geospatialConfig": {
                 "type": "Geography"
             },
-            "_rid": "FWVRANuELxc=",
-            "_ts": 1595289615,
-            "_self": "dbs/FWVRAA==/colls/FWVRANuELxc=/",
-            "_etag": "\"00000000-0000-0000-5ef1-e9b048f901d6\"",
+            "_rid": "feJcAOMYF-k=",
+            "_ts": 1726515385,
+            "_self": "dbs/feJcAA==/colls/feJcAOMYF-k=/",
+            "_etag": "\"00000000-0000-0000-086f-b7fbe8f801db\"",
             "_docs": "docs/",
             "_sprocs": "sprocs/",
             "_triggers": "triggers/",
@@ -384,35 +728,41 @@
             "Content-Type",
             "application/json",
             "Content-Location",
-            "https://localhost:8081/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-27",
+            "https://127.0.0.1:8081/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-CosmosDbPartitionedStorage_-_Base_Storage_Tests_%22before_each%22_hook:_prep_for_%22delete_an_object%22",
             "Server",
             "Microsoft-HTTPAPI/2.0",
             "Access-Control-Allow-Origin",
             "",
             "Access-Control-Allow-Credentials",
             "true",
+            "x-ms-activity-id",
+            "5cd05a92-3d0a-41a0-893a-3e329ae8c602",
             "x-ms-last-state-change-utc",
-            "Mon, 20 Jul 2020 23:59:38.738 GMT",
+            "Mon, 16 Sep 2024 13:27:46.376 GMT",
             "etag",
-            "\"00000000-0000-0000-5ef1-e9b048f901d6\"",
+            "\"00000000-0000-0000-086f-b7fbe8f801db\"",
+            "x-ms-schemaversion",
+            "1.15",
             "collection-partition-index",
             "0",
             "collection-service-index",
             "0",
             "lsn",
-            "61",
-            "x-ms-schemaversion",
-            "1.9",
+            "985",
+            "x-ms-request-charge",
+            "1",
             "x-ms-alt-content-path",
             "dbs/CosmosPartitionedStorageTestDb",
             "x-ms-content-path",
-            "FWVRAA==",
+            "feJcAA==",
             "x-ms-quorum-acked-lsn",
-            "61",
+            "985",
             "x-ms-current-write-quorum",
             "1",
             "x-ms-current-replica-set-size",
             "1",
+            "x-ms-documentdb-partitionkeyrangeid",
+            "0",
             "x-ms-xp-role",
             "0",
             "x-ms-global-Committed-lsn",
@@ -420,36 +770,196 @@
             "x-ms-number-of-read-regions",
             "0",
             "x-ms-item-lsn",
-            "61",
+            "985",
             "x-ms-transport-request-id",
-            "110",
+            "4339",
             "x-ms-cosmos-llsn",
-            "61",
+            "985",
             "x-ms-cosmos-quorum-acked-llsn",
-            "61",
+            "985",
             "x-ms-cosmos-item-llsn",
-            "61",
+            "985",
             "x-ms-session-token",
-            "0:-1#61",
-            "x-ms-request-charge",
-            "1",
+            "0:-1#985",
+            "x-ms-request-duration-ms",
+            "0.561",
             "x-ms-serviceversion",
-            "version=2.9.0.0",
-            "x-ms-activity-id",
-            "3c710e3d-a8c4-4388-b43d-87ccef4fc1b9",
+            "version=2.14.0.0",
+            "x-ms-cosmos-max-content-length",
+            "2097152",
             "x-ms-gatewayversion",
-            "version=2.9.2",
+            "version=2.14.0",
             "Date",
-            "Tue, 21 Jul 2020 00:00:15 GMT",
+            "Mon, 16 Sep 2024 19:36:25 GMT",
             "Connection",
             "close"
         ],
         "responseIsBinary": false
     },
     {
-        "scope": "https://localhost:8081",
+        "scope": "https://127.0.0.1:8081/",
+        "method": "GET",
+        "path": "/",
+        "body": "",
+        "status": 200,
+        "response": {
+            "_self": "",
+            "id": "localhost",
+            "_rid": "127.0.0.1",
+            "media": "//media/",
+            "addresses": "//addresses/",
+            "_dbs": "//dbs/",
+            "writableLocations": [
+                {
+                    "name": "South Central US",
+                    "databaseAccountEndpoint": "https://127.0.0.1:8081/"
+                }
+            ],
+            "readableLocations": [
+                {
+                    "name": "South Central US",
+                    "databaseAccountEndpoint": "https://127.0.0.1:8081/"
+                }
+            ],
+            "enableMultipleWriteLocations": false,
+            "userReplicationPolicy": {
+                "asyncReplication": false,
+                "minReplicaSetSize": 1,
+                "maxReplicasetSize": 4
+            },
+            "userConsistencyPolicy": {
+                "defaultConsistencyLevel": "Session"
+            },
+            "systemReplicationPolicy": {
+                "minReplicaSetSize": 1,
+                "maxReplicasetSize": 4
+            },
+            "readPolicy": {
+                "primaryReadCoefficient": 1,
+                "secondaryReadCoefficient": 1
+            },
+            "queryEngineConfiguration": "{\"allowNewKeywords\":true,\"maxJoinsPerSqlQuery\":10,\"maxQueryRequestTimeoutFraction\":0.9,\"maxSqlQueryInputLength\":524288,\"maxUdfRefPerSqlQuery\":10,\"queryMaxInMemorySortDocumentCount\":-500,\"spatialMaxGeometryPointCount\":256,\"sqlAllowNonFiniteNumbers\":false,\"sqlDisableOptimizationFlags\":0,\"enableSpatialIndexing\":true,\"maxInExpressionItemsCount\":2147483647,\"maxLogicalAndPerSqlQuery\":2147483647,\"maxLogicalOrPerSqlQuery\":2147483647,\"maxSpatialQueryCells\":2147483647,\"sqlAllowAggregateFunctions\":true,\"sqlAllowGroupByClause\":true,\"sqlAllowLike\":true,\"sqlAllowSubQuery\":true,\"sqlAllowScalarSubQuery\":true,\"sqlAllowTop\":true}"
+        },
+        "rawHeaders": [
+            "Cache-Control",
+            "no-store, no-cache",
+            "Pragma",
+            "no-cache",
+            "Transfer-Encoding",
+            "chunked",
+            "Content-Type",
+            "application/json",
+            "Content-Location",
+            "https://127.0.0.1:8081/",
+            "Server",
+            "Microsoft-HTTPAPI/2.0",
+            "Access-Control-Allow-Origin",
+            "",
+            "Access-Control-Allow-Credentials",
+            "true",
+            "x-ms-max-media-storage-usage-mb",
+            "10240",
+            "x-ms-media-storage-usage-mb",
+            "0",
+            "x-ms-databaseaccount-consumed-mb",
+            "0",
+            "x-ms-databaseaccount-reserved-mb",
+            "0",
+            "x-ms-databaseaccount-provisioned-mb",
+            "0",
+            "x-ms-gatewayversion",
+            "version=2.14.0",
+            "Date",
+            "Mon, 16 Sep 2024 19:36:25 GMT",
+            "Connection",
+            "close"
+        ],
+        "responseIsBinary": false
+    },
+    {
+        "scope": "https://127.0.0.1:8081/",
+        "method": "GET",
+        "path": "/",
+        "body": "",
+        "status": 200,
+        "response": {
+            "_self": "",
+            "id": "localhost",
+            "_rid": "127.0.0.1",
+            "media": "//media/",
+            "addresses": "//addresses/",
+            "_dbs": "//dbs/",
+            "writableLocations": [
+                {
+                    "name": "South Central US",
+                    "databaseAccountEndpoint": "https://127.0.0.1:8081/"
+                }
+            ],
+            "readableLocations": [
+                {
+                    "name": "South Central US",
+                    "databaseAccountEndpoint": "https://127.0.0.1:8081/"
+                }
+            ],
+            "enableMultipleWriteLocations": false,
+            "userReplicationPolicy": {
+                "asyncReplication": false,
+                "minReplicaSetSize": 1,
+                "maxReplicasetSize": 4
+            },
+            "userConsistencyPolicy": {
+                "defaultConsistencyLevel": "Session"
+            },
+            "systemReplicationPolicy": {
+                "minReplicaSetSize": 1,
+                "maxReplicasetSize": 4
+            },
+            "readPolicy": {
+                "primaryReadCoefficient": 1,
+                "secondaryReadCoefficient": 1
+            },
+            "queryEngineConfiguration": "{\"allowNewKeywords\":true,\"maxJoinsPerSqlQuery\":10,\"maxQueryRequestTimeoutFraction\":0.9,\"maxSqlQueryInputLength\":524288,\"maxUdfRefPerSqlQuery\":10,\"queryMaxInMemorySortDocumentCount\":-500,\"spatialMaxGeometryPointCount\":256,\"sqlAllowNonFiniteNumbers\":false,\"sqlDisableOptimizationFlags\":0,\"enableSpatialIndexing\":true,\"maxInExpressionItemsCount\":2147483647,\"maxLogicalAndPerSqlQuery\":2147483647,\"maxLogicalOrPerSqlQuery\":2147483647,\"maxSpatialQueryCells\":2147483647,\"sqlAllowAggregateFunctions\":true,\"sqlAllowGroupByClause\":true,\"sqlAllowLike\":true,\"sqlAllowSubQuery\":true,\"sqlAllowScalarSubQuery\":true,\"sqlAllowTop\":true}"
+        },
+        "rawHeaders": [
+            "Cache-Control",
+            "no-store, no-cache",
+            "Pragma",
+            "no-cache",
+            "Transfer-Encoding",
+            "chunked",
+            "Content-Type",
+            "application/json",
+            "Content-Location",
+            "https://127.0.0.1:8081/",
+            "Server",
+            "Microsoft-HTTPAPI/2.0",
+            "Access-Control-Allow-Origin",
+            "",
+            "Access-Control-Allow-Credentials",
+            "true",
+            "x-ms-max-media-storage-usage-mb",
+            "10240",
+            "x-ms-media-storage-usage-mb",
+            "0",
+            "x-ms-databaseaccount-consumed-mb",
+            "0",
+            "x-ms-databaseaccount-reserved-mb",
+            "0",
+            "x-ms-databaseaccount-provisioned-mb",
+            "0",
+            "x-ms-gatewayversion",
+            "version=2.14.0",
+            "Date",
+            "Mon, 16 Sep 2024 19:36:25 GMT",
+            "Connection",
+            "close"
+        ],
+        "responseIsBinary": false
+    },
+    {
+        "scope": "https://127.0.0.1:8081/",
         "method": "POST",
-        "path": "/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-27/docs",
+        "path": "/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-CosmosDbPartitionedStorage_-_Base_Storage_Tests_%22before_each%22_hook:_prep_for_%22delete_an_object%22/docs",
         "body": {
             "id": "delete1",
             "realId": "delete1",
@@ -466,11 +976,11 @@
                 "id": 1,
                 "count": 1
             },
-            "_rid": "FWVRANuELxcBAAAAAAAAAA==",
-            "_self": "dbs/FWVRAA==/colls/FWVRANuELxc=/docs/FWVRANuELxcBAAAAAAAAAA==/",
-            "_etag": "\"00000000-0000-0000-5ef1-e9d57efb01d6\"",
+            "_rid": "feJcAOMYF-kBAAAAAAAAAA==",
+            "_self": "dbs/feJcAA==/colls/feJcAOMYF-k=/docs/feJcAOMYF-kBAAAAAAAAAA==/",
+            "_etag": "\"00000000-0000-0000-086f-b8228b5401db\"",
             "_attachments": "attachments/",
-            "_ts": 1595289615
+            "_ts": 1726515386
         },
         "rawHeaders": [
             "Cache-Control",
@@ -487,28 +997,34 @@
             "",
             "Access-Control-Allow-Credentials",
             "true",
+            "x-ms-activity-id",
+            "bf9837bc-8480-4e3c-a5ad-9dbf78b11f59",
             "x-ms-last-state-change-utc",
-            "Mon, 20 Jul 2020 23:59:38.738 GMT",
+            "Mon, 16 Sep 2024 13:27:46.376 GMT",
             "etag",
-            "\"00000000-0000-0000-5ef1-e9d57efb01d6\"",
+            "\"00000000-0000-0000-086f-b8228b5401db\"",
             "x-ms-resource-quota",
             "documentSize=10240;documentsSize=10485760;documentsCount=-1;collectionSize=10485760;",
             "x-ms-resource-usage",
-            "documentSize=0;documentsSize=1;documentsCount=0;collectionSize=1;",
-            "lsn",
-            "62",
+            "documentSize=0;documentsSize=0;documentsCount=0;collectionSize=1;",
             "x-ms-schemaversion",
-            "1.9",
+            "1.15",
+            "lsn",
+            "986",
+            "x-ms-request-charge",
+            "7.05",
             "x-ms-alt-content-path",
-            "dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-27",
+            "dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-CosmosDbPartitionedStorage_-_Base_Storage_Tests_%22before_each%22_hook:_prep_for_%22delete_an_object%22",
             "x-ms-content-path",
-            "FWVRANuELxc=",
+            "feJcAOMYF-k=",
             "x-ms-quorum-acked-lsn",
-            "61",
+            "985",
             "x-ms-current-write-quorum",
             "1",
             "x-ms-current-replica-set-size",
             "1",
+            "x-ms-documentdb-partitionkeyrangeid",
+            "0",
             "x-ms-xp-role",
             "0",
             "x-ms-global-Committed-lsn",
@@ -516,46 +1032,69 @@
             "x-ms-number-of-read-regions",
             "0",
             "x-ms-transport-request-id",
-            "111",
+            "4340",
             "x-ms-cosmos-llsn",
-            "62",
+            "986",
             "x-ms-cosmos-quorum-acked-llsn",
-            "61",
+            "985",
             "x-ms-session-token",
-            "0:-1#62",
-            "x-ms-request-charge",
-            "7.05",
+            "0:-1#986",
+            "x-ms-request-duration-ms",
+            "15.529",
             "x-ms-serviceversion",
-            "version=2.9.0.0",
-            "x-ms-activity-id",
-            "b84d83d9-6b20-4ef1-bf4d-edf1da8b8342",
+            "version=2.14.0.0",
             "x-ms-gatewayversion",
-            "version=2.9.2",
+            "version=2.14.0",
             "Date",
-            "Tue, 21 Jul 2020 00:00:15 GMT",
+            "Mon, 16 Sep 2024 19:36:25 GMT",
             "Connection",
             "close"
         ],
         "responseIsBinary": false
     },
     {
-        "scope": "https://localhost:8081",
+        "scope": "https://127.0.0.1:8081/",
         "method": "GET",
-        "path": "/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-27/docs/delete1",
+        "path": "/",
         "body": "",
         "status": 200,
         "response": {
-            "id": "delete1",
-            "realId": "delete1",
-            "document": {
-                "id": 1,
-                "count": 1
+            "_self": "",
+            "id": "localhost",
+            "_rid": "127.0.0.1",
+            "media": "//media/",
+            "addresses": "//addresses/",
+            "_dbs": "//dbs/",
+            "writableLocations": [
+                {
+                    "name": "South Central US",
+                    "databaseAccountEndpoint": "https://127.0.0.1:8081/"
+                }
+            ],
+            "readableLocations": [
+                {
+                    "name": "South Central US",
+                    "databaseAccountEndpoint": "https://127.0.0.1:8081/"
+                }
+            ],
+            "enableMultipleWriteLocations": false,
+            "userReplicationPolicy": {
+                "asyncReplication": false,
+                "minReplicaSetSize": 1,
+                "maxReplicasetSize": 4
             },
-            "_rid": "FWVRANuELxcBAAAAAAAAAA==",
-            "_self": "dbs/FWVRAA==/colls/FWVRANuELxc=/docs/FWVRANuELxcBAAAAAAAAAA==/",
-            "_etag": "\"00000000-0000-0000-5ef1-e9d57efb01d6\"",
-            "_attachments": "attachments/",
-            "_ts": 1595289615
+            "userConsistencyPolicy": {
+                "defaultConsistencyLevel": "Session"
+            },
+            "systemReplicationPolicy": {
+                "minReplicaSetSize": 1,
+                "maxReplicasetSize": 4
+            },
+            "readPolicy": {
+                "primaryReadCoefficient": 1,
+                "secondaryReadCoefficient": 1
+            },
+            "queryEngineConfiguration": "{\"allowNewKeywords\":true,\"maxJoinsPerSqlQuery\":10,\"maxQueryRequestTimeoutFraction\":0.9,\"maxSqlQueryInputLength\":524288,\"maxUdfRefPerSqlQuery\":10,\"queryMaxInMemorySortDocumentCount\":-500,\"spatialMaxGeometryPointCount\":256,\"sqlAllowNonFiniteNumbers\":false,\"sqlDisableOptimizationFlags\":0,\"enableSpatialIndexing\":true,\"maxInExpressionItemsCount\":2147483647,\"maxLogicalAndPerSqlQuery\":2147483647,\"maxLogicalOrPerSqlQuery\":2147483647,\"maxSpatialQueryCells\":2147483647,\"sqlAllowAggregateFunctions\":true,\"sqlAllowGroupByClause\":true,\"sqlAllowLike\":true,\"sqlAllowSubQuery\":true,\"sqlAllowScalarSubQuery\":true,\"sqlAllowTop\":true}"
         },
         "rawHeaders": [
             "Cache-Control",
@@ -567,35 +1106,176 @@
             "Content-Type",
             "application/json",
             "Content-Location",
-            "https://localhost:8081/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-27/docs/delete1",
+            "https://127.0.0.1:8081/",
             "Server",
             "Microsoft-HTTPAPI/2.0",
             "Access-Control-Allow-Origin",
             "",
             "Access-Control-Allow-Credentials",
             "true",
+            "x-ms-max-media-storage-usage-mb",
+            "10240",
+            "x-ms-media-storage-usage-mb",
+            "0",
+            "x-ms-databaseaccount-consumed-mb",
+            "0",
+            "x-ms-databaseaccount-reserved-mb",
+            "0",
+            "x-ms-databaseaccount-provisioned-mb",
+            "0",
+            "x-ms-gatewayversion",
+            "version=2.14.0",
+            "Date",
+            "Mon, 16 Sep 2024 19:36:25 GMT",
+            "Connection",
+            "close"
+        ],
+        "responseIsBinary": false
+    },
+    {
+        "scope": "https://127.0.0.1:8081/",
+        "method": "GET",
+        "path": "/",
+        "body": "",
+        "status": 200,
+        "response": {
+            "_self": "",
+            "id": "localhost",
+            "_rid": "127.0.0.1",
+            "media": "//media/",
+            "addresses": "//addresses/",
+            "_dbs": "//dbs/",
+            "writableLocations": [
+                {
+                    "name": "South Central US",
+                    "databaseAccountEndpoint": "https://127.0.0.1:8081/"
+                }
+            ],
+            "readableLocations": [
+                {
+                    "name": "South Central US",
+                    "databaseAccountEndpoint": "https://127.0.0.1:8081/"
+                }
+            ],
+            "enableMultipleWriteLocations": false,
+            "userReplicationPolicy": {
+                "asyncReplication": false,
+                "minReplicaSetSize": 1,
+                "maxReplicasetSize": 4
+            },
+            "userConsistencyPolicy": {
+                "defaultConsistencyLevel": "Session"
+            },
+            "systemReplicationPolicy": {
+                "minReplicaSetSize": 1,
+                "maxReplicasetSize": 4
+            },
+            "readPolicy": {
+                "primaryReadCoefficient": 1,
+                "secondaryReadCoefficient": 1
+            },
+            "queryEngineConfiguration": "{\"allowNewKeywords\":true,\"maxJoinsPerSqlQuery\":10,\"maxQueryRequestTimeoutFraction\":0.9,\"maxSqlQueryInputLength\":524288,\"maxUdfRefPerSqlQuery\":10,\"queryMaxInMemorySortDocumentCount\":-500,\"spatialMaxGeometryPointCount\":256,\"sqlAllowNonFiniteNumbers\":false,\"sqlDisableOptimizationFlags\":0,\"enableSpatialIndexing\":true,\"maxInExpressionItemsCount\":2147483647,\"maxLogicalAndPerSqlQuery\":2147483647,\"maxLogicalOrPerSqlQuery\":2147483647,\"maxSpatialQueryCells\":2147483647,\"sqlAllowAggregateFunctions\":true,\"sqlAllowGroupByClause\":true,\"sqlAllowLike\":true,\"sqlAllowSubQuery\":true,\"sqlAllowScalarSubQuery\":true,\"sqlAllowTop\":true}"
+        },
+        "rawHeaders": [
+            "Cache-Control",
+            "no-store, no-cache",
+            "Pragma",
+            "no-cache",
+            "Transfer-Encoding",
+            "chunked",
+            "Content-Type",
+            "application/json",
+            "Content-Location",
+            "https://127.0.0.1:8081/",
+            "Server",
+            "Microsoft-HTTPAPI/2.0",
+            "Access-Control-Allow-Origin",
+            "",
+            "Access-Control-Allow-Credentials",
+            "true",
+            "x-ms-max-media-storage-usage-mb",
+            "10240",
+            "x-ms-media-storage-usage-mb",
+            "0",
+            "x-ms-databaseaccount-consumed-mb",
+            "0",
+            "x-ms-databaseaccount-reserved-mb",
+            "0",
+            "x-ms-databaseaccount-provisioned-mb",
+            "0",
+            "x-ms-gatewayversion",
+            "version=2.14.0",
+            "Date",
+            "Mon, 16 Sep 2024 19:36:25 GMT",
+            "Connection",
+            "close"
+        ],
+        "responseIsBinary": false
+    },
+    {
+        "scope": "https://127.0.0.1:8081/",
+        "method": "GET",
+        "path": "/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-CosmosDbPartitionedStorage_-_Base_Storage_Tests_%22before_each%22_hook:_prep_for_%22delete_an_object%22/docs/delete1",
+        "body": "",
+        "status": 200,
+        "response": {
+            "id": "delete1",
+            "realId": "delete1",
+            "document": {
+                "id": 1,
+                "count": 1
+            },
+            "_rid": "feJcAOMYF-kBAAAAAAAAAA==",
+            "_self": "dbs/feJcAA==/colls/feJcAOMYF-k=/docs/feJcAOMYF-kBAAAAAAAAAA==/",
+            "_etag": "\"00000000-0000-0000-086f-b8228b5401db\"",
+            "_attachments": "attachments/",
+            "_ts": 1726515386
+        },
+        "rawHeaders": [
+            "Cache-Control",
+            "no-store, no-cache",
+            "Pragma",
+            "no-cache",
+            "Transfer-Encoding",
+            "chunked",
+            "Content-Type",
+            "application/json",
+            "Content-Location",
+            "https://127.0.0.1:8081/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-CosmosDbPartitionedStorage_-_Base_Storage_Tests_%22before_each%22_hook:_prep_for_%22delete_an_object%22/docs/delete1",
+            "Server",
+            "Microsoft-HTTPAPI/2.0",
+            "Access-Control-Allow-Origin",
+            "",
+            "Access-Control-Allow-Credentials",
+            "true",
+            "x-ms-activity-id",
+            "18f57569-3587-45d9-aefe-080c6d70a8a4",
             "x-ms-last-state-change-utc",
-            "Mon, 20 Jul 2020 23:59:38.738 GMT",
+            "Mon, 16 Sep 2024 13:27:46.376 GMT",
             "etag",
-            "\"00000000-0000-0000-5ef1-e9d57efb01d6\"",
+            "\"00000000-0000-0000-086f-b8228b5401db\"",
             "x-ms-resource-quota",
             "documentSize=10240;documentsSize=10485760;documentsCount=-1;collectionSize=10485760;",
             "x-ms-resource-usage",
-            "documentSize=0;documentsSize=1;documentsCount=1;collectionSize=1;",
-            "lsn",
-            "62",
+            "documentSize=0;documentsSize=0;documentsCount=1;collectionSize=1;",
             "x-ms-schemaversion",
-            "1.9",
+            "1.15",
+            "lsn",
+            "986",
+            "x-ms-request-charge",
+            "1",
             "x-ms-alt-content-path",
-            "dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-27",
+            "dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-CosmosDbPartitionedStorage_-_Base_Storage_Tests_%22before_each%22_hook:_prep_for_%22delete_an_object%22",
             "x-ms-content-path",
-            "FWVRANuELxc=",
+            "feJcAOMYF-k=",
             "x-ms-quorum-acked-lsn",
-            "62",
+            "986",
             "x-ms-current-write-quorum",
             "1",
             "x-ms-current-replica-set-size",
             "1",
+            "x-ms-documentdb-partitionkeyrangeid",
+            "0",
             "x-ms-xp-role",
             "0",
             "x-ms-global-Committed-lsn",
@@ -603,36 +1283,194 @@
             "x-ms-number-of-read-regions",
             "0",
             "x-ms-item-lsn",
-            "62",
+            "986",
             "x-ms-transport-request-id",
-            "112",
+            "4341",
             "x-ms-cosmos-llsn",
-            "62",
+            "986",
             "x-ms-cosmos-quorum-acked-llsn",
-            "62",
+            "986",
             "x-ms-cosmos-item-llsn",
-            "62",
+            "986",
             "x-ms-session-token",
-            "0:-1#62",
-            "x-ms-request-charge",
-            "1",
+            "0:-1#986",
+            "x-ms-request-duration-ms",
+            "0.357",
             "x-ms-serviceversion",
-            "version=2.9.0.0",
-            "x-ms-activity-id",
-            "2f28f2aa-34d6-4850-a281-2c3b8dbcba26",
+            "version=2.14.0.0",
             "x-ms-gatewayversion",
-            "version=2.9.2",
+            "version=2.14.0",
             "Date",
-            "Tue, 21 Jul 2020 00:00:15 GMT",
+            "Mon, 16 Sep 2024 19:36:25 GMT",
             "Connection",
             "close"
         ],
         "responseIsBinary": false
     },
     {
-        "scope": "https://localhost:8081",
+        "scope": "https://127.0.0.1:8081/",
+        "method": "GET",
+        "path": "/",
+        "body": "",
+        "status": 200,
+        "response": {
+            "_self": "",
+            "id": "localhost",
+            "_rid": "127.0.0.1",
+            "media": "//media/",
+            "addresses": "//addresses/",
+            "_dbs": "//dbs/",
+            "writableLocations": [
+                {
+                    "name": "South Central US",
+                    "databaseAccountEndpoint": "https://127.0.0.1:8081/"
+                }
+            ],
+            "readableLocations": [
+                {
+                    "name": "South Central US",
+                    "databaseAccountEndpoint": "https://127.0.0.1:8081/"
+                }
+            ],
+            "enableMultipleWriteLocations": false,
+            "userReplicationPolicy": {
+                "asyncReplication": false,
+                "minReplicaSetSize": 1,
+                "maxReplicasetSize": 4
+            },
+            "userConsistencyPolicy": {
+                "defaultConsistencyLevel": "Session"
+            },
+            "systemReplicationPolicy": {
+                "minReplicaSetSize": 1,
+                "maxReplicasetSize": 4
+            },
+            "readPolicy": {
+                "primaryReadCoefficient": 1,
+                "secondaryReadCoefficient": 1
+            },
+            "queryEngineConfiguration": "{\"allowNewKeywords\":true,\"maxJoinsPerSqlQuery\":10,\"maxQueryRequestTimeoutFraction\":0.9,\"maxSqlQueryInputLength\":524288,\"maxUdfRefPerSqlQuery\":10,\"queryMaxInMemorySortDocumentCount\":-500,\"spatialMaxGeometryPointCount\":256,\"sqlAllowNonFiniteNumbers\":false,\"sqlDisableOptimizationFlags\":0,\"enableSpatialIndexing\":true,\"maxInExpressionItemsCount\":2147483647,\"maxLogicalAndPerSqlQuery\":2147483647,\"maxLogicalOrPerSqlQuery\":2147483647,\"maxSpatialQueryCells\":2147483647,\"sqlAllowAggregateFunctions\":true,\"sqlAllowGroupByClause\":true,\"sqlAllowLike\":true,\"sqlAllowSubQuery\":true,\"sqlAllowScalarSubQuery\":true,\"sqlAllowTop\":true}"
+        },
+        "rawHeaders": [
+            "Cache-Control",
+            "no-store, no-cache",
+            "Pragma",
+            "no-cache",
+            "Transfer-Encoding",
+            "chunked",
+            "Content-Type",
+            "application/json",
+            "Content-Location",
+            "https://127.0.0.1:8081/",
+            "Server",
+            "Microsoft-HTTPAPI/2.0",
+            "Access-Control-Allow-Origin",
+            "",
+            "Access-Control-Allow-Credentials",
+            "true",
+            "x-ms-max-media-storage-usage-mb",
+            "10240",
+            "x-ms-media-storage-usage-mb",
+            "0",
+            "x-ms-databaseaccount-consumed-mb",
+            "0",
+            "x-ms-databaseaccount-reserved-mb",
+            "0",
+            "x-ms-databaseaccount-provisioned-mb",
+            "0",
+            "x-ms-gatewayversion",
+            "version=2.14.0",
+            "Date",
+            "Mon, 16 Sep 2024 19:36:25 GMT",
+            "Connection",
+            "close"
+        ],
+        "responseIsBinary": false
+    },
+    {
+        "scope": "https://127.0.0.1:8081/",
+        "method": "GET",
+        "path": "/",
+        "body": "",
+        "status": 200,
+        "response": {
+            "_self": "",
+            "id": "localhost",
+            "_rid": "127.0.0.1",
+            "media": "//media/",
+            "addresses": "//addresses/",
+            "_dbs": "//dbs/",
+            "writableLocations": [
+                {
+                    "name": "South Central US",
+                    "databaseAccountEndpoint": "https://127.0.0.1:8081/"
+                }
+            ],
+            "readableLocations": [
+                {
+                    "name": "South Central US",
+                    "databaseAccountEndpoint": "https://127.0.0.1:8081/"
+                }
+            ],
+            "enableMultipleWriteLocations": false,
+            "userReplicationPolicy": {
+                "asyncReplication": false,
+                "minReplicaSetSize": 1,
+                "maxReplicasetSize": 4
+            },
+            "userConsistencyPolicy": {
+                "defaultConsistencyLevel": "Session"
+            },
+            "systemReplicationPolicy": {
+                "minReplicaSetSize": 1,
+                "maxReplicasetSize": 4
+            },
+            "readPolicy": {
+                "primaryReadCoefficient": 1,
+                "secondaryReadCoefficient": 1
+            },
+            "queryEngineConfiguration": "{\"allowNewKeywords\":true,\"maxJoinsPerSqlQuery\":10,\"maxQueryRequestTimeoutFraction\":0.9,\"maxSqlQueryInputLength\":524288,\"maxUdfRefPerSqlQuery\":10,\"queryMaxInMemorySortDocumentCount\":-500,\"spatialMaxGeometryPointCount\":256,\"sqlAllowNonFiniteNumbers\":false,\"sqlDisableOptimizationFlags\":0,\"enableSpatialIndexing\":true,\"maxInExpressionItemsCount\":2147483647,\"maxLogicalAndPerSqlQuery\":2147483647,\"maxLogicalOrPerSqlQuery\":2147483647,\"maxSpatialQueryCells\":2147483647,\"sqlAllowAggregateFunctions\":true,\"sqlAllowGroupByClause\":true,\"sqlAllowLike\":true,\"sqlAllowSubQuery\":true,\"sqlAllowScalarSubQuery\":true,\"sqlAllowTop\":true}"
+        },
+        "rawHeaders": [
+            "Cache-Control",
+            "no-store, no-cache",
+            "Pragma",
+            "no-cache",
+            "Transfer-Encoding",
+            "chunked",
+            "Content-Type",
+            "application/json",
+            "Content-Location",
+            "https://127.0.0.1:8081/",
+            "Server",
+            "Microsoft-HTTPAPI/2.0",
+            "Access-Control-Allow-Origin",
+            "",
+            "Access-Control-Allow-Credentials",
+            "true",
+            "x-ms-max-media-storage-usage-mb",
+            "10240",
+            "x-ms-media-storage-usage-mb",
+            "0",
+            "x-ms-databaseaccount-consumed-mb",
+            "0",
+            "x-ms-databaseaccount-reserved-mb",
+            "0",
+            "x-ms-databaseaccount-provisioned-mb",
+            "0",
+            "x-ms-gatewayversion",
+            "version=2.14.0",
+            "Date",
+            "Mon, 16 Sep 2024 19:36:25 GMT",
+            "Connection",
+            "close"
+        ],
+        "responseIsBinary": false
+    },
+    {
+        "scope": "https://127.0.0.1:8081/",
         "method": "DELETE",
-        "path": "/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-27/docs/delete1",
+        "path": "/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-CosmosDbPartitionedStorage_-_Base_Storage_Tests_%22before_each%22_hook:_prep_for_%22delete_an_object%22/docs/delete1",
         "body": "",
         "status": 204,
         "response": "",
@@ -646,33 +1484,39 @@
             "Content-Type",
             "application/json",
             "Content-Location",
-            "https://localhost:8081/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-27/docs/delete1",
+            "https://127.0.0.1:8081/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-CosmosDbPartitionedStorage_-_Base_Storage_Tests_%22before_each%22_hook:_prep_for_%22delete_an_object%22/docs/delete1",
             "Server",
             "Microsoft-HTTPAPI/2.0",
             "Access-Control-Allow-Origin",
             "",
             "Access-Control-Allow-Credentials",
             "true",
+            "x-ms-activity-id",
+            "5dc41752-2d48-4b3d-9e81-6d6bb1bc90b6",
             "x-ms-last-state-change-utc",
-            "Mon, 20 Jul 2020 23:59:38.738 GMT",
+            "Mon, 16 Sep 2024 13:27:46.376 GMT",
             "x-ms-resource-quota",
             "documentSize=10240;documentsSize=10485760;documentsCount=-1;collectionSize=10485760;",
             "x-ms-resource-usage",
             "documentSize=0;documentsSize=0;documentsCount=1;collectionSize=0;",
-            "lsn",
-            "63",
             "x-ms-schemaversion",
-            "1.9",
+            "1.15",
+            "lsn",
+            "987",
+            "x-ms-request-charge",
+            "7.05",
             "x-ms-alt-content-path",
-            "dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-27",
+            "dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-CosmosDbPartitionedStorage_-_Base_Storage_Tests_%22before_each%22_hook:_prep_for_%22delete_an_object%22",
             "x-ms-content-path",
-            "FWVRANuELxc=",
+            "feJcAOMYF-k=",
             "x-ms-quorum-acked-lsn",
-            "62",
+            "986",
             "x-ms-current-write-quorum",
             "1",
             "x-ms-current-replica-set-size",
             "1",
+            "x-ms-documentdb-partitionkeyrangeid",
+            "0",
             "x-ms-xp-role",
             "0",
             "x-ms-global-Committed-lsn",
@@ -680,37 +1524,195 @@
             "x-ms-number-of-read-regions",
             "0",
             "x-ms-transport-request-id",
-            "113",
+            "4342",
             "x-ms-cosmos-llsn",
-            "63",
+            "987",
             "x-ms-cosmos-quorum-acked-llsn",
-            "62",
+            "986",
             "x-ms-session-token",
-            "0:-1#63",
-            "x-ms-request-charge",
-            "7.05",
+            "0:-1#987",
+            "x-ms-request-duration-ms",
+            "4.043",
             "x-ms-serviceversion",
-            "version=2.9.0.0",
-            "x-ms-activity-id",
-            "a71bf7db-f401-417b-b893-124e43189f98",
+            "version=2.14.0.0",
             "x-ms-gatewayversion",
-            "version=2.9.2",
+            "version=2.14.0",
             "Date",
-            "Tue, 21 Jul 2020 00:00:15 GMT",
+            "Mon, 16 Sep 2024 19:36:25 GMT",
             "Connection",
             "close"
         ],
         "responseIsBinary": false
     },
     {
-        "scope": "https://localhost:8081",
+        "scope": "https://127.0.0.1:8081/",
         "method": "GET",
-        "path": "/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-27/docs/delete1",
+        "path": "/",
+        "body": "",
+        "status": 200,
+        "response": {
+            "_self": "",
+            "id": "localhost",
+            "_rid": "127.0.0.1",
+            "media": "//media/",
+            "addresses": "//addresses/",
+            "_dbs": "//dbs/",
+            "writableLocations": [
+                {
+                    "name": "South Central US",
+                    "databaseAccountEndpoint": "https://127.0.0.1:8081/"
+                }
+            ],
+            "readableLocations": [
+                {
+                    "name": "South Central US",
+                    "databaseAccountEndpoint": "https://127.0.0.1:8081/"
+                }
+            ],
+            "enableMultipleWriteLocations": false,
+            "userReplicationPolicy": {
+                "asyncReplication": false,
+                "minReplicaSetSize": 1,
+                "maxReplicasetSize": 4
+            },
+            "userConsistencyPolicy": {
+                "defaultConsistencyLevel": "Session"
+            },
+            "systemReplicationPolicy": {
+                "minReplicaSetSize": 1,
+                "maxReplicasetSize": 4
+            },
+            "readPolicy": {
+                "primaryReadCoefficient": 1,
+                "secondaryReadCoefficient": 1
+            },
+            "queryEngineConfiguration": "{\"allowNewKeywords\":true,\"maxJoinsPerSqlQuery\":10,\"maxQueryRequestTimeoutFraction\":0.9,\"maxSqlQueryInputLength\":524288,\"maxUdfRefPerSqlQuery\":10,\"queryMaxInMemorySortDocumentCount\":-500,\"spatialMaxGeometryPointCount\":256,\"sqlAllowNonFiniteNumbers\":false,\"sqlDisableOptimizationFlags\":0,\"enableSpatialIndexing\":true,\"maxInExpressionItemsCount\":2147483647,\"maxLogicalAndPerSqlQuery\":2147483647,\"maxLogicalOrPerSqlQuery\":2147483647,\"maxSpatialQueryCells\":2147483647,\"sqlAllowAggregateFunctions\":true,\"sqlAllowGroupByClause\":true,\"sqlAllowLike\":true,\"sqlAllowSubQuery\":true,\"sqlAllowScalarSubQuery\":true,\"sqlAllowTop\":true}"
+        },
+        "rawHeaders": [
+            "Cache-Control",
+            "no-store, no-cache",
+            "Pragma",
+            "no-cache",
+            "Transfer-Encoding",
+            "chunked",
+            "Content-Type",
+            "application/json",
+            "Content-Location",
+            "https://127.0.0.1:8081/",
+            "Server",
+            "Microsoft-HTTPAPI/2.0",
+            "Access-Control-Allow-Origin",
+            "",
+            "Access-Control-Allow-Credentials",
+            "true",
+            "x-ms-max-media-storage-usage-mb",
+            "10240",
+            "x-ms-media-storage-usage-mb",
+            "0",
+            "x-ms-databaseaccount-consumed-mb",
+            "0",
+            "x-ms-databaseaccount-reserved-mb",
+            "0",
+            "x-ms-databaseaccount-provisioned-mb",
+            "0",
+            "x-ms-gatewayversion",
+            "version=2.14.0",
+            "Date",
+            "Mon, 16 Sep 2024 19:36:25 GMT",
+            "Connection",
+            "close"
+        ],
+        "responseIsBinary": false
+    },
+    {
+        "scope": "https://127.0.0.1:8081/",
+        "method": "GET",
+        "path": "/",
+        "body": "",
+        "status": 200,
+        "response": {
+            "_self": "",
+            "id": "localhost",
+            "_rid": "127.0.0.1",
+            "media": "//media/",
+            "addresses": "//addresses/",
+            "_dbs": "//dbs/",
+            "writableLocations": [
+                {
+                    "name": "South Central US",
+                    "databaseAccountEndpoint": "https://127.0.0.1:8081/"
+                }
+            ],
+            "readableLocations": [
+                {
+                    "name": "South Central US",
+                    "databaseAccountEndpoint": "https://127.0.0.1:8081/"
+                }
+            ],
+            "enableMultipleWriteLocations": false,
+            "userReplicationPolicy": {
+                "asyncReplication": false,
+                "minReplicaSetSize": 1,
+                "maxReplicasetSize": 4
+            },
+            "userConsistencyPolicy": {
+                "defaultConsistencyLevel": "Session"
+            },
+            "systemReplicationPolicy": {
+                "minReplicaSetSize": 1,
+                "maxReplicasetSize": 4
+            },
+            "readPolicy": {
+                "primaryReadCoefficient": 1,
+                "secondaryReadCoefficient": 1
+            },
+            "queryEngineConfiguration": "{\"allowNewKeywords\":true,\"maxJoinsPerSqlQuery\":10,\"maxQueryRequestTimeoutFraction\":0.9,\"maxSqlQueryInputLength\":524288,\"maxUdfRefPerSqlQuery\":10,\"queryMaxInMemorySortDocumentCount\":-500,\"spatialMaxGeometryPointCount\":256,\"sqlAllowNonFiniteNumbers\":false,\"sqlDisableOptimizationFlags\":0,\"enableSpatialIndexing\":true,\"maxInExpressionItemsCount\":2147483647,\"maxLogicalAndPerSqlQuery\":2147483647,\"maxLogicalOrPerSqlQuery\":2147483647,\"maxSpatialQueryCells\":2147483647,\"sqlAllowAggregateFunctions\":true,\"sqlAllowGroupByClause\":true,\"sqlAllowLike\":true,\"sqlAllowSubQuery\":true,\"sqlAllowScalarSubQuery\":true,\"sqlAllowTop\":true}"
+        },
+        "rawHeaders": [
+            "Cache-Control",
+            "no-store, no-cache",
+            "Pragma",
+            "no-cache",
+            "Transfer-Encoding",
+            "chunked",
+            "Content-Type",
+            "application/json",
+            "Content-Location",
+            "https://127.0.0.1:8081/",
+            "Server",
+            "Microsoft-HTTPAPI/2.0",
+            "Access-Control-Allow-Origin",
+            "",
+            "Access-Control-Allow-Credentials",
+            "true",
+            "x-ms-max-media-storage-usage-mb",
+            "10240",
+            "x-ms-media-storage-usage-mb",
+            "0",
+            "x-ms-databaseaccount-consumed-mb",
+            "0",
+            "x-ms-databaseaccount-reserved-mb",
+            "0",
+            "x-ms-databaseaccount-provisioned-mb",
+            "0",
+            "x-ms-gatewayversion",
+            "version=2.14.0",
+            "Date",
+            "Mon, 16 Sep 2024 19:36:25 GMT",
+            "Connection",
+            "close"
+        ],
+        "responseIsBinary": false
+    },
+    {
+        "scope": "https://127.0.0.1:8081/",
+        "method": "GET",
+        "path": "/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-CosmosDbPartitionedStorage_-_Base_Storage_Tests_%22before_each%22_hook:_prep_for_%22delete_an_object%22/docs/delete1",
         "body": "",
         "status": 404,
         "response": {
             "code": "NotFound",
-            "message": "Message: {\"Errors\":[\"Resource Not Found\"]}\r\nActivityId: 30a79df1-ad25-4ce0-ae85-bd5cdb0c145b, Request URI: /apps/DocDbApp/services/DocDbServer2/partitions/a4cb494e-38c8-11e6-8106-8cdcd42c33be/replicas/1p/, RequestStats: \r\nRequestStartTime: 2020-07-21T00:00:15.7766085Z, RequestEndTime: 2020-07-21T00:00:15.7776144Z,  Number of regions attempted:1\r\nResponseTime: 2020-07-21T00:00:15.7776144Z, StoreResult: StorePhysicalAddress: rntbd://127.0.0.1:10253/apps/DocDbApp/services/DocDbServer2/partitions/a4cb494e-38c8-11e6-8106-8cdcd42c33be/replicas/1p/, LSN: 63, GlobalCommittedLsn: -1, PartitionKeyRangeId: 0, IsValid: True, StatusCode: 404, SubStatusCode: 0, RequestCharge: 1, ItemLSN: -1, SessionToken: -1#63, UsingLocalLSN: True, TransportException: null, ResourceType: Document, OperationType: Read\r\n, SDK: Microsoft.Azure.Documents.Common/2.9.2"
+            "message": "Message: {\"Errors\":[\"Resource Not Found. Learn more: https:\\/\\/aka.ms\\/cosmosdb-tsg-not-found\"]}\r\nActivityId: 7d0a75fb-239b-4e41-b8f2-28b7d8971542, Request URI: /apps/DocDbApp/services/DocDbServer21/partitions/a4cb4961-38c8-11e6-8106-8cdcd42c33be/replicas/1p/, RequestStats: \r\nRequestStartTime: 2024-09-16T19:36:26.1978787Z, RequestEndTime: 2024-09-16T19:36:26.1999390Z,  Number of regions attempted:1\r\n{\"systemHistory\":[{\"dateUtc\":\"2024-09-16T19:35:35.1876950Z\",\"cpu\":1.112,\"memory\":3245664.000,\"threadInfo\":{\"isThreadStarving\":\"False\",\"threadWaitIntervalInMs\":0.1166,\"availableThreads\":32766,\"minThreads\":8,\"maxThreads\":32767},\"numberOfOpenTcpConnection\":2},{\"dateUtc\":\"2024-09-16T19:35:45.1941910Z\",\"cpu\":1.504,\"memory\":3223508.000,\"threadInfo\":{\"isThreadStarving\":\"False\",\"threadWaitIntervalInMs\":0.1421,\"availableThreads\":32766,\"minThreads\":8,\"maxThreads\":32767},\"numberOfOpenTcpConnection\":2},{\"dateUtc\":\"2024-09-16T19:35:55.2146074Z\",\"cpu\":1.034,\"memory\":3232856.000,\"threadInfo\":{\"isThreadStarving\":\"False\",\"threadWaitIntervalInMs\":0.2002,\"availableThreads\":32765,\"minThreads\":8,\"maxThreads\":32767},\"numberOfOpenTcpConnection\":2},{\"dateUtc\":\"2024-09-16T19:36:05.2254102Z\",\"cpu\":0.819,\"memory\":3247968.000,\"threadInfo\":{\"isThreadStarving\":\"False\",\"threadWaitIntervalInMs\":0.0278,\"availableThreads\":32765,\"minThreads\":8,\"maxThreads\":32767},\"numberOfOpenTcpConnection\":2},{\"dateUtc\":\"2024-09-16T19:36:15.2311024Z\",\"cpu\":5.577,\"memory\":3325036.000,\"threadInfo\":{\"isThreadStarving\":\"False\",\"threadWaitIntervalInMs\":0.0925,\"availableThreads\":32765,\"minThreads\":8,\"maxThreads\":32767},\"numberOfOpenTcpConnection\":2},{\"dateUtc\":\"2024-09-16T19:36:25.2395178Z\",\"cpu\":8.223,\"memory\":3182784.000,\"threadInfo\":{\"isThreadStarving\":\"False\",\"threadWaitIntervalInMs\":0.052,\"availableThreads\":32766,\"minThreads\":8,\"maxThreads\":32767},\"numberOfOpenTcpConnection\":2}]}\r\nRequestStart: 2024-09-16T19:36:26.1978787Z; ResponseTime: 2024-09-16T19:36:26.1999390Z; StoreResult: StorePhysicalAddress: rntbd://127.0.0.1:10253/apps/DocDbApp/services/DocDbServer21/partitions/a4cb4961-38c8-11e6-8106-8cdcd42c33be/replicas/1p/, LSN: 987, GlobalCommittedLsn: -1, PartitionKeyRangeId: 0, IsValid: True, StatusCode: 404, SubStatusCode: 0, RequestCharge: 1, ItemLSN: -1, SessionToken: -1#987, UsingLocalLSN: True, TransportException: null, BELatencyMs: 0.445, ActivityId: 7d0a75fb-239b-4e41-b8f2-28b7d8971542, RetryAfterInMs: , TransportRequestTimeline: {\"requestTimeline\":[{\"event\": \"Created\", \"startTimeUtc\": \"2024-09-16T19:36:26.1978787Z\", \"durationInMs\": 0.0064},{\"event\": \"ChannelAcquisitionStarted\", \"startTimeUtc\": \"2024-09-16T19:36:26.1978851Z\", \"durationInMs\": 0.0028},{\"event\": \"Pipelined\", \"startTimeUtc\": \"2024-09-16T19:36:26.1978879Z\", \"durationInMs\": 0.2499},{\"event\": \"Transit Time\", \"startTimeUtc\": \"2024-09-16T19:36:26.1981378Z\", \"durationInMs\": 0.9777},{\"event\": \"Received\", \"startTimeUtc\": \"2024-09-16T19:36:26.1991155Z\", \"durationInMs\": 0.1166},{\"event\": \"Completed\", \"startTimeUtc\": \"2024-09-16T19:36:26.1992321Z\", \"durationInMs\": 0}],\"serviceEndpointStats\":{\"inflightRequests\":1,\"openConnections\":1},\"connectionStats\":{\"waitforConnectionInit\":\"False\",\"callsPendingReceive\":0,\"lastSendAttempt\":\"2024-09-16T19:36:26.1785634Z\",\"lastSend\":\"2024-09-16T19:36:26.1794708Z\",\"lastReceive\":\"2024-09-16T19:36:26.1834667Z\"},\"requestSizeInBytes\":620,\"responseMetadataSizeInBytes\":178,\"responseBodySizeInBytes\":87};\r\n ResourceType: Document, OperationType: Read\r\n, SDK: Microsoft.Azure.Documents.Common/2.14.0"
         },
         "rawHeaders": [
             "Transfer-Encoding",
@@ -718,25 +1720,31 @@
             "Content-Type",
             "application/json",
             "Content-Location",
-            "https://localhost:8081/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-27/docs/delete1",
+            "https://127.0.0.1:8081/dbs/CosmosPartitionedStorageTestDb/colls/CosmosPartitionedStorageTestContainer-CosmosDbPartitionedStorage_-_Base_Storage_Tests_%22before_each%22_hook:_prep_for_%22delete_an_object%22/docs/delete1",
             "Server",
             "Microsoft-HTTPAPI/2.0",
             "Access-Control-Allow-Origin",
             "",
             "Access-Control-Allow-Credentials",
             "true",
+            "x-ms-activity-id",
+            "7d0a75fb-239b-4e41-b8f2-28b7d8971542",
             "x-ms-last-state-change-utc",
-            "Mon, 20 Jul 2020 23:59:38.738 GMT",
-            "lsn",
-            "63",
+            "Mon, 16 Sep 2024 13:27:46.376 GMT",
             "x-ms-schemaversion",
-            "1.9",
+            "1.15",
+            "lsn",
+            "987",
+            "x-ms-request-charge",
+            "1",
             "x-ms-quorum-acked-lsn",
-            "63",
+            "987",
             "x-ms-current-write-quorum",
             "1",
             "x-ms-current-replica-set-size",
             "1",
+            "x-ms-documentdb-partitionkeyrangeid",
+            "0",
             "x-ms-xp-role",
             "0",
             "x-ms-global-Committed-lsn",
@@ -744,23 +1752,21 @@
             "x-ms-number-of-read-regions",
             "0",
             "x-ms-transport-request-id",
-            "114",
+            "4343",
             "x-ms-cosmos-llsn",
-            "63",
+            "987",
             "x-ms-cosmos-quorum-acked-llsn",
-            "63",
+            "987",
             "x-ms-session-token",
-            "0:-1#63",
-            "x-ms-request-charge",
-            "1",
+            "0:-1#987",
+            "x-ms-request-duration-ms",
+            "0.445",
             "x-ms-serviceversion",
-            "version=2.9.0.0",
-            "x-ms-activity-id",
-            "30a79df1-ad25-4ce0-ae85-bd5cdb0c145b",
+            "version=2.14.0.0",
             "x-ms-gatewayversion",
-            "version=2.9.2",
+            "version=2.14.0",
             "Date",
-            "Tue, 21 Jul 2020 00:00:15 GMT",
+            "Mon, 16 Sep 2024 19:36:25 GMT",
             "Connection",
             "close"
         ],

@@ -28,18 +28,18 @@
     }
   },
   "dependencies": {
-    "@azure/cosmos": "3.10.0",
-    "@azure/core-auth": "^1.4.0",
+    "@azure/core-auth": "^1.7.2",
+    "@azure/cosmos": "^4.1.1",
     "@azure/storage-blob": "^12.24.0",
+    "bcryptjs": "^2.4.3",
     "botbuilder": "4.1.6",
     "botbuilder-stdlib": "4.1.6",
-    "bcryptjs": "^2.4.3",
     "lodash": "^4.17.20",
     "p-map": "^4.0.0"
   },
   "devDependencies": {
     "fs-extra": "^11.2.0",
-    "nock": "^11.9.1",
+    "nock": "^13.5.5",
     "node-fetch": "^2.7.0"
   },
   "scripts": {
