@@ -46,7 +46,8 @@
     "babel-traverse": "npm:@babel/traverse@^7.24.7",
     "lodash.pick": "file:overrides/lodash.pick",
     "**/nightwatch/ejs": "^3.1.10",
-    "**/nightwatch/semver": "^7.5.2"
+    "**/nightwatch/semver": "^7.5.2",
+    "**/botbuilder-dialogs-adaptive-runtime-integration-restify/restify/send": "^0.19.0"
   },
   "resolutionComments": {
     "lodash.pick": "Remove the resolution and override project when supporting Node >=18. Because we can't update nightwatch due to jsdom requires node >= 18. https://github.com/lodash/lodash/issues/5809#issuecomment-1910560681",
