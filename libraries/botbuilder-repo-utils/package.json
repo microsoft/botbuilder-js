@@ -11,17 +11,16 @@
     "url": "https://github.com/Microsoft/botbuilder-js.git"
   },
   "dependencies": {
-    "dayjs": "^1.10.3",
-    "get-stream": "^6.0.0",
+    "dayjs": "^1.11.13",
     "fast-glob": "^3.3.2",
     "lodash": "^4.17.20",
-    "minimatch": "^4.0.0",
+    "minimatch": "^9.0.5",
     "minimist": "^1.2.6",
     "p-map": "^4.0.0"
   },
   "devDependencies": {
-    "@types/minimist": "^1.2.1",
-    "@types/semver": "^7.3.7",
+    "@types/minimist": "^1.2.5",
+    "@types/semver": "^7.5.8",
     "semver": "^7.5.3",
     "ts-node": "^10.9.2",
     "typescript": "~4.7"

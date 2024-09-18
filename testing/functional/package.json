@@ -5,7 +5,7 @@
   "description": "Test that hits services",
   "main": "",
   "dependencies": {
-    "swagger-client": "^3.0.0"
+    "swagger-client": "^3.23.3"
   },
   "directories": {
     "test": "tests"

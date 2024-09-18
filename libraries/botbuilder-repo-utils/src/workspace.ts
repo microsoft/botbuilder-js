@@ -3,7 +3,7 @@
 
 import fg from 'fast-glob';
 import compact from 'lodash/compact';
-import minimatch from 'minimatch';
+import { minimatch } from 'minimatch';
 import path from 'path';
 import { Package } from './package';
 import { readJsonFile } from './file';
