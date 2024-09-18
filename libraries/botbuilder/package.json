@@ -28,8 +28,8 @@
   },
   "dependencies": {
     "@azure/core-http": "^3.0.4",
-    "@azure/msal-node": "^2.13.0",
-    "axios": "^1.7.5",
+    "@azure/msal-node": "^2.13.1",
+    "axios": "^1.7.7",
     "botbuilder-core": "4.1.6",
     "botbuilder-stdlib": "4.1.6",
     "botframework-connector": "4.1.6",
@@ -46,7 +46,7 @@
     "chai": "^4.5.0",
     "lodash": "^4.17.20",
     "nock": "^11.9.1",
-    "node-mocks-http": "^1.15.1"
+    "node-mocks-http": "^1.16.0"
   },
   "scripts": {
     "build": "tsc -b",

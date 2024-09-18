@@ -14,10 +14,10 @@
     "botbuilder": "4.1.6",
     "botbuilder-dialogs": "4.1.6",
     "botframework-connector": "4.1.6",
-    "dotenv": "^6.2.0",
+    "dotenv": "^16.4.5",
     "restify": "^11.1.0"
   },
   "devDependencies": {
-    "typescript": "3.5.3"
+    "typescript": "~4.7"
   }
 }

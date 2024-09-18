@@ -39,6 +39,6 @@
     "p-map": "^4.0.0"
   },
   "devDependencies": {
-    "@types/minimist": "^1.2.1"
+    "@types/minimist": "^1.2.5"
   }
 }

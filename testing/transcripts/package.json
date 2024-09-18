@@ -10,13 +10,13 @@
     "license": "MIT",
     "dependencies": {
         "@types/node": "^10.17.27",
-        "@types/restify": "^8.4.2",
+        "@types/restify": "^8.5.12",
         "botbuilder": "4.1.6",
         "botbuilder-ai": "4.1.6",
         "botbuilder-dialogs": "4.1.6"
     },
     "devDependencies": {
-        "mocha": "^10.4.0",
-        "nyc": "^15.1.0"
+        "mocha": "^10.7.3",
+        "nyc": "^17.0.0"
     }
 }
