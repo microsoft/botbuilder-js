@@ -4,6 +4,8 @@
 
 ```ts
 
+/// <reference types="node" />
+
 import { Duplex } from 'stream';
 import { DuplexOptions } from 'stream';
 import { default as WebSocket_2 } from 'ws';
