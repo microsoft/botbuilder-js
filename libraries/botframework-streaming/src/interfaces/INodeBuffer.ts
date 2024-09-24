@@ -96,8 +96,5 @@ export interface INodeBuffer extends Uint8Array {
     fill(value: any, offset?: number, end?: number): this;
     indexOf(value: string | number | Uint8Array, byteOffset?: number, encoding?: string): number;
     lastIndexOf(value: string | number | Uint8Array, byteOffset?: number, encoding?: string): number;
-    entries(): IterableIterator<[number, number]>;
     includes(value: string | number | this, byteOffset?: number, encoding?: string): boolean;
-    keys(): IterableIterator<number>;
-    values(): IterableIterator<number>;
 }
