@@ -4,8 +4,6 @@
 
 ```ts
 
-/// <reference types="node" />
-
 import { Duplex } from 'stream';
 import { DuplexOptions } from 'stream';
 import { default as WebSocket_2 } from 'ws';
@@ -44,8 +42,6 @@ export interface INodeBuffer extends Uint8Array {
     // (undocumented)
     copy(targetBuffer: Uint8Array, targetStart?: number, sourceStart?: number, sourceEnd?: number): number;
     // (undocumented)
-    entries(): IterableIterator<[number, number]>;
-    // (undocumented)
     equals(otherBuffer: Uint8Array): boolean;
     // (undocumented)
     fill(value: any, offset?: number, end?: number): this;
@@ -53,8 +49,6 @@ export interface INodeBuffer extends Uint8Array {
     includes(value: string | number | this, byteOffset?: number, encoding?: string): boolean;
     // (undocumented)
     indexOf(value: string | number | Uint8Array, byteOffset?: number, encoding?: string): number;
-    // (undocumented)
-    keys(): IterableIterator<number>;
     // (undocumented)
     lastIndexOf(value: string | number | Uint8Array, byteOffset?: number, encoding?: string): number;
     // (undocumented)
@@ -108,8 +102,6 @@ export interface INodeBuffer extends Uint8Array {
     };
     // (undocumented)
     toString(encoding?: string, start?: number, end?: number): string;
-    // (undocumented)
-    values(): IterableIterator<number>;
     // (undocumented)
     write(string: string, offset?: number, length?: number, encoding?: string): number;
     // (undocumented)
