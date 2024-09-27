@@ -28,7 +28,7 @@
     }
   },
   "dependencies": {
-    "applicationinsights": "^1.7.5",
+    "applicationinsights": "^2.9.6",
     "botbuilder-core": "4.1.6",
     "cls-hooked": "^4.2.2"
   },
