@@ -53,7 +53,7 @@
     "botbuilder-test-utils": "0.0.0",
     "dotenv": "^16.4.5",
     "esbuild-plugin-polyfill-node": "^0.3.0",
-    "nock": "^11.9.1",
+    "nock": "^13.5.5",
     "should": "^13.2.3",
     "tsup": "^8.2.4"
   },
