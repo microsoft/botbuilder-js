@@ -1794,6 +1794,10 @@ export class OnError extends OnDialogEvent {
     // (undocumented)
     static $kind: string;
     constructor(actions?: Dialog[], condition?: string);
+    // (undocumented)
+    currentExecutionLimit: () => number;
+    execute(actionContext: ActionContext): Promise<ActionChangeList[]>;
+    executionLimit: NumberExpression;
     onCreateChangeList(actionContext: ActionContext, dialogOptions?: any): ActionChangeList;
 }
 
