@@ -33,7 +33,7 @@
     "botbuilder-dialogs-declarative": "4.1.6",
     "botbuilder-stdlib": "4.1.6",
     "murmurhash-js": "^1.0.0",
-    "nock": "^11.9.1",
+    "nock": "^13.5.5",
     "url-parse": "^1.5.10",
     "zod": "^3.23.8"
   },
