@@ -23,7 +23,7 @@ export class FunctionTable implements Map<string, ExpressionEvaluator> {
      *
      * @returns A list of string values.
      */
-    keys(): IterableIterator<string> {
+    keys(): MapIterator<string> {
         const keysOfAllFunctions = Array.from(ExpressionFunctions.standardFunctions.keys()).concat(
             Array.from(this.customFunctions.keys())
         );
@@ -35,7 +35,7 @@ export class FunctionTable implements Map<string, ExpressionEvaluator> {
      *
      * @returns A list of [ExpressionEvaluator](xref:adaptive-expressions.ExpressionEvaluator).
      */
-    values(): IterableIterator<ExpressionEvaluator> {
+    values(): MapIterator<ExpressionEvaluator> {
         const valuesOfAllFunctions = Array.from(ExpressionFunctions.standardFunctions.values()).concat(
             Array.from(this.customFunctions.values())
         );
@@ -168,7 +168,7 @@ export class FunctionTable implements Map<string, ExpressionEvaluator> {
      * Returns an iterable of key, value pairs for every entry in the map.
      * Not implemented.
      */
-    entries(): IterableIterator<[string, ExpressionEvaluator]> {
+    entries(): MapIterator<[string, ExpressionEvaluator]> {
         throw Error('entries function not implemented');
     }
 
@@ -176,7 +176,7 @@ export class FunctionTable implements Map<string, ExpressionEvaluator> {
      * Returns an iterable of key, value pairs.
      * Not implemented.
      */
-    get [Symbol.iterator](): () => IterableIterator<[string, ExpressionEvaluator]> {
+    get [Symbol.iterator](): () => MapIterator<[string, ExpressionEvaluator]> {
         throw Error('Symbol.iterator function not implemented');
     }
 
