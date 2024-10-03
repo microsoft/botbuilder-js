@@ -6,3 +6,4 @@ coverage
 /**/.antlr
 /**/*.interp
 tests/expressionProperty.test.js
+!types/**

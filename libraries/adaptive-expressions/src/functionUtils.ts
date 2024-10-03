@@ -14,8 +14,7 @@ import { ExpressionType } from './expressionType';
 import { MemoryInterface } from './memory';
 import { Options } from './options';
 import { ReturnType } from './returnType';
-// eslint-disable-next-line lodash/import-scope
-import isEqual from 'lodash.isequal';
+import isEqual from 'lodash/isEqual';
 
 /**
  * Verify the result of an expression is of the appropriate type and return a string if not.

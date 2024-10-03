@@ -1927,7 +1927,7 @@ export class FuncInvokeExpContext extends PrimaryExpressionContext {
 
 // @public
 export class FunctionTable implements Map<string, ExpressionEvaluator> {
-    get [Symbol.iterator](): () => IterableIterator<[string, ExpressionEvaluator]>;
+    get [Symbol.iterator](): () => MapIterator<[string, ExpressionEvaluator]>;
     get [Symbol.toStringTag](): string;
     // (undocumented)
     add(item: {
@@ -1942,15 +1942,15 @@ export class FunctionTable implements Map<string, ExpressionEvaluator> {
     add(key: string, value: customFunction): void;
     clear(): void;
     delete(key: string): boolean;
-    entries(): IterableIterator<[string, ExpressionEvaluator]>;
+    entries(): MapIterator<[string, ExpressionEvaluator]>;
     forEach(_callbackfn: (value: ExpressionEvaluator, key: string, map: Map<string, ExpressionEvaluator>) => void, _thisArg?: any): void;
     get(key: string): ExpressionEvaluator;
     has(key: string): boolean;
     get isReadOnly(): boolean;
-    keys(): IterableIterator<string>;
+    keys(): MapIterator<string>;
     set(key: string, value: ExpressionEvaluator): this;
     get size(): number;
-    values(): IterableIterator<ExpressionEvaluator>;
+    values(): MapIterator<ExpressionEvaluator>;
 }
 
 // @public

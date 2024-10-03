@@ -5,23 +5,28 @@ import { promisify } from 'util';
 
 const execp = promisify(exec);
 
-const versions = ['4.7', '4.8', '4.9', '5.0', '5.1', '5.2', '5.3', '5.4', '5.5'];
+const versions = ['4.7', '4.8', '4.9', '5.0', '5.1', '5.2', '5.3', '5.4', '5.5', '5.6'];
 
 (async () => {
     const flags = minimist(process.argv.slice(2), {
-        boolean: ['versbose'],
+        boolean: ['verbose'],
         alias: { v: 'verbose' },
     });
 
     try {
-        console.log(`Running typescript consumer test against ["${versions.join('", "')}"]`);
+        const [minTarget, maxTarget] = ['es6', 'esnext'];
+        console.log(
+            `Running typescript consumer test against ["${versions.join(
+                '", "'
+            )}"] with '${minTarget}' and '${maxTarget}' targets.`
+        );
 
         const results = await pmap(
             versions,
             (version) =>
                 Promise.all([
-                    execp(`npx -p typescript@${version} tsc -p tsconfig-test.json`),
-                    execp(`npx -p typescript@${version} tsc -p tsconfig-test.json --lib es2018`),
+                    execp(`npx -p typescript@${version} tsc -p tsconfig-test.json --target ${minTarget}`),
+                    execp(`npx -p typescript@${version} tsc -p tsconfig-test.json --target ${maxTarget}`),
                 ])
                     .then(() => ({ err: null, version, success: true }))
                     .catch((err) => ({ err, version, success: false })),
