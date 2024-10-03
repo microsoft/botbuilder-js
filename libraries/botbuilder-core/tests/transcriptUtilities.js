@@ -11,7 +11,7 @@ const promisify = require('util').promisify;
 const readFileAsync = promisify(fs.readFile);
 const axios = require('axios');
 const unzip = require('unzipper');
-const rimraf = require('rimraf');
+const { rimraf } = require('rimraf');
 
 const chatdown = require('./chatdown');
 
