@@ -7,6 +7,7 @@
  */
 
 import { ConfidentialClientApplication, ManagedIdentityApplication } from '@azure/msal-node';
+import { ok } from 'assert';
 import { AppCredentials } from './appCredentials';
 import { AuthenticatorResult } from './authenticatorResult';
 import { MsalAppCredentials } from './msalAppCredentials';
@@ -40,6 +41,9 @@ export class FederatedAppCredentials extends AppCredentials {
         clientAudience?: string
     ) {
         super(appId, channelAuthTenant, oAuthScope);
+
+        ok(appId?.trim(), 'FederatedAppCredentials.constructor(): missing appId.');
+
         this.clientAudience = clientAudience ?? 'api://AzureADTokenExchange';
         this.managedIdentityClientAssertion = new ManagedIdentityApplication({
             managedIdentityIdParams: { userAssignedClientId: clientId },
