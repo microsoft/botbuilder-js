@@ -6,5 +6,8 @@
     "declarationMap": false,
     "sourceMap": false
   },
-  "include": ["*.ts"]
+  "include": [
+    "*.ts",
+    "../types/**/*"
+  ]
 }

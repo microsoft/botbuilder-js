@@ -54,7 +54,7 @@
     "promise": "^8.3.0",
     "random-js": "^2.1.0",
     "should": "^13.2.3",
-    "sinon": "^2.1.0",
+    "sinon": "^19.0.2",
     "xmlbuilder": "15.1.1"
   },
   "homepage": "http://github.com/azure/azure-sdk-for-node",
