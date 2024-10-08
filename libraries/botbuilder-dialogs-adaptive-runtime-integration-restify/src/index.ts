@@ -195,7 +195,7 @@ export async function makeServer(
         const adapter = services.mustMakeInstance<BotFrameworkHttpAdapter>('adapter');
 
         try {
-            await adapter.process(req, socket as INodeSocket, head, async (context) => {
+            await adapter.process(req, socket, head, async (context) => {
                 await bot.run(context);
             });
         } catch (err: any) {
