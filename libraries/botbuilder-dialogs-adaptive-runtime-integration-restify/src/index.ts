@@ -7,7 +7,6 @@ import restify from 'restify';
 import type { ActivityHandlerBase, BotFrameworkHttpAdapter, ChannelServiceRoutes } from 'botbuilder';
 import type { ServiceCollection } from 'botbuilder-dialogs-adaptive-runtime-core';
 import { Configuration, getRuntimeServices } from 'botbuilder-dialogs-adaptive-runtime';
-import { INodeSocket } from 'botframework-streaming';
 
 // Explicitly fails checks for `""`
 const NonEmptyString = z.string().refine((str) => str.length > 0, { message: 'must be non-empty string' });
