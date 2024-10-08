@@ -7,6 +7,7 @@ import restify from 'restify';
 import type { ActivityHandlerBase, BotFrameworkHttpAdapter, ChannelServiceRoutes } from 'botbuilder';
 import type { ServiceCollection } from 'botbuilder-dialogs-adaptive-runtime-core';
 import { Configuration, getRuntimeServices } from 'botbuilder-dialogs-adaptive-runtime';
+import { INodeSocket } from 'botframework-streaming';
 
 // Explicitly fails checks for `""`
 const NonEmptyString = z.string().refine((str) => str.length > 0, { message: 'must be non-empty string' });
@@ -194,8 +195,7 @@ export async function makeServer(
         const adapter = services.mustMakeInstance<BotFrameworkHttpAdapter>('adapter');
 
         try {
-            // TODO: Fix INodeSocket type. Related issue https://github.com/microsoft/botbuilder-js/issues/4684.
-            await adapter.process(req, socket as any, head, async (context) => {
+            await adapter.process(req, socket as INodeSocket, head, async (context) => {
                 await bot.run(context);
             });
         } catch (err: any) {

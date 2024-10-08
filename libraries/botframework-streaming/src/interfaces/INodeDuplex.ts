@@ -7,15 +7,15 @@
  * Licensed under the MIT License.
  */
 
-import { Socket } from 'net';
+import { Duplex } from 'stream';
 import { INodeBuffer } from './INodeBuffer';
 
 /**
- * Represents a Socket from the `net` module in Node.js.
+ * Represents a Duplex from the `stream` module in Node.js.
  *
  * This interface supports the framework and is not intended to be called directly for your code.
  */
-export interface INodeSocket extends Socket {
-    on(event: string, listener: (...args: any[]) => void): this;
-    on(event: 'data', listener: (data: INodeBuffer) => void): this;
+export interface INodeDuplex extends Duplex {
+    on(event: string | symbol, listener: (...args: any[]) => void): this;
+    on(event: 'data', listener: (chunk: INodeBuffer) => void): this;
 }

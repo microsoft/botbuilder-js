@@ -9,6 +9,7 @@
 export * from './INodeBuffer';
 export * from './INodeIncomingMessage';
 export * from './INodeSocket';
+export * from './INodeDuplex';
 export * from './IReceiveRequest';
 export * from './IReceiveResponse';
 export * from './ISocket';
