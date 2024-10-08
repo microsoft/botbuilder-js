@@ -9,19 +9,6 @@ body {
     box-sizing: content-box;
 }
 
-section {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    margin: 10px;
-    padding: 10px;
-    border: 1px solid #d1d1d1;
-    display: flex;
-    overflow: hidden;
-}
-
 section > div:first-child {
     width: 100%;
 }
