@@ -14,7 +14,6 @@ import {
     ConversationReference,
     DeliveryModes,
     ExpectedReplies,
-    ExtendedUserTokenProvider,
     OAuthCard,
     SkillConversationIdFactoryOptions,
     StatusCodes,
@@ -30,6 +29,7 @@ import { DialogContext } from './dialogContext';
 import { DialogEvents } from './dialogEvents';
 import { SkillDialogOptions } from './skillDialogOptions';
 import { TurnPath } from './memory/turnPath';
+import * as UserTokenAccess from './prompts/userTokenAccess';
 
 /**
  * A specialized Dialog that can wrap remote calls to a skill.
@@ -333,45 +333,46 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
         activity: Activity,
         connectionName: string
     ): Promise<boolean> {
-        if (!connectionName || !('exchangeToken' in context.adapter)) {
-            // The adapter may choose not to support token exchange, in which case we fallback to showing skill's OAuthCard to the user.
+        if (!connectionName) {
             return false;
         }
 
         const oAuthCardAttachment: Attachment = (activity.attachments || []).find(
             (c) => c.contentType === CardFactory.contentTypes.oauthCard
         );
-        if (oAuthCardAttachment) {
-            const tokenExchangeProvider: ExtendedUserTokenProvider = (context.adapter as unknown) as ExtendedUserTokenProvider;
-            const oAuthCard: OAuthCard = oAuthCardAttachment.content;
-
-            const uri = oAuthCard && oAuthCard.tokenExchangeResource && oAuthCard.tokenExchangeResource.uri;
-            if (uri) {
-                try {
-                    const result: TokenResponse = await tokenExchangeProvider.exchangeToken(
-                        context,
-                        connectionName,
-                        context.activity.from.id,
-                        { uri }
-                    );
-
-                    if (result && result.token) {
-                        // If token above is null or undefined, then SSO has failed and we return false.
-                        // If not, send an invoke to the skill with the token.
-                        return await this.sendTokenExchangeInvokeToSkill(
-                            activity,
-                            oAuthCard.tokenExchangeResource.id,
-                            oAuthCard.connectionName,
-                            result.token
-                        );
-                    }
-                } catch {
-                    // Failures in token exchange are not fatal. They simply mean that the user needs to be shown the skill's OAuthCard.
-                    return false;
-                }
-            }
+        if (!oAuthCardAttachment) {
+            return false;
         }
-        return false;
+
+        const oAuthCard: OAuthCard = oAuthCardAttachment.content;
+        const uri = oAuthCard && oAuthCard.tokenExchangeResource && oAuthCard.tokenExchangeResource.uri;
+
+        if (!uri) {
+            return false;
+        }
+
+        try {
+            const result: TokenResponse = await UserTokenAccess.exchangeToken(
+                context,
+                { title: 'Sign In', connectionName: connectionName },
+                { uri }
+            );
+
+            if (!result || !result.token) {
+                // If token above is null or undefined, then SSO has failed and we return false.
+                return false;
+            }
+            // If not, send an invoke to the skill with the token.
+            return await this.sendTokenExchangeInvokeToSkill(
+                activity,
+                oAuthCard.tokenExchangeResource.id,
+                oAuthCard.connectionName,
+                result.token
+            );
+        } catch {
+            // Failures in token exchange are not fatal. They simply mean that the user needs to be shown the skill's OAuthCard.
+            return false;
+        }
     }
 
     /**
