@@ -8,6 +8,7 @@
 
 export * from './allowedCallersClaimsValidator';
 export * from './appCredentials';
+export * from './aseChannelValidation';
 export * from './authenticateRequestResult';
 export * from './authenticationConfiguration';
 export * from './authenticationConstants';
@@ -22,9 +23,10 @@ export * from './claimsIdentity';
 export * from './connectorFactory';
 export * from './credentialProvider';
 export * from './emulatorValidation';
-export * from './aseChannelValidation';
 export * from './endorsementsValidator';
 export * from './enterpriseChannelValidation';
+export * from './federatedAppCredentials';
+export * from './federatedServiceClientCredentialsFactory';
 export * from './governmentChannelValidation';
 export * from './governmentConstants';
 export * from './jwtTokenProviderFactory';

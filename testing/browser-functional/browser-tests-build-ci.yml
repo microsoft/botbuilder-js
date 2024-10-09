@@ -42,8 +42,11 @@ steps:
     cp "%GECKOWEBDRIVER%/geckodriver.exe" "testing/browser-functional/drivers"
   displayName: use browser drivers
 
-- script: cd testing/browser-functional/browser-echo-bot && yarn && yarn build
-  displayName: yarn install and build browser-echo-bot
+- script: yarn --network-timeout 600000
+  displayName: yarn install
+
+- script: yarn build
+  displayName: yarn build
 
 - task: PowerShell@2
   inputs:
@@ -74,9 +77,6 @@ steps:
 
      echo "# Deploy source code"
      call az webapp deployment source config-zip --resource-group "$(TestResourceGroup)" --name "$(TestWebApp)" --src "$(System.DefaultWorkingDirectory)/testing/browser-functional/browser-echo-bot/browser-echo-bot.zip"
-
-- script: yarn --network-timeout 600000
-  displayName: yarn install
 
 - script: yarn browser-functional-test chrome
   displayName: run chrome tests
