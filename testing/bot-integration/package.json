@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc -b",
     "clean": "rimraf lib tsconfig.tsbuildinfo",
-    "lint": "eslint . --ext .js,.ts",
+    "lint": "eslint .",
     "test": "yarn build && mocha **/*.test.js"
   },
   "author": "Microsoft Corp.",

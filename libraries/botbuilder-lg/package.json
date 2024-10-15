@@ -34,7 +34,7 @@
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder-lg --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-lg .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - LG\" --readme none",
     "clean": "rimraf lib tsconfig.tsbuildinfo",
     "depcheck": "depcheck --config ../../.depcheckrc",
-    "lint": "eslint . --ext .js,.ts",
+    "lint": "eslint .",
     "test": "yarn build && mocha tests/ --timeout 60000",
     "test:compat": "api-extractor run --verbose"
   },

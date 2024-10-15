@@ -20,7 +20,11 @@
   "browser": "lib/browser.js",
   "types": "lib/index.d.ts",
   "typesVersions": {
-    "<5.6": { "*": [ "types/ts5.6/*" ] }
+    "<5.6": {
+      "*": [
+        "types/ts5.6/*"
+      ]
+    }
   },
   "dependencies": {
     "@microsoft/recognizers-text-data-types-timex-expression": "~1.3.1",
@@ -58,7 +62,7 @@
     "build-docs": "typedoc --theme markdown --entryPoint adaptive-expressions --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\adaptive-expressions .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Expression\" --readme none",
     "test": "yarn build && mocha tests --timeout 60000",
     "test:compat": "api-extractor run --verbose",
-    "lint": "eslint . --ext .js,.ts",
+    "lint": "eslint .",
     "antlr-build-expression": "antlr4ts src/parser/ExpressionAntlrLexer.g4 -o src/parser/generated && antlr4ts src/parser/ExpressionAntlrParser.g4 -visitor -o src/parser/generated",
     "antlr-build-commonregex": "antlr4ts src/CommonRegex.g4 -o src/generated -visitor"
   },

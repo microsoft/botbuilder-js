@@ -41,7 +41,7 @@
   "scripts": {
     "build": "webpack",
     "clean": "rimraf dist",
-    "lint": "eslint . --ext .js,.ts"
+    "lint": "eslint ."
   },
   "files": [
     "dist"

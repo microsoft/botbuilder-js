@@ -56,7 +56,7 @@
     "build:tests": "tsc -p tests/tsconfig.json",
     "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
     "depcheck": "depcheck --config ../../.depcheckrc --ignores botbuilder-dialogs-adaptive-testing,mocha,sinon",
-    "lint": "eslint . --ext .js,.ts",
+    "lint": "eslint .",
     "postbuild": "downlevel-dts lib _ts3.4/lib --checksum",
     "test": "yarn build && nyc mocha tests/",
     "test:compat": "api-extractor run --verbose",

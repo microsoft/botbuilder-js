@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc -b",
     "clean": "rimraf lib tsconfig.tsbuildinfo",
-    "lint": "eslint . --ext .js,.ts"
+    "lint": "eslint ."
   },
   "peerDependencies": {
     "jsonwebtoken": "*",

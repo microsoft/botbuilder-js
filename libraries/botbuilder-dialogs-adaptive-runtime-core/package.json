@@ -38,7 +38,7 @@
     "build": "tsc -b",
     "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
     "depcheck": "depcheck --config ../../.depcheckrc --ignores dependency-graph",
-    "lint": "eslint . --ext .js,.ts",
+    "lint": "eslint .",
     "postbuild": "downlevel-dts lib _ts3.4/lib --checksum",
     "test": "nyc mocha",
     "test:min": "nyc --silent mocha --reporter dot"
