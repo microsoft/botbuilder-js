@@ -1,3 +1,8 @@
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+
 const { DEFAULT_BROWSER, getFlag, getBrowser, logs, isBrowserInstalled, isBotRunning } = require('./utils');
 
 async function validate() {
