@@ -1,7 +1,16 @@
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+
 /* eslint-disable import/no-extraneous-dependencies */
+
+import { resolve } from 'path';
+import { readFileSync } from 'fs';
 import { defineConfig } from 'tsup';
 import { polyfillNode } from 'esbuild-plugin-polyfill-node';
-import packageJson from './package.json';
+
+const packageJson = JSON.parse(readFileSync(resolve(process.cwd(), 'package.json'), 'utf-8'));
 
 const external = [/^botbuilder-/, /^botframework-/];
 
@@ -21,8 +30,8 @@ export default defineConfig({
     }),
     esbuildOptions(options) {
         options.outdir = '';
-        options.outfile = './lib/browser.js';
-        options.inject = ['./esbuild.inject.js'];
+        options.outfile = options.define.outfile ?? 'lib/browser.js';
+        options.inject = [resolve(__dirname, 'esbuild.inject.js')];
         options.define = {
             global: 'globalThis',
         };
@@ -31,6 +40,9 @@ export default defineConfig({
             http: 'stream-http',
             https: 'https-browserify',
             stream: 'stream-browserify',
+            // Changed from .browser to .es5 file, as imported classes are not exported in .browser file.
+            '@microsoft/recognizers-text-data-types-timex-expression':
+                '@microsoft/recognizers-text-data-types-timex-expression/dist/recognizers-text-data-types-timex-expression.es5.js',
         };
     },
     esbuildPlugins: [

@@ -37,31 +37,25 @@
     "botframework-schema": "4.1.6",
     "buffer": "^6.0.3",
     "cross-fetch": "^4.0.0",
-    "crypto-browserify": "^3.12.0",
-    "https-browserify": "^1.0.0",
     "https-proxy-agent": "^7.0.5",
     "jsonwebtoken": "^9.0.2",
     "node-fetch": "^2.7.0",
     "openssl-wrapper": "^0.3.4",
     "rsa-pem-from-mod-exp": "^0.8.6",
-    "stream-browserify": "^3.0.0",
-    "stream-http": "^3.2.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/node": "18.19.47",
     "botbuilder-test-utils": "0.0.0",
     "dotenv": "^16.4.5",
-    "esbuild-plugin-polyfill-node": "^0.3.0",
     "nock": "^13.5.5",
-    "should": "^13.2.3",
-    "tsup": "^8.2.4"
+    "should": "^13.2.3"
   },
   "scripts": {
     "build": "tsc -b",
     "build:tsup": "npm-run-all build:tsup:clean build:tsup:run",
     "build:tsup:clean": "rimraf --glob lib/browser.*",
-    "build:tsup:run": "tsup",
+    "build:tsup:run": "tsup --config ../../tsup/browser.config.ts",
     "build:downlevel-dts": "downlevel-dts lib _ts3.4/lib --checksum",
     "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
     "depcheck": "depcheck --config ../../.depcheckrc --ignores azure,sinon,browserify-fs,buffer,crypto-browserify,https-browserify,stream-browserify,stream-http",
