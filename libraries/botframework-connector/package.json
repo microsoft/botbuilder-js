@@ -26,15 +26,15 @@
       ]
     }
   },
-  "dependencies": {
+"dependencies": {
     "@azure/core-http": "^3.0.4",
     "@azure/identity": "^4.4.1",
     "@azure/msal-node": "^2.13.1",
     "@types/jsonwebtoken": "9.0.6",
     "axios": "^1.7.7",
     "base64url": "^3.0.0",
-    "botbuilder-stdlib": "4.1.6",
-    "botframework-schema": "4.1.6",
+    "botbuilder-stdlib": "4.23.1-internal",
+    "botframework-schema": "4.23.1",
     "buffer": "^6.0.3",
     "cross-fetch": "^4.0.0",
     "crypto-browserify": "^3.12.0",
@@ -53,7 +53,7 @@
     "botbuilder-test-utils": "0.0.0",
     "dotenv": "^16.4.5",
     "esbuild-plugin-polyfill-node": "^0.3.0",
-    "nock": "^13.5.5",
+    "nock": "^11.9.1",
     "should": "^13.2.3",
     "tsup": "^8.2.4"
   },
