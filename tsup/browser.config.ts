@@ -25,6 +25,9 @@ export default defineConfig({
     treeshake: true,
     splitting: false,
     external,
+    env: {
+      NODE_ENV: 'production',
+    },
     noExternal: Object.keys(packageJson.dependencies).filter((packageName) => {
         return !external.some((e) => packageName.match(e));
     }),

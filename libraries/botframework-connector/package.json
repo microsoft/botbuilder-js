@@ -53,14 +53,14 @@
   },
   "scripts": {
     "build": "tsc -b",
-    "build:tsup": "npm-run-all build:tsup:clean build:tsup:run",
-    "build:tsup:clean": "rimraf --glob lib/browser.*",
-    "build:tsup:run": "tsup --config ../../tsup/browser.config.ts",
+    "build:browser": "npm-run-all build:browser:clean build:browser:run",
+    "build:browser:clean": "rimraf --glob lib/browser.*",
+    "build:browser:run": "tsup --config ../../tsup/browser.config.ts",
     "build:downlevel-dts": "downlevel-dts lib _ts3.4/lib --checksum",
     "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
     "depcheck": "depcheck --config ../../.depcheckrc --ignores azure,sinon,browserify-fs,buffer,crypto-browserify,https-browserify,stream-browserify,stream-http",
     "lint": "eslint . --ext .js,.ts",
-    "postbuild": "npm-run-all -p build:tsup build:downlevel-dts",
+    "postbuild": "npm-run-all -p build:browser build:downlevel-dts",
     "test": "yarn build && yarn test:mocha",
     "test:mocha": "nyc mocha tests --recursive"
   },

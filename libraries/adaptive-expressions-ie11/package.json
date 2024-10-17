@@ -22,8 +22,8 @@
     "adaptive-expressions": "4.1.6"
   },
   "scripts": {
-    "build": "npm-run-all clean build:tsup",
-    "build:tsup": "tsup --dts --config ../../tsup/browser.config.ts --define.outfile dist/index.js",
+    "build": "npm-run-all clean build:browser",
+    "build:browser": "tsup --config ../../tsup/browser.config.ts --define.outfile dist/index.js --dts",
     "clean": "rimraf dist",
     "lint": "eslint . --ext .js,.ts"
   },

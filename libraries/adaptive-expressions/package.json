@@ -48,13 +48,12 @@
     "typescript": "~4.7"
   },
   "scripts": {
-    "build": "npm-run-all build:src build:tests",
+    "build": "npm-run-all build:src build:tests build:browser",
     "build:src": "tsc -b",
     "build:tests": "tsc -p tests/tsconfig.json",
-    "build:tsup": "npm-run-all build:tsup:clean build:tsup:run",
-    "build:tsup:clean": "rimraf --glob lib/browser.*",
-    "build:tsup:run": "tsup --config ../../tsup/browser.config.ts",
-    "postbuild": "npm-run-all -p build:tsup",
+    "build:browser": "npm-run-all build:browser:clean build:browser:run",
+    "build:browser:clean": "rimraf --glob lib/browser.*",
+    "build:browser:run": "tsup --config ../../tsup/browser.config.ts",
     "clean": "rimraf lib tsconfig.tsbuildinfo",
     "depcheck": "depcheck --config ../../.depcheckrc --ignores sinon,@types/xmldom",
     "build-docs": "typedoc --theme markdown --entryPoint adaptive-expressions --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\adaptive-expressions .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Expression\" --readme none",
