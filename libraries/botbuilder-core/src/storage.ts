@@ -17,7 +17,6 @@ import { TurnContext } from './turnContext';
  * ```TypeScript
  * type StorageKeyFactory = (context: TurnContext) => Promise<string>;
  * ```
- *
  * @param StorageKeyFactory.context Context for the current turn of conversation with a user.
  * @returns A promise resolving to the storage key string
  */
@@ -29,7 +28,6 @@ export type StorageKeyFactory = (context: TurnContext) => Promise<string>;
 export interface Storage {
     /**
      * Loads store items from storage
-     *
      * @remarks
      * This example reads in a single object from storage:
      *
@@ -43,7 +41,6 @@ export interface Storage {
 
     /**
      * Saves store items to storage.
-     *
      * @remarks
      * This example writes an object to storage after its been modified:
      *
@@ -57,7 +54,6 @@ export interface Storage {
 
     /**
      * Removes store items from storage
-     *
      * @remarks
      * This example deletes an object from storage:
      *
@@ -76,7 +72,7 @@ export interface StoreItem {
     /**
      * Key/value pairs.
      */
-    [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+    [key: string]: any;
 
     /**
      * (Optional) eTag field for stores that support optimistic concurrency.
@@ -91,7 +87,7 @@ export interface StoreItems {
     /**
      * List of store items indexed by key.
      */
-    [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+    [key: string]: any;
 }
 
 const storeItems = z.record(z.unknown());
@@ -107,7 +103,6 @@ export function assertStoreItems(val: unknown, ..._args: unknown[]): asserts val
 
 /**
  * Utility function to calculate a change hash for a `StoreItem`.
- *
  * @remarks
  * This example calculates a change hash for an object that's been read in and then only writes it
  * back out if it's been modified:
@@ -124,7 +119,6 @@ export function assertStoreItems(val: unknown, ..._args: unknown[]): asserts val
  *    await storage.write({ 'botState': state });
  * }
  * ```
- *
  * @param item Item to calculate the change hash for.
  * @returns change hash string
  */

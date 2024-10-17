@@ -65,7 +65,7 @@ describe('PrivateConversationState', function () {
         privateConversationState.getStorageKey = (_turnContext) => undefined;
         await assert.rejects(
             privateConversationState.load(context, true),
-            new Error('PrivateConversationState: overridden getStorageKey method did not return a key.')
+            new Error('PrivateConversationState: overridden getStorageKey method did not return a key.'),
         );
     });
 });

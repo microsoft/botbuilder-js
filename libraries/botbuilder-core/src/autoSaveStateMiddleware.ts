@@ -12,7 +12,6 @@ import { TurnContext } from './turnContext';
 
 /**
  * Middleware that will automatically save any state changes at the end of the turn.
- *
  * @remarks
  * The `AutoSaveStateMiddleware` class should be added towards the top of your bot's middleware
  * stack, before any other components that use state.  Any `BotState` plugins passed to the
@@ -50,7 +49,6 @@ export class AutoSaveStateMiddleware implements Middleware {
     botStateSet: BotStateSet;
     /**
      * Creates a new AutoSaveStateMiddleware instance.
-     *
      * @param botStates One or more BotState plugins to automatically save at the end of the turn.
      */
     constructor(...botStates: BotState[]) {
@@ -60,7 +58,6 @@ export class AutoSaveStateMiddleware implements Middleware {
 
     /**
      * Called by the adapter (for example, a `BotFrameworkAdapter`) at runtime in order to process an inbound [Activity](xref:botframework-schema.Activity).
-     *
      * @param context The context object for this turn.
      * @param next {function} The next delegate function.
      */
@@ -71,7 +68,6 @@ export class AutoSaveStateMiddleware implements Middleware {
 
     /**
      * Adds additional `BotState` plugins to be saved.
-     *
      * @param botStates One or more BotState plugins to add.
      * @returns The updated BotStateSet object.
      */

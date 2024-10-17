@@ -11,7 +11,6 @@ export const INVOKE_RESPONSE_KEY = Symbol('invokeResponse');
 
 /**
  * Defines the core behavior for event-emitting activity handlers for bots.
- *
  * @remarks
  * This provides an extensible class for handling incoming activities in an event-driven way.
  * You can register an arbitrary set of handlers for each event type.
@@ -33,9 +32,7 @@ export const INVOKE_RESPONSE_KEY = Symbol('invokeResponse');
 export class ActivityHandlerBase {
     /**
      * Called at the start of the event emission process.
-     *
      * @param context The context object for the current turn.
-     *
      * @remarks
      * Override this method to use custom logic for emitting events.
      *
@@ -100,9 +97,7 @@ export class ActivityHandlerBase {
 
     /**
      * Provides a hook for emitting the _message_ event.
-     *
      * @param _context The context object for the current turn.
-     *
      * @remarks
      * Override this method to run registered _message_ handlers and then continue the event
      * emission process.
@@ -113,9 +108,7 @@ export class ActivityHandlerBase {
 
     /**
      * Provides a hook for emitting the _message update_ event.
-     *
      * @param _context The context object for the current turn.
-     *
      * @remarks
      * Override this method to run registered _message update_ handlers and then continue the event
      * emission process.
@@ -126,9 +119,7 @@ export class ActivityHandlerBase {
 
     /**
      * Provides a hook for emitting the _message delete_ event.
-     *
      * @param _context The context object for the current turn.
-     *
      * @remarks
      * Override this method to run registered _message delete_ handlers and then continue the event
      * emission process.
@@ -139,9 +130,7 @@ export class ActivityHandlerBase {
 
     /**
      * Provides a hook for emitting the _conversation update_ event.
-     *
      * @param context The context object for the current turn.
-     *
      * @remarks
      * Override this method to run registered _conversation update_ handlers and then continue the event
      * emission process.
@@ -156,7 +145,7 @@ export class ActivityHandlerBase {
         if (context.activity.membersAdded && context.activity.membersAdded.length > 0) {
             if (
                 context.activity.membersAdded.filter(
-                    (m) => context.activity.recipient && context.activity.recipient.id !== m.id
+                    (m) => context.activity.recipient && context.activity.recipient.id !== m.id,
                 ).length
             ) {
                 await this.onMembersAddedActivity(context.activity.membersAdded, context);
@@ -164,7 +153,7 @@ export class ActivityHandlerBase {
         } else if (context.activity.membersRemoved && context.activity.membersRemoved.length > 0) {
             if (
                 context.activity.membersRemoved.filter(
-                    (m) => context.activity.recipient && context.activity.recipient.id !== m.id
+                    (m) => context.activity.recipient && context.activity.recipient.id !== m.id,
                 ).length
             ) {
                 await this.onMembersRemovedActivity(context.activity.membersRemoved, context);
@@ -174,9 +163,7 @@ export class ActivityHandlerBase {
 
     /**
      * Provides a hook for emitting the _message reaction_ event.
-     *
      * @param context The context object for the current turn.
-     *
      * @remarks
      * Override this method to run registered _message reaction_ handlers and then continue the event
      * emission process.
@@ -199,9 +186,7 @@ export class ActivityHandlerBase {
 
     /**
      * Provides a hook for emitting the _event_ event.
-     *
      * @param _context The context object for the current turn.
-     *
      * @remarks
      * Override this method to run registered _event_ handlers and then continue the event
      * emission process.
@@ -212,7 +197,6 @@ export class ActivityHandlerBase {
 
     /**
      * Provides a hook for invoke calls.
-     *
      * @param _context The context object for the current turn.
      * @returns {Promise<InvokeResponse>} An Invoke Response for the activity.
      * @remarks
@@ -224,9 +208,7 @@ export class ActivityHandlerBase {
 
     /**
      * Provides a hook for emitting the _end of conversation_ event.
-     *
      * @param _context The context object for the current turn.
-     *
      * @remarks
      * Override this method to run registered _end of conversation_ handlers and then continue the event
      * emission process.
@@ -237,9 +219,7 @@ export class ActivityHandlerBase {
 
     /**
      * Provides a hook for emitting the _typing_ event.
-     *
      * @param _context The context object for the current turn.
-     *
      * @remarks
      * Override this method to run registered _typing_ handlers and then continue the event
      * emission process.
@@ -250,9 +230,7 @@ export class ActivityHandlerBase {
 
     /**
      * Provides a hook for emitting the _installationupdate_ event.
-     *
      * @param context The context object for the current turn.
-     *
      * @remarks
      * Override this method to run registered _installationupdate_ handlers and then continue the event
      * emission process.
@@ -272,9 +250,7 @@ export class ActivityHandlerBase {
 
     /**
      * Provides a hook for emitting the _installationupdateadd_ event.
-     *
      * @param _context The context object for the current turn.
-     *
      * @remarks
      * Override this method to run registered _installationupdateadd_ handlers and then continue the event
      * emission process.
@@ -285,9 +261,7 @@ export class ActivityHandlerBase {
 
     /**
      * Provides a hook for emitting the _installationupdateremove_ event.
-     *
      * @param _context The context object for the current turn.
-     *
      * @remarks
      * Override this method to run registered _installationupdateremove_ handlers and then continue the event
      * emission process.
@@ -298,9 +272,7 @@ export class ActivityHandlerBase {
 
     /**
      * Provides a hook for emitting the _unrecognized_ event.
-     *
      * @param _context The context object for the current turn.
-     *
      * @remarks
      * Override this method to run registered _unrecognized_ handlers and then continue the event
      * emission process.
@@ -312,10 +284,8 @@ export class ActivityHandlerBase {
     /**
      * Provides a hook for emitting the _members added_ event,
      * a sub-type of the _conversation update_ event.
-     *
      * @param _membersAdded An array of the members added to the conversation.
      * @param _context The context object for the current turn.
-     *
      * @remarks
      * Override this method to run registered _members added_ handlers and then continue the event
      * emission process.
@@ -327,10 +297,8 @@ export class ActivityHandlerBase {
     /**
      * Provides a hook for emitting the _members removed_ event,
      * a sub-type of the _conversation update_ event.
-     *
      * @param _membersRemoved An array of the members removed from the conversation.
      * @param _context The context object for the current turn.
-     *
      * @remarks
      * Override this method to run registered _members removed_ handlers and then continue the event
      * emission process.
@@ -342,10 +310,8 @@ export class ActivityHandlerBase {
     /**
      * Provides a hook for emitting the _reactions added_ event,
      * a sub-type of the _message reaction_ event.
-     *
      * @param _reactionsAdded An array of the reactions added to a message.
      * @param _context The context object for the current turn.
-     *
      * @remarks
      * Override this method to run registered _reactions added_ handlers and then continue the event
      * emission process.
@@ -357,17 +323,15 @@ export class ActivityHandlerBase {
     /**
      * Provides a hook for emitting the _reactions removed_ event,
      * a sub-type of the _message reaction_ event.
-     *
      * @param _reactionsRemoved An array of the reactions removed from a message.
      * @param _context The context object for the current turn.
-     *
      * @remarks
      * Override this method to run registered _reactions removed_ handlers and then continue the event
      * emission process.
      */
     protected async onReactionsRemovedActivity(
         _reactionsRemoved: MessageReaction[],
-        _context: TurnContext
+        _context: TurnContext,
     ): Promise<void> {
         return;
     }
@@ -378,7 +342,6 @@ export class ActivityHandlerBase {
      * Commands are requests to perform an action and receivers typically respond with
      * one or more commandResult activities. Receivers are also expected to explicitly
      * reject unsupported command activities.
-     *
      * @param _context A context object for this turn.
      * @returns A promise that represents the work queued to execute.
      */
@@ -390,7 +353,6 @@ export class ActivityHandlerBase {
      * Invoked when a commandResult activity is received when the base behavior of
      * `onTurn()` is used.
      * CommandResult activity can be used to communicate the result of a command execution.
-     *
      * @param _context A context object for this turn.
      * @returns A promise that represents the work queued to execute.
      */
@@ -400,9 +362,7 @@ export class ActivityHandlerBase {
 
     /**
      * Called to initiate the event emission process.
-     *
      * @param context The context object for the current turn.
-     *
      * @remarks
      * Typically, you would provide this method as the function handler that the adapter calls
      * to perform the bot's logic after the received activity has been pre-processed by the adapter

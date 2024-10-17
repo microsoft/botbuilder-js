@@ -12,7 +12,6 @@ import { TurnContext } from './turnContext';
 /**
  * Middleware to patch mention Entities from Skype since they don't conform to expected values.
  * Bots that interact with Skype should use this middleware if mentions are used.
- *
  * @remarks
  * A Skype mention "text" field is of the format:
  *   <at id="28:2bc5b54d-5d48-4ff1-bd25-03dcbb5ce918">botname</at>
@@ -23,7 +22,6 @@ import { TurnContext } from './turnContext';
 export class SkypeMentionNormalizeMiddleware implements Middleware {
     /**
      * Performs the normalization of Skype mention Entities.
-     *
      * @param activity [Activity](xref:botframework-schema.Activity) containing the mentions to normalize.
      */
     static normalizeSkypeMentionText(activity: Activity): void {
@@ -43,7 +41,6 @@ export class SkypeMentionNormalizeMiddleware implements Middleware {
 
     /**
      * Middleware implementation which corrects the Entity text of type [Mention](xref:botframework-schema.Mention) to a value that [removeMentionText](xref:botbuilder-core.TurnContext.removeMentionText) can work with.
-     *
      * @param turnContext [TurnContext](xref:botbuilder-core.TurnContext) for the current turn of conversation.
      * @param next Delegate to call to continue the bot middleware pipeline.
      */

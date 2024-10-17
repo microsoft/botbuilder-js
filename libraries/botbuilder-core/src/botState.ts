@@ -27,7 +27,6 @@ export interface CachedBotState {
 
 /**
  * Base class for the frameworks state persistance scopes.
- *
  * @remarks
  * This class will read and write state, to a provided storage provider, for each turn of
  * conversation with a user. Derived classes, like `ConversationState` and `UserState`, provide a
@@ -41,16 +40,17 @@ export class BotState implements PropertyManager {
 
     /**
      * Creates a new BotState instance.
-     *
      * @param storage Storage provider to persist the state object to.
      * @param storageKey Function called anytime the storage key for a given turn needs to be calculated.
      */
-    constructor(protected storage: Storage, protected storageKey: StorageKeyFactory) {}
+    constructor(
+        protected storage: Storage,
+        protected storageKey: StorageKeyFactory,
+    ) {}
 
     /**
      * Creates a new property accessor for reading and writing an individual property to the bot
      * states storage object.
-     *
      * @template T The type of property to create. Defaults to `any` type.
      * @param name Name of the property to add.
      * @returns An accessor for the property.
@@ -62,7 +62,6 @@ export class BotState implements PropertyManager {
 
     /**
      * Reads in and caches the backing state object for a turn.
-     *
      * @remarks
      * Subsequent reads will return the cached object unless the `force` flag is passed in which
      * will force the state object to be re-read.
@@ -95,7 +94,6 @@ export class BotState implements PropertyManager {
 
     /**
      * Saves the cached state object if it's been changed.
-     *
      * @remarks
      * If the `force` flag is passed in the cached state object will be saved regardless of
      * whether its been changed or not and if no object has been cached, an empty object will be
@@ -132,7 +130,6 @@ export class BotState implements PropertyManager {
 
     /**
      * Clears the current state object for a turn.
-     *
      * @remarks
      * The cleared state object will not be persisted until [saveChanges()](#savechanges) has
      * been called.
@@ -153,7 +150,6 @@ export class BotState implements PropertyManager {
 
     /**
      * Delete the backing state object for the current turn.
-     *
      * @remarks
      * The state object will be removed from storage if it exists.  If the state object has been
      * read in and cached, the cache will be cleared.
@@ -174,7 +170,6 @@ export class BotState implements PropertyManager {
 
     /**
      * Returns a cached state object or undefined if not cached.
-     *
      * @remarks
      * This example shows how to synchronously get an already loaded and cached state object:
      *

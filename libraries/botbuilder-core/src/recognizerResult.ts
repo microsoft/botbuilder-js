@@ -24,7 +24,6 @@ export interface RecognizerResult {
 
     /**
      * Intents recognized for the utterance.
-     *
      * @remarks
      * A map of intent names to an object with score is returned.
      */

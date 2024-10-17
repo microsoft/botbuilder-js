@@ -27,6 +27,7 @@
     }
   },
   "dependencies": {
+    "@eslint/js": "^9.12.0",
     "botbuilder-dialogs-adaptive-runtime-core": "4.1.6",
     "botbuilder-stdlib": "4.1.6",
     "botframework-connector": "4.1.6",

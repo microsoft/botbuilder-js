@@ -49,7 +49,6 @@ const TypedOptions = z
 
         /**
          * A string used to indicate if which cloud the bot is operating in (e.g. Public Azure or US Government).
-         *
          * @remarks
          * A `null` or `''` value indicates Public Azure, whereas [GovernmentConstants.ChannelService](xref:botframework-connector.GovernmentConstants.ChannelService) indicates the bot is operating in the US Government cloud.
          *
@@ -69,7 +68,6 @@ const TypedOptions = z
 
         /**
          * The Oauth scope to request.
-         *
          * @remarks
          * This value is used when fetching a token to indicate the ultimate recipient or `audience` of an activity sent using these credentials.
          */
@@ -125,7 +123,6 @@ export class ConfigurationBotFrameworkAuthentication extends BotFrameworkAuthent
 
     /**
      * Initializes a new instance of the [ConfigurationBotFrameworkAuthentication](xref:botbuilder-core.ConfigurationBotFrameworkAuthentication) class.
-     *
      * @param botFrameworkAuthConfig A [ConfigurationBotFrameworkAuthenticationOptions](xref:botbuilder-core.ConfigurationBotFrameworkAuthenticationOptions) object.
      * @param credentialsFactory A [ServiceClientCredentialsFactory](xref:botframework-connector.ServiceClientCredentialsFactory) instance.
      * @param authConfiguration A [Configuration](xref:botframework-connector.AuthenticationConfiguration) object.
@@ -137,7 +134,7 @@ export class ConfigurationBotFrameworkAuthentication extends BotFrameworkAuthent
         credentialsFactory?: ServiceClientCredentialsFactory,
         authConfiguration?: AuthenticationConfiguration,
         botFrameworkClientFetch?: (input: RequestInfo, init?: RequestInit) => Promise<Response>,
-        connectorClientOptions: ConnectorClientOptions = {}
+        connectorClientOptions: ConnectorClientOptions = {},
     ) {
         super();
 
@@ -177,11 +174,11 @@ export class ConfigurationBotFrameworkAuthentication extends BotFrameworkAuthent
                 CallerId,
                 credentialsFactory ??
                     new ConfigurationServiceClientCredentialFactory(
-                        typedBotFrameworkAuthConfig as ConfigurationServiceClientCredentialFactoryOptions
+                        typedBotFrameworkAuthConfig as ConfigurationServiceClientCredentialFactoryOptions,
                     ),
                 authConfiguration ?? { requiredEndorsements: [] },
                 botFrameworkClientFetch,
-                connectorClientOptions
+                connectorClientOptions,
             );
         } catch (err) {
             // Throw a new error with the validation details prominently featured.
@@ -194,7 +191,6 @@ export class ConfigurationBotFrameworkAuthentication extends BotFrameworkAuthent
 
     /**
      * Authenticate Bot Framework Protocol requests to Skills.
-     *
      * @param authHeader The http auth header received in the skill request.
      * @returns  {Promise<ClaimsIdentity>} A [ClaimsIdentity](xref:botframework-connector.ClaimsIdentity).
      */
@@ -204,7 +200,6 @@ export class ConfigurationBotFrameworkAuthentication extends BotFrameworkAuthent
 
     /**
      * Validate Bot Framework Protocol requests.
-     *
      * @param activity The inbound Activity.
      * @param authHeader The HTTP auth header.
      * @returns {Promise<AuthenticateRequestResult>} An [AuthenticateRequestResult](xref:botframework-connector.AuthenticateRequestResult).
@@ -215,7 +210,6 @@ export class ConfigurationBotFrameworkAuthentication extends BotFrameworkAuthent
 
     /**
      * Validate Bot Framework Protocol requests.
-     *
      * @param authHeader The HTTP auth header.
      * @param channelIdHeader The channel ID HTTP header.
      * @returns {Promise<AuthenticateRequestResult>} An [AuthenticateRequestResult](xref:botframework-connector.AuthenticateRequestResult).
@@ -226,7 +220,6 @@ export class ConfigurationBotFrameworkAuthentication extends BotFrameworkAuthent
 
     /**
      * Creates a BotFrameworkClient for calling Skills.
-     *
      * @returns A [BotFrameworkClient](xref:botframework-connector.BotFrameworkClient).
      */
     createBotFrameworkClient(): BotFrameworkClient {
@@ -235,7 +228,6 @@ export class ConfigurationBotFrameworkAuthentication extends BotFrameworkAuthent
 
     /**
      * Creates a ConnectorFactory that can be used to create ConnectorClients that can use credentials from this particular Cloud Environment.
-     *
      * @param claimsIdentity The inbound Activity's ClaimsIdentity.
      * @returns A [ConnectorFactory](xref:botframework-connector.ConnectorFactory).
      */
@@ -245,7 +237,6 @@ export class ConfigurationBotFrameworkAuthentication extends BotFrameworkAuthent
 
     /**
      * Creates the appropriate UserTokenClient instance.
-     *
      * @param claimsIdentity The inbound Activity's ClaimsIdentity.
      * @returns {Promise<UserTokenClient>} An [UserTokenClient](xref:botframework-connector.UserTokenClient).
      */
@@ -256,7 +247,6 @@ export class ConfigurationBotFrameworkAuthentication extends BotFrameworkAuthent
 
 /**
  * Creates a new instance of the [ConfigurationBotFrameworkAuthentication](xref:botbuilder-core.ConfigurationBotFrameworkAuthentication) class.
- *
  * @remarks
  * The [Configuration](xref:botbuilder-dialogs-adaptive-runtime-core.Configuration) instance provided to the constructor should
  * have the desired authentication values available at the root, using the properties of [ConfigurationBotFrameworkAuthenticationOptions](xref:botbuilder-core.ConfigurationBotFrameworkAuthenticationOptions) as its keys.
@@ -272,7 +262,7 @@ export function createBotFrameworkAuthenticationFromConfiguration(
     credentialsFactory?: ServiceClientCredentialsFactory,
     authConfiguration?: AuthenticationConfiguration,
     botFrameworkClientFetch?: (input: RequestInfo, init?: RequestInit) => Promise<Response>,
-    connectorClientOptions: ConnectorClientOptions = {}
+    connectorClientOptions: ConnectorClientOptions = {},
 ): BotFrameworkAuthentication {
     const botFrameworkAuthConfig = configuration?.get<ConfigurationBotFrameworkAuthenticationOptions>();
 
@@ -281,6 +271,6 @@ export function createBotFrameworkAuthenticationFromConfiguration(
         credentialsFactory,
         authConfiguration,
         botFrameworkClientFetch,
-        connectorClientOptions
+        connectorClientOptions,
     );
 }

@@ -11,9 +11,7 @@ import { TurnContext } from './turnContext';
 /**
  * Defines methods for accessing a state property created in a
  * [BotState](xref:botbuilder-core.BotState) object.
- *
  * @template T The type of the state property to access. Default type is `any`.
- *
  * @remarks
  * To create a state property in a state management objet, use the
  * [createProperty\<T>](xref:botbuilder-core.BotState.createProperty) method.
@@ -21,7 +19,6 @@ import { TurnContext } from './turnContext';
 export interface StatePropertyAccessor<T = any> {
     /**
      * Deletes the persisted property from its backing storage object.
-     *
      * @remarks
      * The properties backing storage object SHOULD be loaded into memory on first access.
      *
@@ -34,7 +31,6 @@ export interface StatePropertyAccessor<T = any> {
 
     /**
      * Reads a persisted property from its backing storage object.
-     *
      * @remarks
      * The properties backing storage object SHOULD be loaded into memory on first access.
      *
@@ -46,14 +42,17 @@ export interface StatePropertyAccessor<T = any> {
      * const value = await myProperty.get(context, { count: 0 });
      * ```
      * @param context Context for the current turn of conversation with the user.
-     * @param defaultValue (Optional) default value to copy to the backing storage object if the property isn't found.
      */
     get(context: TurnContext): Promise<T | undefined>;
+
+    /**
+     * @param context Context for the current turn of conversation with the user.
+     * @param defaultValue (Optional) default value to copy to the backing storage object if the property isn't found.
+     */
     get(context: TurnContext, defaultValue: T): Promise<T>;
 
     /**
      * Assigns a new value to the properties backing storage object.
-     *
      * @remarks
      * The properties backing storage object SHOULD be loaded into memory on first access.
      *
@@ -71,7 +70,6 @@ export interface StatePropertyAccessor<T = any> {
 
 /**
  * A `BotState` specific implementation of the `StatePropertyAccessor` interface.
- *
  * @remarks
  * Properties can be defined for a given `BotState` instance using `createProperty()`.
  *
@@ -84,15 +82,16 @@ export interface StatePropertyAccessor<T = any> {
 export class BotStatePropertyAccessor<T = any> implements StatePropertyAccessor<T> {
     /**
      * Creates a new BotStatePropertyAccessor instance.
-     *
      * @param state Parent BotState instance.
      * @param name Unique name of the property for the parent BotState.
      */
-    constructor(protected readonly state: BotState, public readonly name: string) {}
+    constructor(
+        protected readonly state: BotState,
+        public readonly name: string,
+    ) {}
 
     /**
      * Deletes the persisted property from its backing storage object.
-     *
      * @param context [TurnContext](xref:botbuilder-core.TurnContext) object for this turn.
      */
     async delete(context: TurnContext): Promise<void> {
@@ -104,7 +103,6 @@ export class BotStatePropertyAccessor<T = any> implements StatePropertyAccessor<
 
     /**
      * Reads a persisted property from its backing storage object.
-     *
      * @param context [TurnContext](xref:botbuilder-core.TurnContext) object for this turn.
      * @returns A JSON representation of the cached state.
      */
@@ -112,7 +110,6 @@ export class BotStatePropertyAccessor<T = any> implements StatePropertyAccessor<
     async get(context: TurnContext, defaultValue: T): Promise<T>;
     /**
      * Reads a persisted property from its backing storage object.
-     *
      * @param context [TurnContext](xref:botbuilder-core.TurnContext) object for this turn.
      * @param defaultValue Optional. Default value for the property.
      * @returns A JSON representation of the cached state.
@@ -132,7 +129,6 @@ export class BotStatePropertyAccessor<T = any> implements StatePropertyAccessor<
 
     /**
      * Assigns a new value to the properties backing storage object.
-     *
      * @param context [TurnContext](xref:botbuilder-core.TurnContext) object for this turn.
      * @param value Value to set on the property.
      */

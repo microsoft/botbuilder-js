@@ -17,7 +17,6 @@ export class RegisterClassMiddleware<T> implements Middleware {
 
     /**
      * Initialize a new instance of the RegisterClassMiddleware class.
-     *
      * @param service The object or service to add.
      * @param key The key for service object in turn state.
      */
@@ -33,7 +32,6 @@ export class RegisterClassMiddleware<T> implements Middleware {
 
     /**
      * Adds the associated object or service to the current turn context.
-     *
      * @param turnContext The context object for this turn.
      * @param next The delegate to call to continue the bot middleware pipeline.
      */

@@ -40,7 +40,7 @@ describe('BotState', function () {
         await botState.load(context);
         const state = cachedState(context, botState.stateKey);
         assert(state.test === 'foo', 'invalid initial state');
-        delete state.test === 'foo';
+        delete state.test;
         await botState.load(context, true);
         assert(cachedState(context, botState.stateKey).test === 'foo', 'state not reloaded');
     });
@@ -51,7 +51,7 @@ describe('BotState', function () {
         await botState.clear(context);
         assert(
             !Object.prototype.hasOwnProperty.call(cachedState(context, botState.stateKey), 'test'),
-            'state not cleared on context.'
+            'state not cleared on context.',
         );
         await botState.saveChanges(context);
 

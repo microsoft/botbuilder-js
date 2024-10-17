@@ -14,7 +14,6 @@ const NO_KEY = 'ConversationState: overridden getStorageKey method did not retur
 
 /**
  * Reads and writes conversation state for your bot to storage.
- *
  * @remarks
  * Each conversation your bot has with a user or group will have its own isolated storage object
  * that can be used to persist conversation tracking information between turns of the conversation.
@@ -29,11 +28,13 @@ const NO_KEY = 'ConversationState: overridden getStorageKey method did not retur
 export class ConversationState extends BotState {
     /**
      * Creates a new ConversationState instance.
-     *
      * @param storage Storage provider to persist conversation state to.
      * @param namespace (Optional) namespace to append to storage keys. Defaults to an empty string.
      */
-    constructor(storage: Storage, private namespace: string = '') {
+    constructor(
+        storage: Storage,
+        private namespace: string = '',
+    ) {
         super(storage, (context: TurnContext) => {
             // Calculate storage key
             const key: string = this.getStorageKey(context);
@@ -44,7 +45,6 @@ export class ConversationState extends BotState {
 
     /**
      * Returns the storage key for the current conversation state.
-     *
      * @param context Context for current turn of conversation with the user.
      * @returns The storage key for the current conversation state.
      */

@@ -50,7 +50,7 @@ describe('BotAdapter', function () {
 
             assert(
                 middlewares.every((middleware) => middleware.called),
-                'every middleware was called'
+                'every middleware was called',
             );
             assert(handler.called, 'handler was called');
         });
@@ -105,7 +105,7 @@ describe('BotAdapter', function () {
 
                 await assert.rejects(
                     adapter.processRequest(testMessage, handler),
-                    'unhandled handler error should yield promise rejection'
+                    'unhandled handler error should yield promise rejection',
                 );
 
                 assert(handler.called, 'handler was called');
@@ -124,7 +124,7 @@ describe('BotAdapter', function () {
 
                 await assert.rejects(
                     adapter.processRequest(testMessage, handler),
-                    'unhandled onTurnError error should yield promise rejection'
+                    'unhandled onTurnError error should yield promise rejection',
                 );
 
                 assert(adapter.onTurnError.called, 'onTurnError was called');
@@ -171,7 +171,7 @@ describe('BotAdapter', function () {
 
             await assert.rejects(
                 adapter.processRequest(testMessage, handler),
-                'unhandled handler error should yield promise rejection'
+                'unhandled handler error should yield promise rejection',
             );
             assert(handler.called, 'handler was called');
 

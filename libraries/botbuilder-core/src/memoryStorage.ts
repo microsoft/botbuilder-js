@@ -9,7 +9,6 @@ import { Storage, StoreItems } from './storage';
 
 /**
  * Memory based storage provider for a bot.
- *
  * @remarks
  * This provider is most useful for simulating production storage when running locally against the
  * emulator or as part of a unit test. It has the following characteristics:
@@ -31,7 +30,6 @@ export class MemoryStorage implements Storage {
     protected etag: number;
     /**
      * Creates a new MemoryStorage instance.
-     *
      * @param memory (Optional) memory to use for storing items. By default it will create an empty JSON object `{}`.
      */
     constructor(protected memory: { [k: string]: string } = {}) {
@@ -40,7 +38,6 @@ export class MemoryStorage implements Storage {
 
     /**
      * Reads storage items from storage.
-     *
      * @param keys Keys of the [StoreItems](xref:botbuilder-core.StoreItems) objects to read.
      * @returns The read items.
      */
@@ -62,7 +59,6 @@ export class MemoryStorage implements Storage {
 
     /**
      * Writes storage items to storage.
-     *
      * @param changes The [StoreItems](xref:botbuilder-core.StoreItems) to write, indexed by key.
      * @returns {Promise<void>} A promise representing the async operation.
      */
@@ -97,7 +93,6 @@ export class MemoryStorage implements Storage {
 
     /**
      * Deletes storage items from storage.
-     *
      * @param keys Keys of the [StoreItems](xref:botbuilder-core.StoreItems) objects to delete.
      * @returns {Promise<void>} A promise representing the async operation.
      */

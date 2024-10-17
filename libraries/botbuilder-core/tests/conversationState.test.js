@@ -53,7 +53,7 @@ describe('ConversationState', function () {
         conversationState.getStorageKey = (_turnContext) => undefined;
         await assert.rejects(
             conversationState.load(context, true),
-            new Error('ConversationState: overridden getStorageKey method did not return a key.')
+            new Error('ConversationState: overridden getStorageKey method did not return a key.'),
         );
     });
 });

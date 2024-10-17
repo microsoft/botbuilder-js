@@ -290,7 +290,7 @@ describe('ActivityHandlerBase', function () {
                 assert(reactionsRemoved, 'reactionsRemoved not found');
                 assert(
                     reactionsRemoved.length === 1,
-                    `unexpected number of reactionsRemoved: ${reactionsRemoved.length}`
+                    `unexpected number of reactionsRemoved: ${reactionsRemoved.length}`,
                 );
                 onReactionsRemovedActivityCalled = true;
             }

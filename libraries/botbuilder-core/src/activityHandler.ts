@@ -22,7 +22,6 @@ import {
 
 /**
  * Describes a bot activity event handler, for use with an [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
- *
  * @remarks
  * **Parameters**
  *
@@ -44,7 +43,6 @@ export type BotHandler = (context: TurnContext, next: () => Promise<void>) => Pr
 
 /**
  * Event-emitting activity handler for bots. Extends [ActivityHandlerBase](xref:botbuilder-core.ActivityHandlerBase).
- *
  * @remarks
  * This provides an extensible class for handling incoming activities in an event-driven way.
  * You can register an arbitrary set of handlers for each event type.
@@ -96,7 +94,6 @@ export class ActivityHandler extends ActivityHandlerBase {
 
     /**
      * Registers an activity event handler for the _turn_ event, emitted for every incoming activity, regardless of type.
-     *
      * @param handler The event handler.
      * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
      */
@@ -106,7 +103,6 @@ export class ActivityHandler extends ActivityHandlerBase {
 
     /**
      * Registers an activity event handler for the _message_ event, emitted for every incoming message activity.
-     *
      * @param handler The event handler.
      * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
      * @remarks
@@ -121,7 +117,6 @@ export class ActivityHandler extends ActivityHandlerBase {
 
     /**
      * Registers an activity event handler for the _message update_ event, emitted for every incoming message activity.
-     *
      * @param handler The event handler.
      * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
      * @remarks
@@ -138,7 +133,6 @@ export class ActivityHandler extends ActivityHandlerBase {
 
     /**
      * Registers an activity event handler for the _message delete_ event, emitted for every incoming message activity.
-     *
      * @param handler The event handler.
      * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
      * @remarks
@@ -155,7 +149,6 @@ export class ActivityHandler extends ActivityHandlerBase {
     /**
      * Registers an activity event handler for the _conversation update_ event, emitted for every incoming
      * conversation update activity.
-     *
      * @param handler The event handler.
      * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
      * @remarks
@@ -173,7 +166,6 @@ export class ActivityHandler extends ActivityHandlerBase {
     /**
      * Registers an activity event handler for the _members added_ event, emitted for any incoming
      * conversation update activity that includes members added to the conversation.
-     *
      * @param handler The event handler.
      * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
      * @remarks
@@ -190,7 +182,6 @@ export class ActivityHandler extends ActivityHandlerBase {
     /**
      * Registers an activity event handler for the _members removed_ event, emitted for any incoming
      * conversation update activity that includes members removed from the conversation.
-     *
      * @param handler The event handler.
      * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
      * @remarks
@@ -207,7 +198,6 @@ export class ActivityHandler extends ActivityHandlerBase {
     /**
      * Registers an activity event handler for the _message reaction_ event, emitted for every incoming
      * message reaction activity.
-     *
      * @param handler The event handler.
      * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
      * @remarks
@@ -228,7 +218,6 @@ export class ActivityHandler extends ActivityHandlerBase {
     /**
      * Registers an activity event handler for the _reactions added_ event, emitted for any incoming
      * message reaction activity that describes reactions added to a message.
-     *
      * @param handler The event handler.
      * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
      * @remarks
@@ -245,7 +234,6 @@ export class ActivityHandler extends ActivityHandlerBase {
     /**
      * Registers an activity event handler for the _reactions removed_ event, emitted for any incoming
      * message reaction activity that describes reactions removed from a message.
-     *
      * @param handler The event handler.
      * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
      * @remarks
@@ -261,7 +249,6 @@ export class ActivityHandler extends ActivityHandlerBase {
 
     /**
      * Registers an activity event handler for the _event_ event, emitted for every incoming event activity.
-     *
      * @param handler The event handler.
      * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
      * @remarks
@@ -282,7 +269,6 @@ export class ActivityHandler extends ActivityHandlerBase {
 
     /**
      * Registers an activity event handler for the _end of conversation_ activity.
-     *
      * @param handler The event handler.
      * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
      * @remarks
@@ -297,7 +283,6 @@ export class ActivityHandler extends ActivityHandlerBase {
 
     /**
      * Registers an activity event handler for the _typing_ activity.
-     *
      * @param handler The event handler.
      * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
      * @remarks
@@ -310,7 +295,6 @@ export class ActivityHandler extends ActivityHandlerBase {
 
     /**
      * Registers an activity event handler for the _installationupdate_ activity.
-     *
      * @param handler The event handler.
      * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
      * @remarks
@@ -323,7 +307,6 @@ export class ActivityHandler extends ActivityHandlerBase {
 
     /**
      * Registers an activity event handler for the _installationupdate add_ activity.
-     *
      * @param handler The event handler.
      * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
      * To handle a InstallationUpdateAdd event, use the
@@ -335,7 +318,6 @@ export class ActivityHandler extends ActivityHandlerBase {
 
     /**
      * Registers an activity event handler for the _installationupdate remove_ activity.
-     *
      * @param handler The event handler.
      * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
      * @remarks
@@ -349,7 +331,6 @@ export class ActivityHandler extends ActivityHandlerBase {
     /**
      * Registers an activity event handler for the _tokens-response_ event, emitted for any incoming
      * `tokens/response` event activity. These are generated as part of the OAuth authentication flow.
-     *
      * @param handler The event handler.
      * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
      * @remarks
@@ -367,7 +348,6 @@ export class ActivityHandler extends ActivityHandlerBase {
 
     /**
      * Registers an activity event handler for the _command_ activity.
-     *
      * @param handler The event handler.
      * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
      * @remarks
@@ -380,7 +360,6 @@ export class ActivityHandler extends ActivityHandlerBase {
 
     /**
      * Registers an activity event handler for the _CommandResult_ activity.
-     *
      * @param handler The event handler.
      * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
      * @remarks
@@ -395,7 +374,6 @@ export class ActivityHandler extends ActivityHandlerBase {
      * Registers an activity event handler for the _unrecognized activity type_ event, emitted for an
      * incoming activity with a type for which the [ActivityHandler](xref:botbuilder-core.ActivityHandler)
      * doesn't provide an event handler.
-     *
      * @param handler The event handler.
      * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
      * @remarks
@@ -412,7 +390,6 @@ export class ActivityHandler extends ActivityHandlerBase {
 
     /**
      * Registers an activity event handler for the _dialog_ event, emitted as the last event for an incoming activity.
-     *
      * @param handler The event handler.
      * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
      */
@@ -422,9 +399,7 @@ export class ActivityHandler extends ActivityHandlerBase {
 
     /**
      * Called to initiate the event emission process.
-     *
      * @param context The context object for the current turn.
-     *
      * @remarks
      * Typically, you would provide this method as the function handler that the adapter calls
      * to perform the bot's logic after the received activity has been pre-processed by the adapter
@@ -449,9 +424,7 @@ export class ActivityHandler extends ActivityHandlerBase {
 
     /**
      * Called at the start of the event emission process.
-     *
      * @param context The context object for the current turn.
-     *
      * @remarks
      * Override this method to use custom logic for emitting events.
      *
@@ -466,9 +439,7 @@ export class ActivityHandler extends ActivityHandlerBase {
 
     /**
      * Runs all registered _message_ handlers and then continues the event emission process.
-     *
      * @param context The context object for the current turn.
-     *
      * @remarks
      * Override this method to support channel-specific behavior across multiple channels.
      *
@@ -482,9 +453,7 @@ export class ActivityHandler extends ActivityHandlerBase {
 
     /**
      * Runs all registered _message update_ handlers and then continues the event emission process.
-     *
      * @param context The context object for the current turn.
-     *
      * @remarks
      * Override this method to support channel-specific behavior across multiple channels.
      *
@@ -500,9 +469,7 @@ export class ActivityHandler extends ActivityHandlerBase {
 
     /**
      * Runs all registered _message delete_ handlers and then continues the event emission process.
-     *
      * @param context The context object for the current turn.
-     *
      * @remarks
      * Override this method to support channel-specific behavior across multiple channels.
      *
@@ -518,7 +485,6 @@ export class ActivityHandler extends ActivityHandlerBase {
 
     /**
      * Provides default behavior for invoke activities.
-     *
      * @param context The context object for the current turn.
      * @returns {Promise<InvokeResponse>} An Invoke Response for the activity.
      * @remarks
@@ -566,9 +532,7 @@ export class ActivityHandler extends ActivityHandlerBase {
 
     /**
      * Handle _signin invoke activity type_.
-     *
      * @param _context The context object for the current turn.
-     *
      * @remarks
      * Override this method to support channel-specific behavior across multiple channels.
      */
@@ -578,21 +542,19 @@ export class ActivityHandler extends ActivityHandlerBase {
 
     /**
      * Invoked when the bot is sent an Adaptive Card Action Execute.
-     *
      * @param _context the context object for the current turn
      * @param _invokeValue incoming activity value
      * @returns {Promise<AdaptiveCardInvokeResponse>} An Adaptive Card Invoke Response for the activity.
      */
     protected onAdaptiveCardInvoke(
         _context: TurnContext,
-        _invokeValue: AdaptiveCardInvokeValue
+        _invokeValue: AdaptiveCardInvokeValue,
     ): Promise<AdaptiveCardInvokeResponse> {
         return Promise.reject(new InvokeException(StatusCodes.NOT_IMPLEMENTED));
     }
 
     /**
      * Invoked when the bot is sent an invoke activity with name of 'application/search'.
-     *
      * @param _context the context object for the current turn.
      * @param _invokeValue incoming activity value.
      * @returns {Promise<SearchInvokeResponse>} A Search Invoke Response for the activity.
@@ -603,9 +565,7 @@ export class ActivityHandler extends ActivityHandlerBase {
 
     /**
      * Runs all registered _endOfConversation_ handlers and then continues the event emission process.
-     *
      * @param context The context object for the current turn.
-     *
      * @remarks
      * Override this method to support channel-specific behavior across multiple channels.
      *
@@ -619,9 +579,7 @@ export class ActivityHandler extends ActivityHandlerBase {
 
     /**
      * Runs all registered _typing_ handlers and then continues the event emission process.
-     *
      * @param context The context object for the current turn.
-     *
      * @remarks
      * Override this method to support channel-specific behavior across multiple channels.
      *
@@ -635,9 +593,7 @@ export class ActivityHandler extends ActivityHandlerBase {
 
     /**
      * Runs all registered _instllationupdate_ handlers and then continues the event emission process.
-     *
      * @param context The context object for the current turn.
-     *
      * @remarks
      * Override this method to support channel-specific behavior across multiple channels.
      *
@@ -653,7 +609,6 @@ export class ActivityHandler extends ActivityHandlerBase {
 
     /**
      * Runs all registered _command_ handlers and then continues the event emission process.
-     *
      * @param context The context object for the current turn.
      */
     protected async onCommandActivity(context: TurnContext): Promise<void> {
@@ -662,7 +617,6 @@ export class ActivityHandler extends ActivityHandlerBase {
 
     /**
      * Runs all registered _commandresult_ handlers and then continues the event emission process.
-     *
      * @param context The context object for the current turn.
      */
     protected async onCommandResultActivity(context: TurnContext): Promise<void> {
@@ -671,9 +625,7 @@ export class ActivityHandler extends ActivityHandlerBase {
 
     /**
      * Runs the _installation update_ sub-type handlers, as appropriate, and then continues the event emission process.
-     *
      * @param context The context object for the current turn.
-     *
      * @remarks
      * Override this method to support channel-specific behavior across multiple channels or to add
      * custom conversation update sub-type events.
@@ -698,9 +650,7 @@ export class ActivityHandler extends ActivityHandlerBase {
 
     /**
      * Runs all registered _installation update add_ handlers and then continues the event emission process.
-     *
      * @param context The context object for the current turn.
-     *
      * @remarks
      * Override this method to support channel-specific behavior across multiple channels.
      *
@@ -714,9 +664,7 @@ export class ActivityHandler extends ActivityHandlerBase {
 
     /**
      * Runs all registered _installation update remove_ handlers and then continues the event emission process.
-     *
      * @param context The context object for the current turn.
-     *
      * @remarks
      * Override this method to support channel-specific behavior across multiple channels.
      *
@@ -730,9 +678,7 @@ export class ActivityHandler extends ActivityHandlerBase {
 
     /**
      * Runs all registered _unrecognized activity type_ handlers and then continues the event emission process.
-     *
      * @param context The context object for the current turn.
-     *
      * @remarks
      * Override this method to support channel-specific behavior across multiple channels.
      *
@@ -750,7 +696,7 @@ export class ActivityHandler extends ActivityHandlerBase {
             const response = this.createAdaptiveCardInvokeErrorResponse(
                 StatusCodes.BAD_REQUEST,
                 'BadRequest',
-                'Missing value property for search'
+                'Missing value property for search',
             );
 
             throw new InvokeException(StatusCodes.BAD_REQUEST, response);
@@ -763,7 +709,7 @@ export class ActivityHandler extends ActivityHandlerBase {
                 const response = this.createAdaptiveCardInvokeErrorResponse(
                     StatusCodes.BAD_REQUEST,
                     'BadRequest',
-                    'Missing kind property for search.'
+                    'Missing kind property for search.',
                 );
 
                 throw new InvokeException(StatusCodes.BAD_REQUEST, response);
@@ -774,7 +720,7 @@ export class ActivityHandler extends ActivityHandlerBase {
             const response = this.createAdaptiveCardInvokeErrorResponse(
                 StatusCodes.BAD_REQUEST,
                 'BadRequest',
-                'Missing queryText for search.'
+                'Missing queryText for search.',
             );
 
             throw new InvokeException(StatusCodes.BAD_REQUEST, response);
@@ -789,7 +735,7 @@ export class ActivityHandler extends ActivityHandlerBase {
             const response = this.createAdaptiveCardInvokeErrorResponse(
                 StatusCodes.BAD_REQUEST,
                 'BadRequest',
-                'Missing value property'
+                'Missing value property',
             );
 
             throw new InvokeException(StatusCodes.BAD_REQUEST, response);
@@ -799,7 +745,7 @@ export class ActivityHandler extends ActivityHandlerBase {
             const response = this.createAdaptiveCardInvokeErrorResponse(
                 StatusCodes.BAD_REQUEST,
                 'NotSupported',
-                `The action '${value.action.type}' is not supported.`
+                `The action '${value.action.type}' is not supported.`,
             );
 
             throw new InvokeException(StatusCodes.BAD_REQUEST, response);
@@ -828,7 +774,7 @@ export class ActivityHandler extends ActivityHandlerBase {
     private createAdaptiveCardInvokeErrorResponse(
         statusCode: StatusCodes,
         code: string,
-        message: string
+        message: string,
     ): AdaptiveCardInvokeResponse {
         return {
             statusCode,
@@ -839,9 +785,7 @@ export class ActivityHandler extends ActivityHandlerBase {
 
     /**
      * Runs all registered _conversation update_ handlers and then continues the event emission process.
-     *
      * @param context The context object for the current turn.
-     *
      * @remarks
      * Override this method to support channel-specific behavior across multiple channels.
      *
@@ -858,9 +802,7 @@ export class ActivityHandler extends ActivityHandlerBase {
 
     /**
      * Runs the _conversation update_ sub-type handlers, as appropriate, and then continues the event emission process.
-     *
      * @param context The context object for the current turn.
-     *
      * @remarks
      * Override this method to support channel-specific behavior across multiple channels or to add
      * custom conversation update sub-type events.
@@ -882,9 +824,7 @@ export class ActivityHandler extends ActivityHandlerBase {
 
     /**
      * Runs the _message update_ sub-type handlers, as appropriate, and then continues the event emission process.
-     *
      * @param context The context object for the current turn.
-     *
      * @remarks
      * Override this method to support channel-specific behavior across multiple channels or to add
      * custom conversation update sub-type events.
@@ -897,9 +837,7 @@ export class ActivityHandler extends ActivityHandlerBase {
 
     /**
      * Runs the _message delete_ sub-type handlers, as appropriate, and then continues the event emission process.
-     *
      * @param context The context object for the current turn.
-     *
      * @remarks
      * Override this method to support channel-specific behavior across multiple channels or to add
      * custom conversation update sub-type events.
@@ -911,9 +849,7 @@ export class ActivityHandler extends ActivityHandlerBase {
     }
     /**
      * Runs all registered _message reaction_ handlers and then continues the event emission process.
-     *
      * @param context The context object for the current turn.
-     *
      * @remarks
      * Override this method to support channel-specific behavior across multiple channels.
      *
@@ -930,10 +866,8 @@ export class ActivityHandler extends ActivityHandlerBase {
 
     /**
      * Runs all registered _reactions added_ handlers and then continues the event emission process.
-     *
      * @param reactionsAdded The list of reactions added.
      * @param context The context object for the current turn.
-     *
      * @remarks
      * Override this method to support channel-specific behavior across multiple channels.
      *
@@ -947,10 +881,8 @@ export class ActivityHandler extends ActivityHandlerBase {
 
     /**
      * Runs all registered _reactions removed_ handlers and then continues the event emission process.
-     *
      * @param reactionsRemoved The list of reactions removed.
      * @param context The context object for the current turn.
-     *
      * @remarks
      * Override this method to support channel-specific behavior across multiple channels.
      *
@@ -960,16 +892,14 @@ export class ActivityHandler extends ActivityHandlerBase {
      */
     protected async onReactionsRemovedActivity(
         reactionsRemoved: MessageReaction[],
-        context: TurnContext
+        context: TurnContext,
     ): Promise<void> {
         await this.handle(context, 'ReactionsRemoved', this.defaultNextEvent(context));
     }
 
     /**
      * Runs the _message reaction_ sub-type handlers, as appropriate, and then continues the event emission process.
-     *
      * @param context The context object for the current turn.
-     *
      * @remarks
      * Override this method to support channel-specific behavior across multiple channels or to add
      * custom message reaction sub-type events.
@@ -989,9 +919,7 @@ export class ActivityHandler extends ActivityHandlerBase {
 
     /**
      * Runs all registered event_ handlers and then continues the event emission process.
-     *
      * @param context The context object for the current turn.
-     *
      * @remarks
      * Override this method to support channel-specific behavior across multiple channels.
      *
@@ -1008,9 +936,7 @@ export class ActivityHandler extends ActivityHandlerBase {
 
     /**
      * Runs the _event_ sub-type handlers, as appropriate, and then continues the event emission process.
-     *
      * @param context The context object for the current turn.
-     *
      * @remarks
      * Override this method to support channel-specific behavior across multiple channels or to add custom event sub-type events.
      * For certain channels, such as  Web Chat and custom Direct Line clients, developers can emit custom event activities from the client.
@@ -1030,7 +956,6 @@ export class ActivityHandler extends ActivityHandlerBase {
 
     /**
      * Called at the end of the event emission process.
-     *
      * @param context The context object for the current turn.
      * @returns {Promise<void>} A promise representing the async operation.
      * @remarks
@@ -1050,7 +975,6 @@ export class ActivityHandler extends ActivityHandlerBase {
 
     /**
      * Registers a bot event handler to receive a specific event.
-     *
      * @param type The identifier for the event type.
      * @param handler The event handler to register.
      * @returns A reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
@@ -1066,7 +990,6 @@ export class ActivityHandler extends ActivityHandlerBase {
 
     /**
      * Emits an event and executes any registered handlers.
-     *
      * @param context The context object for the current turn.
      * @param type The identifier for the event type.
      * @param onNext The continuation function to call after all registered handlers for this event complete.
@@ -1104,7 +1027,6 @@ export class ActivityHandler extends ActivityHandlerBase {
 
     /**
      * An [InvokeResponse](xref:botbuilder.InvokeResponse) factory that initializes the body to the parameter passed and status equal to OK.
-     *
      * @param body JSON serialized content from a POST response.
      * @returns A new [InvokeResponse](xref:botbuilder.InvokeResponse) object.
      */

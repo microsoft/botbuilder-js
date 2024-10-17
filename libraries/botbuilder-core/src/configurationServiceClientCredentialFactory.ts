@@ -65,7 +65,6 @@ export class ConfigurationServiceClientCredentialFactory extends PasswordService
 
     /**
      * Initializes a new instance of the [ConfigurationServiceClientCredentialFactory](xref:botbuilder-core.ConfigurationServiceClientCredentialFactory) class.
-     *
      * @param factoryOptions A [ConfigurationServiceClientCredentialFactoryOptions](xref:botbuilder-core.ConfigurationServiceClientCredentialFactoryOptions) object.
      */
     constructor(factoryOptions: ConfigurationServiceClientCredentialFactoryOptions = {}) {
@@ -85,11 +84,11 @@ export class ConfigurationServiceClientCredentialFactory extends PasswordService
         if (withCertificate) {
             ok(
                 CertificateThumbprint?.trim(),
-                'CertificateThumbprint is required when using a Certificate in configuration.'
+                'CertificateThumbprint is required when using a Certificate in configuration.',
             );
             ok(
                 CertificatePrivateKey?.trim(),
-                'CertificatePrivateKey is required when using a Certificate in configuration.'
+                'CertificatePrivateKey is required when using a Certificate in configuration.',
             );
         }
 
@@ -101,7 +100,7 @@ export class ConfigurationServiceClientCredentialFactory extends PasswordService
 
                 this.inner = new ManagedIdentityServiceClientCredentialsFactory(
                     MicrosoftAppId,
-                    new JwtTokenProviderFactory()
+                    new JwtTokenProviderFactory(),
                 );
                 break;
             case SingleTenant.toLocaleLowerCase():
@@ -113,18 +112,18 @@ export class ConfigurationServiceClientCredentialFactory extends PasswordService
                         MicrosoftAppId,
                         CertificateThumbprint,
                         CertificatePrivateKey,
-                        MicrosoftAppTenantId
+                        MicrosoftAppTenantId,
                     );
                 } else {
                     ok(
                         MicrosoftAppPassword?.trim(),
-                        'MicrosoftAppPassword is required for SingleTenant in configuration.'
+                        'MicrosoftAppPassword is required for SingleTenant in configuration.',
                     );
 
                     this.inner = new PasswordServiceClientCredentialFactory(
                         MicrosoftAppId,
                         MicrosoftAppPassword,
-                        MicrosoftAppTenantId
+                        MicrosoftAppTenantId,
                     );
                 }
                 break;
@@ -133,13 +132,13 @@ export class ConfigurationServiceClientCredentialFactory extends PasswordService
                 if (withCertificate) {
                     ok(
                         MicrosoftAppId?.trim(),
-                        'MicrosoftAppId is required for MultiTenant when using a Certificate in configuration.'
+                        'MicrosoftAppId is required for MultiTenant when using a Certificate in configuration.',
                     );
 
                     this.inner = new CertificateServiceClientCredentialsFactory(
                         MicrosoftAppId,
                         CertificateThumbprint,
-                        CertificatePrivateKey
+                        CertificatePrivateKey,
                     );
                 } else {
                     this.inner = new PasswordServiceClientCredentialFactory(MicrosoftAppId, MicrosoftAppPassword, '');
@@ -169,7 +168,7 @@ export class ConfigurationServiceClientCredentialFactory extends PasswordService
         microsoftAppId: string,
         audience: string,
         loginEndpoint: string,
-        validateAuthority: boolean
+        validateAuthority: boolean,
     ): Promise<ServiceClientCredentials> {
         return this.inner.createCredentials(microsoftAppId, audience, loginEndpoint, validateAuthority);
     }
@@ -177,7 +176,6 @@ export class ConfigurationServiceClientCredentialFactory extends PasswordService
 
 /**
  * Creates a new instance of the [ConfigurationServiceClientCredentialFactory](xref:botbuilder-core.ConfigurationServiceClientCredentialFactory) class.
- *
  * @remarks
  * The [Configuration](xref:botbuilder-dialogs-adaptive-runtime-core.Configuration) instance provided to the constructor should
  * have the desired authentication values available at the root, using the properties of [ConfigurationServiceClientCredentialFactoryOptions](xref:botbuilder-core.ConfigurationServiceClientCredentialFactoryOptions) as its keys.
@@ -185,7 +183,7 @@ export class ConfigurationServiceClientCredentialFactory extends PasswordService
  * @returns A [ConfigurationServiceClientCredentialFactory](xref:botbuilder-core.ConfigurationServiceClientCredentialFactory) instance.
  */
 export function createServiceClientCredentialFactoryFromConfiguration(
-    configuration: Configuration
+    configuration: Configuration,
 ): ConfigurationServiceClientCredentialFactory {
     const factoryOptions = configuration.get<ConfigurationServiceClientCredentialFactoryOptions>();
     return new ConfigurationServiceClientCredentialFactory(factoryOptions);

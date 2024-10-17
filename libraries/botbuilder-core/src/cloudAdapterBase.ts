@@ -40,7 +40,6 @@ export abstract class CloudAdapterBase extends BotAdapter {
 
     /**
      * Create a new [CloudAdapterBase](xref:botbuilder.CloudAdapterBase) instance.
-     *
      * @param botFrameworkAuthentication A [BotFrameworkAuthentication](xref:botframework-connector.BotFrameworkAuthentication) used for validating and creating tokens.
      */
     constructor(protected readonly botFrameworkAuthentication: BotFrameworkAuthentication) {
@@ -88,12 +87,12 @@ export abstract class CloudAdapterBase extends BotAdapter {
                     response = await connectorClient.conversations.replyToActivity(
                         activity.conversation.id,
                         activity.replyToId,
-                        activity
+                        activity,
                     );
                 } else {
                     response = await connectorClient.conversations.sendToConversation(
                         activity.conversation.id,
-                        activity
+                        activity,
                     );
                 }
             }
@@ -128,7 +127,7 @@ export abstract class CloudAdapterBase extends BotAdapter {
         const response = await connectorClient.conversations.updateActivity(
             activity.conversation.id,
             activity.id,
-            activity
+            activity,
         );
 
         return response?.id ? { id: response.id } : undefined;
@@ -156,15 +155,14 @@ export abstract class CloudAdapterBase extends BotAdapter {
 
     /**
      * @inheritdoc
-     *
      * @deprecated
      */
     async continueConversation(
         _reference: Partial<ConversationReference>,
-        _logic: (context: TurnContext) => Promise<void>
+        _logic: (context: TurnContext) => Promise<void>,
     ): Promise<void> {
         throw new Error(
-            '`CloudAdapterBase.continueConversation` is deprecated, please use `CloudAdapterBase.continueConversationAsync`'
+            '`CloudAdapterBase.continueConversation` is deprecated, please use `CloudAdapterBase.continueConversationAsync`',
         );
     }
 
@@ -175,7 +173,7 @@ export abstract class CloudAdapterBase extends BotAdapter {
         botAppIdOrClaimsIdentity: string | ClaimsIdentity,
         reference: Partial<ConversationReference>,
         logicOrAudience: ((context: TurnContext) => Promise<void>) | string,
-        maybeLogic?: (context: TurnContext) => Promise<void>
+        maybeLogic?: (context: TurnContext) => Promise<void>,
     ): Promise<void> {
         const botAppId = typeof botAppIdOrClaimsIdentity === 'string' ? botAppIdOrClaimsIdentity : undefined;
 
@@ -200,7 +198,7 @@ export abstract class CloudAdapterBase extends BotAdapter {
         serviceUrl: string,
         audience: string,
         conversationParameters: ConversationParameters,
-        logic: (context: TurnContext) => Promise<void>
+        logic: (context: TurnContext) => Promise<void>,
     ): Promise<void> {
         if (typeof serviceUrl !== 'string' || !serviceUrl) {
             throw new TypeError('`serviceUrl` must be a non-empty string');
@@ -227,7 +225,7 @@ export abstract class CloudAdapterBase extends BotAdapter {
             createConversationResult.id,
             channelId,
             serviceUrl,
-            conversationParameters
+            conversationParameters,
         );
 
         // Create a UserTokenClient instance for the application to use. (For example, in the OAuthPrompt.)
@@ -241,7 +239,7 @@ export abstract class CloudAdapterBase extends BotAdapter {
             connectorClient,
             userTokenClient,
             logic,
-            connectorFactory
+            connectorFactory,
         );
 
         // Run the pipeline.
@@ -252,7 +250,7 @@ export abstract class CloudAdapterBase extends BotAdapter {
         createdConversationId: string | undefined,
         channelId: string,
         serviceUrl: string,
-        conversationParameters: ConversationParameters
+        conversationParameters: ConversationParameters,
     ): Partial<Activity> {
         // Create a conversation update activity to represent the result.
         const activity = ActivityEx.createEventActivity();
@@ -276,7 +274,6 @@ export abstract class CloudAdapterBase extends BotAdapter {
 
     /**
      * The implementation for continue conversation.
-     *
      * @param claimsIdentity The [ClaimsIdentity](xref:botframework-connector.ClaimsIdentity) for the conversation.
      * @param continuationActivity The continuation [Activity](xref:botframework-schema.Activity) used to create the [TurnContext](xref:botbuilder-core.TurnContext).
      * @param audience The audience for the call.
@@ -287,7 +284,7 @@ export abstract class CloudAdapterBase extends BotAdapter {
         claimsIdentity: ClaimsIdentity,
         continuationActivity: Partial<Activity>,
         audience: string | undefined,
-        logic: (context: TurnContext) => Promise<void>
+        logic: (context: TurnContext) => Promise<void>,
     ): Promise<void> {
         // Create the connector factory and  the inbound request, extracting parameters and then create a connector for outbound requests.
         const connectorFactory = this.botFrameworkAuthentication.createConnectorFactory(claimsIdentity);
@@ -306,7 +303,7 @@ export abstract class CloudAdapterBase extends BotAdapter {
             connectorClient,
             userTokenClient,
             logic,
-            connectorFactory
+            connectorFactory,
         );
 
         // Run the pipeline.
@@ -315,7 +312,6 @@ export abstract class CloudAdapterBase extends BotAdapter {
 
     /**
      * The implementation for processing an Activity sent to this bot.
-     *
      * @param authHeader The authorization header from the http request.
      * @param activity The [Activity](xref:botframework-schema.Activity) to process.
      * @param logic The function to call for the resulting bot turn.
@@ -324,12 +320,11 @@ export abstract class CloudAdapterBase extends BotAdapter {
     protected processActivity(
         authHeader: string,
         activity: Activity,
-        logic: (context: TurnContext) => Promise<void>
+        logic: (context: TurnContext) => Promise<void>,
     ): Promise<InvokeResponse | undefined>;
 
     /**
      * The implementation for processing an Activity sent to this bot.
-     *
      * @param authenticateRequestResult The [AuthenticateRequestResult](xref:botframework-connector.AuthenticateRequestResult) for this turn.
      * @param activity The [Activity](xref:botframework-schema.Activity) to process.
      * @param logic The function to call for the resulting bot turn.
@@ -338,7 +333,7 @@ export abstract class CloudAdapterBase extends BotAdapter {
     protected processActivity(
         authenticateRequestResult: AuthenticateRequestResult,
         activity: Activity,
-        logic: (context: TurnContext) => Promise<void>
+        logic: (context: TurnContext) => Promise<void>,
     ): Promise<InvokeResponse | undefined>;
 
     /**
@@ -347,14 +342,14 @@ export abstract class CloudAdapterBase extends BotAdapter {
     protected async processActivity(
         authHeaderOrAuthenticateRequestResult: string | AuthenticateRequestResult,
         activity: Activity,
-        logic: (context: TurnContext) => Promise<void>
+        logic: (context: TurnContext) => Promise<void>,
     ): Promise<InvokeResponse | undefined> {
         // Authenticate the inbound request, extracting parameters and create a ConnectorFactory for creating a Connector for outbound requests.
         const authenticateRequestResult =
             typeof authHeaderOrAuthenticateRequestResult === 'string'
                 ? await this.botFrameworkAuthentication.authenticateRequest(
                       activity,
-                      authHeaderOrAuthenticateRequestResult
+                      authHeaderOrAuthenticateRequestResult,
                   )
                 : authHeaderOrAuthenticateRequestResult;
 
@@ -364,7 +359,7 @@ export abstract class CloudAdapterBase extends BotAdapter {
         // Create the connector client to use for outbound requests.
         const connectorClient = await authenticateRequestResult.connectorFactory?.create(
             activity.serviceUrl,
-            authenticateRequestResult.audience
+            authenticateRequestResult.audience,
         );
 
         if (!connectorClient) {
@@ -373,7 +368,7 @@ export abstract class CloudAdapterBase extends BotAdapter {
 
         // Create a UserTokenClient instance for the application to use. (For example, it would be used in a sign-in prompt.)
         const userTokenClient = await this.botFrameworkAuthentication.createUserTokenClient(
-            authenticateRequestResult.claimsIdentity
+            authenticateRequestResult.claimsIdentity,
         );
 
         // Create a turn context and run the pipeline.
@@ -384,7 +379,7 @@ export abstract class CloudAdapterBase extends BotAdapter {
             connectorClient,
             userTokenClient,
             logic,
-            authenticateRequestResult.connectorFactory
+            authenticateRequestResult.connectorFactory,
         );
 
         // Run the pipeline.
@@ -397,7 +392,6 @@ export abstract class CloudAdapterBase extends BotAdapter {
     /**
      * This is a helper to create the ClaimsIdentity structure from an appId that will be added to the TurnContext.
      * It is intended for use in proactive and named-pipe scenarios.
-     *
      * @param botAppId The bot's application id.
      * @returns a [ClaimsIdentity](xref:botframework-connector.ClaimsIdentity) with the audience and appId claims set to the botAppId.
      */
@@ -421,7 +415,7 @@ export abstract class CloudAdapterBase extends BotAdapter {
         connectorClient: ConnectorClient,
         userTokenClient: UserTokenClient,
         logic: (context: TurnContext) => Promise<void>,
-        connectorFactory: ConnectorFactory
+        connectorFactory: ConnectorFactory,
     ): TurnContext {
         const context = new TurnContext(this, activity);
 

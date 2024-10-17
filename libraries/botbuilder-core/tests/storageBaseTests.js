@@ -9,7 +9,6 @@ const { BlobStorage, CosmosDbPartitionedStorage } = require('../../botbuilder-az
  *
  * All tests return true if assertions pass to indicate that the code ran to completion, passing internal assertions.
  * Therefore, all tests using theses static tests should strictly check that the method returns true.
- *
  * @example
  * const testRan = await StorageBaseTests.returnEmptyObjectWhenReadingUnknownKey(storage);
  * assert.strictEqual(testRan, true);
@@ -33,12 +32,12 @@ class StorageBaseTests {
         if (storage instanceof BlobStorage) {
             await assert.rejects(
                 async () => await storage.read(null),
-                new Error('Please provide at least one key to read from storage.')
+                new Error('Please provide at least one key to read from storage.'),
             );
         } else if (storage instanceof CosmosDbPartitionedStorage || storage instanceof MemoryStorage) {
             await assert.rejects(
                 async () => await storage.read(null),
-                ReferenceError('Keys are required when reading.')
+                ReferenceError('Keys are required when reading.'),
             );
             // CosmosDbStorage and catch-all
         } else {
@@ -53,12 +52,12 @@ class StorageBaseTests {
         if (storage instanceof BlobStorage) {
             await assert.rejects(
                 async () => await storage.write(null),
-                new Error('Please provide a StoreItems with changes to persist.')
+                new Error('Please provide a StoreItems with changes to persist.'),
             );
         } else if (storage instanceof CosmosDbPartitionedStorage || storage instanceof MemoryStorage) {
             await assert.rejects(
                 async () => await storage.write(null),
-                ReferenceError('Changes are required when writing.')
+                ReferenceError('Changes are required when writing.'),
             );
             // CosmosDbStorage and catch-all
         } else {
@@ -261,18 +260,18 @@ class StorageBaseTests {
                 const result = promptContext.recognized.value;
                 if (result.length > 3) {
                     const succeededMessage = MessageFactory.text(
-                        `You got it at the ${promptContext.attemptCount}th try!`
+                        `You got it at the ${promptContext.attemptCount}th try!`,
                     );
                     await promptContext.context.sendActivity(succeededMessage);
                     return true;
                 }
 
                 const reply = MessageFactory.text(
-                    `Please send a name that is longer than 3 characters. ${promptContext.attemptCount}`
+                    `Please send a name that is longer than 3 characters. ${promptContext.attemptCount}`,
                 );
                 await promptContext.context.sendActivity(reply);
                 return false;
-            })
+            }),
         );
 
         const steps = [
