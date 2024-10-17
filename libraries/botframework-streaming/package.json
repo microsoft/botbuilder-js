@@ -41,8 +41,8 @@
   "scripts": {
     "build": "npm-run-all -p build:lib build:browser",
     "build:browser": "npm-run-all build:browser:clean build:browser:run",
-    "build:browser:clean": "rimraf --glob lib/browser.*",
-    "build:browser:run": "tsup --config ../../tsup/browser.config.ts",
+    "build:browser:clean": "rimraf --glob lib/index-browser.*",
+    "build:browser:run": "tsup --config ../../tsup/browser.config.ts --define.entry src/index-browser.ts --define.outfile lib/index-browser.js --dts",
     "build:lib": "tsc -p tsconfig.json",
     "build:rollup": "yarn clean && yarn build && api-extractor run --verbose --local",
     "clean": "rimraf _ts3.4 lib",

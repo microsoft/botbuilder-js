@@ -14,53 +14,56 @@ const packageJson = JSON.parse(readFileSync(resolve(process.cwd(), 'package.json
 
 const external = [/^botbuilder-/, /^botframework-/];
 
-export default defineConfig({
-    name: 'browser',
-    platform: 'browser',
-    entry: ['./src/index.ts'],
-    format: ['cjs'],
-    bundle: true,
-    sourcemap: true,
-    minify: true,
-    treeshake: true,
-    splitting: false,
-    external,
-    env: {
-      NODE_ENV: 'production',
-    },
-    noExternal: Object.keys(packageJson.dependencies).filter((packageName) => {
-        return !external.some((e) => packageName.match(e));
-    }),
-    esbuildOptions(options) {
-        options.outdir = '';
-        options.outfile = options.define.outfile ?? 'lib/browser.js';
-        options.inject = [resolve(__dirname, 'esbuild.inject.js')];
-        options.define = {
-            global: 'globalThis',
-        };
-        options.alias = {
-            crypto: 'crypto-browserify',
-            http: 'stream-http',
-            https: 'https-browserify',
-            stream: 'stream-browserify',
-            // Changed from .browser to .es5 file, as imported classes are not exported in .browser file.
-            '@microsoft/recognizers-text-data-types-timex-expression':
-                '@microsoft/recognizers-text-data-types-timex-expression/dist/recognizers-text-data-types-timex-expression.es5.js',
-        };
-    },
-    esbuildPlugins: [
-        polyfillNode({
-            polyfills: {
-                buffer: false,
-                child_process: true,
-                crypto: false,
-                fs: true,
-                http: false,
-                https: false,
-                net: true,
-                stream: false,
-                tls: true,
-            },
+export default defineConfig((options) => {
+    return {
+        name: 'browser',
+        platform: 'browser',
+        entry: options.define?.entry?.split(' ') ?? ['./src/index.ts'],
+        format: ['cjs'],
+        bundle: true,
+        sourcemap: true,
+        minify: true,
+        treeshake: true,
+        splitting: false,
+        external,
+        env: {
+            NODE_ENV: 'production',
+        },
+        noExternal: Object.keys(packageJson.dependencies).filter((packageName) => {
+            return !external.some((e) => packageName.match(e));
         }),
-    ],
+        esbuildOptions(options) {
+            options.outdir = '';
+            options.outfile = options.define.outfile ?? 'lib/browser.js';
+            options.inject = [resolve(__dirname, 'esbuild.inject.js')];
+            options.define = {
+                global: 'globalThis',
+            };
+            options.alias = {
+                crypto: 'crypto-browserify',
+                http: 'stream-http',
+                https: 'https-browserify',
+                stream: 'stream-browserify',
+                // Changed from .browser to .es5 file, as imported classes are not exported in .browser file.
+                '@microsoft/recognizers-text-data-types-timex-expression':
+                    '@microsoft/recognizers-text-data-types-timex-expression/dist/recognizers-text-data-types-timex-expression.es5.js',
+            };
+        },
+        esbuildPlugins: [
+            polyfillNode({
+                polyfills: {
+                    buffer: false,
+                    child_process: true,
+                    crypto: false,
+                    fs: true,
+                    http: false,
+                    https: false,
+                    net: true,
+                    process: false,
+                    stream: false,
+                    tls: true,
+                },
+            }),
+        ],
+    };
 });
