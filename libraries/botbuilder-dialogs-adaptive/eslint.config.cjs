@@ -1,5 +1,4 @@
 const onlyWarn = require("eslint-plugin-only-warn");
-
 const js = require("@eslint/js");
 const sharedConfig = require("../../eslint.config.cjs")
 
