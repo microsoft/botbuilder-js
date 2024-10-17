@@ -21,7 +21,7 @@
     "dev:link": "wsrun --if is-not-private --bin=yarn link",
     "dev:unlink": "wsrun --if is-not-private --bin=yarn unlink",
     "functional-test": "yarn build && yarn workspace functional-tests test",
-    "lint": "wsrun -m -l lint --max-warnings=0",
+    "lint": "wsrun -m -l lint",
     "package": "wsrun -e -t -l --if is-not-private --bin yarn pack",
     "test": "npm-run-all build test:mocha test:runtime test:mocha:transcripts test:nyc:report",
     "test:compat": "wsrun -e -m -t test:compat",

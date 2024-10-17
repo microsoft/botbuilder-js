@@ -5,6 +5,7 @@ const lodash = require("eslint-plugin-lodash");
 const mocha = require("eslint-plugin-mocha");
 const prettier = require("eslint-plugin-prettier");
 const security = require("eslint-plugin-security");
+const onlyWarn = require("eslint-plugin-only-warn");
 
 const {
     fixupPluginRules,
@@ -32,7 +33,9 @@ module.exports = [{
     "plugin:@typescript-eslint/recommended",
     "plugin:jsdoc/recommended",
 ), {
+
     plugins: {
+        "only-warn": onlyWarn,
         "@typescript-eslint": typescriptEslint,
         import: fixupPluginRules(_import),
         jsdoc,
@@ -131,6 +134,10 @@ module.exports = [{
     },
 }, {
     files: ["**/*.test.*", "test/**/*", "tests/**/*"],
+    ignores: ['**/*.lu', '**/*.dialog', '**/tests/resources/'],
+    plugins: {
+        "only-warn": onlyWarn,
+    },
 
     languageOptions: {
         globals: {
@@ -157,6 +164,7 @@ module.exports = [{
 
     plugins: {
         jsdoc,
+        "only-warn": onlyWarn,
     },
 
     rules: {
@@ -179,6 +187,10 @@ module.exports = [{
 }, {
     files: ["**/*.config.js"],
 
+    plugins: {
+        "only-warn": onlyWarn,
+    },
+
     languageOptions: {
         globals: {
             ...globals.node,
@@ -187,5 +199,10 @@ module.exports = [{
 
     rules: {
         "@typescript-eslint/no-var-requires": "off",
+    },
+},
+{
+    plugins: {
+        "only-warn": onlyWarn,
     },
 }];
