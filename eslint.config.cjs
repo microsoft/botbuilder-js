@@ -1,19 +1,17 @@
 const typescriptEslint = require("@typescript-eslint/eslint-plugin");
 const _import = require("eslint-plugin-import");
 const jsdoc = require("eslint-plugin-jsdoc");
+const js = require("@eslint/js");
 const lodash = require("eslint-plugin-lodash");
 const mocha = require("eslint-plugin-mocha");
 const prettier = require("eslint-plugin-prettier");
 const security = require("eslint-plugin-security");
-const onlyWarn = require("eslint-plugin-only-warn");
+const globals = require("globals");
+const tsParser = require("@typescript-eslint/parser");
 
 const {
     fixupPluginRules,
 } = require("@eslint/compat");
-
-const globals = require("globals");
-const tsParser = require("@typescript-eslint/parser");
-const js = require("@eslint/js");
 
 const {
     FlatCompat,
@@ -25,17 +23,19 @@ const compat = new FlatCompat({
     allConfig: js.configs.all
 });
 
-module.exports = [{
-    ignores: ["**/_ts3.4/", "**/dist/", "**/lib/", "**/node_modules/"],
-}, ...compat.extends(
-    "eslint:recommended",
+module.exports = [
+    js.configs.recommended,
+    {
+        ignores: ["**/_ts3.4/", "**/dist/", "**/lib/", "**/node_modules/"],
+        files: ["**/*.js, **/*.ts"]
+    }, 
+    ...compat.extends(
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:jsdoc/recommended",
 ), {
 
     plugins: {
-        "only-warn": onlyWarn,
         "@typescript-eslint": typescriptEslint,
         import: fixupPluginRules(_import),
         jsdoc,
@@ -135,9 +135,6 @@ module.exports = [{
 }, {
     files: ["**/*.test.*", "test/**/*", "tests/**/*"],
     ignores: ['**/*.lu', '**/*.dialog', '**/tests/resources/'],
-    plugins: {
-        "only-warn": onlyWarn,
-    },
 
     languageOptions: {
         globals: {
@@ -164,7 +161,6 @@ module.exports = [{
 
     plugins: {
         jsdoc,
-        "only-warn": onlyWarn,
     },
 
     rules: {
@@ -187,10 +183,6 @@ module.exports = [{
 }, {
     files: ["**/*.config.js"],
 
-    plugins: {
-        "only-warn": onlyWarn,
-    },
-
     languageOptions: {
         globals: {
             ...globals.node,
@@ -202,7 +194,9 @@ module.exports = [{
     },
 },
 {
-    plugins: {
-        "only-warn": onlyWarn,
+    files: ["**/*.config.cjs"],
+
+    rules: {
+        "@typescript-eslint/no-require-imports": "off",
     },
 }];

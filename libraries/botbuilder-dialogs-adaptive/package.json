@@ -28,7 +28,6 @@
     }
   },
   "dependencies": {
-    "@eslint/js": "^9.12.0",
     "@microsoft/recognizers-text": "~1.1.4",
     "@microsoft/recognizers-text-choice": "~1.1.4",
     "@microsoft/recognizers-text-date-time": "~1.1.4",
@@ -49,7 +48,8 @@
     "node-fetch": "^2.7.0"
   },
   "devDependencies": {
-    "@types/node-fetch": "^2.6.11"
+    "@types/node-fetch": "^2.6.11",
+    "eslint-plugin-only-warn": "^1.1.0"
   },
   "scripts": {
     "build": "npm-run-all build:src build:tests",

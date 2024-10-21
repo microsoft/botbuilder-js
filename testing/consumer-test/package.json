@@ -39,6 +39,7 @@
     "p-map": "^4.0.0"
   },
   "devDependencies": {
-    "@types/minimist": "^1.2.5"
+    "@types/minimist": "^1.2.5",
+    "eslint-plugin-only-warn": "^1.1.0"
   }
 }
