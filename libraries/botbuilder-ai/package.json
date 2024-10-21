@@ -34,6 +34,7 @@
     "botbuilder-dialogs-adaptive-runtime-core": "4.1.6",
     "botbuilder-dialogs-declarative": "4.1.6",
     "botframework-connector": "4.1.6",
+    "eslint-plugin-only-warn": "^1.1.0",
     "lodash": "^4.17.21",
     "node-fetch": "^2.7.0",
     "url-parse": "^1.5.10",
@@ -41,7 +42,6 @@
   },
   "devDependencies": {
     "@types/node-fetch": "^2.6.11",
-    "eslint-plugin-only-warn": "^1.1.0",
     "fs-extra": "^11.2.0",
     "nock": "^13.5.5"
   },

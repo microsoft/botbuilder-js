@@ -48,8 +48,7 @@
     "node-fetch": "^2.7.0"
   },
   "devDependencies": {
-    "@types/node-fetch": "^2.6.11",
-    "eslint-plugin-only-warn": "^1.1.0"
+    "@types/node-fetch": "^2.6.11"
   },
   "scripts": {
     "build": "npm-run-all build:src build:tests",

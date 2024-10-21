@@ -39,13 +39,13 @@
     "botbuilder-dialogs-adaptive-runtime-core": "4.1.6",
     "botbuilder-dialogs-declarative": "4.1.6",
     "botframework-connector": "4.1.6",
+    "eslint-plugin-only-warn": "^1.1.0",
     "nconf": "^0.12.1",
     "yargs-parser": "^21.1.1",
     "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/nconf": "^0.10.7",
-    "eslint-plugin-only-warn": "^1.1.0",
     "mocha": "^10.7.3",
     "nyc": "^17.0.0"
   },

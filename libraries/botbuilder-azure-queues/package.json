@@ -29,11 +29,11 @@
   },
   "dependencies": {
     "@azure/storage-queue": "^12.23.0",
-    "botbuilder-core": "4.1.6"
+    "botbuilder-core": "4.1.6",
+    "eslint-plugin-only-warn": "^1.1.0"
   },
   "devDependencies": {
     "botbuilder-dialogs": "4.1.6",
-    "eslint-plugin-only-warn": "^1.1.0",
     "node-fetch": "^2.7.0"
   },
   "scripts": {

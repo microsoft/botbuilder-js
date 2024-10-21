@@ -34,11 +34,11 @@
     "bcryptjs": "^2.4.3",
     "botbuilder": "4.1.6",
     "botbuilder-stdlib": "4.1.6",
+    "eslint-plugin-only-warn": "^1.1.0",
     "lodash": "^4.17.20",
     "p-map": "^4.0.0"
   },
-  "devDependencies": {
-    "eslint-plugin-only-warn": "^1.1.0",
+  "devDependencies": {  
     "fs-extra": "^11.2.0",
     "nock": "^13.5.5",
     "node-fetch": "^2.7.0"

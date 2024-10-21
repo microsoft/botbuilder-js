@@ -30,9 +30,7 @@
   "dependencies": {
     "applicationinsights": "^2.9.6",
     "botbuilder-core": "4.1.6",
-    "cls-hooked": "^4.2.2"
-  },
-  "devDependencies": {
+    "cls-hooked": "^4.2.2",
     "eslint-plugin-only-warn": "^1.1.0"
   },
   "scripts": {

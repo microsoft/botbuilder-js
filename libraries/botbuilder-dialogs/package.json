@@ -33,7 +33,8 @@
     "@microsoft/recognizers-text-suite": "1.1.4",
     "botbuilder-core": "4.1.6",
     "botbuilder-dialogs-adaptive-runtime-core": "4.1.6",
-    "botframework-connector": "4.1.6",    
+    "botframework-connector": "4.1.6",
+    "eslint-plugin-only-warn": "^1.1.0",    
     "globalize": "^1.7.0",
     "lodash": "^4.17.21",
     "uuid": "^10.0.0",
@@ -41,7 +42,7 @@
   },
   "devDependencies": {
     "@types/globalize": "^1.5.5",
-    "eslint-plugin-only-warn": "^1.1.0",
+    
     "line-reader": "^0.4.0"
   },
   "scripts": {

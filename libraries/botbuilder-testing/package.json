@@ -28,9 +28,7 @@
   },
   "dependencies": {
     "botbuilder-core": "4.1.6",
-    "botbuilder-dialogs": "4.1.6"
-  },
-  "devDependencies": {
+    "botbuilder-dialogs": "4.1.6",
     "eslint-plugin-only-warn": "^1.1.0"
   },
   "scripts": {

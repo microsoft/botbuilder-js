@@ -44,9 +44,7 @@
     "botbuilder-dialogs-adaptive-runtime-core": "4.1.6",
     "botframework-connector": "4.1.6",
     "express": "^4.21.0",
+    "eslint-plugin-only-warn": "^1.1.0",
     "zod": "^3.23.8"
-  },
-  "devDependencies": {
-    "eslint-plugin-only-warn": "^1.1.0"
   }
 }

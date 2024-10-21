@@ -32,14 +32,14 @@
     "botbuilder-dialogs-adaptive-runtime-core": "4.1.6",
     "botbuilder-dialogs-declarative": "4.1.6",
     "botbuilder-stdlib": "4.1.6",
+    "eslint-plugin-only-warn": "^1.1.0",
     "murmurhash-js": "^1.0.0",
     "nock": "^13.5.5",
     "url-parse": "^1.5.10",
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "botbuilder": "4.1.6",
-    "eslint-plugin-only-warn": "^1.1.0",
+    "botbuilder": "4.1.6",    
     "@microsoft/recognizers-text-suite": "1.1.4"
   },
   "author": "Microsoft",

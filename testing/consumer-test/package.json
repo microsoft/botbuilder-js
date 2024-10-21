@@ -35,11 +35,11 @@
     "botframework-connector": "4.1.6",
     "botframework-schema": "4.1.6",
     "botframework-streaming": "4.1.6",
+    "eslint-plugin-only-warn": "^1.1.0",
     "minimist": "^1.2.6",
     "p-map": "^4.0.0"
   },
   "devDependencies": {
-    "@types/minimist": "^1.2.5",
-    "eslint-plugin-only-warn": "^1.1.0"
+    "@types/minimist": "^1.2.5"   
   }
 }
