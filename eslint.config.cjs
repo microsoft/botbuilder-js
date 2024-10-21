@@ -26,8 +26,7 @@ const compat = new FlatCompat({
 module.exports = [
     js.configs.recommended,
     {
-        ignores: ["**/_ts3.4/", "**/dist/", "**/lib/", "**/node_modules/"],
-        files: ["**/*.js, **/*.ts"]
+        ignores: ["**/_ts3.4/", "**/dist/", "**/lib/", "**/node_modules/"]
     }, 
     ...compat.extends(
     "plugin:@typescript-eslint/eslint-recommended",
