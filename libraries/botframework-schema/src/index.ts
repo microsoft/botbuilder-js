@@ -2089,32 +2089,35 @@ export enum ActivityEventNames {
 
 /**
  * Defines values for ActivityTypes.
- * Possible values include: 'message', 'contactRelationUpdate', 'conversationUpdate', 'typing',
- * 'endOfConversation', 'event', 'invoke', 'deleteUserData', 'messageUpdate', 'messageDelete',
- * 'installationUpdate', 'messageReaction', 'suggestion', 'trace', 'handoff'
+ * Possible values include: 'command', 'commandResult', 'contactRelationUpdate',
+ * 'conversationUpdate', 'delay', 'deleteUserData','endOfConversation', 'event', 
+ * 'handoff', 'installationUpdate', 'invoke', 'invokeResponse', 'message',
+ * 'messageDelete', 'messageReaction', 'messageUpdate', 'suggestion',
+ * 'trace', 'typing'
  *
  * @readonly
  * @enum {string}
  */
 export enum ActivityTypes {
-    Message = 'message',
-    ContactRelationUpdate = 'contactRelationUpdate',
-    ConversationUpdate = 'conversationUpdate',
-    Typing = 'typing',
-    EndOfConversation = 'endOfConversation',
-    Event = 'event',
-    Invoke = 'invoke',
-    InvokeResponse = 'invokeResponse',
-    DeleteUserData = 'deleteUserData',
-    MessageUpdate = 'messageUpdate',
-    MessageDelete = 'messageDelete',
-    InstallationUpdate = 'installationUpdate',
-    MessageReaction = 'messageReaction',
-    Suggestion = 'suggestion',
-    Trace = 'trace',
-    Handoff = 'handoff',
     Command = 'command',
     CommandResult = 'commandResult',
+    ContactRelationUpdate = 'contactRelationUpdate',
+    ConversationUpdate = 'conversationUpdate',
+    Delay = 'delay',
+    DeleteUserData = 'deleteUserData',
+    EndOfConversation = 'endOfConversation',
+    Event = 'event',
+    Handoff = 'handoff',
+    InstallationUpdate = 'installationUpdate',
+    Invoke = 'invoke',
+    InvokeResponse = 'invokeResponse',
+    Message = 'message',
+    MessageDelete = 'messageDelete',
+    MessageReaction = 'messageReaction',
+    MessageUpdate = 'messageUpdate',
+    Suggestion = 'suggestion',
+    Trace = 'trace',
+    Typing = 'typing',
 }
 
 /**
