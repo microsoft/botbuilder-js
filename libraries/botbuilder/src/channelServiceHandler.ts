@@ -22,7 +22,6 @@ import {
 export class ChannelServiceHandler extends ChannelServiceHandlerBase {
     /**
      * Initializes a new instance of the ChannelServiceHandler class, using a credential provider.
-     *
      * @param credentialProvider The credential provider.
      * @param authConfig The authentication configuration.
      * @param channelService A string representing the channel provider.
@@ -30,7 +29,7 @@ export class ChannelServiceHandler extends ChannelServiceHandlerBase {
     constructor(
         private readonly credentialProvider: ICredentialProvider,
         private readonly authConfig: AuthenticationConfiguration,
-        protected readonly channelService = process.env[AuthenticationConstants.ChannelService]
+        protected readonly channelService = process.env[AuthenticationConstants.ChannelService],
     ) {
         super();
 
@@ -62,7 +61,7 @@ export class ChannelServiceHandler extends ChannelServiceHandlerBase {
             this.channelService,
             'unknown',
             undefined,
-            this.authConfig
+            this.authConfig,
         );
     }
 }

@@ -16,7 +16,7 @@ export const INodeSocketT = z.custom<INodeSocket>(
         typeof val.once === 'function' &&
         typeof val.pipe === 'function' &&
         typeof val.write === 'function',
-    { message: 'INodeSocket' }
+    { message: 'INodeSocket' },
 );
 
 export const LogicT = z.custom<(context: TurnContext) => Promise<void>>((val) => typeof val === 'function');

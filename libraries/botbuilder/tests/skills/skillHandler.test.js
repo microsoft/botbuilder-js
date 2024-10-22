@@ -73,7 +73,7 @@ describe('SkillHandler', function () {
                         assert.deepStrictEqual(context.turnState.get(adapter.BotIdentityKey), identity);
                         return true;
                     })
-                    .and(sinon.match({ activity }))
+                    .and(sinon.match({ activity })),
             )
             .once();
 
@@ -133,7 +133,7 @@ describe('SkillHandler', function () {
             expectsGetSkillConversationReference(convId, updatedActivity.serviceUrl);
 
             expectsContext((context) =>
-                context.expects('updateActivity').withArgs(sinon.match(updatedActivity)).once().resolves()
+                context.expects('updateActivity').withArgs(sinon.match(updatedActivity)).once().resolves(),
             );
 
             await handler.onUpdateActivity(new ClaimsIdentity([]), convId, activityId, updatedActivity);
@@ -166,13 +166,13 @@ describe('SkillHandler', function () {
                     assert.deepStrictEqual(
                         context.turnState.get(adapter.BotIdentityKey),
                         identity,
-                        'cached identity exists'
+                        'cached identity exists',
                     );
 
                     assert.deepStrictEqual(
                         context.turnState.get(handler.SkillConversationReferenceKey),
                         ref,
-                        'cached conversation ref exists'
+                        'cached conversation ref exists',
                     );
 
                     sandbox.verify();
@@ -186,7 +186,7 @@ describe('SkillHandler', function () {
 
                 await assert.rejects(
                     handler.inner.processActivity({}, 'convId', 'replyId', {}),
-                    new Error('skillConversationReference not found')
+                    new Error('skillConversationReference not found'),
                 );
 
                 sandbox.verify();
@@ -197,7 +197,7 @@ describe('SkillHandler', function () {
 
                 await assert.rejects(
                     handler.inner.processActivity({}, 'convId', 'replyId', {}),
-                    new Error('conversationReference not found.')
+                    new Error('conversationReference not found.'),
                 );
 
                 sandbox.verify();
@@ -233,7 +233,7 @@ describe('SkillHandler', function () {
                         { type: AuthenticationConstants.AppIdClaim, value: '00000000-0000-0000-0000-000000000000' },
                         { type: AuthenticationConstants.VersionClaim, value: '1.0' },
                     ],
-                    true
+                    true,
                 );
 
                 const skillActivity = {
@@ -289,7 +289,7 @@ describe('SkillHandler', function () {
                         { type: AuthenticationConstants.AppIdClaim, value: skillAppId },
                         { type: AuthenticationConstants.VersionClaim, value: '1.0' },
                     ],
-                    true
+                    true,
                 );
 
                 const skillActivity = {
@@ -313,16 +313,16 @@ describe('SkillHandler', function () {
                             assert.strictEqual(
                                 fromKey,
                                 fromHandlerKey,
-                                'the keys should return the same cached values'
+                                'the keys should return the same cached values',
                             );
 
                             assert.strictEqual(
                                 context.activity.callerId,
-                                `${CallerIdConstants.BotToBotPrefix}${skillAppId}`
+                                `${CallerIdConstants.BotToBotPrefix}${skillAppId}`,
                             );
 
                             return true;
-                        })
+                        }),
                     )
                     .once();
 

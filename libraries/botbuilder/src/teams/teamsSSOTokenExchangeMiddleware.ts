@@ -50,7 +50,7 @@ async function sendInvokeResponse(context: TurnContext, body: unknown = null, st
 
 const ExchangeToken = z.custom<Pick<ExtendedUserTokenProvider, 'exchangeToken'>>(
     (val: any) => typeof val.exchangeToken === 'function',
-    { message: 'ExtendedUserTokenProvider' }
+    { message: 'ExtendedUserTokenProvider' },
 );
 
 /**
@@ -71,11 +71,13 @@ const ExchangeToken = z.custom<Pick<ExtendedUserTokenProvider, 'exchangeToken'>>
 export class TeamsSSOTokenExchangeMiddleware implements Middleware {
     /**
      * Initializes a new instance of the TeamsSSOTokenExchangeMiddleware class.
-     *
      * @param storage The [Storage](xref:botbuilder-core.Storage) to use for deduplication
      * @param oAuthConnectionName The connection name to use for the single sign on token exchange
      */
-    constructor(private readonly storage: Storage, private readonly oAuthConnectionName: string) {
+    constructor(
+        private readonly storage: Storage,
+        private readonly oAuthConnectionName: string,
+    ) {
         if (!storage) {
             throw new TypeError('`storage` parameter is required');
         }
@@ -87,7 +89,6 @@ export class TeamsSSOTokenExchangeMiddleware implements Middleware {
 
     /**
      * Called each time the bot receives a new request.
-     *
      * @param context Context for current turn of conversation with the user.
      * @param next Function to call to continue execution to the next step in the middleware chain.
      */
@@ -142,7 +143,7 @@ export class TeamsSSOTokenExchangeMiddleware implements Middleware {
 
         try {
             const userTokenClient = context.turnState.get<UserTokenClient>(
-                (context.adapter as CloudAdapterBase).UserTokenClientKey
+                (context.adapter as CloudAdapterBase).UserTokenClientKey,
             );
             const exchangeToken = ExchangeToken.safeParse(context.adapter);
 
@@ -151,14 +152,14 @@ export class TeamsSSOTokenExchangeMiddleware implements Middleware {
                     context.activity.from.id,
                     this.oAuthConnectionName,
                     context.activity.channelId,
-                    { token: tokenExchangeRequest.token }
+                    { token: tokenExchangeRequest.token },
                 );
             } else if (exchangeToken.success) {
                 tokenExchangeResponse = await exchangeToken.data.exchangeToken(
                     context,
                     this.oAuthConnectionName,
                     context.activity.from.id,
-                    { token: tokenExchangeRequest.token }
+                    { token: tokenExchangeRequest.token },
                 );
             } else {
                 new Error('Token Exchange is not supported by the current adapter.');

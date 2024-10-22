@@ -83,14 +83,13 @@ class TraceActivity {
 abstract class InterceptionMiddleware implements Middleware {
     /**
      * Implement middleware signature
-     *
      * @param turnContext {TurnContext} An incoming TurnContext object.
      * @param next {function} The next delegate function.
      */
     async onTurn(turnContext: TurnContext, next: () => Promise<void>): Promise<void> {
         const { shouldForwardToApplication, shouldIntercept } = await this.invokeInbound(
             turnContext,
-            TraceActivity.fromActivity(turnContext.activity, 'ReceivedActivity', 'Received Activity')
+            TraceActivity.fromActivity(turnContext.activity, 'ReceivedActivity', 'Received Activity'),
         );
 
         if (shouldIntercept) {
@@ -165,10 +164,8 @@ abstract class InterceptionMiddleware implements Middleware {
 
 /**
  * InspectionMiddleware for emulator inspection of runtime Activities and BotState.
- *
  * @remarks
  * InspectionMiddleware for emulator inspection of runtime Activities and BotState.
- *
  * @deprecated This class will be removed in a future version of the framework.
  */
 export class InspectionMiddleware extends InterceptionMiddleware {
@@ -182,7 +179,6 @@ export class InspectionMiddleware extends InterceptionMiddleware {
 
     /**
      * Create the Inspection middleware for sending trace activities out to an emulator session
-     *
      * @param inspectionState A state management object for inspection state.
      * @param userState A state management object for user state.
      * @param conversationState A state management object for conversation state.
@@ -192,7 +188,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
         inspectionState: InspectionState,
         userState?: UserState,
         conversationState?: ConversationState,
-        credentials?: Partial<MicrosoftAppCredentials>
+        credentials?: Partial<MicrosoftAppCredentials>,
     ) {
         super();
 
@@ -206,7 +202,6 @@ export class InspectionMiddleware extends InterceptionMiddleware {
 
     /**
      * Indentifies open and attach commands and calls the appropriate method.
-     *
      * @param turnContext The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      * @returns True if the command is open or attached, otherwise false.
      */
@@ -236,7 +231,6 @@ export class InspectionMiddleware extends InterceptionMiddleware {
 
     /**
      * Processes inbound activities.
-     *
      * @param turnContext The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      * @param traceActivity The trace activity.
      * @returns {Promise<any>} A promise representing the asynchronous operation.
@@ -260,7 +254,6 @@ export class InspectionMiddleware extends InterceptionMiddleware {
 
     /**
      * Processes outbound activities.
-     *
      * @param turnContext The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      * @param traceActivities A collection of trace activities.
      */
@@ -278,7 +271,6 @@ export class InspectionMiddleware extends InterceptionMiddleware {
 
     /**
      * Processes the state management object.
-     *
      * @param turnContext The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      */
     protected async traceState(turnContext: TurnContext): Promise<any> {
@@ -312,7 +304,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
         const sessions = await this.inspectionStateAccessor.get(turnContext, InspectionSessionsByStatus.DefaultValue);
         const sessionId = this.openCommand(sessions, TurnContext.getConversationReference(turnContext.activity));
         await turnContext.sendActivity(
-            TraceActivity.makeCommandActivity(`${InspectionMiddleware.command} attach ${sessionId}`)
+            TraceActivity.makeCommandActivity(`${InspectionMiddleware.command} attach ${sessionId}`),
         );
         await this.inspectionState.saveChanges(turnContext, false);
     }
@@ -336,7 +328,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
      */
     private openCommand(
         sessions: InspectionSessionsByStatus,
-        conversationReference: Partial<ConversationReference>
+        conversationReference: Partial<ConversationReference>,
     ): string {
         const sessionId = uuidv4();
         sessions.openedSessions[sessionId] = conversationReference;
@@ -376,7 +368,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
     private async invokeSend(
         turnContext: TurnContext,
         session: InspectionSession,
-        activity: Partial<Activity>
+        activity: Partial<Activity>,
     ): Promise<any> {
         if (await session.send(activity)) {
             return true;
@@ -441,16 +433,13 @@ class InspectionSessionsByStatus {
 
 /**
  * InspectionState for use by the InspectionMiddleware for emulator inspection of runtime Activities and BotState.
- *
  * @remarks
  * InspectionState for use by the InspectionMiddleware for emulator inspection of runtime Activities and BotState.
- *
  * @deprecated This class will be removed in a future version of the framework.
  */
 export class InspectionState extends BotState {
     /**
      * Creates a new instance of the [InspectionState](xref:botbuilder.InspectionState)  class.
-     *
      * @param storage The [Storage](xref:botbuilder-core.Storage) layer this state management object will use to store and retrieve state.
      */
     constructor(storage: Storage) {
@@ -461,7 +450,6 @@ export class InspectionState extends BotState {
 
     /**
      * Gets the key to use when reading and writing state to and from storage.
-     *
      * @param _turnContext The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      * @returns The storage key.
      */

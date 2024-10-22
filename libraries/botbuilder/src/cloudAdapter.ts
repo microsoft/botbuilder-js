@@ -47,7 +47,6 @@ const ActivityT = z.custom<Activity>((val) => z.record(z.unknown()).safeParse(va
 export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAdapter {
     /**
      * Initializes a new instance of the [CloudAdapter](xref:botbuilder:CloudAdapter) class.
-     *
      * @param botFrameworkAuthentication Optional [BotFrameworkAuthentication](xref:botframework-connector.BotFrameworkAuthentication) instance
      */
     constructor(botFrameworkAuthentication: BotFrameworkAuthentication = BotFrameworkAuthenticationFactory.create()) {
@@ -56,7 +55,6 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
 
     /**
      * Process a web request by applying a logic function.
-     *
      * @param req An incoming HTTP [Request](xref:botbuilder.Request)
      * @param req The corresponding HTTP [Response](xref:botbuilder.Response)
      * @param logic The logic function to apply
@@ -67,7 +65,6 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
     /**
      * Handle a web socket connection by applying a logic function to
      * each streaming request.
-     *
      * @param req An incoming HTTP [Request](xref:botbuilder.Request)
      * @param socket The corresponding [INodeSocket](xref:botframework-streaming.INodeSocket)
      * @param head The corresponding [INodeBuffer](xref:botframework-streaming.INodeBuffer)
@@ -78,7 +75,7 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
         req: Request,
         socket: INodeSocket,
         head: INodeBuffer,
-        logic: (context: TurnContext) => Promise<void>
+        logic: (context: TurnContext) => Promise<void>,
     ): Promise<void>;
 
     /**
@@ -105,7 +102,7 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
         req: Request,
         resOrSocket: Response | INodeSocket | INodeDuplex,
         logicOrHead: ((context: TurnContext) => Promise<void>) | INodeBuffer,
-        maybeLogic?: (context: TurnContext) => Promise<void>
+        maybeLogic?: (context: TurnContext) => Promise<void>,
     ): Promise<void> {
         // Early return with web socket handler if function invocation matches that signature
         if (maybeLogic) {
@@ -139,7 +136,7 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
         if (!z.record(z.unknown()).safeParse(req.body).success) {
             return end(
                 StatusCodes.BAD_REQUEST,
-                '`req.body` not an object, make sure you are using middleware to parse incoming requests.'
+                '`req.body` not an object, make sure you are using middleware to parse incoming requests.',
             );
         }
 
@@ -158,14 +155,13 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
             console.error(err);
             return end(
                 err instanceof AuthenticationError ? StatusCodes.UNAUTHORIZED : StatusCodes.INTERNAL_SERVER_ERROR,
-                err.message ?? err
+                err.message ?? err,
             );
         }
     }
 
     /**
      * Asynchronously process an activity running the provided logic function.
-     *
      * @param authorization The authorization header in the format: "Bearer [longString]" or the AuthenticateRequestResult for this turn.
      * @param activity The activity to process.
      * @param logic The logic function to apply.
@@ -174,12 +170,14 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
     async processActivityDirect(
         authorization: string | AuthenticateRequestResult,
         activity: Activity,
-        logic: (context: TurnContext) => Promise<void>
+        logic: (context: TurnContext) => Promise<void>,
     ): Promise<void> {
         try {
-            typeof authorization === 'string'
-                ? await this.processActivity(authorization, activity, logic)
-                : await this.processActivity(authorization, activity, logic);
+            if (typeof authorization === 'string') {
+                await this.processActivity(authorization, activity, logic);
+            } else {
+                await this.processActivity(authorization, activity, logic);
+            }
         } catch (err) {
             throw new Error(`CloudAdapter.processActivityDirect(): ERROR\n ${err.stack}`);
         }
@@ -187,7 +185,6 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
 
     /**
      * Used to connect the adapter to a named pipe.
-     *
      * @param pipeName Pipe name to connect to (note: yields two named pipe servers by appending ".incoming" and ".outgoing" to this name)
      * @param logic The logic function to call for resulting bot turns.
      * @param appId The Bot application ID
@@ -201,7 +198,7 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
         appId: string,
         audience: string,
         callerId?: string,
-        retryCount = 7
+        retryCount = 7,
     ): Promise<void> {
         z.object({
             pipeName: z.string(),
@@ -221,7 +218,7 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
         // Creat request handler
         const requestHandler = new StreamingRequestHandler(
             authenticateRequestResult,
-            (authenticateRequestResult, activity) => this.processActivity(authenticateRequestResult, activity, logic)
+            (authenticateRequestResult, activity) => this.processActivity(authenticateRequestResult, activity, logic),
         );
 
         // Create server
@@ -238,7 +235,7 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
         req: Request,
         socket: INodeSocket,
         head: INodeBuffer,
-        logic: (context: TurnContext) => Promise<void>
+        logic: (context: TurnContext) => Promise<void>,
     ): Promise<void> {
         // Grab the auth header from the inbound http request
         const authHeader = z.string().parse(req.headers.Authorization ?? req.headers.authorization ?? '');
@@ -249,19 +246,19 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
         // Authenticate inbound request
         const authenticateRequestResult = await this.botFrameworkAuthentication.authenticateStreamingRequest(
             authHeader,
-            channelIdHeader
+            channelIdHeader,
         );
 
         // Creat request handler
         const requestHandler = new StreamingRequestHandler(
             authenticateRequestResult,
-            (authenticateRequestResult, activity) => this.processActivity(authenticateRequestResult, activity, logic)
+            (authenticateRequestResult, activity) => this.processActivity(authenticateRequestResult, activity, logic),
         );
 
         // Create server
         const server = new WebSocketServer(
             await new NodeWebSocketFactory().createWebSocket(req, socket, head),
-            requestHandler
+            requestHandler,
         );
 
         // Attach server to request handler
@@ -284,8 +281,8 @@ class StreamingRequestHandler extends RequestHandler {
         private readonly authenticateRequestResult: AuthenticateRequestResult,
         private readonly processActivity: (
             authenticateRequestResult: AuthenticateRequestResult,
-            activity: Activity
-        ) => Promise<InvokeResponse | undefined>
+            activity: Activity,
+        ) => Promise<InvokeResponse | undefined>,
     ) {
         super();
 
@@ -311,14 +308,14 @@ class StreamingRequestHandler extends RequestHandler {
         if (!request.verb || !request.path) {
             return end(
                 StatusCodes.BAD_REQUEST,
-                `Request missing verb and/or path. Verb: ${request.verb}, Path: ${request.path}`
+                `Request missing verb and/or path. Verb: ${request.verb}, Path: ${request.path}`,
             );
         }
 
         if (request.verb.toUpperCase() !== POST && request.verb.toUpperCase() !== GET) {
             return end(
                 StatusCodes.METHOD_NOT_ALLOWED,
-                `Invalid verb received. Only GET and POST are accepted. Verb: ${request.verb}`
+                `Invalid verb received. Only GET and POST are accepted. Verb: ${request.verb}`,
             );
         }
 
@@ -328,7 +325,7 @@ class StreamingRequestHandler extends RequestHandler {
             } else {
                 return end(
                     StatusCodes.METHOD_NOT_ALLOWED,
-                    `Invalid verb received for path: ${request.path}. Only GET is accepted. Verb: ${request.verb}`
+                    `Invalid verb received for path: ${request.path}. Only GET is accepted. Verb: ${request.verb}`,
                 );
             }
         }
@@ -349,7 +346,7 @@ class StreamingRequestHandler extends RequestHandler {
                             : await attachmentStream.readAsString();
 
                     return { contentType, content };
-                })
+                }),
             );
         } catch (err) {
             return end(StatusCodes.BAD_REQUEST, `Request body missing or malformed: ${err}`);
@@ -377,7 +374,7 @@ class StreamingConnectorFactory implements ConnectorFactory {
 
         if (serviceUrl !== this.serviceUrl) {
             throw new Error(
-                'This is a streaming scenario, all connectors from this factory must all be for the same url.'
+                'This is a streaming scenario, all connectors from this factory must all be for the same url.',
             );
         }
 
@@ -411,7 +408,7 @@ class StreamingHttpClient implements HttpClient {
 
     private async createHttpResponse(
         receiveResponse: IReceiveResponse,
-        httpRequest: WebResource
+        httpRequest: WebResource,
     ): Promise<HttpOperationResponse> {
         const [bodyAsText] =
             (await Promise.all(receiveResponse.streams?.map((stream) => stream.readAsString()) ?? [])) ?? [];

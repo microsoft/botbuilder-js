@@ -83,7 +83,6 @@ function parseActivity(json: string): Activity {
 
 /**
  * The file transcript store stores transcripts in file system with each activity as a file.
- *
  * @remarks
  * This class provides an interface to log all incoming and outgoing activities to the filesystem.
  * It implements the features necessary to work alongside the TranscriptLoggerMiddleware plugin.
@@ -103,7 +102,6 @@ export class FileTranscriptStore implements TranscriptStore {
 
     /**
      * Creates an instance of FileTranscriptStore.
-     *
      * @param folder Root folder where transcript will be stored.
      */
     constructor(folder: string) {
@@ -116,7 +114,6 @@ export class FileTranscriptStore implements TranscriptStore {
 
     /**
      * Log an activity to the transcript.
-     *
      * @param activity Activity being logged.
      * @returns {Promise<void>} a promise representing the asynchronous operation.
      */
@@ -133,7 +130,6 @@ export class FileTranscriptStore implements TranscriptStore {
 
     /**
      * Get all activities associated with a conversation id (aka get the transcript).
-     *
      * @param channelId Channel Id.
      * @param conversationId Conversation Id.
      * @param continuationToken (Optional) Continuation token to page through results.
@@ -144,7 +140,7 @@ export class FileTranscriptStore implements TranscriptStore {
         channelId: string,
         conversationId: string,
         continuationToken?: string,
-        startDate?: Date
+        startDate?: Date,
     ): Promise<PagedResult<Activity>> {
         if (!channelId) {
             throw new Error('Missing channelId');
@@ -165,7 +161,8 @@ export class FileTranscriptStore implements TranscriptStore {
         const transcriptFolderContents = await readdir(transcriptFolder);
         const include = includeWhen((fileName) => !continuationToken || parse(fileName).name === continuationToken);
         const items = transcriptFolderContents.filter(
-            (transcript) => transcript.endsWith('.json') && withDateFilter(startDate, transcript) && include(transcript)
+            (transcript) =>
+                transcript.endsWith('.json') && withDateFilter(startDate, transcript) && include(transcript),
         );
 
         pagedResult.items = await Promise.all(
@@ -175,7 +172,7 @@ export class FileTranscriptStore implements TranscriptStore {
                 .map(async (activityFilename) => {
                     const json = await readFile(join(transcriptFolder, activityFilename), 'utf8');
                     return parseActivity(json);
-                })
+                }),
         );
         const { length } = pagedResult.items;
         if (length === FileTranscriptStore.PageSize && items[length]) {
@@ -186,7 +183,6 @@ export class FileTranscriptStore implements TranscriptStore {
 
     /**
      * List all the logged conversations for a given channelId.
-     *
      * @param channelId Channel Id.
      * @param continuationToken (Optional) Continuation token to page through results.
      * @returns {Promise<PagedResult<TranscriptInfo>>} PagedResult of transcripts.
@@ -218,7 +214,6 @@ export class FileTranscriptStore implements TranscriptStore {
 
     /**
      * Delete a conversation and all of it's activities.
-     *
      * @param channelId Channel Id where conversation took place.
      * @param conversationId Id of the conversation to delete.
      * @returns {Promise<void>} A promise representing the asynchronous operation.
@@ -239,7 +234,6 @@ export class FileTranscriptStore implements TranscriptStore {
 
     /**
      * Saves the [Activity](xref:botframework-schema.Activity) as a JSON file.
-     *
      * @param activity The [Activity](xref:botframework-schema.Activity) to transcript.
      * @param transcriptPath The path where the transcript will be saved.
      * @param activityFilename The name for the file.

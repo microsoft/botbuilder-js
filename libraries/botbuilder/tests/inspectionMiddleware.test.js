@@ -45,14 +45,14 @@ describe('InspectionMiddleware', function () {
         const inboundExpectation = nock('https://test.com')
             .post(
                 '/v3/conversations/Convo1/activities',
-                (activity) => activity.type === 'trace' && activity.value.text == 'hi'
+                (activity) => activity.type === 'trace' && activity.value.text == 'hi',
             )
             .reply(200, { id: 'test' });
 
         const outboundExpectation = nock('https://test.com')
             .post(
                 '/v3/conversations/Convo1/activities',
-                (activity) => activity.type === 'trace' && activity.value.text == 'echo: hi'
+                (activity) => activity.type === 'trace' && activity.value.text == 'echo: hi',
             )
             .reply(200, { id: 'test' });
 
@@ -64,7 +64,7 @@ describe('InspectionMiddleware', function () {
                     activity.value.userState &&
                     activity.value.userState.x.property == 'hello' &&
                     activity.value.conversationState &&
-                    activity.value.conversationState.y.property == 'world'
+                    activity.value.conversationState.y.property == 'world',
             )
             .reply(200, { id: 'test' });
 
@@ -85,7 +85,7 @@ describe('InspectionMiddleware', function () {
                 await inspectionMiddleware.processCommand(turnContext);
             },
             null,
-            true
+            true,
         );
 
         await inspectionAdapter.receiveActivity(openActivity);
@@ -109,7 +109,7 @@ describe('InspectionMiddleware', function () {
                 await conversationState.saveChanges(turnContext);
             },
             null,
-            true
+            true,
         );
 
         // IMPORTANT add the InspectionMiddleware to the adapter that is running our bot
@@ -129,7 +129,7 @@ describe('InspectionMiddleware', function () {
         assert(inboundExpectation.isDone(), 'The expectation of a trace message for the inbound activity was not met');
         assert(
             outboundExpectation.isDone(),
-            'The expectation of a trace message for the outbound activity was not met'
+            'The expectation of a trace message for the outbound activity was not met',
         );
         assert(stateExpectation.isDone(), 'The expectation of a trace message for the bot state was not met');
     });
@@ -139,14 +139,14 @@ describe('InspectionMiddleware', function () {
         const inboundExpectation = nock('https://test.com')
             .post(
                 '/v3/conversations/Convo1/activities',
-                (activity) => activity.type === 'trace' && activity.value.text == 'hi'
+                (activity) => activity.type === 'trace' && activity.value.text == 'hi',
             )
             .reply(200, { id: 'test' });
 
         const outboundExpectation = nock('https://test.com')
             .post(
                 '/v3/conversations/Convo1/activities',
-                (activity) => activity.type === 'trace' && activity.value.text == 'echo: hi'
+                (activity) => activity.type === 'trace' && activity.value.text == 'echo: hi',
             )
             .reply(200, { id: 'test' });
 
@@ -158,7 +158,7 @@ describe('InspectionMiddleware', function () {
                     activity.value.userState &&
                     activity.value.userState.x.property == 'hello' &&
                     activity.value.conversationState &&
-                    activity.value.conversationState.y.property == 'world'
+                    activity.value.conversationState.y.property == 'world',
             )
             .reply(200, { id: 'test' });
 
@@ -179,7 +179,7 @@ describe('InspectionMiddleware', function () {
                 await inspectionMiddleware.processCommand(turnContext);
             },
             null,
-            true
+            true,
         );
 
         await inspectionAdapter.receiveActivity(openActivity);
@@ -205,7 +205,7 @@ describe('InspectionMiddleware', function () {
                 await conversationState.saveChanges(turnContext);
             },
             null,
-            true
+            true,
         );
 
         // IMPORTANT add the InspectionMiddleware to the adapter that is running our bot
@@ -241,7 +241,7 @@ describe('InspectionMiddleware', function () {
         assert(inboundExpectation.isDone(), 'The expectation of a trace message for the inbound activity was not met');
         assert(
             outboundExpectation.isDone(),
-            'The expectation of a trace message for the outbound activity was not met'
+            'The expectation of a trace message for the outbound activity was not met',
         );
         assert(stateExpectation.isDone(), 'The expectation of a trace message for the bot state was not met');
     });
@@ -251,14 +251,14 @@ describe('InspectionMiddleware', function () {
         const inboundExpectation = nock('https://test.com')
             .post(
                 '/v3/conversations/Convo1/activities',
-                (activity) => activity.type === 'trace' && activity.value.text == 'hi'
+                (activity) => activity.type === 'trace' && activity.value.text == 'hi',
             )
             .reply(200, { id: 'test' });
 
         const outboundExpectation = nock('https://test.com')
             .post(
                 '/v3/conversations/Convo1/activities',
-                (activity) => activity.type === 'trace' && activity.value.text == 'echo: hi'
+                (activity) => activity.type === 'trace' && activity.value.text == 'echo: hi',
             )
             .reply(200, { id: 'test' });
 
@@ -270,7 +270,7 @@ describe('InspectionMiddleware', function () {
                     activity.value.userState &&
                     activity.value.userState.x.property == 'hello' &&
                     activity.value.conversationState &&
-                    activity.value.conversationState.y.property == 'world'
+                    activity.value.conversationState.y.property == 'world',
             )
             .reply(200, { id: 'test' });
 
@@ -291,7 +291,7 @@ describe('InspectionMiddleware', function () {
                 await inspectionMiddleware.processCommand(turnContext);
             },
             null,
-            true
+            true,
         );
 
         await inspectionAdapter.receiveActivity(openActivity);
@@ -315,7 +315,7 @@ describe('InspectionMiddleware', function () {
                 await conversationState.saveChanges(turnContext);
             },
             null,
-            true
+            true,
         );
 
         // IMPORTANT add the InspectionMiddleware to the adapter that is running our bot
@@ -341,7 +341,7 @@ describe('InspectionMiddleware', function () {
         assert(inboundExpectation.isDone(), 'The expectation of a trace message for the inbound activity was not met');
         assert(
             outboundExpectation.isDone(),
-            'The expectation of a trace message for the outbound activity was not met'
+            'The expectation of a trace message for the outbound activity was not met',
         );
         assert(stateExpectation.isDone(), 'The expectation of a trace message for the bot state was not met');
     });
@@ -352,14 +352,14 @@ describe('InspectionMiddleware', function () {
         nock('https://test.com')
             .post(
                 '/v3/conversations/Convo1/activities',
-                (activity) => activity.type === 'trace' && activity.value.text == 'hi'
+                (activity) => activity.type === 'trace' && activity.value.text == 'hi',
             )
             .reply(200, { id: 'test' });
 
         nock('https://test.com')
             .post(
                 '/v3/conversations/Convo1/activities',
-                (activity) => activity.type === 'trace' && activity.value.text == 'echo: hi'
+                (activity) => activity.type === 'trace' && activity.value.text == 'echo: hi',
             )
             .reply(200, { id: 'test' });
 
@@ -371,7 +371,7 @@ describe('InspectionMiddleware', function () {
                     activity.value.userState &&
                     activity.value.userState.x.property == 'hello' &&
                     activity.value.conversationState &&
-                    activity.value.conversationState.y.property == 'world'
+                    activity.value.conversationState.y.property == 'world',
             )
             .reply(200, { id: 'test' });
 
@@ -390,7 +390,7 @@ describe('InspectionMiddleware', function () {
                 await inspectionMiddleware.processCommand(turnContext);
             },
             null,
-            true
+            true,
         );
 
         await inspectionAdapter.receiveActivity(openActivity);
@@ -412,7 +412,7 @@ describe('InspectionMiddleware', function () {
                 await conversationState.saveChanges(turnContext);
             },
             null,
-            true
+            true,
         );
 
         adapter.use(inspectionMiddleware);
@@ -433,14 +433,14 @@ describe('InspectionMiddleware', function () {
         nock('https://test.com')
             .post(
                 '/v3/conversations/Convo1/activities',
-                (activity) => activity.type === 'trace' && activity.value.text == 'hi'
+                (activity) => activity.type === 'trace' && activity.value.text == 'hi',
             )
             .reply(200, { id: 'test' });
 
         nock('https://test.com')
             .post(
                 '/v3/conversations/Convo1/activities',
-                (activity) => activity.type === 'trace' && activity.value.text == 'echo: hi'
+                (activity) => activity.type === 'trace' && activity.value.text == 'echo: hi',
             )
             .reply(200, { id: 'test' });
 
@@ -452,7 +452,7 @@ describe('InspectionMiddleware', function () {
                     activity.value.userState &&
                     activity.value.userState.x.property == 'hello' &&
                     activity.value.conversationState &&
-                    activity.value.conversationState.y.property == 'world'
+                    activity.value.conversationState.y.property == 'world',
             )
             .reply(200, { id: 'test' });
 
@@ -472,7 +472,7 @@ describe('InspectionMiddleware', function () {
                 await inspectionMiddleware.processCommand(turnContext);
             },
             null,
-            true
+            true,
         );
 
         await inspectionAdapter.receiveActivity(openActivity);
@@ -493,7 +493,7 @@ describe('InspectionMiddleware', function () {
                 await conversationState.saveChanges(turnContext);
             },
             null,
-            true
+            true,
         );
 
         adapter.use(inspectionMiddleware);
@@ -513,14 +513,14 @@ describe('InspectionMiddleware', function () {
         nock('https://test.com')
             .post(
                 '/v3/conversations/Convo1/activities',
-                (activity) => activity.type === 'trace' && activity.value.text == 'hi'
+                (activity) => activity.type === 'trace' && activity.value.text == 'hi',
             )
             .reply(200, { id: 'test' });
 
         nock('https://test.com')
             .post(
                 '/v3/conversations/Convo1/activities',
-                (activity) => activity.type === 'trace' && activity.value.text == 'echo: hi'
+                (activity) => activity.type === 'trace' && activity.value.text == 'echo: hi',
             )
             .reply(200, { id: 'test' });
 
@@ -532,7 +532,7 @@ describe('InspectionMiddleware', function () {
                     activity.value.userState &&
                     activity.value.userState.x.property == 'hello' &&
                     activity.value.conversationState &&
-                    activity.value.conversationState.y.property == 'world'
+                    activity.value.conversationState.y.property == 'world',
             )
             .reply(200, { id: 'test' });
 
@@ -551,7 +551,7 @@ describe('InspectionMiddleware', function () {
                 await inspectionMiddleware.processCommand(turnContext);
             },
             null,
-            true
+            true,
         );
 
         await inspectionAdapter.receiveActivity(openActivity);
@@ -563,11 +563,11 @@ describe('InspectionMiddleware', function () {
             async (turnContext) => {
                 await assert.rejects(
                     inspectionMiddleware.onTurn(turnContext, null),
-                    TypeError('next is not a function', 'next function should be null')
+                    TypeError('next is not a function', 'next function should be null'),
                 );
             },
             null,
-            true
+            true,
         );
 
         adapter.use(inspectionMiddleware);
@@ -641,7 +641,7 @@ describe('InspectionMiddleware', function () {
         const result = await inspectionMiddleware.attachCommand(
             '',
             { openedSessions: { 'session-1': undefined } },
-            'session-1'
+            'session-1',
         );
         assert.strictEqual(result, false, 'should be returning false');
     });

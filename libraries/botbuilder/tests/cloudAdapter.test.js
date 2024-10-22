@@ -170,7 +170,7 @@ describe('CloudAdapter', function () {
                 credentialsFactory,
                 authConfig,
                 undefined,
-                undefined
+                undefined,
             );
 
             const adapter = new CloudAdapter(botFrameworkAuthentication);
@@ -178,7 +178,7 @@ describe('CloudAdapter', function () {
             await adapter.process(req, res, logic);
 
             assert.equal(StatusCodes.UNAUTHORIZED, res.statusCode);
-            expect(consoleStub.calledWithMatch({ message: 'The token has expired' })).to.be.true;
+            expect(consoleStub.calledWithMatch({ message: 'The token has expired' })).to.equal(true);
         });
 
         it('calls processActivityDirect with string authorization', async function () {
@@ -205,7 +205,7 @@ describe('CloudAdapter', function () {
             const claimsIdentity = adapter.createClaimsIdentity('appId');
             const audience = AuthenticationConstants.ToChannelFromBotOAuthScope;
             const botFrameworkAuthentication = new ConfigurationBotFrameworkAuthentication(
-                TestConfiguration.DefaultConfig
+                TestConfiguration.DefaultConfig,
             );
             const connectorFactory = botFrameworkAuthentication.createConnectorFactory(claimsIdentity);
             //AuthenticateRequestResult
@@ -249,7 +249,7 @@ describe('CloudAdapter', function () {
 
             await assert.rejects(
                 adapter.processActivityDirect(authorization, activity, logic),
-                new Error('CloudAdapter.processActivityDirect(): ERROR\n error stack')
+                new Error('CloudAdapter.processActivityDirect(): ERROR\n error stack'),
             );
         });
     });
@@ -263,27 +263,27 @@ describe('CloudAdapter', function () {
 
             await assert.rejects(
                 adapter.connectNamedPipe(undefined, noop, 'appId', 'audience', 'callerId'),
-                includesParam('pipeName')
+                includesParam('pipeName'),
             );
 
             await assert.rejects(
                 adapter.connectNamedPipe('pipeName', undefined, 'appId', 'audience', 'callerId'),
-                includesParam('logic')
+                includesParam('logic'),
             );
 
             await assert.rejects(
                 adapter.connectNamedPipe('pipeName', noop, undefined, 'audience', 'callerId'),
-                includesParam('appId')
+                includesParam('appId'),
             );
 
             await assert.rejects(
                 adapter.connectNamedPipe('pipeName', noop, 'appId', undefined, 'callerId'),
-                includesParam('audience')
+                includesParam('audience'),
             );
 
             await assert.rejects(
                 adapter.connectNamedPipe('pipeName', noop, 'appId', 'audience', 10),
-                includesParam('callerId')
+                includesParam('callerId'),
             );
         });
 

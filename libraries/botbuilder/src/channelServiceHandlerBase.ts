@@ -25,7 +25,6 @@ import {
 export abstract class ChannelServiceHandlerBase {
     /**
      * Sends an [Activity](xref:botframework-schema.Activity) to the end of a conversation.
-     *
      * @param authHeader The authentication header.
      * @param conversationId The conversation Id.
      * @param activity The [Activity](xref:botframework-schema.Activity) to send.
@@ -34,7 +33,7 @@ export abstract class ChannelServiceHandlerBase {
     async handleSendToConversation(
         authHeader: string,
         conversationId: string,
-        activity: Activity
+        activity: Activity,
     ): Promise<ResourceResponse> {
         const claimsIdentity = await this.authenticate(authHeader);
         return this.onSendToConversation(claimsIdentity, conversationId, activity);
@@ -42,7 +41,6 @@ export abstract class ChannelServiceHandlerBase {
 
     /**
      * Sends a reply to an [Activity](xref:botframework-schema.Activity).
-     *
      * @param authHeader The authentication header.
      * @param conversationId The conversation Id.
      * @param activityId The activity Id the reply is to.
@@ -53,7 +51,7 @@ export abstract class ChannelServiceHandlerBase {
         authHeader: string,
         conversationId: string,
         activityId: string,
-        activity: Activity
+        activity: Activity,
     ): Promise<ResourceResponse> {
         const claimsIdentity = await this.authenticate(authHeader);
         return this.onReplyToActivity(claimsIdentity, conversationId, activityId, activity);
@@ -61,7 +59,6 @@ export abstract class ChannelServiceHandlerBase {
 
     /**
      * Edits a previously sent existing [Activity](xref:botframework-schema.Activity).
-     *
      * @param authHeader The authentication header.
      * @param conversationId The conversation Id.
      * @param activityId The activity Id to update.
@@ -72,7 +69,7 @@ export abstract class ChannelServiceHandlerBase {
         authHeader: string,
         conversationId: string,
         activityId: string,
-        activity: Activity
+        activity: Activity,
     ): Promise<ResourceResponse> {
         const claimsIdentity = await this.authenticate(authHeader);
         return this.onUpdateActivity(claimsIdentity, conversationId, activityId, activity);
@@ -80,7 +77,6 @@ export abstract class ChannelServiceHandlerBase {
 
     /**
      * Deletes an existing [Activity](xref:botframework-schema.Activity).
-     *
      * @param authHeader The authentication header.
      * @param conversationId The conversation Id.
      * @param activityId The activity Id to delete.
@@ -92,7 +88,6 @@ export abstract class ChannelServiceHandlerBase {
 
     /**
      * Enumerates the members of an [Activity](xref:botframework-schema.Activity).
-     *
      * @param authHeader The authentication header.
      * @param conversationId The conversation Id.
      * @param activityId The activity Id.
@@ -101,7 +96,7 @@ export abstract class ChannelServiceHandlerBase {
     async handleGetActivityMembers(
         authHeader: string,
         conversationId: string,
-        activityId: string
+        activityId: string,
     ): Promise<ChannelAccount[]> {
         const claimsIdentity = await this.authenticate(authHeader);
         return this.onGetActivityMembers(claimsIdentity, conversationId, activityId);
@@ -109,14 +104,13 @@ export abstract class ChannelServiceHandlerBase {
 
     /**
      * Creates a new Conversation.
-     *
      * @param authHeader The authentication header.
      * @param parameters [ConversationParameters](xref:botbuilder-core.ConversationParameters) to create the conversation from.
      * @returns A `Promise` representation for the operation.
      */
     async handleCreateConversation(
         authHeader: string,
-        parameters: ConversationParameters
+        parameters: ConversationParameters,
     ): Promise<ConversationResourceResponse> {
         const claimsIdentity = await this.authenticate(authHeader);
         return this.onCreateConversation(claimsIdentity, parameters);
@@ -124,7 +118,6 @@ export abstract class ChannelServiceHandlerBase {
 
     /**
      * Lists the Conversations in which the bot has participated.
-     *
      * @param authHeader The authentication header.
      * @param conversationId The conversation Id.
      * @param continuationToken A skip or continuation token.
@@ -133,7 +126,7 @@ export abstract class ChannelServiceHandlerBase {
     async handleGetConversations(
         authHeader: string,
         conversationId: string,
-        continuationToken?: string /* some default */
+        continuationToken?: string /* some default */,
     ): Promise<ConversationsResult> {
         const claimsIdentity = await this.authenticate(authHeader);
         return this.onGetConversations(claimsIdentity, conversationId, continuationToken);
@@ -141,7 +134,6 @@ export abstract class ChannelServiceHandlerBase {
 
     /**
      * Enumerates the members of a conversation.
-     *
      * @param authHeader The authentication header.
      * @param conversationId The conversation Id.
      * @returns The enumerated [ChannelAccount](xref:botframework-schema.ChannelAccount) list.
@@ -153,7 +145,6 @@ export abstract class ChannelServiceHandlerBase {
 
     /**
      * Gets the account of a single conversation member.
-     *
      * @param authHeader The authentication header.
      * @param userId The user Id.
      * @param conversationId The conversation Id.
@@ -162,7 +153,7 @@ export abstract class ChannelServiceHandlerBase {
     async handleGetConversationMember(
         authHeader: string,
         userId: string,
-        conversationId: string
+        conversationId: string,
     ): Promise<ChannelAccount> {
         const claimsIdentity = await this.authenticate(authHeader);
         return this.onGetConversationMember(claimsIdentity, userId, conversationId);
@@ -170,7 +161,6 @@ export abstract class ChannelServiceHandlerBase {
 
     /**
      * Enumerates the members of a conversation one page at a time.
-     *
      * @param authHeader The authentication header.
      * @param conversationId The conversation Id.
      * @param pageSize Suggested page size.
@@ -181,7 +171,7 @@ export abstract class ChannelServiceHandlerBase {
         authHeader: string,
         conversationId: string,
         pageSize = -1,
-        continuationToken?: string
+        continuationToken?: string,
     ): Promise<PagedMembersResult> {
         const claimsIdentity = await this.authenticate(authHeader);
         return this.onGetConversationPagedMembers(claimsIdentity, conversationId, pageSize, continuationToken);
@@ -189,7 +179,6 @@ export abstract class ChannelServiceHandlerBase {
 
     /**
      * Deletes a member from a conversation.
-     *
      * @param authHeader The authentication header.
      * @param conversationId The conversation Id.
      * @param memberId Id of the member to delete from this conversation.
@@ -201,7 +190,6 @@ export abstract class ChannelServiceHandlerBase {
 
     /**
      * Uploads the historic activities of the conversation.
-     *
      * @param authHeader The authentication header.
      * @param conversationId The conversation Id.
      * @param transcript [Transcript](xref:botframework-schema.Transcript) of activities.
@@ -210,7 +198,7 @@ export abstract class ChannelServiceHandlerBase {
     async handleSendConversationHistory(
         authHeader: string,
         conversationId: string,
-        transcript: Transcript
+        transcript: Transcript,
     ): Promise<ResourceResponse> {
         const claimsIdentity = await this.authenticate(authHeader);
         return this.onSendConversationHistory(claimsIdentity, conversationId, transcript);
@@ -218,7 +206,6 @@ export abstract class ChannelServiceHandlerBase {
 
     /**
      * Stores data in a compliant store when dealing with enterprises.
-     *
      * @param authHeader The authentication header.
      * @param conversationId The conversation Id.
      * @param attachmentUpload [AttachmentData](xref:botframework-schema.AttachmentData).
@@ -227,7 +214,7 @@ export abstract class ChannelServiceHandlerBase {
     async handleUploadAttachment(
         authHeader: string,
         conversationId: string,
-        attachmentUpload: AttachmentData
+        attachmentUpload: AttachmentData,
     ): Promise<ResourceResponse> {
         const claimsIdentity = await this.authenticate(authHeader);
         return this.onUploadAttachment(claimsIdentity, conversationId, attachmentUpload);
@@ -235,13 +222,12 @@ export abstract class ChannelServiceHandlerBase {
 
     /**
      * SendToConversation() API for Skill.
-     *
      * @remarks
      * This method allows you to send an activity to the end of a conversation.
      * This is slightly different from ReplyToActivity().
-     * * SendToConversation(conversationId) - will append the activity to the end
+     * SendToConversation(conversationId) - will append the activity to the end
      * of the conversation according to the timestamp or semantics of the channel.
-     * * ReplyToActivity(conversationId,ActivityId) - adds the activity as a reply
+     * ReplyToActivity(conversationId,ActivityId) - adds the activity as a reply
      * to another activity, if the channel supports it. If the channel does not
      * support nested replies, ReplyToActivity falls back to SendToConversation.
      *
@@ -256,26 +242,25 @@ export abstract class ChannelServiceHandlerBase {
     protected async onSendToConversation(
         _claimsIdentity: ClaimsIdentity,
         _conversationId: string,
-        _activity: Activity
+        _activity: Activity,
     ): Promise<ResourceResponse> {
         throw new StatusCodeError(
             StatusCodes.NOT_IMPLEMENTED,
             `ChannelServiceHandler.onSendToConversation(): ${StatusCodes.NOT_IMPLEMENTED}: ${
                 STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]
-            }`
+            }`,
         );
     }
 
     /**
      * ReplyToActivity() API for Skill.
-     *
      * @remarks
      * This method allows you to reply to an activity.
      *
      * This is slightly different from SendToConversation().
-     * * SendToConversation(conversationId) - will append the activity to the end
+     * SendToConversation(conversationId) - will append the activity to the end
      * of the conversation according to the timestamp or semantics of the channel.
-     * * ReplyToActivity(conversationId,ActivityId) - adds the activity as a reply
+     * ReplyToActivity(conversationId,ActivityId) - adds the activity as a reply
      * to another activity, if the channel supports it. If the channel does not
      * support nested replies, ReplyToActivity falls back to SendToConversation.
      *
@@ -292,19 +277,18 @@ export abstract class ChannelServiceHandlerBase {
         _claimsIdentity: ClaimsIdentity,
         _conversationId: string,
         _activityId: string,
-        _activity: Activity
+        _activity: Activity,
     ): Promise<ResourceResponse> {
         throw new StatusCodeError(
             StatusCodes.NOT_IMPLEMENTED,
             `ChannelServiceHandler.onReplyToActivity(): ${StatusCodes.NOT_IMPLEMENTED}: ${
                 STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]
-            }`
+            }`,
         );
     }
 
     /**
      * UpdateActivity() API for Skill.
-     *
      * @remarks
      * Edit an existing activity.
      *
@@ -321,26 +305,23 @@ export abstract class ChannelServiceHandlerBase {
         _claimsIdentity: ClaimsIdentity,
         _conversationId: string,
         _activityId: string,
-        _activity: Activity
+        _activity: Activity,
     ): Promise<ResourceResponse> {
         throw new StatusCodeError(
             StatusCodes.NOT_IMPLEMENTED,
             `ChannelServiceHandler.onUpdateActivity(): ${StatusCodes.NOT_IMPLEMENTED}: ${
                 STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]
-            }`
+            }`,
         );
     }
 
     /**
      * DeleteActivity() API for Skill.
-     *
      * @remarks
      * Delete an existing activity.
      *
      * Some channels allow you to delete an existing activity, and if successful
      * this method will remove the specified activity.
-     *
-     *
      * @param _claimsIdentity ClaimsIdentity for the bot, should have AudienceClaim, AppIdClaim and ServiceUrlClaim.
      * @param _conversationId Conversation ID.
      * @param _activityId activityId to delete.
@@ -348,19 +329,18 @@ export abstract class ChannelServiceHandlerBase {
     protected async onDeleteActivity(
         _claimsIdentity: ClaimsIdentity,
         _conversationId: string,
-        _activityId: string
+        _activityId: string,
     ): Promise<void> {
         throw new StatusCodeError(
             StatusCodes.NOT_IMPLEMENTED,
             `ChannelServiceHandler.onDeleteActivity(): ${StatusCodes.NOT_IMPLEMENTED}: ${
                 STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]
-            }`
+            }`,
         );
     }
 
     /**
      * GetActivityMembers() API for Skill.
-     *
      * @remarks
      * Enumerate the members of an activity.
      *
@@ -374,51 +354,48 @@ export abstract class ChannelServiceHandlerBase {
     protected async onGetActivityMembers(
         _claimsIdentity: ClaimsIdentity,
         _conversationId: string,
-        _activityId: string
+        _activityId: string,
     ): Promise<ChannelAccount[]> {
         throw new StatusCodeError(
             StatusCodes.NOT_IMPLEMENTED,
             `ChannelServiceHandler.onGetActivityMembers(): ${StatusCodes.NOT_IMPLEMENTED}: ${
                 STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]
-            }`
+            }`,
         );
     }
 
     /**
      * CreateConversation() API for Skill.
-     *
      * @remarks
      * Create a new Conversation.
      *
      * POST to this method with a
-     * * Bot being the bot creating the conversation
-     * * IsGroup set to true if this is not a direct message (default is false)
-     * * Array containing the members to include in the conversation
+     * Bot being the bot creating the conversation
+     * IsGroup set to true if this is not a direct message (default is false)
+     * Array containing the members to include in the conversation
      *
      * The return value is a ResourceResponse which contains a conversation id
      * which is suitable for use in the message payload and REST API uris.
      *
      * Most channels only support the semantics of bots initiating a direct
      * message conversation.
-     *
      * @param _claimsIdentity ClaimsIdentity for the bot, should have AudienceClaim, AppIdClaim and ServiceUrlClaim.
      * @param _parameters Parameters to create the conversation from.
      */
     protected async onCreateConversation(
         _claimsIdentity: ClaimsIdentity,
-        _parameters: ConversationParameters
+        _parameters: ConversationParameters,
     ): Promise<ConversationResourceResponse> {
         throw new StatusCodeError(
             StatusCodes.NOT_IMPLEMENTED,
             `ChannelServiceHandler.onCreateConversation(): ${StatusCodes.NOT_IMPLEMENTED}: ${
                 STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]
-            }`
+            }`,
         );
     }
 
     /**
      * onGetConversations() API for Skill.
-     *
      * @remarks
      * List the Conversations in which this bot has participated.
      *
@@ -431,7 +408,6 @@ export abstract class ChannelServiceHandlerBase {
      *
      * Each ConversationMembers object contains the ID of the conversation and an
      * array of ChannelAccounts that describe the members of the conversation.
-     *
      * @param _claimsIdentity ClaimsIdentity for the bot, should have AudienceClaim, AppIdClaim and ServiceUrlClaim.
      * @param _conversationId Conversation ID.
      * @param _continuationToken Skip or continuation token.
@@ -439,19 +415,18 @@ export abstract class ChannelServiceHandlerBase {
     protected async onGetConversations(
         _claimsIdentity: ClaimsIdentity,
         _conversationId: string,
-        _continuationToken?: string
+        _continuationToken?: string,
     ): Promise<ConversationsResult> {
         throw new StatusCodeError(
             StatusCodes.NOT_IMPLEMENTED,
             `ChannelServiceHandler.onGetConversations(): ${StatusCodes.NOT_IMPLEMENTED}: ${
                 STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]
-            }`
+            }`,
         );
     }
 
     /**
      * getConversationMembers() API for Skill.
-     *
      * @remarks
      * Enumerate the members of a conversation.
      *
@@ -462,19 +437,18 @@ export abstract class ChannelServiceHandlerBase {
      */
     protected async onGetConversationMembers(
         _claimsIdentity: ClaimsIdentity,
-        _conversationId: string
+        _conversationId: string,
     ): Promise<ChannelAccount[]> {
         throw new StatusCodeError(
             StatusCodes.NOT_IMPLEMENTED,
             `ChannelServiceHandler.onGetConversationMembers(): ${StatusCodes.NOT_IMPLEMENTED}: ${
                 STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]
-            }`
+            }`,
         );
     }
 
     /**
      * getConversationMember() API for Skill.
-     *
      * @remarks
      * Get the account of a single conversation member.
      *
@@ -487,19 +461,18 @@ export abstract class ChannelServiceHandlerBase {
     protected async onGetConversationMember(
         _claimsIdentity: ClaimsIdentity,
         _userId: string,
-        _conversationId: string
+        _conversationId: string,
     ): Promise<ChannelAccount> {
         throw new StatusCodeError(
             StatusCodes.NOT_IMPLEMENTED,
             `ChannelServiceHandler.onGetConversationMember(): ${StatusCodes.NOT_IMPLEMENTED}: ${
                 STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]
-            }`
+            }`,
         );
     }
 
     /**
      * getConversationPagedMembers() API for Skill.
-     *
      * @remarks
      * Enumerate the members of a conversation one page at a time.
      *
@@ -527,19 +500,18 @@ export abstract class ChannelServiceHandlerBase {
         _claimsIdentity: ClaimsIdentity,
         _conversationId: string,
         _pageSize = -1,
-        _continuationToken?: string
+        _continuationToken?: string,
     ): Promise<PagedMembersResult> {
         throw new StatusCodeError(
             StatusCodes.NOT_IMPLEMENTED,
             `ChannelServiceHandler.onGetConversationPagedMembers(): ${StatusCodes.NOT_IMPLEMENTED}: ${
                 STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]
-            }`
+            }`,
         );
     }
 
     /**
      * DeleteConversationMember() API for Skill.
-     *
      * @remarks
      * Deletes a member from a conversation.
      *
@@ -553,19 +525,18 @@ export abstract class ChannelServiceHandlerBase {
     protected async onDeleteConversationMember(
         _claimsIdentity: ClaimsIdentity,
         _conversationId: string,
-        _memberId: string
+        _memberId: string,
     ): Promise<void> {
         throw new StatusCodeError(
             StatusCodes.NOT_IMPLEMENTED,
             `ChannelServiceHandler.onDeleteConversationMember(): ${StatusCodes.NOT_IMPLEMENTED}: ${
                 STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]
-            }`
+            }`,
         );
     }
 
     /**
      * SendConversationHistory() API for Skill.
-     *
      * @remarks
      * This method allows you to upload the historic activities to the
      * conversation.
@@ -581,19 +552,18 @@ export abstract class ChannelServiceHandlerBase {
     protected async onSendConversationHistory(
         _claimsIdentity: ClaimsIdentity,
         _conversationId: string,
-        _transcript: Transcript
+        _transcript: Transcript,
     ): Promise<ResourceResponse> {
         throw new StatusCodeError(
             StatusCodes.NOT_IMPLEMENTED,
             `ChannelServiceHandler.onSendConversationHistory(): ${StatusCodes.NOT_IMPLEMENTED}: ${
                 STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]
-            }`
+            }`,
         );
     }
 
     /**
      * UploadAttachment() API for Skill.
-     *
      * @remarks
      * Upload an attachment directly into a channel's blob storage.
      *
@@ -609,19 +579,18 @@ export abstract class ChannelServiceHandlerBase {
     protected async onUploadAttachment(
         _claimsIdentity: ClaimsIdentity,
         _conversationId: string,
-        _attachmentUpload: AttachmentData
+        _attachmentUpload: AttachmentData,
     ): Promise<ResourceResponse> {
         throw new StatusCodeError(
             StatusCodes.NOT_IMPLEMENTED,
             `ChannelServiceHandler.onUploadAttachment(): ${StatusCodes.NOT_IMPLEMENTED}: ${
                 STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]
-            }`
+            }`,
         );
     }
 
     /**
      * Helper to authenticate the header token and extract the claims.
-     *
      * @param authHeader HTTP authorization header
      * @returns a promise resolving to the authorization header claims
      */

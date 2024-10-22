@@ -29,7 +29,6 @@ import {
 export class SkillHandler extends ChannelServiceHandler {
     /**
      * Used to access the CovnersationReference sent from the Skill to the Parent.
-     *
      * @remarks
      * The value is the same as the SkillConversationReferenceKey exported from botbuilder-core.
      */
@@ -40,7 +39,6 @@ export class SkillHandler extends ChannelServiceHandler {
 
     /**
      * Initializes a new instance of the SkillHandler class.
-     *
      * @param adapter An instance of the BotAdapter that will handle the request.
      * @param bot The ActivityHandlerBase instance.
      * @param conversationIdFactory A SkillConversationIdFactoryBase to unpack the conversation ID and map it to the calling bot.
@@ -54,7 +52,7 @@ export class SkillHandler extends ChannelServiceHandler {
         conversationIdFactory: SkillConversationIdFactoryBase,
         credentialProvider: ICredentialProvider,
         authConfig: AuthenticationConfiguration,
-        channelService?: string
+        channelService?: string,
     ) {
         super(credentialProvider, authConfig, channelService);
 
@@ -78,20 +76,19 @@ export class SkillHandler extends ChannelServiceHandler {
             () =>
                 JwtTokenValidation.isGovernment(channelService)
                     ? GovernmentConstants.ToChannelFromBotOAuthScope
-                    : AuthenticationConstants.ToChannelFromBotOAuthScope
+                    : AuthenticationConstants.ToChannelFromBotOAuthScope,
         );
     }
 
     /**
      * sendToConversation() API for Skill.
-     *
      * @remarks
      * This method allows you to send an activity to the end of a conversation.
      *
      * This is slightly different from replyToActivity().
-     * * sendToConversation(conversationId) - will append the activity to the end
+     * sendToConversation(conversationId) - will append the activity to the end
      * of the conversation according to the timestamp or semantics of the channel.
-     * * replyToActivity(conversationId,ActivityId) - adds the activity as a reply
+     * replyToActivity(conversationId,ActivityId) - adds the activity as a reply
      * to another activity, if the channel supports it. If the channel does not
      * support nested replies, replyToActivity falls back to sendToConversation.
      *
@@ -106,21 +103,20 @@ export class SkillHandler extends ChannelServiceHandler {
     protected onSendToConversation(
         claimsIdentity: ClaimsIdentity,
         conversationId: string,
-        activity: Activity
+        activity: Activity,
     ): Promise<ResourceResponse> {
         return this.inner.onSendToConversation(claimsIdentity, conversationId, activity);
     }
 
     /**
      * replyToActivity() API for Skill.
-     *
      * @remarks
      * This method allows you to reply to an activity.
      *
      * This is slightly different from sendToConversation().
-     * * sendToConversation(conversationId) - will append the activity to the end
+     * sendToConversation(conversationId) - will append the activity to the end
      * of the conversation according to the timestamp or semantics of the channel.
-     * * replyToActivity(conversationId,ActivityId) - adds the activity as a reply
+     * replyToActivity(conversationId,ActivityId) - adds the activity as a reply
      * to another activity, if the channel supports it. If the channel does not
      * support nested replies, replyToActivity falls back to sendToConversation.
      *
@@ -137,15 +133,14 @@ export class SkillHandler extends ChannelServiceHandler {
         claimsIdentity: ClaimsIdentity,
         conversationId: string,
         activityId: string,
-        activity: Activity
+        activity: Activity,
     ): Promise<ResourceResponse> {
         return this.inner.onReplyToActivity(claimsIdentity, conversationId, activityId, activity);
     }
 
     /**
      *
-     * UpdateActivity() API for Skill.
-     *
+     *UpdateActivity() API for Skill.
      * @remarks
      * Edit an existing activity.
      *
@@ -163,21 +158,18 @@ export class SkillHandler extends ChannelServiceHandler {
         claimsIdentity: ClaimsIdentity,
         conversationId: string,
         activityId: string,
-        activity: Activity
+        activity: Activity,
     ): Promise<ResourceResponse> {
         return this.inner.onUpdateActivity(claimsIdentity, conversationId, activityId, activity);
     }
 
     /**
      * DeleteActivity() API for Skill.
-     *
      * @remarks
      * Delete an existing activity.
      *
      * Some channels allow you to delete an existing activity, and if successful
      * this method will remove the specified activity.
-     *
-     *
      * @param claimsIdentity ClaimsIdentity for the bot, should have AudienceClaim, AppIdClaim and ServiceUrlClaim.
      * @param conversationId Conversation ID.
      * @param activityId activityId to delete.
@@ -186,7 +178,7 @@ export class SkillHandler extends ChannelServiceHandler {
     protected async onDeleteActivity(
         claimsIdentity: ClaimsIdentity,
         conversationId: string,
-        activityId: string
+        activityId: string,
     ): Promise<void> {
         return this.inner.onDeleteActivity(claimsIdentity, conversationId, activityId);
     }

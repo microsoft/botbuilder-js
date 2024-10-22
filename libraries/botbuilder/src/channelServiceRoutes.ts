@@ -43,7 +43,6 @@ export class ChannelServiceRoutes {
 
     /**
      * Registers all Channel Service paths on the provided WebServer.
-     *
      * @param server WebServer
      * @param basePath Optional basePath which is appended before the service's REST API is configured on the WebServer.
      */
@@ -58,7 +57,7 @@ export class ChannelServiceRoutes {
         server.get(basePath + RouteConstants.ConversationMember, this.processGetConversationMember.bind(this));
         server.get(
             basePath + RouteConstants.ConversationPagedMembers,
-            this.processGetConversationPagedMembers.bind(this)
+            this.processGetConversationPagedMembers.bind(this),
         );
         server.post(basePath + RouteConstants.ConversationHistory, this.processSendConversationHistory.bind(this));
         server.post(basePath + RouteConstants.Attachments, this.processUploadAttachment.bind(this));
@@ -68,7 +67,7 @@ export class ChannelServiceRoutes {
         if (typeof server.delete === 'function') {
             server.delete(
                 basePath + RouteConstants.ConversationMember,
-                this.processDeleteConversationMember.bind(this)
+                this.processDeleteConversationMember.bind(this),
             );
             server.delete(basePath + RouteConstants.Activity, this.processDeleteActivity.bind(this));
         } else if (typeof server.del === 'function') {
@@ -80,7 +79,7 @@ export class ChannelServiceRoutes {
     /**
      * @private
      */
-    private processSendToConversation(req: WebRequest, res: WebResponse, next: Function): void {
+    private processSendToConversation(req: WebRequest, res: WebResponse, next: () => void): void {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         ChannelServiceRoutes.readActivity(req)
             .then((activity) => {
@@ -106,7 +105,7 @@ export class ChannelServiceRoutes {
     /**
      * @private
      */
-    private processReplyToActivity(req: WebRequest, res: WebResponse, next: Function): void {
+    private processReplyToActivity(req: WebRequest, res: WebResponse, next: () => void): void {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         ChannelServiceRoutes.readActivity(req)
             .then((activity) => {
@@ -132,7 +131,7 @@ export class ChannelServiceRoutes {
     /**
      * @private
      */
-    private processUpdateActivity(req: WebRequest, res: WebResponse, next: Function): void {
+    private processUpdateActivity(req: WebRequest, res: WebResponse, next: () => void): void {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         ChannelServiceRoutes.readActivity(req)
             .then((activity) => {
@@ -158,7 +157,7 @@ export class ChannelServiceRoutes {
     /**
      * @private
      */
-    private processDeleteActivity(req: WebRequest, res: WebResponse, next: Function): void {
+    private processDeleteActivity(req: WebRequest, res: WebResponse, next: () => void): void {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         this.channelServiceHandler
             .handleDeleteActivity(authHeader, req.params.conversationId, req.params.activityId)
@@ -175,7 +174,7 @@ export class ChannelServiceRoutes {
     /**
      * @private
      */
-    private processGetActivityMembers(req: WebRequest, res: WebResponse, next: Function): void {
+    private processGetActivityMembers(req: WebRequest, res: WebResponse, next: () => void): void {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         this.channelServiceHandler
             .handleGetActivityMembers(authHeader, req.params.conversationId, req.params.activityId)
@@ -195,7 +194,7 @@ export class ChannelServiceRoutes {
     /**
      * @private
      */
-    private processCreateConversation(req: WebRequest, res: WebResponse, next: Function): void {
+    private processCreateConversation(req: WebRequest, res: WebResponse, next: () => void): void {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         ChannelServiceRoutes.readBody<ConversationParameters>(req).then((conversationParameters) => {
             this.channelServiceHandler
@@ -217,7 +216,7 @@ export class ChannelServiceRoutes {
     /**
      * @private
      */
-    private processGetConversations(req: WebRequest, res: WebResponse, next: Function): void {
+    private processGetConversations(req: WebRequest, res: WebResponse, next: () => void): void {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         this.channelServiceHandler
             .handleGetConversations(authHeader, req.params.conversationId, req.query.continuationToken)
@@ -237,7 +236,7 @@ export class ChannelServiceRoutes {
     /**
      * @private
      */
-    private processGetConversationMembers(req: WebRequest, res: WebResponse, next: Function): void {
+    private processGetConversationMembers(req: WebRequest, res: WebResponse, next: () => void): void {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         this.channelServiceHandler
             .handleGetConversationMembers(authHeader, req.params.conversationId)
@@ -257,7 +256,7 @@ export class ChannelServiceRoutes {
     /**
      * @private
      */
-    private processGetConversationMember(req: WebRequest, res: WebResponse, next: Function): void {
+    private processGetConversationMember(req: WebRequest, res: WebResponse, next: () => void): void {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         this.channelServiceHandler
             .handleGetConversationMember(authHeader, req.params.memberId, req.params.conversationId)
@@ -277,7 +276,7 @@ export class ChannelServiceRoutes {
     /**
      * @private
      */
-    private processGetConversationPagedMembers(req: WebRequest, res: WebResponse, next: Function): void {
+    private processGetConversationPagedMembers(req: WebRequest, res: WebResponse, next: () => void): void {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         let pageSize = parseInt(req.query.pageSize);
         if (isNaN(pageSize)) {
@@ -288,7 +287,7 @@ export class ChannelServiceRoutes {
                 authHeader,
                 req.params.conversationId,
                 pageSize,
-                req.query.continuationToken
+                req.query.continuationToken,
             )
             .then((pagedMembersResult) => {
                 res.status(200);
@@ -306,7 +305,7 @@ export class ChannelServiceRoutes {
     /**
      * @private
      */
-    private processDeleteConversationMember(req: WebRequest, res: WebResponse, next: Function): void {
+    private processDeleteConversationMember(req: WebRequest, res: WebResponse, next: () => void): void {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         this.channelServiceHandler
             .handleDeleteConversationMember(authHeader, req.params.conversationId, req.params.memberId)
@@ -323,7 +322,7 @@ export class ChannelServiceRoutes {
     /**
      * @private
      */
-    private processSendConversationHistory(req: WebRequest, res: WebResponse, next: Function): void {
+    private processSendConversationHistory(req: WebRequest, res: WebResponse, next: () => void): void {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         ChannelServiceRoutes.readBody<Transcript>(req)
             .then((transcript) => {
@@ -349,7 +348,7 @@ export class ChannelServiceRoutes {
     /**
      * @private
      */
-    private processUploadAttachment(req: WebRequest, res: WebResponse, next: Function): void {
+    private processUploadAttachment(req: WebRequest, res: WebResponse, next: () => void): void {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         ChannelServiceRoutes.readBody<AttachmentData>(req)
             .then((attachmentData) => {

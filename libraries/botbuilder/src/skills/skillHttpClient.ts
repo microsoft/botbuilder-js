@@ -30,7 +30,6 @@ export class SkillHttpClient extends BotFrameworkHttpClient {
 
     /**
      * Creates a new instance of the [SkillHttpClient](xref:botbuilder-core.SkillHttpClient) class.
-     *
      * @param credentialProvider An instance of [ICredentialProvider](xref:botframework-connector.ICredentialProvider).
      * @param conversationIdFactory An instance of a class derived from [SkillConversationIdFactoryBase](xref:botbuilder-core.SkillConversationIdFactoryBase).
      * @param channelService Optional. The channel service.
@@ -38,7 +37,7 @@ export class SkillHttpClient extends BotFrameworkHttpClient {
     constructor(
         credentialProvider: ICredentialProvider,
         conversationIdFactory: SkillConversationIdFactoryBase,
-        channelService?: string
+        channelService?: string,
     ) {
         super(credentialProvider, channelService);
         if (!conversationIdFactory) {
@@ -50,7 +49,6 @@ export class SkillHttpClient extends BotFrameworkHttpClient {
 
     /**
      * Uses the SkillConversationIdFactory to create or retrieve a Skill Conversation Id, and sends the activity.
-     *
      * @template T The type of body in the InvokeResponse.
      * @param originatingAudience The OAuth audience scope, used during token retrieval. (Either https://api.botframework.com or bot app id.)
      * @param fromBotId The MicrosoftAppId of the bot sending the activity.
@@ -63,11 +61,10 @@ export class SkillHttpClient extends BotFrameworkHttpClient {
         fromBotId: string,
         toSkill: BotFrameworkSkill,
         callbackUrl: string,
-        activity: Activity
+        activity: Activity,
     ): Promise<InvokeResponse<T>>;
     /**
      * Uses the SkillConversationIdFactory to create or retrieve a Skill Conversation Id, and sends the activity.
-     *
      * @deprecated This overload is deprecated. Please use SkillHttpClient.postToSkill() that takes an `originatingAudience`.
      * @param fromBotId The MicrosoftAppId of the bot sending the activity.
      * @param toSkill The skill to create the Conversation Id for.
@@ -78,11 +75,10 @@ export class SkillHttpClient extends BotFrameworkHttpClient {
         fromBotId: string,
         toSkill: BotFrameworkSkill,
         callbackUrl: string,
-        activity: Activity
+        activity: Activity,
     ): Promise<InvokeResponse>;
     /**
      * Uses the `SkillConversationIdFactory` to create or retrieve a Skill Conversation Id, and sends the [Activity](xref:botframework-schema.Activity).
-     *
      * @param audienceOrFromBotId The OAuth audience scope, used during token retrieval or the AppId of the bot sending the [Activity](xref:botframework-schema.Activity).
      * @param fromBotIdOrSkill The AppId of the bot sending the [Activity](xref:botframework-schema.Activity) or the skill to create the Conversation Id for.
      * @param toSkillOrCallbackUrl The skill to create the Conversation Id for or the callback Url for the skill host.
@@ -95,7 +91,7 @@ export class SkillHttpClient extends BotFrameworkHttpClient {
         fromBotIdOrSkill: string | BotFrameworkSkill,
         toSkillOrCallbackUrl: BotFrameworkSkill | string,
         callbackUrlOrActivity: string | Activity,
-        activityToForward?: Activity
+        activityToForward?: Activity,
     ): Promise<InvokeResponse<T>> {
         let originatingAudience: string;
         let fromBotId: string;
@@ -125,13 +121,12 @@ export class SkillHttpClient extends BotFrameworkHttpClient {
                 fromBotOAuthScope: originatingAudience,
             };
 
-            skillConversationId = await this.conversationIdFactory.createSkillConversationIdWithOptions(
-                createIdOptions
-            );
+            skillConversationId =
+                await this.conversationIdFactory.createSkillConversationIdWithOptions(createIdOptions);
         } catch (err) {
             if (err.message === 'Not Implemented') {
                 skillConversationId = await this.conversationIdFactory.createSkillConversationId(
-                    TurnContext.getConversationReference(activity) as ConversationReference
+                    TurnContext.getConversationReference(activity) as ConversationReference,
                 );
             } else {
                 throw err;
@@ -144,7 +139,7 @@ export class SkillHttpClient extends BotFrameworkHttpClient {
             toSkill.skillEndpoint,
             callbackUrl,
             skillConversationId,
-            activity
+            activity,
         );
     }
 }

@@ -61,7 +61,7 @@ describe('TokenResolver', function () {
         assert(!gotToken, 'did not receive token');
         await assert.throws(
             () => TokenResolver.checkForOAuthCards(adapter, context, activity),
-            new Error("The OAuthPrompt's ConnectionName property is missing a value.", 'did not receive token')
+            new Error("The OAuthPrompt's ConnectionName property is missing a value.", 'did not receive token'),
         );
     });
 

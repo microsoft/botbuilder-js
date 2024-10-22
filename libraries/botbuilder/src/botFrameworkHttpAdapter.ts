@@ -24,7 +24,7 @@ export interface BotFrameworkHttpAdapter {
         req: Request,
         socket: INodeSocket,
         head: INodeBuffer,
-        logic: (context: TurnContext) => Promise<void>
+        logic: (context: TurnContext) => Promise<void>,
     ): Promise<void>;
 
     /**

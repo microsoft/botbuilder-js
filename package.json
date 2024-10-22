@@ -82,6 +82,7 @@
     "esbuild-plugin-polyfill-node": "^0.3.0",
     "https-browserify": "^1.0.0",
     "eslint": "^9.12.0",
+    "eslint-plugin-chai-friendly": "^1.0.1",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-jsdoc": "^50.3.1",

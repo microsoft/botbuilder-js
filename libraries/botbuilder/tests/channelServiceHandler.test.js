@@ -86,7 +86,7 @@ describe('ChannelServiceHandler', function () {
 
             await assert.rejects(
                 handler.handleSendToConversation(AUTH_HEADER, 'convId', { type: ActivityTypes.Message }),
-                matchStatusCodeError('onSendToConversation')
+                matchStatusCodeError('onSendToConversation'),
             );
         });
     });
@@ -97,7 +97,7 @@ describe('ChannelServiceHandler', function () {
 
             await assert.rejects(
                 handler.handleReplyToActivity(AUTH_HEADER, 'convId', ACTIVITY.id, ACTIVITY),
-                matchStatusCodeError('onReplyToActivity')
+                matchStatusCodeError('onReplyToActivity'),
             );
         });
     });
@@ -108,7 +108,7 @@ describe('ChannelServiceHandler', function () {
 
             await assert.rejects(
                 handler.handleUpdateActivity(AUTH_HEADER, 'convId', ACTIVITY.id, ACTIVITY),
-                matchStatusCodeError('onUpdateActivity')
+                matchStatusCodeError('onUpdateActivity'),
             );
         });
     });
@@ -119,7 +119,7 @@ describe('ChannelServiceHandler', function () {
 
             await assert.rejects(
                 handler.handleDeleteActivity(AUTH_HEADER, 'convId', ACTIVITY.id, ACTIVITY),
-                matchStatusCodeError('onDeleteActivity')
+                matchStatusCodeError('onDeleteActivity'),
             );
         });
     });
@@ -130,7 +130,7 @@ describe('ChannelServiceHandler', function () {
 
             await assert.rejects(
                 handler.handleGetActivityMembers(AUTH_HEADER, 'convId', ACTIVITY.id),
-                matchStatusCodeError('onGetActivityMembers')
+                matchStatusCodeError('onGetActivityMembers'),
             );
         });
     });
@@ -141,7 +141,7 @@ describe('ChannelServiceHandler', function () {
 
             await assert.rejects(
                 handler.handleCreateConversation(AUTH_HEADER, { isGroup: false }),
-                matchStatusCodeError('onCreateConversation')
+                matchStatusCodeError('onCreateConversation'),
             );
         });
     });
@@ -152,7 +152,7 @@ describe('ChannelServiceHandler', function () {
 
             await assert.rejects(
                 handler.handleGetConversations(AUTH_HEADER, 'convId'),
-                matchStatusCodeError('onGetConversations')
+                matchStatusCodeError('onGetConversations'),
             );
         });
     });
@@ -163,7 +163,7 @@ describe('ChannelServiceHandler', function () {
 
             await assert.rejects(
                 handler.handleGetConversationMembers(AUTH_HEADER, 'convId'),
-                matchStatusCodeError('onGetConversationMembers')
+                matchStatusCodeError('onGetConversationMembers'),
             );
         });
 
@@ -172,7 +172,7 @@ describe('ChannelServiceHandler', function () {
 
             await assert.rejects(
                 handler.handleGetConversationPagedMembers(AUTH_HEADER, 'convId'),
-                matchStatusCodeError('onGetConversationPagedMembers')
+                matchStatusCodeError('onGetConversationPagedMembers'),
             );
         });
 
@@ -181,7 +181,7 @@ describe('ChannelServiceHandler', function () {
 
             await assert.rejects(
                 handler.handleDeleteConversationMember(AUTH_HEADER, 'convId', 'memberId'),
-                matchStatusCodeError('onDeleteConversationMember')
+                matchStatusCodeError('onDeleteConversationMember'),
             );
         });
     });
@@ -192,7 +192,7 @@ describe('ChannelServiceHandler', function () {
 
             await assert.rejects(
                 handler.handleSendConversationHistory(AUTH_HEADER, 'convId', { ACTIVITY }),
-                matchStatusCodeError('onSendConversationHistory')
+                matchStatusCodeError('onSendConversationHistory'),
             );
         });
     });
@@ -203,7 +203,7 @@ describe('ChannelServiceHandler', function () {
 
             await assert.rejects(
                 handler.handleUploadAttachment(AUTH_HEADER, 'convId', { type: 'string', name: 'attachment' }),
-                matchStatusCodeError('onUploadAttachment')
+                matchStatusCodeError('onUploadAttachment'),
             );
         });
     });

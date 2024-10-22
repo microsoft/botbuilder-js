@@ -676,17 +676,17 @@ describe('TeamsActivityHandler', function () {
                 .assertReply((activity) => {
                     assert(
                         activity.type === 'invokeResponse',
-                        `incorrect activity type "${activity.type}", expected "invokeResponse"`
+                        `incorrect activity type "${activity.type}", expected "invokeResponse"`,
                     );
                     assert(
                         activity.value.status === 400,
-                        `incorrect status code "${activity.value.status}", expected "400"`
+                        `incorrect status code "${activity.value.status}", expected "400"`,
                     );
                     assert(
                         !activity.value.body,
                         `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${JSON.stringify(
-                            activity.value.body
-                        )}`
+                            activity.value.body,
+                        )}`,
                     );
                 })
                 .startTest();
@@ -706,17 +706,17 @@ describe('TeamsActivityHandler', function () {
                 .assertReply((activity) => {
                     assert(
                         activity.type === 'invokeResponse',
-                        `incorrect activity type "${activity.type}", expected "invokeResponse"`
+                        `incorrect activity type "${activity.type}", expected "invokeResponse"`,
                     );
                     assert(
                         activity.value.status === 400,
-                        `incorrect status code "${activity.value.status}", expected "400"`
+                        `incorrect status code "${activity.value.status}", expected "400"`,
                     );
                     assert(
                         !activity.value.body,
                         `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${JSON.stringify(
-                            activity.value.body
-                        )}`
+                            activity.value.body,
+                        )}`,
                     );
                 })
                 .startTest();
@@ -774,17 +774,17 @@ describe('TeamsActivityHandler', function () {
                 .assertReply((activity) => {
                     assert(
                         activity.type === 'invokeResponse',
-                        `incorrect activity type "${activity.type}", expected "invokeResponse"`
+                        `incorrect activity type "${activity.type}", expected "invokeResponse"`,
                     );
                     assert(
                         activity.value.status === 501,
-                        `incorrect status code "${activity.value.status}", expected "501"`
+                        `incorrect status code "${activity.value.status}", expected "501"`,
                     );
                     assert(
                         !activity.value.body,
                         `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${JSON.stringify(
-                            activity.value.body
-                        )}`
+                            activity.value.body,
+                        )}`,
                     );
                 })
                 .startTest();
@@ -806,17 +806,17 @@ describe('TeamsActivityHandler', function () {
                 .assertReply((activity) => {
                     assert(
                         activity.type === 'invokeResponse',
-                        `incorrect activity type "${activity.type}", expected "invokeResponse"`
+                        `incorrect activity type "${activity.type}", expected "invokeResponse"`,
                     );
                     assert(
                         activity.value.status === 501,
-                        `incorrect status code "${activity.value.status}", expected "501"`
+                        `incorrect status code "${activity.value.status}", expected "501"`,
                     );
                     assert(
                         !activity.value.body,
                         `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${JSON.stringify(
-                            activity.value.body
-                        )}`
+                            activity.value.body,
+                        )}`,
                     );
                 })
                 .startTest();
@@ -838,17 +838,17 @@ describe('TeamsActivityHandler', function () {
                 .assertReply((activity) => {
                     assert(
                         activity.type === 'invokeResponse',
-                        `incorrect activity type "${activity.type}", expected "invokeResponse"`
+                        `incorrect activity type "${activity.type}", expected "invokeResponse"`,
                     );
                     assert(
                         activity.value.status === 501,
-                        `incorrect status code "${activity.value.status}", expected "501"`
+                        `incorrect status code "${activity.value.status}", expected "501"`,
                     );
                     assert(
                         !activity.value.body,
                         `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${JSON.stringify(
-                            activity.value.body
-                        )}`
+                            activity.value.body,
+                        )}`,
                     );
                 })
                 .startTest();
@@ -868,17 +868,17 @@ describe('TeamsActivityHandler', function () {
                 .assertReply((activity) => {
                     assert(
                         activity.type === 'invokeResponse',
-                        `incorrect activity type "${activity.type}", expected "invokeResponse"`
+                        `incorrect activity type "${activity.type}", expected "invokeResponse"`,
                     );
                     assert(
                         activity.value.status === 501,
-                        `incorrect status code "${activity.value.status}", expected "501"`
+                        `incorrect status code "${activity.value.status}", expected "501"`,
                     );
                     assert(
                         !activity.value.body,
                         `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${JSON.stringify(
-                            activity.value.body
-                        )}`
+                            activity.value.body,
+                        )}`,
                     );
                 })
                 .startTest();
@@ -1211,17 +1211,17 @@ describe('TeamsActivityHandler', function () {
                 .assertReply((activity) => {
                     assert(
                         activity.type === 'invokeResponse',
-                        `incorrect activity type "${activity.type}", expected "invokeResponse"`
+                        `incorrect activity type "${activity.type}", expected "invokeResponse"`,
                     );
                     assert(
                         activity.value.status === 200,
-                        `incorrect status code "${activity.value.status}", expected "200"`
+                        `incorrect status code "${activity.value.status}", expected "200"`,
                     );
                     assert(
                         !activity.value.body,
                         `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${JSON.stringify(
-                            activity.value.body
-                        )}`
+                            activity.value.body,
+                        )}`,
                     );
                 })
                 .startTest();
@@ -1240,17 +1240,17 @@ describe('TeamsActivityHandler', function () {
                 .assertReply((activity) => {
                     assert(
                         activity.type === 'invokeResponse',
-                        `incorrect activity type "${activity.type}", expected "invokeResponse"`
+                        `incorrect activity type "${activity.type}", expected "invokeResponse"`,
                     );
                     assert(
                         activity.value.status === 200,
-                        `incorrect status code "${activity.value.status}", expected "200"`
+                        `incorrect status code "${activity.value.status}", expected "200"`,
                     );
                     assert(
                         !activity.value.body,
                         `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${JSON.stringify(
-                            activity.value.body
-                        )}`
+                            activity.value.body,
+                        )}`,
                     );
                 })
                 .startTest();
@@ -1275,17 +1275,17 @@ describe('TeamsActivityHandler', function () {
                 .assertReply((activity) => {
                     assert(
                         activity.type === 'invokeResponse',
-                        `incorrect activity type "${activity.type}", expected "invokeResponse"`
+                        `incorrect activity type "${activity.type}", expected "invokeResponse"`,
                     );
                     assert(
                         activity.value.status === 200,
-                        `incorrect status code "${activity.value.status}", expected "200"`
+                        `incorrect status code "${activity.value.status}", expected "200"`,
                     );
                     assert(
                         !activity.value.body,
                         `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${JSON.stringify(
-                            activity.value.body
-                        )}`
+                            activity.value.body,
+                        )}`,
                     );
                 })
                 .startTest();
@@ -1481,7 +1481,7 @@ describe('TeamsActivityHandler', function () {
                 assert(fileConsentCardResponse, 'fileConsentCardResponse not found');
                 assert(
                     fileConsentCalled,
-                    'handleTeamsFileConsent handler was not called before handleTeamsFileConsentAccept handler'
+                    'handleTeamsFileConsent handler was not called before handleTeamsFileConsentAccept handler',
                 );
                 fileConsentAcceptCalled = true;
             }
@@ -1491,7 +1491,7 @@ describe('TeamsActivityHandler', function () {
                 assert(fileConsentCardResponse, 'fileConsentCardResponse not found');
                 assert(
                     fileConsentCalled,
-                    'handleTeamsFileConsent handler was not called before handleTeamsFileConsentDecline handler'
+                    'handleTeamsFileConsent handler was not called before handleTeamsFileConsentDecline handler',
                 );
                 fileConsentDeclineCalled = true;
             }
@@ -1521,17 +1521,17 @@ describe('TeamsActivityHandler', function () {
                 .assertReply((activity) => {
                     assert(
                         activity.type === 'invokeResponse',
-                        `incorrect activity type "${activity.type}", expected "invokeResponse"`
+                        `incorrect activity type "${activity.type}", expected "invokeResponse"`,
                     );
                     assert(
                         activity.value.status === 200,
-                        `incorrect status code "${activity.value.status}", expected "200"`
+                        `incorrect status code "${activity.value.status}", expected "200"`,
                     );
                     assert(
                         !activity.value.body,
                         `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${JSON.stringify(
-                            activity.value.body
-                        )}`
+                            activity.value.body,
+                        )}`,
                     );
                 })
                 .then(() => {
@@ -1553,17 +1553,17 @@ describe('TeamsActivityHandler', function () {
                 .assertReply((activity) => {
                     assert(
                         activity.type === 'invokeResponse',
-                        `incorrect activity type "${activity.type}", expected "invokeResponse"`
+                        `incorrect activity type "${activity.type}", expected "invokeResponse"`,
                     );
                     assert(
                         activity.value.status === 200,
-                        `incorrect status code "${activity.value.status}", expected "200"`
+                        `incorrect status code "${activity.value.status}", expected "200"`,
                     );
                     assert(
                         !activity.value.body,
                         `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${JSON.stringify(
-                            activity.value.body
-                        )}`
+                            activity.value.body,
+                        )}`,
                     );
                 })
                 .then(() => {
@@ -2574,7 +2574,7 @@ describe('TeamsActivityHandler', function () {
                 .then(() => {
                     assert(
                         ncalls === 1,
-                        'On ConversationUpdate handler should only be called once, times called: ' + ncalls.toString()
+                        'On ConversationUpdate handler should only be called once, times called: ' + ncalls.toString(),
                     );
                 })
                 .startTest();

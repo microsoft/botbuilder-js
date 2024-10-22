@@ -28,7 +28,7 @@ export class SkillHandlerImpl {
         private readonly adapter: BotAdapter,
         private readonly logic: (context: TurnContext) => Promise<void>,
         private readonly conversationIdFactory: SkillConversationIdFactoryBase,
-        private readonly getOauthScope: () => string | undefined = () => undefined
+        private readonly getOauthScope: () => string | undefined = () => undefined,
     ) {}
 
     /**
@@ -37,7 +37,7 @@ export class SkillHandlerImpl {
     onSendToConversation(
         claimsIdentity: ClaimsIdentity,
         conversationId: string,
-        activity: Activity
+        activity: Activity,
     ): Promise<ResourceResponse> {
         return this.processActivity(claimsIdentity, conversationId, null, activity);
     }
@@ -49,7 +49,7 @@ export class SkillHandlerImpl {
         claimsIdentity: ClaimsIdentity,
         conversationId: string,
         activityId: string,
-        activity: Activity
+        activity: Activity,
     ): Promise<ResourceResponse> {
         return this.processActivity(claimsIdentity, conversationId, activityId, activity);
     }
@@ -61,7 +61,7 @@ export class SkillHandlerImpl {
         claimsIdentity: ClaimsIdentity,
         conversationId: string,
         activityId: string,
-        activity: Activity
+        activity: Activity,
     ): Promise<ResourceResponse> {
         let resourceResponse: ResourceResponse | void;
 
@@ -70,7 +70,7 @@ export class SkillHandlerImpl {
 
             context.activity.id = activityId;
             context.activity.callerId = `${CallerIdConstants.BotToBotPrefix}${JwtTokenValidation.getAppIdFromClaims(
-                claimsIdentity.claims
+                claimsIdentity.claims,
             )}`;
 
             resourceResponse = await context.updateActivity(newActivity);
@@ -84,7 +84,7 @@ export class SkillHandlerImpl {
      */
     async onDeleteActivity(claimsIdentity: ClaimsIdentity, conversationId: string, activityId: string): Promise<void> {
         return this.continueConversation(claimsIdentity, conversationId, (context) =>
-            context.deleteActivity(activityId)
+            context.deleteActivity(activityId),
         );
     }
 
@@ -135,7 +135,7 @@ export class SkillHandlerImpl {
         claimsIdentity: ClaimsIdentity,
         conversationId: string,
         replyToActivityId: string,
-        activity: Activity
+        activity: Activity,
     ): Promise<ResourceResponse> {
         let resourceResponse: ResourceResponse;
 
@@ -151,7 +151,7 @@ export class SkillHandlerImpl {
 
             context.activity.id = replyToActivityId;
             context.activity.callerId = `${CallerIdConstants.BotToBotPrefix}${JwtTokenValidation.getAppIdFromClaims(
-                claimsIdentity.claims
+                claimsIdentity.claims,
             )}`;
 
             switch (newActivity.type) {
@@ -185,7 +185,7 @@ export class SkillHandlerImpl {
     private async continueConversation(
         claimsIdentity: ClaimsIdentity,
         conversationId: string,
-        callback: (context: TurnContext, ref: SkillConversationReference) => Promise<void>
+        callback: (context: TurnContext, ref: SkillConversationReference) => Promise<void>,
     ): Promise<void> {
         const ref = await this.getSkillConversationReference(conversationId);
 
@@ -199,7 +199,7 @@ export class SkillHandlerImpl {
                 claimsIdentity,
                 ref.conversationReference,
                 ref.oAuthScope,
-                continueCallback
+                continueCallback,
             );
         } catch (err) {
             if (err.message === 'NotImplemented') {

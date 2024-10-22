@@ -24,7 +24,6 @@ import { HandoffEventNames } from './handoffEventNames';
 export class EventFactory {
     /**
      * Create handoff initiation event.
-     *
      * @param context The context object for the turn.
      * @param handoffContext Agent hub-specific context.
      * @param transcript Transcript of the conversation.
@@ -33,7 +32,7 @@ export class EventFactory {
     static createHandoffInitiation<T = unknown>(
         context: TurnContext,
         handoffContext: T,
-        transcript?: Transcript
+        transcript?: Transcript,
     ): Activity {
         if (!context) {
             throw new TypeError('EventFactory.createHandoffInitiation(): Missing context.');
@@ -42,7 +41,7 @@ export class EventFactory {
         const handoffEvent = this.createHandoffEvent(
             HandoffEventNames.InitiateHandoff,
             handoffContext,
-            context.activity.conversation
+            context.activity.conversation,
         );
 
         handoffEvent.from = context.activity.from;
@@ -65,7 +64,6 @@ export class EventFactory {
 
     /**
      * Create handoff status event.
-     *
      * @param conversation Conversation being handed over.
      * @param state State, possible values are: "accepted", "failed", "completed".
      * @param message Additional message for failed handoff.
@@ -89,7 +87,7 @@ export class EventFactory {
     private static createHandoffEvent<T = unknown>(
         name: string,
         value: T,
-        conversation: ConversationAccount
+        conversation: ConversationAccount,
     ): Activity {
         const handoffEvent: Partial<Activity> = { type: ActivityTypes.Event };
 
