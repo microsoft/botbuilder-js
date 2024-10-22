@@ -33,7 +33,7 @@ export class LanguageGenerationBotComponent extends BotComponent {
                         },
                     ];
                 },
-            })
+            }),
         );
     }
 }

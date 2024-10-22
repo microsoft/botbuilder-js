@@ -110,7 +110,7 @@ export class ContinueConversationLater extends Dialog implements ContinueConvers
                 relatesTo: reference as ConversationReference,
             },
             reference,
-            true
+            true,
         );
         activity.value = this.value && this.value.getValue(dc.state);
 

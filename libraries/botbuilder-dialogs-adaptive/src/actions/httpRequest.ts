@@ -6,10 +6,10 @@
  * Licensed under the MIT License.
  */
 import { StatusCodes } from 'botbuilder-core';
-import fetch, { FetchError } from 'node-fetch';
+import fetch, { FetchError, Response, Headers } from 'node-fetch';
 import { Activity } from 'botbuilder';
 import { BoolProperty, EnumProperty, StringProperty, UnknownProperty } from '../properties';
-import { Response, Headers } from 'node-fetch';
+
 import { evaluateExpression } from '../jsonExtensions';
 
 import {

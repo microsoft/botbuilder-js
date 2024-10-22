@@ -8,7 +8,7 @@ describe('LanguageGeneratorConverter', function () {
         const newGenerator = converter.convert('');
         ok(
             newGenerator instanceof ResourceMultiLanguageGenerator,
-            'expected newGenerator to be instance of ResourceMultiLanguageGenerator'
+            'expected newGenerator to be instance of ResourceMultiLanguageGenerator',
         );
     });
 

@@ -28,7 +28,7 @@ describe('Memory - Memory Scopes', function () {
                 new SendActivity("${contains(dialogcontext.stack, 'foo')}"),
                 new SendActivity("${contains(dialogcontext.stack, 'adaptiveDialog')}"),
                 new SendActivity("${contains(dialogcontext.stack, 'adaptiveDialog2')}"),
-            ])
+            ]),
         );
 
         const storage = new MemoryStorage();
@@ -67,15 +67,15 @@ describe('Memory - Memory Scopes', function () {
                     id: 'askForName',
                 }),
                 new SendActivity('I have ${user.name}'),
-            ])
+            ]),
         );
         root.triggers.push(
             new OnIntent(
                 'why',
                 [],
                 [new SendActivity('I need your name to complete the sample')],
-                "contains(dialogcontext.stack, 'askForName')"
-            )
+                "contains(dialogcontext.stack, 'askForName')",
+            ),
         );
         root.triggers.push(new OnIntent('why', [], [new SendActivity('why what?')]));
 

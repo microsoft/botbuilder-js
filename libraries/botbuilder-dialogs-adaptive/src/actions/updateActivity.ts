@@ -120,7 +120,7 @@ export class UpdateActivity<O extends object = {}> extends Dialog<O> implements 
                 utterance: dc.context.activity.text || '',
             },
             dc.state,
-            options
+            options,
         );
         const activityResult = await this.activity.bind(dc, data);
 

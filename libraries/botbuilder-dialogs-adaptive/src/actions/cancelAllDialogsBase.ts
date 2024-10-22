@@ -39,7 +39,8 @@ export interface CancelAllDialogsBaseConfiguration extends DialogConfiguration {
  */
 export class CancelAllDialogsBase<O extends object = {}>
     extends Dialog<O>
-    implements CancelAllDialogsBaseConfiguration {
+    implements CancelAllDialogsBaseConfiguration
+{
     constructor();
 
     /**

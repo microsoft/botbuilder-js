@@ -123,7 +123,7 @@ export class SetProperties<O extends object = {}> extends Dialog<O> implements S
     protected onComputeId(): string {
         return `SetProperties[${StringUtils.ellipsis(
             this.assignments.map((item): string => item.property.toString()).join(','),
-            50
+            50,
         )}]`;
     }
 }
