@@ -1,201 +1,194 @@
-const typescriptEslint = require("@typescript-eslint/eslint-plugin");
-const _import = require("eslint-plugin-import");
-const jsdoc = require("eslint-plugin-jsdoc");
-const js = require("@eslint/js");
-const lodash = require("eslint-plugin-lodash");
-const mocha = require("eslint-plugin-mocha");
-const prettier = require("eslint-plugin-prettier");
-const security = require("eslint-plugin-security");
-const globals = require("globals");
-const tsParser = require("@typescript-eslint/parser");
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 
-const {
-    fixupPluginRules,
-} = require("@eslint/compat");
+const globals = require('globals');
+const eslint = require('@eslint/js');
+const tseslint = require('typescript-eslint');
 
-const {
-    FlatCompat,
-} = require("@eslint/eslintrc");
-
-const compat = new FlatCompat({
-    baseDirectory: __dirname,
-    recommendedConfig: js.configs.recommended,
-    allConfig: js.configs.all
-});
+const importPlugin = require('eslint-plugin-import');
+const jsdocPlugin = require('eslint-plugin-jsdoc');
+const lodashPlugin = require('eslint-plugin-lodash');
+const mochaPlugin = require('eslint-plugin-mocha');
+const prettierPluginRecommended = require('eslint-plugin-prettier/recommended');
+const securityPlugin = require('eslint-plugin-security');
 
 module.exports = [
-    js.configs.recommended,
+    // Base configurations.
+    eslint.configs.recommended,
+    ...tseslint.configs.recommended,
+    importPlugin.flatConfigs.recommended,
+    importPlugin.flatConfigs.typescript,
+    jsdocPlugin.configs['flat/recommended-typescript'],
+    mochaPlugin.configs.flat.recommended,
+    prettierPluginRecommended,
+    securityPlugin.configs.recommended,
+
+    // Global ignores setting.
+    // Using 'ignores' without any other keys will cause the patterns to be applied globally.
+    // More information: https://eslint.org/docs/v9.x/use/configure/configuration-files#globally-ignoring-files-with-ignores
     {
-        ignores: ["**/_ts3.4/", "**/dist/", "**/lib/", "**/node_modules/"]
-    }, 
-    ...compat.extends(
-    "plugin:@typescript-eslint/eslint-recommended",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:jsdoc/recommended",
-), {
-
-    plugins: {
-        "@typescript-eslint": typescriptEslint,
-        import: fixupPluginRules(_import),
-        jsdoc,
-        lodash,
-        mocha,
-        prettier,
-        security,
+        ignores: [
+            '**/node_modules',
+            '**/lib',
+            '**/dist',
+            '**/_ts3.4',
+            '**/tests/resources',
+            '**/*.lu',
+            '**/*.dialog',
+            '**/*.js.map',
+        ],
     },
 
-    languageOptions: {
-        globals: {
-            ...globals.node,
-        },
-
-        parser: tsParser,
-        ecmaVersion: 9,
-        sourceType: "module",
-
-        parserOptions: {
-            ecmaFeatures: {
-                impliedStrict: true,
+    // Global settings.
+    {
+        languageOptions: {
+            globals: {
+                ...globals.node,
+            },
+            ecmaVersion: 9,
+            sourceType: 'module',
+            parserOptions: {
+                ecmaFeatures: {
+                    impliedStrict: true,
+                },
             },
         },
-    },
-
-    settings: {
-        jsdoc: {
-            ignoreInternal: true,
-            ignorePrivate: true,
-
-            tagNamePreference: {
-                augments: "extends",
+        plugins: {
+            lodash: lodashPlugin,
+        },
+        settings: {
+            jsdoc: {
+                ignoreInternal: true,
+                ignorePrivate: true,
             },
         },
     },
 
-    rules: {
-        "@typescript-eslint/no-empty-function": "off",
-        "@typescript-eslint/no-explicit-any": "off",
-        "@typescript-eslint/explicit-module-boundary-types": "off",
-
-        "@typescript-eslint/ban-types": ["off", {
-            types: {
-                object: "",
-            },
-        }],
-
-        "@typescript-eslint/explicit-member-accessibility": ["error", {
-            accessibility: "no-public",
-
-            overrides: {
-                parameterProperties: "off",
-            },
-        }],
-
-        "@typescript-eslint/no-unused-vars": ["error", {
-            args: "after-used",
-            argsIgnorePattern: "^_",
-            caughtErrors: "all",
-            caughtErrorsIgnorePattern: "^_",
-            varsIgnorePattern: "^_",
-        }],
-
-        "import/no-extraneous-dependencies": ["error", {
-            devDependencies: false,
-            optionalDependencies: false,
-            peerDependencies: false,
-        }],
-
-        "jsdoc/check-tag-names": ["error", {
-            definedTags: ["remarks"],
-        }],
-
-        "jsdoc/empty-tags": "off",
-
-        "jsdoc/require-jsdoc": ["error", {
-            publicOnly: true,
-            enableFixer: false,
-        }],
-
-        "jsdoc/require-param": "error",
-        "jsdoc/require-param-type": "off",
-        "jsdoc/require-returns": "error",
-        "jsdoc/require-returns-type": "off",
-        "lodash/import-scope": ["error"],
-        "no-unused-vars": "off",
-        "no-var": "error",
-        "prefer-const": "error",
-        "prettier/prettier": "error",
-
-        quotes: ["error", "single", {
-            avoidEscape: true,
-        }],
-
-        "security/detect-object-injection": "off",
-    },
-}, {
-    files: ["**/*.test.*", "test/**/*", "tests/**/*"],
-    ignores: ['**/*.lu', '**/*.dialog', '**/tests/resources/'],
-
-    languageOptions: {
-        globals: {
-            ...globals.mocha,
-            ...globals.node,
-        },
-    },
-
-    rules: {
-        "@typescript-eslint/no-var-requires": "off",
-        "import/no-extraneous-dependencies": "off",
-        "jsdoc/require-jsdoc": "off",
-        "jsdoc/require-param": "off",
-        "jsdoc/require-returns": "off",
-        "mocha/handle-done-callback": ["error"],
-        "mocha/no-async-describe": ["error"],
-        "mocha/no-mocha-arrows": ["error"],
-        "mocha/no-return-from-async": ["error"],
-        "mocha/no-sibling-hooks": ["error"],
-        "security/detect-non-literal-fs-filename": "off",
-    },
-}, {
-    files: ["src/**/*.ts"],
-
-    plugins: {
-        jsdoc,
-    },
-
-    rules: {
-        "jsdoc/require-jsdoc": ["warn", {
-            require: {
-                FunctionDeclaration: true,
-                MethodDefinition: false,
-                ClassDeclaration: true,
-                ArrowFunctionExpression: false,
-                FunctionExpression: false,
-            },
-
-            publicOnly: true,
-
-            contexts: [
-                "MethodDefinition:not([accessibility=/(private|protected)/]) > FunctionExpression",
+    // TypeScript and JavaScript settings.
+    {
+        rules: {
+            'no-var': 'error',
+            'prefer-const': 'error',
+            '@typescript-eslint/no-empty-function': 'off',
+            '@typescript-eslint/no-explicit-any': 'off',
+            '@typescript-eslint/explicit-module-boundary-types': 'off',
+            '@typescript-eslint/no-empty-object-type': [
+                'error',
+                {
+                    allowObjectTypes: 'always',
+                },
             ],
-        }],
-    },
-}, {
-    files: ["**/*.config.js"],
-
-    languageOptions: {
-        globals: {
-            ...globals.node,
+            '@typescript-eslint/no-restricted-types': [
+                'off',
+                {
+                    types: {
+                        object: '',
+                    },
+                },
+            ],
+            '@typescript-eslint/explicit-member-accessibility': [
+                'error',
+                {
+                    accessibility: 'no-public',
+                    overrides: {
+                        properties: 'off',
+                    },
+                },
+            ],
+            '@typescript-eslint/no-unused-vars': [
+                'error',
+                {
+                    args: 'after-used',
+                    argsIgnorePattern: '^_',
+                    caughtErrors: 'all',
+                    caughtErrorsIgnorePattern: '^_',
+                    varsIgnorePattern: '^_',
+                },
+            ],
+            'import/no-extraneous-dependencies': [
+                'error',
+                {
+                    devDependencies: false,
+                    optionalDependencies: false,
+                    peerDependencies: false,
+                },
+            ],
+            'jsdoc/check-tag-names': [
+                'error',
+                {
+                    definedTags: ['remarks'],
+                },
+            ],
+            'jsdoc/empty-tags': 'off',
+            'jsdoc/require-jsdoc': [
+                'error',
+                {
+                    require: {
+                        FunctionDeclaration: true,
+                        MethodDefinition: false,
+                        ClassDeclaration: true,
+                        ArrowFunctionExpression: false,
+                        FunctionExpression: false,
+                    },
+                    publicOnly: true,
+                    enableFixer: false,
+                    contexts: ['MethodDefinition:not([accessibility=/(private|protected)/]) > FunctionExpression'],
+                },
+            ],
+            'jsdoc/require-param': 'error',
+            'jsdoc/require-returns': 'error',
+            'jsdoc/require-returns-type': 'off',
+            'jsdoc/no-types': 'off',
+            'jsdoc/tag-lines': [
+                'error',
+                'any',
+                {
+                    startLines: 1,
+                },
+            ],
+            'lodash/import-scope': 'error',
+            'prettier/prettier': [
+                'error',
+                {
+                    singleQuote: true,
+                },
+            ],
+            'security/detect-object-injection': 'off',
         },
     },
 
-    rules: {
-        "@typescript-eslint/no-var-requires": "off",
+    // JavaScript settings.
+    {
+        files: ['**/*.{js,mjs,cjs}'],
+        rules: {
+            '@typescript-eslint/no-require-imports': 'off',
+            'jsdoc/no-undefined-types': 1,
+            'jsdoc/require-param-type': 'off',
+        },
     },
-},
-{
-    files: ["**/*.config.cjs"],
 
-    rules: {
-        "@typescript-eslint/no-require-imports": "off",
+    // JavaScript and TypeScript unit tests settings.
+    {
+        files: ['**/*.test.{js,ts}', 'tests/**/*.{js,ts}'],
+        languageOptions: {
+            globals: {
+                ...globals.mocha,
+            },
+        },
+        rules: {
+            'import/no-extraneous-dependencies': 'off',
+            'jsdoc/require-jsdoc': 'off',
+            'jsdoc/require-param': 'off',
+            'jsdoc/require-returns': 'off',
+            'mocha/handle-done-callback': 'error',
+            'mocha/no-async-describe': 'error',
+            'mocha/no-mocha-arrows': 'error',
+            'mocha/no-return-from-async': 'error',
+            'mocha/no-sibling-hooks': 'error',
+            'mocha/no-setup-in-describe': 'off',
+            'security/detect-non-literal-fs-filename': 'off',
+        },
     },
-}];
+];

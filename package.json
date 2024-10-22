@@ -60,7 +60,6 @@
     "**/restify/find-my-way": "Remove the resolution when restify publishes a new version with the patch"
   },
   "devDependencies": {
-    "@types/node": "18.19.47",
     "@azure/logger": "^1.1.4",
     "@eslint/compat": "^1.2.0",
     "@eslint/eslintrc": "^3.1.0",
@@ -69,10 +68,10 @@
     "@standardlabs/is-private": "^1.0.1",
     "@types/lodash": "^4.17.7",
     "@types/mocha": "^10.0.8",
+    "@types/node": "18.19.47",
     "@types/sinon": "^17.0.3",
-    "@typescript-eslint/eslint-plugin": "^8.8.1",
-    "@typescript-eslint/parser": "^8.8.1",
     "applicationinsights": "^2.9.6",
+    "babelify": "^10.0.0",
     "browserify": "^17.0.0",
     "depcheck": "^1.4.7",
     "eslint": "^9.12.0",
@@ -83,6 +82,7 @@
     "eslint-plugin-mocha": "^10.5.0",
     "eslint-plugin-prettier": "^5.2.1",
     "eslint-plugin-security": "^3.0.1",
+    "esmify": "^2.1.1",
     "exorcist": "^2.0.0",
     "mocha": "^10.7.3",
     "mocha-junit-reporter": "^2.2.1",
@@ -99,10 +99,9 @@
     "typedoc-plugin-external-module-name": "^4.0.6",
     "typedoc-plugin-markdown": "^4.2.7",
     "typescript": "~4.7",
+    "typescript-eslint": "^8.11.0",
     "webpack-dev-server": "^5.1.0",
-    "wsrun": "^5.2.4",
-    "esmify": "^2.1.1",
-    "babelify": "^10.0.0"
+    "wsrun": "^5.2.4"
   },
   "nyc": {
     "exclude": [
