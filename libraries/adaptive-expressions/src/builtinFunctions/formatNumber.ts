@@ -7,7 +7,6 @@
  * Licensed under the MIT License.
  */
 
-import { formatLocale as d3formatLocale, format as d3format } from 'd3-format';
 import { Expression } from '../expression';
 import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
@@ -15,7 +14,9 @@ import { FunctionUtils } from '../functionUtils';
 import { ReturnType } from '../returnType';
 import { Options } from '../options';
 import { localeInfo } from '../localeInfo';
+import importSync from 'import-sync';
 
+const { formatLocale: d3formatLocale, format: d3format } = importSync('d3-format');
 /**
  * Format number into required decimal numbers.
  */
