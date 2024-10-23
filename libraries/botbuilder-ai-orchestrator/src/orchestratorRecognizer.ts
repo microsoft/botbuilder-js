@@ -24,7 +24,7 @@ import { AdaptiveRecognizer } from 'botbuilder-dialogs-adaptive';
 import { Activity, RecognizerResult } from 'botbuilder-core';
 import { Converter, ConverterFactory, DialogContext, Recognizer, RecognizerConfiguration } from 'botbuilder-dialogs';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+//eslint-disable-next-line @typescript-eslint/no-require-imports
 const oc = require('@microsoft/orchestrator-core');
 
 export interface OrchestratorRecognizerConfiguration extends RecognizerConfiguration {
@@ -147,7 +147,6 @@ export class OrchestratorRecognizer extends AdaptiveRecognizer implements Orches
 
     /**
      * Returns an OrchestratorRecognizer instance.
-     *
      * @param {string} modelFolder Path to NLR model.
      * @param {string} snapshotFile Path to snapshot.
      * @param {any} resolverExternal Orchestrator resolver to use.
@@ -162,7 +161,6 @@ export class OrchestratorRecognizer extends AdaptiveRecognizer implements Orches
 
     /**
      * Returns a new OrchestratorRecognizer instance.
-     *
      * @param {DialogContext} dc Context for the current dialog.
      * @param {Partial<Activity>} activity Current activity sent from user.
      * @param {Record<string, string>} telemetryProperties Additional properties to be logged to telemetry with event.
@@ -173,7 +171,7 @@ export class OrchestratorRecognizer extends AdaptiveRecognizer implements Orches
         dc: DialogContext,
         activity: Partial<Activity>,
         telemetryProperties?: Record<string, string>,
-        telemetryMetrics?: Record<string, number>
+        telemetryMetrics?: Record<string, number>,
     ): Promise<RecognizerResult> {
         if (!this._resolver) {
             const modelFolder: string = this.modelFolder.getValue(dc.state);
@@ -209,30 +207,28 @@ export class OrchestratorRecognizer extends AdaptiveRecognizer implements Orches
                 // add all scores
                 recognizerResult.intents = results.reduce(function (
                     intents: { [index: string]: { score: number } },
-                    result
+                    result,
                 ) {
                     intents[result.label.name] = { score: result.score };
                     return intents;
-                },
-                {});
+                }, {});
                 recognizerResult.intents.None = { score: 1.0 };
             } else {
                 // add all scores
                 recognizerResult.intents = results.reduce(function (
                     intents: { [index: string]: { score: number } },
-                    result
+                    result,
                 ) {
                     intents[result.label.name] = { score: result.score };
                     return intents;
-                },
-                {});
+                }, {});
 
                 // disambiguate
                 if (detectAmbiguity) {
                     const disambiguationScoreThreshold = this.disambiguationScoreThreshold.getValue(dc.state);
                     const classifyingScore = topScore - disambiguationScoreThreshold;
                     const ambiguousResults = results.filter(
-                        (item: { score: number }) => item.score >= classifyingScore
+                        (item: { score: number }) => item.score >= classifyingScore,
                     );
                     if (ambiguousResults.length > 1) {
                         const recognizerResults: Record<string, RecognizerResult> = ambiguousResults
@@ -242,7 +238,7 @@ export class OrchestratorRecognizer extends AdaptiveRecognizer implements Orches
                                     alteredText: result.closest_text,
                                     entities: recognizerResult.entities,
                                     intents: { [result.label.name]: { score: result.score } },
-                                })
+                                }),
                             )
                             .reduce((results: Record<string, RecognizerResult>, result: RecognizerResult) => {
                                 const guid = uuidv4();
@@ -266,7 +262,7 @@ export class OrchestratorRecognizer extends AdaptiveRecognizer implements Orches
                 dc,
                 activity,
                 telemetryProperties,
-                telemetryMetrics
+                telemetryMetrics,
             );
             recognizerResult.entities = externalResults.entities;
         }
@@ -277,13 +273,13 @@ export class OrchestratorRecognizer extends AdaptiveRecognizer implements Orches
             'OrchestratorRecognizer',
             recognizerResult,
             'OrchestratorRecognizer',
-            'Orchestrator Recognition'
+            'Orchestrator Recognition',
         );
         this.trackRecognizerResult(
             dc,
             'OrchestratorRecognizerResult',
             this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties, dc),
-            telemetryMetrics
+            telemetryMetrics,
         );
 
         return recognizerResult;
@@ -309,7 +305,6 @@ export class OrchestratorRecognizer extends AdaptiveRecognizer implements Orches
 
     /**
      * Uses the RecognizerResult to create a list of properties to be included when tracking the result in telemetry.
-     *
      * @param {RecognizerResult} recognizerResult Recognizer Result.
      * @param {Record<string, string>} telemetryProperties A list of properties to append or override the properties created using the RecognizerResult.
      * @param {DialogContext} dialogContext Dialog Context.
@@ -318,7 +313,7 @@ export class OrchestratorRecognizer extends AdaptiveRecognizer implements Orches
     protected fillRecognizerResultTelemetryProperties(
         recognizerResult: RecognizerResult,
         telemetryProperties?: Record<string, string>,
-        dialogContext?: DialogContext
+        dialogContext?: DialogContext,
     ): Record<string, string> {
         const topTwo = this.getTopTwoIntents(recognizerResult);
         const intent = Object.entries(recognizerResult.intents);
@@ -388,7 +383,7 @@ export class OrchestratorRecognizer extends AdaptiveRecognizer implements Orches
                   if (isEntityExtractionCapable) {
                       if (!orchestrator.load(fullModelFolder, entityModelFolder)) {
                           throw new Error(
-                              `Model load failed - model folder ${fullModelFolder}, entity model folder ${entityModelFolder}.`
+                              `Model load failed - model folder ${fullModelFolder}, entity model folder ${entityModelFolder}.`,
                           );
                       }
                   } else {
