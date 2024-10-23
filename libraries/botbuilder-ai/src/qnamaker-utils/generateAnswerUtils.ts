@@ -34,7 +34,10 @@ export class GenerateAnswerUtils {
      * @param {QnAMakerOptions} _options Settings used to configure the instance.
      * @param {QnAMakerEndpoint} endpoint The endpoint of the knowledge base to query.
      */
-    constructor(public _options: QnAMakerOptions, private readonly endpoint: QnAMakerEndpoint) {
+    constructor(
+        public _options: QnAMakerOptions,
+        private readonly endpoint: QnAMakerEndpoint,
+    ) {
         this.httpRequestUtils = new HttpRequestUtils();
 
         this.validateOptions(this._options);
@@ -47,11 +50,11 @@ export class GenerateAnswerUtils {
      * @param {string} question Question which need to be queried.
      * @param {QnAMakerOptions} options (Optional) The options for the QnA Maker knowledge base. If null, constructor option is used for this instance.
      * @returns {Promise<QnAMakerResult[]>} a promise that resolves to the query results.
-    .*/
+     */
     async queryQnaService(
         endpoint: QnAMakerEndpoint,
         question: string,
-        options?: QnAMakerOptions
+        options?: QnAMakerOptions,
     ): Promise<QnAMakerResult[]> {
         const result = await this.queryQnaServiceRaw(endpoint, question, options);
 
@@ -69,7 +72,7 @@ export class GenerateAnswerUtils {
     async queryQnaServiceRaw(
         endpoint: QnAMakerEndpoint,
         question: string,
-        options?: QnAMakerOptions
+        options?: QnAMakerOptions,
     ): Promise<QnAMakerResults> {
         const url = `${endpoint.host}/knowledgebases/${endpoint.knowledgeBaseId}/generateanswer`;
         const queryOptions: QnAMakerOptions = { ...this._options, ...options } as QnAMakerOptions;
@@ -77,7 +80,7 @@ export class GenerateAnswerUtils {
         const legacyMetadata = this.getMetadata(
             queryOptions.strictFilters,
             queryOptions.strictFiltersJoinOperator,
-            queryOptions.filters
+            queryOptions.filters,
         );
         queryOptions.strictFilters = legacyMetadata.metadata;
         queryOptions.filters = null;
@@ -94,7 +97,7 @@ export class GenerateAnswerUtils {
             url,
             payloadBody,
             this.endpoint,
-            queryOptions.timeout
+            queryOptions.timeout,
         );
 
         if (Array.isArray(qnaResults?.answers)) {
@@ -115,8 +118,7 @@ export class GenerateAnswerUtils {
     async emitTraceInfo(
         turnContext: TurnContext,
         answers: QnAMakerResult[],
-        queryOptions?: QnAMakerOptions
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        queryOptions?: QnAMakerOptions,
     ): Promise<any> {
         const requestOptions: QnAMakerOptions = { ...this._options, ...queryOptions };
         const { scoreThreshold, top, strictFilters, metadataBoost, context, qnaId } = requestOptions;
@@ -169,7 +171,7 @@ export class GenerateAnswerUtils {
      */
     static sortAnswersWithinThreshold(
         answers: QnAMakerResult[] = [] as QnAMakerResult[],
-        queryOptions: QnAMakerOptions
+        queryOptions: QnAMakerOptions,
     ): QnAMakerResult[] {
         const minScore: number = typeof queryOptions.scoreThreshold === 'number' ? queryOptions.scoreThreshold : 0.001;
 
@@ -183,7 +185,6 @@ export class GenerateAnswerUtils {
             .sort((a: QnAMakerResult, b: QnAMakerResult) => b.score - a.score);
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private formatQnaResult(qnaResult: QnAMakerResults | any): QnAMakerResults {
         qnaResult.answers = qnaResult.answers.map((answer: QnAMakerResult & { qnaId?: number }) => {
             answer.score = answer.score / 100;
@@ -204,7 +205,7 @@ export class GenerateAnswerUtils {
     private validateScoreThreshold(scoreThreshold: number): void {
         if (typeof scoreThreshold !== 'number' || !(scoreThreshold > 0 && scoreThreshold <= 1)) {
             throw new TypeError(
-                `"${scoreThreshold}" is an invalid scoreThreshold. QnAMakerOptions.scoreThreshold must have a value between 0 and 1.`
+                `"${scoreThreshold}" is an invalid scoreThreshold. QnAMakerOptions.scoreThreshold must have a value between 0 and 1.`,
             );
         }
     }
@@ -212,7 +213,7 @@ export class GenerateAnswerUtils {
     private validateTop(qnaOptionTop: number): void {
         if (!Number.isInteger(qnaOptionTop) || qnaOptionTop < 1) {
             throw new RangeError(
-                `"${qnaOptionTop}" is an invalid top value. QnAMakerOptions.top must be an integer greater than 0.`
+                `"${qnaOptionTop}" is an invalid top value. QnAMakerOptions.top must be an integer greater than 0.`,
             );
         }
     }
@@ -220,7 +221,7 @@ export class GenerateAnswerUtils {
     private getMetadata(
         strictFilters: QnAMakerMetadata[],
         operator: JoinOperator,
-        filters: Filters
+        filters: Filters,
     ): { metadata: QnAMakerMetadata[]; compoundOperation: JoinOperator } {
         if (!strictFilters) {
             return { metadata: strictFilters, compoundOperation: operator ? operator : JoinOperator.AND };

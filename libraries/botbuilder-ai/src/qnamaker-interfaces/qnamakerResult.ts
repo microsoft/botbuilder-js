@@ -31,7 +31,7 @@ export interface QnAMakerResult {
     /**
      * Metadata associated with the answer (If any)
      */
-    metadata?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+    metadata?: any;
 
     /**
      * The source from which the QnA was extracted (If any)
