@@ -617,7 +617,6 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
         // If the `error` received is a azure-cognitiveservices-luis-runtime error,
         // it may have a `response` property and `response.statusCode`.
         // If these properties exist, we should populate the error with a correct and informative error message.
-
         const response: Record<'status', number> = (error as any).response;
 
         if (response?.status) {

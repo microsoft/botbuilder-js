@@ -213,7 +213,6 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
         verbose: boolean,
     ): EntityModel[] {
         const childrenEntities: any = verbose ? { $instance: {} } : {};
-
         let childrenEntitiesMetadata: any = {};
 
         // This is now implemented as O(n^2) search and can be reduced to O(2n) using a map as an optimization if n grows
@@ -306,11 +305,8 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
             }
 
             const vals: any = entity.resolution.values;
-
             const type = vals[0].type;
-
             const timexes = vals.map((t: any) => t.timex);
-
             const distinct = timexes.filter((v, i, a) => a.indexOf(v) === i);
 
             return { type: type, timex: distinct };
