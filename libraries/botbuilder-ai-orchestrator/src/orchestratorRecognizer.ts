@@ -147,6 +147,7 @@ export class OrchestratorRecognizer extends AdaptiveRecognizer implements Orches
 
     /**
      * Returns an OrchestratorRecognizer instance.
+     *
      * @param {string} modelFolder Path to NLR model.
      * @param {string} snapshotFile Path to snapshot.
      * @param {any} resolverExternal Orchestrator resolver to use.
@@ -161,6 +162,7 @@ export class OrchestratorRecognizer extends AdaptiveRecognizer implements Orches
 
     /**
      * Returns a new OrchestratorRecognizer instance.
+     *
      * @param {DialogContext} dc Context for the current dialog.
      * @param {Partial<Activity>} activity Current activity sent from user.
      * @param {Record<string, string>} telemetryProperties Additional properties to be logged to telemetry with event.
@@ -305,6 +307,7 @@ export class OrchestratorRecognizer extends AdaptiveRecognizer implements Orches
 
     /**
      * Uses the RecognizerResult to create a list of properties to be included when tracking the result in telemetry.
+     *
      * @param {RecognizerResult} recognizerResult Recognizer Result.
      * @param {Record<string, string>} telemetryProperties A list of properties to append or override the properties created using the RecognizerResult.
      * @param {DialogContext} dialogContext Dialog Context.
@@ -374,10 +377,13 @@ export class OrchestratorRecognizer extends AdaptiveRecognizer implements Orches
         this._orchestrator = OrchestratorRecognizer.orchestratorMap.has(fullModelFolder)
             ? OrchestratorRecognizer.orchestratorMap.get(fullModelFolder)
             : ((): OrchestratorDictionaryEntry => {
+                  // eslint-disable-next-line security/detect-non-literal-fs-filename
                   if (!existsSync(fullModelFolder)) {
                       throw new Error(`Model folder does not exist at ${fullModelFolder}.`);
                   }
+
                   const entityModelFolder: string = resolve(modelFolder, 'entity');
+                  // eslint-disable-next-line security/detect-non-literal-fs-filename
                   const isEntityExtractionCapable: boolean = existsSync(entityModelFolder);
                   const orchestrator = new oc.Orchestrator();
                   if (isEntityExtractionCapable) {
@@ -400,11 +406,13 @@ export class OrchestratorRecognizer extends AdaptiveRecognizer implements Orches
               })();
 
         const fullSnapshotPath = resolve(snapshotFile);
+        // eslint-disable-next-line security/detect-non-literal-fs-filename
         if (!existsSync(fullSnapshotPath)) {
             throw new Error(`Snapshot file does not exist at ${fullSnapshotPath}.`);
         }
 
         // Load the snapshot
+        // eslint-disable-next-line security/detect-non-literal-fs-filename
         const snapshot: Uint8Array = readFileSync(fullSnapshotPath);
 
         // Load snapshot and create resolver
