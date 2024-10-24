@@ -53,8 +53,8 @@ export class PasswordServiceClientCredentialFactory implements ServiceClientCred
      * @param appId The app ID.
      * @param password The app password.
      * @param tenantId Tenant ID of the Azure AD tenant where the bot is created.
-     *   * Required for SingleTenant app types.
-     *   * Optional for MultiTenant app types. **Note**: '_botframework.com_' is the default tenant when no value is provided.
+     *   Required for SingleTenant app types.
+     *   Optional for MultiTenant app types. **Note**: '_botframework.com_' is the default tenant when no value is provided.
      *
      * More information: https://learn.microsoft.com/en-us/security/zero-trust/develop/identity-supported-account-types.
      */
@@ -101,7 +101,7 @@ export class PasswordServiceClientCredentialFactory implements ServiceClientCred
         appId: string,
         audience: string,
         loginEndpoint: string,
-        validateAuthority: boolean
+        validateAuthority: boolean,
     ): Promise<ServiceClientCredentials> {
         if (await this.isAuthenticationDisabled()) {
             return MicrosoftAppCredentials.Empty;
@@ -125,7 +125,7 @@ export class PasswordServiceClientCredentialFactory implements ServiceClientCred
                 this.tenantId,
                 audience,
                 normalizedEndpoint,
-                validateAuthority
+                validateAuthority,
             );
         }
         return credentials;
@@ -142,7 +142,7 @@ class PrivateCloudAppCredentials extends MicrosoftAppCredentials {
         tenantId: string,
         oAuthScope: string,
         oAuthEndpoint: string,
-        validateAuthority: boolean
+        validateAuthority: boolean,
     ) {
         super(appId, password, tenantId, oAuthScope);
         this.oAuthEndpoint = oAuthEndpoint;

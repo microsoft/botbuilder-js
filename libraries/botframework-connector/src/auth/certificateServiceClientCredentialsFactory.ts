@@ -31,8 +31,8 @@ export class CertificateServiceClientCredentialsFactory extends ServiceClientCre
      * @param certificateThumbprint A hex encoded thumbprint of the certificate.
      * @param certificatePrivateKey A PEM encoded certificate private key.
      * @param tenantId Tenant ID of the Azure AD tenant where the bot is created.
-     *   * Required for SingleTenant app types.
-     *   * Optional for MultiTenant app types. **Note**: '_botframework.com_' is the default tenant when no value is provided.
+     *   Required for SingleTenant app types.
+     *   Optional for MultiTenant app types. **Note**: '_botframework.com_' is the default tenant when no value is provided.
      *
      * More information: https://learn.microsoft.com/en-us/security/zero-trust/develop/identity-supported-account-types.
      * @param x5c Optional. Enables application developers to achieve easy certificates roll-over in Azure AD:
@@ -43,7 +43,7 @@ export class CertificateServiceClientCredentialsFactory extends ServiceClientCre
         certificateThumbprint: string,
         certificatePrivateKey: string,
         tenantId?: string,
-        x5c?: string
+        x5c?: string,
     );
 
     /**
@@ -54,8 +54,8 @@ export class CertificateServiceClientCredentialsFactory extends ServiceClientCre
      * set this parameter to send the public certificate (BEGIN CERTIFICATE) to Azure AD, so that Azure AD can use it to validate the subject name based on a trusted issuer policy.
      * @param certificatePrivateKey A PEM encoded certificate private key.
      * @param tenantId Tenant ID of the Azure AD tenant where the bot is created.
-     *   * Required for SingleTenant app types.
-     *   * Optional for MultiTenant app types. **Note**: '_botframework.com_' is the default tenant when no value is provided.
+     *   Required for SingleTenant app types.
+     *   Optional for MultiTenant app types. **Note**: '_botframework.com_' is the default tenant when no value is provided.
      *
      * More information: https://learn.microsoft.com/en-us/security/zero-trust/develop/identity-supported-account-types.
      */
@@ -69,14 +69,14 @@ export class CertificateServiceClientCredentialsFactory extends ServiceClientCre
         certificateThumbprintOrx5c: string,
         certificatePrivateKey: string,
         tenantId?: string,
-        x5c?: string
+        x5c?: string,
     ) {
         super();
 
         ok(appId?.trim(), 'CertificateServiceClientCredentialsFactory.constructor(): missing appId.');
         ok(
             certificatePrivateKey?.trim(),
-            'CertificateServiceClientCredentialsFactory.constructor(): missing certificatePrivateKey.'
+            'CertificateServiceClientCredentialsFactory.constructor(): missing certificatePrivateKey.',
         );
 
         if (certificateThumbprintOrx5c?.includes('-----BEGIN CERTIFICATE-----')) {
@@ -84,7 +84,7 @@ export class CertificateServiceClientCredentialsFactory extends ServiceClientCre
         } else {
             ok(
                 certificateThumbprintOrx5c?.trim(),
-                'CertificateServiceClientCredentialsFactory.constructor(): missing certificateThumbprint or x5c value.'
+                'CertificateServiceClientCredentialsFactory.constructor(): missing certificateThumbprint or x5c value.',
             );
             this.certificateThumbprint = certificateThumbprintOrx5c;
             this.x5c = x5c;
@@ -128,7 +128,7 @@ export class CertificateServiceClientCredentialsFactory extends ServiceClientCre
     async createCredentials(appId: string, audience: string): Promise<ServiceClientCredentials> {
         ok(
             await this.isValidAppId(appId),
-            'CertificateServiceClientCredentialsFactory.createCredentials(): Invalid Managed ID.'
+            'CertificateServiceClientCredentialsFactory.createCredentials(): Invalid Managed ID.',
         );
 
         return new CertificateAppCredentials(
@@ -137,7 +137,7 @@ export class CertificateServiceClientCredentialsFactory extends ServiceClientCre
             this.certificatePrivateKey,
             this.tenantId,
             audience,
-            this.x5c
+            this.x5c,
         );
     }
 }

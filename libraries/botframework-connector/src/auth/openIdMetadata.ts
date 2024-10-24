@@ -27,7 +27,10 @@ export class OpenIdMetadata {
      * @param url Metadata Url.
      * @param proxySettings The proxy settings for the request.
      */
-    constructor(private url: string, private proxySettings?: ProxySettings) {}
+    constructor(
+        private url: string,
+        private proxySettings?: ProxySettings,
+    ) {}
 
     /**
      * Gets the Signing key.
@@ -76,13 +79,13 @@ export class OpenIdMetadata {
             } else {
                 throw new AuthenticationError(
                     `Failed to load Keys: ${getKeyResponse.status}`,
-                    StatusCodes.INTERNAL_SERVER_ERROR
+                    StatusCodes.INTERNAL_SERVER_ERROR,
                 );
             }
         } else {
             throw new AuthenticationError(
                 `Failed to load openID config: ${res.status}`,
-                StatusCodes.INTERNAL_SERVER_ERROR
+                StatusCodes.INTERNAL_SERVER_ERROR,
             );
         }
     }
