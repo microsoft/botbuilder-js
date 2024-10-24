@@ -72,6 +72,7 @@ describe('ActivityHandlerBase', function () {
             super.onTurnActivity(context);
         }
     }
+
     it('should call onActivity from run()', async function () {
         const bot = new OverrideOnTurnActivity();
         await processActivity({ type: 'any' }, bot);

@@ -23,6 +23,7 @@ export class InvokeException<T = unknown> extends Error {
 
     /**
      * A factory method that creates a new [InvokeResponse](xref:botbuilder-core.InvokeResponse) object with the status code and body of the current object.
+     *
      * @returns A new [InvokeResponse](xref:botbuilder-core.InvokeResponse) object.
      */
     createInvokeResponse(): InvokeResponse {

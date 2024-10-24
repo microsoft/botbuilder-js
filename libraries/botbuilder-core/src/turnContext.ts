@@ -21,6 +21,7 @@ import {
 
 /**
  * A handler that can participate in send activity events for the current turn.
+ *
  * @remarks
  * **Parameters**
  *
@@ -57,6 +58,7 @@ export type SendActivitiesHandler = (
 
 /**
  * A handler that can participate in update activity events for the current turn.
+ *
  * @remarks
  * **Parameters**
  *
@@ -88,6 +90,7 @@ export type UpdateActivityHandler = (
 
 /**
  * A handler that can participate in delete activity events for the current turn.
+ *
  * @remarks
  * **Parameters**
  *
@@ -135,6 +138,7 @@ export interface TurnContext {}
 
 /**
  * Provides context for a turn of a bot.
+ *
  * @remarks
  * Context provides information needed to process an incoming activity. The context object is
  * created by a [BotAdapter](xref:botbuilder-core.BotAdapter) and persists for the length of the turn.
@@ -157,17 +161,20 @@ export class TurnContext {
 
     /**
      * Creates an new instance of the [TurnContext](xref:xref:botbuilder-core.TurnContext) class.
+     *
      * @param adapterOrContext The adapter creating the context.
      * @param request The incoming activity for the turn.
      */
     constructor(adapterOrContext: BotAdapter, request: Partial<Activity>);
     /**
      * Creates an new instance of the [TurnContext](xref:xref:botbuilder-core.TurnContext) class.
+     *
      * @param adapterOrContext The context object to clone.
      */
     constructor(adapterOrContext: TurnContext);
     /**
      * Creates an new instance of the [TurnContext](xref:xref:botbuilder-core.TurnContext) class.
+     *
      * @param adapterOrContext The adapter creating the context or the context object to clone.
      * @param request Optional. The incoming activity for the turn.
      */
@@ -184,6 +191,7 @@ export class TurnContext {
      * Removes at mentions for the activity's [recipient](xref:botframework-schema.Activity.recipient)
      * from the text of an activity and returns the updated text.
      * Use with caution; this function alters the activity's [text](xref:botframework-schema.Activity.text) property.
+     *
      * @param activity The activity to remove at mentions from.
      * @returns The updated activity's text.
      * @remarks
@@ -207,6 +215,7 @@ export class TurnContext {
     /**
      * Removes at mentions for a given ID from the text of an activity and returns the updated text.
      * Use with caution; this function alters the activity's [text](xref:botframework-schema.Activity.text) property.
+     *
      * @param activity The activity to remove at mentions from.
      * @param id The ID of the user or bot to remove at mentions for.
      * @returns The updated activity's text.
@@ -244,6 +253,7 @@ export class TurnContext {
 
     /**
      * Gets all at-mention entities included in an activity.
+     *
      * @param activity The activity.
      * @returns All the at-mention entities included in an activity.
      * @remarks
@@ -271,6 +281,7 @@ export class TurnContext {
 
     /**
      * Copies conversation reference information from an activity.
+     *
      * @param activity The activity to get the information from.
      * @returns A conversation reference for the conversation that contains this activity.
      * @remarks
@@ -299,6 +310,7 @@ export class TurnContext {
 
     /**
      * Updates an activity with the delivery information from an existing conversation reference.
+     *
      * @param activity The activity to update.
      * @param reference The conversation reference to copy delivery information from.
      * @param isIncoming Optional. `true` to treat the activity as an incoming activity, where the
@@ -338,6 +350,7 @@ export class TurnContext {
 
     /**
      * Copies conversation reference information from a resource response for a sent activity.
+     *
      * @param activity The sent activity.
      * @param reply The resource response for the activity, returned by the
      *      [sendActivity](xref:botbuilder-core.TurnContext.sendActivity) or
@@ -376,6 +389,7 @@ export class TurnContext {
 
     /**
      * Asynchronously sends an activity to the sender of the incoming activity.
+     *
      * @param name The activity or text to send.
      * @param value Optional. The text to be spoken by your bot on a speech-enabled channel.
      * @param valueType Optional. Indicates whether your bot is accepting, expecting, or ignoring user
@@ -412,6 +426,7 @@ export class TurnContext {
 
     /**
      * Asynchronously sends an activity to the sender of the incoming activity.
+     *
      * @param activityOrText The activity or text to send.
      * @param speak Optional. The text to be spoken by your bot on a speech-enabled channel.
      * @param inputHint Optional. Indicates whether your bot is accepting, expecting, or ignoring user
@@ -460,6 +475,7 @@ export class TurnContext {
 
     /**
      * Asynchronously sends a set of activities to the sender of the incoming activity.
+     *
      * @param activities The activities to send.
      * @returns A promise with a ResourceResponse.
      * @remarks
@@ -548,6 +564,7 @@ export class TurnContext {
 
     /**
      * Asynchronously updates a previously sent activity.
+     *
      * @param activity The replacement for the original activity.
      * @returns A promise with a ResourceResponse.
      * @remarks
@@ -577,6 +594,7 @@ export class TurnContext {
 
     /**
      * Asynchronously deletes a previously sent activity.
+     *
      * @param idOrReference ID or conversation reference for the activity to delete.
      * @returns A promise representing the async operation.
      * @remarks
@@ -612,6 +630,7 @@ export class TurnContext {
 
     /**
      * Adds a response handler for send activity operations.
+     *
      * @param handler The handler to add to the context object.
      * @returns The updated context object.
      * @remarks
@@ -642,6 +661,7 @@ export class TurnContext {
 
     /**
      * Adds a response handler for update activity operations.
+     *
      * @param handler The handler to add to the context object.
      * @returns The updated context object.
      * @remarks
@@ -671,6 +691,7 @@ export class TurnContext {
 
     /**
      * Adds a response handler for delete activity operations.
+     *
      * @param handler The handler to add to the context object.
      * @returns The updated context object.
      * @remarks
@@ -700,6 +721,7 @@ export class TurnContext {
 
     /**
      * Called when this turn context object is passed into the constructor for a new turn context.
+     *
      * @param context The new turn context object.
      * @remarks
      * This copies private members from this object to the new object.
@@ -722,6 +744,7 @@ export class TurnContext {
 
     /**
      * Gets the bot adapter that created this context object.
+     *
      * @returns The bot adapter that created this context object.
      */
     get adapter(): BotAdapter {
@@ -730,6 +753,7 @@ export class TurnContext {
 
     /**
      * Gets the activity associated with this turn.
+     *
      * @returns The activity associated with this turn.
      * @remarks
      * This example shows how to get the users trimmed utterance from the activity:
@@ -744,6 +768,7 @@ export class TurnContext {
 
     /**
      * Indicates whether the bot has replied to the user this turn.
+     *
      * @returns True if at least one response was sent for the current turn; otherwise, false.
      * @remarks
      * **true** if at least one response was sent for the current turn; otherwise, **false**.
@@ -765,6 +790,7 @@ export class TurnContext {
 
     /**
      * Sets the response flag on the current turn context.
+     *
      * @remarks
      * The [sendActivity](xref:botbuilder-core.TurnContext.sendActivity) and
      * [sendActivities](xref:botbuilder-core.TurnContext.sendActivities) methods call this method to
@@ -780,6 +806,7 @@ export class TurnContext {
 
     /**
      * Gets the locale stored in the turnState.
+     *
      * @returns The locale stored in the turnState.
      */
     get locale(): string | undefined {
@@ -806,6 +833,7 @@ export class TurnContext {
 
     /**
      * Gets the services registered on this context object.
+     *
      * @returns The services registered on this context object.
      * @remarks
      * Middleware, other components, and services will typically use this to cache information

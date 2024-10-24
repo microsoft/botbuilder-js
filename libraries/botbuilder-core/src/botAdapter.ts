@@ -10,6 +10,7 @@ import { TurnContext } from './turnContext';
 
 /**
  * Defines the core behavior of a bot adapter that can connect a bot to a service endpoint.
+ *
  * @remarks
  * The bot adapter encapsulates authentication processes and sends activities to and receives
  * activities from the Bot Connector Service. When your bot receives an activity, the adapter
@@ -41,6 +42,7 @@ export abstract class BotAdapter {
      * This method supports the framework and is not intended to be called directly for your code.
      * Use the turn context's [sendActivity](xref:botbuilder-core.TurnContext.sendActivity) or
      * [sendActivities](xref:botbuilder-core.TurnContext.sendActivities) method from your bot code.
+     *
      * @param context The context object for the turn.
      * @param activities The activities to send.
      * @returns An array of [ResourceResponse](xref:)
@@ -57,6 +59,7 @@ export abstract class BotAdapter {
      * This interface supports the framework and is not intended to be called directly for your code.
      * Use [TurnContext.updateActivity](xref:botbuilder-core.TurnContext.updateActivity) to update
      * an activity from your bot code.
+     *
      * @param context The context object for the turn.
      * @param activity The updated version of the activity to replace.
      * @remarks
@@ -70,6 +73,7 @@ export abstract class BotAdapter {
      * This interface supports the framework and is not intended to be called directly for your code.
      * Use [TurnContext.deleteActivity](xref:botbuilder-core.TurnContext.deleteActivity) to delete
      * an activity from your bot code.
+     *
      * @param context The context object for the turn.
      * @param reference Conversation reference information for the activity to delete.
      * @remarks
@@ -79,6 +83,7 @@ export abstract class BotAdapter {
 
     /**
      * Asynchronously resumes a conversation with a user, possibly after some time has gone by.
+     *
      * @param reference A reference to the conversation to continue.
      * @param logic The asynchronous method to call after the adapter middleware runs.
      * @remarks
@@ -93,6 +98,7 @@ export abstract class BotAdapter {
 
     /**
      * Asynchronously resumes a conversation with a user, possibly after some time has gone by.
+     *
      * @param botAppId The application ID of the bot. This parameter is ignored in single tenant the Adapters (Console,Test, etc) but is critical to the BotFrameworkAdapter which is multi-tenant aware.
      * @param reference A partial [ConversationReference](xref:botframework-schema.ConversationReference) to the conversation to continue.
      * @param logic The asynchronous method to call after the adapter middleware runs.
@@ -106,6 +112,7 @@ export abstract class BotAdapter {
 
     /**
      * Asynchronously resumes a conversation with a user, possibly after some time has gone by.
+     *
      * @param claimsIdentity A [ClaimsIdentity](xref:botframework-connector) for the conversation.
      * @param reference A partial [ConversationReference](xref:botframework-schema.ConversationReference) to the conversation to continue.
      * @param logic The asynchronous method to call after the adapter middleware runs.
@@ -119,6 +126,7 @@ export abstract class BotAdapter {
 
     /**
      * Asynchronously resumes a conversation with a user, possibly after some time has gone by.
+     *
      * @param claimsIdentity A [ClaimsIdentity](xref:botframework-connector) for the conversation.
      * @param reference A partial [ConversationReference](xref:botframework-schema.ConversationReference) to the conversation to continue.
      * @param audience A value signifying the recipient of the proactive message.</param>
@@ -146,6 +154,7 @@ export abstract class BotAdapter {
 
     /**
      * Creates a conversation on the specified channel.
+     *
      * @param _botAppId The application ID of the bot.
      * @param _channelId The ID for the channel.
      * @param _serviceUrl The ID for the channel.
@@ -177,6 +186,7 @@ export abstract class BotAdapter {
 
     /**
      * Gets or sets an error handler that can catch exceptions in the middleware or application.
+     *
      * @remarks
      * The error handler is called with these parameters:
      *
@@ -192,6 +202,7 @@ export abstract class BotAdapter {
 
     /**
      * Sets an error handler that can catch exceptions in the middleware or application.
+     *
      * @remarks
      * The error handler is called with these parameters:
      *
@@ -206,6 +217,7 @@ export abstract class BotAdapter {
 
     /**
      * Adds middleware to the adapter's pipeline.
+     *
      * @param {...any} middlewares The middleware or middleware handlers to add.
      * @returns The updated adapter object.
      * @remarks Middleware is added to the adapter at initialization time.
@@ -219,6 +231,7 @@ export abstract class BotAdapter {
 
     /**
      * Starts activity processing for the current bot turn.
+     *
      * @param context The context object for the turn.
      * @param next A callback method to run at the end of the pipeline.
      * @returns A promise that resolves when the middleware chain is finished

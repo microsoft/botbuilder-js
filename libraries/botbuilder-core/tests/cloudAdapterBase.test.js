@@ -17,6 +17,7 @@ const noop = () => null;
 
 describe('CloudAdapterBase', function () {
     let sandbox;
+
     beforeEach(function () {
         sandbox = sinon.createSandbox({ useFakeTimers: true });
     });

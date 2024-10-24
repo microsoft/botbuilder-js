@@ -38,7 +38,7 @@
     "lodash": "^4.17.20",
     "p-map": "^4.0.0"
   },
-  "devDependencies": {  
+  "devDependencies": {
     "fs-extra": "^11.2.0",
     "nock": "^13.5.5",
     "node-fetch": "^2.7.0"

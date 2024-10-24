@@ -40,6 +40,7 @@ export abstract class CloudAdapterBase extends BotAdapter {
 
     /**
      * Create a new [CloudAdapterBase](xref:botbuilder.CloudAdapterBase) instance.
+     *
      * @param botFrameworkAuthentication A [BotFrameworkAuthentication](xref:botframework-connector.BotFrameworkAuthentication) used for validating and creating tokens.
      */
     constructor(protected readonly botFrameworkAuthentication: BotFrameworkAuthentication) {
@@ -274,6 +275,7 @@ export abstract class CloudAdapterBase extends BotAdapter {
 
     /**
      * The implementation for continue conversation.
+     *
      * @param claimsIdentity The [ClaimsIdentity](xref:botframework-connector.ClaimsIdentity) for the conversation.
      * @param continuationActivity The continuation [Activity](xref:botframework-schema.Activity) used to create the [TurnContext](xref:botbuilder-core.TurnContext).
      * @param audience The audience for the call.
@@ -312,6 +314,7 @@ export abstract class CloudAdapterBase extends BotAdapter {
 
     /**
      * The implementation for processing an Activity sent to this bot.
+     *
      * @param authHeader The authorization header from the http request.
      * @param activity The [Activity](xref:botframework-schema.Activity) to process.
      * @param logic The function to call for the resulting bot turn.
@@ -325,6 +328,7 @@ export abstract class CloudAdapterBase extends BotAdapter {
 
     /**
      * The implementation for processing an Activity sent to this bot.
+     *
      * @param authenticateRequestResult The [AuthenticateRequestResult](xref:botframework-connector.AuthenticateRequestResult) for this turn.
      * @param activity The [Activity](xref:botframework-schema.Activity) to process.
      * @param logic The function to call for the resulting bot turn.
@@ -392,6 +396,7 @@ export abstract class CloudAdapterBase extends BotAdapter {
     /**
      * This is a helper to create the ClaimsIdentity structure from an appId that will be added to the TurnContext.
      * It is intended for use in proactive and named-pipe scenarios.
+     *
      * @param botAppId The bot's application id.
      * @returns a [ClaimsIdentity](xref:botframework-connector.ClaimsIdentity) with the audience and appId claims set to the botAppId.
      */

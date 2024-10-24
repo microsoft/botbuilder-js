@@ -9,6 +9,7 @@ import { MemoryStorage } from './memoryStorage';
 
 /**
  * Storage provider that uses browser local storage.
+ *
  * @remarks
  * Anything written to the store will remain persisted until the user manually flushes their
  * browsers cookies and other site data.
@@ -30,6 +31,7 @@ export class BrowserLocalStorage extends MemoryStorage {
 
 /**
  * Storage provider that uses browser session storage.
+ *
  * @remarks
  * Anything written to the store will only be persisted for the lifetime of a single page within a
  * browser tab. The storage will survive page reloads but closing the tab will delete anything

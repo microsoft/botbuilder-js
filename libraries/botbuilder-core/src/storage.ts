@@ -17,6 +17,7 @@ import { TurnContext } from './turnContext';
  * ```TypeScript
  * type StorageKeyFactory = (context: TurnContext) => Promise<string>;
  * ```
+ *
  * @param StorageKeyFactory.context Context for the current turn of conversation with a user.
  * @returns A promise resolving to the storage key string
  */
@@ -28,6 +29,7 @@ export type StorageKeyFactory = (context: TurnContext) => Promise<string>;
 export interface Storage {
     /**
      * Loads store items from storage
+     *
      * @remarks
      * This example reads in a single object from storage:
      *
@@ -41,6 +43,7 @@ export interface Storage {
 
     /**
      * Saves store items to storage.
+     *
      * @remarks
      * This example writes an object to storage after its been modified:
      *
@@ -54,6 +57,7 @@ export interface Storage {
 
     /**
      * Removes store items from storage
+     *
      * @remarks
      * This example deletes an object from storage:
      *
@@ -103,6 +107,7 @@ export function assertStoreItems(val: unknown, ..._args: unknown[]): asserts val
 
 /**
  * Utility function to calculate a change hash for a `StoreItem`.
+ *
  * @remarks
  * This example calculates a change hash for an object that's been read in and then only writes it
  * back out if it's been modified:

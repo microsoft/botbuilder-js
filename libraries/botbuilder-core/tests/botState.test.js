@@ -19,6 +19,7 @@ describe('BotState', function () {
         assert(context, 'context not passed into storage stateKey factory.');
         return storageKey;
     });
+
     it('should return undefined from get() if nothing cached.', async function () {
         const state = botState.get(context);
         assert(state === undefined, 'state returned.');

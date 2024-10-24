@@ -13,6 +13,7 @@ class SimpleAdapter extends BotAdapter {
 
 describe('BotAdapter', function () {
     let sandbox;
+
     beforeEach(function () {
         sandbox = sinon.createSandbox();
     });

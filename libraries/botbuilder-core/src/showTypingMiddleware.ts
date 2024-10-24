@@ -12,6 +12,7 @@ import { TurnContext } from './turnContext';
 
 /**
  * Middleware that will send a typing indicator automatically for each message.
+ *
  * @remarks
  * When added, this middleware will send typing activities back to the user when a Message activity
  * is received to let them know that the bot has received the message and is working on the response.
@@ -22,6 +23,7 @@ import { TurnContext } from './turnContext';
 export class ShowTypingMiddleware implements Middleware {
     /**
      * Create the SendTypingIndicator middleware
+     *
      * @param delay {number} Number of milliseconds to wait before sending the first typing indicator.
      * @param period {number} Number of milliseconds to wait before sending each following indicator.
      */
@@ -40,6 +42,7 @@ export class ShowTypingMiddleware implements Middleware {
 
     /**
      * Processes an incoming activity.
+     *
      * @param context {TurnContext} An incoming TurnContext object.
      * @param next {function} The next delegate function.
      */

@@ -20,6 +20,7 @@ export class BotStateSet {
 
     /**
      * Creates a new BotStateSet instance.
+     *
      * @param botStates One or more BotState plugins to register.
      */
     constructor(...botStates: BotState[]) {
@@ -28,6 +29,7 @@ export class BotStateSet {
 
     /**
      * Registers one or more `BotState` plugins with the set.
+     *
      * @param botStates One or more BotState plugins to register.
      * @returns The updated BotStateSet.
      */
@@ -45,6 +47,7 @@ export class BotStateSet {
 
     /**
      * Calls `BotState.load()` on all of the BotState plugins in the set.
+     *
      * @remarks
      * This will trigger all of the plugins to read in their state in parallel.
      *
@@ -64,6 +67,7 @@ export class BotStateSet {
 
     /**
      * Calls `BotState.saveChanges()` on all of the BotState plugins in the set.
+     *
      * @remarks
      * This will trigger all of the plugins to write out their state in parallel.
      *

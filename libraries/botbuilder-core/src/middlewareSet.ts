@@ -13,6 +13,7 @@ import { TurnContext } from './turnContext';
 export interface Middleware {
     /**
      * Called each time the bot receives a new request.
+     *
      * @remarks
      * Calling `await next();` will cause execution to continue to either the next piece of
      * middleware in the chain or the bots main logic if you are the last piece of middleware.
@@ -48,6 +49,7 @@ export type MiddlewareHandler = (context: TurnContext, next: () => Promise<void>
 
 /**
  * A set of `Middleware` plugins.
+ *
  * @remarks
  * The set itself is middleware so you can easily package up a set of middleware that can be composed
  * into an adapter with a single `adapter.use(mySet)` call or even into another middleware set using
@@ -69,6 +71,7 @@ export class MiddlewareSet implements Middleware {
 
     /**
      * Creates a new MiddlewareSet instance.
+     *
      * @param {...any} middlewares One or more middleware handlers(s) to register.
      */
     constructor(...middlewares: (MiddlewareHandler | Middleware)[]) {
@@ -77,6 +80,7 @@ export class MiddlewareSet implements Middleware {
 
     /**
      * Processes an incoming activity.
+     *
      * @param context [TurnContext](xref:botbuilder-core.TurnContext) object for this turn.
      * @param next Delegate to call to continue the bot middleware pipeline.
      * @returns {Promise<void>} A Promise representing the async operation.
@@ -87,6 +91,7 @@ export class MiddlewareSet implements Middleware {
 
     /**
      * Registers middleware handlers(s) with the set.
+     *
      * @remarks This example adds a new piece of middleware to a set:
      * ```JavaScript
      * set.use(async (context, next) => {
@@ -114,6 +119,7 @@ export class MiddlewareSet implements Middleware {
 
     /**
      * Executes a set of middleware in series.
+     *
      * @param context Context for the current turn of conversation with the user.
      * @param next Function to invoke at the end of the middleware chain.
      * @returns A promise that resolves after the handler chain is complete.

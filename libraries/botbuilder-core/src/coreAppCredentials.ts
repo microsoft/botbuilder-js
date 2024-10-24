@@ -18,12 +18,14 @@ interface CoreWebResource {
 
 /**
  * CoreAppCredentials
+ *
  * @remarks
  * Runtime-agnostic interface representing "ServiceClientCredentials" from @azure/ms-rest-js
  */
 export interface CoreAppCredentials {
     /**
      * Signs a request with the Authentication header.
+     *
      * @param {CoreWebResource} webResource The CoreWebResource/request to be signed.
      * @returns {Promise<CoreWebResource>} The signed request object;
      */

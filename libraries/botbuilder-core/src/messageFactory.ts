@@ -19,6 +19,7 @@ import { CardFactory } from './cardFactory';
 /**
  * A set of utility functions to assist with the formatting of the various message types a bot can
  * return.
+ *
  * @remarks
  * The following example shows sending a message containing a single hero card:
  *
@@ -37,6 +38,7 @@ import { CardFactory } from './cardFactory';
 export class MessageFactory {
     /**
      * Returns a simple text message.
+     *
      * @remarks
      * This example shows sending a simple text message:
      *
@@ -63,6 +65,7 @@ export class MessageFactory {
 
     /**
      * Returns a message that includes a set of suggested actions and optional text.
+     *
      * @remarks
      * This example shows creating a message with suggested actions:
      *
@@ -100,6 +103,7 @@ export class MessageFactory {
 
     /**
      * Returns a single message activity containing an attachment.
+     *
      * @remarks
      * This example shows creating a message with a hero card attachment:
      *
@@ -129,6 +133,7 @@ export class MessageFactory {
 
     /**
      * Returns a message that will display a set of attachments in list form.
+     *
      * @remarks
      * This example shows creating a message with a list of hero cards:
      *
@@ -156,6 +161,7 @@ export class MessageFactory {
 
     /**
      * Returns a message that will display a set of attachments using a carousel layout.
+     *
      * @remarks
      * This example shows creating a message with a carousel of hero cards:
      *
@@ -183,6 +189,7 @@ export class MessageFactory {
 
     /**
      * Returns a message that will display a single image or video to a user.
+     *
      * @remarks
      * This example shows sending an image to the user:
      *

@@ -65,6 +65,7 @@ export class ConfigurationServiceClientCredentialFactory extends PasswordService
 
     /**
      * Initializes a new instance of the [ConfigurationServiceClientCredentialFactory](xref:botbuilder-core.ConfigurationServiceClientCredentialFactory) class.
+     *
      * @param factoryOptions A [ConfigurationServiceClientCredentialFactoryOptions](xref:botbuilder-core.ConfigurationServiceClientCredentialFactoryOptions) object.
      */
     constructor(factoryOptions: ConfigurationServiceClientCredentialFactoryOptions = {}) {
@@ -176,6 +177,7 @@ export class ConfigurationServiceClientCredentialFactory extends PasswordService
 
 /**
  * Creates a new instance of the [ConfigurationServiceClientCredentialFactory](xref:botbuilder-core.ConfigurationServiceClientCredentialFactory) class.
+ *
  * @remarks
  * The [Configuration](xref:botbuilder-dialogs-adaptive-runtime-core.Configuration) instance provided to the constructor should
  * have the desired authentication values available at the root, using the properties of [ConfigurationServiceClientCredentialFactoryOptions](xref:botbuilder-core.ConfigurationServiceClientCredentialFactoryOptions) as its keys.

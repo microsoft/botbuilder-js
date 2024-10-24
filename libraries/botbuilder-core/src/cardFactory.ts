@@ -23,6 +23,7 @@ import {
 
 /**
  * Provides methods for formatting the various card types a bot can return.
+ *
  * @remarks
  * All of these functions return an [Attachment](xref:botframework-schema.Attachment) object,
  * which can be added to an existing activity's [attachments](xref:botframework-schema.Activity.attachments) collection directly or
@@ -61,6 +62,7 @@ export class CardFactory {
 
     /**
      * Returns an attachment for an Adaptive Card.
+     *
      * @param card A description of the Adaptive Card to return.
      * @returns An [Attachment](xref:botframework-schema.Attachment).
      * @remarks
@@ -100,6 +102,7 @@ export class CardFactory {
 
     /**
      * Returns an attachment for an animation card.
+     *
      * @param title The card title.
      * @param media The media URLs for the card.
      * @param buttons Optional. The array of buttons to include on the card. Each `string` in the array
@@ -118,6 +121,7 @@ export class CardFactory {
 
     /**
      * Returns an attachment for an audio card.
+     *
      * @param title The card title.
      * @param media The media URL for the card.
      * @param buttons Optional. The array of buttons to include on the card. Each `string` in the array
@@ -136,6 +140,7 @@ export class CardFactory {
 
     /**
      * Returns an attachment for a hero card.
+     *
      * @param title The card title.
      * @param images Optional. The array of images to include on the card. Each element can be a
      *      [CardImage](ref:botframework-schema.CardImage) or the URL of the image to include.
@@ -164,6 +169,7 @@ export class CardFactory {
     ): Attachment;
     /**
      * Returns an attachment for a hero card.
+     *
      * @param title The card title.
      * @param text The card text.
      * @param images Optional. The array of images to include on the card. Each element can be a
@@ -193,6 +199,7 @@ export class CardFactory {
     ): Attachment;
     /**
      * Returns an attachment for a hero card.
+     *
      * @param title The card title.
      * @param text Optional. The card text.
      * @param images Optional. The array of images to include on the card. Each element can be a
@@ -221,6 +228,7 @@ export class CardFactory {
 
     /**
      * Returns an attachment for an OAuth card.
+     *
      * @param connectionName The name of the OAuth connection to use.
      * @param title The title for the card's sign-in button.
      * @param text Optional. Additional text to include on the card.
@@ -253,6 +261,7 @@ export class CardFactory {
 
     /**
      * Returns an attachment for an Office 365 connector card.
+     *
      * @param card a description of the Office 365 connector card to return.
      * @returns An [Attachment](xref:botframework-schema.Attachment).
      * @remarks
@@ -279,6 +288,7 @@ export class CardFactory {
 
     /**
      * Returns an attachment for a receipt card.
+     *
      * @param card A description of the receipt card to return.
      * @returns An [Attachment](xref:botframework-schema.Attachment).
      */
@@ -288,6 +298,7 @@ export class CardFactory {
 
     /**
      * Returns an attachment for a sign-in card.
+     *
      * @param title The title for the card's sign-in button.
      * @param url The URL of the sign-in page to use.
      * @param text Optional. Additional text to include on the card.
@@ -308,6 +319,7 @@ export class CardFactory {
 
     /**
      * Returns an attachment for a thumbnail card.
+     *
      * @param title The card title.
      * @param images Optional. The array of images to include on the card. Each element can be a
      *      [CardImage](ref:botframework-schema.CardImage) or the URL of the image to include.
@@ -329,6 +341,7 @@ export class CardFactory {
     ): Attachment;
     /**
      * Returns an attachment for a thumbnail card.
+     *
      * @param title The card title.
      * @param text The card text.
      * @param images Optional. The array of images to include on the card. Each element can be a
@@ -352,6 +365,7 @@ export class CardFactory {
     ): Attachment;
     /**
      * Returns an attachment for a thumbnail card.
+     *
      * @param title The card title.
      * @param text Optional. The card text.
      * @param images Optional. The array of images to include on the card. Each element can be a
@@ -398,6 +412,7 @@ export class CardFactory {
 
     /**
      * Returns an attachment for a video card.
+     *
      * @param title The card title.
      * @param media The media URLs for the card.
      * @param buttons Optional. The array of buttons to include on the card. Each `string` in the array
@@ -416,6 +431,7 @@ export class CardFactory {
 
     /**
      * Returns a properly formatted array of actions.
+     *
      * @param actions The array of action to include on the card. Each `string` in the array
      *      is converted to an `imBack` button with a title and value set to the value of the string.
      * @returns A properly formatted array of actions.
@@ -440,6 +456,7 @@ export class CardFactory {
 
     /**
      * Returns a properly formatted array of card images.
+     *
      * @param images The array of images to include on the card. Each element can be a
      *      [CardImage](ref:botframework-schema.CardImage) or the URL of the image to include.
      * @returns A properly formatted array of card images.
@@ -459,6 +476,7 @@ export class CardFactory {
 
     /**
      * Returns a properly formatted array of media URL objects.
+     *
      * @param links The media URLs. Each `string` is converted to a media URL object.
      * @returns A properly formatted array of media URL objects.
      */

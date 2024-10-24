@@ -76,6 +76,7 @@ export interface TelemetryPageView {
 export class NullTelemetryClient implements BotTelemetryClient, BotPageViewTelemetryClient {
     /**
      * Creates a new instance of the [NullTelemetryClient](xref:botbuilder-core.NullTelemetryClient) class.
+     *
      * @param _settings Optional. Settings for the telemetry client.
      */
     constructor(_settings?: any) {
@@ -84,6 +85,7 @@ export class NullTelemetryClient implements BotTelemetryClient, BotPageViewTelem
 
     /**
      * Logs an Application Insights page view.
+     *
      * @param _telemetry An object implementing [TelemetryPageView](xref:botbuilder-core.TelemetryPageView).
      */
     trackPageView(_telemetry: TelemetryPageView) {
@@ -92,6 +94,7 @@ export class NullTelemetryClient implements BotTelemetryClient, BotPageViewTelem
 
     /**
      * Sends information about an external dependency (outgoing call) in the application.
+     *
      * @param _telemetry An object implementing [TelemetryDependency](xref:botbuilder-core.TelemetryDependency).
      */
     trackDependency(_telemetry: TelemetryDependency) {
@@ -100,6 +103,7 @@ export class NullTelemetryClient implements BotTelemetryClient, BotPageViewTelem
 
     /**
      * Logs custom events with extensible named fields.
+     *
      * @param _telemetry An object implementing [TelemetryEvent](xref:botbuilder-core.TelemetryEvent).
      */
     trackEvent(_telemetry: TelemetryEvent) {
@@ -108,6 +112,7 @@ export class NullTelemetryClient implements BotTelemetryClient, BotPageViewTelem
 
     /**
      * Logs a system exception.
+     *
      * @param _telemetry An object implementing [TelemetryException](xref:botbuilder-core.TelemetryException).
      */
     trackException(_telemetry: TelemetryException) {
@@ -116,6 +121,7 @@ export class NullTelemetryClient implements BotTelemetryClient, BotPageViewTelem
 
     /**
      * Sends a trace message.
+     *
      * @param _telemetry An object implementing [TelemetryTrace](xref:botbuilder-core.TelemetryTrace).
      */
     trackTrace(_telemetry: TelemetryTrace) {
@@ -133,6 +139,7 @@ export class NullTelemetryClient implements BotTelemetryClient, BotPageViewTelem
 /**
  * Logs a DialogView using the [trackPageView](xref:botbuilder-core.BotTelemetryClient.trackPageView) method on the [BotTelemetryClient](xref:botbuilder-core.BotTelemetryClient) if [BotPageViewTelemetryClient](xref:botbuilder-core.BotPageViewTelemetryClient) has been implemented.
  * Alternatively logs the information out via TrackTrace.
+ *
  * @param telemetryClient TelemetryClient that implements [BotTelemetryClient](xref:botbuilder-core.BotTelemetryClient).
  * @param dialogName Name of the dialog to log the entry / start for.
  * @param properties Named string values you can use to search and classify events.

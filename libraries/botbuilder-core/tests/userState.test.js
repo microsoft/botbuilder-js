@@ -12,6 +12,7 @@ describe('UserState', function () {
     const adapter = new TestAdapter();
     const context = new TurnContext(adapter, receivedMessage);
     const userState = new UserState(storage);
+
     it('should load and save state from storage.', async function () {
         // Simulate a "Turn" in a conversation by loading the state,
         // changing it and then saving the changes to state.

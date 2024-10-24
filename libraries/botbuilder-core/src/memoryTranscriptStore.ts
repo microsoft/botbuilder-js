@@ -11,6 +11,7 @@ import { PagedResult, TranscriptInfo, TranscriptStore } from './transcriptLogger
 
 /**
  * The memory transcript store stores transcripts in volatile memory in a Map.
+ *
  * @remarks
  * Because this uses an unbounded volatile dictionary this should only be used for unit tests or
  * non-production environments.
@@ -22,6 +23,7 @@ export class MemoryTranscriptStore implements TranscriptStore {
 
     /**
      * Log an activity to the transcript.
+     *
      * @param activity Activity to log.
      * @returns {Promise<void>} A promise representing the async operation.
      */
@@ -55,6 +57,7 @@ export class MemoryTranscriptStore implements TranscriptStore {
 
     /**
      * Get activities from the memory transcript store.
+     *
      * @param channelId Channel Id.
      * @param conversationId Conversation Id.
      * @param continuationToken Continuation token to page through results.
@@ -104,6 +107,7 @@ export class MemoryTranscriptStore implements TranscriptStore {
 
     /**
      * List conversations in the channelId.
+     *
      * @param channelId Channel Id.
      * @param continuationToken Continuation token to page through results.
      * @returns {Promise<PagedResult<TranscriptInfo>>} A page of conversations for a channel from the store.
@@ -148,6 +152,7 @@ export class MemoryTranscriptStore implements TranscriptStore {
 
     /**
      * Delete a specific conversation and all of it's activities.
+     *
      * @param channelId Channel Id where conversation took place.
      * @param conversationId Id of the conversation to delete.
      * @returns {Promise<void>} A promise representing the async operation.

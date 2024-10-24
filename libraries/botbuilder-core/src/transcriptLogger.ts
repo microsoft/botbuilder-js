@@ -25,6 +25,7 @@ export class TranscriptLoggerMiddleware implements Middleware {
 
     /**
      * Middleware for logging incoming and outgoing activities to a transcript store.
+     *
      * @param logger Transcript logger
      */
     constructor(logger: TranscriptLogger) {
@@ -37,6 +38,7 @@ export class TranscriptLoggerMiddleware implements Middleware {
 
     /**
      * Initialization for middleware turn.
+     *
      * @param context Context for the current turn of conversation with the user.
      * @param next Function to call at the end of the middleware chain.
      */
@@ -145,6 +147,7 @@ export class TranscriptLoggerMiddleware implements Middleware {
 
     /**
      * Logs the Activity.
+     *
      * @param transcript Array where the activity will be pushed.
      * @param activity Activity to log.
      */
@@ -161,6 +164,7 @@ export class TranscriptLoggerMiddleware implements Middleware {
 
     /**
      * Clones the Activity entity.
+     *
      * @param activity Activity to clone.
      * @returns The cloned activity.
      */
@@ -170,6 +174,7 @@ export class TranscriptLoggerMiddleware implements Middleware {
 
     /**
      * Error logging helper function.
+     *
      * @param err Error or object to console.error out.
      */
     private transcriptLoggerErrorHandler(err: Error | any): void {
@@ -190,6 +195,7 @@ export class TranscriptLoggerMiddleware implements Middleware {
 export class ConsoleTranscriptLogger implements TranscriptLogger {
     /**
      * Log an activity to the transcript.
+     *
      * @param activity Activity being logged.
      */
     logActivity(activity: Activity): void | Promise<void> {
@@ -208,6 +214,7 @@ export class ConsoleTranscriptLogger implements TranscriptLogger {
 export interface TranscriptLogger {
     /**
      * Log an activity to the transcript.
+     *
      * @param activity Activity being logged.
      */
     logActivity(activity: Activity): void | Promise<void>;
@@ -219,6 +226,7 @@ export interface TranscriptLogger {
 export interface TranscriptStore extends TranscriptLogger {
     /**
      * Get activities for a conversation (Aka the transcript)
+     *
      * @param channelId Channel Id.
      * @param conversationId Conversation Id.
      * @param continuationToken Continuation token to page through results.
@@ -233,6 +241,7 @@ export interface TranscriptStore extends TranscriptLogger {
 
     /**
      * List conversations in the channelId.
+     *
      * @param channelId Channel Id.
      * @param continuationToken Continuation token to page through results.
      */
@@ -240,6 +249,7 @@ export interface TranscriptStore extends TranscriptLogger {
 
     /**
      * Delete a specific conversation and all of its activities.
+     *
      * @param channelId Channel Id where conversation took place.
      * @param conversationId Id of the conversation to delete.
      */
@@ -268,6 +278,7 @@ export interface TranscriptInfo {
 
 /**
  * Page of results.
+ *
  * @param T type of items being paged in.
  */
 // tslint:disable-next-line:max-classes-per-file

@@ -15,6 +15,7 @@ import { v4 as uuid } from 'uuid';
 export class SkillConversationIdFactory extends SkillConversationIdFactoryBase {
     /**
      * Creates a new instance of the SkillConversationIdFactory class.
+     *
      * @param storage The storage for the [ConversationReference](xref:botframework-schema:ConversationReference) instances.
      */
     constructor(private readonly storage: Storage) {
@@ -23,6 +24,7 @@ export class SkillConversationIdFactory extends SkillConversationIdFactoryBase {
 
     /**
      * Creates a conversation ID for a skill conversation based on the caller's [ConversationReference](xref:botframework-schema:ConversationReference).
+     *
      * @param options The [SkillConversationIdFactoryOptions](xref:botbuilder-core.SkillConversationIdFactoryOptions) to use.
      * @returns {Promise<string>} A unique conversation ID used to communicate with the skill.
      */
@@ -43,6 +45,7 @@ export class SkillConversationIdFactory extends SkillConversationIdFactoryBase {
 
     /**
      * Gets the ConversationReference created using createSkillConversationId() for a skillConversationId.
+     *
      * @param skillConversationId A skill conversationId created using createSkillConversationId().
      * @returns {Promise<SkillConversationReference>} The caller's ConversationReference for a skillConversationId. Null if not found.
      */
@@ -62,6 +65,7 @@ export class SkillConversationIdFactory extends SkillConversationIdFactoryBase {
 
     /**
      * Deletes the [SkillConversationReference](xref:botbuilder-core.SkillConversationReference) from the storage.
+     *
      * @param skillConversationId The skill conversation id to use as key for the delete.
      * @returns {Promise<void>} A promise representing the asynchronous operation.
      */

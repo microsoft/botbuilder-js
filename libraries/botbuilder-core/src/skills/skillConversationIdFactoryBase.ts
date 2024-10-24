@@ -16,6 +16,7 @@ import { SkillConversationReference } from './skillConversationReference';
 export abstract class SkillConversationIdFactoryBase {
     /**
      * Creates a conversation ID for a skill conversation based on the caller's ConversationReference.
+     *
      * @param _options The [SkillConversationIdFactoryOptions](xref:botbuilder-core.SkillConversationIdFactoryOptions) to use.
      * @remarks It should be possible to use the returned string on a request URL and it should not contain special characters.
      * Returns A unique conversation ID used to communicate with the skill.
@@ -26,6 +27,7 @@ export abstract class SkillConversationIdFactoryBase {
 
     /**
      * Creates a conversation ID for a skill conversation based on the caller's ConversationReference.
+     *
      * @deprecated Method is deprecated, please use createSkillConversationIdWithOptions() with SkillConversationIdFactoryOptions instead.
      * @param _conversationReference The skill's caller ConversationReference.
      * @remarks It should be possible to use the returned string on a request URL and it should not contain special characters.
@@ -37,6 +39,7 @@ export abstract class SkillConversationIdFactoryBase {
 
     /**
      * Gets the ConversationReference created using createSkillConversationId() for a skillConversationId.
+     *
      * @deprecated Method is deprecated, please use getSkillConversationReference() instead.
      * @param _skillConversationId A skill conversationId created using createSkillConversationId().
      * @remarks Returns The caller's ConversationReference for a skillConversationId. null if not found.
@@ -47,6 +50,7 @@ export abstract class SkillConversationIdFactoryBase {
 
     /**
      * Gets the SkillConversationReference created using createSkillConversationId() for a skillConversationId.
+     *
      * @param _skillConversationId Gets the SkillConversationReference used during createSkillConversationId for a skillConversationId.
      */
     getSkillConversationReference(_skillConversationId: string): Promise<SkillConversationReference> {
@@ -55,6 +59,7 @@ export abstract class SkillConversationIdFactoryBase {
 
     /**
      * Deletes a ConversationReference.
+     *
      * @param skillConversationId A skill conversationId created using createSkillConversationId().
      */
     abstract deleteConversationReference(skillConversationId: string): Promise<void>;

@@ -27,6 +27,7 @@ module.exports = {
 
 /**
  * Loads a list of activities from a .transcript file.
+ *
  * @param {string} transcriptFilePath Relative or absolute path to .transcript file.
  */
 function getActivitiesFromTranscript(transcriptFilePath) {
@@ -35,6 +36,7 @@ function getActivitiesFromTranscript(transcriptFilePath) {
 
 /**
  * Loads a list of activities from a .chat file.
+ *
  * @param {string} chatFilePath Relative or absolute path to .chat file.
  */
 async function getActivitiesFromChat(chatFilePath) {
@@ -46,6 +48,7 @@ async function getActivitiesFromChat(chatFilePath) {
 /**
  * Creates a Mocha Test definition (Mocha.ITestDefinition) that will use the TestAdapter to test a bot logic against the specified transcript file.
  * Optionally, pass a third parameter (as function) to register middleware into the TestAdapter.
+ *
  * @param {string} relativeTranscriptPath Path to the transcript file. Can be a .chat or .transcript file.
  * @param {Function} botLogicFactoryFun Function which accepts conversationState and userState and should return the bots logic to test.
  * @param {Function} middlewareRegistrationFun (Optional) Function which accepts the testAdapter, conversationState and userState.
@@ -61,6 +64,7 @@ function assertBotLogicWithBotBuilderTranscript(relativeTranscriptPath, botLogic
 /**
  * Creates a Mocha Test definition (Mocha.ITestDefinition) that will use the TestAdapter to test a bot logic against the specified transcript file.
  * Optionally, pass a third parameter (as function) to register middleware into the TestAdapter.
+ *
  * @param {string} transcriptPath Path to the transcript file. Can be a .chat or .transcript file.
  * @param {Function} botLogicFactoryFun Function which accepts conversationState and userState and should return the bots logic to test.
  * @param {Function} middlewareRegistrationFun (Optional) Function which accepts the testAdapter, conversationState and userState.

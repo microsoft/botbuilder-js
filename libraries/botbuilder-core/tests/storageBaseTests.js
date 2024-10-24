@@ -9,6 +9,7 @@ const { BlobStorage, CosmosDbPartitionedStorage } = require('../../botbuilder-az
  *
  * All tests return true if assertions pass to indicate that the code ran to completion, passing internal assertions.
  * Therefore, all tests using theses static tests should strictly check that the method returns true.
+ *
  * @example
  * const testRan = await StorageBaseTests.returnEmptyObjectWhenReadingUnknownKey(storage);
  * assert.strictEqual(testRan, true);
