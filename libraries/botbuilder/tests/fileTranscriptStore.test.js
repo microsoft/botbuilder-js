@@ -12,10 +12,12 @@ const workingFolder = path.join(os.tmpdir(), 'botbuilder-transcript-tests');
 describe('The FileTranscriptStore', function () {
     let storage;
     const startDate = new Date();
+
     before(async function () {
         await fs.remove(workingFolder);
         storage = new FileTranscriptStore(workingFolder);
     });
+
     after(function () {
         return fs.remove(workingFolder);
     });
@@ -53,6 +55,7 @@ describe('The FileTranscriptStore', function () {
     describe('should log activities', function () {
         const conversationId = 'logActivitySpec';
         let activities;
+
         before(function () {
             activities = createActivities(conversationId, startDate);
             return Promise.all(activities.map((activity) => storage.logActivity(activity)));
@@ -156,11 +159,13 @@ describe('The FileTranscriptStore', function () {
     describe('should retrieve activities', function () {
         const conversationId = 'retrieveActivitiesSpec';
         let activities;
+
         before(function () {
             activities = createActivities(conversationId, startDate, 60);
             storage = new FileTranscriptStore(workingFolder);
             return Promise.all(activities.map((activity) => storage.logActivity(activity)));
         });
+
         after(function () {
             return fs.remove(workingFolder);
         });
@@ -245,6 +250,7 @@ describe('The FileTranscriptStore', function () {
 
     describe('should list transcripts', function () {
         let activities;
+
         before(function () {
             activities = [];
             let ct = 100;
@@ -254,6 +260,7 @@ describe('The FileTranscriptStore', function () {
             storage = new FileTranscriptStore(workingFolder);
             return Promise.all(activities.map((activity) => storage.logActivity(activity)));
         });
+
         after(function () {
             return fs.remove(workingFolder);
         });

@@ -22,6 +22,7 @@ import {
 export class ChannelServiceHandler extends ChannelServiceHandlerBase {
     /**
      * Initializes a new instance of the ChannelServiceHandler class, using a credential provider.
+     *
      * @param credentialProvider The credential provider.
      * @param authConfig The authentication configuration.
      * @param channelService A string representing the channel provider.

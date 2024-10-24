@@ -194,6 +194,7 @@ describe('TeamsSSOTokenExchangeMiddleware', function () {
         afterEach(function () {
             this.sandbox.restore();
         });
+
         it('exchange token with CloudAdapter', async function () {
             class TestCloudAdapter extends CloudAdapterBase {}
             const conversation = TestAdapter.createConversation('Convo1');

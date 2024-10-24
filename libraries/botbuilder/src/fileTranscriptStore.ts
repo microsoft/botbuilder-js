@@ -83,6 +83,7 @@ function parseActivity(json: string): Activity {
 
 /**
  * The file transcript store stores transcripts in file system with each activity as a file.
+ *
  * @remarks
  * This class provides an interface to log all incoming and outgoing activities to the filesystem.
  * It implements the features necessary to work alongside the TranscriptLoggerMiddleware plugin.
@@ -102,6 +103,7 @@ export class FileTranscriptStore implements TranscriptStore {
 
     /**
      * Creates an instance of FileTranscriptStore.
+     *
      * @param folder Root folder where transcript will be stored.
      */
     constructor(folder: string) {
@@ -114,6 +116,7 @@ export class FileTranscriptStore implements TranscriptStore {
 
     /**
      * Log an activity to the transcript.
+     *
      * @param activity Activity being logged.
      * @returns {Promise<void>} a promise representing the asynchronous operation.
      */
@@ -130,6 +133,7 @@ export class FileTranscriptStore implements TranscriptStore {
 
     /**
      * Get all activities associated with a conversation id (aka get the transcript).
+     *
      * @param channelId Channel Id.
      * @param conversationId Conversation Id.
      * @param continuationToken (Optional) Continuation token to page through results.
@@ -158,6 +162,7 @@ export class FileTranscriptStore implements TranscriptStore {
             return pagedResult;
         }
 
+        //eslint-disable-next-line security/detect-non-literal-fs-filename
         const transcriptFolderContents = await readdir(transcriptFolder);
         const include = includeWhen((fileName) => !continuationToken || parse(fileName).name === continuationToken);
         const items = transcriptFolderContents.filter(
@@ -170,6 +175,7 @@ export class FileTranscriptStore implements TranscriptStore {
                 .slice(0, FileTranscriptStore.PageSize)
                 .sort()
                 .map(async (activityFilename) => {
+                    //eslint-disable-next-line security/detect-non-literal-fs-filename
                     const json = await readFile(join(transcriptFolder, activityFilename), 'utf8');
                     return parseActivity(json);
                 }),
@@ -183,6 +189,7 @@ export class FileTranscriptStore implements TranscriptStore {
 
     /**
      * List all the logged conversations for a given channelId.
+     *
      * @param channelId Channel Id.
      * @param continuationToken (Optional) Continuation token to page through results.
      * @returns {Promise<PagedResult<TranscriptInfo>>} PagedResult of transcripts.
@@ -199,6 +206,8 @@ export class FileTranscriptStore implements TranscriptStore {
         if (!exists) {
             return pagedResult;
         }
+
+        //eslint-disable-next-line security/detect-non-literal-fs-filename
         const channels = await readdir(channelFolder);
         const items = channels.filter(includeWhen((di) => !continuationToken || di === continuationToken));
         pagedResult.items = items
@@ -214,6 +223,7 @@ export class FileTranscriptStore implements TranscriptStore {
 
     /**
      * Delete a conversation and all of it's activities.
+     *
      * @param channelId Channel Id where conversation took place.
      * @param conversationId Id of the conversation to delete.
      * @returns {Promise<void>} A promise representing the asynchronous operation.
@@ -234,6 +244,7 @@ export class FileTranscriptStore implements TranscriptStore {
 
     /**
      * Saves the [Activity](xref:botframework-schema.Activity) as a JSON file.
+     *
      * @param activity The [Activity](xref:botframework-schema.Activity) to transcript.
      * @param transcriptPath The path where the transcript will be saved.
      * @param activityFilename The name for the file.
@@ -246,6 +257,7 @@ export class FileTranscriptStore implements TranscriptStore {
         if (!exists) {
             await mkdirp(transcriptPath);
         }
+        //eslint-disable-next-line security/detect-non-literal-fs-filename
         return writeFile(join(transcriptPath, activityFilename), json, 'utf8');
     }
 

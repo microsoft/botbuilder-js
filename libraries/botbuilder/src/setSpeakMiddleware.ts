@@ -38,6 +38,7 @@ function hasTag(tag: string, nodes: unknown[]): boolean {
 export class SetSpeakMiddleware implements Middleware {
     /**
      * Initializes a new instance of the SetSpeakMiddleware class.
+     *
      * @param voiceName The SSML voice name attribute value.
      * @param fallbackToTextForSpeak true if an empty Activity.Speak is populated with Activity.Text.
      */
@@ -48,6 +49,7 @@ export class SetSpeakMiddleware implements Middleware {
 
     /**
      * Processes an incoming activity.
+     *
      * @param turnContext The context object for this turn.
      * @param next The delegate to call to continue the bot middleware pipeline.
      * @returns A promise representing the async operation.

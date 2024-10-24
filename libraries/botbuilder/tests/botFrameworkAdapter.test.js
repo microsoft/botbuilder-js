@@ -256,6 +256,7 @@ function createActivity() {
 
 describe('BotFrameworkAdapter', function () {
     let sandbox;
+
     beforeEach(function () {
         sandbox = sinon.createSandbox();
     });

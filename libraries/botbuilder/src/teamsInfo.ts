@@ -47,6 +47,7 @@ export class TeamsInfo {
     /**
      * Gets the meeting participant for the given meeting id and participant id. This only works in
      * teams scoped meeting conversations.
+     *
      * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      * @param meetingId The meeting ID to fetch
      * @param participantId The participant ID to fetch
@@ -97,6 +98,7 @@ export class TeamsInfo {
 
     /**
      * Gets the information for the given meeting id.
+     *
      * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      * @param meetingId The BASE64-encoded id of the Teams meeting.
      * @returns The [MeetingInfo](xref:botframework-schema.MeetingInfo) fetched
@@ -122,6 +124,7 @@ export class TeamsInfo {
 
     /**
      * Gets the details for the given team id. This only works in teams scoped conversations.
+     *
      * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      * @param teamId The id of the Teams team.
      * @returns The [TeamDetails](xref:botbuilder-core.TeamDetails) fetched
@@ -137,6 +140,7 @@ export class TeamsInfo {
 
     /**
      * Creates a new thread in a Teams chat and sends an [Activity](xref:botframework-schema.Activity) to that new thread.
+     *
      * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      * @param activity The [Activity](xref:botframework-schema.Activity) to send.
      * @param teamsChannelId The Team's Channel ID, note this is distinct from the Bot Framework activity property with same name.
@@ -201,6 +205,7 @@ export class TeamsInfo {
 
     /**
      * Returns a list of channels in a Team. This only works in teams scoped conversations.
+     *
      * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      * @param teamId ID of the Teams team.
      * @returns The list of [ChannelInfo](xref:botframework-schema.ChannelInfo) objects with the conversations.
@@ -217,6 +222,7 @@ export class TeamsInfo {
 
     /**
      * Gets the conversation members of a one-on-one or group chat.
+     *
      * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      * @returns The list of [TeamsChannelAccount](xref:botframework-schema.TeamsChannelAccount).
      * @deprecated Use `getPagedTeamMembers` instead.
@@ -234,6 +240,7 @@ export class TeamsInfo {
 
     /**
      * Gets a pagined list of members of one-on-one, group, or team conversation.
+     *
      * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      * @param pageSize Suggested number of entries on a page.
      * @param continuationToken A continuation token.
@@ -260,6 +267,7 @@ export class TeamsInfo {
 
     /**
      * Gets the account of a single conversation member.
+     *
      * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      * @param userId ID of the user in question.
      * @returns The [TeamsChannelAccount](xref:botframework-schema.TeamsChannelAccount) of the member.
@@ -277,6 +285,7 @@ export class TeamsInfo {
 
     /**
      * Gets the list of [TeamsChannelAccount](xref:botframework-schema.TeamsChannelAccount) within a team.
+     *
      * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      * @param teamId ID of the Teams team.
      * @returns The list of [TeamsChannelAccount](xref:botframework-schema.TeamsChannelAccount) of the members.
@@ -292,6 +301,7 @@ export class TeamsInfo {
 
     /**
      * Gets a paginated list of members of a team.
+     *
      * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      * @param teamId ID of the Teams team.
      * @param pageSize The number of entries on the page.
@@ -318,6 +328,7 @@ export class TeamsInfo {
 
     /**
      * Gets the account of a member in a teams scoped conversation.
+     *
      * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      * @param teamId ID of the Teams team.
      * @param userId ID of the Teams user.
@@ -333,6 +344,7 @@ export class TeamsInfo {
 
     /**
      * Sends a meeting notification to specific users in a Teams meeting.
+     *
      * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      * @param notification The meeting notification payload.
      * @param meetingId Id of the Teams meeting.
@@ -361,6 +373,7 @@ export class TeamsInfo {
 
     /**
      * Sends a message to the provided users in the list of Teams members.
+     *
      * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      * @param activity The activity to send.
      * @param tenantId The tenant ID.
@@ -388,6 +401,7 @@ export class TeamsInfo {
 
     /**
      * Sends a message to all the users in a tenant.
+     *
      * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      * @param activity The activity to send.
      * @param tenantId The tenant ID.
@@ -410,6 +424,7 @@ export class TeamsInfo {
 
     /**
      * Sends a message to all the users in a team.
+     *
      * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      * @param activity The activity to send.
      * @param tenantId The tenant ID.
@@ -441,6 +456,7 @@ export class TeamsInfo {
 
     /**
      * Sends a message to the provided list of Teams channels.
+     *
      * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      * @param activity The activity to send.
      * @param tenantId The tenant ID.
@@ -472,6 +488,7 @@ export class TeamsInfo {
 
     /**
      * Gets the operation state.
+     *
      * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      * @param operationId The operationId to get the state of.
      * @returns Promise with The state and responses of the operation.
@@ -486,6 +503,7 @@ export class TeamsInfo {
 
     /**
      * Gets the failed entries of an executed operation.
+     *
      * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      * @param operationId The operationId to get the failed entries of.
      * @returns Promise with the list of failed entries of the operation.
@@ -500,6 +518,7 @@ export class TeamsInfo {
 
     /**
      * Cancels a pending operation.
+     *
      * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      * @param operationId The id of the operation to cancel.
      * @returns Promise representing the asynchronous operation.

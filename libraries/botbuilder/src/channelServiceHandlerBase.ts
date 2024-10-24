@@ -25,6 +25,7 @@ import {
 export abstract class ChannelServiceHandlerBase {
     /**
      * Sends an [Activity](xref:botframework-schema.Activity) to the end of a conversation.
+     *
      * @param authHeader The authentication header.
      * @param conversationId The conversation Id.
      * @param activity The [Activity](xref:botframework-schema.Activity) to send.
@@ -41,6 +42,7 @@ export abstract class ChannelServiceHandlerBase {
 
     /**
      * Sends a reply to an [Activity](xref:botframework-schema.Activity).
+     *
      * @param authHeader The authentication header.
      * @param conversationId The conversation Id.
      * @param activityId The activity Id the reply is to.
@@ -59,6 +61,7 @@ export abstract class ChannelServiceHandlerBase {
 
     /**
      * Edits a previously sent existing [Activity](xref:botframework-schema.Activity).
+     *
      * @param authHeader The authentication header.
      * @param conversationId The conversation Id.
      * @param activityId The activity Id to update.
@@ -77,6 +80,7 @@ export abstract class ChannelServiceHandlerBase {
 
     /**
      * Deletes an existing [Activity](xref:botframework-schema.Activity).
+     *
      * @param authHeader The authentication header.
      * @param conversationId The conversation Id.
      * @param activityId The activity Id to delete.
@@ -88,6 +92,7 @@ export abstract class ChannelServiceHandlerBase {
 
     /**
      * Enumerates the members of an [Activity](xref:botframework-schema.Activity).
+     *
      * @param authHeader The authentication header.
      * @param conversationId The conversation Id.
      * @param activityId The activity Id.
@@ -104,6 +109,7 @@ export abstract class ChannelServiceHandlerBase {
 
     /**
      * Creates a new Conversation.
+     *
      * @param authHeader The authentication header.
      * @param parameters [ConversationParameters](xref:botbuilder-core.ConversationParameters) to create the conversation from.
      * @returns A `Promise` representation for the operation.
@@ -118,6 +124,7 @@ export abstract class ChannelServiceHandlerBase {
 
     /**
      * Lists the Conversations in which the bot has participated.
+     *
      * @param authHeader The authentication header.
      * @param conversationId The conversation Id.
      * @param continuationToken A skip or continuation token.
@@ -134,6 +141,7 @@ export abstract class ChannelServiceHandlerBase {
 
     /**
      * Enumerates the members of a conversation.
+     *
      * @param authHeader The authentication header.
      * @param conversationId The conversation Id.
      * @returns The enumerated [ChannelAccount](xref:botframework-schema.ChannelAccount) list.
@@ -145,6 +153,7 @@ export abstract class ChannelServiceHandlerBase {
 
     /**
      * Gets the account of a single conversation member.
+     *
      * @param authHeader The authentication header.
      * @param userId The user Id.
      * @param conversationId The conversation Id.
@@ -161,6 +170,7 @@ export abstract class ChannelServiceHandlerBase {
 
     /**
      * Enumerates the members of a conversation one page at a time.
+     *
      * @param authHeader The authentication header.
      * @param conversationId The conversation Id.
      * @param pageSize Suggested page size.
@@ -179,6 +189,7 @@ export abstract class ChannelServiceHandlerBase {
 
     /**
      * Deletes a member from a conversation.
+     *
      * @param authHeader The authentication header.
      * @param conversationId The conversation Id.
      * @param memberId Id of the member to delete from this conversation.
@@ -190,6 +201,7 @@ export abstract class ChannelServiceHandlerBase {
 
     /**
      * Uploads the historic activities of the conversation.
+     *
      * @param authHeader The authentication header.
      * @param conversationId The conversation Id.
      * @param transcript [Transcript](xref:botframework-schema.Transcript) of activities.
@@ -206,6 +218,7 @@ export abstract class ChannelServiceHandlerBase {
 
     /**
      * Stores data in a compliant store when dealing with enterprises.
+     *
      * @param authHeader The authentication header.
      * @param conversationId The conversation Id.
      * @param attachmentUpload [AttachmentData](xref:botframework-schema.AttachmentData).
@@ -222,6 +235,7 @@ export abstract class ChannelServiceHandlerBase {
 
     /**
      * SendToConversation() API for Skill.
+     *
      * @remarks
      * This method allows you to send an activity to the end of a conversation.
      * This is slightly different from ReplyToActivity().
@@ -254,6 +268,7 @@ export abstract class ChannelServiceHandlerBase {
 
     /**
      * ReplyToActivity() API for Skill.
+     *
      * @remarks
      * This method allows you to reply to an activity.
      *
@@ -289,6 +304,7 @@ export abstract class ChannelServiceHandlerBase {
 
     /**
      * UpdateActivity() API for Skill.
+     *
      * @remarks
      * Edit an existing activity.
      *
@@ -317,6 +333,7 @@ export abstract class ChannelServiceHandlerBase {
 
     /**
      * DeleteActivity() API for Skill.
+     *
      * @remarks
      * Delete an existing activity.
      *
@@ -341,6 +358,7 @@ export abstract class ChannelServiceHandlerBase {
 
     /**
      * GetActivityMembers() API for Skill.
+     *
      * @remarks
      * Enumerate the members of an activity.
      *
@@ -366,6 +384,7 @@ export abstract class ChannelServiceHandlerBase {
 
     /**
      * CreateConversation() API for Skill.
+     *
      * @remarks
      * Create a new Conversation.
      *
@@ -396,6 +415,7 @@ export abstract class ChannelServiceHandlerBase {
 
     /**
      * onGetConversations() API for Skill.
+     *
      * @remarks
      * List the Conversations in which this bot has participated.
      *
@@ -427,6 +447,7 @@ export abstract class ChannelServiceHandlerBase {
 
     /**
      * getConversationMembers() API for Skill.
+     *
      * @remarks
      * Enumerate the members of a conversation.
      *
@@ -449,6 +470,7 @@ export abstract class ChannelServiceHandlerBase {
 
     /**
      * getConversationMember() API for Skill.
+     *
      * @remarks
      * Get the account of a single conversation member.
      *
@@ -473,6 +495,7 @@ export abstract class ChannelServiceHandlerBase {
 
     /**
      * getConversationPagedMembers() API for Skill.
+     *
      * @remarks
      * Enumerate the members of a conversation one page at a time.
      *
@@ -512,6 +535,7 @@ export abstract class ChannelServiceHandlerBase {
 
     /**
      * DeleteConversationMember() API for Skill.
+     *
      * @remarks
      * Deletes a member from a conversation.
      *
@@ -537,6 +561,7 @@ export abstract class ChannelServiceHandlerBase {
 
     /**
      * SendConversationHistory() API for Skill.
+     *
      * @remarks
      * This method allows you to upload the historic activities to the
      * conversation.
@@ -564,6 +589,7 @@ export abstract class ChannelServiceHandlerBase {
 
     /**
      * UploadAttachment() API for Skill.
+     *
      * @remarks
      * Upload an attachment directly into a channel's blob storage.
      *
@@ -591,6 +617,7 @@ export abstract class ChannelServiceHandlerBase {
 
     /**
      * Helper to authenticate the header token and extract the claims.
+     *
      * @param authHeader HTTP authorization header
      * @returns a promise resolving to the authorization header claims
      */

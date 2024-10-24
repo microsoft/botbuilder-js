@@ -1148,24 +1148,6 @@ describe('TeamsActivityHandler', function () {
                 .startTest();
         });
 
-        it('handleTeamsMessagingExtensionConfigurationQuerySettingUrl is not overridden', async function () {
-            const bot = new TeamsActivityHandler();
-
-            const adapter = new TestAdapter(async (context) => {
-                await bot.run(context);
-            });
-
-            const taskSubmitActivity = createInvokeActivity('composeExtension/querySettingUrl');
-            await adapter
-                .send(taskSubmitActivity)
-                .assertReply((activity) => {
-                    assert.strictEqual(activity.type, 'invokeResponse');
-                    assert.strictEqual(activity.value.status, 501);
-                    assert.strictEqual(activity.value.body, undefined);
-                })
-                .startTest();
-        });
-
         it('handleTeamsMessagingExtensionConfigurationSetting is not overridden', async function () {
             const bot = new TeamsActivityHandler();
 

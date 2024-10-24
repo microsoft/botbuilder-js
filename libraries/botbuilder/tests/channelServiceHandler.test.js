@@ -41,6 +41,7 @@ describe('ChannelServiceHandler', function () {
     const handler = new ChannelServiceHandler(CREDENTIALS, AUTH_CONFIG, 'channels');
 
     let sandbox;
+
     beforeEach(function () {
         sandbox = sinon.createSandbox();
     });

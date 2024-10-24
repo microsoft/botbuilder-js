@@ -27,9 +27,11 @@ describe('SkillHandler', function () {
     const handler = new SkillHandler(adapter, bot, factory, creds, authConfig);
 
     let sandbox;
+
     beforeEach(function () {
         sandbox = sinon.createSandbox();
     });
+
     afterEach(function () {
         sandbox.restore();
     });

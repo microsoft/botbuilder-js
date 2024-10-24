@@ -47,6 +47,7 @@ const ActivityT = z.custom<Activity>((val) => z.record(z.unknown()).safeParse(va
 export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAdapter {
     /**
      * Initializes a new instance of the [CloudAdapter](xref:botbuilder:CloudAdapter) class.
+     *
      * @param botFrameworkAuthentication Optional [BotFrameworkAuthentication](xref:botframework-connector.BotFrameworkAuthentication) instance
      */
     constructor(botFrameworkAuthentication: BotFrameworkAuthentication = BotFrameworkAuthenticationFactory.create()) {
@@ -55,6 +56,7 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
 
     /**
      * Process a web request by applying a logic function.
+     *
      * @param req An incoming HTTP [Request](xref:botbuilder.Request)
      * @param req The corresponding HTTP [Response](xref:botbuilder.Response)
      * @param logic The logic function to apply
@@ -65,6 +67,7 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
     /**
      * Handle a web socket connection by applying a logic function to
      * each streaming request.
+     *
      * @param req An incoming HTTP [Request](xref:botbuilder.Request)
      * @param socket The corresponding [INodeSocket](xref:botframework-streaming.INodeSocket)
      * @param head The corresponding [INodeBuffer](xref:botframework-streaming.INodeBuffer)
@@ -162,6 +165,7 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
 
     /**
      * Asynchronously process an activity running the provided logic function.
+     *
      * @param authorization The authorization header in the format: "Bearer [longString]" or the AuthenticateRequestResult for this turn.
      * @param activity The activity to process.
      * @param logic The logic function to apply.
@@ -185,6 +189,7 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
 
     /**
      * Used to connect the adapter to a named pipe.
+     *
      * @param pipeName Pipe name to connect to (note: yields two named pipe servers by appending ".incoming" and ".outgoing" to this name)
      * @param logic The logic function to call for resulting bot turns.
      * @param appId The Bot application ID

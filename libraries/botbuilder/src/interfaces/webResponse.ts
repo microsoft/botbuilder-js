@@ -20,6 +20,7 @@ export interface WebResponse {
 
     /**
      * When implemented in a derived class, sends a FIN packet.
+     *
      * @param args The arguments for the end event.
      * @returns A reference to the response object.
      */
@@ -27,6 +28,7 @@ export interface WebResponse {
 
     /**
      * When implemented in a derived class, sends the response.
+     *
      * @param body The response payload.
      * @returns A reference to the response object.
      */
@@ -34,6 +36,7 @@ export interface WebResponse {
 
     /**
      * When implemented in a derived class, sets the HTTP status code for the response.
+     *
      * @param status The status code to use.
      * @returns The status code.
      */

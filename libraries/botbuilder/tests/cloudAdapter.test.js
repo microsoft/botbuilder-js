@@ -30,6 +30,7 @@ const noop = () => null;
 
 describe('CloudAdapter', function () {
     let sandbox;
+
     beforeEach(function () {
         sandbox = sinon.createSandbox({ useFakeTimers: false });
     });
@@ -85,6 +86,7 @@ describe('CloudAdapter', function () {
 
         const activity = { type: ActivityTypes.Invoke, value: 'invoke' };
         const authorization = 'Bearer Authorization';
+
         it('delegates to connect', async function () {
             const req = {};
             const socket = FakeNodeSocket();
@@ -128,6 +130,7 @@ describe('CloudAdapter', function () {
             mock.verify();
         });
 
+        //eslint-disable-next-line mocha/no-skipped-tests
         it.skip('throws exception on expired token', async function () {
             const consoleStub = sandbox.stub(console, 'error');
 

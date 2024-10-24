@@ -83,6 +83,7 @@ class TraceActivity {
 abstract class InterceptionMiddleware implements Middleware {
     /**
      * Implement middleware signature
+     *
      * @param turnContext {TurnContext} An incoming TurnContext object.
      * @param next {function} The next delegate function.
      */
@@ -164,6 +165,7 @@ abstract class InterceptionMiddleware implements Middleware {
 
 /**
  * InspectionMiddleware for emulator inspection of runtime Activities and BotState.
+ *
  * @remarks
  * InspectionMiddleware for emulator inspection of runtime Activities and BotState.
  * @deprecated This class will be removed in a future version of the framework.
@@ -179,6 +181,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
 
     /**
      * Create the Inspection middleware for sending trace activities out to an emulator session
+     *
      * @param inspectionState A state management object for inspection state.
      * @param userState A state management object for user state.
      * @param conversationState A state management object for conversation state.
@@ -202,6 +205,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
 
     /**
      * Indentifies open and attach commands and calls the appropriate method.
+     *
      * @param turnContext The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      * @returns True if the command is open or attached, otherwise false.
      */
@@ -231,6 +235,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
 
     /**
      * Processes inbound activities.
+     *
      * @param turnContext The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      * @param traceActivity The trace activity.
      * @returns {Promise<any>} A promise representing the asynchronous operation.
@@ -254,6 +259,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
 
     /**
      * Processes outbound activities.
+     *
      * @param turnContext The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      * @param traceActivities A collection of trace activities.
      */
@@ -271,6 +277,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
 
     /**
      * Processes the state management object.
+     *
      * @param turnContext The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      */
     protected async traceState(turnContext: TurnContext): Promise<any> {
@@ -433,6 +440,7 @@ class InspectionSessionsByStatus {
 
 /**
  * InspectionState for use by the InspectionMiddleware for emulator inspection of runtime Activities and BotState.
+ *
  * @remarks
  * InspectionState for use by the InspectionMiddleware for emulator inspection of runtime Activities and BotState.
  * @deprecated This class will be removed in a future version of the framework.
@@ -440,6 +448,7 @@ class InspectionSessionsByStatus {
 export class InspectionState extends BotState {
     /**
      * Creates a new instance of the [InspectionState](xref:botbuilder.InspectionState)  class.
+     *
      * @param storage The [Storage](xref:botbuilder-core.Storage) layer this state management object will use to store and retrieve state.
      */
     constructor(storage: Storage) {
@@ -450,6 +459,7 @@ export class InspectionState extends BotState {
 
     /**
      * Gets the key to use when reading and writing state to and from storage.
+     *
      * @param _turnContext The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      * @returns The storage key.
      */

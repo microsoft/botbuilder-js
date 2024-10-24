@@ -61,6 +61,7 @@ const TeamsMeetingEndT = z
 
 /**
  * Adds support for Microsoft Teams specific events and interactions.
+ *
  * @remarks
  * Developers may handle Message Update, Message Delete, and Conversation Update activities sent from Microsoft Teams via two methods:
  *  1. Overriding methods starting with `on..` and *not* ending in `..Event()` (e.g. `onTeamsMembersAdded()`), or instead
@@ -76,6 +77,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Invoked when an invoke activity is received from the connector.
      * Invoke activities can be used to communicate many different things.
+     *
      * @param context A context object for this turn.
      * @returns An Invoke Response for the activity.
      */
@@ -193,6 +195,7 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Handles a Teams Card Action Invoke activity.
+     *
      * @param _context A context object for this turn.
      * @returns An Invoke Response for the activity.
      */
@@ -202,6 +205,7 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Handles a config/fetch invoke activity.
+     *
      * @param _context A context object for this turn.
      * @param _configData The object representing the configuration.
      * @returns A Config Response for the activity.
@@ -212,6 +216,7 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Handles a config/submit invoke activity.
+     *
      * @param _context A context object for this turn.
      * @param _configData The object representing the configuration.
      * @returns A Config Response for the activity.
@@ -225,6 +230,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * `handleTeamsFileConsentAccept` and `handleTeamsFileConsentDecline`.
      * Developers are not passed a pointer to the next `handleTeamsFileConsent` handler because the _wrapper_ around
      * the handler will call `onDialogs` handlers after delegating to `handleTeamsFileConsentAccept` or `handleTeamsFileConsentDecline`.
+     *
      * @param context A context object for this turn.
      * @param fileConsentCardResponse Represents the value of the invoke activity sent when the user acts on a file consent card.
      * @returns A promise that represents the work queued.
@@ -245,6 +251,7 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Receives invoke activities with Activity name of 'fileConsent/invoke' with confirmation from user
+     *
      * @remarks
      * This type of invoke activity occur during the File Consent flow.
      * @param _context A context object for this turn.
@@ -260,6 +267,7 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Receives invoke activities with Activity name of 'fileConsent/invoke' with decline from user
+     *
      * @remarks
      * This type of invoke activity occur during the File Consent flow.
      * @param _context A context object for this turn.
@@ -275,6 +283,7 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Receives invoke activities with Activity name of 'actionableMessage/executeAction'.
+     *
      * @param _context A context object for this turn.
      * @param _query The O365 connector card HttpPOST invoke query.
      * @returns A promise that represents the work queued.
@@ -288,6 +297,7 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Invoked when a signIn invoke activity is received from the connector.
+     *
      * @param context A context object for this turn.
      * @returns A promise that represents the work queued.
      */
@@ -302,6 +312,7 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Receives invoke activities with Activity name of 'signin/verifyState'.
+     *
      * @param _context A context object for this turn.
      * @param _query Signin state (part of signin action auth flow) verification invoke query.
      * @returns A promise that represents the work queued.
@@ -315,6 +326,7 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Receives invoke activities with Activity name of 'signin/tokenExchange'
+     *
      * @param _context A context object for this turn.
      * @param _query Signin state (part of signin action auth flow) verification invoke query
      * @returns A promise that represents the work queued.
@@ -328,6 +340,7 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Receives invoke activities with Activity name of 'composeExtension/onCardButtonClicked'
+     *
      * @param _context A context object for this turn.
      * @param _cardData Object representing the card data.
      * @returns A promise that represents the work queued.
@@ -341,6 +354,7 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Receives invoke activities with Activity name of 'task/fetch'
+     *
      * @param _context A context object for this turn.
      * @param _taskModuleRequest The task module invoke request value payload.
      * @returns A Task Module Response for the request.
@@ -354,6 +368,7 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Receives invoke activities with Activity name of 'task/submit'
+     *
      * @param _context A context object for this turn.
      * @param _taskModuleRequest The task module invoke request value payload.
      * @returns A Task Module Response for the request.
@@ -367,6 +382,7 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Receives invoke activities with Activity name of 'tab/fetch'
+     *
      * @param _context A context object for this turn.
      * @param _tabRequest The tab invoke request value payload.
      * @returns A Tab Response for the request.
@@ -377,6 +393,7 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Receives invoke activities with Activity name of 'tab/submit'
+     *
      * @param _context A context object for this turn.
      * @param _tabSubmit The tab submit invoke request value payload.
      * @returns A Tab Response for the request.
@@ -387,6 +404,7 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Receives invoke activities with Activity name of 'composeExtension/queryLink'
+     *
      * @remarks
      * Used in creating a Search-based Message Extension.
      * @param _context A context object for this turn.
@@ -402,6 +420,7 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Receives invoke activities with Activity name of 'composeExtension/anonymousQueryLink'
+     *
      * @remarks
      * Used in creating a Search-based Message Extension.
      * @param _context A context object for this turn.
@@ -417,6 +436,7 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Receives invoke activities with the name 'composeExtension/query'.
+     *
      * @remarks
      * Used in creating a Search-based Message Extension.
      * @param _context A context object for this turn.
@@ -432,6 +452,7 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Receives invoke activities with the name 'composeExtension/selectItem'.
+     *
      * @remarks
      * Used in creating a Search-based Message Extension.
      * @param _context A context object for this turn.
@@ -447,6 +468,7 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Receives invoke activities with the name 'composeExtension/submitAction' and dispatches to botMessagePreview-flows as applicable.
+     *
      * @remarks
      * A handler registered through this method does not dispatch to the next handler (either `handleTeamsMessagingExtensionSubmitAction`, `handleTeamsMessagingExtensionBotMessagePreviewEdit`, or `handleTeamsMessagingExtensionBotMessagePreviewSend`).
      * This method exists for developers to optionally add more logic before the TeamsActivityHandler routes the activity to one of the
@@ -475,6 +497,7 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Receives invoke activities with the name 'composeExtension/submitAction'.
+     *
      * @param _context A context object for this turn.
      * @param _action The messaging extension action.
      * @returns The Messaging Extension Action Response for the action.
@@ -489,6 +512,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Receives invoke activities with the name 'composeExtension/submitAction' with the 'botMessagePreview' property present on activity.value.
      * The value for 'botMessagePreview' is 'edit'.
+     *
      * @param _context A context object for this turn.
      * @param _action The messaging extension action.
      * @returns The Messaging Extension Action Response for the action.
@@ -503,6 +527,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Receives invoke activities with the name 'composeExtension/submitAction' with the 'botMessagePreview' property present on activity.value.
      * The value for 'botMessagePreview' is 'send'.
+     *
      * @param _context A context object for this turn.
      * @param _action The messaging extension action.
      * @returns The Messaging Extension Action Response for the action.
@@ -516,6 +541,7 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Receives invoke activities with the name 'composeExtension/fetchTask'
+     *
      * @param _context A context object for this turn.
      * @param _action The messaging extension action.
      * @returns The Messaging Extension Action Response for the action.
@@ -529,6 +555,7 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Receives invoke activities with the name 'composeExtension/querySettingUrl'
+     *
      * @param _context A context object for this turn.
      * @param _query The Messaging extension query.
      * @returns The Messaging Extension Action Response for the query.
@@ -542,6 +569,7 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Receives invoke activities with the name 'composeExtension/setting'
+     *
      * @param _context A context object for this turn.
      * @param _settings Object representing the configuration settings.
      */
@@ -551,6 +579,7 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Override this method to change the dispatching of ConversationUpdate activities.
+     *
      * @param context A context object for this turn.
      * @returns A promise that represents the work queued.
      */
@@ -611,6 +640,7 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Override this method to change the dispatching of MessageUpdate activities.
+     *
      * @param context A context object for this turn.
      * @returns A promise that represents the work queued.
      */
@@ -635,6 +665,7 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Override this method to change the dispatching of MessageDelete activities.
+     *
      * @param context A context object for this turn.
      * @returns A promise that represents the work queued.
      */
@@ -658,6 +689,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * Called in `dispatchMessageUpdateActivity()` to trigger the `'TeamsMessageUndelete'` handlers.
      * Override this in a derived class to provide logic for when a deleted message in a conversation is undeleted.
      * For example, when the user decides to "undo" a deleted message.
+     *
      * @param context A context object for this turn.
      * @returns A promise that represents the work queued.
      */
@@ -668,6 +700,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Called in `dispatchMessageUpdateActivity()` to trigger the `'TeamsMessageEdit'` handlers.
      * Override this in a derived class to provide logic for when a message in a conversation is edited.
+     *
      * @param context A context object for this turn.
      * @returns A promise that represents the work queued.
      */
@@ -679,6 +712,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * Called in `dispatchMessageDeleteActivity()` to trigger the `'TeamsMessageEdit'` handlers.
      * Override this in a derived class to provide logic for when a message in a conversation is soft deleted.
      * This means that the message as the option of being undeleted.
+     *
      * @param context A context object for this turn.
      * @returns A promise that represents the work queued.
      */
@@ -690,6 +724,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * Called in `dispatchConversationUpdateActivity()` to trigger the `'TeamsMembersAdded'` handlers.
      * Override this in a derived class to provide logic for when members other than the bot
      * join the channel, such as your bot's welcome logic.
+     *
      * @remarks
      * If no handlers are registered for the `'TeamsMembersAdded'` event, the `'MembersAdded'` handlers will run instead.
      * @param context A context object for this turn.
@@ -745,6 +780,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * Called in `dispatchConversationUpdateActivity()` to trigger the `'TeamsMembersRemoved'` handlers.
      * Override this in a derived class to provide logic for when members other than the bot
      * leave the channel, such as your bot's good-bye logic.
+     *
      * @remarks
      * If no handlers are registered for the `'TeamsMembersRemoved'` event, the `'MembersRemoved'` handlers will run instead.
      * @param context A context object for this turn.
@@ -762,6 +798,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * Invoked when a Channel Created event activity is received from the connector.
      * Channel Created corresponds to the user creating a new channel.
      * Override this in a derived class to provide logic for when a channel is created.
+     *
      * @param context A context object for this turn.
      * @returns A promise that represents the work queued.
      */
@@ -773,6 +810,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * Invoked when a Channel Deleted event activity is received from the connector.
      * Channel Deleted corresponds to the user deleting a channel.
      * Override this in a derived class to provide logic for when a channel is deleted.
+     *
      * @param context A context object for this turn.
      * @returns A promise that represents the work queued.
      */
@@ -784,6 +822,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * Invoked when a Channel Renamed event activity is received from the connector.
      * Channel Renamed corresponds to the user renaming a new channel.
      * Override this in a derived class to provide logic for when a channel is renamed.
+     *
      * @param context A context object for this turn.
      * @returns A promise that represents the work queued.
      */
@@ -795,6 +834,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * Invoked when a Team Archived event activity is received from the connector.
      * Team Archived corresponds to the user archiving a team.
      * Override this in a derived class to provide logic for when a team is archived.
+     *
      * @param context The context for this turn.
      * @returns A promise that represents the work queued.
      */
@@ -806,6 +846,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * Invoked when a Team Deleted event activity is received from the connector.
      * Team Deleted corresponds to the user deleting a team.
      * Override this in a derived class to provide logic for when a team is deleted.
+     *
      * @param context The context for this turn.
      * @returns A promise that represents the work queued.
      */
@@ -817,6 +858,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * Invoked when a Team Hard Deleted event activity is received from the connector.
      * Team Hard Deleted corresponds to the user hard-deleting a team.
      * Override this in a derived class to provide logic for when a team is hard-deleted.
+     *
      * @param context The context for this turn.
      * @returns A promise that represents the work queued.
      */
@@ -829,6 +871,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      *Invoked when a Channel Restored event activity is received from the connector.
      *Channel Restored corresponds to the user restoring a previously deleted channel.
      *Override this in a derived class to provide logic for when a channel is restored.
+     *
      * @param context The context for this turn.
      * @returns A promise that represents the work queued.
      */
@@ -840,6 +883,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * Invoked when a Team Renamed event activity is received from the connector.
      * Team Renamed corresponds to the user renaming a team.
      * Override this in a derived class to provide logic for when a team is renamed.
+     *
      * @param context The context for this turn.
      * @returns A promise that represents the work queued.
      */
@@ -851,6 +895,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * Invoked when a Team Restored event activity is received from the connector.
      * Team Restored corresponds to the user restoring a team.
      * Override this in a derived class to provide logic for when a team is restored.
+     *
      * @param context The context for this turn.
      * @returns A promise that represents the work queued.
      */
@@ -862,6 +907,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * Invoked when a Team Unarchived event activity is received from the connector.
      * Team Unarchived corresponds to the user unarchiving a team.
      * Override this in a derived class to provide logic for when a team is unarchived.
+     *
      * @param context The context for this turn.
      * @returns A promise that represents the work queued.
      */
@@ -872,6 +918,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Registers a handler for TeamsMessageUndelete events, such as for when a message in a conversation that is
      * observed by the bot goes from a soft delete state to the normal state.
+     *
      * @param handler A callback to handle the teams undelete message event.
      * @returns A promise that represents the work queued.
      */
@@ -884,6 +931,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Registers a handler for TeamsMessageEdit events, such as for when a message in a conversation that is
      * observed by the bot is edited.
+     *
      * @param handler A callback to handle the teams edit message event.
      * @returns A promise that represents the work queued.
      */
@@ -897,6 +945,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * Registers a handler for TeamsMessageSoftDelete events, such as for when a message in a conversation that is
      * observed by the bot is soft deleted. This means that the deleted message, up to a certain time period,
      * can be undoed.
+     *
      * @param handler A callback to handle the teams edit message event.
      * @returns A promise that represents the work queued.
      */
@@ -909,6 +958,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Registers a handler for TeamsMembersAdded events, such as for when members other than the bot
      * join the channel, such as your bot's welcome logic.
+     *
      * @param handler A callback to handle the teams members added event.
      * @returns A promise that represents the work queued.
      */
@@ -929,6 +979,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Registers a handler for TeamsMembersRemoved events, such as for when members other than the bot
      * leave the channel, such as your bot's good-bye logic.
+     *
      * @param handler A callback to handle the teams members removed event.
      * @returns A promise that represents the work queued.
      */
@@ -948,6 +999,7 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Registers a handler for TeamsChannelCreated events, such as for when a channel is created.
+     *
      * @param handler A callback to handle the teams channel created event.
      * @returns A promise that represents the work queued.
      */
@@ -967,6 +1019,7 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Registers a handler for TeamsChannelDeleted events, such as for when a channel is deleted.
+     *
      * @param handler A callback to handle the teams channel deleted event.
      * @returns A promise that represents the work queued.
      */
@@ -986,6 +1039,7 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Registers a handler for TeamsChannelRenamed events, such as for when a channel is renamed.
+     *
      * @param handler A callback to handle the teams channel renamed event.
      * @returns A promise that represents the work queued.
      */
@@ -1005,6 +1059,7 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Registers a handler for TeamsTeamArchived events, such as for when a team is archived.
+     *
      * @param handler A callback to handle the teams team archived event.
      * @returns A promise that represents the work queued.
      */
@@ -1019,6 +1074,7 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Registers a handler for TeamsTeamDeleted events, such as for when a team is deleted.
+     *
      * @param handler A callback to handle the teams team deleted event.
      * @returns A promise that represents the work queued.
      */
@@ -1033,6 +1089,7 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Registers a handler for TeamsTeamHardDeleted events, such as for when a team is hard-deleted.
+     *
      * @param handler A callback to handle the teams team hard deleted event.
      * @returns A promise that represents the work queued.
      */
@@ -1047,6 +1104,7 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Registers a handler for TeamsChannelRestored events, such as for when a channel is restored.
+     *
      * @param handler A callback to handle the teams channel restored event.
      * @returns A promise that represents the work queued.
      */
@@ -1066,6 +1124,7 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Registers a handler for TeamsTeamRenamed events, such as for when a team is renamed.
+     *
      * @param handler A callback to handle the teams team renamed event.
      * @returns A promise that represents the work queued.
      */
@@ -1080,6 +1139,7 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Registers a handler for TeamsTeamRestored events, such as for when a team is restored.
+     *
      * @param handler A callback to handle the teams team restored event.
      * @returns A promise that represents the work queued.
      */
@@ -1094,6 +1154,7 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Registers a handler for TeamsTeamUnarchived events, such as for when a team is unarchived.
+     *
      * @param handler A callback to handle the teams team unarchived event.
      * @returns A promise that represents the work queued.
      */
@@ -1108,6 +1169,7 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Runs the _event_ sub-type handlers, as appropriate, and then continues the event emission process.
+     *
      * @param context The context object for the current turn.
      * @returns A promise that represents the work queued.
      * @remarks
@@ -1136,6 +1198,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Invoked when a Meeting Started event activity is received from the connector.
      * Override this in a derived class to provide logic for when a meeting is started.
+     *
      * @param context The context for this turn.
      * @returns A promise that represents the work queued.
      */
@@ -1146,6 +1209,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Invoked when a Meeting End event activity is received from the connector.
      * Override this in a derived class to provide logic for when a meeting is ended.
+     *
      * @param context The context for this turn.
      * @returns A promise that represents the work queued.
      */
@@ -1156,6 +1220,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Invoked when a read receipt for a previously sent message is received from the connector.
      * Override this in a derived class to provide logic for when the bot receives a read receipt event.
+     *
      * @param context The context for this turn.
      * @returns A promise that represents the work queued.
      */
@@ -1166,6 +1231,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Invoked when a Meeting Participant Join event activity is received from the connector.
      * Override this in a derived class to provide logic for when a meeting participant is joined.
+     *
      * @param context The context for this turn.
      * @returns A promise that represents the work queued.
      */
@@ -1176,6 +1242,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Invoked when a Meeting Participant Leave event activity is received from the connector.
      * Override this in a derived class to provide logic for when a meeting participant is left.
+     *
      * @param context The context for this turn.
      * @returns A promise that represents the work queued.
      */
@@ -1185,6 +1252,7 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Registers a handler for when a Teams meeting starts.
+     *
      * @param handler A callback that handles Meeting Start events.
      * @returns A promise that represents the work queued.
      */
@@ -1209,6 +1277,7 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Registers a handler for when a Teams meeting ends.
+     *
      * @param handler A callback that handles Meeting End events.
      * @returns A promise that represents the work queued.
      */
@@ -1233,6 +1302,7 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Registers a handler for when a Read Receipt is sent.
+     *
      * @param handler A callback that handles Read Receipt events.
      * @returns A promise that represents the work queued.
      */
@@ -1247,6 +1317,7 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Registers a handler for when a Teams meeting participant join.
+     *
      * @param handler A callback that handles Meeting Participant Join events.
      * @returns A promise that represents the work queued.
      */
@@ -1271,6 +1342,7 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Registers a handler for when a Teams meeting participant leave.
+     *
      * @param handler A callback that handles Meeting Participant Leave events.
      * @returns A promise that represents the work queued.
      */

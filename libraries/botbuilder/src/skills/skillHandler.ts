@@ -29,6 +29,7 @@ import {
 export class SkillHandler extends ChannelServiceHandler {
     /**
      * Used to access the CovnersationReference sent from the Skill to the Parent.
+     *
      * @remarks
      * The value is the same as the SkillConversationReferenceKey exported from botbuilder-core.
      */
@@ -39,6 +40,7 @@ export class SkillHandler extends ChannelServiceHandler {
 
     /**
      * Initializes a new instance of the SkillHandler class.
+     *
      * @param adapter An instance of the BotAdapter that will handle the request.
      * @param bot The ActivityHandlerBase instance.
      * @param conversationIdFactory A SkillConversationIdFactoryBase to unpack the conversation ID and map it to the calling bot.
@@ -82,6 +84,7 @@ export class SkillHandler extends ChannelServiceHandler {
 
     /**
      * sendToConversation() API for Skill.
+     *
      * @remarks
      * This method allows you to send an activity to the end of a conversation.
      *
@@ -110,6 +113,7 @@ export class SkillHandler extends ChannelServiceHandler {
 
     /**
      * replyToActivity() API for Skill.
+     *
      * @remarks
      * This method allows you to reply to an activity.
      *
@@ -141,6 +145,7 @@ export class SkillHandler extends ChannelServiceHandler {
     /**
      *
      *UpdateActivity() API for Skill.
+     *
      * @remarks
      * Edit an existing activity.
      *
@@ -165,6 +170,7 @@ export class SkillHandler extends ChannelServiceHandler {
 
     /**
      * DeleteActivity() API for Skill.
+     *
      * @remarks
      * Delete an existing activity.
      *

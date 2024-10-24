@@ -43,6 +43,7 @@ export class ChannelServiceRoutes {
 
     /**
      * Registers all Channel Service paths on the provided WebServer.
+     *
      * @param server WebServer
      * @param basePath Optional basePath which is appended before the service's REST API is configured on the WebServer.
      */

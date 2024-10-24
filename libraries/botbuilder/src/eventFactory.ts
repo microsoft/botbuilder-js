@@ -24,6 +24,7 @@ import { HandoffEventNames } from './handoffEventNames';
 export class EventFactory {
     /**
      * Create handoff initiation event.
+     *
      * @param context The context object for the turn.
      * @param handoffContext Agent hub-specific context.
      * @param transcript Transcript of the conversation.
@@ -64,6 +65,7 @@ export class EventFactory {
 
     /**
      * Create handoff status event.
+     *
      * @param conversation Conversation being handed over.
      * @param state State, possible values are: "accepted", "failed", "completed".
      * @param message Additional message for failed handoff.

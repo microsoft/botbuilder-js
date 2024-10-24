@@ -31,6 +31,7 @@ class MockResponse {
 
 describe('channelServiceRoutes', function () {
     let sandbox;
+
     beforeEach(function () {
         sandbox = sinon.createSandbox();
     });
@@ -50,6 +51,7 @@ describe('channelServiceRoutes', function () {
 
     describe('register()', function () {
         let channel, server;
+
         beforeEach(function () {
             const testHandler = sandbox.mock(ChannelServiceHandler);
             channel = new ChannelServiceRoutes(testHandler);

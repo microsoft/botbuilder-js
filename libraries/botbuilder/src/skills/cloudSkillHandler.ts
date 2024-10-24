@@ -29,6 +29,7 @@ export class CloudSkillHandler extends CloudChannelServiceHandler {
 
     /**
      * Initializes a new instance of the CloudSkillHandler class.
+     *
      * @param adapter An instance of the BotAdapter that will handle the request.
      * @param logic The Bot logic function
      * @param conversationIdFactory A SkillConversationIdFactoryBase to unpack the conversation ID and map it to the calling bot.
@@ -65,6 +66,7 @@ export class CloudSkillHandler extends CloudChannelServiceHandler {
 
     /**
      * sendToConversation() API for Skill.
+     *
      * @remarks
      * This method allows you to send an activity to the end of a conversation.
      *
@@ -93,6 +95,7 @@ export class CloudSkillHandler extends CloudChannelServiceHandler {
 
     /**
      * replyToActivity() API for Skill.
+     *
      * @remarks
      * This method allows you to reply to an activity.
      *
@@ -124,6 +127,7 @@ export class CloudSkillHandler extends CloudChannelServiceHandler {
     /**
      *
      *UpdateActivity() API for Skill.
+     *
      * @remarks
      * Edit an existing activity.
      *
@@ -148,6 +152,7 @@ export class CloudSkillHandler extends CloudChannelServiceHandler {
 
     /**
      * DeleteActivity() API for Skill.
+     *
      * @remarks
      * Delete an existing activity.
      *
@@ -168,6 +173,7 @@ export class CloudSkillHandler extends CloudChannelServiceHandler {
 
     /**
      * getConversationMember() API for Skill.
+     *
      * @remarks
      * Get the account of a single conversation member.
      *

@@ -1729,14 +1729,14 @@ describe('TeamsInfo', function () {
         });
 
         describe('getMembersInternal()', function () {
-            it('should error if an invalid conversationId is passed in.', async function () {
+            it('getMembers should throw error if an invalid conversationId is passed in.', async function () {
                 await assert.rejects(
                     TeamsInfo.getMembersInternal({}, undefined),
                     new Error('The getMembers operation needs a valid conversationId.'),
                 );
             });
 
-            it('should error if an invalid conversationId is passed in.', async function () {
+            it('getMember should throw error if an invalid conversationId is passed in.', async function () {
                 await assert.rejects(
                     TeamsInfo.getMemberInternal({}, undefined),
                     new Error('The getMember operation needs a valid conversationId.'),
@@ -1753,6 +1753,7 @@ describe('TeamsInfo', function () {
 
         describe('getPagedMembersInternal()', function () {
             let sandbox;
+
             beforeEach(function () {
                 sandbox = sinon.createSandbox();
             });

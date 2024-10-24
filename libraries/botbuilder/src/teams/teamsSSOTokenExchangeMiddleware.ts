@@ -71,6 +71,7 @@ const ExchangeToken = z.custom<Pick<ExtendedUserTokenProvider, 'exchangeToken'>>
 export class TeamsSSOTokenExchangeMiddleware implements Middleware {
     /**
      * Initializes a new instance of the TeamsSSOTokenExchangeMiddleware class.
+     *
      * @param storage The [Storage](xref:botbuilder-core.Storage) to use for deduplication
      * @param oAuthConnectionName The connection name to use for the single sign on token exchange
      */
@@ -89,6 +90,7 @@ export class TeamsSSOTokenExchangeMiddleware implements Middleware {
 
     /**
      * Called each time the bot receives a new request.
+     *
      * @param context Context for current turn of conversation with the user.
      * @param next Function to call to continue execution to the next step in the middleware chain.
      */

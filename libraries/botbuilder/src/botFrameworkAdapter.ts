@@ -167,6 +167,7 @@ const US_GOV_OAUTH_ENDPOINT = 'https://api.botframework.azure.us';
 /**
  * A [BotAdapter](xref:botbuilder-core.BotAdapter) that can connect a bot to a service endpoint.
  * Implements [IUserTokenProvider](xref:botbuilder-core.IUserTokenProvider).
+ *
  * @remarks
  * The bot adapter encapsulates authentication processes and sends activities to and receives
  * activities from the Bot Connector Service. When your bot receives an activity, the adapter
@@ -227,6 +228,7 @@ export class BotFrameworkAdapter
 
     /**
      * Creates a new instance of the [BotFrameworkAdapter](xref:botbuilder.BotFrameworkAdapter) class.
+     *
      * @param settings Optional. The settings to use for this adapter instance.
      * @remarks
      * If the `settings` parameter does not include
@@ -314,6 +316,7 @@ export class BotFrameworkAdapter
 
     /**
      * Used in streaming contexts to check if the streaming connection is still open for the bot to send activities.
+     *
      * @returns True if the streaming connection is open, otherwise false.
      */
     get isStreamingConnectionOpen(): boolean {
@@ -322,6 +325,7 @@ export class BotFrameworkAdapter
 
     /**
      * Asynchronously resumes a conversation with a user, possibly after some time has gone by.
+     *
      * @param reference A reference to the conversation to continue.
      * @param oAuthScope The intended recipient of any sent activities.
      * @param logic The asynchronous method to call after the adapter middleware runs.
@@ -371,6 +375,7 @@ export class BotFrameworkAdapter
 
     /**
      * Asynchronously resumes a conversation with a user, possibly after some time has gone by.
+     *
      * @param reference [ConversationReference](xref:botframework-schema.ConversationReference) of the conversation to continue.
      * @param oAuthScope The intended recipient of any sent activities or the function to call to continue the conversation.
      * @param logic Optional. The asynchronous method to call after the adapter middleware runs.
@@ -436,6 +441,7 @@ export class BotFrameworkAdapter
 
     /**
      * Asynchronously creates and starts a conversation with a user on a channel.
+     *
      * @param {Partial<ConversationReference>} reference A reference for the conversation to create.
      * @param {(context: TurnContext) => Promise<void>} logic The asynchronous method to call after the adapter middleware runs.
      * @returns {Promise<void>} a promise representing the asynchronous operation
@@ -484,6 +490,7 @@ export class BotFrameworkAdapter
 
     /**
      * Asynchronously creates and starts a conversation with a user on a channel.
+     *
      * @param {Partial<ConversationReference>} reference A reference for the conversation to create.
      * @param {Partial<ConversationParameters>} parameters Parameters used when creating the conversation
      * @param {(context: TurnContext) => Promise<void>} logic The asynchronous method to call after the adapter middleware runs.
@@ -572,6 +579,7 @@ export class BotFrameworkAdapter
      * This interface supports the framework and is not intended to be called directly for your code.
      * Use [TurnContext.deleteActivity](xref:botbuilder-core.TurnContext.deleteActivity) to delete
      * an activity from your bot code.
+     *
      * @param context The context object for the turn.
      * @param reference Conversation reference information for the activity to delete.
      * @remarks
@@ -597,6 +605,7 @@ export class BotFrameworkAdapter
 
     /**
      * Asynchronously removes a member from the current conversation.
+     *
      * @param context The context object for the turn.
      * @param memberId The ID of the member to remove from the conversation.
      * @remarks
@@ -619,6 +628,7 @@ export class BotFrameworkAdapter
 
     /**
      * Asynchronously lists the members of a given activity.
+     *
      * @param context The context object for the turn.
      * @param activityId Optional. The ID of the activity to get the members of. If not specified, the current activity ID is used.
      * @returns An array of [ChannelAccount](xref:botframework-schema.ChannelAccount) objects for
@@ -654,6 +664,7 @@ export class BotFrameworkAdapter
 
     /**
      * Asynchronously lists the members of the current conversation.
+     *
      * @param context The context object for the turn.
      * @returns An array of [ChannelAccount](xref:botframework-schema.ChannelAccount) objects for
      * all users currently involved in a conversation.
@@ -680,6 +691,7 @@ export class BotFrameworkAdapter
 
     /**
      * For the specified channel, asynchronously gets a page of the conversations in which this bot has participated.
+     *
      * @param contextOrServiceUrl The URL of the channel server to query or a
      * [TurnContext](xref:botbuilder-core.TurnContext) object from a conversation on the channel.
      * @param continuationToken Optional. The continuation token from the previous page of results.
@@ -718,6 +730,7 @@ export class BotFrameworkAdapter
 
     /**
      * Asynchronously attempts to retrieve the token for a user that's in a login flow.
+     *
      * @param context The context object for the turn.
      * @param connectionName The name of the auth connection to use.
      * @param magicCode Optional. The validation code the user entered.
@@ -733,6 +746,7 @@ export class BotFrameworkAdapter
     ): Promise<TokenResponse>;
     /**
      * Asynchronously attempts to retrieve the token for a user that's in a login flow.
+     *
      * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for the turn.
      * @param connectionName The name of the auth connection to use.
      * @param magicCode Optional. The validation code the user entered.
@@ -771,6 +785,7 @@ export class BotFrameworkAdapter
 
     /**
      * Asynchronously signs out the user from the token server.
+     *
      * @param context The context object for the turn.
      * @param connectionName The name of the auth connection to use.
      * @param userId The ID of user to sign out.
@@ -785,6 +800,7 @@ export class BotFrameworkAdapter
     ): Promise<void>;
     /**
      * Asynchronously signs out the user from the token server.
+     *
      * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for the turn.
      * @param connectionName Optional. The name of the auth connection to use.
      * @param userId Optional. The ID of the user to sign out.
@@ -817,6 +833,7 @@ export class BotFrameworkAdapter
     /**
      * Asynchronously gets a sign-in link from the token server that can be sent as part
      * of a [SigninCard](xref:botframework-schema.SigninCard).
+     *
      * @param context The context object for the turn.
      * @param connectionName The name of the auth connection to use.
      * @param oAuthAppCredentials AppCredentials for OAuth.
@@ -840,6 +857,7 @@ export class BotFrameworkAdapter
     /**
      * Asynchronously gets a sign-in link from the token server that can be sent as part
      * of a [SigninCard](xref:botframework-schema.SigninCard).
+     *
      * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for the turn.
      * @param connectionName The name of the auth connection to use.
      * @param oAuthAppCredentials Optional. [AppCredentials](xref:botframework-connector.AppCredentials) for OAuth.
@@ -880,6 +898,7 @@ export class BotFrameworkAdapter
 
     /**
      * Asynchronously retrieves the token status for each configured connection for the given user.
+     *
      * @param context The context object for the turn.
      * @param userId Optional. If present, the ID of the user to retrieve the token status for.
      *      Otherwise, the ID of the user who sent the current activity is used.
@@ -897,6 +916,7 @@ export class BotFrameworkAdapter
     ): Promise<TokenStatus[]>;
     /**
      * Asynchronously retrieves the token status for each configured connection for the given user.
+     *
      * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for the turn.
      * @param userId Optional. If present, the ID of the user to retrieve the token status for.
      * Otherwise, the ID of the user who sent the current activity is used.
@@ -930,6 +950,7 @@ export class BotFrameworkAdapter
 
     /**
      * Asynchronously signs out the user from the token server.
+     *
      * @param context The context object for the turn.
      * @param connectionName The name of the auth connection to use.
      * @param resourceUrls The list of resource URLs to retrieve tokens for.
@@ -949,6 +970,7 @@ export class BotFrameworkAdapter
     ): Promise<{ [propertyName: string]: TokenResponse }>;
     /**
      * Asynchronously signs out the user from the token server.
+     *
      * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for the turn.
      * @param connectionName The name of the auth connection to use.
      * @param resourceUrls The list of resource URLs to retrieve tokens for.
@@ -982,6 +1004,7 @@ export class BotFrameworkAdapter
 
     /**
      * Asynchronously Get the raw signin resource to be sent to the user for signin.
+     *
      * @param context The context object for the turn.
      * @param connectionName The name of the auth connection to use.
      * @param userId The user id that will be associated with the token.
@@ -1030,6 +1053,7 @@ export class BotFrameworkAdapter
 
     /**
      * Asynchronously Performs a token exchange operation such as for single sign-on.
+     *
      * @param context Context for the current turn of conversation with the user.
      * @param connectionName Name of the auth connection to use.
      * @param userId The user id that will be associated with the token.
@@ -1045,6 +1069,7 @@ export class BotFrameworkAdapter
     ): Promise<TokenResponse>;
     /**
      * Asynchronously Performs a token exchange operation such as for single sign-on.
+     *
      * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for the turn.
      * @param connectionName Name of the auth connection to use.
      * @param userId The user id that will be associated with the token.
@@ -1090,6 +1115,7 @@ export class BotFrameworkAdapter
      * Asynchronously sends an emulated OAuth card for a channel.
      *
      * This method supports the framework and is not intended to be called directly for your code.
+     *
      * @param contextOrServiceUrl The URL of the emulator.
      * @param emulate `true` to send an emulated OAuth card to the emulator; or `false` to not send the card.
      * @remarks
@@ -1103,6 +1129,7 @@ export class BotFrameworkAdapter
 
     /**
      * Asynchronously creates a turn context and runs the middleware pipeline for an incoming activity.
+     *
      * @param req An Express or Restify style request object.
      * @param res An Express or Restify style response object.
      * @param logic The function to call at the end of the middleware pipeline.
@@ -1243,6 +1270,7 @@ export class BotFrameworkAdapter
      * Asynchronously creates a turn context and runs the middleware pipeline for an incoming activity.
      *
      * Use [CloudAdapter.processActivityDirect] instead.
+     *
      * @param activity The activity to process.
      * @param logic The function to call at the end of the middleware pipeline.
      * @remarks
@@ -1291,6 +1319,7 @@ export class BotFrameworkAdapter
      * This method supports the framework and is not intended to be called directly for your code.
      * Use the turn context's [sendActivity](xref:botbuilder-core.TurnContext.sendActivity) or
      * [sendActivities](xref:botbuilder-core.TurnContext.sendActivities) method from your bot code.
+     *
      * @param context The context object for the turn.
      * @param activities The activities to send.
      * @returns An array of [ResourceResponse](xref:)
@@ -1358,6 +1387,7 @@ export class BotFrameworkAdapter
      * This interface supports the framework and is not intended to be called directly for your code.
      * Use [TurnContext.updateActivity](xref:botbuilder-core.TurnContext.updateActivity) to update
      * an activity from your bot code.
+     *
      * @param context The context object for the turn.
      * @param activity The updated version of the activity to replace.
      * @returns A `Promise` representing the [ResourceResponse](xref:botframework-schema.ResourceResponse) for the operation.
@@ -1381,6 +1411,7 @@ export class BotFrameworkAdapter
 
     /**
      * Creates a connector client.
+     *
      * @param serviceUrl The client's service URL.
      * @returns The [ConnectorClient](xref:botbuilder-connector.ConnectorClient) instance.
      * @remarks
@@ -1392,6 +1423,7 @@ export class BotFrameworkAdapter
 
     /**
      * Create a ConnectorClient with a ClaimsIdentity.
+     *
      * @remarks
      * If the ClaimsIdentity contains the claims for a Skills request, create a ConnectorClient for use with Skills.
      * Derives the correct audience from the ClaimsIdentity, or the instance's credentials property.
@@ -1401,6 +1433,7 @@ export class BotFrameworkAdapter
     async createConnectorClientWithIdentity(serviceUrl: string, identity: ClaimsIdentity): Promise<ConnectorClient>;
     /**
      * Create a ConnectorClient with a ClaimsIdentity and an explicit audience.
+     *
      * @remarks
      * If the trimmed audience is not a non-zero length string, the audience will be derived from the ClaimsIdentity or
      * the instance's credentials property.
@@ -1415,6 +1448,7 @@ export class BotFrameworkAdapter
     ): Promise<ConnectorClient>;
     /**
      * Create a [ConnectorClient](xref:botbuilder-connector.ConnectorClient) with a [ClaimsIdentity](xref:botbuilder-connector.ClaimsIdentity).
+     *
      * @remarks
      * If the [ClaimsIdentity](xref:botbuilder-connector.ClaimsIdentity) contains the claims for a Skills request, create a [ConnectorClient](xref:botbuilder-connector.ConnectorClient) for use with Skills.
      * Derives the correct audience from the [ClaimsIdentity](xref:botbuilder-connector.ClaimsIdentity), or the instance's credentials property.
@@ -1537,6 +1571,7 @@ export class BotFrameworkAdapter
 
     /**
      * Returns the correct [OAuthScope](xref:botframework-connector.AppCredentials.OAuthScope) for [AppCredentials](xref:botframework-connector.AppCredentials).
+     *
      * @param botAppId The bot's AppId.
      * @param claims The [Claim](xref:botbuilder-connector.Claim) list to check.
      * @returns The current credentials' OAuthScope.
@@ -1596,6 +1631,7 @@ export class BotFrameworkAdapter
 
     /**
      * Creates an OAuth API client.
+     *
      * @param serviceUrl The client's service URL.
      * @param oAuthAppCredentials AppCredentials for OAuth.
      * @remarks
@@ -1604,6 +1640,7 @@ export class BotFrameworkAdapter
     protected createTokenApiClient(serviceUrl: string, oAuthAppCredentials?: CoreAppCredentials): TokenApiClient;
     /**
      * Creates an OAuth API client.
+     *
      * @param serviceUrl The client's service URL.
      * @param oAuthAppCredentials Optional. The [AppCredentials](xref:botframework-connector.AppCredentials)for OAuth.
      * @remarks
@@ -1619,6 +1656,7 @@ export class BotFrameworkAdapter
 
     /**
      * Allows for the overriding of authentication in unit tests.
+     *
      * @param request Received request.
      * @param authHeader Received authentication header.
      */
@@ -1655,6 +1693,7 @@ export class BotFrameworkAdapter
     /**
      * Generates the CallerId property for the activity based on
      * https://github.com/microsoft/botframework-obi/blob/main/protocols/botframework-activity/botframework-activity.md#appendix-v---caller-id-values.
+     *
      * @param identity The inbound claims.
      * @returns {Promise<string>} a promise representing the generated callerId.
      */
@@ -1691,6 +1730,7 @@ export class BotFrameworkAdapter
 
     /**
      * Gets the OAuth API endpoint.
+     *
      * @param contextOrServiceUrl The URL of the channel server to query or
      * a [TurnContext](xref:botbuilder-core.TurnContext). For a turn context, the context's
      * [activity](xref:botbuilder-core.TurnContext.activity).[serviceUrl](xref:botframework-schema.Activity.serviceUrl)
@@ -1713,6 +1753,7 @@ export class BotFrameworkAdapter
 
     /**
      * Checks the environment and can set a flag to emulate OAuth cards.
+     *
      * @param context The context object for the turn.
      * @remarks
      * Override this in a derived class to control how OAuth cards are emulated for unit testing.
@@ -1725,6 +1766,7 @@ export class BotFrameworkAdapter
 
     /**
      * Creates a turn context.
+     *
      * @param request An incoming request body.
      * @returns A new [TurnContext](xref:botbuilder-core.TurnContext) instance.
      * @remarks
@@ -1737,6 +1779,7 @@ export class BotFrameworkAdapter
     /**
      * Checks the validity of the request and attempts to map it the correct virtual endpoint,
      * then generates and returns a response if appropriate.
+     *
      * @param request A ReceiveRequest from the connected channel.
      * @returns A response created by the BotAdapter to be sent to the client that originated the request.
      */
@@ -1824,6 +1867,7 @@ export class BotFrameworkAdapter
 
     /**
      * Process a web request by applying a logic function.
+     *
      * @param req An incoming HTTP [Request](xref:botbuilder.Request)
      * @param res The corresponding HTTP [Response](xref:botbuilder.Response)
      * @param logic The logic function to apply
@@ -1834,6 +1878,7 @@ export class BotFrameworkAdapter
     /**
      * Handle a web socket connection by applying a logic function to
      * each streaming request.
+     *
      * @param req An incoming HTTP [Request](xref:botbuilder.Request)
      * @param socket The corresponding [INodeSocket](xref:botframework-streaming.INodeSocket)
      * @param head The corresponding [INodeBuffer](xref:botframework-streaming.INodeBuffer)
@@ -1870,6 +1915,7 @@ export class BotFrameworkAdapter
 
     /**
      * Connects the handler to a Named Pipe server and begins listening for incoming requests.
+     *
      * @param logic The logic that will handle incoming requests.
      * @param pipeName The name of the named pipe to use when creating the server.
      * @param retryCount Number of times to attempt to bind incoming and outgoing pipe
@@ -1907,6 +1953,7 @@ export class BotFrameworkAdapter
 
     /**
      * Process the initial request to establish a long lived connection via a streaming server.
+     *
      * @param req The connection request.
      * @param socket The raw socket connection between the bot (server) and channel/caller (client).
      * @param head The first packet of the upgraded stream.
@@ -1974,6 +2021,7 @@ export class BotFrameworkAdapter
 
     /**
      * Connects the handler to a WebSocket server and begins listening for incoming requests.
+     *
      * @param socket The socket to use when creating the server.
      */
     private async startWebSocket(socket: ISocket): Promise<void> {
@@ -2043,6 +2091,7 @@ export class BotFrameworkAdapter
      * This can be determined by looking at the ServiceUrl property:
      * (1) All channels that send messages via http/https are not streaming
      * (2) Channels that send messages via streaming have a ServiceUrl that does not begin with http/https.
+     *
      * @param serviceUrl the serviceUrl provided in the resquest.
      * @returns True if the serviceUrl is a streaming url, otherwise false.
      */
@@ -2085,6 +2134,7 @@ function parseRequest(req: WebRequest): Promise<Activity> {
 
 /**
  * Creates an error message with status code to write to socket, then closes the connection.
+ *
  * @param socket The raw socket connection between the bot (server) and channel/caller (client).
  * @param err The error. If the error includes a status code, it will be included in the message written to the socket.
  */

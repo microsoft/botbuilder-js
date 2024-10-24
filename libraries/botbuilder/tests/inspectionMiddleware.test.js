@@ -39,6 +39,7 @@ describe('InspectionMiddleware', function () {
         assert(adapter.activityBuffer[0].type === 'message', 'expected a message activity');
         assert(adapter.activityBuffer[0].text === 'hi', "expected text saying 'hi'");
     });
+
     it('should replicate activity data to listening emulator following open and attach', async function () {
         // set up our expectations in nock - each corresponds to a trace message we expect to receive in the emulator
 
@@ -133,6 +134,7 @@ describe('InspectionMiddleware', function () {
         );
         assert(stateExpectation.isDone(), 'The expectation of a trace message for the bot state was not met');
     });
+
     it('should replicate activity data to listening emulator following open and attach with at mention', async function () {
         // set up our expectations in nock - each corresponds to a trace message we expect to receive in the emulator
 
@@ -245,6 +247,7 @@ describe('InspectionMiddleware', function () {
         );
         assert(stateExpectation.isDone(), 'The expectation of a trace message for the bot state was not met');
     });
+
     it('should replicate activity data to listening emulator following open and attach within Teams Team', async function () {
         // set up our expectations in nock - each corresponds to a trace message we expect to receive in the emulator
 

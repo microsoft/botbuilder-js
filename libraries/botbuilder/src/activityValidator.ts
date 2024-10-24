@@ -10,6 +10,7 @@ import { Activity, ActivityTimestamps } from 'botbuilder-core';
 
 /**
  * Validates an [Activity](xref:botbuilder-core.Activity) and formats the timestamp fields.
+ *
  * @param activity [Activity](xref:botbuilder-core.Activity) to be validated.
  * @returns The [Activity](xref:botframework-schema.Activity).
  */
