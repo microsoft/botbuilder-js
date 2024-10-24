@@ -41,7 +41,10 @@ export class HttpContent {
      * @param headers The Streaming Http content header definition.
      * @param stream The stream of buffered data.
      */
-    constructor(public headers: IHttpContentHeaders, private readonly stream: SubscribableStream) {}
+    constructor(
+        public headers: IHttpContentHeaders,
+        private readonly stream: SubscribableStream,
+    ) {}
 
     /**
      * Gets the data contained within this [HttpContent](xref:botframework-streaming.HttpContent).

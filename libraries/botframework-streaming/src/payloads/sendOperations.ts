@@ -41,11 +41,9 @@ export class SendOperations {
         await disassembler.disassemble();
 
         if (request.streams) {
-            request.streams.forEach(
-                async (contentStream): Promise<void> => {
-                    await new HttpContentStreamDisassembler(this.payloadSender, contentStream).disassemble();
-                }
-            );
+            request.streams.forEach(async (contentStream): Promise<void> => {
+                await new HttpContentStreamDisassembler(this.payloadSender, contentStream).disassemble();
+            });
         }
     }
 
@@ -61,11 +59,9 @@ export class SendOperations {
         await disassembler.disassemble();
 
         if (response.streams) {
-            response.streams.forEach(
-                async (contentStream): Promise<void> => {
-                    await new HttpContentStreamDisassembler(this.payloadSender, contentStream).disassemble();
-                }
-            );
+            response.streams.forEach(async (contentStream): Promise<void> => {
+                await new HttpContentStreamDisassembler(this.payloadSender, contentStream).disassemble();
+            });
         }
     }
 

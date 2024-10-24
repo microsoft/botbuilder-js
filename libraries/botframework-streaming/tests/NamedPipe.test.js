@@ -354,7 +354,7 @@ describe.windowsOnly('Streaming Extensions NamedPipe Library Tests', function ()
                                 err.server = server;
                                 throw err;
                             }
-                        })
+                        }),
                     ),
                     (err) => {
                         // Verify we did get an addr in use error
@@ -363,12 +363,12 @@ describe.windowsOnly('Streaming Extensions NamedPipe Library Tests', function ()
                         assert(err.server, 'server attached to error');
                         assert(
                             err.server._incomingServer && !err.server._incomingServer.listening,
-                            'incoming server attached but not listening'
+                            'incoming server attached but not listening',
                         );
                         assert(!err.server._outgoingServer, 'no outgoing server attached');
 
                         return true;
-                    }
+                    },
                 );
             } finally {
                 servers.forEach((server) => server.disconnect());

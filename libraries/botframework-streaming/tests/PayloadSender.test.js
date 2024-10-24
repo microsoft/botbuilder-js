@@ -95,7 +95,7 @@ describe('PayloadTransport', function () {
                     } catch (e) {
                         done(e);
                     }
-                })
+                }),
             );
         });
 
@@ -182,7 +182,7 @@ describe('PayloadTransport', function () {
             pr.subscribe(
                 (header) => assemblerManager.getPayloadStream(header),
                 (header, contentStream, contentLength) =>
-                    assemblerManager.onReceive(header, contentStream, contentLength)
+                    assemblerManager.onReceive(header, contentStream, contentLength),
             );
 
             expect(() => pr.connect(sock)).to.not.throw();

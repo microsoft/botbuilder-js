@@ -50,7 +50,7 @@ describe('Streaming Extensions ProtocolAdapter', function () {
             requestHandler,
             requestManager,
             payloadSender,
-            payloadReceiver
+            payloadReceiver,
         );
 
         expect(protocolAdapter.assemblerManager).to.not.be.undefined;
@@ -79,7 +79,7 @@ describe('Streaming Extensions ProtocolAdapter', function () {
             requestHandler,
             requestManager,
             payloadSender,
-            payloadReceiver
+            payloadReceiver,
         );
 
         const requestHandlerSpy = sinon.spy(requestHandler, 'processRequest');
@@ -99,7 +99,7 @@ describe('Streaming Extensions ProtocolAdapter', function () {
             requestHandler,
             requestManager,
             payloadSender,
-            payloadReceiver
+            payloadReceiver,
         );
 
         const requestManagerSpy = sinon.spy(requestManager, 'signalResponse');
@@ -119,7 +119,7 @@ describe('Streaming Extensions ProtocolAdapter', function () {
             requestHandler,
             requestManager,
             payloadSender,
-            payloadReceiver
+            payloadReceiver,
         );
         const header = { payloadType: 'A', payloadLength: '5', id: '100', end: true };
         const assembler = new PayloadAssembler.PayloadAssembler(new StreamManager.StreamManager(), {
@@ -139,7 +139,7 @@ describe('Streaming Extensions ProtocolAdapter', function () {
             requestHandler,
             requestManager,
             payloadSender,
-            payloadReceiver
+            payloadReceiver,
         );
 
         expect(() => protocolAdapter.sendRequest(new Request.StreamingRequest())).to.not.throw();
@@ -159,7 +159,7 @@ describe('Streaming Extensions ProtocolAdapter', function () {
         };
         const s = new SubscribableStream.SubscribableStream();
         s.write(
-            '{"statusCode": "12345","streams": [{"id": "1","contentType": "text","length": "2"},{"id": "2","contentType": "text","length": "2"},{"id": "3","contentType": "text","length": "2"}]}'
+            '{"statusCode": "12345","streams": [{"id": "1","contentType": "text","length": "2"},{"id": "2","contentType": "text","length": "2"},{"id": "3","contentType": "text","length": "2"}]}',
         );
         const rp = { verb: 'POST', path: '/some/path' };
         rp.streams = [];

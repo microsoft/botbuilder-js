@@ -76,7 +76,7 @@ describe('Streaming Extensions ContentStream Tests ', function () {
             new PayloadAssembler(streamManager, {
                 id: 'csa1',
                 header: { ...header, payloadLength: 0 },
-            })
+            }),
         );
 
         return cs.readAsString().then((data) => {
@@ -93,7 +93,7 @@ describe('Streaming Extensions ContentStream Tests ', function () {
             new PayloadAssembler(streamManager, {
                 id: 'csa1',
                 header: assemblerHeader,
-            })
+            }),
         );
 
         return cs

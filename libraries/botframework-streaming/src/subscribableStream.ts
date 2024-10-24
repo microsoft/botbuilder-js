@@ -14,7 +14,7 @@ export class SubscribableStream extends Duplex {
     length = 0;
 
     private readonly bufferList: Buffer[] = [];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     private _onData: (chunk: any) => void;
 
     /**
@@ -34,7 +34,7 @@ export class SubscribableStream extends Duplex {
      * @param _encoding The encoding. Unused in the implementation of Duplex.
      * @param callback Callback for when this chunk of data is flushed.
      */
-    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
+
     _write(chunk: any, _encoding: string, callback: (error?: Error | null) => void): void {
         const buffer = Buffer.from(chunk);
         this.bufferList.push(buffer);
@@ -72,7 +72,7 @@ export class SubscribableStream extends Duplex {
      *
      * @param onData Callback to be called when onData is executed.
      */
-    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
+
     subscribe(onData: (chunk: any) => void): void {
         this._onData = onData;
     }

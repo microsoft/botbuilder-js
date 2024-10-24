@@ -213,7 +213,7 @@ describe('PayloadAssemblerManager', function () {
             end: true,
         };
         expect(() => new PayloadAssembler(streamManager, { header })).to.throw(
-            'An ID must be supplied when creating an assembler.'
+            'An ID must be supplied when creating an assembler.',
         );
     });
 
@@ -221,7 +221,7 @@ describe('PayloadAssemblerManager', function () {
         const header = { payloadType: PayloadTypes.response, payloadLength: '5', id: '96', end: true };
         const s = new SubscribableStream();
         s.write(
-            '{"statusCode": "12345","streams": [{"id": "1","contentType": "text","length": "2"},{"id": "2","contentType": "text","length": "2"},{"id": "3","contentType": "text","length": "2"}]}'
+            '{"statusCode": "12345","streams": [{"id": "1","contentType": "text","length": "2"},{"id": "2","contentType": "text","length": "2"},{"id": "3","contentType": "text","length": "2"}]}',
         );
         const rp = { verb: 'POST', path: '/some/path' };
         rp.streams = [];

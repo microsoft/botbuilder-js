@@ -12,7 +12,6 @@
  * This interface supports the framework and is not intended to be called directly for your code.
  */
 export interface IEventEmitter {
-    /* eslint-disable @typescript-eslint/no-explicit-any */
     addListener(event: string | symbol, listener: (...args: any[]) => void): this;
     emit(event: string | symbol, ...args: any[]): boolean;
     off(event: string | symbol, listener: (...args: any[]) => void): this;
@@ -21,7 +20,7 @@ export interface IEventEmitter {
     removeListener(event: string | symbol, listener: (...args: any[]) => void): this;
     prependListener(event: string | symbol, listener: (...args: any[]) => void): this;
     prependOnceListener(event: string | symbol, listener: (...args: any[]) => void): this;
-    /* eslint-enable @typescript-eslint/no-explicit-any */
+
     removeAllListeners(event?: string | symbol): this;
     setMaxListeners(n: number): this;
     getMaxListeners(): number;

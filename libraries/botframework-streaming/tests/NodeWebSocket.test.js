@@ -30,9 +30,9 @@ describe('NodeWebSocket', function () {
             socket.connect().catch((error) => {
                 expect(
                     error.message === 'connect ECONNREFUSED 127.0.0.1:8082' ||
-                        error.message === 'connect ECONNREFUSED ::1:8082'
+                        error.message === 'connect ECONNREFUSED ::1:8082',
                 ).to.be.true;
-            })
+            }),
         );
     });
 

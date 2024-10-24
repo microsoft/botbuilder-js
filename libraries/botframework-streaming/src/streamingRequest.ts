@@ -64,7 +64,7 @@ export class StreamingRequest {
      *
      * @param body The JSON text to write to the body of the streamingRequest.
      */
-    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
+
     setBody(body: any): void {
         if (typeof body === 'string') {
             const stream = new SubscribableStream();
@@ -75,8 +75,8 @@ export class StreamingRequest {
                         type: 'application/json; charset=utf-8',
                         contentLength: stream.length,
                     },
-                    stream
-                )
+                    stream,
+                ),
             );
         } else if (typeof body === 'object') {
             this.addStream(body);
