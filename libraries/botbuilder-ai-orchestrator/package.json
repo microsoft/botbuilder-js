@@ -35,7 +35,6 @@
     "botbuilder-dialogs-adaptive": "4.1.6",
     "botbuilder-dialogs-adaptive-runtime-core": "4.1.6",
     "botbuilder-dialogs-declarative": "4.1.6",
-    "eslint-plugin-only-warn": "^1.1.0",
     "@microsoft/orchestrator-core": "~4.15.1",
     "uuid": "^10.0.0"
   },
