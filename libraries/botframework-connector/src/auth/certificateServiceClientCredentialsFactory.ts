@@ -31,8 +31,8 @@ export class CertificateServiceClientCredentialsFactory extends ServiceClientCre
      * @param certificateThumbprint A hex encoded thumbprint of the certificate.
      * @param certificatePrivateKey A PEM encoded certificate private key.
      * @param tenantId Tenant ID of the Azure AD tenant where the bot is created.
-     *   Required for SingleTenant app types.
-     *   Optional for MultiTenant app types. **Note**: '_botframework.com_' is the default tenant when no value is provided.
+     *   - Required for SingleTenant app types.
+     *   - Optional for MultiTenant app types. **Note**: '_botframework.com_' is the default tenant when no value is provided.
      *
      * More information: https://learn.microsoft.com/en-us/security/zero-trust/develop/identity-supported-account-types.
      * @param x5c Optional. Enables application developers to achieve easy certificates roll-over in Azure AD:
@@ -54,8 +54,8 @@ export class CertificateServiceClientCredentialsFactory extends ServiceClientCre
      * set this parameter to send the public certificate (BEGIN CERTIFICATE) to Azure AD, so that Azure AD can use it to validate the subject name based on a trusted issuer policy.
      * @param certificatePrivateKey A PEM encoded certificate private key.
      * @param tenantId Tenant ID of the Azure AD tenant where the bot is created.
-     *   Required for SingleTenant app types.
-     *   Optional for MultiTenant app types. **Note**: '_botframework.com_' is the default tenant when no value is provided.
+     *   - Required for SingleTenant app types.
+     *   - Optional for MultiTenant app types. **Note**: '_botframework.com_' is the default tenant when no value is provided.
      *
      * More information: https://learn.microsoft.com/en-us/security/zero-trust/develop/identity-supported-account-types.
      */

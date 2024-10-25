@@ -26,8 +26,8 @@ export class FederatedAppCredentials extends AppCredentials {
      * @param {string} appId App ID for the Application.
      * @param {string} clientId Client ID for the managed identity assigned to the bot.
      * @param {string} channelAuthTenant Tenant ID of the Azure AD tenant where the bot is created.
-     *   **Required** for SingleTenant app types.
-     *   **Optional** for MultiTenant app types. **Note**: '_botframework.com_' is the default tenant when no value is provided.
+     *   - **Required** for SingleTenant app types.
+     *   - **Optional** for MultiTenant app types. **Note**: '_botframework.com_' is the default tenant when no value is provided.
      *
      * More information: https://learn.microsoft.com/en-us/security/zero-trust/develop/identity-supported-account-types.
      * @param {string} oAuthScope **Optional**. The scope for the token.

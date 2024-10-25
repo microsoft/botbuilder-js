@@ -16,7 +16,6 @@ import { ICredentialProvider, SimpleCredentialProvider } from './credentialProvi
 import { JwtTokenExtractor } from './jwtTokenExtractor';
 import { JwtTokenValidation } from './jwtTokenValidation';
 import { AuthenticationError } from './authenticationError';
-
 import { StatusCodes } from 'botframework-schema';
 import { BetweenBotAndAseChannelTokenValidationParameters } from './tokenValidationParameters';
 
