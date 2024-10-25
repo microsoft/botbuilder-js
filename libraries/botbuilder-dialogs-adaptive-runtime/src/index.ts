@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import * as z from 'zod';
 import fs from 'fs';
 import path from 'path';
@@ -82,12 +80,12 @@ function addFeatures(services: ServiceCollection, configuration: Configuration):
                         voiceFontName: z.string().optional(),
                         fallbackToTextForSpeechIfEmpty: z.boolean(),
                     })
-                    .nonstrict()
+                    .nonstrict(),
             );
 
             if (setSpeak) {
                 middlewareSet.use(
-                    new SetSpeakMiddleware(setSpeak.voiceFontName ?? null, setSpeak.fallbackToTextForSpeechIfEmpty)
+                    new SetSpeakMiddleware(setSpeak.voiceFontName ?? null, setSpeak.fallbackToTextForSpeechIfEmpty),
                 );
             }
 
@@ -100,15 +98,15 @@ function addFeatures(services: ServiceCollection, configuration: Configuration):
                             containerName: z.string(),
                             decodeTranscriptKey: z.boolean().optional(),
                         })
-                        .nonstrict()
+                        .nonstrict(),
                 );
 
                 middlewareSet.use(
                     new TranscriptLoggerMiddleware(
                         blobsTranscript
                             ? new BlobsTranscriptStore(blobsTranscript.connectionString, blobsTranscript.containerName)
-                            : new ConsoleTranscriptLogger()
-                    )
+                            : new ConsoleTranscriptLogger(),
+                    ),
                 );
             }
 
@@ -118,7 +116,7 @@ function addFeatures(services: ServiceCollection, configuration: Configuration):
             }
 
             return middlewareSet;
-        }
+        },
     );
 }
 
@@ -132,7 +130,7 @@ function addTelemetry(services: ServiceCollection, configuration: Configuration)
                     instrumentationKey: z.string(),
                 })
                 .partial()
-                .nonstrict()
+                .nonstrict(),
         );
 
         const setupString = telemetryOptions?.connectionString ?? telemetryOptions?.instrumentationKey;
@@ -150,8 +148,8 @@ function addTelemetry(services: ServiceCollection, configuration: Configuration)
         ({ botTelemetryClient }) =>
             new TelemetryInitializerMiddleware(
                 new TelemetryLoggerMiddleware(botTelemetryClient, configuration.bool(['logPersonalInformation'])),
-                configuration.bool(['logActivities'])
-            )
+                configuration.bool(['logActivities']),
+            ),
     );
 }
 
@@ -159,13 +157,13 @@ function addStorage(services: ServiceCollection, configuration: Configuration): 
     services.addFactory<ConversationState, { storage: Storage }>(
         'conversationState',
         ['storage'],
-        ({ storage }) => new ConversationState(storage)
+        ({ storage }) => new ConversationState(storage),
     );
 
     services.addFactory<UserState, { storage: Storage }>(
         'userState',
         ['storage'],
-        ({ storage }) => new UserState(storage)
+        ({ storage }) => new UserState(storage),
     );
 
     services.addFactory<Storage>('storage', () => {
@@ -180,7 +178,7 @@ function addStorage(services: ServiceCollection, configuration: Configuration): 
                             connectionString: z.string(),
                             containerName: z.string(),
                         })
-                        .nonstrict()
+                        .nonstrict(),
                 );
 
                 if (!blobsStorage) {
@@ -203,7 +201,7 @@ function addStorage(services: ServiceCollection, configuration: Configuration): 
                             databaseId: z.string(),
                             keySuffix: z.string().optional(),
                         })
-                        .nonstrict()
+                        .nonstrict(),
                 );
 
                 if (!cosmosOptions) {
@@ -234,7 +232,7 @@ function addSkills(services: ServiceCollection, configuration: Configuration): v
     services.addFactory<SkillConversationIdFactoryBase, { storage: Storage }>(
         'skillConversationIdFactory',
         ['storage'],
-        ({ storage }) => new SkillConversationIdFactory(storage)
+        ({ storage }) => new SkillConversationIdFactory(storage),
     );
 
     // If TenantId is specified in config, add the tenant as a valid JWT token issuer for Bot to Skill conversation.
@@ -263,9 +261,9 @@ function addSkills(services: ServiceCollection, configuration: Configuration): v
                         .object({
                             msAppId: z.string(),
                         })
-                        .nonstrict()
-                )
-            ) ?? {}
+                        .nonstrict(),
+                ),
+            ) ?? {},
         );
 
         if (skills.length) {
@@ -274,7 +272,7 @@ function addSkills(services: ServiceCollection, configuration: Configuration): v
             return new AuthenticationConfiguration(
                 undefined,
                 allowedCallersClaimsValidator(skills.map((skill) => skill.msAppId)),
-                validTokenIssuers
+                validTokenIssuers,
             );
         } else {
             // If the config entry for runtimeSettings.skills.allowedCallers contains entries, then we are a skill and
@@ -282,7 +280,7 @@ function addSkills(services: ServiceCollection, configuration: Configuration): v
             return new AuthenticationConfiguration(
                 undefined,
                 allowedCallers.length ? allowedCallersClaimsValidator(allowedCallers) : undefined,
-                validTokenIssuers
+                validTokenIssuers,
             );
         }
     });
@@ -303,14 +301,14 @@ function addSkills(services: ServiceCollection, configuration: Configuration): v
                 dependencies.adapter,
                 (context) => dependencies.bot.run(context),
                 dependencies.skillConversationIdFactory,
-                dependencies.botFrameworkAuthentication
-            )
+                dependencies.botFrameworkAuthentication,
+            ),
     );
 
     services.addFactory<ChannelServiceRoutes, { channelServiceHandler: ChannelServiceHandler }>(
         'channelServiceRoutes',
         ['channelServiceHandler'],
-        (dependencies) => new ChannelServiceRoutes(dependencies.channelServiceHandler)
+        (dependencies) => new ChannelServiceRoutes(dependencies.channelServiceHandler),
     );
 }
 
@@ -337,8 +335,8 @@ function addCoreBot(services: ServiceCollection, configuration: Configuration): 
                 dependencies.serviceClientCredentialsFactory,
                 dependencies.authenticationConfiguration,
                 dependencies.botFrameworkClientFetch,
-                dependencies.connectorClientOptions
-            )
+                dependencies.connectorClientOptions,
+            ),
     );
 
     services.addFactory<
@@ -376,8 +374,8 @@ function addCoreBot(services: ServiceCollection, configuration: Configuration): 
                 configuration.string(['defaultLocale']) ?? 'en-us',
                 configuration.string(['defaultRootDialog']) ?? 'main.dialog',
                 dependencies.memoryScopes,
-                dependencies.pathResolvers
-            )
+                dependencies.pathResolvers,
+            ),
     );
 
     services.addFactory<
@@ -396,10 +394,10 @@ function addCoreBot(services: ServiceCollection, configuration: Configuration): 
             new CoreBotAdapter(
                 dependencies.botFrameworkAuthentication,
                 dependencies.conversationState,
-                dependencies.userState
+                dependencies.userState,
             )
                 .use(dependencies.middlewares)
-                .use(dependencies.telemetryMiddleware)
+                .use(dependencies.telemetryMiddleware),
     );
 }
 
@@ -433,8 +431,8 @@ async function addSettingsBotComponents(services: ServiceCollection, configurati
                         name: z.string(),
                         settingsPrefix: z.string().optional(),
                     })
-                    .nonstrict()
-            )
+                    .nonstrict(),
+            ),
         ) ?? [];
 
     const loadErrors: Array<{ error: Error; name: string }> = [];
@@ -453,8 +451,8 @@ async function addSettingsBotComponents(services: ServiceCollection, configurati
         loadErrors.forEach(({ name, error }) =>
             console.warn(
                 `${name} failed to load. Consider removing this component from the list of components in your application settings.`,
-                error
-            )
+                error,
+            ),
         );
     }
 }
@@ -501,9 +499,9 @@ async function normalizeConfiguration(configuration: Configuration, applicationR
         await new Promise<string | undefined>((resolve, reject) =>
             // eslint-disable-next-line security/detect-non-literal-fs-filename
             fs.readdir(applicationRoot, (err, files) =>
-                err ? reject(err) : resolve(files.find((file) => file.endsWith('.dialog')))
-            )
-        )
+                err ? reject(err) : resolve(files.find((file) => file.endsWith('.dialog'))),
+            ),
+        ),
     );
 
     addComposerConfiguration(configuration);
@@ -571,7 +569,7 @@ function registerQnAComponents(services: ServiceCollection, configuration: Confi
 export async function getRuntimeServices(
     applicationRoot: string,
     settingsDirectory: string,
-    defaultServices?: Record<string, any>
+    defaultServices?: Record<string, any>,
 ): Promise<[ServiceCollection, Configuration]>;
 
 /**
@@ -585,7 +583,7 @@ export async function getRuntimeServices(
 export async function getRuntimeServices(
     applicationRoot: string,
     configuration: Configuration,
-    defaultServices?: Record<string, any>
+    defaultServices?: Record<string, any>,
 ): Promise<[ServiceCollection, Configuration]>;
 
 /**
@@ -594,7 +592,7 @@ export async function getRuntimeServices(
 export async function getRuntimeServices(
     applicationRoot: string,
     configurationOrSettingsDirectory: Configuration | string,
-    defaultServices: Record<string, any> = {}
+    defaultServices: Record<string, any> = {},
 ): Promise<[ServiceCollection, Configuration]> {
     // Resolve configuration
     let configuration: Configuration;
@@ -632,7 +630,7 @@ export async function getRuntimeServices(
     services.addFactory<ResourceExplorer, { declarativeTypes: ComponentDeclarativeTypes[] }>(
         'resourceExplorer',
         ['declarativeTypes'],
-        ({ declarativeTypes }) => new ConfigurationResourceExporer(configuration, declarativeTypes)
+        ({ declarativeTypes }) => new ConfigurationResourceExporer(configuration, declarativeTypes),
     );
 
     registerAdaptiveComponents(services, configuration);
