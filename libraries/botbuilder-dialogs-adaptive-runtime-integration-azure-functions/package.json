@@ -32,7 +32,6 @@
     "botbuilder": "4.1.6",
     "botbuilder-dialogs-adaptive-runtime": "4.1.6",
     "botbuilder-dialogs-adaptive-runtime-core": "4.1.6",
-    "eslint-plugin-only-warn": "^1.1.0",
     "mime": "^4.0.4",
     "zod": "^3.23.8"
   },
@@ -40,7 +39,7 @@
     "build": "tsc -b",
     "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
     "depcheck": "depcheck --config ../../.depcheckrc",
-    "lint": "eslint .",
+    "lint": "eslint . --config ../../eslint.config.cjs",
     "postbuild": "downlevel-dts lib _ts3.4/lib --checksum"
   },
   "files": [
