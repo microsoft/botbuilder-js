@@ -46,7 +46,6 @@ export class StreamingResponse {
      *
      * @param body The JSON text to write to the body of the streaming response.
      */
-
     setBody(body: any): void {
         const stream = new SubscribableStream();
         stream.write(JSON.stringify(body), 'utf8');

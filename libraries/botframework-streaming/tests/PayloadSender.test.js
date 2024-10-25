@@ -60,7 +60,7 @@ describe('PayloadTransport', function () {
 
             const psSenderSpy = sinon.spy(ps._sender, 'send');
             expect(ps.sendPayload(header, stream, () => done()));
-            expect(psSenderSpy.calledTwice).to.be.true;
+            expect(psSenderSpy.calledTwice).to.equal(true);
         });
 
         it('writes a large stream to its sender.', function (done) {
@@ -157,7 +157,7 @@ describe('PayloadTransport', function () {
     describe('PayloadReceiver', function () {
         it('begins disconnected.', function () {
             const pr = new PayloadReceiver();
-            expect(pr.isConnected).to.be.false;
+            expect(pr.isConnected).to.equal(false);
         });
 
         it('connects to and reads a header with no payload from the transport.', function () {
@@ -167,7 +167,7 @@ describe('PayloadTransport', function () {
             sock.setReceiver(pr);
 
             pr.connect(sock);
-            expect(pr.isConnected).to.be.true;
+            expect(pr.isConnected).to.equal(true);
         });
 
         it('connects to and reads a header with a stream the transport.', function (done) {
@@ -188,7 +188,7 @@ describe('PayloadTransport', function () {
             expect(() => pr.connect(sock)).to.not.throw();
 
             pr.disconnected = () => done();
-            expect(pr.isConnected).to.be.true;
+            expect(pr.isConnected).to.equal(true);
         });
     });
 });

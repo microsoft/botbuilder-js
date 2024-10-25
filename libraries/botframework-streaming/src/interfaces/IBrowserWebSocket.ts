@@ -18,7 +18,6 @@ export interface IBrowserWebSocket {
     onmessage: (event: any) => void;
     onopen: (event: any) => void;
     send(buffer: any): void;
-
     readyState: number;
     close(): void;
 }

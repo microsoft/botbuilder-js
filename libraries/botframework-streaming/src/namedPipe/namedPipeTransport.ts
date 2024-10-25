@@ -20,7 +20,6 @@ export class NamedPipeTransport implements ITransportSender, ITransportReceiver 
     private _activeOffset = 0;
     private _activeReceiveCount = 0;
     private _activeReceiveResolve: (resolve: INodeBuffer) => void;
-
     private _activeReceiveReject: (reason?: any) => void;
 
     /**

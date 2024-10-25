@@ -32,7 +32,6 @@ export class BrowserWebSocket implements ISocket {
      */
     async connect(serverAddress: string): Promise<void> {
         let resolver: (value: void | PromiseLike<void>) => void;
-
         let rejector: (reason?: any) => void;
 
         if (!this.webSocket) {
@@ -83,7 +82,6 @@ export class BrowserWebSocket implements ISocket {
      *
      * @param handler The callback to handle the "message" event.
      */
-
     setOnMessageHandler(handler: (x: any) => void): void {
         const bufferKey = 'buffer';
         const packets = [];
@@ -110,7 +108,6 @@ export class BrowserWebSocket implements ISocket {
      *
      * @param handler The callback to handle the "error" event.
      */
-
     setOnErrorHandler(handler: (x: any) => void): void {
         this.webSocket.onerror = (error): void => {
             if (error) {
@@ -124,7 +121,6 @@ export class BrowserWebSocket implements ISocket {
      *
      * @param handler The callback to handle the "close" event.
      */
-
     setOnCloseHandler(handler: (x: any) => void): void {
         this.webSocket.onclose = handler;
     }

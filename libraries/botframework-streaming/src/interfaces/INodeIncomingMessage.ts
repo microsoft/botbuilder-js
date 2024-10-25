@@ -15,12 +15,10 @@ export interface INodeIncomingMessage {
     /**
      * Optional. The request headers.
      */
-
     headers?: any;
 
     /**
      * Optional. The request method.
      */
-
     method?: any;
 }

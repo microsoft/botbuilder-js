@@ -13,7 +13,6 @@ import { IReceiveResponse } from '../interfaces';
 class PendingRequest {
     requestId: string;
     resolve: (response: IReceiveResponse) => void;
-
     reject: (reason?: any) => void;
 }
 

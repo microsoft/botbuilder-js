@@ -126,7 +126,6 @@ export class NodeWebSocket implements ISocket {
         req.on('upgrade', (res, socket, head): void => {
             // @types/ws does not contain the signature for completeUpgrade
             // https://github.com/websockets/ws/blob/0a612364e69fc07624b8010c6873f7766743a8e3/lib/websocket-server.js#L269
-
             (this.wsServer as any).completeUpgrade(wskey, undefined, res, socket, head, (websocket): void => {
                 this.wsSocket = websocket;
             });
@@ -143,7 +142,6 @@ export class NodeWebSocket implements ISocket {
      *
      * @param handler The callback to handle the "message" event.
      */
-
     setOnMessageHandler(handler: (x: any) => void): void {
         this.wsSocket.on('message', handler);
     }
@@ -165,7 +163,6 @@ export class NodeWebSocket implements ISocket {
      *
      * @param handler The callback to handle the "close" event.
      */
-
     setOnCloseHandler(handler: (x: any) => void): void {
         this.wsSocket.on('close', handler);
     }
@@ -175,7 +172,6 @@ export class NodeWebSocket implements ISocket {
      *
      * @param handler The callback to handle the "error" event.
      */
-
     setOnErrorHandler(handler: (x: any) => void): void {
         this.wsSocket.on('error', (error): void => {
             if (error) {

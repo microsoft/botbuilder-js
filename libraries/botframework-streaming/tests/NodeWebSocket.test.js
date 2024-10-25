@@ -15,7 +15,7 @@ describe('NodeWebSocket', function () {
 
     it('starts out connected', function () {
         const socket = new NodeWebSocket(new FauxSock());
-        expect(socket.isConnected).to.be.true;
+        expect(socket.isConnected).to.equal(true);
     });
 
     it('writes to the socket', function () {
@@ -31,7 +31,7 @@ describe('NodeWebSocket', function () {
                 expect(
                     error.message === 'connect ECONNREFUSED 127.0.0.1:8082' ||
                         error.message === 'connect ECONNREFUSED ::1:8082',
-                ).to.be.true;
+                ).to.equal(true);
             }),
         );
     });
@@ -39,25 +39,25 @@ describe('NodeWebSocket', function () {
     it('can set message handlers on the socket', function () {
         const sock = new FauxSock();
         const socket = new NodeWebSocket(sock);
-        expect(sock.messageHandler).to.be.undefined;
+        expect(sock.messageHandler).to.equal(undefined);
         expect(() => socket.setOnMessageHandler(() => {})).to.not.throw();
-        expect(sock.messageHandler).to.not.be.undefined;
+        expect(sock.messageHandler).to.not.equal(undefined);
     });
 
     it('can set error handler on the socket', function () {
         const sock = new FauxSock();
         const socket = new NodeWebSocket(sock);
-        expect(sock.errorHandler).to.be.undefined;
+        expect(sock.errorHandler).to.equal(undefined);
         expect(() => socket.setOnErrorHandler(() => {})).to.not.throw();
-        expect(sock.errorHandler).to.not.be.undefined;
+        expect(sock.errorHandler).to.not.equal(undefined);
     });
 
     it('can set end handler on the socket', function () {
         const sock = new FauxSock();
         const socket = new NodeWebSocket(sock);
-        expect(sock.closeHandler).to.be.undefined;
+        expect(sock.closeHandler).to.equal(undefined);
         expect(() => socket.setOnCloseHandler(() => {})).to.not.throw();
-        expect(sock.closeHandler).to.not.be.undefined;
+        expect(sock.closeHandler).to.not.equal(undefined);
     });
 
     it('create() should be successful and set a WebSocket', async function () {
@@ -142,7 +142,7 @@ describe('NodeWebSocket', function () {
 
             describe('isConnected property', function () {
                 it('should be true', function () {
-                    expect(nodeSocket.isConnected).to.be.true;
+                    expect(nodeSocket.isConnected).to.equal(true);
                 });
             });
 

@@ -29,7 +29,6 @@ export interface INodeBuffer extends Uint8Array {
     constructor: any;
     write(string: string, offset?: number, length?: number, encoding?: string): number;
     toString(encoding?: string, start?: number, end?: number): string;
-
     toJSON(): { type: 'Buffer'; data: any[] };
     equals(otherBuffer: Uint8Array): boolean;
     compare(

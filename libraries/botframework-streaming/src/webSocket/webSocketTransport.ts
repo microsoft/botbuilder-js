@@ -16,7 +16,6 @@ export class WebSocketTransport implements ITransportSender, ITransportReceiver 
     private _active: INodeBuffer;
     private _activeOffset = 0;
     private _activeReceiveResolve: (resolve: INodeBuffer) => void;
-
     private _activeReceiveReject: (reason?: any) => void;
     private _activeReceiveCount = 0;
 

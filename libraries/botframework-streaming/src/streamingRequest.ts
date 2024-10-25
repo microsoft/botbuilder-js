@@ -64,7 +64,6 @@ export class StreamingRequest {
      *
      * @param body The JSON text to write to the body of the streamingRequest.
      */
-
     setBody(body: any): void {
         if (typeof body === 'string') {
             const stream = new SubscribableStream();

@@ -18,10 +18,7 @@ export interface ISocket {
     write(buffer: INodeBuffer);
     connect(serverAddress: string): Promise<void>;
     close();
-
     setOnMessageHandler(handler: (x: any) => void);
-
     setOnErrorHandler(handler: (x: any) => void);
-
     setOnCloseHandler(handler: (x: any) => void);
 }

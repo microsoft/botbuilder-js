@@ -53,19 +53,19 @@ describe('Streaming Extensions ProtocolAdapter', function () {
             payloadReceiver,
         );
 
-        expect(protocolAdapter.assemblerManager).to.not.be.undefined;
+        expect(protocolAdapter.assemblerManager).to.not.equal(undefined);
 
-        expect(protocolAdapter.payloadReceiver).to.not.be.undefined;
+        expect(protocolAdapter.payloadReceiver).to.not.equal(undefined);
 
-        expect(protocolAdapter.payloadSender).to.not.be.undefined;
+        expect(protocolAdapter.payloadSender).to.not.equal(undefined);
 
-        expect(protocolAdapter.sendOperations).to.not.be.undefined;
+        expect(protocolAdapter.sendOperations).to.not.equal(undefined);
 
-        expect(protocolAdapter.streamManager).to.not.be.undefined;
+        expect(protocolAdapter.streamManager).to.not.equal(undefined);
 
-        expect(protocolAdapter.requestHandler).to.not.be.undefined;
+        expect(protocolAdapter.requestHandler).to.not.equal(undefined);
 
-        expect(protocolAdapter.requestManager).to.not.be.undefined;
+        expect(protocolAdapter.requestManager).to.not.equal(undefined);
     });
 
     it('processes requests.', async function () {
@@ -85,7 +85,7 @@ describe('Streaming Extensions ProtocolAdapter', function () {
         const requestHandlerSpy = sinon.spy(requestHandler, 'processRequest');
 
         protocolAdapter.onReceiveRequest('42', { verb: 'POST', path: '/api/messages', streams: [] });
-        expect(requestHandlerSpy.called).to.be.true;
+        expect(requestHandlerSpy.called).to.equal(true);
     });
 
     it('processes responses.', async function () {
@@ -105,7 +105,7 @@ describe('Streaming Extensions ProtocolAdapter', function () {
         const requestManagerSpy = sinon.spy(requestManager, 'signalResponse');
 
         protocolAdapter.onReceiveResponse('42', { statusCode: '200', streams: [] });
-        expect(requestManagerSpy.called).to.be.true;
+        expect(requestManagerSpy.called).to.equal(true);
     });
 
     it('does not throw when processing a cancellation for an already processed stream', async function () {
@@ -166,7 +166,7 @@ describe('Streaming Extensions ProtocolAdapter', function () {
         rp.streams.push(s);
 
         pa.connect(receiver);
-        expect(pa.isConnected).to.be.true;
+        expect(pa.isConnected).to.equal(true);
         expect(() => pa.connect(receiver)).to.not.throw();
 
         pa.disconnect();

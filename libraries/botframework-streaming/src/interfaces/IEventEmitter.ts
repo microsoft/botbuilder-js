@@ -20,14 +20,11 @@ export interface IEventEmitter {
     removeListener(event: string | symbol, listener: (...args: any[]) => void): this;
     prependListener(event: string | symbol, listener: (...args: any[]) => void): this;
     prependOnceListener(event: string | symbol, listener: (...args: any[]) => void): this;
-
     removeAllListeners(event?: string | symbol): this;
     setMaxListeners(n: number): this;
     getMaxListeners(): number;
-    /* eslint-disable  @typescript-eslint/ban-types */
-    listeners(event: string | symbol): Function[];
-    rawListeners(event: string | symbol): Function[];
-    /* eslint-enable  @typescript-eslint/ban-types */
+    listeners(event: string | symbol): ((...args: any[]) => void)[];
+    rawListeners(event: string | symbol): ((...args: any[]) => void)[];
     listenerCount(type: string | symbol): number;
     eventNames(): Array<string | symbol>;
 }

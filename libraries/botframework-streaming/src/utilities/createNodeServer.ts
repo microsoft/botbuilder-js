@@ -35,7 +35,8 @@ export function createNodeServer(callback?: ConnectionListener): INodeServer {
  * @returns a server factory function
  */
 export function getServerFactory(): (callback?: ConnectionListener) => INodeServer {
-    if (typeof require !== undefined) {
+    if (typeof require !== 'undefined') {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
         return require('net').Server;
     }
 
