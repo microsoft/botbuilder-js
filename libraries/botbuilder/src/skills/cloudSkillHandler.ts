@@ -126,7 +126,7 @@ export class CloudSkillHandler extends CloudChannelServiceHandler {
 
     /**
      *
-     *UpdateActivity() API for Skill.
+     * UpdateActivity() API for Skill.
      *
      * @remarks
      * Edit an existing activity.

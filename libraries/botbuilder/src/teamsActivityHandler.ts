@@ -868,9 +868,9 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      *
-     *Invoked when a Channel Restored event activity is received from the connector.
-     *Channel Restored corresponds to the user restoring a previously deleted channel.
-     *Override this in a derived class to provide logic for when a channel is restored.
+     * Invoked when a Channel Restored event activity is received from the connector.
+     * Channel Restored corresponds to the user restoring a previously deleted channel.
+     * Override this in a derived class to provide logic for when a channel is restored.
      *
      * @param context The context for this turn.
      * @returns A promise that represents the work queued.

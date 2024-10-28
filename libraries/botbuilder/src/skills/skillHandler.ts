@@ -144,7 +144,7 @@ export class SkillHandler extends ChannelServiceHandler {
 
     /**
      *
-     *UpdateActivity() API for Skill.
+     * UpdateActivity() API for Skill.
      *
      * @remarks
      * Edit an existing activity.
