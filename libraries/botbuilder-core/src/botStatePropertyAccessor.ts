@@ -49,6 +49,8 @@ export interface StatePropertyAccessor<T = any> {
     get(context: TurnContext): Promise<T | undefined>;
 
     /**
+     * Reads a persisted property from its backing storage object.
+     *
      * @param context Context for the current turn of conversation with the user.
      * @param defaultValue (Optional) default value to copy to the backing storage object if the property isn't found.
      */
