@@ -19,7 +19,7 @@ export interface ComponentDeclarativeTypes {
 
 const componentDeclarativeTypes = z.custom<ComponentDeclarativeTypes>(
     (val: any) => typeof val.getDeclarativeTypes === 'function',
-    { message: 'ComponentDeclarativeTypes' }
+    { message: 'ComponentDeclarativeTypes' },
 );
 
 /**
