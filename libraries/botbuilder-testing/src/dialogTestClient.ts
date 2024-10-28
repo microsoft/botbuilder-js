@@ -6,8 +6,6 @@
  * Licensed under the MIT License.
  */
 
-/* eslint-disable @typescript-eslint/ban-types */
-
 import {
     Activity,
     TestAdapter,
@@ -140,7 +138,6 @@ export class DialogTestClient {
      * @param activity an activity potentially with text
      * @returns a TestFlow that can be used to assert replies etc
      */
-
     async sendActivity(activity: Partial<Activity> | string): Promise<any> {
         await this._testAdapter.receiveActivity(activity);
         return this._testAdapter.activityBuffer.shift();
