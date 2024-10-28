@@ -177,11 +177,7 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
         logic: (context: TurnContext) => Promise<void>,
     ): Promise<void> {
         try {
-            if (typeof authorization === 'string') {
-                await this.processActivity(authorization, activity, logic);
-            } else {
-                await this.processActivity(authorization, activity, logic);
-            }
+            await this.processActivity(authorization as any, activity, logic);
         } catch (err) {
             throw new Error(`CloudAdapter.processActivityDirect(): ERROR\n ${err.stack}`);
         }
