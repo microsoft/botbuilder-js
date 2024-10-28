@@ -71,7 +71,7 @@ export class BotConfiguration extends BotConfigurationBase {
             }
         }
         throw new Error(
-            `Error: no bot file found in ${folder}. Choose a different location or use msbot init to create a .bot file."`
+            `Error: no bot file found in ${folder}. Choose a different location or use msbot init to create a .bot file."`,
         );
     }
 
@@ -94,7 +94,7 @@ export class BotConfiguration extends BotConfigurationBase {
             }
         }
         throw new Error(
-            `Error: no bot file found in ${folder}. Choose a different location or use msbot init to create a .bot file."`
+            `Error: no bot file found in ${folder}. Choose a different location or use msbot init to create a .bot file."`,
         );
     }
 
@@ -327,7 +327,7 @@ export class BotConfiguration extends BotConfigurationBase {
     validateSecret(secret: string): void {
         if (!secret) {
             throw new Error(
-                'You are attempting to perform an operation which needs access to the secret and --secret is missing'
+                'You are attempting to perform an operation which needs access to the secret and --secret is missing',
             );
         }
 
@@ -341,7 +341,7 @@ export class BotConfiguration extends BotConfigurationBase {
             }
         } catch {
             throw new Error(
-                'You are attempting to perform an operation which needs access to the secret and --secret is incorrect.'
+                'You are attempting to perform an operation which needs access to the secret and --secret is incorrect.',
             );
         }
     }
