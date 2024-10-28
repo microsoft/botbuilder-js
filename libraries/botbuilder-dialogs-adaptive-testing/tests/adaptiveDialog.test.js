@@ -3,6 +3,7 @@ const { makeResourceExplorer } = require('./utils');
 
 describe('AdaptiveDialogTests', function () {
     let resourceExplorer;
+
     before(function () {
         resourceExplorer = makeResourceExplorer('AdaptiveDialogTests');
     });

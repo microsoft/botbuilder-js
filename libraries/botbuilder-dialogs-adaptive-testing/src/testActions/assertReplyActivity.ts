@@ -75,10 +75,10 @@ export class AssertReplyActivity extends TestAction implements AssertReplyActivi
     async execute(
         testAdapter: TestAdapter,
         _callback: (context: TurnContext) => Promise<any>,
-        _inspector?: Inspector
+        _inspector?: Inspector,
     ): Promise<any> {
         const start = new Date();
-        /* eslint-disable no-constant-condition */
+
         while (true) {
             const current = new Date();
 

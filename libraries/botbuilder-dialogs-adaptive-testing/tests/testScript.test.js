@@ -6,6 +6,7 @@ const { makeResourceExplorer } = require('./utils');
 
 describe('TestScriptTests', function () {
     let resourceExplorer;
+
     before(function () {
         resourceExplorer = makeResourceExplorer('TestScriptTests', QnAMakerBotComponent);
     });
@@ -24,7 +25,7 @@ describe('TestScriptTests', function () {
             (err) => {
                 assert(err.message.includes('undefined text.length == 0 {"type":"message","text":"hi User1"'));
                 return true;
-            }
+            },
         );
     });
 
@@ -74,7 +75,7 @@ describe('TestScriptTests', function () {
         resourceExplorer.registerType(
             LuisAdaptiveRecognizer.$kind,
             MockLuisRecognizer,
-            new MockLuisLoader(resourceExplorer, config)
+            new MockLuisLoader(resourceExplorer, config),
         );
         await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_HttpRequestLuisMock', undefined, config);
     });
