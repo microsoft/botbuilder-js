@@ -104,7 +104,7 @@ describe('AdaptiveDialogTests', function () {
         await TestUtils.runTestScript(resourceExplorer, 'AdaptiveDialog_NestedRecognizers');
     });
 
-    it('PropertySetInInterruption', async function () {
+    it('PropertyBotInterruption', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'AdaptiveDialog_ParentBotInterruption');
     });
 
