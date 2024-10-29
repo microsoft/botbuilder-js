@@ -30,13 +30,14 @@
     }
   },
   "dependencies": {
-    "botbuilder-ai": "4.1.6"
+    "botbuilder-ai": "4.1.6",
+    "eslint-plugin-only-warn": "^1.1.0"
   },
   "scripts": {
     "build": "tsc -b",
     "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
     "depcheck": "depcheck --config ../../.depcheckrc",
-    "lint": "eslint . --ext .js,.ts",
+    "lint": "eslint .",
     "postbuild": "downlevel-dts lib _ts3.4/lib --checksum"
   },
   "files": [
