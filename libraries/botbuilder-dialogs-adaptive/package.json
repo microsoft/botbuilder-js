@@ -43,6 +43,7 @@
     "botbuilder-dialogs-declarative": "4.1.6",
     "botbuilder-lg": "4.1.6",
     "botframework-connector": "4.1.6",
+    "eslint-plugin-only-warn": "^1.1.0",
     "lodash": "^4.17.21",
     "node-fetch": "^2.7.0"
   },
@@ -56,7 +57,7 @@
     "build:tests": "tsc -p tests/tsconfig.json",
     "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
     "depcheck": "depcheck --config ../../.depcheckrc --ignores botbuilder-dialogs-adaptive-testing,mocha,sinon",
-    "lint": "eslint . --ext .js,.ts",
+    "lint": "eslint .",
     "postbuild": "downlevel-dts lib _ts3.4/lib --checksum",
     "test": "yarn build && nyc mocha tests/",
     "test:compat": "api-extractor run --verbose",
