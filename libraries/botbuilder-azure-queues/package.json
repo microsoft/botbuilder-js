@@ -29,7 +29,8 @@
   },
   "dependencies": {
     "@azure/storage-queue": "^12.23.0",
-    "botbuilder-core": "4.1.6"
+    "botbuilder-core": "4.1.6",
+    "eslint-plugin-only-warn": "^1.1.0"
   },
   "devDependencies": {
     "botbuilder-dialogs": "4.1.6",
@@ -40,7 +41,7 @@
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder-azure-queues --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-azure-queues .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Azure Queues\" --readme none",
     "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
     "depcheck": "depcheck --config ../../.depcheckrc",
-    "lint": "eslint . --ext .js,.ts",
+    "lint": "eslint .",
     "postbuild": "downlevel-dts lib _ts3.4/lib",
     "test": "yarn build && nyc mocha --check-leaks tests",
     "test:compat": "api-extractor run --verbose"

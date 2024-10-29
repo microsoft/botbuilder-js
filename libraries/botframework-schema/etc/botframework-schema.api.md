@@ -2969,6 +2969,7 @@ export interface SearchInvokeResponse extends AdaptiveCardInvokeResponse {
 // @public
 export interface SearchInvokeValue {
     context: any;
+    dataset: string;
     kind: string;
     queryOptions: SearchInvokeOptions;
     queryText: string;

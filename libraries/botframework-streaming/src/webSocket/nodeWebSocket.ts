@@ -10,6 +10,7 @@ import { IncomingMessage, request } from 'http';
 import { URL } from 'url';
 import crypto from 'crypto';
 import WebSocket from 'ws';
+import { Socket } from 'net';
 
 import { INodeIncomingMessage, INodeBuffer, INodeSocket, ISocket } from '../interfaces';
 
@@ -36,12 +37,16 @@ export class NodeWebSocket implements ISocket {
      * @param head A Buffer [INodeBuffer](xref:botframework-streaming.INodeBuffer) interface.
      * @returns A Promise that resolves after the WebSocket upgrade has been handled, otherwise rejects with a thrown error.
      */
-    async create(req: INodeIncomingMessage, socket: INodeSocket, head: INodeBuffer): Promise<void> {
+    async create(req: INodeIncomingMessage, socket: INodeSocket, head: INodeBuffer): Promise<void>;
+
+    /**
+     * @internal
+     */
+    async create(req: IncomingMessage, socket: Socket, head: Buffer): Promise<void> {
         this.wsServer = new WebSocket.Server({ noServer: true });
         return new Promise<void>((resolve, reject) => {
             try {
-                // TODO: Fix INodeSocket type. Related issue https://github.com/microsoft/botbuilder-js/issues/4684.
-                this.wsServer.handleUpgrade(req as IncomingMessage, socket as any, head as any, (websocket) => {
+                this.wsServer.handleUpgrade(req, socket, head, (websocket) => {
                     this.wsSocket = websocket;
                     resolve();
                 });

@@ -45,6 +45,7 @@ import { HttpClient } from '@azure/core-http';
 import { HttpOperationResponse } from '@azure/core-http';
 import { ICredentialProvider } from 'botframework-connector';
 import { INodeBuffer } from 'botframework-streaming';
+import { INodeDuplex } from 'botframework-streaming';
 import { INodeSocket } from 'botframework-streaming';
 import { InvokeResponse } from 'botbuilder-core';
 import { IReceiveRequest } from 'botframework-streaming';
@@ -187,6 +188,7 @@ export interface BotFrameworkAdapterSettings {
 export interface BotFrameworkHttpAdapter {
     process(req: Request_2, res: Response_2, logic: (context: TurnContext) => Promise<void>): Promise<void>;
     process(req: Request_2, socket: INodeSocket, head: INodeBuffer, logic: (context: TurnContext) => Promise<void>): Promise<void>;
+    process(req: Request_2, socket: INodeDuplex, head: INodeBuffer, logic: (context: TurnContext) => Promise<void>): Promise<void>;
 }
 
 // @public @deprecated (undocumented)
@@ -250,6 +252,7 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
     connectNamedPipe(pipeName: string, logic: (context: TurnContext) => Promise<void>, appId: string, audience: string, callerId?: string, retryCount?: number): Promise<void>;
     process(req: Request_2, res: Response_2, logic: (context: TurnContext) => Promise<void>): Promise<void>;
     process(req: Request_2, socket: INodeSocket, head: INodeBuffer, logic: (context: TurnContext) => Promise<void>): Promise<void>;
+    process(req: Request_2, socket: INodeDuplex, head: INodeBuffer, logic: (context: TurnContext) => Promise<void>): Promise<void>;
     processActivityDirect(authorization: string | AuthenticateRequestResult, activity: Activity, logic: (context: TurnContext) => Promise<void>): Promise<void>;
 }
 

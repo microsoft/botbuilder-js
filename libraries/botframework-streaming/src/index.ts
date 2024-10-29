@@ -12,6 +12,7 @@ export {
     INodeBuffer,
     INodeIncomingMessage,
     INodeSocket,
+    INodeDuplex,
     IReceiveRequest,
     IReceiveResponse,
     ISocket,

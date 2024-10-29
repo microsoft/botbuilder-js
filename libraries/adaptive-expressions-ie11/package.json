@@ -22,6 +22,7 @@
     "adaptive-expressions": "4.1.6",
     "clean-webpack-plugin": "^4.0.0",
     "core-js": "^3.38.1",
+    "eslint-plugin-only-warn": "^1.1.0",
     "terser-webpack-plugin": "^5.3.10"
   },
   "devDependencies": {
@@ -41,7 +42,7 @@
   "scripts": {
     "build": "webpack",
     "clean": "rimraf dist",
-    "lint": "eslint . --ext .js,.ts"
+    "lint": "eslint ."
   },
   "files": [
     "dist"
