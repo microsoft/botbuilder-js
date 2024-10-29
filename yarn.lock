@@ -4764,7 +4764,7 @@ acorn-walk@^8.1.1:
   resolved "https://registry.yarnpkg.com/acorn-walk/-/acorn-walk-8.2.0.tgz#741210f2e2426454508853a2f44d0ab83b7f69c1"
   integrity sha512-k+iyHEuPgSw6SbuDpGQM+06HQUa04DZ3o+F6CSzXMvvI5KMvnaEqXe+YVe555R9nn6GPt404fos4wcgpw12SDA==
 
-acorn@^7.0.0, acorn@^7.1.1:
+acorn@^7.1.1:
   version "7.4.1"
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-7.4.1.tgz#feaed255973d2e77555b83dbc08851a6c63520fa"
   integrity sha512-nQyp0o1/mNdbTO1PO6kHkwSrmgZ0MT/jCCpNiwbUjGoRN4dlBhqJtoQuCnEOKzgTVwg0ZWiCoQy6SxMebQVh8A==
@@ -7943,22 +7943,6 @@ eslint@^9.12.0:
     natural-compare "^1.4.0"
     optionator "^0.9.3"
     text-table "^0.2.0"
-
-esmify@^2.1.1:
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/esmify/-/esmify-2.1.1.tgz#bb788a8b347739d003c873d9eddf9724bbf032b3"
-  integrity sha512-GyOVgjG7sNyYB5Mbo15Ll4aGrcXZzZ3LI22rbLOjCI7L/wYelzQpBHRZkZkqbPNZ/QIRilcaHqzgNCLcEsi1lQ==
-  dependencies:
-    "@babel/core" "^7.2.2"
-    "@babel/plugin-syntax-async-generators" "^7.2.0"
-    "@babel/plugin-syntax-dynamic-import" "^7.2.0"
-    "@babel/plugin-syntax-object-rest-spread" "^7.2.0"
-    "@babel/plugin-transform-modules-commonjs" "^7.2.0"
-    babel-plugin-import-to-require "^1.0.0"
-    cached-path-relative "^1.0.2"
-    concat-stream "^1.6.2"
-    duplexer2 "^0.1.4"
-    through2 "^2.0.5"
 
 espree@^10.0.1, espree@^10.1.0, espree@^10.2.0:
   version "10.2.0"
@@ -13261,7 +13245,7 @@ resolve-options@^2.0.0:
   dependencies:
     value-or-function "^4.0.0"
 
-resolve@^1.1.6, resolve@^1.10.0, resolve@^1.17.0:
+resolve@^1.1.6, resolve@^1.10.0:
   version "1.18.1"
   resolved "https://registry.yarnpkg.com/resolve/-/resolve-1.18.1.tgz#018fcb2c5b207d2a6424aee361c5a266da8f4130"
   integrity sha512-lDfCPaMKfOJXjy0dPayzPdF1phampNWr3qFCjAu+rw/qbQmr5jWH5xN2hwh9QKfw9E5v4hwV7A+jrCmL8yjjqA==
