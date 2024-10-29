@@ -91,7 +91,7 @@ export class SkillHandler extends ChannelServiceHandler {
      * This is slightly different from replyToActivity().
      * sendToConversation(conversationId) - will append the activity to the end
      * of the conversation according to the timestamp or semantics of the channel.
-     * replyToActivity(conversationId,ActivityId) - adds the activity as a reply
+     * - replyToActivity(conversationId,ActivityId) - adds the activity as a reply
      * to another activity, if the channel supports it. If the channel does not
      * support nested replies, replyToActivity falls back to sendToConversation.
      *
@@ -120,7 +120,7 @@ export class SkillHandler extends ChannelServiceHandler {
      * This is slightly different from sendToConversation().
      * sendToConversation(conversationId) - will append the activity to the end
      * of the conversation according to the timestamp or semantics of the channel.
-     * replyToActivity(conversationId,ActivityId) - adds the activity as a reply
+     * - replyToActivity(conversationId,ActivityId) - adds the activity as a reply
      * to another activity, if the channel supports it. If the channel does not
      * support nested replies, replyToActivity falls back to sendToConversation.
      *
