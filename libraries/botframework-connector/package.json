@@ -37,6 +37,7 @@
     "botframework-schema": "4.1.6",
     "buffer": "^6.0.3",
     "cross-fetch": "^4.0.0",
+    "eslint-plugin-only-warn": "^1.1.0",
     "https-proxy-agent": "^7.0.5",
     "jsonwebtoken": "^9.0.2",
     "node-fetch": "^2.7.0",
