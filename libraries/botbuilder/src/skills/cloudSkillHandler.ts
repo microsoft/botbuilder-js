@@ -71,7 +71,7 @@ export class CloudSkillHandler extends CloudChannelServiceHandler {
      * This method allows you to send an activity to the end of a conversation.
      *
      * This is slightly different from replyToActivity().
-     * sendToConversation(conversationId) - will append the activity to the end
+     * - sendToConversation(conversationId) - will append the activity to the end
      * of the conversation according to the timestamp or semantics of the channel.
      * - replyToActivity(conversationId,ActivityId) - adds the activity as a reply
      * to another activity, if the channel supports it. If the channel does not
@@ -100,7 +100,7 @@ export class CloudSkillHandler extends CloudChannelServiceHandler {
      * This method allows you to reply to an activity.
      *
      * This is slightly different from sendToConversation().
-     * sendToConversation(conversationId) - will append the activity to the end
+     * - sendToConversation(conversationId) - will append the activity to the end
      * of the conversation according to the timestamp or semantics of the channel.
      * - replyToActivity(conversationId,ActivityId) - adds the activity as a reply
      * to another activity, if the channel supports it. If the channel does not
