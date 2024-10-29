@@ -34,6 +34,7 @@
     "url": "git@github.com:Microsoft/botbuilder-js.git"
   },
   "dependencies": {
+    "eslint-plugin-only-warn": "^1.1.0",
     "fs-extra": "^11.2.0",
     "uuid": "^10.0.0"
   },
@@ -44,7 +45,7 @@
     "build": "tsc -b",
     "build:rollup": "yarn clean && yarn build && api-extractor run --verbose --local",
     "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
-    "lint": "eslint . --ext .js,.ts",
+    "lint": "eslint .",
     "postbuild": "downlevel-dts lib _ts3.4/lib --checksum",
     "test": "yarn build && nyc mocha tests/",
     "test:compat": "api-extractor run --verbose"
