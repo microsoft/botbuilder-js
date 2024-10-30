@@ -40,13 +40,13 @@
     "chai": "^4.5.0"
   },
   "scripts": {
-    "build": "npm-run-all -p build:lib build:es5",
-    "build:es5": "npm-run-all build:es5:tsc build:es5:browserify",
-    "build:es5:browserify": "browserify -s BFSE --debug es5/index-browser.js | exorcist lib/index-browser.js.map > lib/index-browser.js",
-    "build:es5:tsc": "tsc -p tsconfig-es5.json",
+    "build": "npm-run-all -p build:lib build:browser",
+    "build:browser": "npm-run-all build:browser:clean build:browser:run",
+    "build:browser:clean": "rimraf --glob lib/index-browser.*",
+    "build:browser:run": "tsup --config ../../tsup/browser.config.ts --define.entry src/index-browser.ts --define.outfile lib/index-browser.js --dts",
     "build:lib": "tsc -p tsconfig.json",
     "build:rollup": "yarn clean && yarn build && api-extractor run --verbose --local",
-    "clean": "rimraf _ts3.4 es5 lib",
+    "clean": "rimraf _ts3.4 lib",
     "depcheck": "depcheck --config ../../.depcheckrc",
     "lint": "eslint .",
     "postbuild": "downlevel-dts lib _ts3.4/lib --checksum",

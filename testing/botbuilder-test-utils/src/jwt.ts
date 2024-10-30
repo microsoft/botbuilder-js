@@ -6,8 +6,8 @@ import forge from 'node-forge';
 import jwt, { Algorithm } from 'jsonwebtoken'; // eslint-disable-line import/no-extraneous-dependencies
 import nock from 'nock'; // eslint-disable-line import/no-extraneous-dependencies
 import url from 'url';
-import { nanoid } from 'nanoid';
 import { ok } from 'assert';
+import { randomUUID } from 'crypto';
 
 /**
  * Registers mocha hooks for proper usage
@@ -62,10 +62,10 @@ export function stub(options: Partial<Options> = {}): Result {
         algorithm = 'RS256',
         bits = 2048,
         expiresIn = 1000 * 60 * 5,
-        host = `https://${nanoid()}.jwt.localhost`,
+        host = `https://${randomUUID()}.jwt.localhost`,
         issuer = 'iss',
         jwks = { path: '/v1/.well-known/jwks' },
-        keyId = nanoid(),
+        keyId = randomUUID(),
         metadata = { path: '/v1/.well-known/openid' },
     } = options;
 
