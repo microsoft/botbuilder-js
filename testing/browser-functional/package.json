@@ -7,14 +7,14 @@
   "devDependencies": {
     "axios": "^1.7.7",
     "dotenv": "^16.4.5",
-    "nightwatch": "^2.6.21",
-    "selenium-server": "^3.141.59"
+    "nightwatch": "^3.7.0"
   },
   "directories": {
     "test": "tests"
   },
   "scripts": {
-    "test": "node nightwatch.js -e"
+    "test": "nightwatch --parallel --fail-fast --env firefox,chrome,edge --config nightwatch/config.js",
+    "start:echo": "cd browser-echo-bot && yarn start"
   },
   "author": "Microsoft Corp.",
   "license": "MIT"

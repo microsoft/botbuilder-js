@@ -1,7 +1,6 @@
 {
     "extends": "../adaptive-expressions/tsconfig.json",
     "compilerOptions": {
-      "target": "es5",
       "outDir": "dist",
       "rootDir": "./src"
     },
