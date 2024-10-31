@@ -194,8 +194,7 @@ export async function makeServer(
         const adapter = services.mustMakeInstance<BotFrameworkHttpAdapter>('adapter');
 
         try {
-            // TODO: Fix INodeSocket type. Related issue https://github.com/microsoft/botbuilder-js/issues/4684.
-            await adapter.process(req, socket as any, head, async (context) => {
+            await adapter.process(req, socket, head, async (context) => {
                 await bot.run(context);
             });
         } catch (err: any) {

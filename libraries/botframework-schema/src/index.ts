@@ -2440,6 +2440,10 @@ export interface SearchInvokeValue {
      * For search and searchAnswers, there is no defined context value.
      */
     context: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+    /**
+     * The dataset to be queried to get the choices.
+     */
+    dataset: string;
 }
 
 /**

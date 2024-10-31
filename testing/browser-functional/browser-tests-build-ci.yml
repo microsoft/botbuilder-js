@@ -36,13 +36,7 @@ steps:
   inputs:
     versionSpec: 20.x
 
-- script: |
-    mkdir "testing/browser-functional/drivers"
-    cp "%CHROMEWEBDRIVER%/chromedriver.exe" "testing/browser-functional/drivers"
-    cp "%GECKOWEBDRIVER%/geckodriver.exe" "testing/browser-functional/drivers"
-  displayName: use browser drivers
-
-- script: yarn --network-timeout 600000
+- script: yarn install --network-timeout 600000
   displayName: yarn install
 
 - script: yarn build
@@ -78,11 +72,10 @@ steps:
      echo "# Deploy source code"
      call az webapp deployment source config-zip --resource-group "$(TestResourceGroup)" --name "$(TestWebApp)" --src "$(System.DefaultWorkingDirectory)/testing/browser-functional/browser-echo-bot/browser-echo-bot.zip"
 
-- script: yarn browser-functional-test chrome
-  displayName: run chrome tests
-
-- script: yarn browser-functional-test firefox
-  displayName: run firefox tests
+- script: yarn browser-functional-test
+  env:
+    TestURI: $(TESTURI)
+  displayName: Run tests
 
 - task: AzureCLI@1
   displayName: 'Delete Resource Group'
@@ -90,5 +83,4 @@ steps:
     azureSubscription: '$(AzureSubscription)'
     scriptLocation: inlineScript
     inlineScript: 'call az group delete -n $(TestResourceGroup) --yes'
-
   condition: succeededOrFailed()
