@@ -1,5 +1,6 @@
 const { PayloadConstants } = require('../lib/payloads/payloadConstants');
-const { expect } = require('chai');
+const importSync= require('import-sync');
+const { expect } = importSync('chai');
 
 describe('PayloadConstants', function () {
     it('has the proper value for MaxPayloadLength', function () {

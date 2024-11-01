@@ -1,8 +1,8 @@
 const StreamingRequest = require('../lib/streamingRequest');
 const HttpContent = require('../lib/httpContentStream');
 const SubscribableStream = require('../lib/subscribableStream');
-const chai = require('chai');
-const expect = chai.expect;
+const importSync= require('import-sync');
+const { expect } = importSync('chai');
 
 describe('Streaming Extensions Request tests', function () {
     it('creates a new request with undefined properties', function () {

@@ -4,7 +4,8 @@
 const assert = require('assert');
 const httpMocks = require('node-mocks-http');
 const net = require('net');
-const { expect } = require('chai');
+const importSync= require('import-sync');
+const { expect } = importSync('chai');
 const sinon = require('sinon');
 const {
     AuthenticationConfiguration,

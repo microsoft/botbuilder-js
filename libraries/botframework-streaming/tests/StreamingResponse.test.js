@@ -1,5 +1,6 @@
 const { HttpContent, StreamingResponse, SubscribableStream } = require('..');
-const { expect } = require('chai');
+const importSync= require('import-sync');
+const { expect } = importSync('chai');
 
 describe('Streaming Extensions Response Tests', function () {
     it('can set the response body', function () {

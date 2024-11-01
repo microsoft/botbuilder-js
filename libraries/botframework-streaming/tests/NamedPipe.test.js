@@ -1,5 +1,6 @@
 const assert = require('assert');
-const { expect } = require('chai');
+const importSync= require('import-sync');
+const { expect } = importSync('chai');
 const { expectEventually } = require('./helpers/expectEventually');
 const { NamedPipeClient, NamedPipeServer, StreamingRequest } = require('../lib');
 const { NamedPipeTransport } = require('../lib/namedPipe');

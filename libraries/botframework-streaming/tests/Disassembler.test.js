@@ -3,7 +3,8 @@ const { HttpContentStream } = require('../lib/httpContentStream');
 const { HttpContent, StreamingRequest, SubscribableStream } = require('..');
 const { PayloadSender } = require('../lib/payloadTransport');
 const { PayloadTypes } = require('../lib/payloads');
-const { expect } = require('chai');
+const importSync= require('import-sync');
+const { expect } = importSync('chai');
 
 describe('RequestDisassembler', function () {
     it('resolves calls to get stream.', async function () {

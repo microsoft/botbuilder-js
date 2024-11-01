@@ -1,4 +1,5 @@
-const { expect } = require('chai');
+const importSync= require('import-sync');
+const { expect } = importSync('chai');
 const { Server } = require('ws');
 const { spy, stub } = require('sinon');
 

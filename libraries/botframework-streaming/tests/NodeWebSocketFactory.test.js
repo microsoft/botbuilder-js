@@ -1,4 +1,5 @@
-const { expect } = require('chai');
+const importSync= require('import-sync');
+const { expect } = importSync('chai');
 const { FauxSocket, TestRequest } = require('./helpers');
 const { NodeWebSocket, NodeWebSocketFactory } = require('..');
 const { randomBytes } = require('crypto');

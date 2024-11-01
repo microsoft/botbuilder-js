@@ -3,7 +3,8 @@
  * Licensed under the MIT License.
  */
 
-const { expect } = require('chai');
+const importSync= require('import-sync');
+const { expect } = importSync('chai');
 
 // chai-as-promised is not actively maintained, we need to build something simple.
 

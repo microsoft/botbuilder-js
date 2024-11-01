@@ -1,7 +1,8 @@
 const { PayloadAssembler } = require('../lib/assemblers');
 const { PayloadTypes, StreamManager } = require('../lib/payloads');
 const { SubscribableStream } = require('..');
-const { expect } = require('chai');
+const importSync= require('import-sync');
+const { expect } = importSync('chai');
 
 describe('StreamManager', function () {
     it('properly constructs a new instance', function () {

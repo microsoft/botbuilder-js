@@ -1,7 +1,8 @@
 const { SubscribableStream } = require('..');
 const { PayloadReceiver, PayloadSender } = require('../lib/payloadTransport');
 const { PayloadAssemblerManager, PayloadTypes, StreamManager } = require('../lib/payloads');
-const { expect } = require('chai');
+const importSync= require('import-sync');
+const { expect } = importSync('chai');
 const sinon = require('sinon');
 
 class FauxSock {
