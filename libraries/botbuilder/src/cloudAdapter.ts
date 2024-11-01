@@ -26,6 +26,7 @@ import {
 import {
     INodeBuffer,
     INodeSocket,
+    INodeDuplex,
     IReceiveRequest,
     IReceiveResponse,
     IStreamingTransportServer,
@@ -81,11 +82,28 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
     ): Promise<void>;
 
     /**
+     * Handle a web socket connection by applying a logic function to
+     * each streaming request.
+     *
+     * @param req An incoming HTTP [Request](xref:botbuilder.Request)
+     * @param socket The corresponding [INodeDuplex](xref:botframework-streaming.INodeDuplex)
+     * @param head The corresponding [INodeBuffer](xref:botframework-streaming.INodeBuffer)
+     * @param logic The logic function to apply
+     * @returns a promise representing the asynchronous operation.
+     */
+    async process(
+        req: Request,
+        socket: INodeDuplex,
+        head: INodeBuffer,
+        logic: (context: TurnContext) => Promise<void>
+    ): Promise<void>;
+
+    /**
      * @internal
      */
     async process(
         req: Request,
-        resOrSocket: Response | INodeSocket,
+        resOrSocket: Response | INodeSocket | INodeDuplex,
         logicOrHead: ((context: TurnContext) => Promise<void>) | INodeBuffer,
         maybeLogic?: (context: TurnContext) => Promise<void>
     ): Promise<void> {

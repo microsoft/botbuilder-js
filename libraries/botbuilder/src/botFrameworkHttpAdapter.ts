@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import type { INodeBuffer, INodeSocket } from 'botframework-streaming';
+import type { INodeBuffer, INodeDuplex, INodeSocket } from 'botframework-streaming';
 import type { Request, Response } from './interfaces';
 import type { TurnContext } from 'botbuilder-core';
 
@@ -23,6 +23,17 @@ export interface BotFrameworkHttpAdapter {
     process(
         req: Request,
         socket: INodeSocket,
+        head: INodeBuffer,
+        logic: (context: TurnContext) => Promise<void>
+    ): Promise<void>;
+
+    /**
+     * Handle a web socket connection by applying a logic callback function to
+     * each streaming request.
+     */
+    process(
+        req: Request,
+        socket: INodeDuplex,
         head: INodeBuffer,
         logic: (context: TurnContext) => Promise<void>
     ): Promise<void>;

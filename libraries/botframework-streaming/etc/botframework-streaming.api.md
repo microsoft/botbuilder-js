@@ -8,6 +8,7 @@
 
 import { Duplex } from 'stream';
 import { DuplexOptions } from 'stream';
+import { Socket } from 'net';
 import { default as WebSocket_2 } from 'ws';
 
 // @public
@@ -145,224 +146,25 @@ export interface INodeBuffer extends Uint8Array {
 }
 
 // @public
+export interface INodeDuplex extends Duplex {
+    // (undocumented)
+    on(event: string | symbol, listener: (...args: any[]) => void): this;
+    // (undocumented)
+    on(event: 'data', listener: (chunk: INodeBuffer) => void): this;
+}
+
+// @public
 export interface INodeIncomingMessage {
     headers?: any;
     method?: any;
 }
 
 // @public
-export interface INodeSocket {
-    // (undocumented)
-    [Symbol.asyncIterator](): AsyncIterableIterator<any>;
-    // (undocumented)
-    addListener(event: 'close', listener: () => void): this;
-    // (undocumented)
-    addListener(event: 'data', listener: (chunk: any) => void): this;
-    // (undocumented)
-    addListener(event: 'end', listener: () => void): this;
-    // (undocumented)
-    addListener(event: 'readable', listener: () => void): this;
-    // (undocumented)
-    addListener(event: 'error', listener: (err: Error) => void): this;
-    // (undocumented)
-    addListener(event: string | symbol, listener: (...args: any[]) => void): this;
-    // Warning: (ae-forgotten-export) The symbol "AddressInfo" needs to be exported by the entry point index.d.ts
-    //
-    // (undocumented)
-    address(): AddressInfo | string;
-    // (undocumented)
-    readonly bufferSize: number;
-    // (undocumented)
-    readonly bytesRead: number;
-    // (undocumented)
-    readonly bytesWritten: number;
-    // (undocumented)
-    connect(options: any, connectionListener?: () => void): any;
-    // (undocumented)
-    connect(port: number, host: string, connectionListener?: () => void): any;
-    // (undocumented)
-    connect(port: number, connectionListener?: () => void): any;
-    // (undocumented)
-    connect(path: string, connectionListener?: () => void): any;
-    // (undocumented)
-    connecting: boolean;
-    // (undocumented)
-    cork(): void;
-    // (undocumented)
-    destroy(error?: Error): void;
-    // (undocumented)
-    _destroy(error: Error | null, callback: (error: Error | null) => void): void;
-    // (undocumented)
-    destroyed: boolean;
-    // (undocumented)
-    emit(event: 'close'): boolean;
-    // (undocumented)
-    emit(event: 'data', chunk: any): boolean;
-    // (undocumented)
-    emit(event: 'end'): boolean;
-    // (undocumented)
-    emit(event: 'readable'): boolean;
-    // (undocumented)
-    emit(event: 'error', err: Error): boolean;
-    // (undocumented)
-    emit(event: string | symbol, ...args: any[]): boolean;
-    // (undocumented)
-    end(cb?: () => void): void;
-    // (undocumented)
-    end(chunk: any, cb?: () => void): void;
-    // (undocumented)
-    end(chunk: any, encoding?: string, cb?: () => void): void;
-    // (undocumented)
-    eventNames(): Array<string | symbol>;
-    // (undocumented)
-    _final(callback: (error?: Error | null) => void): void;
-    // (undocumented)
-    getMaxListeners(): number;
-    // (undocumented)
-    isPaused(): boolean;
-    // (undocumented)
-    listenerCount(type: string | symbol): number;
-    // (undocumented)
-    listeners(event: string | symbol): Function[];
-    // (undocumented)
-    readonly localAddress: string;
-    // (undocumented)
-    readonly localPort: number;
-    // (undocumented)
-    off(event: string | symbol, listener: (...args: any[]) => void): this;
+export interface INodeSocket extends Socket {
     // (undocumented)
     on(event: string, listener: (...args: any[]) => void): this;
     // (undocumented)
-    on(event: 'close', listener: (had_error: boolean) => void): this;
-    // (undocumented)
-    on(event: 'connect', listener: () => void): this;
-    // (undocumented)
     on(event: 'data', listener: (data: INodeBuffer) => void): this;
-    // (undocumented)
-    on(event: 'end', listener: () => void): this;
-    // (undocumented)
-    on(event: 'error', listener: (err: Error) => void): this;
-    // (undocumented)
-    once(event: 'close', listener: () => void): this;
-    // (undocumented)
-    once(event: 'data', listener: (chunk: any) => void): this;
-    // (undocumented)
-    once(event: 'end', listener: () => void): this;
-    // (undocumented)
-    once(event: 'readable', listener: () => void): this;
-    // (undocumented)
-    once(event: 'error', listener: (err: Error) => void): this;
-    // (undocumented)
-    once(event: string | symbol, listener: (...args: any[]) => void): this;
-    // (undocumented)
-    pause(): this;
-    // Warning: (ae-forgotten-export) The symbol "WritableStream_2" needs to be exported by the entry point index.d.ts
-    //
-    // (undocumented)
-    pipe<T extends WritableStream_2>(destination: T, options?: {
-        end?: boolean;
-    }): T;
-    // (undocumented)
-    prependListener(event: 'close', listener: () => void): this;
-    // (undocumented)
-    prependListener(event: 'data', listener: (chunk: any) => void): this;
-    // (undocumented)
-    prependListener(event: 'end', listener: () => void): this;
-    // (undocumented)
-    prependListener(event: 'readable', listener: () => void): this;
-    // (undocumented)
-    prependListener(event: 'error', listener: (err: Error) => void): this;
-    // (undocumented)
-    prependListener(event: string | symbol, listener: (...args: any[]) => void): this;
-    // (undocumented)
-    prependOnceListener(event: 'close', listener: () => void): this;
-    // (undocumented)
-    prependOnceListener(event: 'data', listener: (chunk: any) => void): this;
-    // (undocumented)
-    prependOnceListener(event: 'end', listener: () => void): this;
-    // (undocumented)
-    prependOnceListener(event: 'readable', listener: () => void): this;
-    // (undocumented)
-    prependOnceListener(event: 'error', listener: (err: Error) => void): this;
-    // (undocumented)
-    prependOnceListener(event: string | symbol, listener: (...args: any[]) => void): this;
-    // (undocumented)
-    push(chunk: any, encoding?: string): boolean;
-    // (undocumented)
-    rawListeners(event: string | symbol): Function[];
-    // (undocumented)
-    read(size?: number): any;
-    // (undocumented)
-    _read(size: number): void;
-    // (undocumented)
-    readable: boolean;
-    // (undocumented)
-    readonly readableFlowing: boolean | null;
-    // (undocumented)
-    readonly readableHighWaterMark: number;
-    // (undocumented)
-    readonly readableLength: number;
-    // (undocumented)
-    ref(): any;
-    // (undocumented)
-    removeAllListeners(event?: string | symbol): this;
-    // (undocumented)
-    removeListener(event: string | symbol, listener: (...args: any[]) => void): this;
-    // (undocumented)
-    resume(): this;
-    // (undocumented)
-    setDefaultEncoding(encoding: string): this;
-    // (undocumented)
-    setEncoding(encoding: string): this;
-    // (undocumented)
-    setKeepAlive(enable?: boolean, initialDelay?: number): this;
-    // (undocumented)
-    setMaxListeners(n: number): this;
-    // (undocumented)
-    setNoDelay(noDelay?: boolean): this;
-    // (undocumented)
-    setTimeout(timeout: number, callback?: () => void): this;
-    // (undocumented)
-    uncork(): void;
-    // (undocumented)
-    unpipe(destination?: any): this;
-    // (undocumented)
-    unref(): any;
-    // (undocumented)
-    unshift(chunk: any): void;
-    // (undocumented)
-    wrap(oldStream: any): this;
-    // (undocumented)
-    writable: boolean;
-    // (undocumented)
-    readonly writableHighWaterMark: number;
-    // (undocumented)
-    readonly writableLength: number;
-    // Warning: (ae-forgotten-export) The symbol "ValidBuffer" needs to be exported by the entry point index.d.ts
-    //
-    // (undocumented)
-    write(buffer: ValidBuffer, cb?: (err?: Error) => void): boolean;
-    // (undocumented)
-    write(str: string, encoding?: string, cb?: Function): boolean;
-    // (undocumented)
-    write(buffer: ValidBuffer): boolean;
-    // (undocumented)
-    write(str: string, cb?: Function): boolean;
-    // (undocumented)
-    write(str: string, encoding?: string, fd?: string): boolean;
-    // (undocumented)
-    write(data: any, encoding?: string, callback?: Function): void;
-    // (undocumented)
-    write(chunk: any, cb?: (error: Error | null | undefined) => void): boolean;
-    // (undocumented)
-    write(chunk: any, encoding?: string, cb?: (error: Error | null | undefined) => void): boolean;
-    // (undocumented)
-    _write(chunk: any, encoding: string, callback: (error?: Error | null) => void): void;
-    // (undocumented)
-    _writev?(chunks: Array<{
-        chunk: any;
-        encoding: string;
-    }>, callback: (error?: Error | null) => void): void;
 }
 
 // @public

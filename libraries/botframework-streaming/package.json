@@ -32,6 +32,7 @@
   "dependencies": {
     "@types/node": "18.19.47",
     "@types/ws": "^6.0.3",
+    "eslint-plugin-only-warn": "^1.1.0",
     "uuid": "^10.0.0",
     "ws": "^7.5.10"
   },
@@ -47,7 +48,7 @@
     "build:rollup": "yarn clean && yarn build && api-extractor run --verbose --local",
     "clean": "rimraf _ts3.4 lib",
     "depcheck": "depcheck --config ../../.depcheckrc",
-    "lint": "eslint . --ext .js,.ts",
+    "lint": "eslint .",
     "postbuild": "downlevel-dts lib _ts3.4/lib --checksum",
     "test": "npm-run-all build test:mocha",
     "test:compat": "api-extractor run --verbose",
