@@ -1,5 +1,5 @@
 const importSync= require('import-sync');
-const { expect } = importSync('chai');
+const { expect } = importSync('chai/lib/chai');
 const { spy } = require('sinon');
 
 const { BrowserWebSocket } = require('../lib/index-browser');

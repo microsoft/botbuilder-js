@@ -1,6 +1,6 @@
 const { RequestManager } = require('../lib/payloads');
 const importSync= require('import-sync');
-const { expect } = importSync('chai');
+const { expect } = importSync('chai/lib/chai');
 const { expectEventually } = require('./helpers');
 
 const REQUEST_ID = '123';

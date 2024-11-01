@@ -2,7 +2,7 @@ const { HttpContent, StreamingRequest, StreamingResponse, SubscribableStream } =
 const { PayloadSender } = require('../lib/payloadTransport');
 const { SendOperations } = require('../lib/payloads');
 const importSync= require('import-sync');
-const { expect } = importSync('chai');
+const { expect } = importSync('chai/lib/chai');
 
 describe('SendOperations', function () {
     it('constructs a new instance', function () {

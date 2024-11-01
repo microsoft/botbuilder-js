@@ -1,6 +1,6 @@
 const { SubscribableStream } = require('../lib/subscribableStream');
 const importSync= require('import-sync');
-const { expect } = importSync('chai');
+const { expect } = importSync('chai/lib/chai');
 
 describe('Streaming Extensions Stream Tests', function () {
     it('throws on invalid encoding types', function () {

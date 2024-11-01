@@ -1,7 +1,7 @@
 const { HeaderSerializer, PayloadTypes } = require('../lib/payloads');
 const { PayloadConstants } = require('../lib/payloads/payloadConstants');
 const importSync= require('import-sync');
-const { expect } = importSync('chai');
+const { expect } = importSync('chai/lib/chai');
 
 describe('HeaderSerializer', function () {
     it('serializes and deserializes correctly', function () {

@@ -4,7 +4,7 @@ const { PayloadTypes } = require('../lib/payloads/payloadTypes');
 const { StreamManager } = require('../lib/payloads/streamManager');
 const { SubscribableStream } = require('../lib/subscribableStream');
 const importSync= require('import-sync');
-const { expect } = importSync('chai');
+const { expect } = importSync('chai/lib/chai');
 
 class TestPayloadAssembler {
     constructor(content) {

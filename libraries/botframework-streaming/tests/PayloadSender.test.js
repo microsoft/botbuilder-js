@@ -2,7 +2,7 @@ const { SubscribableStream } = require('..');
 const { PayloadReceiver, PayloadSender } = require('../lib/payloadTransport');
 const { PayloadAssemblerManager, PayloadTypes, StreamManager } = require('../lib/payloads');
 const importSync= require('import-sync');
-const { expect } = importSync('chai');
+const { expect } = importSync('chai/lib/chai');
 const sinon = require('sinon');
 
 class FauxSock {
@@ -89,7 +89,7 @@ describe('PayloadTransport', function () {
 
             expect(
                 ps.sendPayload(header, stream, () => {
-                    // This try-catch is required as chai failures need to be caught and bubbled up via done().
+                    // This try-catch is required as chai/lib/chai failures need to be caught and bubbled up via done().
                     try {
                         expect(psSenderSpy.callCount).to.equal(4);
                         done();

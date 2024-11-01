@@ -2,7 +2,7 @@ const { SubscribableStream } = require('../lib/subscribableStream');
 const { PayloadAssemblerManager, PayloadTypes, StreamManager } = require('../lib/payloads');
 const { PayloadAssembler } = require('../lib/assemblers');
 const importSync= require('import-sync');
-const { expect } = importSync('chai');
+const { expect } = importSync('chai/lib/chai');
 
 const streamManager = new StreamManager();
 

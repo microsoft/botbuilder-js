@@ -10,7 +10,7 @@ const Response = require('../lib/streamingResponse');
 const Request = require('../lib/streamingRequest');
 const StreamManager = require('../lib/payloads/streamManager');
 const importSync= require('import-sync');
-const { expect } = importSync('chai');
+const { expect } = importSync('chai/lib/chai');
 const sinon = require('sinon');
 
 class TestRequestHandler extends RequestHandler.RequestHandler {

@@ -1,7 +1,7 @@
 const assert = require('assert');
 const { Socket } = require('net');
 const importSync= require('import-sync');
-const { expect } = importSync('chai');
+const { expect } = importSync('chai/lib/chai');
 const { spy } = require('sinon');
 const { ActivityHandler, ActivityTypes, StatusCodes, TurnContext } = require('botbuilder-core');
 
