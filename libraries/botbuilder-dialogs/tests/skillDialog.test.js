@@ -296,10 +296,6 @@ describe('SkillDialog', function () {
             const validatedActivity = validatedArgs.activity;
             assert.strictEqual(validatedActivity.type, ActivityTypes.Message);
             assert.strictEqual(validatedActivity.text, 'Hello SkillDialog!');
-        });
-
-        it('should fail if options is falsy second case', function () {
-            const dialog = new SkillDialog({}, 'SkillDialog');
             assert.throws(() => dialog.validateBeginDialogArgs(), new TypeError('Missing options parameter'));
         });
 
