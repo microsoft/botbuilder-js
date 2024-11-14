@@ -136,6 +136,7 @@ class SimpleComponentDialog extends ComponentDialog {
             new WaterfallDialog(this.WaterfallDialog, [this.promptForName.bind(this), this.finalStep.bind(this)]),
         );
         this.initialDialogId = this.WaterfallDialog;
+        this.endReason = '';
     }
 
     async onEndDialog(context, instance, reason) {

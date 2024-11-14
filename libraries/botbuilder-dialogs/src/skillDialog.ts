@@ -355,7 +355,7 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
             const result: TokenResponse = await UserTokenAccess.exchangeToken(
                 context,
                 { title: 'Sign In', connectionName: connectionName },
-                { uri }
+                { uri },
             );
 
             if (!result || !result.token) {
@@ -367,7 +367,7 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
                 activity,
                 oAuthCard.tokenExchangeResource.id,
                 oAuthCard.connectionName,
-                result.token
+                result.token,
             );
         } catch {
             // Failures in token exchange are not fatal. They simply mean that the user needs to be shown the skill's OAuthCard.

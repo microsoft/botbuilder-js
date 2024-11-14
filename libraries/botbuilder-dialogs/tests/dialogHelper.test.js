@@ -117,6 +117,7 @@ class SimpleComponentDialog extends ComponentDialog {
             new WaterfallDialog(this.WaterfallDialog, [this.promptForName.bind(this), this.finalStep.bind(this)]),
         );
         this.initialDialogId = this.WaterfallDialog;
+        this.endReason = '';
     }
 
     async onEndDialog(context, instance, reason) {
@@ -143,6 +144,7 @@ class ComponentDialogWithPrematureEnd extends ComponentDialog {
         const waterfallDialog = 'waterfallDialog';
         this.addDialog(new WaterfallDialog(waterfallDialog, [this.finalStep.bind(this)]));
         this.initialDialogId = waterfallDialog;
+        this.endReason = '';
     }
 
     async onEndDialog(context, instance, reason) {
@@ -161,6 +163,7 @@ class ComponentDialogWithCancellation extends ComponentDialog {
         const waterfallDialog = 'waterfallDialog';
         this.addDialog(new WaterfallDialog(waterfallDialog, [this.finalStep.bind(this)]));
         this.initialDialogId = waterfallDialog;
+        this.endReason = '';
     }
 
     async onEndDialog(context, instance, reason) {
