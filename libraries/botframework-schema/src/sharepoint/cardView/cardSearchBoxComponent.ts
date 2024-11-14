@@ -7,7 +7,8 @@ import type { CardButtonBase } from './cardButtonBase';
 /**
  * Search box button properties.
  */
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
+
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface ICardSearchBoxButton extends CardButtonBase {
     // reserved for future. Not additional properties.
 }
