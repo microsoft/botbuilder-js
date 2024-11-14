@@ -31,8 +31,7 @@
     }
   },
   "dependencies": {
-    "botbuilder-ai": "4.1.6",
-    "eslint-plugin-only-warn": "^1.1.0"
+    "botbuilder-ai": "4.1.6"
   },
   "scripts": {
     "build": "tsc -b",
