@@ -41,7 +41,7 @@
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder-azure-queues --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-azure-queues .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Azure Queues\" --readme none",
     "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
     "depcheck": "depcheck --config ../../.depcheckrc",
-    "lint": "eslint .",
+    "lint": "eslint . --config ../../eslint.config.cjs",
     "postbuild": "downlevel-dts lib _ts3.4/lib",
     "test": "yarn build && nyc mocha --check-leaks tests",
     "test:compat": "api-extractor run --verbose"
