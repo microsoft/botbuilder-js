@@ -94,8 +94,13 @@ export const command = (argv: string[], quiet = false) => async (): Promise<Resu
     // Read git commit sha if instructed (JSON.parse properly coerces strings to boolean)
     const commitSha = JSON.parse(flags.git) ? await gitSha('HEAD') : undefined;
 
+        const projects: string[] = [
+            ...(packageFile.workspaces?.packages || []),
+            ...(packageFile.workspaces?.generators || []),
+        ];
+
     // Collect all workspaces from the repo root. Returns workspaces with absolute paths.
-    const workspaces = await collectWorkspacePackages(repoRoot, packageFile.workspaces?.packages);
+        const workspaces = await collectWorkspacePackages(repoRoot, projects);
 
     // Build an object mapping a package name to its new, updated version
     const workspaceVersions = workspaces.reduce<Record<string, string>>(
