@@ -31,7 +31,7 @@ describe('SkillDialog', function () {
             BOTBUILDER_TESTING = require('../../botbuilder-testing');
         } catch (_err) {
             console.warn(
-                '=====\nUnable to load botbuilder or botbuilder-testing module. "beginDialog should call skill" tests will not be run.\n'
+                '=====\nUnable to load botbuilder or botbuilder-testing module. "beginDialog should call skill" tests will not be run.\n',
             );
         }
 
@@ -67,7 +67,7 @@ describe('SkillDialog', function () {
                 conversationState,
                 skillClient,
                 undefined,
-                useCreateSkillConversationId
+                useCreateSkillConversationId,
             );
 
             let createSkillConversationIdSpy;
@@ -86,7 +86,7 @@ describe('SkillDialog', function () {
                 dialog,
                 { activity: activityToSend },
                 undefined,
-                conversationState
+                conversationState,
             );
 
             assert.strictEqual(dialogOptions.conversationIdFactory.createCount, 0);
@@ -123,12 +123,12 @@ describe('SkillDialog', function () {
             assert.strictEqual(
                 await dialogOptions.conversationIdFactory.getSkillConversationReference('Convo1'),
                 undefined,
-                'no test should use TestAdapter ConversationId as SkillConversationId.'
+                'no test should use TestAdapter ConversationId as SkillConversationId.',
             );
             assert.strictEqual(
                 await dialogOptions.conversationIdFactory.getSkillConversationReference(undefined),
                 undefined,
-                'no test should use TestAdapter ConversationId as SkillConversationId.'
+                'no test should use TestAdapter ConversationId as SkillConversationId.',
             );
         }
 
@@ -153,7 +153,7 @@ describe('SkillDialog', function () {
                         return;
                     },
                     undefined,
-                    expectedReplies
+                    expectedReplies,
                 );
                 const conversationState = new ConversationState(new MemoryStorage());
                 const dialogOptions = createSkillDialogOptions(conversationState, skillClient, undefined, false);
@@ -217,7 +217,7 @@ describe('SkillDialog', function () {
                     dialog,
                     { activity: activityToSend },
                     undefined,
-                    conversationState
+                    conversationState,
                 );
 
                 assert.strictEqual(dialogOptions.conversationIdFactory.createCount, 0);
@@ -298,7 +298,7 @@ describe('SkillDialog', function () {
             assert.strictEqual(validatedActivity.text, 'Hello SkillDialog!');
         });
 
-        it('should fail if options is falsy', function () {
+        it('should fail if options is falsy second case', function () {
             const dialog = new SkillDialog({}, 'SkillDialog');
             assert.throws(() => dialog.validateBeginDialogArgs(), new TypeError('Missing options parameter'));
         });
@@ -307,7 +307,7 @@ describe('SkillDialog', function () {
             const dialog = new SkillDialog({}, 'SkillDialog');
             assert.throws(
                 () => dialog.validateBeginDialogArgs({}),
-                new TypeError('"activity" is undefined or null in options.')
+                new TypeError('"activity" is undefined or null in options.'),
             );
         });
     });
@@ -330,7 +330,7 @@ describe('SkillDialog', function () {
                     skill: {},
                     skillHostEndpoint: 'http://localhost:3980/api/messages',
                 },
-                'SkillDialog'
+                'SkillDialog',
             );
             dialog.state = {};
 
@@ -368,7 +368,7 @@ describe('SkillDialog', function () {
                         },
                     },
                 },
-                'SkillDialog'
+                'SkillDialog',
             );
 
             dialog.state = {};
@@ -421,14 +421,14 @@ describe('SkillDialog', function () {
                     dialogUnderTest,
                     beginSkillDialogOptions,
                     [new AutoSaveStateMiddleware(conversationState)],
-                    conversationState
+                    conversationState,
                 );
                 client._testAdapter.addExchangeableToken(
                     connectionName,
                     Channels.Test,
                     'user1',
                     'https://test',
-                    'https://test1'
+                    'https://test1',
                 );
 
                 const finalActivity = await client.sendActivity('irrelevant');
@@ -456,14 +456,14 @@ describe('SkillDialog', function () {
                     dialogUnderTest,
                     beginSkillDialogOptions,
                     [new AutoSaveStateMiddleware(conversationState)],
-                    conversationState
+                    conversationState,
                 );
                 client._testAdapter.addExchangeableToken(
                     connectionName,
                     Channels.Test,
                     'user1',
                     'https://test',
-                    'https://test1'
+                    'https://test1',
                 );
 
                 const finalActivity = await client.sendActivity('irrelevant');
@@ -491,7 +491,7 @@ describe('SkillDialog', function () {
                     dialogUnderTest,
                     beginSkillDialogOptions,
                     [new AutoSaveStateMiddleware(conversationState)],
-                    conversationState
+                    conversationState,
                 );
                 // dont add exchangeable token to test adapter
                 const finalActivity = await client.sendActivity('irrelevant');
@@ -521,7 +521,7 @@ describe('SkillDialog', function () {
                     dialogUnderTest,
                     beginSkillDialogOptions,
                     [new AutoSaveStateMiddleware(conversationState)],
-                    conversationState
+                    conversationState,
                 );
                 client._testAdapter.addExchangeableToken(connectionName, Channels.Test, 'user1', 'https://test');
 
@@ -553,14 +553,14 @@ describe('SkillDialog', function () {
                     dialogUnderTest,
                     beginSkillDialogOptions,
                     [new AutoSaveStateMiddleware(conversationState)],
-                    conversationState
+                    conversationState,
                 );
                 client._testAdapter.addExchangeableToken(
                     connectionName,
                     Channels.Test,
                     'user1',
                     'https://test',
-                    'https://test1'
+                    'https://test1',
                 );
 
                 const finalActivity = await client.sendActivity('irrelevant');
@@ -586,7 +586,7 @@ function createSkillClientAndStub(captureAction, returnStatusCode = StatusCodes.
 
     if (captureAction && typeof captureAction !== 'function') {
         throw new TypeError(
-            `Failed test arrangement - createSkillClientAndStub() received ${typeof captureAction} instead of undefined or a function.`
+            `Failed test arrangement - createSkillClientAndStub() received ${typeof captureAction} instead of undefined or a function.`,
         );
     }
 

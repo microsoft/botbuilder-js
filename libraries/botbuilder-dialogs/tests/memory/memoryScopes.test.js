@@ -223,7 +223,7 @@ describe('Memory Scopes', function () {
 
         it('returns parent containers state for children', async function () {
             const { dc, scope } = await initialize(
-                new TestContainer('container', new TestDialog('child', 'test message'))
+                new TestContainer('container', new TestDialog('child', 'test message')),
             );
             assert(dc.child);
 
@@ -238,7 +238,7 @@ describe('Memory Scopes', function () {
 
         it('overwrites parents memory', async function () {
             const { dc, scope } = await initialize(
-                new TestContainer('container', new TestDialog('child', 'test message'))
+                new TestContainer('container', new TestDialog('child', 'test message')),
             );
             assert(dc.child);
 
@@ -334,7 +334,7 @@ describe('Memory Scopes', function () {
                         },
                     },
                     BlobsStorage: {},
-                }
+                },
             );
         });
 
@@ -365,7 +365,7 @@ describe('Memory Scopes', function () {
                     'to_be_overridden',
                     'MicrosoftAppPassword',
                     'runtimeSettings',
-                    'BlobsStorage'
+                    'BlobsStorage',
                 ),
                 {
                     array: ['one', 'two'],
@@ -381,7 +381,7 @@ describe('Memory Scopes', function () {
                         },
                     },
                     BlobsStorage: {},
-                }
+                },
             );
         });
 

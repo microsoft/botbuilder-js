@@ -114,7 +114,7 @@ export class SettingsMemoryScope extends MemoryScope {
             const root = this.convertFlattenSettingToNode(Object.entries(configuration));
             settings = root.children.reduce(
                 (acc, child) => ({ ...acc, [child.value]: this.convertNodeToObject(child) }),
-                settings
+                settings,
             );
         }
 

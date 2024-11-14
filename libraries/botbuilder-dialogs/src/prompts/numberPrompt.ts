@@ -6,9 +6,9 @@
  * Licensed under the MIT License.
  */
 
-/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable-next-line @typescript-eslint/no-require-imports */
 const Globalize = require('globalize');
-import Recognizers from '@microsoft/recognizers-text-number';
+import { recognizeNumber } from '@microsoft/recognizers-text-number';
 import * as locales from '../i18n';
 import { InputHints, TurnContext } from 'botbuilder-core';
 import { Prompt, PromptOptions, PromptRecognizerResult, PromptValidator } from './prompt';
@@ -56,7 +56,7 @@ export class NumberPrompt extends Prompt<number> {
         context: TurnContext,
         state: unknown,
         options: PromptOptions,
-        isRetry: boolean
+        isRetry: boolean,
     ): Promise<void> {
         if (isRetry && options.retryPrompt) {
             await context.sendActivity(options.retryPrompt, undefined, InputHints.ExpectingInput);
@@ -78,7 +78,7 @@ export class NumberPrompt extends Prompt<number> {
     protected async onRecognize(
         context: TurnContext,
         _state: unknown,
-        _options: PromptOptions
+        _options: PromptOptions,
     ): Promise<PromptRecognizerResult<number>> {
         const result: PromptRecognizerResult<number> = { succeeded: false };
         const activity = context.activity;
@@ -91,7 +91,7 @@ export class NumberPrompt extends Prompt<number> {
         const defaultLocale = this.defaultLocale || 'en-us';
         const locale = activity.locale || defaultLocale;
 
-        const [{ resolution = null } = {}] = Recognizers.recognizeNumber(utterance, locale) || [];
+        const [{ resolution = null } = {}] = recognizeNumber(utterance, locale) || [];
         if (resolution) {
             result.succeeded = true;
 

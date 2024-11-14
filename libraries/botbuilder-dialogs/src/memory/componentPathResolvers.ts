@@ -18,7 +18,7 @@ export interface ComponentPathResolvers {
 
 const componentPathResolvers = z.custom<ComponentPathResolvers>(
     (val: any) => typeof val.getPathResolvers === 'function',
-    { message: 'ComponentPathResolvers' }
+    { message: 'ComponentPathResolvers' },
 );
 
 /**

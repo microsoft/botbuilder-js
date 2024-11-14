@@ -247,7 +247,7 @@ export class DialogContext {
         if (!dialog) {
             throw new DialogContextError(
                 `DialogContext.beginDialog(): A dialog with an id of '${dialogId}' wasn't found.`,
-                this
+                this,
             );
         }
 
@@ -360,7 +360,7 @@ export class DialogContext {
      */
     async prompt(
         dialogId: string,
-        promptOrOptions: string | Partial<Activity> | PromptOptions
+        promptOrOptions: string | Partial<Activity> | PromptOptions,
     ): Promise<DialogTurnResult>;
 
     /**
@@ -383,7 +383,7 @@ export class DialogContext {
     async prompt(
         dialogId: string,
         promptOrOptions: string | Partial<Activity> | PromptOptions,
-        choices: (string | Choice)[]
+        choices: (string | Choice)[],
     ): Promise<DialogTurnResult>;
 
     /**
@@ -405,7 +405,7 @@ export class DialogContext {
     async prompt(
         dialogId: string,
         promptOrOptions: string | Partial<Activity>,
-        choices?: (string | Choice)[]
+        choices?: (string | Choice)[],
     ): Promise<DialogTurnResult> {
         let options: PromptOptions;
         if (
@@ -466,7 +466,7 @@ export class DialogContext {
             if (!dialog) {
                 throw new DialogContextError(
                     `DialogContext.continueDialog(): Can't continue dialog. A dialog with an id of '${instance.id}' wasn't found.`,
-                    this
+                    this,
                 );
             }
 
@@ -520,7 +520,7 @@ export class DialogContext {
             if (!dialog) {
                 throw new DialogContextError(
                     `DialogContext.endDialog(): Can't resume previous dialog. A dialog with an id of '${instance.id}' wasn't found.`,
-                    this
+                    this,
                 );
             }
 
@@ -582,7 +582,7 @@ export class DialogContext {
                 if (!dialog) {
                     throw new DialogContextError(
                         `DialogContext.repromptDialog(): Can't find a dialog with an id of '${instance.id}'.`,
-                        this
+                        this,
                     );
                 }
 
@@ -615,7 +615,6 @@ export class DialogContext {
         // eslint-disable-next-line @typescript-eslint/no-this-alias
         let dc: DialogContext = this;
         if (fromLeaf) {
-            // eslint-disable-next-line no-constant-condition
             while (true) {
                 const childDc = dc.child;
                 if (childDc != undefined) {
