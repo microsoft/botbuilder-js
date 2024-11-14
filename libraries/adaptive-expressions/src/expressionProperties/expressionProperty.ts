@@ -92,7 +92,6 @@ export class ExpressionProperty<T> {
      * @param data Data to use for expression binding.
      * @returns The value.
      */
-    // eslint-disable-next-line @typescript-eslint/ban-types
     getValue(data: object): T {
         const { value, error } = this.tryGetValue(data);
         if (error) {
@@ -108,7 +107,6 @@ export class ExpressionProperty<T> {
      * @param data Data to use for expression binding.
      * @returns the value or an error.
      */
-    // eslint-disable-next-line @typescript-eslint/ban-types
     tryGetValue(data: object): { value: T; error: Error } {
         if (!this.expression && this.expressionText) {
             try {

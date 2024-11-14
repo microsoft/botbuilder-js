@@ -31,9 +31,9 @@ export class Split extends ExpressionEvaluator {
         return FunctionUtils.apply(
             (args: any[]): string[] =>
                 InternalFunctionUtils.parseStringOrUndefined(args[0]).split(
-                    InternalFunctionUtils.parseStringOrUndefined(args[1] || '')
+                    InternalFunctionUtils.parseStringOrUndefined(args[1] || ''),
                 ),
-            FunctionUtils.verifyStringOrNull
+            FunctionUtils.verifyStringOrNull,
         );
     }
 

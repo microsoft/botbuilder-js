@@ -34,12 +34,12 @@ export class Constant extends Expression {
             typeof theValue === 'string'
                 ? ReturnType.String
                 : typeof theValue === 'boolean'
-                ? ReturnType.Boolean
-                : FunctionUtils.isNumber(theValue)
-                ? ReturnType.Number
-                : Array.isArray(theValue)
-                ? ReturnType.Array
-                : ReturnType.Object;
+                  ? ReturnType.Boolean
+                  : FunctionUtils.isNumber(theValue)
+                    ? ReturnType.Number
+                    : Array.isArray(theValue)
+                      ? ReturnType.Array
+                      : ReturnType.Object;
 
         this._value = theValue;
     }
@@ -55,12 +55,9 @@ export class Constant extends Expression {
     constructor(value: any) {
         super(
             ExpressionType.Constant,
-            new ExpressionEvaluator(
-                ExpressionType.Constant,
-                (expression: Expression): ValueWithError => {
-                    return { value: (expression as Constant).value, error: undefined };
-                }
-            )
+            new ExpressionEvaluator(ExpressionType.Constant, (expression: Expression): ValueWithError => {
+                return { value: (expression as Constant).value, error: undefined };
+            }),
         );
         this.value = value;
     }

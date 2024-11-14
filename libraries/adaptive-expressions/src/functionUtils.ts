@@ -47,7 +47,7 @@ export class FunctionUtils {
         expression: Expression,
         minArity: number,
         maxArity: number,
-        returnType: ReturnType = ReturnType.Object
+        returnType: ReturnType = ReturnType.Object,
     ): void {
         if (expression.children.length < minArity) {
             throw new Error(`${expression} should have at least ${minArity} children.`);
@@ -82,7 +82,7 @@ export class FunctionUtils {
                     ? `${expression} should have ${types.length} children.`
                     : `${expression} should have between ${types.length} and ${
                           types.length + optional.length
-                      } children.`
+                      } children.`,
             );
         }
 
@@ -494,7 +494,7 @@ export class FunctionUtils {
         expression: Expression,
         state: MemoryInterface,
         options: Options,
-        verify?: VerifyExpression
+        verify?: VerifyExpression,
     ): { args: any[]; error: string } {
         const args: any[] = [];
         let value: any;
@@ -551,7 +551,7 @@ export class FunctionUtils {
      */
     static applyWithError(
         func: (arg0: any[]) => ValueWithError,
-        verify?: VerifyExpression
+        verify?: VerifyExpression,
     ): EvaluateExpressionDelegate {
         return (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => {
             let value: any;
@@ -578,7 +578,7 @@ export class FunctionUtils {
      */
     static applyWithOptionsAndError(
         func: (arg0: unknown[], options: Options) => { value: unknown; error: string },
-        verify?: VerifyExpression
+        verify?: VerifyExpression,
     ): EvaluateExpressionDelegate {
         return (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => {
             let value: unknown;
@@ -605,7 +605,7 @@ export class FunctionUtils {
      */
     static applyWithOptions(
         func: (arg0: unknown[], options: Options) => unknown,
-        verify?: VerifyExpression
+        verify?: VerifyExpression,
     ): EvaluateExpressionDelegate {
         return (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => {
             let value: unknown;
@@ -702,7 +702,7 @@ export class FunctionUtils {
         args: unknown[],
         maxArgsLength: number,
         format: string,
-        locale = 'en-us'
+        locale = 'en-us',
     ): { format: string; locale: string } {
         if (maxArgsLength >= 2) {
             if (args.length === maxArgsLength) {
@@ -757,7 +757,7 @@ export class FunctionUtils {
     static tryAccumulatePath(
         expression: Expression,
         state: MemoryInterface,
-        options: Options
+        options: Options,
     ): { path: string; left: any; error: string } {
         let path = '';
         let left = expression;
