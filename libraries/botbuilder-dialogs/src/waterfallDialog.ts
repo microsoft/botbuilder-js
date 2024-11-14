@@ -7,9 +7,7 @@
  */
 import { v4 as uuidv4 } from 'uuid';
 import { ActivityTypes, TurnContext, telemetryTrackDialogView } from 'botbuilder-core';
-
 import { DialogInstance, Dialog, DialogReason, DialogTurnResult } from './dialog';
-
 import { DialogContext } from './dialogContext';
 import { WaterfallStepContext } from './waterfallStepContext';
 
