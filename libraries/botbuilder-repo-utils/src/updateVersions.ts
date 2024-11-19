@@ -100,7 +100,7 @@ export const command = (argv: string[], quiet = false) => async (): Promise<Resu
         ];
 
     // Collect all workspaces from the repo root. Returns workspaces with absolute paths.
-        const workspaces = await collectWorkspacePackages(repoRoot, projects);
+    const workspaces = await collectWorkspacePackages(repoRoot, projects);
 
     // Build an object mapping a package name to its new, updated version
     const workspaceVersions = workspaces.reduce<Record<string, string>>(
