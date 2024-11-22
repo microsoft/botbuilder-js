@@ -53,6 +53,21 @@ describe('BlobsStorage', function () {
         maybeIt('should write a set of values', async () => {
             await client.write({ foo, bar });
         });
+
+        maybeIt('should fail with eTag conflict error', async () => {
+            const changes = {
+                item1: {
+                    key1: 'value1',
+                    eTag: 'etag1',
+                },
+                item2: {
+                    key2: 'value2',
+                    eTag: 'etag1',
+                },
+            };
+
+            await assert.rejects(() => client.write(changes), 'Storage: error writing "item2" due to eTag conflict.');
+        });
     });
 
     describe('delete()', function () {
