@@ -49,6 +49,7 @@ describe('QnAMaker', function () {
     };
 
     let sandbox;
+
     beforeEach(function () {
         sandbox = sinon.createSandbox();
         nock.cleanAll();
@@ -157,7 +158,7 @@ describe('QnAMaker', function () {
                 sinon.match({
                     telemetryClient: sinon.match.instanceOf(NullTelemetryClient),
                     logPersonalInformation: false,
-                })
+                }),
             );
         });
 
@@ -170,7 +171,7 @@ describe('QnAMaker', function () {
                 sinon.match({
                     telemetryClient: sinon.match.instanceOf(NullTelemetryClient),
                     logPersonalInformation: false,
-                })
+                }),
             );
         });
     });
@@ -195,6 +196,7 @@ describe('QnAMaker', function () {
 
             assert.deepStrictEqual(results[0].metadata, filters.metadataFilter.metadata);
         });
+
         it('returns answer with strictFilters specified', async function () {
             const qna = new QnAMaker(endpoint);
             const context = new TestContext({ text: 'where are the unicorns?' });
@@ -214,6 +216,7 @@ describe('QnAMaker', function () {
 
             assert.deepStrictEqual(results[0].metadata, strictFilters);
         });
+
         it('returns answer without any options specified', async function () {
             const qna = new QnAMaker(endpoint);
             const context = new TestContext({ text: 'where are the unicorns?' });
@@ -361,7 +364,7 @@ describe('QnAMaker', function () {
                 sinon.match({
                     id: qnaId,
                     qnaId: sinon.match.undefined,
-                })
+                }),
             );
         });
 
@@ -432,7 +435,7 @@ describe('QnAMaker', function () {
                         metrics: sinon.match({
                             score: sinon.match.number,
                         }),
-                    })
+                    }),
                 )
                 .once();
 
@@ -464,7 +467,7 @@ describe('QnAMaker', function () {
                             articleFound: 'true',
                         }),
                         metrics: { score: 0 },
-                    })
+                    }),
                 )
                 .once();
 
@@ -499,7 +502,7 @@ describe('QnAMaker', function () {
                         metrics: sinon.match({
                             score: sinon.match.number,
                         }),
-                    })
+                    }),
                 )
                 .once();
 
@@ -526,7 +529,7 @@ describe('QnAMaker', function () {
                             foo: 'bar',
                             ImportantProperty: 'ImportantValue',
                         }),
-                    })
+                    }),
                 )
                 .once();
 
@@ -546,7 +549,7 @@ describe('QnAMaker', function () {
                         metrics: sinon.match({
                             score: sinon.match.number,
                         }),
-                    })
+                    }),
                 )
                 .once();
 
@@ -581,7 +584,7 @@ describe('QnAMaker', function () {
                             username: sinon.match.string,
                         }),
                         metrics: sinon.match({ score }),
-                    })
+                    }),
                 )
                 .once();
 
@@ -592,7 +595,7 @@ describe('QnAMaker', function () {
                 context,
                 null,
                 { question: 'OVERRIDE', MyImportantProperty: 'MyImportantValue' },
-                { score }
+                { score },
             );
 
             sandbox.verify();
@@ -610,6 +613,7 @@ describe('QnAMaker', function () {
                 message: 'QnAMaker.getAnswers() requires a TurnContext.',
             });
         });
+
         it('throws TypeError if context is undefined in getAnswersRaw', async function () {
             const qna = new QnAMaker(endpoint);
 
@@ -703,7 +707,7 @@ describe('QnAMaker', function () {
             assert(found);
 
             const traceActivity = context.sent.find(
-                (activity) => activity.type === 'trace' && activity.name === 'QnAMaker'
+                (activity) => activity.type === 'trace' && activity.name === 'QnAMaker',
             );
 
             sinon.assert.match(
@@ -719,7 +723,7 @@ describe('QnAMaker', function () {
                         knowledgeBaseId,
                         scoreThreshold: sinon.match.number,
                     }),
-                })
+                }),
             );
         });
 

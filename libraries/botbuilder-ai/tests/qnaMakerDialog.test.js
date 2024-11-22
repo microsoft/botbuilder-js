@@ -20,8 +20,7 @@ const {
 const KB_ID = process.env.QNAKNOWLEDGEBASEID;
 const ENDPOINT_KEY = process.env.QNAENDPOINTKEY;
 const HOSTNAME = process.env.QNAHOSTNAME || 'test-qna-app';
-const isMockQna = false || !(KB_ID && ENDPOINT_KEY);
-
+const isMockQna = !(KB_ID && ENDPOINT_KEY);
 const beginMessage = { text: 'begin', type: 'message' };
 
 describe('QnAMakerDialog', function () {
@@ -297,6 +296,7 @@ describe('QnAMakerDialog', function () {
     describe('Active Learning', function () {
         let sandbox;
         const testFilesPath = `${__dirname}/TestData/QnAMakerDialog/`;
+
         beforeEach(function () {
             nock.cleanAll();
             nock(`https://${HOSTNAME}.azurewebsites.net`)
@@ -329,7 +329,7 @@ describe('QnAMakerDialog', function () {
                 undefined,
                 undefined,
                 activeLearningCardTitle,
-                cardNoMatchText
+                cardNoMatchText,
             );
 
             dm.rootDialog = qnaDialog;
@@ -386,7 +386,7 @@ describe('QnAMakerDialog', function () {
                 undefined,
                 undefined,
                 activeLearningCardTitle,
-                cardNoMatchText
+                cardNoMatchText,
             );
             qnaDialog.useTeamsAdaptiveCard = true;
 
@@ -447,7 +447,7 @@ describe('QnAMakerDialog', function () {
                     strictEqual(noMatchingQuestionsText, cardNoMatchText);
                     return MessageFactory.suggestedActions(suggestionsList, noMatchingQuestionsText);
                 },
-                cardNoMatchText
+                cardNoMatchText,
             );
 
             dm.rootDialog = qnaDialog;
@@ -470,7 +470,7 @@ describe('QnAMakerDialog', function () {
             const endpointKey = 'dummyEndpointKey';
             throws(
                 () => new QnAMakerDialog(kbId, endpointKey, HOSTNAME, undefined, undefined, (_) => {}, undefined),
-                new Error('cardNoMatchText is required when using the suggestionsActivityFactory.')
+                new Error('cardNoMatchText is required when using the suggestionsActivityFactory.'),
             );
         });
 
@@ -493,7 +493,7 @@ describe('QnAMakerDialog', function () {
                     strictEqual(noMatchingQuestionsText, cardNoMatchText);
                     return 1;
                 },
-                cardNoMatchText
+                cardNoMatchText,
             );
 
             dm.rootDialog = qnaDialog;
@@ -506,7 +506,7 @@ describe('QnAMakerDialog', function () {
                 (thrown) =>
                     thrown.message.includes('invalid_type') &&
                     thrown.message.includes('"expected": "object"') &&
-                    thrown.message.includes('"received": "number"')
+                    thrown.message.includes('"received": "number"'),
             );
         });
 
@@ -535,7 +535,7 @@ describe('QnAMakerDialog', function () {
                 undefined,
                 undefined,
                 suggestionsCardTitle,
-                cardNoMatchText
+                cardNoMatchText,
             );
 
             dm.rootDialog = qnaDialog;
@@ -545,7 +545,7 @@ describe('QnAMakerDialog', function () {
 
             await rejects(
                 adapter.send('QnaMaker_TopNAnswer.json').startTest(),
-                (thrown) => thrown.message.includes('invalid_type') && thrown.message.includes('Required')
+                (thrown) => thrown.message.includes('invalid_type') && thrown.message.includes('Required'),
             );
 
             sandbox.verify();
@@ -576,7 +576,7 @@ describe('QnAMakerDialog', function () {
                 undefined,
                 undefined,
                 suggestionsCardTitle,
-                cardNoMatchText
+                cardNoMatchText,
             );
             qnaDialog.useTeamsAdaptiveCard = true;
 
@@ -587,7 +587,7 @@ describe('QnAMakerDialog', function () {
 
             await rejects(
                 adapter.send('QnaMaker_TopNAnswer.json').startTest(),
-                (thrown) => thrown.message.includes('invalid_type') && thrown.message.includes('Required')
+                (thrown) => thrown.message.includes('invalid_type') && thrown.message.includes('Required'),
             );
 
             sandbox.verify();

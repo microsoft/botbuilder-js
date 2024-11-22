@@ -38,5 +38,8 @@ jobs:
       - name: yarn
         run: yarn --frozen-lockfile
 
+      - name: yarn build
+        run: yarn build
+
       - name: yarn lint
         run: yarn lint
