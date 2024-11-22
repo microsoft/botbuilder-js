@@ -5,12 +5,12 @@
   "workspaces": {
     "packages": [
       "libraries/*",
-      "libraries/functional-tests/dialogToDialog/*",
-      "libraries/testskills/*",
       "testing/*",
       "testing/browser-functional/browser-echo-bot",
-      "tools",
-      "transcripts"
+      "tools"
+    ],
+    "generators": [
+      "generators/generator-botbuilder/generators/app/templates/*"
     ],
     "nohoist": [
       "**/@types/selenium-webdriver"
