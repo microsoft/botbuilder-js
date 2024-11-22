@@ -12,7 +12,9 @@ import { AuthenticationConstants } from './authenticationConstants';
 import { GovernmentConstants } from './governmentConstants';
 
 /**
- * An implementation of ServiceClientCredentialsFactory that generates MsalAppCredentials
+ * An implementation of ServiceClientCredentialsFactory that generates MsalAppCredentials.
+ *
+ * @deprecated Use the ServiceClientCredentialsFactory implementation that corresponds to the authentication type (MSI, Certificate, Federated, etc.).
  */
 export class MsalServiceClientCredentialsFactory implements ServiceClientCredentialsFactory {
     private readonly appId: string;
