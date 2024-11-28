@@ -21,10 +21,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: use node 20.x
+      - name: use node 22.x
         uses: actions/setup-node@v2-beta
         with:
-          node-version: 20.x
+          node-version: 22.x
 
       - name: yarn cache dir
         id: yarn-cache-dir
@@ -33,7 +33,7 @@ jobs:
       - uses: actions/cache@v2
         with:
           path: ${{ steps.yarn-cache-dir.outputs.dir }}
-          key: ${{ runner.os }}-node20.x-yarn-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-node22.x-yarn-${{ hashFiles('**/yarn.lock') }}
 
       - name: npm install @microsoft/botframework-cli@next --global
         run: npm install @microsoft/botframework-cli@next --global
