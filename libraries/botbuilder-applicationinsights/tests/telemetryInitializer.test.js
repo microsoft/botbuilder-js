@@ -151,7 +151,7 @@ describe('TelemetryInitializerMiddleware', function () {
             (err) => {
                 assert.strictEqual(err.message, 'context is null');
                 return true;
-            }
+            },
         );
     });
 
@@ -175,7 +175,7 @@ describe('TelemetryInitializerMiddleware', function () {
             () =>
                 new Promise((resolve) => {
                     resolve();
-                })
+                }),
         );
 
         const updatedContext = appInsights.getCorrelationContext();
@@ -200,7 +200,7 @@ describe('TelemetryInitializerMiddleware', function () {
             () =>
                 new Promise((resolve) => {
                     resolve();
-                })
+                }),
         );
 
         const updatedContext = appInsights.getCorrelationContext();
@@ -229,7 +229,7 @@ describe('TelemetryInitializerMiddleware', function () {
             () =>
                 new Promise((resolve) => {
                     resolve();
-                })
+                }),
         );
 
         const updatedContext = appInsights.getCorrelationContext();
