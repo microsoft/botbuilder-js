@@ -8,7 +8,7 @@ const testBotPath = require.resolve('./test.bot');
 const govTestBotPath = require.resolve('./govTest.bot');
 const legacyBotPath = require.resolve('./legacy.bot');
 const saveBotPath = testBotPath.replace('test.bot', 'save.bot');
-const [nodeVersion] = process.version.replace('v', '').split('.').map(Number);
+const UNSUPPORTED_VERSION = 'v22.0.0';
 
 describe('LoadAndSaveTests', function () {
     it('DeserializeBotFile', async function () {
@@ -90,10 +90,10 @@ describe('LoadAndSaveTests', function () {
         const config = await bf.BotConfiguration.load(testBotPath);
         await config.saveAs(saveBotPath, secret);
 
-        if (nodeVersion >= 22) {
+        if (UNSUPPORTED_VERSION.localeCompare(process.version) < 1) {
             await assert.rejects(
                 bf.BotConfiguration.load(saveBotPath),
-                new Error('This method is not available for Node.js versions over 22.0.0.'),
+                new Error(`This method is not available for Node.js versions over ${UNSUPPORTED_VERSION}.`),
             );
         } else {
             await assert.rejects(
@@ -362,10 +362,10 @@ describe('LoadAndSaveTests', function () {
     });
 
     it('LegacyEncryption', async function () {
-        if (nodeVersion >= 22) {
+        if (!(UNSUPPORTED_VERSION.localeCompare(process.version) > 0)) {
             await assert.rejects(
                 bf.BotConfiguration.load(legacyBotPath, 'password'),
-                new Error('This method is not available for Node.js versions over 22.0.0.'),
+                new Error(`This method is not available for Node.js versions over ${UNSUPPORTED_VERSION}.`),
             );
         } else {
             let config = await bf.BotConfiguration.load(legacyBotPath, 'password');

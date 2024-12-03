@@ -101,7 +101,7 @@ export function decryptString(encryptedValue: string, secret: string): string {
  * @param secret
  */
 export function legacyDecrypt(encryptedValue: string, secret: string): string {
-    const UNSUPPORTED_VERSION = '22.0.0';
+    const UNSUPPORTED_VERSION = 'v22.0.0';
     if (!isNodeCompatible(nodeVersion, UNSUPPORTED_VERSION)) {
         throw new Error(`This method is not available for Node.js versions over ${UNSUPPORTED_VERSION}.`);
     } else {
@@ -122,7 +122,5 @@ export function legacyDecrypt(encryptedValue: string, secret: string): string {
  * @returns true if the current version of Node is lower than the unsupported version.
  */
 function isNodeCompatible(currentVersion: string, minVersion: string): boolean {
-    const [currentMajor] = currentVersion.replace('v', '').split('.').map(Number);
-    const [minMajor] = minVersion.split('.').map(Number);
-    return currentMajor < minMajor;
+    return minVersion.localeCompare(currentVersion) > 0;
 }

@@ -33,7 +33,7 @@ jobs:
       - uses: actions/cache@v2
         with:
           path: ${{ steps.yarn-cache-dir.outputs.dir }}
-          key: ${{ runner.os }}-node20.x-yarn-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-node22.x-yarn-${{ hashFiles('**/yarn.lock') }}
 
       - name: yarn
         run: yarn --frozen-lockfile

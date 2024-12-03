@@ -50,13 +50,13 @@
     "node-mocks-http": "^1.16.0"
   },
   "scripts": {
-    "build": "yarn prebuild && tsc -b",
+    "build": "tsc -b",
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder .\\lib\\index.d.ts ..\\botbuilder-core\\lib\\index.d.ts ..\\botframework-schema\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK\" --readme none",
     "build:rollup": "yarn clean && yarn build && api-extractor run --verbose --local",
-    "clean": "rimraf _ts3.4 lib dist tsconfig.tsbuildinfo",
+    "clean": "rimraf _ts3.4 lib vendors tsconfig.tsbuildinfo",
     "depcheck": "depcheck --config ../../.depcheckrc",
     "lint": "eslint .",
-    "prebuild": "tsup ../../node_modules/filenamify/*.js --format cjs --dts --out-dir dist/filenamify --clean --sourcemap",
+    "prebuild": "tsup ./node_modules/filenamify/*.js --format cjs --dts --out-dir vendors/filenamify --clean --sourcemap",
     "postbuild": "downlevel-dts lib _ts3.4/lib --checksum",
     "test": "npm-run-all build test:mocha",
     "test:compat": "api-extractor run --verbose",
@@ -70,6 +70,7 @@
   "files": [
     "_ts3.4",
     "lib",
-    "src"
+    "src",
+    "vendors"
   ]
 }
