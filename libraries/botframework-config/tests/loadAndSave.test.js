@@ -362,7 +362,7 @@ describe('LoadAndSaveTests', function () {
     });
 
     it('LegacyEncryption', async function () {
-        if (!(UNSUPPORTED_VERSION.localeCompare(process.version) > 0)) {
+        if (UNSUPPORTED_VERSION.localeCompare(process.version) < 1) {
             await assert.rejects(
                 bf.BotConfiguration.load(legacyBotPath, 'password'),
                 new Error(`This method is not available for Node.js versions over ${UNSUPPORTED_VERSION}.`),
