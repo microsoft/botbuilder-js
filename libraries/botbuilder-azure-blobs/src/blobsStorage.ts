@@ -158,18 +158,25 @@ export class BlobsStorage implements Storage {
 
         await pmap(
             Object.entries(changes),
-            ([key, { eTag = '', ...change }]) => {
-                const blob = this._containerClient.getBlockBlobClient(sanitizeBlobKey(key));
-                const serialized = JSON.stringify(change);
-
-                return blob.upload(serialized, serialized.length, {
-                    conditions: typeof eTag === 'string' && eTag !== '*' ? { ifMatch: eTag } : {},
-                    blobHTTPHeaders: { blobContentType: 'application/json' },
-                });
+            async ([key, { eTag = '', ...change }]) => {
+                try {
+                    const blob = this._containerClient.getBlockBlobClient(sanitizeBlobKey(key));
+                    const serialized = JSON.stringify(change);
+                    return await blob.upload(serialized, serialized.length, {
+                        conditions: typeof eTag === 'string' && eTag !== '*' ? { ifMatch: eTag } : {},
+                        blobHTTPHeaders: { blobContentType: 'application/json' },
+                    });
+                } catch (err: any) {
+                    if (err.statusCode === 412) {
+                        throw new Error(`Storage: error writing "${key}" due to eTag conflict.`);
+                    } else {
+                        throw err;
+                    }
+                }
             },
             {
                 concurrency: this._concurrency,
-            }
+            },
         );
     }
 

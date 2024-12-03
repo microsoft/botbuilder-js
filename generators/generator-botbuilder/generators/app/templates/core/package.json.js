@@ -1,6 +1,6 @@
 {
     "name": "<%= botname %>",
-    "version": "1.0.0",
+    "version": "4.1.6",
     "description": "<%= botDescription %>",
     "author": "Generated using Microsoft Bot Builder Yeoman generator v<%= version %>",
     "license": "MIT",
@@ -17,9 +17,9 @@
     },
     "dependencies": {
         "@microsoft/recognizers-text-data-types-timex-expression": "1.1.4",
-        "botbuilder": "^4.23.1,
-        "botbuilder-ai": "^4.23.1",
-        "botbuilder-dialogs": "^4.23.1",
+        "botbuilder": "4.1.6",
+        "botbuilder-ai": "4.1.6",
+        "botbuilder-dialogs": "4.1.6",
         "dotenv": "~8.2.0",
         "restify": "~11.1.0"
     },
