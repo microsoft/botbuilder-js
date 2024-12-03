@@ -1,4 +1,3 @@
-/* eslint-disable security/detect-object-injection */
 /**
  * @module botbuilder-lg
  */
@@ -188,7 +187,7 @@ export class TemplateExtensions {
         const startPosition = new Position(lineOffset + context.start.line, context.start.charPositionInLine);
         const stopPosition = new Position(
             lineOffset + context.stop.line,
-            context.stop.charPositionInLine + context.stop.text.length
+            context.stop.charPositionInLine + context.stop.text.length,
         );
 
         return new Range(startPosition, stopPosition);

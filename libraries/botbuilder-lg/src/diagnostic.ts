@@ -43,7 +43,7 @@ export class Diagnostic {
         message: string,
         severity: DiagnosticSeverity = DiagnosticSeverity.Error,
         source?: string,
-        code?: string
+        code?: string,
     ) {
         this.message = message;
         this.range = range;

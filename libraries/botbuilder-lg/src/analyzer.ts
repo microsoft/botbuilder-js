@@ -1,4 +1,3 @@
-/* eslint-disable security/detect-object-injection */
 /**
  * @module botbuilder-lg
  */
@@ -16,7 +15,7 @@ import { LGTemplateParserVisitor } from './generated/LGTemplateParserVisitor';
 import { Template } from './template';
 import { TemplateExtensions } from './templateExtensions';
 import { Templates } from './templates';
-import keyBy = require('lodash/keyBy');
+import keyBy from 'lodash/keyBy';
 
 import {
     IfConditionRuleContext,
@@ -37,7 +36,8 @@ import { TemplateErrors } from './templateErrors';
  */
 export class Analyzer
     extends AbstractParseTreeVisitor<AnalyzerResult>
-    implements LGTemplateParserVisitor<AnalyzerResult> {
+    implements LGTemplateParserVisitor<AnalyzerResult>
+{
     /**
      * Templates.
      */
@@ -85,7 +85,7 @@ export class Analyzer
                 throw new Error(
                     `${TemplateErrors.loopDetected} ${this.evalutationTargetStack
                         .reverse()
-                        .map((e) => e.templateName)} => ${templateName}`
+                        .map((e) => e.templateName)} => ${templateName}`,
                 );
             }
         }

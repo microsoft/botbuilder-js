@@ -1,4 +1,3 @@
-/* eslint-disable security/detect-object-injection */
 /**
  * @module botbuilder-lg
  */
@@ -20,11 +19,10 @@ import {
     SimpleObjectMemory,
     ValueWithError,
 } from 'adaptive-expressions';
-import { ImportResolverDelegate, TemplatesTransformer } from './templatesParser';
+import { ImportResolverDelegate, TemplatesTransformer, TemplatesParser } from './templatesParser';
 import { Evaluator } from './evaluator';
 import { Expander } from './expander';
 import { Analyzer } from './analyzer';
-import { TemplatesParser } from './templatesParser';
 import { AnalyzerResult } from './analyzerResult';
 import { TemplateErrors } from './templateErrors';
 import { TemplateExtensions } from './templateExtensions';
@@ -133,7 +131,7 @@ export class Templates implements Iterable<Template> {
         importResolverDelegate?: ImportResolverDelegate,
         options?: string[],
         source?: string,
-        namedReferences?: Record<string, Templates>
+        namedReferences?: Record<string, Templates>,
     ) {
         this.items = items || [];
         this.imports = imports || [];
@@ -236,7 +234,7 @@ export class Templates implements Iterable<Template> {
     static parseFile(
         filePath: string,
         importResolver?: ImportResolverDelegate,
-        expressionParser?: ExpressionParser
+        expressionParser?: ExpressionParser,
     ): Templates {
         return TemplatesParser.parseFile(filePath, importResolver, expressionParser).injectToExpressionFunction();
     }
@@ -255,7 +253,7 @@ export class Templates implements Iterable<Template> {
         content: string,
         id = '',
         importResolver?: ImportResolverDelegate,
-        expressionParser?: ExpressionParser
+        expressionParser?: ExpressionParser,
     ): Templates {
         return TemplatesParser.parseText(content, id, importResolver, expressionParser).injectToExpressionFunction();
     }
@@ -271,7 +269,7 @@ export class Templates implements Iterable<Template> {
     static parseResource(
         resource: LGResource,
         importResolver?: ImportResolverDelegate,
-        expressionParser?: ExpressionParser
+        expressionParser?: ExpressionParser,
     ): Templates {
         return TemplatesParser.parseResource(resource, importResolver, expressionParser).injectToExpressionFunction();
     }
@@ -373,7 +371,7 @@ export class Templates implements Iterable<Template> {
         templateName: string,
         newTemplateName: string,
         parameters: string[],
-        templateBody: string
+        templateBody: string,
     ): Templates {
         const template: Template = this.items.find((u: Template): boolean => u.name === templateName);
         if (template) {
@@ -388,7 +386,7 @@ export class Templates implements Iterable<Template> {
                 this.content,
                 template.sourceRange.range.start.line - 1,
                 template.sourceRange.range.end.line - 1,
-                content
+                content,
             );
 
             let updatedTemplates = new Templates();
@@ -399,7 +397,7 @@ export class Templates implements Iterable<Template> {
 
             const resource = new LGResource(this.id, this.id, content);
             updatedTemplates = new TemplatesTransformer(updatedTemplates).transform(
-                TemplatesParser.antlrParseTemplates(resource)
+                TemplatesParser.antlrParseTemplates(resource),
             );
 
             const originalStartLine = template.sourceRange.range.start.line - 1;
@@ -447,7 +445,7 @@ export class Templates implements Iterable<Template> {
 
         const resource = new LGResource(this.id, this.id, content);
         updatedTemplates = new TemplatesTransformer(updatedTemplates).transform(
-            TemplatesParser.antlrParseTemplates(resource)
+            TemplatesParser.antlrParseTemplates(resource),
         );
 
         this.appendDiagnosticWithOffset(updatedTemplates.diagnostics, originalStartLine);
@@ -584,7 +582,7 @@ export class Templates implements Iterable<Template> {
         originString: string,
         startLine: number,
         stopLine: number,
-        replaceString: string
+        replaceString: string,
     ): string {
         const originList: string[] = TemplateExtensions.readLine(originString);
         if (startLine < 0 || startLine > stopLine || stopLine >= originList.length) {
@@ -694,8 +692,8 @@ export class Templates implements Iterable<Template> {
 
                                 return { value, error };
                             },
-                            ReturnType.Object
-                        )
+                            ReturnType.Object,
+                        ),
                     );
                 }
             }

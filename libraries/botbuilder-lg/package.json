@@ -21,7 +21,6 @@
   "dependencies": {
     "adaptive-expressions": "4.1.6",
     "antlr4ts": "0.5.0-alpha.4",
-    "eslint-plugin-only-warn": "^1.1.0",
     "lodash": "^4.17.19",
     "uuid": "^10.0.0"
   },

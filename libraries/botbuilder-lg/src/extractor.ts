@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
-import keyBy = require('lodash/keyBy');
+import keyBy from 'lodash/keyBy';
 import { LGTemplateParserVisitor } from './generated/LGTemplateParserVisitor';
 import { Template } from './template';
 
@@ -26,7 +26,8 @@ import {
  */
 export class Extractor
     extends AbstractParseTreeVisitor<Map<string, string[]>>
-    implements LGTemplateParserVisitor<Map<string, string[]>> {
+    implements LGTemplateParserVisitor<Map<string, string[]>>
+{
     readonly templates: Template[];
 
     readonly templateMap: Record<string, Template>;
@@ -55,7 +56,7 @@ export class Extractor
             const templateBodies = this.visit(template.templateBodyParseTree);
             let isNormalTemplate = true;
             templateBodies.forEach(
-                (templateBody) => (isNormalTemplate = isNormalTemplate && templateBody === undefined)
+                (templateBody) => (isNormalTemplate = isNormalTemplate && templateBody === undefined),
             );
 
             if (isNormalTemplate) {
@@ -128,8 +129,8 @@ export class Extractor
             const node: TerminalNode = ifExpr
                 ? conditionNode.IF()
                 : elseIfExpr
-                ? conditionNode.ELSEIF()
-                : conditionNode.ELSE();
+                  ? conditionNode.ELSEIF()
+                  : conditionNode.ELSE();
             const conditionLabel: string = node.text.toLowerCase();
             const childTemplateBodyResult: string[] = [];
             const templateBodies = this.visit(ifRule.normalTemplateBody());
@@ -167,8 +168,8 @@ export class Extractor
             const node: TerminalNode = switchExpr
                 ? switchCaseStat.SWITCH()
                 : caseExpr
-                ? switchCaseStat.CASE()
-                : switchCaseStat.DEFAULT();
+                  ? switchCaseStat.CASE()
+                  : switchCaseStat.DEFAULT();
             if (switchExpr) {
                 continue;
             }

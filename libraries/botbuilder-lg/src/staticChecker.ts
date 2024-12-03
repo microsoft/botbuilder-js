@@ -35,7 +35,8 @@ import {
  */
 export class StaticChecker
     extends AbstractParseTreeVisitor<Diagnostic[]>
-    implements LGTemplateParserVisitor<Diagnostic[]> {
+    implements LGTemplateParserVisitor<Diagnostic[]>
+{
     private readonly templates: Templates;
     private currentTemplate: Template;
     private _expressionParser: ExpressionParserInterface;
@@ -77,7 +78,7 @@ export class StaticChecker
                 Range.DefaultRange,
                 TemplateErrors.noTemplate,
                 DiagnosticSeverity.Warning,
-                this.templates.source
+                this.templates.source,
             );
             result.push(diagnostic);
             return result;
@@ -96,10 +97,10 @@ export class StaticChecker
                         range,
                         TemplateErrors.duplicatedTemplateInDiffTemplate(
                             sameTemplate.name,
-                            sameTemplate.sourceRange.source
+                            sameTemplate.sourceRange.source,
                         ),
                         DiagnosticSeverity.Error,
-                        this.templates.source
+                        this.templates.source,
                     );
                     templateDiagnostics.push(diagnostic);
                 }
@@ -151,8 +152,8 @@ export class StaticChecker
                 this.buildLGDiagnostic(
                     TemplateErrors.invalidStrucName(errorName.text),
                     undefined,
-                    context.structuredBodyNameLine()
-                )
+                    context.structuredBodyNameLine(),
+                ),
             );
         }
 
@@ -209,12 +210,12 @@ export class StaticChecker
             const node: TerminalNode = ifExpr
                 ? conditionNode.IF()
                 : elseIfExpr
-                ? conditionNode.ELSEIF()
-                : conditionNode.ELSE();
+                  ? conditionNode.ELSEIF()
+                  : conditionNode.ELSE();
 
             if (node.text.split(' ').length - 1 > 1) {
                 result.push(
-                    this.buildLGDiagnostic(TemplateErrors.invalidWhitespaceInCondition, undefined, conditionNode)
+                    this.buildLGDiagnostic(TemplateErrors.invalidWhitespaceInCondition, undefined, conditionNode),
                 );
             }
 
@@ -223,8 +224,8 @@ export class StaticChecker
                     this.buildLGDiagnostic(
                         TemplateErrors.notStartWithIfInCondition,
                         DiagnosticSeverity.Warning,
-                        conditionNode
-                    )
+                        conditionNode,
+                    ),
                 );
             }
 
@@ -237,8 +238,8 @@ export class StaticChecker
                     this.buildLGDiagnostic(
                         TemplateErrors.notEndWithElseInCondition,
                         DiagnosticSeverity.Warning,
-                        conditionNode
-                    )
+                        conditionNode,
+                    ),
                 );
             }
 
@@ -249,7 +250,7 @@ export class StaticChecker
             if (!elseExpr) {
                 if (ifRule.ifCondition().expression().length !== 1) {
                     result.push(
-                        this.buildLGDiagnostic(TemplateErrors.invalidExpressionInCondition, undefined, conditionNode)
+                        this.buildLGDiagnostic(TemplateErrors.invalidExpressionInCondition, undefined, conditionNode),
                     );
                 } else {
                     const errorPrefix = "Condition '" + conditionNode.expression(0).text + "': ";
@@ -258,7 +259,7 @@ export class StaticChecker
             } else {
                 if (ifRule.ifCondition().expression().length !== 0) {
                     result.push(
-                        this.buildLGDiagnostic(TemplateErrors.extraExpressionInCondition, undefined, conditionNode)
+                        this.buildLGDiagnostic(TemplateErrors.extraExpressionInCondition, undefined, conditionNode),
                     );
                 }
             }
@@ -266,7 +267,7 @@ export class StaticChecker
                 result = result.concat(this.visit(ifRule.normalTemplateBody()));
             } else {
                 result.push(
-                    this.buildLGDiagnostic(TemplateErrors.missingTemplateBodyInCondition, undefined, conditionNode)
+                    this.buildLGDiagnostic(TemplateErrors.missingTemplateBodyInCondition, undefined, conditionNode),
                 );
             }
 
@@ -296,23 +297,27 @@ export class StaticChecker
             const node: TerminalNode = switchExpr
                 ? switchCaseStat.SWITCH()
                 : caseExpr
-                ? switchCaseStat.CASE()
-                : switchCaseStat.DEFAULT();
+                  ? switchCaseStat.CASE()
+                  : switchCaseStat.DEFAULT();
             if (node.text.split(' ').length - 1 > 1) {
                 result.push(
-                    this.buildLGDiagnostic(TemplateErrors.invalidWhitespaceInSwitchCase, undefined, switchCaseStat)
+                    this.buildLGDiagnostic(TemplateErrors.invalidWhitespaceInSwitchCase, undefined, switchCaseStat),
                 );
             }
 
             if (idx === 0 && !switchExpr) {
                 result.push(
-                    this.buildLGDiagnostic(TemplateErrors.notStartWithSwitchInSwitchCase, undefined, switchCaseStat)
+                    this.buildLGDiagnostic(TemplateErrors.notStartWithSwitchInSwitchCase, undefined, switchCaseStat),
                 );
             }
 
             if (idx > 0 && switchExpr) {
                 result.push(
-                    this.buildLGDiagnostic(TemplateErrors.multipleSwithStatementInSwitchCase, undefined, switchCaseStat)
+                    this.buildLGDiagnostic(
+                        TemplateErrors.multipleSwithStatementInSwitchCase,
+                        undefined,
+                        switchCaseStat,
+                    ),
                 );
             }
 
@@ -321,8 +326,8 @@ export class StaticChecker
                     this.buildLGDiagnostic(
                         TemplateErrors.invalidStatementInMiddlerOfSwitchCase,
                         undefined,
-                        switchCaseStat
-                    )
+                        switchCaseStat,
+                    ),
                 );
             }
 
@@ -332,8 +337,8 @@ export class StaticChecker
                         this.buildLGDiagnostic(
                             TemplateErrors.notEndWithDefaultInSwitchCase,
                             DiagnosticSeverity.Warning,
-                            switchCaseStat
-                        )
+                            switchCaseStat,
+                        ),
                     );
                 } else {
                     if (length === 2) {
@@ -341,8 +346,8 @@ export class StaticChecker
                             this.buildLGDiagnostic(
                                 TemplateErrors.missingCaseInSwitchCase,
                                 DiagnosticSeverity.Warning,
-                                switchCaseStat
-                            )
+                                switchCaseStat,
+                            ),
                         );
                     }
                 }
@@ -350,7 +355,7 @@ export class StaticChecker
             if (switchExpr || caseExpr) {
                 if (switchCaseStat.expression().length !== 1) {
                     result.push(
-                        this.buildLGDiagnostic(TemplateErrors.invalidExpressionInSwiathCase, undefined, switchCaseStat)
+                        this.buildLGDiagnostic(TemplateErrors.invalidExpressionInSwiathCase, undefined, switchCaseStat),
                     );
                 } else {
                     let errorPrefix = switchExpr ? 'Switch' : 'Case';
@@ -360,7 +365,7 @@ export class StaticChecker
             } else {
                 if (switchCaseStat.expression().length !== 0 || switchCaseStat.TEXT().length !== 0) {
                     result.push(
-                        this.buildLGDiagnostic(TemplateErrors.extraExpressionInSwitchCase, undefined, switchCaseStat)
+                        this.buildLGDiagnostic(TemplateErrors.extraExpressionInSwitchCase, undefined, switchCaseStat),
                     );
                 }
             }
@@ -372,8 +377,8 @@ export class StaticChecker
                         this.buildLGDiagnostic(
                             TemplateErrors.missingTemplateBodyInSwitchCase,
                             undefined,
-                            switchCaseStat
-                        )
+                            switchCaseStat,
+                        ),
                     );
                 }
             }
@@ -446,7 +451,7 @@ export class StaticChecker
     private buildLGDiagnostic(
         message: string,
         severity: DiagnosticSeverity = undefined,
-        context: ParserRuleContext = undefined
+        context: ParserRuleContext = undefined,
     ): Diagnostic {
         const lineOffset = this.currentTemplate !== undefined ? this.currentTemplate.sourceRange.range.start.line : 0;
 

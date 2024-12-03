@@ -63,7 +63,6 @@ export class CustomizedMemory implements MemoryInterface {
      * @param _path Memory path.
      * @param _value Value to set.
      */
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     setValue(_path: string, _value: any): void {
         return;
     }
