@@ -33,11 +33,12 @@
     "@types/node": "18.19.47",
     "@types/ws": "^6.0.3",
     "eslint-plugin-only-warn": "^1.1.0",
+    "import-sync": "^2.2.2",
     "uuid": "^10.0.0",
     "ws": "^7.5.10"
   },
   "devDependencies": {
-    "chai": "^4.5.0"
+    "chai": "^5.1.2"
   },
   "scripts": {
     "build": "npm-run-all -p build:lib build:browser",
