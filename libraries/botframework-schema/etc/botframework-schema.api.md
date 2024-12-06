@@ -613,7 +613,7 @@ export enum Channels {
     // (undocumented)
     Line = "line",
     // (undocumented)
-    M365 = 'm365extensions',
+    M365 = "m365extensions",
     // (undocumented)
     Msteams = "msteams",
     // (undocumented)
