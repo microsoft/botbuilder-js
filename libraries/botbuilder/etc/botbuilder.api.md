@@ -352,6 +352,13 @@ export class SharePointActivityHandler extends ActivityHandler {
     protected onSharePointTaskGetQuickViewAsync(_context: TurnContext, _aceRequest: AceRequest): Promise<QuickViewResponse>;
     protected onSharePointTaskHandleActionAsync(_context: TurnContext, _aceRequest: AceRequest): Promise<HandleActionResponse>;
     protected onSharePointTaskSetPropertyPaneConfigurationAsync(_context: TurnContext, _aceRequest: AceRequest): Promise<SetPropertyPaneConfigurationResponse>;
+    protected onSignInInvoke(_context: TurnContext): Promise<void>;
+}
+
+// @public
+export class SharePointSSOTokenExchangeMiddleware implements Middleware {
+    constructor(storage: Storage_2, oAuthConnectionName: string);
+    onTurn(context: TurnContext, next: () => Promise<void>): Promise<void>;
 }
 
 // @public @deprecated (undocumented)

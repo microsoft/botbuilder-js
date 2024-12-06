@@ -2295,6 +2295,7 @@ export enum Channels {
      */
     Kik = 'kik',
     Line = 'line',
+    M365 = 'm365extensions',
     Msteams = 'msteams',
     Omni = 'omnichannel',
     Outlook = 'outlook',
