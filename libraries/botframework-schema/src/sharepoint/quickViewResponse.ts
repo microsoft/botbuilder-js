@@ -34,4 +34,12 @@ export interface QuickViewResponse {
      * An optional focus element to set focus when the view is rendered for accessibility purposes.
      */
     focusParameters: FocusParameters;
+    /**
+     * Value indicating whether the client should trigger a single sign on flow
+     */
+    requiresSso?: boolean;
+    /**
+     * Value representing the view id of the view to load once SSO is complete
+     */
+    postSsoViewId?: string;
 }
