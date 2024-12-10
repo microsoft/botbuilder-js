@@ -16,8 +16,7 @@
     "lodash": "^4.17.20",
     "eslint-plugin-only-warn": "^1.1.0",
     "minimatch": "^9.0.5",
-    "minimist": "^1.2.6",
-    "p-map": "^4.0.0"
+    "minimist": "^1.2.6"
   },
   "devDependencies": {
     "@types/minimist": "^1.2.5",

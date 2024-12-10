@@ -3,7 +3,7 @@
 
 import * as z from 'zod';
 import StreamConsumers from 'stream/consumers';
-import pmap from 'p-map';
+import pmap from '../vendors/p-map';
 import { Activity, PagedResult, TranscriptInfo, TranscriptStore } from 'botbuilder-core';
 import { maybeCast } from 'botbuilder-stdlib';
 import { sanitizeBlobKey } from './sanitizeBlobKey';
