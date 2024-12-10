@@ -20,7 +20,10 @@ export abstract class LuisRecognizerInternal {
      * @param {LuisApplication} application An object conforming to the [LuisApplication](xref:botbuilder-ai.LuisApplication) definition.
      * @param {LuisRecognizerOptions} _options Optional. Options object used to control predictions. Should conform to the [LuisRecognizerOptions](xref:botbuilder-ai.LuisRecognizerOptions) definition.
      */
-    constructor(public application: LuisApplication, _options?: LuisRecognizerOptions) {
+    constructor(
+        public application: LuisApplication,
+        _options?: LuisRecognizerOptions,
+    ) {
         if (!application) {
             throw new Error('Null Application\n');
         }

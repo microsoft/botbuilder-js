@@ -6,8 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import fetch from 'node-fetch';
-import { RequestInfo, RequestInit } from 'node-fetch';
+import fetch, { RequestInfo, RequestInit } from 'node-fetch';
 import { LuisApplication, LuisRecognizerOptionsV3 } from './luisRecognizer';
 import { LuisResult } from './luisV2-models/luisResult';
 import { LuisRecognizerInternal } from './luisRecognizerOptions';
@@ -31,7 +30,6 @@ const MetadataKey = '$instance';
  * @returns {boolean} A boolean value that indicates param options is a [LuisRecognizerOptionsV3](xref:botbuilder-ai.LuisRecognizerOptionsV3).
  */
 export function isLuisRecognizerOptionsV3(options: unknown): options is LuisRecognizerOptionsV3 {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return (options as any).apiVersion && (options as any).apiVersion === 'v3';
 }
 
@@ -143,7 +141,7 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
     private async recognize(
         context: TurnContext,
         utterance: string,
-        options: LuisRecognizerOptionsV3
+        options: LuisRecognizerOptionsV3,
     ): Promise<RecognizerResult> {
         if (!utterance.trim()) {
             // Bypass LUIS if the activity's text is null or whitespace
@@ -240,7 +238,7 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
         context: TurnContext,
         luisResult: LuisResult,
         recognizerResult: RecognizerResult,
-        options: LuisRecognizerOptionsV3
+        options: LuisRecognizerOptionsV3,
     ): Promise<unknown> {
         const traceInfo = {
             recognizerResult: recognizerResult,

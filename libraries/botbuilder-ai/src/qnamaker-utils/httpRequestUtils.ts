@@ -15,7 +15,7 @@ import { QnAMakerResults } from '../qnamaker-interfaces/qnamakerResults';
 import { getFetch } from '../globals';
 const fetch = getFetch();
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const pjson: Record<'name' | 'version', string> = require('../../package.json');
 /**
  * Http request utils class.
@@ -37,7 +37,7 @@ export class HttpRequestUtils {
         requestUrl: string,
         payloadBody: string,
         endpoint: QnAMakerEndpoint,
-        timeout?: number
+        timeout?: number,
     ): Promise<QnAMakerResults | KnowledgeBaseAnswers | undefined> {
         if (!requestUrl) {
             throw new TypeError('Request url cannot be null.');

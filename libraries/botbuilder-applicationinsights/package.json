@@ -30,8 +30,7 @@
   "dependencies": {
     "applicationinsights": "^2.9.6",
     "botbuilder-core": "4.1.6",
-    "cls-hooked": "^4.2.2",
-    "eslint-plugin-only-warn": "^1.1.0"
+    "cls-hooked": "^4.2.2"
   },
   "scripts": {
     "build": "tsc -b",
@@ -39,7 +38,7 @@
     "build:rollup": "yarn clean && yarn build && api-extractor run --verbose --local",
     "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
     "depcheck": "depcheck --config ../../.depcheckrc",
-    "lint": "eslint .",
+    "lint": "eslint . --config ../../eslint.config.cjs",
     "postbuild": "downlevel-dts lib _ts3.4/lib --checksum",
     "test": "npm-run-all build test:mocha",
     "test:compat": "api-extractor run --verbose",
