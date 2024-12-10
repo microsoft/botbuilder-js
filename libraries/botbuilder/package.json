@@ -40,7 +40,6 @@
     "filenamify": "^6.0.0",
     "fs-extra": "^11.2.0",
     "htmlparser2": "^9.0.1",
-    "import-sync": "^2.2.2",
     "uuid": "^10.0.0",
     "zod": "^3.23.8"
   },
@@ -54,9 +53,10 @@
     "build": "tsc -b",
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder .\\lib\\index.d.ts ..\\botbuilder-core\\lib\\index.d.ts ..\\botframework-schema\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK\" --readme none",
     "build:rollup": "yarn clean && yarn build && api-extractor run --verbose --local",
-    "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
+    "clean": "rimraf _ts3.4 lib vendors tsconfig.tsbuildinfo",
     "depcheck": "depcheck --config ../../.depcheckrc",
     "lint": "eslint .",
+    "prebuild": "tsup ./node_modules/filenamify/*.js --format cjs --dts --out-dir vendors/filenamify --clean --sourcemap",
     "postbuild": "downlevel-dts lib _ts3.4/lib --checksum",
     "test": "npm-run-all build test:mocha",
     "test:compat": "api-extractor run --verbose",
@@ -70,6 +70,7 @@
   "files": [
     "_ts3.4",
     "lib",
-    "src"
+    "src",
+    "vendors"
   ]
 }
