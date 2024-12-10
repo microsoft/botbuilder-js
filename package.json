@@ -10,6 +10,7 @@
       "tools"
     ],
     "generators": [
+      "generators/generator-botbuilder",
       "generators/generator-botbuilder/generators/app/templates/*"
     ],
     "nohoist": [

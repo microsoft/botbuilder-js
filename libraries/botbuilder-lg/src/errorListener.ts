@@ -48,22 +48,21 @@ export class ErrorListener implements ANTLRErrorListener<void> {
         offendingSymbol: any,
         line: number,
         charPositionInLine: number,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         msg: string,
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        e: RecognitionException | undefined
+        e: RecognitionException | undefined,
     ): void {
         const startPosition: Position = new Position(this.lineOffset + line, charPositionInLine);
         const stopPosition: Position = new Position(
             this.lineOffset + line,
-            charPositionInLine + offendingSymbol.stopIndex - offendingSymbol.startIndex + 1
+            charPositionInLine + offendingSymbol.stopIndex - offendingSymbol.startIndex + 1,
         );
         const range: Range = new Range(startPosition, stopPosition);
         const diagnostic: Diagnostic = new Diagnostic(
             range,
             TemplateErrors.syntaxError(msg),
             DiagnosticSeverity.Error,
-            this.source
+            this.source,
         );
 
         throw new TemplateException(diagnostic.toString(), [diagnostic]);
