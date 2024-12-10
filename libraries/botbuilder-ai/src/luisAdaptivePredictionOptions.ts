@@ -63,7 +63,8 @@ export interface LuisAdaptivePredictionOptionsConfiguration {
  * Converts optional parameters for a LUIS prediction request.
  */
 export class LuisAdaptivePredictionOptionsConverter
-    implements Converter<LuisAdaptivePredictionOptionsConfiguration, LuisAdaptivePredictionOptions> {
+    implements Converter<LuisAdaptivePredictionOptionsConfiguration, LuisAdaptivePredictionOptions>
+{
     /**
      * Converts the provided options configuration into an object of [LuisAdaptivePredictionOptions](xref:botbuilder-ai.LuisAdaptivePredictionOptions) type.
      *
