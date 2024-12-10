@@ -50,7 +50,7 @@
     "clean": "rimraf _ts3.4 lib vendors tsconfig.tsbuildinfo",
     "depcheck": "depcheck --config ../../.depcheckrc",
     "lint": "eslint .",
-    "prebuild": "tsup ../../node_modules/p-map/*.js --format cjs --dts --out-dir vendors/p-map --clean --sourcemap",
+    "prebuild": "tsup ./node_modules/p-map/*.js --format cjs --dts --out-dir vendors/p-map --clean --sourcemap",
     "postbuild": "downlevel-dts lib _ts3.4/lib --checksum",
     "test": "yarn build && nyc mocha tests/",
     "test:compat": "api-extractor run --verbose"
