@@ -3,9 +3,10 @@
  * Licensed under the MIT License.
  */
 
-const { expect } = require('chai');
+const importSync= require('import-sync');
+const { expect } = importSync('chai/lib/chai');
 
-// chai-as-promised is not actively maintained, we need to build something simple.
+// chai/lib/chai-as-promised is not actively maintained, we need to build something simple.
 
 module.exports.expectEventually = async function (promise) {
     let error, result;
