@@ -5,12 +5,13 @@
   "workspaces": {
     "packages": [
       "libraries/*",
-      "libraries/functional-tests/dialogToDialog/*",
-      "libraries/testskills/*",
       "testing/*",
       "testing/browser-functional/browser-echo-bot",
-      "tools",
-      "transcripts"
+      "tools"
+    ],
+    "generators": [
+      "generators/generator-botbuilder",
+      "generators/generator-botbuilder/generators/app/templates/*"
     ],
     "nohoist": [
       "**/@types/selenium-webdriver"
@@ -81,7 +82,7 @@
     "depcheck": "^1.4.7",
     "esbuild-plugin-polyfill-node": "^0.3.0",
     "https-browserify": "^1.0.0",
-    "eslint": "^9.12.0",
+    "eslint": "^9.15.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-jsdoc": "^50.3.1",
@@ -106,7 +107,7 @@
     "typedoc-plugin-markdown": "^4.2.7",
     "typedoc": "^0.26.7",
     "typescript": "~4.7",
-    "typescript-eslint": "^8.11.0",
+    "typescript-eslint": "^8.15.0",
     "webpack-dev-server": "^5.1.0",
     "wsrun": "^5.2.4"
   },

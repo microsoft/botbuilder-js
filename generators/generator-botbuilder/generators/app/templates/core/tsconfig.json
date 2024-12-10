@@ -3,13 +3,15 @@
     "composite": true,
     "declaration": true,
     "target": "es2017",
-    "module": "commonjs",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "outDir": "./lib",
     "rootDir": "./src",
     "resolveJsonModule": true,
     "rootDirs": ["./src", "./resources"],
     "sourceMap": true,
     "incremental": true,
-    "tsBuildInfoFile": "./lib/.tsbuildinfo"
+    "tsBuildInfoFile": "./lib/.tsbuildinfo",
+    "esModuleInterop": true
   }
 }

@@ -1,6 +1,6 @@
 {
     "name": "<%= botname %>",
-    "version": "1.0.0",
+    "version": "4.1.6",
     "description": "<%= botDescription %>",
     "author": "Generated using Microsoft Bot Builder Yeoman generator v<%= version %>",
     "license": "MIT",
@@ -18,15 +18,16 @@
         "url": "https://github.com"
     },
     "dependencies": {
-        "botbuilder": "~4.23.1",
+        "botbuilder": "4.1.6",
         "dotenv": "~8.2.0",
         "replace": "~1.2.0",
         "restify": "~11.1.0"
     },
     "devDependencies": {
+        "@types/node": "^18.19.47",
         "@types/restify": "8.4.2",
         "nodemon": "^2.0.4",
         "tslint": "^6.1.2",
-        "typescript": "^4.0.7"
+        "typescript": "^5.6.3"
     }
 }
