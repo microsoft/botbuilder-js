@@ -16,7 +16,7 @@ export class CoreBotAdapter extends CloudAdapter {
     constructor(
         botFrameworkAuthentication: BotFrameworkAuthentication,
         private readonly conversationState: ConversationState,
-        userState: UserState
+        userState: UserState,
     ) {
         super(botFrameworkAuthentication);
 

@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import sinon from 'sinon';
+import sinon, { createSandbox, match } from 'sinon';
 import { AuthenticationConfiguration, AuthenticationConstants, SkillValidation } from 'botframework-connector';
 import { BlobsStorage } from 'botbuilder-azure-blobs';
 import { Configuration, getRuntimeServices } from '../src';
@@ -22,8 +22,9 @@ import {
 
 describe('getRuntimeServices', function () {
     let sandbox: sinon.SinonSandbox;
+
     beforeEach(function () {
-        sandbox = sinon.createSandbox();
+        sandbox = createSandbox();
     });
 
     afterEach(function () {
@@ -173,10 +174,10 @@ describe('getRuntimeServices', function () {
 
             services.mustMakeInstance('middlewares');
 
-            ok(spy.calledWith(sinon.match.instanceOf(ShowTypingMiddleware)), 'ShowTypingMiddleware');
-            ok(spy.calledWith(sinon.match.instanceOf(SetSpeakMiddleware)), 'SetSpeakMiddleware');
-            ok(spy.calledWith(sinon.match.instanceOf(TranscriptLoggerMiddleware)), 'TranscriptLoggerMiddleware');
-            ok(spy.calledWith(sinon.match.instanceOf(InspectionMiddleware)), 'InspectionMiddleware');
+            ok(spy.calledWith(match.instanceOf(ShowTypingMiddleware)), 'ShowTypingMiddleware');
+            ok(spy.calledWith(match.instanceOf(SetSpeakMiddleware)), 'SetSpeakMiddleware');
+            ok(spy.calledWith(match.instanceOf(TranscriptLoggerMiddleware)), 'TranscriptLoggerMiddleware');
+            ok(spy.calledWith(match.instanceOf(InspectionMiddleware)), 'InspectionMiddleware');
         });
     });
 
@@ -193,9 +194,8 @@ describe('getRuntimeServices', function () {
             });
 
             const [services] = await getRuntimeServices(__dirname, configuration);
-            const authenticationConfiguration = services.mustMakeInstance<AuthenticationConfiguration>(
-                'authenticationConfiguration'
-            );
+            const authenticationConfiguration =
+                services.mustMakeInstance<AuthenticationConfiguration>('authenticationConfiguration');
 
             const { validateClaims } = authenticationConfiguration;
             ok(validateClaims);
@@ -213,7 +213,7 @@ describe('getRuntimeServices', function () {
                         type: AuthenticationConstants.AppIdClaim,
                         value: 'BadAppId',
                     },
-                ])
+                ]),
             );
         });
 
@@ -230,9 +230,8 @@ describe('getRuntimeServices', function () {
             });
 
             const [services] = await getRuntimeServices(__dirname, configuration);
-            const authenticationConfiguration = services.mustMakeInstance<AuthenticationConfiguration>(
-                'authenticationConfiguration'
-            );
+            const authenticationConfiguration =
+                services.mustMakeInstance<AuthenticationConfiguration>('authenticationConfiguration');
 
             const { validateClaims } = authenticationConfiguration;
             ok(validateClaims);
@@ -258,7 +257,7 @@ describe('getRuntimeServices', function () {
                         type: AuthenticationConstants.AppIdClaim,
                         value: 'AppC',
                     },
-                ])
+                ]),
             );
         });
     });
