@@ -37,7 +37,7 @@
   "scripts": {
     "build": "tsc -b",
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder-azure-blobs --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-azure-blobs .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Azure Blobs\" --readme none",
-    "clean": "rimraf _ts3.4 lib vendorstsconfig.tsbuildinfo",
+    "clean": "rimraf _ts3.4 lib vendors tsconfig.tsbuildinfo",
     "depcheck": "depcheck --config ../../.depcheckrc",
     "lint": "eslint . --config ../../eslint.config.cjs",
     "prebuild": "tsup ../../node_modules/p-map/*.js --format cjs --dts --out-dir vendors/p-map --clean --sourcemap",
