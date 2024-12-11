@@ -37,7 +37,7 @@ export class LuisPrediction {
     resolve(
         appId: string,
         query: string,
-        options?: PredictionResolveOptionalParams
+        options?: PredictionResolveOptionalParams,
     ): Promise<PredictionResolveResponse>;
     /**
      * @param appId The LUIS application ID (Guid).
@@ -55,7 +55,7 @@ export class LuisPrediction {
         appId: string,
         query: string,
         options: PredictionResolveOptionalParams,
-        callback: ServiceCallback<LuisResult>
+        callback: ServiceCallback<LuisResult>,
     ): void;
     /**
      * @param appId The LUIS application ID (Guid).
@@ -68,7 +68,7 @@ export class LuisPrediction {
         appId: string,
         query: string,
         options?: PredictionResolveOptionalParams | ServiceCallback<LuisResult>,
-        callback?: ServiceCallback<LuisResult>
+        callback?: ServiceCallback<LuisResult>,
     ): Promise<PredictionResolveResponse> {
         return this.client.sendOperationRequest(
             {
@@ -77,7 +77,7 @@ export class LuisPrediction {
                 options,
             },
             resolveOperationSpec,
-            callback
+            callback,
         ) as Promise<PredictionResolveResponse>;
     }
 }

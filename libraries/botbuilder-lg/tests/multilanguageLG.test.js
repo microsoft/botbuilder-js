@@ -23,7 +23,7 @@ describe('MultilanguageLGTest', function () {
         SpecificFallbackLocale2: (function () {
             const enTemplates = Templates.parseResource(
                 new LGResource('abc', 'abc', '[import](1.lg)\r\n # template\r\n - hi'),
-                defaultFileResolver
+                defaultFileResolver,
             );
             const templatesDict = new Map();
             templatesDict.set('en', enTemplates);
