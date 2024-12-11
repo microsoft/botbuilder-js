@@ -1,4 +1,3 @@
-/* eslint-disable security/detect-non-literal-fs-filename */
 const assert = require('assert');
 const fs = require('fs-extra');
 const nock = require('nock');
@@ -30,7 +29,7 @@ class ThrowErrorRecognizer extends LuisRecognizer {
         super(
             { applicationId: luisAppId, endpointKey: endpointKey },
             { includeAllIntents: true, includeInstanceData: true },
-            true
+            true,
         );
     }
 
@@ -138,7 +137,6 @@ function getExpectedData(oracle) {
     const query = 'verbose=(true|false)&staging=false&spellCheck=false&log=true';
     const path = `/luis/v2\\.0/apps/${luisAppId}`;
     const pattern = `${path}\\?${query}`;
-    // eslint-disable-next-line security/detect-non-literal-regexp
     const uri = new RegExp(pattern);
     const requestContent = expectedData.text != undefined ? `"${expectedData.text}"` : undefined;
     const responseBody = expectedData.v2;
@@ -171,7 +169,7 @@ async function testJson(
         telemetryClient,
         telemetryMetrics,
         telemetryProperties,
-    } = {}
+    } = {},
 ) {
     const expectedPath = getExpectedPath(file);
     const expectedData = getExpectedData(expectedPath);
@@ -187,7 +185,7 @@ async function testJson(
             logPersonalInformation,
             telemetryClient,
         },
-        true
+        true,
     );
 
     const result = await recognizer.recognize(context, telemetryProperties, telemetryMetrics);
@@ -209,7 +207,7 @@ describe('LuisRecognizer', function () {
     const recognizer = new LuisRecognizer(
         { applicationId: luisAppId, endpointKey: endpointKey },
         { includeAllIntents: true },
-        true
+        true,
     );
 
     const maybeIt = !mockLuis && endpointKey === 'MockedKey' ? it.skip : it;
@@ -401,7 +399,7 @@ describe('LuisRecognizer', function () {
         assert(res.entities.Address[0].$instance.State[0].score);
         assert(
             res.entities.Address[0].$instance.State[0].score > 0 &&
-                res.entities.Address[0].$instance.State[0].score <= 1
+                res.entities.Address[0].$instance.State[0].score <= 1,
         );
     });
 
@@ -410,7 +408,7 @@ describe('LuisRecognizer', function () {
 
         const recognizer = new LuisRecognizer(
             { applicationId: luisAppId, endpointKey: endpointKey },
-            { includeAllIntents: true, apiVersion: 'v2', includeAPIResults: true }
+            { includeAllIntents: true, apiVersion: 'v2', includeAPIResults: true },
         );
 
         const context = new TestContext({ text: expectedData.text });
@@ -601,7 +599,7 @@ describe('LuisRecognizer', function () {
             const recognizer = new ThrowErrorRecognizer();
             const context = new TestContext({ text: 'Hello world!' });
             await assert.rejects(recognizer.recognize(context), Error('Test'));
-        }
+        },
     );
 
     maybeIt('should send user-agent header.', async () => {
@@ -634,8 +632,8 @@ describe('LuisRecognizer', function () {
         assert.throws(
             () => new LuisRecognizer(endpointWithNoSubscriptionKey),
             new Error(
-                `Invalid \`endpointKey\` value detected: ${expectedSubscriptionKey}\nPlease make sure your endpointKey is a valid LUIS Endpoint Key, e.g. "048ec46dc58e495482b0c447cfdbd291".`
-            )
+                `Invalid \`endpointKey\` value detected: ${expectedSubscriptionKey}\nPlease make sure your endpointKey is a valid LUIS Endpoint Key, e.g. "048ec46dc58e495482b0c447cfdbd291".`,
+            ),
         );
     });
 
@@ -646,8 +644,8 @@ describe('LuisRecognizer', function () {
         assert.throws(
             () => new LuisRecognizer(endpointWithNoAppId),
             new Error(
-                `Invalid \`applicationId\` value detected: ${expectedApplicationId}\nPlease make sure your applicationId is a valid LUIS Application Id, e.g. "b31aeaf3-3511-495b-a07f-571fc873214b".`
-            )
+                `Invalid \`applicationId\` value detected: ${expectedApplicationId}\nPlease make sure your applicationId is a valid LUIS Application Id, e.g. "b31aeaf3-3511-495b-a07f-571fc873214b".`,
+            ),
         );
     });
 
@@ -655,8 +653,8 @@ describe('LuisRecognizer', function () {
         assert.throws(
             () => new LuisRecognizer('this.is.not.a.url'),
             new Error(
-                `Invalid \`applicationId\` value detected: ${expectedApplicationId}\nPlease make sure your applicationId is a valid LUIS Application Id, e.g. "b31aeaf3-3511-495b-a07f-571fc873214b".`
-            )
+                `Invalid \`applicationId\` value detected: ${expectedApplicationId}\nPlease make sure your applicationId is a valid LUIS Application Id, e.g. "b31aeaf3-3511-495b-a07f-571fc873214b".`,
+            ),
         );
     });
 
@@ -917,7 +915,7 @@ describe('LuisRecognizer', function () {
                 telemetryClient: telemetryClient,
                 logPersonalInformation: true,
             },
-            true
+            true,
         );
 
         const res = await recognizer.recognize(context, properties, metrics);
@@ -998,7 +996,7 @@ describe('LuisRecognizer', function () {
                 telemetryClient: telemetryClient,
                 logPersonalInformation: true,
             },
-            true
+            true,
         );
 
         const res = await recognizer.recognize(context, properties, metrics);
@@ -1037,7 +1035,7 @@ describe('LuisRecognizer', function () {
         const recognizer = new LuisRecognizer(
             { applicationId: luisAppId, endpointKey: endpointKey },
             luisPredictionDefaultOptions,
-            true
+            true,
         );
         const mergedOptions = luisPredictionUserOptions
             ? recognizer.setLuisPredictionOptions(recognizer.options, luisPredictionUserOptions)
@@ -1060,7 +1058,7 @@ describe('LuisRecognizer', function () {
         const recognizer = new LuisRecognizer(
             { applicationId: luisAppId, endpointKey: endpointKey },
             luisPredictionDefaultOptions,
-            true
+            true,
         );
         const mergedOptions = recognizer.buildRecognizer(luisPredictionUserOptions);
         assert.strictEqual(mergedOptions.predictionOptions.includeAllIntents, false);
@@ -1081,7 +1079,7 @@ describe('LuisRecognizer', function () {
         const recognizer = new LuisRecognizer(
             { applicationId: luisAppId, endpointKey: endpointKey },
             luisPredictionDefaultOptions,
-            true
+            true,
         );
         const mergedOptions = recognizer.buildRecognizer(luisPredictionUserOptions);
         assert.strictEqual(mergedOptions.options.includeAllIntents, false);
@@ -1098,7 +1096,7 @@ describe('LuisRecognizer', function () {
         const recognizer = new LuisRecognizer(
             { applicationId: luisAppId, endpointKey: endpointKey },
             luisPredictionDefaultOptions,
-            true
+            true,
         );
         const mergedOptions = luisPredictionUserOptions
             ? recognizer.setLuisPredictionOptions(recognizer.options, luisPredictionUserOptions)

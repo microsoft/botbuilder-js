@@ -124,7 +124,7 @@ export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizer
      * The flag to indicate if personal information should be logged in telemetry.
      */
     logPersonalInformation: BoolExpression = new BoolExpression(
-        '=settings.runtimeSettings.telemetry.logPersonalInformation'
+        '=settings.runtimeSettings.telemetry.logPersonalInformation',
     );
 
     /**
@@ -193,7 +193,7 @@ export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizer
         dc: DialogContext,
         activity: Activity,
         telemetryProperties?: { [key: string]: string },
-        telemetryMetrics?: { [key: string]: number }
+        telemetryMetrics?: { [key: string]: number },
     ): Promise<RecognizerResult> {
         // identify matched intents
         const recognizerResult: RecognizerResult = {
@@ -270,7 +270,7 @@ export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizer
             dc,
             'QnAMakerRecognizerResult',
             this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties, dc),
-            telemetryMetrics
+            telemetryMetrics,
         );
         return recognizerResult;
     }
@@ -344,11 +344,11 @@ export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizer
     protected fillRecognizerResultTelemetryProperties(
         recognizerResult: RecognizerResult,
         telemetryProperties: Record<string, string>,
-        dc: DialogContext
+        dc: DialogContext,
     ): Record<string, string> {
         if (!dc) {
             throw new Error(
-                'DialogContext needed for state in AdaptiveRecognizer.fillRecognizerResultTelemetryProperties method.'
+                'DialogContext needed for state in AdaptiveRecognizer.fillRecognizerResultTelemetryProperties method.',
             );
         }
         const { intent, score } = getTopScoringIntent(recognizerResult);
@@ -359,7 +359,7 @@ export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizer
             Intents: intentsCount > 0 ? JSON.stringify(recognizerResult.intents) : undefined,
             Entities: recognizerResult.entities ? JSON.stringify(recognizerResult.entities) : undefined,
             AdditionalProperties: JSON.stringify(
-                omit(recognizerResult, ['text', 'alteredText', 'intents', 'entities'])
+                omit(recognizerResult, ['text', 'alteredText', 'intents', 'entities']),
             ),
         };
 
