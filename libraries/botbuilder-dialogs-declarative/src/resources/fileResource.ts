@@ -1,4 +1,3 @@
-/* eslint-disable security/detect-non-literal-fs-filename */
 /**
  * @module botbuilder-dialogs-declarative
  */
@@ -7,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import fs = require('fs');
+import { readFileSync } from 'fs';
 import { Resource } from './resource';
 
 /**
@@ -33,7 +32,8 @@ export class FileResource extends Resource {
      */
     readText(): string {
         const filePath = this._fullname;
-        const text = fs.readFileSync(filePath, 'utf-8');
+        // eslint-disable-next-line security/detect-non-literal-fs-filename
+        const text = readFileSync(filePath, 'utf-8');
         return text;
     }
 }

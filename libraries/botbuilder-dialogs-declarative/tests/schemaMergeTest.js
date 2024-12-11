@@ -4,7 +4,6 @@ const assert = require('assert');
 const fs = require('fs');
 const Validator = require('jsonschema').Validator;
 const util = require('util');
-// eslint-disable-next-line security/detect-child-process
 const exec = util.promisify(require('child_process').exec);
 
 // Note: This file is intentionally not named *.test.js to ensure it isn't run
@@ -30,7 +29,7 @@ describe('Schema Merge Tests', function () {
         resourceExplorer,
         path.join(__dirname, '..', '..'),
         true,
-        false
+        false,
     );
     const dialogResources = resourceProvider.getResources('dialog');
     const dialogs = dialogResources
@@ -92,7 +91,7 @@ describe('Schema Merge Tests', function () {
                 [
                     'Generated schema differs from committed schema.',
                     'Run this test locally and commit the tests.*schema files to upload the correct and updated schema.',
-                ].join('\n')
+                ].join('\n'),
             );
         }
 

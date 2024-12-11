@@ -20,6 +20,7 @@ export class PathUtil {
      * @returns True if the path is a directory; false otherwise.
      */
     static isDirectory(path: string): boolean {
+        // eslint-disable-next-line security/detect-non-literal-fs-filename
         return lstatSync(path).isDirectory();
     }
 
@@ -30,6 +31,7 @@ export class PathUtil {
      * @returns Sub folders in the directory.
      */
     static getDirectories(path: string): string[] {
+        // eslint-disable-next-line security/detect-non-literal-fs-filename
         return readdirSync(path)
             .map((name: string): string => join(path, name))
             .filter(PathUtil.isDirectory);
@@ -43,6 +45,7 @@ export class PathUtil {
      * @returns The files in the directory.
      */
     static getFiles(path: string, includeSubFolders = true): string[] {
+        // eslint-disable-next-line security/detect-non-literal-fs-filename
         return readdirSync(path)
             .map((name: string): string => join(path, name))
             .reduce((files: string[], file: string): string[] => {
