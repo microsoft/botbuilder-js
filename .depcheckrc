@@ -1,2 +1,2 @@
-ignores: ["filenamify", "mocha", "rimraf", "sinon", "uuid", "p-map"]
+ignores: ["filenamify", "mocha", "p-map", "rimraf", "sinon", "uuid" ]
 ignorePatterns: [".eslintrc.json", "lib"]
