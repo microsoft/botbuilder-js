@@ -99,7 +99,7 @@ describe('stringify', function () {
             const withoutReplacerToJSON = stringify(value);
 
             const assertWithReplacerToJSON = JSON.stringify(
-                _replacer.call(JSON.parse(JSON.stringify(value, replacer)))
+                _replacer.call(JSON.parse(JSON.stringify(value, replacer))),
             );
             assert.ok(withReplacerToJSON.includes('"_id":":toJSON:replacer:_replacer"'));
             assert.strictEqual(withReplacerToJSON, assertWithReplacerToJSON);

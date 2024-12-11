@@ -7,6 +7,7 @@ const { delay } = require('../');
 
 describe('delay', function () {
     let sandbox;
+
     beforeEach(function () {
         sandbox = sinon.createSandbox({ useFakeTimers: true });
     });

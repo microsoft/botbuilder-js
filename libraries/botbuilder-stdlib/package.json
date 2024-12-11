@@ -9,9 +9,6 @@
   "bugs": {
     "url": "https://github.com/Microsoft/botbuilder-js/issues"
   },
-  "dependencies": {
-    "eslint-plugin-only-warn": "^1.1.0"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/Microsoft/botbuilder-js.git"
@@ -20,7 +17,7 @@
     "build": "tsc -b",
     "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
     "depcheck": "depcheck --config ../../.depcheckrc",
-    "lint": "eslint .",
+    "lint": "eslint . --config ../../eslint.config.cjs",
     "postbuild": "downlevel-dts lib _ts3.4/lib",
     "test": "yarn build && nyc mocha --check-leaks tests"
   },
