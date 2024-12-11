@@ -65,7 +65,7 @@ describe('EncryptionTests', function () {
 
         assert.throws(
             () => encrypt.decryptString(encrypted, encrypt.generateKey()),
-            new Error('error:1C800064:Provider routines::bad decrypt')
+            new Error('error:1C800064:Provider routines::bad decrypt'),
         );
     });
 });

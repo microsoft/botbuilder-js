@@ -33,7 +33,7 @@ describe('Service Tests', function () {
         });
         assert.equal(
             qnaWithQnamakerHostname.hostname,
-            'https://MyServiceThatDoesntNeedAppending.azurewebsites.net/qnamaker'
+            'https://MyServiceThatDoesntNeedAppending.azurewebsites.net/qnamaker',
         );
     });
 
