@@ -5,6 +5,7 @@
   "workspaces": {
     "packages": [
       "libraries/*",
+      "libraries/botbuilder-vendors/vendors/**",
       "testing/*",
       "testing/browser-functional/browser-echo-bot",
       "tools"
@@ -49,10 +50,10 @@
     "test:runtime": "wsrun -m -p \"botbuilder-dialogs-adaptive-runtime*\" -t test",
     "test:runtime:min": "wsrun -m -p \"botbuilder-dialogs-adaptive-runtime*\" -t test:min",
     "test:schemas": "mocha libraries/botbuilder-dialogs-declarative/tests/schemaMergeTest.js --exit --bail",
-    "update-versions": "yarn workspace botbuilder-repo-utils update-versions"
+    "update-versions": "yarn workspace botbuilder-repo-utils update-versions",
+    "postupdate-versions": "yarn workspace botbuilder-vendors connect"
   },
   "resolutions": {
-    "@microsoft/recognizers-text-number": "~1.3.1",
     "@types/ramda": "0.26.0",
     "lodash.pick": "file:overrides/lodash.pick",
     "**/nightwatch/ejs": "^3.1.10",

@@ -1,2 +1,10 @@
-ignores: ["filenamify", "mocha", "rimraf", "sinon", "uuid"]
+ignores: [
+    "filenamify",
+    "mocha",
+    "rimraf",
+    "sinon",
+    "uuid",
+    "botbuilder-dialogs-adaptive-testing",
+    "@microsoft/recognizers-text*"
+]
 ignorePatterns: [".eslintrc.json", "lib"]

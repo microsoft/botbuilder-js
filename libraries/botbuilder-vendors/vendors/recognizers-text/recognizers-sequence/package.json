@@ -1,0 +1,11 @@
+{
+  "name": "@microsoft/recognizers-text-sequence",
+  "version": "1.1.4",
+  "main": "index.js",
+  "localDependencies": {
+    "@microsoft/recognizers-text": ""
+  },
+  "dependencies": {
+    "grapheme-splitter": "^1.0.2"
+  }
+}
