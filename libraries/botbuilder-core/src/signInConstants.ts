@@ -9,4 +9,4 @@
 export const verifyStateOperationName = 'signin/verifyState';
 export const tokenExchangeOperationName = 'signin/tokenExchange';
 export const tokenResponseEventName = 'tokens/response';
-export const sharePointTokenExchange = "cardExtension/token";
+export const sharePointTokenExchange = 'cardExtension/token';

@@ -68,7 +68,6 @@ const ExchangeToken = z.custom<Pick<ExtendedUserTokenProvider, 'exchangeToken'>>
  * ensuring only one token exchange is processed. This middleware supports
  * CosmosDb storage found in botbuilder-azure, or MemoryStorage for local development.
  */
-
 export class SharePointSSOTokenExchangeMiddleware implements Middleware {
     /**
      * Initializes a new instance of the SharePointSSOTokenExchangeMiddleware class.
