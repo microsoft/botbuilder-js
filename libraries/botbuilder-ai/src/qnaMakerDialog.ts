@@ -59,9 +59,10 @@ import { CustomQuestionAnswering } from './customQuestionAnswering';
 import { ServiceType } from './qnamaker-interfaces/serviceType';
 
 class QnAMakerDialogActivityConverter
-    implements Converter<string, TemplateInterface<Partial<Activity>, DialogStateManager>> {
+    implements Converter<string, TemplateInterface<Partial<Activity>, DialogStateManager>>
+{
     convert(
-        value: string | TemplateInterface<Partial<Activity>, DialogStateManager>
+        value: string | TemplateInterface<Partial<Activity>, DialogStateManager>,
     ): TemplateInterface<Partial<Activity>, DialogStateManager> {
         if (typeof value === 'string') {
             return new BindToActivity(MessageFactory.text(value) as Activity);
@@ -239,7 +240,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
      * Gets or sets the template to send to the user when QnA Maker does not find an answer.
      */
     noAnswer: TemplateInterface<Partial<Activity>, DialogStateManager> = new BindToActivity(
-        MessageFactory.text(this.defaultNoAnswer)
+        MessageFactory.text(this.defaultNoAnswer),
     );
 
     /**
@@ -262,7 +263,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
      * active learning card.
      */
     cardNoMatchResponse: TemplateInterface<Partial<Activity>, DialogStateManager> = new BindToActivity(
-        MessageFactory.text(this.defaultCardNoMatchResponse)
+        MessageFactory.text(this.defaultCardNoMatchResponse),
     );
 
     /**
@@ -364,7 +365,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         enablePreciseAnswer?: boolean,
         displayPreciseAnswerOnly?: boolean,
         qnaServiceType?: ServiceType,
-        useTeamsAdaptiveCard?: boolean
+        useTeamsAdaptiveCard?: boolean,
     );
 
     /**
@@ -401,7 +402,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         enablePreciseAnswer?: boolean,
         displayPreciseAnswerOnly?: boolean,
         qnaServiceType?: ServiceType,
-        useTeamsAdaptiveCard?: boolean
+        useTeamsAdaptiveCard?: boolean,
     );
 
     /**
@@ -426,7 +427,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         enablePreciseAnswer?: boolean,
         displayPreciseAnswerOnly?: boolean,
         qnaServiceType?: ServiceType,
-        useTeamsAdaptiveCard?: boolean
+        useTeamsAdaptiveCard?: boolean,
     ) {
         super(dialogId);
         if (knowledgeBaseId) {
@@ -448,9 +449,8 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         if (top) {
             this.top = new IntExpression(top);
         }
-        const qnaSuggestionsActivityFactoryParsed = qnaSuggestionsActivityFactory.safeParse(
-            activeLearningTitleOrFactory
-        );
+        const qnaSuggestionsActivityFactoryParsed =
+            qnaSuggestionsActivityFactory.safeParse(activeLearningTitleOrFactory);
         if (qnaSuggestionsActivityFactoryParsed.success) {
             if (!cardNoMatchText) {
                 // Without a developer-provided cardNoMatchText, the end user will not be able to tell the convey to the bot and QnA Maker that the suggested alternative questions were not correct.
@@ -461,7 +461,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
             this.suggestionsActivityFactory = qnaSuggestionsActivityFactoryParsed.data;
         } else {
             this.activeLearningCardTitle = new StringExpression(
-                activeLearningTitleOrFactory?.toString() ?? this.defaultCardTitle
+                activeLearningTitleOrFactory?.toString() ?? this.defaultCardTitle,
             );
         }
 
@@ -482,7 +482,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         }
 
         this.cardNoMatchResponse = new BindToActivity(
-            cardNoMatchResponse ?? MessageFactory.text(this.defaultCardNoMatchResponse)
+            cardNoMatchResponse ?? MessageFactory.text(this.defaultCardNoMatchResponse),
         );
 
         if (enablePreciseAnswer != undefined) {
@@ -559,7 +559,6 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
      * @param {object} options (Optional) Initial information to pass to the dialog.
      * @returns {Promise<DialogTurnResult>} A promise resolving to the turn result
      */
-    // eslint-disable-next-line @typescript-eslint/ban-types
     async beginDialog(dc: DialogContext, options?: object): Promise<DialogTurnResult> {
         if (!dc) {
             throw new Error('Missing DialogContext');
@@ -636,7 +635,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
                 this.resetOptions(dc, dialogOptions);
                 const response = await qnaClient.getAnswersRaw(dc.context, dialogOptions.qnaMakerOptions);
                 // disable interruption if we have answers.
-                return response.answers?.length > 0 ?? false;
+                return response.answers?.length > 0;
             }
         }
 
@@ -672,14 +671,14 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
                 endpoint,
                 await this.getQnAMakerOptions(dc),
                 this.telemetryClient,
-                logPersonalInformation
+                logPersonalInformation,
             );
         } else {
             return new QnAMaker(
                 endpoint,
                 await this.getQnAMakerOptions(dc),
                 this.telemetryClient,
-                logPersonalInformation
+                logPersonalInformation,
             );
         }
     }
@@ -728,7 +727,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
      *
      * @param {WaterfallStepContext} step the waterfall step context
      * @returns {Promise<DialogTurnResult>} a promise resolving to the dialog turn result
-     **/
+     */
     protected async displayQnAResult(step: WaterfallStepContext): Promise<DialogTurnResult> {
         const dialogOptions: QnAMakerDialogOptions = step.activeDialog.state[this.options];
         const reply = step.context.activity.text;
@@ -757,7 +756,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
                 const message = QnACardBuilder.getQnAAnswerCard(
                     response[0],
                     this.displayPreciseAnswerOnly,
-                    this.useTeamsAdaptiveCard
+                    this.useTeamsAdaptiveCard,
                 );
                 await step.context.sendActivity(message);
             } else {
@@ -767,7 +766,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
                     const message = QnACardBuilder.getQnAAnswerCard(
                         response[0],
                         this.displayPreciseAnswerOnly,
-                        this.useTeamsAdaptiveCard
+                        this.useTeamsAdaptiveCard,
                     );
                     await step.context.sendActivity(message);
                 }
@@ -861,13 +860,13 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
                     const message =
                         this.suggestionsActivityFactory?.(
                             suggestedQuestions,
-                            dialogOptions.qnaDialogResponseOptions.cardNoMatchText
+                            dialogOptions.qnaDialogResponseOptions.cardNoMatchText,
                         ) ??
                         QnACardBuilder.getSuggestionsCard(
                             suggestedQuestions,
                             dialogOptions.qnaDialogResponseOptions.activeLearningCardTitle,
                             dialogOptions.qnaDialogResponseOptions.cardNoMatchText,
-                            this.useTeamsAdaptiveCard
+                            this.useTeamsAdaptiveCard,
                         );
 
                     z.record(z.unknown()).parse(message, { path: ['message'] });
@@ -961,7 +960,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
                 const message = QnACardBuilder.getQnAAnswerCard(
                     answer,
                     this.displayPreciseAnswerOnly,
-                    this.useTeamsAdaptiveCard
+                    this.useTeamsAdaptiveCard,
                 );
                 await step.context.sendActivity(message);
                 return Dialog.EndOfTurn;

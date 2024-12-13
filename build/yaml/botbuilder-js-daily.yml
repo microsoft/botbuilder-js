@@ -6,7 +6,7 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  NodeVersion: 20.x
+  NodeVersion: 22.x
   Packaging.EnableSBOMSigning: true
   YARN_CACHE_FOLDER: $(Pipeline.Workspace)/.yarn
 #  SDK_JS_org_registry_Url: define this in Azure
