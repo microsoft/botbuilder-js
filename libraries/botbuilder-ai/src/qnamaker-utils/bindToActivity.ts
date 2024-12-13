@@ -28,7 +28,6 @@ export class BindToActivity implements TemplateInterface<Partial<Activity>> {
      * @param _data Data to bind to. If Null, then dc.State will be used.
      * @returns The linked activity.
      */
-    // eslint-disable-next-line @typescript-eslint/ban-types
     async bind(_context: DialogContext, _data?: object): Promise<Partial<Activity>> {
         return this.activity;
     }

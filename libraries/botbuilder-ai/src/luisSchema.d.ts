@@ -30,7 +30,7 @@ export interface Entity {
     startIndex?: number;
     endIndex?: number;
     score?: number;
-    resolution?: { [propertyName: string]: any }; // eslint-disable-line @typescript-eslint/no-explicit-any
+    resolution?: { [propertyName: string]: any };
 }
 
 /**

@@ -43,7 +43,7 @@ export interface QnAMakerClient {
         turnContext: TurnContext,
         options?: QnAMakerOptions,
         telemetryProperties?: Record<string, string>,
-        telemetryMetrics?: Record<string, number>
+        telemetryMetrics?: Record<string, number>,
     ): Promise<QnAMakerResult[]>;
 
     /**
@@ -59,7 +59,7 @@ export interface QnAMakerClient {
         turnContext: TurnContext,
         options?: QnAMakerOptions,
         telemetryProperties?: Record<string, string>,
-        telemetryMetrics?: Record<string, number>
+        telemetryMetrics?: Record<string, number>,
     ): Promise<QnAMakerResults>;
 
     /**
@@ -111,7 +111,7 @@ export interface QnAMakerTelemetryClient {
         context: TurnContext,
         options?: QnAMakerOptions,
         telemetryProperties?: { [key: string]: string },
-        telemetryMetrics?: { [key: string]: number }
+        telemetryMetrics?: { [key: string]: number },
     ): Promise<QnAMakerResult[]>;
 }
 
@@ -142,7 +142,7 @@ export class CustomQuestionAnswering implements QnAMakerClient, QnAMakerTelemetr
         private readonly endpoint: QnAMakerEndpoint,
         options: QnAMakerOptions = {},
         telemetryClient?: BotTelemetryClient,
-        logPersonalInformation?: boolean
+        logPersonalInformation?: boolean,
     ) {
         if (!endpoint) {
             throw new TypeError('QnAMaker requires valid QnAMakerEndpoint.');
@@ -215,7 +215,7 @@ export class CustomQuestionAnswering implements QnAMakerClient, QnAMakerTelemetr
         context: TurnContext,
         options?: QnAMakerOptions,
         telemetryProperties?: { [key: string]: string },
-        telemetryMetrics?: { [key: string]: number }
+        telemetryMetrics?: { [key: string]: number },
     ): Promise<QnAMakerResult[]> {
         if (!context) {
             throw new TypeError('QnAMaker.getAnswers() requires a TurnContext.');
@@ -243,7 +243,7 @@ export class CustomQuestionAnswering implements QnAMakerClient, QnAMakerTelemetr
         context: TurnContext,
         options: QnAMakerOptions,
         telemetryProperties: { [key: string]: string },
-        telemetryMetrics: { [key: string]: number }
+        telemetryMetrics: { [key: string]: number },
     ): Promise<QnAMakerResults> {
         if (!context) {
             throw new TypeError('CustomQuestionAnswering.getAnswersRaw() requires a TurnContext.');
@@ -266,7 +266,7 @@ export class CustomQuestionAnswering implements QnAMakerClient, QnAMakerTelemetr
         context: TurnContext,
         options: QnAMakerOptions,
         telemetryProperties: { [key: string]: string },
-        telemetryMetrics: { [key: string]: number }
+        telemetryMetrics: { [key: string]: number },
     ): Promise<QnAMakerResults> {
         const question: string = this.getTrimmedMessageText(context);
         const userId = context?.activity?.from?.id;
@@ -327,13 +327,13 @@ export class CustomQuestionAnswering implements QnAMakerClient, QnAMakerTelemetr
         qnaResults: QnAMakerResult[],
         turnContext: TurnContext,
         telemetryProperties?: { [key: string]: string },
-        telemetryMetrics?: { [key: string]: number }
+        telemetryMetrics?: { [key: string]: number },
     ): Promise<void> {
         const [properties, metrics] = await this.fillQnAEvent(
             qnaResults,
             turnContext,
             telemetryProperties,
-            telemetryMetrics
+            telemetryMetrics,
         );
 
         this.telemetryClient.trackEvent({
@@ -357,7 +357,7 @@ export class CustomQuestionAnswering implements QnAMakerClient, QnAMakerTelemetr
         qnaResults: QnAMakerResult[],
         turnContext: TurnContext,
         telemetryProperties?: Record<string, string>,
-        telemetryMetrics?: Record<string, number>
+        telemetryMetrics?: Record<string, number>,
     ): Promise<[Record<string, string>, Record<string, number>]> {
         const properties: Record<string, string> = {
             [QnATelemetryConstants.knowledgeBaseIdProperty]: this.endpoint.knowledgeBaseId,

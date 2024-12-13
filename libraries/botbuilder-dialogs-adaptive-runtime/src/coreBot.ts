@@ -48,7 +48,7 @@ export class CoreBot extends ActivityHandler {
         defaultLocale: string,
         defaultRootDialog: string,
         memoryScopes: MemoryScope[],
-        pathResolvers: PathResolver[]
+        pathResolvers: PathResolver[],
     ) {
         super();
 
