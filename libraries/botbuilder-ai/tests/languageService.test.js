@@ -50,6 +50,7 @@ describe('LanguageService', function () {
     };
 
     let sandbox;
+
     beforeEach(function () {
         sandbox = sinon.createSandbox();
         nock.cleanAll();
@@ -63,7 +64,7 @@ describe('LanguageService', function () {
                     nock(`https://${hostname}.cognitiveservices.azure.com`)
                         .matchHeader('user-Agent', /botbuilder-ai\/4.*/)
                         .post(
-                            `/language/:query-knowledgebases?projectName=${knowledgeBaseId}&deploymentName=production&api-version=2021-10-01`
+                            `/language/:query-knowledgebases?projectName=${knowledgeBaseId}&deploymentName=production&api-version=2021-10-01`,
                         )
                         .replyWithFile(200, `${filePath}${file}`);
                 });
@@ -160,7 +161,7 @@ describe('LanguageService', function () {
                 sinon.match({
                     telemetryClient: sinon.match.instanceOf(NullTelemetryClient),
                     logPersonalInformation: false,
-                })
+                }),
             );
         });
 
@@ -173,7 +174,7 @@ describe('LanguageService', function () {
                 sinon.match({
                     telemetryClient: sinon.match.instanceOf(NullTelemetryClient),
                     logPersonalInformation: false,
-                })
+                }),
             );
         });
     });
@@ -425,7 +426,7 @@ describe('LanguageService', function () {
                         metrics: sinon.match({
                             score: sinon.match.number,
                         }),
-                    })
+                    }),
                 )
                 .once();
 
@@ -457,7 +458,7 @@ describe('LanguageService', function () {
                             questionId: '-1',
                             username: sinon.match.string,
                         }),
-                    })
+                    }),
                 )
                 .once();
 
@@ -491,7 +492,7 @@ describe('LanguageService', function () {
                         metrics: sinon.match({
                             score: sinon.match.number,
                         }),
-                    })
+                    }),
                 )
                 .once();
 
@@ -518,7 +519,7 @@ describe('LanguageService', function () {
                             foo: 'bar',
                             ImportantProperty: 'ImportantValue',
                         }),
-                    })
+                    }),
                 )
                 .once();
 
@@ -538,7 +539,7 @@ describe('LanguageService', function () {
                         metrics: sinon.match({
                             score: sinon.match.number,
                         }),
-                    })
+                    }),
                 )
                 .once();
 
@@ -573,7 +574,7 @@ describe('LanguageService', function () {
                             username: sinon.match.string,
                         }),
                         metrics: sinon.match({ score }),
-                    })
+                    }),
                 )
                 .once();
 
@@ -584,7 +585,7 @@ describe('LanguageService', function () {
                 context,
                 null,
                 { question: 'OVERRIDE', MyImportantProperty: 'MyImportantValue' },
-                { score }
+                { score },
             );
 
             sandbox.verify();
@@ -701,6 +702,7 @@ describe('LanguageService', function () {
             });
         });
     });
+
     describe('QnAMakerDialog', function () {
         it('Construct QnAMakerDialog constructor with new LanguageService parameters', async function () {
             const strictFilters = [

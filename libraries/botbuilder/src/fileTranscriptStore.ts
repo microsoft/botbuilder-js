@@ -8,7 +8,7 @@
 import { join, parse } from 'path';
 import { mkdirp, pathExists, readdir, readFile, remove, writeFile } from 'fs-extra';
 import { Activity, PagedResult, TranscriptInfo, TranscriptStore } from 'botbuilder-core';
-import filenamify from 'filenamify';
+import filenamify from '../vendors/filenamify/index';
 
 /**
  * @private

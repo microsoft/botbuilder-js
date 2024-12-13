@@ -169,7 +169,7 @@ describe('updateVersions', function () {
                 dependsOn?: string[];
             }>,
             args: string[] = [],
-            { commitSha = '' } = {}
+            { commitSha = '' } = {},
         ) => {
             const root = 'root';
 
@@ -189,8 +189,8 @@ describe('updateVersions', function () {
                 return {
                     ...workspace,
                     relPath,
-                    absPath: path.join(root, ...relPath, 'package.json'),
-                    posixPath: path.posix.join(root, ...relPath, 'package.json'),
+                    absPath: path.join(root, ...relPath, '{package.json,package-with-tests.json}{,.js,.ts}'),
+                    posixPath: path.posix.join(root, ...relPath, '{package.json,package-with-tests.json}{,.js,.ts}'),
                 };
             });
 
@@ -200,7 +200,7 @@ describe('updateVersions', function () {
                 .withArgs(path.join(root, 'package.json'))
                 .resolves({
                     version: packageVersion,
-                    workspaces: workspacePaths.map((workspace) => path.posix.join(...workspace.relPath)),
+                    workspaces: { packages: workspacePaths.map((workspace) => path.posix.join(...workspace.relPath)) },
                 });
 
             sandbox
@@ -219,14 +219,14 @@ describe('updateVersions', function () {
                         deprecated: workspace.deprecated,
                         dependencies: (workspace.dependsOn ?? []).reduce(
                             (acc, name) => ({ ...acc, [name]: dummyVersion }),
-                            {}
+                            {},
                         ),
                     });
 
                 let packageMatch = sinon.match.hasOwn('version', workspace.expectedVersion);
                 if (workspace.expectedDependencies) {
                     packageMatch = packageMatch.and(
-                        sinon.match.hasOwn('dependencies', sinon.match(workspace.expectedDependencies))
+                        sinon.match.hasOwn('dependencies', sinon.match(workspace.expectedDependencies)),
                     );
                 }
 
@@ -300,7 +300,7 @@ describe('updateVersions', function () {
                         },
                     },
                 ],
-                [expectedVersion]
+                [expectedVersion],
             );
         });
 
@@ -339,8 +339,37 @@ describe('updateVersions', function () {
                     },
                 ],
                 ['--buildLabel', 'dev', '--git', 'true', '--date', dateFormat],
-                { commitSha: 'COMMIT' }
+                { commitSha: 'COMMIT' },
             );
+        });
+
+        it('runs properly', async function () {
+            const writeFileStub = sandbox.stub(file, 'writeJsonFile').returns(Promise.resolve());
+            const version = '4.24.0';
+            await command(
+                [
+                    version,
+                    '--buildLabel',
+                    'dev',
+                    '--internal',
+                    'internal',
+                    '--preview',
+                    'preview',
+                    '--deprecated',
+                    'deprecated',
+                    '--date',
+                    'YYYYMMDD',
+                    '--git',
+                    'false',
+                ],
+                true,
+            )();
+
+            assert.ok(writeFileStub.called);
+            const packagesAssertion = (writeFileStub.args as [string, Package][])
+                .filter(([, pkg]) => !pkg.private)
+                .every(([, pkg]) => pkg.version.startsWith(version));
+            assert.ok(packagesAssertion);
         });
     });
 });

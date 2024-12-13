@@ -25,7 +25,7 @@ export class LuisBotComponent extends BotComponent {
                         },
                     ];
                 },
-            })
+            }),
         );
     }
 }

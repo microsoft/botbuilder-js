@@ -43,7 +43,7 @@ const TypedOptions = z.object({
     /**
      * Used when creating ConnectorClients.
      */
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     connectorClientOptions: z.object({}) as z.ZodObject<any, any, any, ConnectorClientOptions>,
 });
 
@@ -71,7 +71,7 @@ const defaultOptions: Options = {
 export async function start(
     applicationRoot: string,
     settingsDirectory: string,
-    options: Partial<Options> = {}
+    options: Partial<Options> = {},
 ): Promise<void> {
     const [services, configuration] = await getRuntimeServices(applicationRoot, settingsDirectory, {
         connectorClientOptions: options.connectorClientOptions,
@@ -102,7 +102,7 @@ export async function makeApp(
     configuration: Configuration,
     applicationRoot: string,
     options: Partial<Options> = {},
-    app: Application = express()
+    app: Application = express(),
 ): Promise<[Application, (callback?: () => void) => Server]> {
     const configOverrides: Partial<Options> = {};
 
@@ -119,11 +119,10 @@ export async function makeApp(
         }
 
         if (res && !res.headersSent) {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const statusCode = typeof (err as any)?.statusCode === 'number' ? (err as any).statusCode : 500;
 
             res.status(statusCode).json({
-                message: err instanceof Error ? err.message : err ?? 'Internal server error',
+                message: err instanceof Error ? err.message : (err ?? 'Internal server error'),
             });
         }
     };
@@ -146,7 +145,7 @@ export async function makeApp(
                     res.setHeader('Content-Type', contentType);
                 }
             },
-        })
+        }),
     );
 
     app.post(resolvedOptions.messagingEndpointPath, async (req, res) => {
@@ -169,8 +168,8 @@ export async function makeApp(
                     name: z.string(),
                     enabled: z.boolean().optional(),
                     route: z.string(),
-                })
-            )
+                }),
+            ),
         ) ?? [];
 
     adapters
@@ -200,7 +199,7 @@ export async function makeApp(
             // after the app starts listening for requests.
             const server = app.listen(
                 resolvedOptions.port,
-                callback ?? (() => console.log(`server listening on port ${resolvedOptions.port}`))
+                callback ?? (() => console.log(`server listening on port ${resolvedOptions.port}`)),
             );
 
             server.on('upgrade', async (req, socket, head) => {

@@ -102,7 +102,7 @@ export class LuisAdaptiveRecognizer extends Recognizer implements LuisAdaptiveRe
      * The flag to indicate in personal information should be logged in telemetry.
      */
     logPersonalInformation: BoolExpression = new BoolExpression(
-        '=settings.runtimeSettings.telemetry.logPersonalInformation'
+        '=settings.runtimeSettings.telemetry.logPersonalInformation',
     );
 
     /**
@@ -140,7 +140,7 @@ export class LuisAdaptiveRecognizer extends Recognizer implements LuisAdaptiveRe
         dialogContext: DialogContext,
         activity: Activity,
         telemetryProperties?: Record<string, string>,
-        telemetryMetrics?: Record<string, number>
+        telemetryMetrics?: Record<string, number>,
     ): Promise<RecognizerResult> {
         // Validate passed in activity matches turn activity
         const context = dialogContext.context;
@@ -167,7 +167,7 @@ export class LuisAdaptiveRecognizer extends Recognizer implements LuisAdaptiveRe
             dialogContext,
             'LuisResult',
             this.fillRecognizerResultTelemetryProperties(result, telemetryProperties, dialogContext),
-            telemetryMetrics
+            telemetryMetrics,
         );
 
         return result;
@@ -231,7 +231,7 @@ export class LuisAdaptiveRecognizer extends Recognizer implements LuisAdaptiveRe
     protected fillRecognizerResultTelemetryProperties(
         recognizerResult: RecognizerResult,
         telemetryProperties: { [key: string]: string },
-        dialogContext: DialogContext
+        dialogContext: DialogContext,
     ): { [key: string]: string } {
         const logPersonalInfo = this.logPersonalInformation.tryGetValue(dialogContext.state);
         const applicationId = this.applicationId.tryGetValue(dialogContext.state);

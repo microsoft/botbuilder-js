@@ -1,5 +1,3 @@
-/* eslint-disable security/detect-object-injection */
-/* eslint-disable security/detect-non-literal-fs-filename */
 const {
     Templates,
     LGLineBreakStyle,
@@ -150,7 +148,7 @@ describe('LG', function () {
         assert.strictEqual(
             evaled.replace(/\r\n/g, '\n'),
             'markdown\n## Manage the knowledge base\n',
-            `Evaled is ${evaled}`
+            `Evaled is ${evaled}`,
         );
 
         evaled = templates.evaluate('template4').toString();
@@ -310,7 +308,7 @@ describe('LG', function () {
         assert.strictEqual(
             evaled,
             'Your most recent task is Task1. You can let me know if you want to add or complete a task.',
-            `Evaled is ${evaled}`
+            `Evaled is ${evaled}`,
         );
     });
 
@@ -379,7 +377,7 @@ describe('LG', function () {
         evaled = templates.evaluate('showTodo', { todos: ['A', 'B', 'C'] });
         assert.strictEqual(
             evaled.replace(/\r\n/g, '\n'),
-            '\n    Your most recent 3 tasks are\n    * A\n* B\n* C\n    '
+            '\n    Your most recent 3 tasks are\n    * A\n* B\n* C\n    ',
         );
 
         evaled = templates.evaluate('showTodo', undefined);
@@ -529,7 +527,7 @@ describe('LG', function () {
         const resource = new LGResource(
             GetExampleFilePath('xx.lg'),
             GetExampleFilePath('xx.lg'),
-            '[import](./6.lg)\r\n# basicTemplate\r\n- Hi\r\n- Hello\r\n'
+            '[import](./6.lg)\r\n# basicTemplate\r\n- Hi\r\n- Hello\r\n',
         );
         templates = Templates.parseResource(resource);
 
@@ -751,13 +749,13 @@ describe('LG', function () {
         evaled = templates.expandTemplate('showTodo', { todos });
         assert.strictEqual(
             evaled[0].toString().replace(/\r\n/g, '\n'),
-            '\n    Your most recent 3 tasks are\n    * A\n* B\n* C\n    '
+            '\n    Your most recent 3 tasks are\n    * A\n* B\n* C\n    ',
         );
 
         evaled = templates.expandTemplate('showTodo');
         assert.strictEqual(
             evaled[0].toString().replace(/\r\n/g, '\n'),
-            '\n    You don\'t have any "t\\\\odo\'".\n    '
+            '\n    You don\'t have any "t\\\\odo\'".\n    ',
         );
 
         evaled = templates.expandTemplate('getUserName');
@@ -801,11 +799,11 @@ describe('LG', function () {
             (err) => {
                 assert(
                     err.message.includes(
-                        "'variable_not_defined' evaluated to null. [StrictTrue]  Error occurred when evaluating '-${variable_not_defined}'"
-                    )
+                        "'variable_not_defined' evaluated to null. [StrictTrue]  Error occurred when evaluating '-${variable_not_defined}'",
+                    ),
                 );
                 return true;
-            }
+            },
         );
     });
 
@@ -825,7 +823,7 @@ describe('LG', function () {
             (err) => {
                 assert(err.message.includes("it's not a built-in function or a custom function"));
                 return true;
-            }
+            },
         );
     });
 
@@ -951,7 +949,7 @@ describe('LG', function () {
             'newtemplate2',
             'newtemplateName2',
             ['newtemplate2', 'newtemplateName2'],
-            '- new hi\r\n#hi2\r\n'
+            '- new hi\r\n#hi2\r\n',
         );
         assert.strictEqual(templates.toArray().length, 4);
         assert.strictEqual(templates.imports.length, 0);
@@ -1013,7 +1011,7 @@ describe('LG', function () {
         // add an exist template
         assert.throws(
             () => templates.addTemplate('newtemplate', undefined, '- hi2 '),
-            new Error(TemplateErrors.templateExist('newtemplate'))
+            new Error(TemplateErrors.templateExist('newtemplate')),
         );
     });
 
@@ -1112,7 +1110,7 @@ describe('LG', function () {
         let evaled = templates.evaluate('T1', { turn: { name: 'Dong', count: 3 } });
         assert.strictEqual(
             evaled,
-            'Hi Dong, welcome to Seattle, Seattle is a beautiful place, how many burgers do you want, 3?'
+            'Hi Dong, welcome to Seattle, Seattle is a beautiful place, how many burgers do you want, 3?',
         );
 
         const objscope = {
@@ -1138,25 +1136,25 @@ describe('LG', function () {
         if (evaled.text.includes('how old')) {
             assert.deepStrictEqual(
                 evaled,
-                JSON.parse('{"lgType":"Activity","text":"how old are you?","suggestedactions":["10","20","30"]}')
+                JSON.parse('{"lgType":"Activity","text":"how old are you?","suggestedactions":["10","20","30"]}'),
             );
         } else {
             assert.deepStrictEqual(
                 evaled,
-                JSON.parse('{"lgType":"Activity","text":"what\'s your age?","suggestedactions":["10","20","30"]}')
+                JSON.parse('{"lgType":"Activity","text":"what\'s your age?","suggestedactions":["10","20","30"]}'),
             );
         }
 
         evaled = templates.evaluate('AskForAge.prompt3');
         assert.deepStrictEqual(
             evaled,
-            JSON.parse('{"lgType":"Activity","text":"${GetAge()}","suggestions":["10 | cards","20 | cards"]}')
+            JSON.parse('{"lgType":"Activity","text":"${GetAge()}","suggestions":["10 | cards","20 | cards"]}'),
         );
 
         evaled = templates.evaluate('T1');
         assert.deepStrictEqual(
             evaled,
-            JSON.parse('{"lgType":"Activity","text":"This is awesome","speak":"hello world I can also speak!"}')
+            JSON.parse('{"lgType":"Activity","text":"This is awesome","speak":"hello world I can also speak!"}'),
         );
 
         evaled = templates.evaluate('ST1');
@@ -1166,14 +1164,14 @@ describe('LG', function () {
         assert.deepStrictEqual(
             evaled,
             JSON.parse(
-                '{"lgType":"Activity","suggestedactions":[{"lgType":"MyStruct","speak":"beta","text":"food"},{"lgType":"Activity","speak":"I can also speak!"}]}'
-            )
+                '{"lgType":"Activity","suggestedactions":[{"lgType":"MyStruct","speak":"beta","text":"food"},{"lgType":"Activity","speak":"I can also speak!"}]}',
+            ),
         );
 
         evaled = templates.evaluate('MultiExpression');
         assert.strictEqual(
             evaled,
-            '{"lgType":"Activity","speak":"I can also speak!"} {"lgType":"MyStruct","text":"hi"}'
+            '{"lgType":"Activity","speak":"I can also speak!"} {"lgType":"MyStruct","text":"hi"}',
         );
 
         evaled = templates.evaluate('StructuredTemplateRef');
@@ -1183,8 +1181,8 @@ describe('LG', function () {
         assert.deepStrictEqual(
             evaled,
             JSON.parse(
-                '{"lgType":"MyStruct","list":[{"lgType":"SubStruct","text":"hello"},{"lgType":"SubStruct","text":"world"}]}'
-            )
+                '{"lgType":"MyStruct","list":[{"lgType":"SubStruct","text":"hello"},{"lgType":"SubStruct","text":"world"}]}',
+            ),
         );
 
         evaled = templates.evaluate('templateWithSquareBrackets', { manufacturer: { Name: 'Acme Co' } });
@@ -1193,7 +1191,7 @@ describe('LG', function () {
         evaled = templates.evaluate('ValueWithEqualsMark', { name: 'Jack' });
         assert.deepStrictEqual(
             evaled,
-            JSON.parse('{"lgType":"Activity","text":"Hello! welcome back. I have your name = Jack"}')
+            JSON.parse('{"lgType":"Activity","text":"Hello! welcome back. I have your name = Jack"}'),
         );
     });
 
@@ -1649,13 +1647,13 @@ describe('LG', function () {
         ({ value: evaled, error } = Expression.parse('common.countTotal()').tryEvaluate(scope1));
         assert.strictEqual(
             error,
-            "list1 is not a list or array. [countTotal]  Error occurred when evaluating '-${count(union(list1,list2))}'."
+            "list1 is not a list or array. [countTotal]  Error occurred when evaluating '-${count(union(list1,list2))}'.",
         );
 
         ({ value: evaled, error } = Expression.parse('common.countTotal(a, b, c)').tryEvaluate(scope1));
         assert.strictEqual(
             error,
-            "list2 is not a list or array. [countTotal]  Error occurred when evaluating '-${count(union(list1,list2))}'."
+            "list2 is not a list or array. [countTotal]  Error occurred when evaluating '-${count(union(list1,list2))}'.",
         );
 
         const scope2 = { i: 1, j: 2, k: 3, l: 4 };

@@ -22,7 +22,6 @@ export * from './evaluationTarget';
 export * from './templateExtensions';
 export * from './analyzerResult';
 export * from './templateErrors';
-export * from './evaluator';
 export * from './errorListener';
 export * from './customizedMemory';
 export * from './expander';
