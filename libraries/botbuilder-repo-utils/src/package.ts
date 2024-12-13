@@ -11,7 +11,7 @@ export interface Package {
     deprecated?: boolean;
     internal?: boolean;
 
-    workspaces?: { packages: string[] };
+    workspaces?: { packages: string[]; generators: string[] };
 
     dependencies?: Record<string, string>;
     devDependencies?: Record<string, string>;
