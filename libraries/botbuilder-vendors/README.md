@@ -1,3 +1,3 @@
 TODO:
-- Explain how it works, now to add a new vendor, how to connect it with the rest of botbuilder libraries, etc.
+- Explain how it works, how to add a new vendor, connect it with the rest of botbuilder libraries, etc.
 - Add unit tests.
