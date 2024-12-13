@@ -54,7 +54,7 @@ export class BlobsStorage implements Storage {
         containerName: string,
         options?: BlobsStorageOptions,
         url = '',
-        credential?: StorageSharedKeyCredential | AnonymousCredential | TokenCredential
+        credential?: StorageSharedKeyCredential | AnonymousCredential | TokenCredential,
     ) {
         if (url != '' && credential != null) {
             z.object({ url: z.string() }).parse({
@@ -80,7 +80,7 @@ export class BlobsStorage implements Storage {
             this._containerClient = new ContainerClient(
                 connectionString,
                 containerName,
-                options?.storagePipelineOptions
+                options?.storagePipelineOptions,
             );
 
             // At most one promise at a time to be friendly to local emulator users
@@ -121,7 +121,7 @@ export class BlobsStorage implements Storage {
 
                     const blob = await ignoreError(
                         this._containerClient.getBlobClient(sanitizeBlobKey(key)).download(),
-                        isStatusCodeError(404)
+                        isStatusCodeError(404),
                     );
 
                     if (!blob) {
@@ -140,7 +140,7 @@ export class BlobsStorage implements Storage {
                 },
                 {
                     concurrency: this._concurrency,
-                }
+                },
             )
         ).reduce((acc, { key, value }) => (value ? { ...acc, [key]: value } : acc), {});
     }
@@ -158,18 +158,25 @@ export class BlobsStorage implements Storage {
 
         await pmap(
             Object.entries(changes),
-            ([key, { eTag = '', ...change }]) => {
-                const blob = this._containerClient.getBlockBlobClient(sanitizeBlobKey(key));
-                const serialized = JSON.stringify(change);
-
-                return blob.upload(serialized, serialized.length, {
-                    conditions: typeof eTag === 'string' && eTag !== '*' ? { ifMatch: eTag } : {},
-                    blobHTTPHeaders: { blobContentType: 'application/json' },
-                });
+            async ([key, { eTag = '', ...change }]) => {
+                try {
+                    const blob = this._containerClient.getBlockBlobClient(sanitizeBlobKey(key));
+                    const serialized = JSON.stringify(change);
+                    return await blob.upload(serialized, serialized.length, {
+                        conditions: typeof eTag === 'string' && eTag !== '*' ? { ifMatch: eTag } : {},
+                        blobHTTPHeaders: { blobContentType: 'application/json' },
+                    });
+                } catch (err: any) {
+                    if (err.statusCode === 412) {
+                        throw new Error(`Storage: error writing "${key}" due to eTag conflict.`);
+                    } else {
+                        throw err;
+                    }
+                }
             },
             {
                 concurrency: this._concurrency,
-            }
+            },
         );
     }
 
@@ -189,7 +196,7 @@ export class BlobsStorage implements Storage {
             (key) => ignoreError(this._containerClient.deleteBlob(sanitizeBlobKey(key)), isStatusCodeError(404)),
             {
                 concurrency: this._concurrency,
-            }
+            },
         );
     }
 }

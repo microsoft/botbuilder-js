@@ -25,7 +25,7 @@ function GetExpected(oracle) {
     const query = 'verbose=(true|false)(&staging=false&spellCheck=false&log=true|)';
     const path = `/luis/v2\\.0/apps/${applicationId}`;
     const pattern = `${path}\\?${query}`;
-    const uri = new RegExp(pattern); // eslint-disable-line security/detect-non-literal-regexp
+    const uri = new RegExp(pattern);
     const requestContent = expected.text != undefined ? `"${expected.text}"` : undefined;
     const responseBody = expected;
 
@@ -145,25 +145,31 @@ describe('LuisPredict', function () {
     this.timeout(10000);
     if (!mockLuis && k === 'MockedKey') {
         console.warn(
-            'WARNING: skipping LuisRecognizer test suite because the LUISAPPKEY environment variable is not defined'
+            'WARNING: skipping LuisRecognizer test suite because the LUISAPPKEY environment variable is not defined',
         );
         return;
     }
+
     it('test built-ins composite1', async function () {
         await TestJson('Composite1.json');
     });
+
     it('test built-ins composite2', async function () {
         await TestJson('Composite2.json');
     });
+
     it('test built-ins composite3', async function () {
         await TestJson('Composite3.json');
     });
+
     it('test built-ins prebuilt', async function () {
         await TestJson('Prebuilt.json');
     });
+
     it('test patterns', async function () {
         await TestJson('Patterns.json');
     });
+
     it('should return single intent and a simple entity', async function () {
         const result = await TestJson('SingleIntent_SimplyEntity.json', false);
 
