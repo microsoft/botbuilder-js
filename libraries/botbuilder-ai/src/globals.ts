@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 /**
  * @module botbuilder
  */
@@ -8,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const window = require('./custom.window');
 
 /**
@@ -18,7 +16,7 @@ const window = require('./custom.window');
  */
 export function getFetch() {
     if (global) {
-        return (global.fetch = require('node-fetch'));
+        return (global.fetch = require('node-fetch')); // eslint-disable-line @typescript-eslint/no-require-imports
     }
 
     return window?.fetch;

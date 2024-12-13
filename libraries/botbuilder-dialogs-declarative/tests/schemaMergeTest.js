@@ -14,7 +14,7 @@ async function runCommand(command, envObject) {
     // We need to combine our process.env with envObject so,
     //  1) We can use existing env vars (like from CI), and
     //  2) npx doesn't like to install without the existing APPDATA windows env var.
-    const env = { ...process.env, ...envObject };
+    const env = { ...process.env, ...envObject, NODE_NO_WARNINGS: 1 };
     const { stdout, stderr } = await exec(command, { env });
 
     if (stderr) {
