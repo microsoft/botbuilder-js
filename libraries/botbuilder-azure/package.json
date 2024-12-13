@@ -58,6 +58,7 @@
   "files": [
     "_ts3.4",
     "lib",
-    "src"
+    "src",
+    "vendors"
   ]
 }
