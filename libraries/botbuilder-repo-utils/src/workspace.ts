@@ -25,6 +25,7 @@ export interface Filters {
     noPrivate: boolean;
     script: string;
     path: string[];
+    hasLocalDependencies: boolean;
 }
 
 /**
@@ -38,7 +39,7 @@ export interface Filters {
 export async function collectWorkspacePackages(
     repoRoot: string,
     workspaces: string[] = [],
-    filters: Partial<Filters> = {}
+    filters: Partial<Filters> = {},
 ): Promise<Array<Workspace>> {
     // Note: posix is required, this emits absolute paths that are platform specific
     const paths = await glob(
@@ -48,54 +49,56 @@ export async function collectWorkspacePackages(
     );
 
     const maybeWorkspaces = await Promise.all(
-        paths.map(
-            async (absPath): Promise<Workspace | undefined> => {
-                let relPath = absPath.replace(repoRoot, '');
-                if (relPath[0] === path.sep) {
-                    relPath = relPath.slice(1);
-                }
-
-                // Strip `package.json` filename for path filters
-                const relWorkspacePath = path.dirname(relPath);
-
-                if (filters.path?.length && !filters.path.some((path) => minimatch(relWorkspacePath, path))) {
-                    return;
-                }
-
-                if (
-                    filters.ignorePath?.length &&
-                    filters.ignorePath.some((ignorePath) => minimatch(relWorkspacePath, ignorePath))
-                ) {
-                    return;
-                }
-
-                const pkg = await readJsonFile<Package>(absPath);
-                if (!pkg) {
-                    return undefined;
-                }
-
-                if (filters.noPrivate && pkg.private) {
-                    return;
-                }
-
-                if (filters.script && !(pkg.scripts ?? {})[filters.script]) {
-                    return;
-                }
-
-                if (filters.name?.length && !filters.name.some((name) => minimatch(pkg.name, name))) {
-                    return;
-                }
-
-                if (
-                    filters.ignoreName?.length &&
-                    filters.ignoreName.some((ignoreName) => minimatch(pkg.name, ignoreName))
-                ) {
-                    return;
-                }
-
-                return { absPath, pkg, relPath };
+        paths.map(async (absPath): Promise<Workspace | undefined> => {
+            let relPath = absPath.replace(repoRoot, '');
+            if (relPath[0] === path.sep) {
+                relPath = relPath.slice(1);
             }
-        )
+
+            // Strip `package.json` filename for path filters
+            const relWorkspacePath = path.dirname(relPath);
+
+            if (filters.path?.length && !filters.path.some((path) => minimatch(relWorkspacePath, path))) {
+                return;
+            }
+
+            if (
+                filters.ignorePath?.length &&
+                filters.ignorePath.some((ignorePath) => minimatch(relWorkspacePath, ignorePath))
+            ) {
+                return;
+            }
+
+            const pkg = await readJsonFile<Package>(absPath);
+            if (!pkg) {
+                return undefined;
+            }
+
+            if (filters.noPrivate && pkg.private) {
+                return;
+            }
+
+            if (filters.script && !(pkg.scripts ?? {})[filters.script]) {
+                return;
+            }
+
+            if (filters.name?.length && !filters.name.some((name) => minimatch(pkg.name, name))) {
+                return;
+            }
+
+            if (
+                filters.ignoreName?.length &&
+                filters.ignoreName.some((ignoreName) => minimatch(pkg.name, ignoreName))
+            ) {
+                return;
+            }
+
+            if (filters.hasLocalDependencies && Object.keys(pkg.localDependencies ?? {}).length === 0) {
+                return;
+            }
+
+            return { absPath, pkg, relPath };
+        }),
     );
 
     return compact(maybeWorkspaces);
