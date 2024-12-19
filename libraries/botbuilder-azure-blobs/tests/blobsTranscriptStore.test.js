@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 const assert = require('assert');
-const pmap = require('p-map');
+const pmap = require('../vendors/p-map');
 const { BlobsTranscriptStore } = require('../');
 
 const connectionString = process.env.AZURE_BLOB_STORAGE_CONNECTION_STRING;
