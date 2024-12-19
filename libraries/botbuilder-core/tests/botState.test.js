@@ -92,6 +92,12 @@ describe('BotState', function () {
         assert(state.test === 'foo', 'state not loaded.');
     });
 
+    it('should saveChanges() to storage of an empty state object.', async function () {
+        context.turnState.set(botState.stateKey, undefined);
+        await botState.saveChanges(context, false);
+        assert(context.turnState.get(botState.stateKey), 'state not saved.');
+    });
+
     it('should force saveChanges() to storage of an empty state object.', async function () {
         context.turnState.set(botState.stateKey, undefined);
         await botState.saveChanges(context, true);

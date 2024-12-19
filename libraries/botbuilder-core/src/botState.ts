@@ -110,7 +110,7 @@ export class BotState implements PropertyManager {
      */
     saveChanges(context: TurnContext, force = false): Promise<void> {
         let cached: CachedBotState = context.turnState.get(this.stateKey);
-        if (force || (cached && cached.hash !== calculateChangeHash(cached?.state))) {
+        if (!cached || force || (cached && cached.hash !== calculateChangeHash(cached?.state))) {
             return Promise.resolve(this.storageKey(context)).then((key: string) => {
                 if (!cached) {
                     cached = { state: {}, hash: '' };
