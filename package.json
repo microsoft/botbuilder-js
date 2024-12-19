@@ -121,7 +121,8 @@
       "**/botframework-luis/**",
       "**/tests/**",
       "**/tools/**",
-      "**/internal.*"
+      "**/internal.*",
+      "**/vendors/**"
     ]
   }
 }
