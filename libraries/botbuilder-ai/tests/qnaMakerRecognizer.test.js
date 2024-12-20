@@ -42,7 +42,7 @@ const validateAnswers = (result) => {
     strictEqual(
         Object.entries(result.entities.answer).length,
         1,
-        'if there is a match there should only be 1 top answer'
+        'if there is a match there should only be 1 top answer',
     );
     strictEqual(result.entities.$instance.answer[0].startIndex, 0);
     ok(result.entities.$instance.answer[0].endIndex);
