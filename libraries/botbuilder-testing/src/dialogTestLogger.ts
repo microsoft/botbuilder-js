@@ -61,32 +61,30 @@ export class DialogTestLogger implements Middleware {
         const timestamp = `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
         this.logger.log(`-> ts: ${timestamp}`);
 
-        context.onSendActivities(
-            async (context, activities, next): Promise<ResourceResponse[]> => {
-                // log outgoing
-                activities.forEach((activity) => {
-                    if (activity.type == ActivityTypes.Message) {
-                        this.logger.log(`Bot: Text      = ${activity.text}`);
-                        this.logger.log(`     Speak     = ${activity.speak}`);
-                        this.logger.log(`     InputHint = ${activity.inputHint}`);
-                    } else {
-                        this.logger.log(`Bot: Activity = ${activity.type}`);
-                        JSON.stringify(activity, null, 2)
-                            .split(/\n/)
-                            .forEach((line) => {
-                                this.logger.log(line);
-                            });
-                    }
-                });
-                const now = new Date();
-                const stopwatch = context.turnState[this._stopwatchStateKey];
-                const mms = now.getTime() - stopwatch.getTime();
-                const timestamp = `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
-                this.logger.log(`-> ts: ${timestamp} elapsed ${mms} ms`);
+        context.onSendActivities(async (context, activities, next): Promise<ResourceResponse[]> => {
+            // log outgoing
+            activities.forEach((activity) => {
+                if (activity.type == ActivityTypes.Message) {
+                    this.logger.log(`Bot: Text      = ${activity.text}`);
+                    this.logger.log(`     Speak     = ${activity.speak}`);
+                    this.logger.log(`     InputHint = ${activity.inputHint}`);
+                } else {
+                    this.logger.log(`Bot: Activity = ${activity.type}`);
+                    JSON.stringify(activity, null, 2)
+                        .split(/\n/)
+                        .forEach((line) => {
+                            this.logger.log(line);
+                        });
+                }
+            });
+            const now = new Date();
+            const stopwatch = context.turnState[this._stopwatchStateKey];
+            const mms = now.getTime() - stopwatch.getTime();
+            const timestamp = `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
+            this.logger.log(`-> ts: ${timestamp} elapsed ${mms} ms`);
 
-                return next();
-            }
-        );
+            return next();
+        });
         await next();
     }
 }
