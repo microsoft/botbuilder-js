@@ -46,7 +46,7 @@ export class UserSays extends TestAction implements UserSaysConfiguration {
     async execute(
         testAdapter: TestAdapter,
         callback: (context: TurnContext) => Promise<void>,
-        _inspector?: Inspector
+        _inspector?: Inspector,
     ): Promise<void> {
         if (!this.text) {
             throw new Error('You must define the text property');

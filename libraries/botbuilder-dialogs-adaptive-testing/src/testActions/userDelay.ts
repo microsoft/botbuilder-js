@@ -35,7 +35,7 @@ export class UserDelay extends TestAction implements UserDelayConfiguration {
     async execute(
         _testAdapter: TestAdapter,
         _callback: (context: TurnContext) => Promise<any>,
-        _inspector?: Inspector
+        _inspector?: Inspector,
     ): Promise<void> {
         await Promise.resolve((resolve) => setTimeout(resolve, this.timespan));
     }

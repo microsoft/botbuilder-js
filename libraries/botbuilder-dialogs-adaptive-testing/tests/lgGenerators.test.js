@@ -3,6 +3,7 @@ const { makeResourceExplorer } = require('./utils');
 
 describe('LGGeneratorTests', function () {
     let resourceExplorer;
+
     before(function () {
         resourceExplorer = makeResourceExplorer('LGGeneratorTests');
     });

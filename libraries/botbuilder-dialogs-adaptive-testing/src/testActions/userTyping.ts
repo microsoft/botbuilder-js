@@ -36,7 +36,7 @@ export class UserTyping extends Configurable implements TestAction, UserTypingCo
     async execute(
         testAdapter: TestAdapter,
         callback: (context: TurnContext) => Promise<any>,
-        _inspector?: Inspector
+        _inspector?: Inspector,
     ): Promise<any> {
         const typing = testAdapter.makeActivity();
         typing.type = ActivityTypes.Typing;

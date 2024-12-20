@@ -71,7 +71,7 @@ export class MockHttpRequestMiddleware implements Middleware {
         const origins = new Set<string>(
             this._httpRequestMocks
                 .filter((mock) => mock instanceof HttpRequestSequenceMock)
-                .map((mock: HttpRequestSequenceMock) => parse(mock.url).origin)
+                .map((mock: HttpRequestSequenceMock) => parse(mock.url).origin),
         );
 
         // call fallback functions if mocks not catched

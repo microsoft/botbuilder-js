@@ -3,6 +3,7 @@ const { makeResourceExplorer } = require('./utils');
 
 describe('RegexRecognizerTests', function () {
     let resourceExplorer;
+
     before(function () {
         resourceExplorer = makeResourceExplorer('RegexRecognizerTests');
     });

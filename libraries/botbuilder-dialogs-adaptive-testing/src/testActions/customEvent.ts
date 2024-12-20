@@ -40,7 +40,7 @@ export class CustomEvent<T = unknown> extends TestAction implements CustomEventC
     async execute(
         testAdapter: TestAdapter,
         callback: (context: TurnContext) => Promise<void>,
-        _inspector?: Inspector
+        _inspector?: Inspector,
     ): Promise<void> {
         if (!this.name) {
             throw Error('You must define the event name.');

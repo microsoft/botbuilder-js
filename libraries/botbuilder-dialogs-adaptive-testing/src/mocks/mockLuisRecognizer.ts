@@ -85,7 +85,7 @@ export class MockLuisRecognizer extends Recognizer {
         dialogContext: DialogContext,
         activity: Activity,
         telemetryProperties?: Record<string, string>,
-        telemetryMetrics?: Record<string, number>
+        telemetryMetrics?: Record<string, number>,
     ): Promise<RecognizerResult> {
         const options = this._recognizer.recognizerOptions(dialogContext);
         options.includeAPIResults = true;
@@ -164,7 +164,7 @@ export class MockLuisRecognizer extends Recognizer {
     private async _fallback(
         _request: HttpRequestMessage,
         utterance: string,
-        options: LuisRecognizerOptionsV3
+        options: LuisRecognizerOptionsV3,
     ): Promise<HttpResponseMessage> {
         const responsePath: string = this._responsePath(utterance, options);
         if (fs.existsSync(responsePath)) {

@@ -5,6 +5,7 @@ const { LuisAdaptiveRecognizer, LuisBotComponent } = require('botbuilder-ai');
 
 describe('ConditionalsTests', function () {
     let resourceExplorer;
+
     before(function () {
         resourceExplorer = makeResourceExplorer('ConditionalsTests');
     });
@@ -24,7 +25,7 @@ describe('ConditionalsTests', function () {
         resourceExplorer.registerType(
             LuisAdaptiveRecognizer.$kind,
             MockLuisRecognizer,
-            new MockLuisLoader(resourceExplorer, config)
+            new MockLuisLoader(resourceExplorer, config),
         );
         await TestUtils.runTestScript(resourceExplorer, 'ChooseEntity', undefined, config);
     });

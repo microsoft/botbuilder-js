@@ -49,12 +49,13 @@ const getDialogContext = (testName, text, locale = 'en-us') => {
             from: bot,
             locale,
         }),
-        {}
+        {},
     );
 };
 
 describe('CrossTrainedRecognizerSetTests', function () {
     let resourceExplorer;
+
     before(function () {
         resourceExplorer = makeResourceExplorer('CrossTrainedRecognizerSetTests');
     });

@@ -67,7 +67,7 @@ export class AssertReplyOneOf extends AssertReplyActivity implements AssertReply
 
         if (!found) {
             throw new Error(
-                this.description || `Text ${activity.text} didn't match one of expected text: ${this.text.join('\n')}`
+                this.description || `Text ${activity.text} didn't match one of expected text: ${this.text.join('\n')}`,
             );
         }
 

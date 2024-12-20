@@ -25,6 +25,7 @@ const createRecognizer = () =>
 
 describe('MultiLanguageRecognizerTests', function () {
     let resourceExplorer;
+
     before(function () {
         resourceExplorer = makeResourceExplorer('MultiLanguageRecognizerTests');
     });
@@ -48,7 +49,7 @@ describe('MultiLanguageRecognizerTests', function () {
     it('EnUsFallback_AcitivtyLocaleCasing', async function () {
         await TestUtils.runTestScript(
             resourceExplorer,
-            'MultiLanguageRecognizerTest_EnUsFallback_ActivityLocaleCasing'
+            'MultiLanguageRecognizerTest_EnUsFallback_ActivityLocaleCasing',
         );
     });
 
