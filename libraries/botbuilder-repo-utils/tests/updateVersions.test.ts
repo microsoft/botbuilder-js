@@ -8,7 +8,7 @@ import assert from 'assert';
 import dayjs from 'dayjs';
 import path from 'path';
 import semver from 'semver';
-import sinon from 'sinon';
+import { createSandbox, match } from 'sinon';
 import { Package } from '../src/package';
 import { command, getPackageVersion } from '../src/updateVersions';
 import { isSuccess } from '../src/run';
@@ -147,8 +147,9 @@ describe('updateVersions', function () {
 
     describe('command', function () {
         let sandbox: sinon.SinonSandbox;
+
         beforeEach(function () {
-            sandbox = sinon.createSandbox();
+            sandbox = createSandbox();
         });
 
         afterEach(function () {
@@ -223,10 +224,10 @@ describe('updateVersions', function () {
                         ),
                     });
 
-                let packageMatch = sinon.match.hasOwn('version', workspace.expectedVersion);
+                let packageMatch = match.hasOwn('version', workspace.expectedVersion);
                 if (workspace.expectedDependencies) {
                     packageMatch = packageMatch.and(
-                        sinon.match.hasOwn('dependencies', sinon.match(workspace.expectedDependencies)),
+                        match.hasOwn('dependencies', match(workspace.expectedDependencies)),
                     );
                 }
 
