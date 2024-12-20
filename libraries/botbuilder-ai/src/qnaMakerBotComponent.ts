@@ -30,7 +30,7 @@ export class QnAMakerBotComponent extends BotComponent {
                         },
                     ];
                 },
-            })
+            }),
         );
     }
 }

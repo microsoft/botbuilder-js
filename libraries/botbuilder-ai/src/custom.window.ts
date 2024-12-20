@@ -7,7 +7,7 @@
  */
 
 declare global {
-    interface Window {} // eslint-disable-line @typescript-eslint/no-empty-interface
+    interface Window {} // eslint-disable-line @typescript-eslint/no-empty-object-type
 }
 
 export type window = Window;
