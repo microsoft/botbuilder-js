@@ -3,7 +3,7 @@
  * Licensed under the MIT License.
  */
 
-import { ServiceCallback, RequestOptionsBase, Serializer, OperationSpec } from '@azure/core-http';
+import { ServiceCallback, RequestOptionsBase, createSerializer, OperationSpec } from 'botbuilder-stdlib/lib/azureCoreHttpCompat';
 import * as Models from '../models';
 import * as Mappers from '../models/userTokenMappers';
 import * as Parameters from '../models/parameters';
@@ -272,7 +272,7 @@ export class UserToken {
 }
 
 // Operation Specifications
-const serializer = new Serializer(Mappers);
+const serializer = createSerializer(Mappers);
 const getTokenOperationSpec: OperationSpec = {
     httpMethod: 'GET',
     path: 'api/usertoken/GetToken',

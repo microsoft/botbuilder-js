@@ -3,7 +3,7 @@
  * Licensed under the MIT License.
  */
 
-import { ServiceClientCredentials, ServiceClient } from '@azure/core-http';
+import { ServiceClientCredentials, ServiceClientContext } from 'botbuilder-stdlib/lib/azureCoreHttpCompat';
 import { TeamsConnectorClientOptions } from './models';
 
 /**
@@ -12,24 +12,16 @@ import { TeamsConnectorClientOptions } from './models';
  * configured in the [Bot Framework Developer Portal](https://dev.botframework.com).
  * The Connector service uses industry-standard REST and JSON over HTTPS.
  */
-export class TeamsConnectorClientContext extends ServiceClient {
-    credentials: ServiceClientCredentials;
-
+export class TeamsConnectorClientContext extends ServiceClientContext {
     /**
      * Initializes a new instance of the TeamsConnectorClientContext class.
-     *
      * @param credentials Subscription credentials which uniquely identify client subscription.
      * @param [options] The parameter options
      */
     constructor(credentials: ServiceClientCredentials, options?: TeamsConnectorClientOptions) {
-        if (!options) {
-            options = {};
-        }
-
-        super(credentials, options);
-
-        this.baseUri = options.baseUri || this.baseUri || 'https://api.botframework.com';
-        this.requestContentType = 'application/json; charset=utf-8';
-        this.credentials = credentials;
+        super(credentials, {
+            ...options,
+            baseUri: options?.baseUri || 'https://api.botframework.com'
+        });
     }
 }

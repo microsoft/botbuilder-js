@@ -7,7 +7,7 @@
  */
 
 import type { IJwtTokenProviderFactory } from './jwtTokenProviderFactory';
-import type { ServiceClientCredentials } from '@azure/core-http';
+import type { ServiceClientCredentials } from 'botbuilder-stdlib/lib/azureCoreHttpCompat';
 import { ManagedIdentityAppCredentials } from './managedIdentityAppCredentials';
 import { ServiceClientCredentialsFactory } from './serviceClientCredentialsFactory';
 import { ok } from 'assert';

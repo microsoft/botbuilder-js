@@ -11,7 +11,8 @@
 'use strict';
 
 const uuid = require('uuid');
-const { stripRequest, stripResponse, WebResource } = require("@azure/core-http");
+const { stripRequest, stripResponse } = require("../utils");
+const { createWebResource } = require("botbuilder-stdlib/lib/azureCoreHttpCompat");
 
 /**
  * Get all the resources for a resource group.
@@ -116,7 +117,7 @@ function _listByResourceGroup(resourceGroupName, options, callback) {
   }
 
   // Create HTTP transport objects
-  let httpRequest = new WebResource();
+  let httpRequest = createWebResource();
   httpRequest.method = 'GET';
   httpRequest.url = requestUrl;
   httpRequest.headers = {};
@@ -428,7 +429,7 @@ function _list(options, callback) {
   }
 
   // Create HTTP transport objects
-  let httpRequest = new WebResource();
+  let httpRequest = createWebResource();
   httpRequest.method = 'GET';
   httpRequest.url = requestUrl;
   httpRequest.headers = {};
@@ -606,7 +607,7 @@ function _checkExistence(resourceGroupName, resourceProviderNamespace, parentRes
   }
 
   // Create HTTP transport objects
-  let httpRequest = new WebResource();
+  let httpRequest = createWebResource();
   httpRequest.method = 'HEAD';
   httpRequest.url = requestUrl;
   httpRequest.headers = {};
@@ -971,7 +972,7 @@ function _get(resourceGroupName, resourceProviderNamespace, parentResourcePath, 
   }
 
   // Create HTTP transport objects
-  let httpRequest = new WebResource();
+  let httpRequest = createWebResource();
   httpRequest.method = 'GET';
   httpRequest.url = requestUrl;
   httpRequest.headers = {};
@@ -1109,7 +1110,7 @@ function _checkExistenceById(resourceId, apiVersion, options, callback) {
   }
 
   // Create HTTP transport objects
-  let httpRequest = new WebResource();
+  let httpRequest = createWebResource();
   httpRequest.method = 'HEAD';
   httpRequest.url = requestUrl;
   httpRequest.headers = {};
@@ -1419,7 +1420,7 @@ function _getById(resourceId, apiVersion, options, callback) {
   }
 
   // Create HTTP transport objects
-  let httpRequest = new WebResource();
+  let httpRequest = createWebResource();
   httpRequest.method = 'GET';
   httpRequest.url = requestUrl;
   httpRequest.headers = {};
@@ -1584,7 +1585,7 @@ function _beginMoveResources(sourceResourceGroupName, parameters, options, callb
   }
 
   // Create HTTP transport objects
-  let httpRequest = new WebResource();
+  let httpRequest = createWebResource();
   httpRequest.method = 'POST';
   httpRequest.url = requestUrl;
   httpRequest.headers = {};
@@ -1749,7 +1750,7 @@ function _beginValidateMoveResources(sourceResourceGroupName, parameters, option
   }
 
   // Create HTTP transport objects
-  let httpRequest = new WebResource();
+  let httpRequest = createWebResource();
   httpRequest.method = 'POST';
   httpRequest.url = requestUrl;
   httpRequest.headers = {};
@@ -1923,7 +1924,7 @@ function _beginDeleteMethod(resourceGroupName, resourceProviderNamespace, parent
   }
 
   // Create HTTP transport objects
-  let httpRequest = new WebResource();
+  let httpRequest = createWebResource();
   httpRequest.method = 'DELETE';
   httpRequest.url = requestUrl;
   httpRequest.headers = {};
@@ -2129,7 +2130,7 @@ function _beginCreateOrUpdate(resourceGroupName, resourceProviderNamespace, pare
   }
 
   // Create HTTP transport objects
-  let httpRequest = new WebResource();
+  let httpRequest = createWebResource();
   httpRequest.method = 'PUT';
   httpRequest.url = requestUrl;
   httpRequest.headers = {};
@@ -2298,7 +2299,7 @@ function _beginDeleteById(resourceId, apiVersion, options, callback) {
   }
 
   // Create HTTP transport objects
-  let httpRequest = new WebResource();
+  let httpRequest = createWebResource();
   httpRequest.method = 'DELETE';
   httpRequest.url = requestUrl;
   httpRequest.headers = {};
@@ -2465,7 +2466,7 @@ function _beginCreateOrUpdateById(resourceId, apiVersion, parameters, options, c
   }
 
   // Create HTTP transport objects
-  let httpRequest = new WebResource();
+  let httpRequest = createWebResource();
   httpRequest.method = 'PUT';
   httpRequest.url = requestUrl;
   httpRequest.headers = {};
@@ -2623,7 +2624,7 @@ function _listByResourceGroupNext(nextPageLink, options, callback) {
   requestUrl = requestUrl.replace('{nextLink}', nextPageLink);
 
   // Create HTTP transport objects
-  let httpRequest = new WebResource();
+  let httpRequest = createWebResource();
   httpRequest.method = 'GET';
   httpRequest.url = requestUrl;
   httpRequest.headers = {};
@@ -2750,7 +2751,7 @@ function _listNext(nextPageLink, options, callback) {
   requestUrl = requestUrl.replace('{nextLink}', nextPageLink);
 
   // Create HTTP transport objects
-  let httpRequest = new WebResource();
+  let httpRequest = createWebResource();
   httpRequest.method = 'GET';
   httpRequest.url = requestUrl;
   httpRequest.headers = {};
