@@ -26,7 +26,7 @@ export class QnACardBuilder {
         suggestionsList: string[],
         cardTitle: string,
         cardNoMatchText: string,
-        useTeamsAdaptiveCard = false
+        useTeamsAdaptiveCard = false,
     ): Partial<Activity> {
         if (!Array.isArray(suggestionsList)) {
             throw new Error('Missing suggestionsList');
@@ -76,7 +76,7 @@ export class QnACardBuilder {
     static getQnAAnswerCard(
         result: QnAMakerResult,
         displayPreciseAnswerOnly: boolean,
-        useTeamsAdaptiveCard = false
+        useTeamsAdaptiveCard = false,
     ): Partial<Activity> {
         if (!result) {
             throw new Error('Missing QnAMaker result');

@@ -15,7 +15,7 @@ import { LuisRecognizerInternal } from './luisRecognizerOptions';
 import { NullTelemetryClient, TurnContext, RecognizerResult } from 'botbuilder-core';
 import { DialogContext } from 'botbuilder-dialogs';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const pjson: Record<'name' | 'version', string> = require('../package.json');
 
 const LUIS_TRACE_TYPE = 'https://www.luis.ai/schemas/trace';
@@ -29,7 +29,6 @@ const LUIS_TRACE_LABEL = 'Luis Trace';
  * @returns {boolean} A boolean value that indicates param options is a [LuisRecognizerOptionsV2](xref:botbuilder-ai.LuisRecognizerOptionsV2).
  */
 export function isLuisRecognizerOptionsV2(options: unknown): options is LuisRecognizerOptionsV2 {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return (options as any).apiVersion && (options as any).apiVersion === 'v2';
 }
 
@@ -52,7 +51,7 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
         //   shouldn't effect production bots.
         const creds = new TokenCredentials(application.endpointKey);
         const baseUri = application.endpoint || 'https://westus.api.cognitive.microsoft.com';
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
         this.luisClient = new LuisClient(creds as any, baseUri);
 
         this.options = {
@@ -123,7 +122,7 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
                     'User-Agent': this.getUserAgent(),
                 },
                 ...luisPredictionOptions,
-            }
+            },
         );
         // Map results
         const result = {
@@ -133,7 +132,7 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
             entities: this.getEntitiesAndMetadata(
                 luisResult.entities,
                 luisResult.compositeEntities,
-                luisPredictionOptions.includeInstanceData === undefined || luisPredictionOptions.includeInstanceData
+                luisPredictionOptions.includeInstanceData === undefined || luisPredictionOptions.includeInstanceData,
             ),
             sentiment: this.getSentiment(luisResult),
             luisResult: luisPredictionOptions.includeAPIResults ? luisResult : null,
@@ -170,17 +169,15 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
     private getEntitiesAndMetadata(
         entities: EntityModel[],
         compositeEntities: CompositeEntityModel[] | undefined,
-        verbose: boolean
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        verbose: boolean,
     ): any {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const entitiesAndMetadata: any = verbose ? { $instance: {} } : {};
         let compositeEntityTypes: string[] = [];
 
         // We start by populating composite entities so that entities covered by them are removed from the entities list
         if (compositeEntities) {
             compositeEntityTypes = compositeEntities.map(
-                (compositeEntity: CompositeEntityModel) => compositeEntity.parentType
+                (compositeEntity: CompositeEntityModel) => compositeEntity.parentType,
             );
             compositeEntities.forEach((compositeEntity: CompositeEntityModel) => {
                 entities = this.populateCompositeEntity(compositeEntity, entities, entitiesAndMetadata, verbose);
@@ -200,7 +197,7 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
                     this.addProperty(
                         entitiesAndMetadata.$instance,
                         this.getNormalizedEntityName(entity),
-                        this.getEntityMetadata(entity)
+                        this.getEntityMetadata(entity),
                     );
                 }
             }
@@ -212,12 +209,10 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
     private populateCompositeEntity(
         compositeEntity: CompositeEntityModel,
         entities: EntityModel[],
-        entitiesAndMetadata: any, // eslint-disable-line @typescript-eslint/no-explicit-any
-        verbose: boolean
+        entitiesAndMetadata: any,
+        verbose: boolean,
     ): EntityModel[] {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const childrenEntities: any = verbose ? { $instance: {} } : {};
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         let childrenEntitiesMetadata: any = {};
 
         // This is now implemented as O(n^2) search and can be reduced to O(2n) using a map as an optimization if n grows
@@ -258,7 +253,7 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
                             this.addProperty(
                                 childrenEntities.$instance,
                                 this.getNormalizedEntityName(entity),
-                                this.getEntityMetadata(entity)
+                                this.getEntityMetadata(entity),
                             );
                         }
                     }
@@ -278,14 +273,13 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
             this.addProperty(
                 entitiesAndMetadata.$instance,
                 this.getNormalizedEntityName(compositeEntityMetadata),
-                childrenEntitiesMetadata
+                childrenEntitiesMetadata,
             );
         }
 
         return filteredEntities;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private getEntityValue(entity: EntityModel): any {
         if (entity.type.startsWith('builtin.geographyV2.')) {
             return {
@@ -310,13 +304,9 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
                 return entity.resolution;
             }
 
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const vals: any = entity.resolution.values;
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const type = vals[0].type;
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const timexes = vals.map((t: any) => t.timex);
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const distinct = timexes.filter((v, i, a) => a.indexOf(v) === i);
 
             return { type: type, timex: distinct };
@@ -391,7 +381,6 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
     }
 
     // If a property doesn't exist add it to a new array, otherwise append it to the existing array
-    // eslint-disable-next-line @typescript-eslint/ban-types
     private addProperty(obj: object, key: string, value: unknown): void {
         if (key in obj) {
             obj[key] = obj[key].concat(value);
@@ -423,7 +412,7 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
     private emitTraceInfo(
         context: TurnContext,
         luisResult: LuisResult,
-        recognizerResult: RecognizerResult
+        recognizerResult: RecognizerResult,
     ): Promise<unknown> {
         const traceInfo = {
             recognizerResult: recognizerResult,

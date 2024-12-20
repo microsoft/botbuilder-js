@@ -33,5 +33,5 @@ export interface InstanceData {
     /**
      * Any extra properties.
      */
-    [propName: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+    [propName: string]: any;
 }

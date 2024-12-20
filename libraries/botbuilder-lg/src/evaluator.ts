@@ -1,4 +1,3 @@
-/* eslint-disable security/detect-object-injection */
 /* eslint-disable security/detect-non-literal-fs-filename */
 /**
  * @module botbuilder-lg
@@ -19,7 +18,7 @@ import { Template } from './template';
 import { TemplateErrors } from './templateErrors';
 import { TemplateExtensions } from './templateExtensions';
 import { Templates } from './templates';
-import keyBy = require('lodash/keyBy');
+import keyBy from 'lodash/keyBy';
 
 import {
     Constant,
@@ -118,7 +117,7 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
 
         // generate a new customzied expression parser by injecting the templates as functions
         this.expressionParser = new ExpressionParser(
-            this.customizedEvaluatorLookup(templates.expressionParser.EvaluatorLookup)
+            this.customizedEvaluatorLookup(templates.expressionParser.EvaluatorLookup),
         );
     }
 
@@ -145,7 +144,7 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
                 `${TemplateErrors.loopDetected} ${this.evaluationTargetStack
                     .reverse()
                     .map((u: EvaluationTarget): string => u.templateName)
-                    .join(' => ')}`
+                    .join(' => ')}`,
             );
         }
 
@@ -184,7 +183,7 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
                     if (this.evaluationTargetStack.length !== 0) {
                         this.evaluationTargetStack[this.evaluationTargetStack.length - 1].cachedEvaluatedChildren.set(
                             currentEvulateId,
-                            result
+                            result,
                         );
                     }
                 }
@@ -216,7 +215,7 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
                 const propertyObject = this.evalExpression(
                     body.expressionInStructure().text,
                     body.expressionInStructure(),
-                    body.text
+                    body.text,
                 );
                 // Full reference to another structured template is limited to the structured template with same type
                 if (
@@ -247,7 +246,7 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
         for (const item of values) {
             if (TemplateExtensions.isPureExpression(item)) {
                 result.push(
-                    this.evalExpression(item.expressionInStructure(0).text, item.expressionInStructure(0), ctx.text)
+                    this.evalExpression(item.expressionInStructure(0).text, item.expressionInStructure(0), ctx.text),
                 );
             } else {
                 let itemStringResult = '';
@@ -412,7 +411,7 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
             switchExprs[0].text,
             switchExprs[0],
             switchcaseNodes[0].switchCaseStat().text,
-            switchErrorPrefix
+            switchErrorPrefix,
         );
         let idx = 0;
         for (const caseNode of switchcaseNodes) {
@@ -435,7 +434,7 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
                 caseExprs[0].text,
                 caseExprs[0],
                 caseNode.switchCaseStat().text,
-                caseErrorPrefix
+                caseErrorPrefix,
             );
             if (FunctionUtils.commonEquals(switchExprResult, caseExprResult)) {
                 return this.visit(caseNode.normalTemplateBody());
@@ -460,7 +459,7 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
             .reverse()
             .join('')
             .replace(regex, (sub: string) =>
-                this.evalExpression(sub.split('').reverse().join('')).toString().split('').reverse().join('')
+                this.evalExpression(sub.split('').reverse().join('')).toString().split('').reverse().join(''),
             )
             .split('')
             .reverse()
@@ -511,7 +510,7 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
         result: unknown,
         templateName: string,
         inlineContent = '',
-        errorPrefix = ''
+        errorPrefix = '',
     ): void {
         let errorMsg = '';
 
@@ -525,7 +524,7 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
         if (inlineContent && inlineContent.trim() !== '') {
             errorMsg = Evaluator.concatErrorMsg(
                 errorMsg,
-                TemplateErrors.errorExpression(inlineContent, templateName, errorPrefix)
+                TemplateErrors.errorExpression(inlineContent, templateName, errorPrefix),
             );
         }
 
@@ -565,7 +564,7 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
     private evalExpressionInCondition(
         expressionContext: ParserRuleContext,
         contentLine: string,
-        errorPrefix = ''
+        errorPrefix = '',
     ): boolean {
         const exp = TemplateExtensions.trimExpression(expressionContext.text);
         const { value: result, error: error } = this.evalByAdaptiveExpression(exp, this.currentTarget().scope);
@@ -592,7 +591,7 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
         exp: string,
         expressionContext?: ParserRuleContext,
         inlineContent = '',
-        errorPrefix = ''
+        errorPrefix = '',
     ): unknown {
         exp = TemplateExtensions.trimExpression(exp);
         const { value: result, error: error } = this.evalByAdaptiveExpression(exp, this.currentTarget().scope);
@@ -623,117 +622,146 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
     }
 
     // Genearte a new lookup function based on one lookup function
-    private readonly customizedEvaluatorLookup = (baseLookup: EvaluatorLookup) => (
-        name: string
-    ): ExpressionEvaluator => {
-        const standardFunction = baseLookup(name);
+    private readonly customizedEvaluatorLookup =
+        (baseLookup: EvaluatorLookup) =>
+        (name: string): ExpressionEvaluator => {
+            const standardFunction = baseLookup(name);
 
-        if (standardFunction !== undefined) {
-            return standardFunction;
-        }
-
-        const pointIndex = name.indexOf('.');
-        if (pointIndex > 0) {
-            const alias = name.substr(0, pointIndex);
-            const realTemplate = this.templates.namedReferences[alias];
-            if (realTemplate) {
-                const realTemplateName = name.substr(pointIndex + 1);
-                return new ExpressionEvaluator(
-                    realTemplateName,
-                    FunctionUtils.apply(this.evaluateWithTemplates(realTemplateName, realTemplate)),
-                    ReturnType.Object
-                );
+            if (standardFunction !== undefined) {
+                return standardFunction;
             }
-        }
 
-        if (name.startsWith('lg.')) {
-            name = name.substring(3);
-        }
+            const pointIndex = name.indexOf('.');
+            if (pointIndex > 0) {
+                const alias = name.substr(0, pointIndex);
+                const realTemplate = this.templates.namedReferences[alias];
+                if (realTemplate) {
+                    const realTemplateName = name.substr(pointIndex + 1);
+                    return new ExpressionEvaluator(
+                        realTemplateName,
+                        FunctionUtils.apply(this.evaluateWithTemplates(realTemplateName, realTemplate)),
+                        ReturnType.Object,
+                    );
+                }
+            }
 
-        const templateName = this.parseTemplateName(name).pureTemplateName;
-        if (templateName in this.templateMap) {
-            return new ExpressionEvaluator(
-                templateName,
-                FunctionUtils.apply(this.templateEvaluator(name)),
-                ReturnType.Object,
-                this.validTemplateReference
-            );
-        }
+            if (name.startsWith('lg.')) {
+                name = name.substring(3);
+            }
 
-        if (name === Evaluator.templateFunctionName) {
-            return new ExpressionEvaluator(
-                Evaluator.templateFunctionName,
-                FunctionUtils.apply(this.templateFunction()),
-                ReturnType.Object,
-                this.validateTemplateFunction
-            );
-        }
-
-        if (Templates.enableFromFile) {
-            if (name === Evaluator.fromFileFunctionName) {
+            const templateName = this.parseTemplateName(name).pureTemplateName;
+            if (templateName in this.templateMap) {
                 return new ExpressionEvaluator(
-                    Evaluator.fromFileFunctionName,
-                    FunctionUtils.apply(this.fromFile()),
+                    templateName,
+                    FunctionUtils.apply(this.templateEvaluator(name)),
                     ReturnType.Object,
-                    (expr): void => FunctionUtils.validateOrder(expr, [ReturnType.String], ReturnType.String)
+                    this.validTemplateReference,
                 );
             }
-        }
 
-        if (name === Evaluator.activityAttachmentFunctionName) {
-            return new ExpressionEvaluator(
-                Evaluator.activityAttachmentFunctionName,
-                FunctionUtils.apply(this.activityAttachment()),
-                ReturnType.Object,
-                (expr): void => FunctionUtils.validateOrder(expr, undefined, ReturnType.Object, ReturnType.String)
-            );
-        }
-
-        if (name === Evaluator.isTemplateFunctionName) {
-            return new ExpressionEvaluator(
-                Evaluator.isTemplateFunctionName,
-                FunctionUtils.apply(this.isTemplate()),
-                ReturnType.Boolean,
-                FunctionUtils.validateUnaryString
-            );
-        }
-
-        if (name === Evaluator.expandTextFunctionName) {
-            return new ExpressionEvaluator(
-                Evaluator.expandTextFunctionName,
-                FunctionUtils.apply(this.expandText()),
-                ReturnType.Object,
-                FunctionUtils.validateUnaryString
-            );
-        }
-
-        return undefined;
-    };
-
-    private readonly isTemplate = () => (args: readonly unknown[]): boolean => {
-        const templateName = args[0].toString();
-        return templateName in this.templateMap;
-    };
-
-    private readonly fromFile = () => (args: readonly unknown[]): unknown => {
-        const filePath: string = TemplateExtensions.normalizePath(args[0].toString());
-        const resourcePath: string = this.getResourcePath(filePath);
-        let format = FileFormat.Evaluated;
-        if (args.length > 1) {
-            const expected = args[1].toString().toLowerCase();
-            const currentFormat = Object.values(FileFormat).find((f) => f.toLowerCase() === expected);
-            if (currentFormat != null) {
-                format = currentFormat;
+            if (name === Evaluator.templateFunctionName) {
+                return new ExpressionEvaluator(
+                    Evaluator.templateFunctionName,
+                    FunctionUtils.apply(this.templateFunction()),
+                    ReturnType.Object,
+                    this.validateTemplateFunction,
+                );
             }
-        }
 
-        let result: unknown;
-        if (format === FileFormat.Binary) {
-            result = fs.readFileSync(resourcePath);
-        } else if (format === FileFormat.Raw) {
-            result = fs.readFileSync(resourcePath, 'utf-8');
-        } else {
-            const stringContent = fs.readFileSync(resourcePath, 'utf-8');
+            if (Templates.enableFromFile) {
+                if (name === Evaluator.fromFileFunctionName) {
+                    return new ExpressionEvaluator(
+                        Evaluator.fromFileFunctionName,
+                        FunctionUtils.apply(this.fromFile()),
+                        ReturnType.Object,
+                        (expr): void => FunctionUtils.validateOrder(expr, [ReturnType.String], ReturnType.String),
+                    );
+                }
+            }
+
+            if (name === Evaluator.activityAttachmentFunctionName) {
+                return new ExpressionEvaluator(
+                    Evaluator.activityAttachmentFunctionName,
+                    FunctionUtils.apply(this.activityAttachment()),
+                    ReturnType.Object,
+                    (expr): void => FunctionUtils.validateOrder(expr, undefined, ReturnType.Object, ReturnType.String),
+                );
+            }
+
+            if (name === Evaluator.isTemplateFunctionName) {
+                return new ExpressionEvaluator(
+                    Evaluator.isTemplateFunctionName,
+                    FunctionUtils.apply(this.isTemplate()),
+                    ReturnType.Boolean,
+                    FunctionUtils.validateUnaryString,
+                );
+            }
+
+            if (name === Evaluator.expandTextFunctionName) {
+                return new ExpressionEvaluator(
+                    Evaluator.expandTextFunctionName,
+                    FunctionUtils.apply(this.expandText()),
+                    ReturnType.Object,
+                    FunctionUtils.validateUnaryString,
+                );
+            }
+
+            return undefined;
+        };
+
+    private readonly isTemplate =
+        () =>
+        (args: readonly unknown[]): boolean => {
+            const templateName = args[0].toString();
+            return templateName in this.templateMap;
+        };
+
+    private readonly fromFile =
+        () =>
+        (args: readonly unknown[]): unknown => {
+            const filePath: string = TemplateExtensions.normalizePath(args[0].toString());
+            const resourcePath: string = this.getResourcePath(filePath);
+            let format = FileFormat.Evaluated;
+            if (args.length > 1) {
+                const expected = args[1].toString().toLowerCase();
+                const currentFormat = Object.values(FileFormat).find((f) => f.toLowerCase() === expected);
+                if (currentFormat != null) {
+                    format = currentFormat;
+                }
+            }
+
+            let result: unknown;
+            if (format === FileFormat.Binary) {
+                result = fs.readFileSync(resourcePath);
+            } else if (format === FileFormat.Raw) {
+                result = fs.readFileSync(resourcePath, 'utf-8');
+            } else {
+                const stringContent = fs.readFileSync(resourcePath, 'utf-8');
+
+                const newScope = this.evaluationTargetStack.length > 0 ? this.currentTarget().scope : undefined;
+                const newTemplates = new Templates(
+                    this.templates.allTemplates,
+                    undefined,
+                    undefined,
+                    undefined,
+                    undefined,
+                    undefined,
+                    this.expressionParser,
+                    undefined,
+                    [],
+                    undefined,
+                    this.templates.namedReferences,
+                );
+                result = newTemplates.evaluateText(stringContent, newScope, this.lgOptions);
+            }
+
+            return result;
+        };
+
+    private readonly expandText =
+        () =>
+        (args: readonly unknown[]): unknown => {
+            const stringContent = args[0].toString();
 
             const newScope = this.evaluationTargetStack.length > 0 ? this.currentTarget().scope : undefined;
             const newTemplates = new Templates(
@@ -747,33 +775,10 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
                 undefined,
                 [],
                 undefined,
-                this.templates.namedReferences
+                this.templates.namedReferences,
             );
-            result = newTemplates.evaluateText(stringContent, newScope, this.lgOptions);
-        }
-
-        return result;
-    };
-
-    private readonly expandText = () => (args: readonly unknown[]): unknown => {
-        const stringContent = args[0].toString();
-
-        const newScope = this.evaluationTargetStack.length > 0 ? this.currentTarget().scope : undefined;
-        const newTemplates = new Templates(
-            this.templates.allTemplates,
-            undefined,
-            undefined,
-            undefined,
-            undefined,
-            undefined,
-            this.expressionParser,
-            undefined,
-            [],
-            undefined,
-            this.templates.namedReferences
-        );
-        return newTemplates.evaluateText(stringContent, newScope, this.lgOptions);
-    };
+            return newTemplates.evaluateText(stringContent, newScope, this.lgOptions);
+        };
 
     /**
      * @private
@@ -801,28 +806,32 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
         return resourcePath;
     }
 
-    private readonly activityAttachment = () => (args: readonly unknown[]): unknown => {
-        return {
-            [Evaluator.LGType]: 'attachment',
-            contenttype: args[1].toString(),
-            content: args[0],
+    private readonly activityAttachment =
+        () =>
+        (args: readonly unknown[]): unknown => {
+            return {
+                [Evaluator.LGType]: 'attachment',
+                contenttype: args[1].toString(),
+                content: args[0],
+            };
         };
-    };
 
-    private readonly evaluateWithTemplates = (templateName: string, templates: Templates) => (
-        args: readonly unknown[]
-    ): unknown => {
-        const newScope = this.constructScope(templateName, args.slice(0), templates.allTemplates);
+    private readonly evaluateWithTemplates =
+        (templateName: string, templates: Templates) =>
+        (args: readonly unknown[]): unknown => {
+            const newScope = this.constructScope(templateName, args.slice(0), templates.allTemplates);
 
-        return templates.evaluate(templateName, newScope);
-    };
+            return templates.evaluate(templateName, newScope);
+        };
 
-    private readonly templateFunction = () => (args: readonly unknown[]): unknown => {
-        const templateName: string = args[0].toString();
-        const newScope = this.constructScope(templateName, args.slice(1), this.templates.allTemplates);
+    private readonly templateFunction =
+        () =>
+        (args: readonly unknown[]): unknown => {
+            const templateName: string = args[0].toString();
+            const newScope = this.constructScope(templateName, args.slice(1), this.templates.allTemplates);
 
-        return this.evaluateTemplate(templateName, newScope);
-    };
+            return this.evaluateTemplate(templateName, newScope);
+        };
 
     private readonly validateTemplateFunction = (expression: Expression): void => {
         FunctionUtils.validateAtLeastOne(expression);
@@ -857,11 +866,13 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
         }
     }
 
-    private readonly templateEvaluator = (templateName: string) => (args: readonly unknown[]): unknown => {
-        const newScope = this.constructScope(templateName, Array.from(args), this.templates.allTemplates);
+    private readonly templateEvaluator =
+        (templateName: string) =>
+        (args: readonly unknown[]): unknown => {
+            const newScope = this.constructScope(templateName, Array.from(args), this.templates.allTemplates);
 
-        return this.evaluateTemplate(templateName, newScope);
-    };
+            return this.evaluateTemplate(templateName, newScope);
+        };
 
     private readonly validTemplateReference = (expression: Expression): void => {
         return this.checkTemplateReference(expression.type, expression.children);

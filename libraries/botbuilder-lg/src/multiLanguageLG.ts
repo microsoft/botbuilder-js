@@ -877,7 +877,7 @@ export class MultiLanguageLG {
     constructor(
         templatesPerLocale: Map<string, Templates> | undefined,
         filePerLocale: Map<string, string> | undefined,
-        defaultLanguage?: string
+        defaultLanguage?: string,
     ) {
         if (templatesPerLocale !== undefined) {
             this.lgPerLocale = templatesPerLocale;
