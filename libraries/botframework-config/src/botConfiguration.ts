@@ -304,7 +304,10 @@ export class BotConfiguration extends BotConfigurationBase {
                         }
                     }
                 }
-            } catch {
+            } catch (legacyErr) {
+                if (legacyErr.message.includes('Node.js versions')) {
+                    throw legacyErr;
+                }
                 throw err;
             }
         }
