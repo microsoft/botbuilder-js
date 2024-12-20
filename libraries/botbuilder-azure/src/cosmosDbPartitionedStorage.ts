@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-types */
 /**
  * @module botbuilder-azure
  */
@@ -13,7 +12,7 @@ import { DoOnce } from './doOnce';
 import { Storage, StoreItems } from 'botbuilder';
 import { TokenCredential } from '@azure/core-auth';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const pjson: Record<'name' | 'version', string> = require('../package.json');
 
 const _doOnce: DoOnce<Container> = new DoOnce<Container>();
@@ -173,7 +172,7 @@ export class CosmosDbPartitionedStorage implements Storage {
             const suffixEscaped = CosmosDbKeyEscape.escapeKey(cosmosDbStorageOptions.keySuffix);
             if (cosmosDbStorageOptions.keySuffix !== suffixEscaped) {
                 throw new ReferenceError(
-                    `Cannot use invalid Row Key characters: ${cosmosDbStorageOptions.keySuffix} in keySuffix`
+                    `Cannot use invalid Row Key characters: ${cosmosDbStorageOptions.keySuffix} in keySuffix`,
                 );
             }
         }
@@ -202,43 +201,41 @@ export class CosmosDbPartitionedStorage implements Storage {
         const storeItems: StoreItems = {};
 
         await Promise.all(
-            keys.map(
-                async (k: string): Promise<void> => {
-                    try {
-                        const escapedKey = CosmosDbKeyEscape.escapeKey(
-                            k,
-                            this.cosmosDbStorageOptions.keySuffix,
-                            this.cosmosDbStorageOptions.compatibilityMode
-                        );
+            keys.map(async (k: string): Promise<void> => {
+                try {
+                    const escapedKey = CosmosDbKeyEscape.escapeKey(
+                        k,
+                        this.cosmosDbStorageOptions.keySuffix,
+                        this.cosmosDbStorageOptions.compatibilityMode,
+                    );
 
-                        const readItemResponse = await this.container
-                            .item(escapedKey, this.getPartitionKey(escapedKey))
-                            .read<DocumentStoreItem>();
-                        const documentStoreItem = readItemResponse.resource;
-                        if (documentStoreItem) {
-                            storeItems[documentStoreItem.realId] = documentStoreItem.document;
-                            storeItems[documentStoreItem.realId].eTag = documentStoreItem._etag;
-                        }
-                    } catch (err) {
-                        // When an item is not found a CosmosException is thrown, but we want to
-                        // return an empty collection so in this instance we catch and do not rethrow.
-                        // Throw for any other exception.
-                        if (err.code === 404) {
-                            // no-op
-                        }
-                        // Throw unique error for 400s
-                        else if (err.code === 400) {
-                            this.throwInformativeError(
-                                `Error reading from container. You might be attempting to read from a non-partitioned 
+                    const readItemResponse = await this.container
+                        .item(escapedKey, this.getPartitionKey(escapedKey))
+                        .read<DocumentStoreItem>();
+                    const documentStoreItem = readItemResponse.resource;
+                    if (documentStoreItem) {
+                        storeItems[documentStoreItem.realId] = documentStoreItem.document;
+                        storeItems[documentStoreItem.realId].eTag = documentStoreItem._etag;
+                    }
+                } catch (err) {
+                    // When an item is not found a CosmosException is thrown, but we want to
+                    // return an empty collection so in this instance we catch and do not rethrow.
+                    // Throw for any other exception.
+                    if (err.code === 404) {
+                        // no-op
+                    }
+                    // Throw unique error for 400s
+                    else if (err.code === 400) {
+                        this.throwInformativeError(
+                            `Error reading from container. You might be attempting to read from a non-partitioned 
                     container or a container that does not use '/id' as the partitionKeyPath`,
-                                err
-                            );
-                        } else {
-                            this.throwInformativeError('Error reading from container', err);
-                        }
+                            err,
+                        );
+                    } else {
+                        this.throwInformativeError('Error reading from container', err);
                     }
                 }
-            )
+            }),
         );
 
         return storeItems;
@@ -259,38 +256,36 @@ export class CosmosDbPartitionedStorage implements Storage {
         await this.initialize();
 
         await Promise.all(
-            Object.entries(changes).map(
-                async ([key, { eTag, ...change }]): Promise<void> => {
-                    const document = new DocumentStoreItem({
-                        id: CosmosDbKeyEscape.escapeKey(
-                            key,
-                            this.cosmosDbStorageOptions.keySuffix,
-                            this.cosmosDbStorageOptions.compatibilityMode
-                        ),
-                        realId: key,
-                        document: change,
-                    });
+            Object.entries(changes).map(async ([key, { eTag, ...change }]): Promise<void> => {
+                const document = new DocumentStoreItem({
+                    id: CosmosDbKeyEscape.escapeKey(
+                        key,
+                        this.cosmosDbStorageOptions.keySuffix,
+                        this.cosmosDbStorageOptions.compatibilityMode,
+                    ),
+                    realId: key,
+                    document: change,
+                });
 
-                    const accessCondition =
-                        eTag !== '*' && eTag != null && eTag.length > 0
-                            ? { accessCondition: { type: 'IfMatch', condition: eTag } }
-                            : undefined;
+                const accessCondition =
+                    eTag !== '*' && eTag != null && eTag.length > 0
+                        ? { accessCondition: { type: 'IfMatch', condition: eTag } }
+                        : undefined;
 
-                    try {
-                        await this.container.items.upsert(document, accessCondition);
-                    } catch (err) {
-                        // This check could potentially be performed before even attempting to upsert the item
-                        // so that a request wouldn't be made to Cosmos if it's expected to fail.
-                        // However, performing the check here ensures that this custom exception is only thrown
-                        // if Cosmos returns an error first.
-                        // This way, the nesting limit is not imposed on the Bot Framework side
-                        // and no exception will be thrown if the limit is eventually changed on the Cosmos side.
-                        this.checkForNestingError(change, err);
+                try {
+                    await this.container.items.upsert(document, accessCondition);
+                } catch (err) {
+                    // This check could potentially be performed before even attempting to upsert the item
+                    // so that a request wouldn't be made to Cosmos if it's expected to fail.
+                    // However, performing the check here ensures that this custom exception is only thrown
+                    // if Cosmos returns an error first.
+                    // This way, the nesting limit is not imposed on the Bot Framework side
+                    // and no exception will be thrown if the limit is eventually changed on the Cosmos side.
+                    this.checkForNestingError(change, err);
 
-                        this.throwInformativeError('Error upserting document', err);
-                    }
+                    this.throwInformativeError('Error upserting document', err);
                 }
-            )
+            }),
         );
     }
 
@@ -303,25 +298,23 @@ export class CosmosDbPartitionedStorage implements Storage {
         await this.initialize();
 
         await Promise.all(
-            keys.map(
-                async (k: string): Promise<void> => {
-                    const escapedKey = CosmosDbKeyEscape.escapeKey(
-                        k,
-                        this.cosmosDbStorageOptions.keySuffix,
-                        this.cosmosDbStorageOptions.compatibilityMode
-                    );
-                    try {
-                        await this.container.item(escapedKey, this.getPartitionKey(escapedKey)).delete();
-                    } catch (err) {
-                        // If trying to delete a document that doesn't exist, do nothing. Otherwise, throw
-                        if (err.code === 404) {
-                            // no-op
-                        } else {
-                            this.throwInformativeError('Unable to delete document', err);
-                        }
+            keys.map(async (k: string): Promise<void> => {
+                const escapedKey = CosmosDbKeyEscape.escapeKey(
+                    k,
+                    this.cosmosDbStorageOptions.keySuffix,
+                    this.cosmosDbStorageOptions.compatibilityMode,
+                );
+                try {
+                    await this.container.item(escapedKey, this.getPartitionKey(escapedKey)).delete();
+                } catch (err) {
+                    // If trying to delete a document that doesn't exist, do nothing. Otherwise, throw
+                    if (err.code === 404) {
+                        // no-op
+                    } else {
+                        this.throwInformativeError('Unable to delete document', err);
                     }
                 }
-            )
+            }),
         );
     }
 
@@ -350,7 +343,7 @@ export class CosmosDbPartitionedStorage implements Storage {
             const dbAndContainerKey = `${this.cosmosDbStorageOptions.databaseId}-${this.cosmosDbStorageOptions.containerId}`;
             this.container = await _doOnce.waitFor(
                 dbAndContainerKey,
-                async (): Promise<Container> => await this.getOrCreateContainer()
+                async (): Promise<Container> => await this.getOrCreateContainer(),
             );
         }
     }
@@ -372,7 +365,7 @@ export class CosmosDbPartitionedStorage implements Storage {
                     } else if (paths.indexOf(DocumentStoreItem.partitionKeyPath) === -1) {
                         // We are not supporting custom Partition Key Paths.
                         new Error(
-                            `Custom Partition Key Paths are not supported. ${this.cosmosDbStorageOptions.containerId} has a custom Partition Key Path of ${paths[0]}.`
+                            `Custom Partition Key Paths are not supported. ${this.cosmosDbStorageOptions.containerId} has a custom Partition Key Path of ${paths[0]}.`,
                         );
                     }
                 } else {

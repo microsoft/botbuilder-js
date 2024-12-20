@@ -6,7 +6,7 @@ describe('CosmosDbKeyEscape', function () {
         assert.throws(
             () => new CosmosDbKeyEscape(),
             Error,
-            'constructor should have thrown error about missing key parameter.'
+            'constructor should have thrown error about missing key parameter.',
         );
     });
 
@@ -14,7 +14,7 @@ describe('CosmosDbKeyEscape', function () {
         assert.throws(
             () => new CosmosDbKeyEscape(''),
             Error,
-            'constructor should have thrown error about missing key parameter.'
+            'constructor should have thrown error about missing key parameter.',
         );
     });
 
@@ -22,7 +22,7 @@ describe('CosmosDbKeyEscape', function () {
         assert.throws(
             () => new CosmosDbKeyEscape('   '),
             Error,
-            'constructor should have thrown error about missing key parameter.'
+            'constructor should have thrown error about missing key parameter.',
         );
     });
 
