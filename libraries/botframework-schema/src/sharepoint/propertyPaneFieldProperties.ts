@@ -4,7 +4,8 @@
 /**
  * SharePoint base property pane field properties
  */
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
+
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface PropertyPaneFieldProperties {
     // keep this empty - used as base type in property group definition
 }

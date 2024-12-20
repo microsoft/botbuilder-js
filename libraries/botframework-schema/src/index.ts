@@ -102,7 +102,7 @@ export interface InnerHttpError {
     /**
      * Body from failed request
      */
-    body: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+    body: any;
 }
 
 /**
@@ -159,7 +159,7 @@ export interface ChannelAccount {
     /**
      * Custom properties object (optional)
      */
-    properties?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+    properties?: any;
 }
 
 const channelAccount = z.object({
@@ -221,7 +221,7 @@ export interface ConversationAccount {
     /**
      * Custom properties object (optional)
      */
-    properties?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+    properties?: any;
 }
 
 const conversationAccount = z.object({
@@ -306,11 +306,11 @@ export interface CardAction {
     /**
      * Supplementary parameter for action. Content of this property depends on the ActionType
      */
-    value: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+    value: any;
     /**
      * Channel-specific data associated with this action
      */
-    channelData?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+    channelData?: any;
     /**
      * Alternate image text to be used in place of the `image` field
      */
@@ -391,7 +391,7 @@ export interface Attachment {
     /**
      * Embedded content
      */
-    content?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+    content?: any;
     /**
      * (OPTIONAL) The name of the attachment
      */
@@ -435,7 +435,7 @@ export interface Entity {
     /**
      * Additional properties.
      */
-    [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+    [key: string]: any;
 }
 
 const entity = z.record(z.unknown()).refine((val) => typeof val.type === 'string');
@@ -702,7 +702,7 @@ export interface Activity {
     /**
      * Contains channel-specific content.
      */
-    channelData?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+    channelData?: any;
     /**
      * Indicates whether the recipient of a contactRelationUpdate was added or removed from the
      * sender's contact list.
@@ -723,7 +723,7 @@ export interface Activity {
     /**
      * A value that is associated with the activity.
      */
-    value?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+    value?: any;
     /**
      * The name of the operation associated with an invoke or event activity.
      */
@@ -877,7 +877,7 @@ export interface ConversationParameters {
     /**
      * Channel specific payload for creating the conversation
      */
-    channelData: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+    channelData: any;
 }
 
 /**
@@ -1121,7 +1121,7 @@ export interface AnimationCard {
     /**
      * Supplementary parameter for this card
      */
-    value: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+    value: any;
 }
 
 /**
@@ -1177,7 +1177,7 @@ export interface AudioCard {
     /**
      * Supplementary parameter for this card
      */
-    value: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+    value: any;
 }
 
 /**
@@ -1263,7 +1263,7 @@ export interface MediaCard {
     /**
      * Supplementary parameter for this card
      */
-    value: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+    value: any;
 }
 
 /**
@@ -1477,7 +1477,7 @@ export interface VideoCard {
     /**
      * Supplementary parameter for this card
      */
-    value: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+    value: any;
 }
 
 /**
@@ -1531,15 +1531,15 @@ export interface Place {
     /**
      * Address of the place (may be `string` or complex object of type `PostalAddress`)
      */
-    address: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+    address: any;
     /**
      * Geo coordinates of the place (may be complex object of type `GeoCoordinates` or `GeoShape`)
      */
-    geo: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+    geo: any;
     /**
      * Map to the place (may be `string` (URL) or complex object of type `Map`)
      */
-    hasMap: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+    hasMap: any;
     /**
      * The type of the thing
      */
@@ -1571,7 +1571,7 @@ export interface MediaEventValue {
     /**
      * Callback parameter specified in the Value field of the MediaCard that originated this event
      */
-    cardValue: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+    cardValue: any;
 }
 
 /**
@@ -1585,7 +1585,7 @@ export interface TokenRequest {
     /**
      * A collection of settings for the specific provider for this request
      */
-    settings: { [propertyName: string]: any }; // eslint-disable-line @typescript-eslint/no-explicit-any
+    settings: { [propertyName: string]: any };
 }
 
 /**
@@ -1611,7 +1611,7 @@ export interface TokenResponse {
     /**
      * A collection of properties about this response, such as token polling parameters
      */
-    properties?: { [propertyName: string]: any }; // eslint-disable-line @typescript-eslint/no-explicit-any
+    properties?: { [propertyName: string]: any };
 }
 
 /**
@@ -1779,7 +1779,7 @@ export interface PaymentDetailsModifier {
      * A JSON-serializable object that provides optional information that might be needed by the
      * supported payment methods
      */
-    data: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+    data: any;
 }
 
 /**
@@ -1826,7 +1826,7 @@ export interface PaymentMethodData {
      * A JSON-serializable object that provides optional information that might be needed by the
      * supported payment methods
      */
-    data: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+    data: any;
 }
 
 /**
@@ -1906,7 +1906,7 @@ export interface PaymentResponse {
      * A JSON-serializable object that provides a payment method specific message used by the
      * merchant to process the transaction and determine successful fund transfer
      */
-    details: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+    details: any;
     /**
      * If the requestShipping flag was set to true in the PaymentOptions passed to the PaymentRequest
      * constructor, then shippingAddress will be the full and final shipping address chosen by the
@@ -2347,7 +2347,7 @@ export interface IStatusCodeError {
  * Defines the structure that arrives in the Activity.Value.Authentication for Invoke
  * activity with Name of 'adaptiveCard/action'.
  */
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface AdaptiveCardAuthentication extends TokenExchangeInvokeRequest {
     // No-op. This interface was accidentally created as a duplicate of TokenExchangeInvokeRequest but must remain for backwards-compatibility.
 }
@@ -2439,7 +2439,7 @@ export interface SearchInvokeValue {
      * The type of the context field is object and is dependent on the kind field.
      * For search and searchAnswers, there is no defined context value.
      */
-    context: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+    context: any;
     /**
      * The dataset to be queried to get the choices.
      */
@@ -2464,7 +2464,7 @@ export interface SearchInvokeOptions {
  * Defines the structure that is returned as the result of an Invoke activity with
  * Name of 'application/search'.
  */
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface SearchInvokeResponse extends AdaptiveCardInvokeResponse {}
 
 /**
@@ -2472,7 +2472,7 @@ export interface SearchInvokeResponse extends AdaptiveCardInvokeResponse {}
  *
  * This interface supports the framework and is not intended to be called directly for your code.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 export interface InvokeResponse<T = any> {
     /**
      * The HTTP status code of the response.
