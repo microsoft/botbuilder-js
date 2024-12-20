@@ -149,7 +149,7 @@ export function telemetryTrackDialogView(
     telemetryClient: BotTelemetryClient,
     dialogName: string,
     properties?: { [key: string]: any },
-    metrics?: { [key: string]: number }
+    metrics?: { [key: string]: number },
 ): void {
     if (!clientSupportsTrackDialogView(telemetryClient)) {
         throw new TypeError('"telemetryClient" parameter does not have methods trackPageView() or trackTrace()');

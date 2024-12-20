@@ -102,7 +102,7 @@ export class TelemetryLoggerMiddleware implements Middleware {
             async (
                 ctx: TurnContext,
                 activities: Partial<Activity>[],
-                nextSend: () => Promise<ResourceResponse[]>
+                nextSend: () => Promise<ResourceResponse[]>,
             ): Promise<ResourceResponse[]> => {
                 // run full pipeline
                 const responses: ResourceResponse[] = await nextSend();
@@ -111,7 +111,7 @@ export class TelemetryLoggerMiddleware implements Middleware {
                 });
 
                 return responses;
-            }
+            },
         );
 
         // hook up update activity pipeline
@@ -123,7 +123,7 @@ export class TelemetryLoggerMiddleware implements Middleware {
                 await this.onUpdateActivity(<Activity>activity);
 
                 return response;
-            }
+            },
         );
 
         // hook up delete activity pipeline
@@ -138,10 +138,10 @@ export class TelemetryLoggerMiddleware implements Middleware {
                         id: reference.activityId,
                     },
                     reference,
-                    false
+                    false,
                 );
                 await this.onDeleteActivity(<Activity>deletedActivity);
-            }
+            },
         );
 
         if (next !== null) {
@@ -215,7 +215,7 @@ export class TelemetryLoggerMiddleware implements Middleware {
      */
     protected async fillReceiveEventProperties(
         activity: Activity,
-        telemetryProperties?: Record<string, string>
+        telemetryProperties?: Record<string, string>,
     ): Promise<Record<string, string>> {
         const properties: Record<string, string> = {};
 
@@ -273,7 +273,7 @@ export class TelemetryLoggerMiddleware implements Middleware {
      */
     protected async fillSendEventProperties(
         activity: Activity,
-        telemetryProperties?: Record<string, string>
+        telemetryProperties?: Record<string, string>,
     ): Promise<Record<string, string>> {
         const properties: Record<string, string> = {};
 
@@ -329,7 +329,7 @@ export class TelemetryLoggerMiddleware implements Middleware {
      */
     protected async fillUpdateEventProperties(
         activity: Activity,
-        telemetryProperties?: Record<string, string>
+        telemetryProperties?: Record<string, string>,
     ): Promise<Record<string, string>> {
         const properties: Record<string, string> = {};
 
@@ -368,7 +368,7 @@ export class TelemetryLoggerMiddleware implements Middleware {
      */
     protected async fillDeleteEventProperties(
         activity: Activity,
-        telemetryProperties?: Record<string, string>
+        telemetryProperties?: Record<string, string>,
     ): Promise<Record<string, string>> {
         const properties: Record<string, string> = {};
 

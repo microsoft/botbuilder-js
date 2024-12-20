@@ -33,7 +33,10 @@ export class PrivateConversationState extends BotState {
      * @param storage Storage provider to persist PrivateConversation state to.
      * @param namespace (Optional) namespace to append to storage keys. Defaults to an empty string.
      */
-    constructor(storage: Storage, private namespace: string = '') {
+    constructor(
+        storage: Storage,
+        private namespace: string = '',
+    ) {
         super(storage, (context: TurnContext) => {
             // Calculate storage key
             const key: string = this.getStorageKey(context);

@@ -28,7 +28,7 @@ export interface ExtendedUserTokenProvider extends IUserTokenProvider {
         context: TurnContext,
         connectionName: string,
         magicCode?: string,
-        appCredentials?: CoreAppCredentials
+        appCredentials?: CoreAppCredentials,
     ): Promise<TokenResponse>;
 
     /**
@@ -37,13 +37,13 @@ export interface ExtendedUserTokenProvider extends IUserTokenProvider {
      * @param context Context for the current turn of conversation with the user.
      * @param connectionName Name of the auth connection to use.
      * @param userId User id of user to sign out.
-     * @param oAuthAppCredentials AppCredentials for OAuth.
+     * @param appCredentials AppCredentials for OAuth.
      */
     signOutUser(
         context: TurnContext,
         connectionName: string,
         userId?: string,
-        appCredentials?: CoreAppCredentials
+        appCredentials?: CoreAppCredentials,
     ): Promise<void>;
 
     /**
@@ -51,7 +51,7 @@ export interface ExtendedUserTokenProvider extends IUserTokenProvider {
      *
      * @param context Context for the current turn of conversation with the user.
      * @param connectionName Name of the auth connection to use.
-     * @param oAuthAppCredentials AppCredentials for OAuth.
+     * @param appCredentials AppCredentials for OAuth.
      */
     getSignInLink(context: TurnContext, connectionName: string, appCredentials?: CoreAppCredentials): Promise<string>;
 
@@ -60,13 +60,14 @@ export interface ExtendedUserTokenProvider extends IUserTokenProvider {
      *
      * @param context Context for the current turn of conversation with the user.
      * @param connectionName Name of the auth connection to use.
-     * @param oAuthAppCredentials AppCredentials for OAuth.
+     * @param resourceUrls Array with the resource Urls.
+     * @param appCredentials AppCredentials for OAuth.
      */
     getAadTokens(
         context: TurnContext,
         connectionName: string,
         resourceUrls: string[],
-        appCredentials?: CoreAppCredentials
+        appCredentials?: CoreAppCredentials,
     ): Promise<{
         [propertyName: string]: TokenResponse;
     }>;
@@ -91,7 +92,7 @@ export interface ExtendedUserTokenProvider extends IUserTokenProvider {
         context: TurnContext,
         connectionName: string,
         userId: string,
-        finalRedirect?: string
+        finalRedirect?: string,
     ): Promise<SignInUrlResponse>;
 
     /**
@@ -107,7 +108,7 @@ export interface ExtendedUserTokenProvider extends IUserTokenProvider {
         connectionName: string,
         userId: string,
         finalRedirect?: string,
-        appCredentials?: CoreAppCredentials
+        appCredentials?: CoreAppCredentials,
     ): Promise<SignInUrlResponse>;
 
     /**
@@ -122,7 +123,7 @@ export interface ExtendedUserTokenProvider extends IUserTokenProvider {
         context: TurnContext,
         connectionName: string,
         userId: string,
-        tokenExchangeRequest: TokenExchangeRequest
+        tokenExchangeRequest: TokenExchangeRequest,
     ): Promise<TokenResponse>;
 
     /**
@@ -138,6 +139,6 @@ export interface ExtendedUserTokenProvider extends IUserTokenProvider {
         connectionName: string,
         userId: string,
         tokenExchangeRequest: TokenExchangeRequest,
-        appCredentials: CoreAppCredentials
+        appCredentials: CoreAppCredentials,
     ): Promise<TokenResponse>;
 }

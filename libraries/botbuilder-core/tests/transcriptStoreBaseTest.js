@@ -84,23 +84,23 @@ exports._badArgs = function _badArgs(store) {
         assertPromise(() => store.logActivity(null), 'logActivity should have thrown error about missing activity'),
         assertPromise(
             () => store.getTranscriptActivities(null, null),
-            'getTranscriptActivities should have thrown error about missing channelId'
+            'getTranscriptActivities should have thrown error about missing channelId',
         ),
         assertPromise(
             () => store.getTranscriptActivities('foo', null),
-            'getTranscriptActivities should have thrown error about missing conversationId'
+            'getTranscriptActivities should have thrown error about missing conversationId',
         ),
         assertPromise(
             () => store.listTranscripts(null),
-            'listTranscripts should have thrown error about missing channelId'
+            'listTranscripts should have thrown error about missing channelId',
         ),
         assertPromise(
             () => store.deleteTranscript(null, null),
-            'deleteTranscript should have thrown error about missing channelId'
+            'deleteTranscript should have thrown error about missing channelId',
         ),
         assertPromise(
             () => store.deleteTranscript('foo', null),
-            'deleteTranscript should have thrown error about missing conversationId'
+            'deleteTranscript should have thrown error about missing conversationId',
         ),
     ]);
 };
@@ -207,12 +207,13 @@ exports._getTranscriptActivities = function _getTranscriptActivities(store, useP
         // log in parallel batches of 10
         const groups = group(activities, 10);
         return promiseSeq(
-            groups.map((group) => () =>
-                resolvePromises(
-                    group.map((item) => () => store.logActivity(item)),
-                    useParallel
-                )
-            )
+            groups.map(
+                (group) => () =>
+                    resolvePromises(
+                        group.map((item) => () => store.logActivity(item)),
+                        useParallel,
+                    ),
+            ),
         )
             .then(async () => {
                 let actualPageSize = 0;
@@ -222,7 +223,7 @@ exports._getTranscriptActivities = function _getTranscriptActivities(store, useP
                     pagedResult = await store.getTranscriptActivities(
                         'test',
                         conversationId,
-                        pagedResult.continuationToken
+                        pagedResult.continuationToken,
                     );
                     assert(pagedResult);
                     assert(pagedResult.items);
@@ -253,12 +254,13 @@ exports._getTranscriptActivitiesStartDate = function _getTranscriptActivitiesSta
         // log in parallel batches of 10
         const groups = group(activities, 10);
         return promiseSeq(
-            groups.map((group) => () =>
-                resolvePromises(
-                    group.map((item) => () => store.logActivity(item)),
-                    useParallel
-                )
-            )
+            groups.map(
+                (group) => () =>
+                    resolvePromises(
+                        group.map((item) => () => store.logActivity(item)),
+                        useParallel,
+                    ),
+            ),
         )
             .then(async () => {
                 let actualPageSize = 0;
@@ -270,7 +272,7 @@ exports._getTranscriptActivitiesStartDate = function _getTranscriptActivitiesSta
                         'test',
                         conversationId,
                         pagedResult.continuationToken,
-                        referenceDate
+                        referenceDate,
                     );
                     assert(pagedResult);
                     assert(pagedResult.items);
@@ -311,12 +313,13 @@ exports._listTranscripts = function _listTranscripts(store, useParallel = true) 
         // log in parallel batches of 10
         const groups = group(activities, 10);
         return promiseSeq(
-            groups.map((group) => () =>
-                resolvePromises(
-                    group.map((item) => () => store.logActivity(item)),
-                    useParallel
-                )
-            )
+            groups.map(
+                (group) => () =>
+                    resolvePromises(
+                        group.map((item) => () => store.logActivity(item)),
+                        useParallel,
+                    ),
+            ),
         )
             .then(async () => {
                 let actualPageSize = 0;

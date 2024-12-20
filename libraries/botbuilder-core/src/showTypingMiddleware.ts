@@ -27,7 +27,10 @@ export class ShowTypingMiddleware implements Middleware {
      * @param delay {number} Number of milliseconds to wait before sending the first typing indicator.
      * @param period {number} Number of milliseconds to wait before sending each following indicator.
      */
-    constructor(private readonly delay: number = 500, private readonly period: number = 2000) {
+    constructor(
+        private readonly delay: number = 500,
+        private readonly period: number = 2000,
+    ) {
         if (delay < 0) {
             throw new Error('Delay must be greater than or equal to zero');
         }
@@ -97,7 +100,7 @@ export class ShowTypingMiddleware implements Middleware {
                 type: ActivityTypes.Typing,
                 relatesTo: context.activity.relatesTo,
             },
-            conversationReference
+            conversationReference,
         );
 
         await context.adapter.sendActivities(context, [typingActivity]);

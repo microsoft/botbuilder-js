@@ -45,7 +45,10 @@ export class BotState implements PropertyManager {
      * @param storage Storage provider to persist the state object to.
      * @param storageKey Function called anytime the storage key for a given turn needs to be calculated.
      */
-    constructor(protected storage: Storage, protected storageKey: StorageKeyFactory) {}
+    constructor(
+        protected storage: Storage,
+        protected storageKey: StorageKeyFactory,
+    ) {}
 
     /**
      * Creates a new property accessor for reading and writing an individual property to the bot

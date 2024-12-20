@@ -199,7 +199,7 @@ describe('TestAdapter', function () {
         });
         await assert.rejects(
             async () => await adapter.send('test').assertReply('received', 'received failed', 500).startTest(),
-            /.*Timed out after.*/
+            /.*Timed out after.*/,
         );
     });
 
@@ -212,7 +212,7 @@ describe('TestAdapter', function () {
         await assert.rejects(
             async () =>
                 await adapter.send('test').assertReply({ text: 'received' }, 'received failed', 500).startTest(),
-            /.*Timed out after.*/
+            /.*Timed out after.*/,
         );
     });
 
@@ -228,7 +228,7 @@ describe('TestAdapter', function () {
                     .send('test')
                     .assertReply(() => assert(false, "inspector shouldn't be called."), 'received failed', 500)
                     .startTest(),
-            /.*Timed out after.*/
+            /.*Timed out after.*/,
         );
     });
 
@@ -239,7 +239,7 @@ describe('TestAdapter', function () {
             });
         });
         await assert.doesNotReject(
-            async () => await adapter.send('test').assertNoReply('no message received', 500).startTest()
+            async () => await adapter.send('test').assertNoReply('no message received', 500).startTest(),
         );
     });
 
@@ -266,7 +266,7 @@ describe('TestAdapter', function () {
                     .assertReply({ text: 'received' })
                     .assertNoReply('should be no additional replies')
                     .startTest(),
-            /.*should be no additional replies.*/
+            /.*should be no additional replies.*/,
         );
     });
 

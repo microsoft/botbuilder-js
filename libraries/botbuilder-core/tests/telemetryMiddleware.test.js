@@ -23,6 +23,7 @@ const createReply = (activity, text, locale = null) => ({
 
 describe('TelemetryMiddleware', function () {
     let sandbox;
+
     beforeEach(function () {
         sandbox = sinon.createSandbox();
     });

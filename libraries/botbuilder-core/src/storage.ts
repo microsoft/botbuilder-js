@@ -76,7 +76,7 @@ export interface StoreItem {
     /**
      * Key/value pairs.
      */
-    [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+    [key: string]: any;
 
     /**
      * (Optional) eTag field for stores that support optimistic concurrency.
@@ -91,7 +91,7 @@ export interface StoreItems {
     /**
      * List of store items indexed by key.
      */
-    [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+    [key: string]: any;
 }
 
 const storeItems = z.record(z.unknown());
@@ -124,7 +124,6 @@ export function assertStoreItems(val: unknown, ..._args: unknown[]): asserts val
  *    await storage.write({ 'botState': state });
  * }
  * ```
- *
  * @param item Item to calculate the change hash for.
  * @returns change hash string
  */

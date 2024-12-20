@@ -124,7 +124,7 @@ describe('BotStatePropertyAccessor', function () {
             assert(typeof addressValue === 'object', 'default value for PropertyAccessor was not properly set.');
             assert(
                 addressValue.street === '1 Microsoft Way',
-                'default value for PropertyAccessor was not properly set.'
+                'default value for PropertyAccessor was not properly set.',
             );
             assert(addressValue.zipCode === 98052, 'default value for PropertyAccessor was not properly set.');
             assert(addressValue.state === 'WA', 'default value for PropertyAccessor was not properly set.');

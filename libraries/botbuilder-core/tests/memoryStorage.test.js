@@ -70,18 +70,20 @@ function testStorage(storage) {
     });
 }
 
-describe('MemoryStorage - Empty', function () {
-    testStorage(new MemoryStorage());
-});
+describe('Memory Storage Tests', function () {
+    describe('MemoryStorage - Empty', function () {
+        testStorage(new MemoryStorage());
+    });
 
-describe('MemoryStorage - PreExisting', function () {
-    const dictionary = { test: JSON.stringify({ counter: 12 }) };
-    const storage = new MemoryStorage(dictionary);
-    testStorage(storage);
+    describe('MemoryStorage - PreExisting', function () {
+        const dictionary = { test: JSON.stringify({ counter: 12 }) };
+        const storage = new MemoryStorage(dictionary);
+        testStorage(storage);
 
-    it('should still have test', function () {
-        return storage.read(['test']).then((result) => {
-            assert(result.test.counter == 12, 'read()  test.counter should be 12');
+        it('should still have test', function () {
+            return storage.read(['test']).then((result) => {
+                assert(result.test.counter == 12, 'read()  test.counter should be 12');
+            });
         });
     });
 });

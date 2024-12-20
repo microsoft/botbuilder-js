@@ -45,7 +45,7 @@ export interface IUserTokenProvider {
         context: TurnContext,
         userId: string,
         includeFilter?: string,
-        oAuthAppCredentials?: any
+        oAuthAppCredentials?: any,
     ): Promise<any[]>;
 
     /**
@@ -65,7 +65,7 @@ export interface IUserTokenProvider {
     getAadTokens(
         context: TurnContext,
         connectionName: string,
-        resourceUrls: string[]
+        resourceUrls: string[],
     ): Promise<{
         [propertyName: string]: TokenResponse;
     }>;

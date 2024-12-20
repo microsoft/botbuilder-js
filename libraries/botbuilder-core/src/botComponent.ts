@@ -12,7 +12,6 @@ import { Configuration, ServiceCollection } from 'botbuilder-dialogs-adaptive-ru
  * gets called automatically on the components by the bot runtime, as long as the components are registered in the configuration.
  */
 export abstract class BotComponent {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     static z = z.custom<BotComponent>((val: any) => typeof val.configureServices === 'function', {
         message: 'BotComponent',
     });

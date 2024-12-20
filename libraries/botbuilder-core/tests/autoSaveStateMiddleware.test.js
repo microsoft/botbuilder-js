@@ -90,7 +90,7 @@ describe('AutoSaveStateMiddleware', function () {
     it('should throw exception if invalid plugin passed in.', function () {
         assert.throws(
             () => new AutoSaveStateMiddleware(fooState, { read: () => {} }),
-            new Error("BotStateSet: a object was added that isn't an instance of BotState.")
+            new Error("BotStateSet: a object was added that isn't an instance of BotState."),
         );
     });
 

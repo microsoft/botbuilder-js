@@ -23,6 +23,6 @@ export abstract class QueueStorage {
     abstract queueActivity(
         activity: Partial<Activity>,
         visibilityTimeout?: number,
-        timeToLive?: number
+        timeToLive?: number,
     ): Promise<string>;
 }

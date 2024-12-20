@@ -110,11 +110,15 @@ function testStorage(storage) {
 }
 
 global.localStorage = {};
-describe('BrowserLocalStorage', function () {
-    testStorage(new BrowserLocalStorage());
-});
 
-global.sessionStorage = {};
-describe('BrowserSessionStorage', function () {
-    testStorage(new BrowserSessionStorage());
+describe('Browser Storage Tests', function () {
+    describe('BrowserLocalStorage', function () {
+        testStorage(new BrowserLocalStorage());
+    });
+
+    global.sessionStorage = {};
+
+    describe('BrowserSessionStorage', function () {
+        testStorage(new BrowserSessionStorage());
+    });
 });

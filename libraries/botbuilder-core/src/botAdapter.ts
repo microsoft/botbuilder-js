@@ -45,9 +45,7 @@ export abstract class BotAdapter {
      *
      * @param context The context object for the turn.
      * @param activities The activities to send.
-     *
      * @returns An array of [ResourceResponse](xref:)
-     *
      * @remarks
      * The activities will be sent one after another in the order in which they're received. A
      * response object will be returned for each sent activity. For `message` activities this will
@@ -64,7 +62,6 @@ export abstract class BotAdapter {
      *
      * @param context The context object for the turn.
      * @param activity The updated version of the activity to replace.
-     *
      * @remarks
      * Not all channels support this operation. For channels that don't, this call may throw an exception.
      */
@@ -79,7 +76,6 @@ export abstract class BotAdapter {
      *
      * @param context The context object for the turn.
      * @param reference Conversation reference information for the activity to delete.
-     *
      * @remarks
      * Not all channels support this operation. For channels that don't, this call may throw an exception.
      */
@@ -90,7 +86,6 @@ export abstract class BotAdapter {
      *
      * @param reference A reference to the conversation to continue.
      * @param logic The asynchronous method to call after the adapter middleware runs.
-     *
      * @remarks
      * This is often referred to as a _proactive notification_, the bot can proactively
      * send a message to a conversation or user without waiting for an incoming message.
@@ -98,7 +93,7 @@ export abstract class BotAdapter {
      */
     abstract continueConversation(
         reference: Partial<ConversationReference>,
-        logic: (revocableContext: TurnContext) => Promise<void>
+        logic: (revocableContext: TurnContext) => Promise<void>,
     ): Promise<void>;
 
     /**
@@ -112,7 +107,7 @@ export abstract class BotAdapter {
     continueConversationAsync(
         botAppId: string,
         reference: Partial<ConversationReference>,
-        logic: (context: TurnContext) => Promise<void>
+        logic: (context: TurnContext) => Promise<void>,
     ): Promise<void>;
 
     /**
@@ -126,7 +121,7 @@ export abstract class BotAdapter {
     continueConversationAsync(
         claimsIdentity: ClaimsIdentity,
         reference: Partial<ConversationReference>,
-        logic: (context: TurnContext) => Promise<void>
+        logic: (context: TurnContext) => Promise<void>,
     ): Promise<void>;
 
     /**
@@ -142,7 +137,7 @@ export abstract class BotAdapter {
         claimsIdentity: ClaimsIdentity,
         reference: Partial<ConversationReference>,
         audience: string,
-        logic: (context: TurnContext) => Promise<void>
+        logic: (context: TurnContext) => Promise<void>,
     ): Promise<void>;
 
     /**
@@ -152,7 +147,7 @@ export abstract class BotAdapter {
         _botAppIdOrClaimsIdentity: string | ClaimsIdentity,
         _reference: Partial<ConversationReference>,
         _logicOrAudience: ((context: TurnContext) => Promise<void>) | string,
-        _maybeLogic?: (context: TurnContext) => Promise<void>
+        _maybeLogic?: (context: TurnContext) => Promise<void>,
     ): Promise<void> {
         throw new Error('NotImplemented');
     }
@@ -168,7 +163,6 @@ export abstract class BotAdapter {
      * @param _conversationParameters The conversation information to use to create the conversation
      * @param _logic The method to call for the resulting bot turn.
      * @returns A promise that represents the asynchronous operation
-     *
      * @remarks
      * To start a conversation, your bot must know its account information and the user's account information on that
      * channel.  Most _channels only support initiating a direct message (non-group) conversation.
@@ -185,7 +179,7 @@ export abstract class BotAdapter {
         _serviceUrl: string,
         _audience: string,
         _conversationParameters: ConversationParameters,
-        _logic: (context: TurnContext) => Promise<void>
+        _logic: (context: TurnContext) => Promise<void>,
     ): Promise<void> {
         throw new Error('NotImplemented');
     }
@@ -241,7 +235,6 @@ export abstract class BotAdapter {
      * @param context The context object for the turn.
      * @param next A callback method to run at the end of the pipeline.
      * @returns A promise that resolves when the middleware chain is finished
-     *
      * @remarks
      * The adapter creates a revokable proxy for the turn context and then calls its middleware in
      * the order in which you added it. If the middleware chain completes without short circuiting,
@@ -258,7 +251,7 @@ export abstract class BotAdapter {
      */
     protected async runMiddleware(
         context: TurnContext,
-        next: (revocableContext: TurnContext) => Promise<void>
+        next: (revocableContext: TurnContext) => Promise<void>,
     ): Promise<void> {
         if (context && context.activity && context.activity.locale) {
             context.locale = context.activity.locale;
