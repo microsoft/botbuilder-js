@@ -114,8 +114,8 @@ describe('Dialog State Manager', function () {
         const config = this.dc.state.configuration;
         assert(
             config.memoryScopes.find(
-                (scope) => scope instanceof ConversationMemoryScope && scope.name === 'conversation'
-            )
+                (scope) => scope instanceof ConversationMemoryScope && scope.name === 'conversation',
+            ),
         );
         assert(config.memoryScopes.find((scope) => scope instanceof UserMemoryScope && scope.name === 'user'));
     });
@@ -142,7 +142,7 @@ describe('Dialog State Manager', function () {
         it(`read & write values to ${scope} memory scope`, function () {
             this.dc.state.setValue(`${scope}.foo`, 'bar');
             assert.strictEqual(this.dc.state.getValue(`${scope}.foo`), 'bar');
-        })
+        }),
     );
 
     [
@@ -154,7 +154,7 @@ describe('Dialog State Manager', function () {
             this.dc.state.setValue(`${short}foo`, value);
             assertion(this.dc.state.getValue(`${long}.foo`), value);
             assertion(this.dc.state.getValue(`${short}foo`), value);
-        })
+        }),
     );
 
     it('read entities using @ alias.', function () {
@@ -224,7 +224,7 @@ describe('Dialog State Manager', function () {
     it('support passing a function to getValue() for the default.', function () {
         assert.strictEqual(
             this.dc.state.getValue('', () => 'default'),
-            'default'
+            'default',
         );
     });
 

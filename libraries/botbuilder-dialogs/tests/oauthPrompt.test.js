@@ -60,7 +60,7 @@ describe('OAuthPrompt', function () {
                 connectionName,
                 title: 'Login',
                 timeout: 300000,
-            })
+            }),
         );
 
         await adapter
@@ -124,7 +124,7 @@ describe('OAuthPrompt', function () {
                 connectionName,
                 title: 'Login',
                 timeout: 300000,
-            })
+            }),
         );
 
         await adapter
@@ -207,8 +207,8 @@ describe('OAuthPrompt', function () {
                     }
 
                     return false;
-                }
-            )
+                },
+            ),
         );
 
         // Initialize TestAdapter.
@@ -240,7 +240,7 @@ describe('OAuthPrompt', function () {
                     activity.channelId,
                     activity.recipient.id,
                     exchangeToken,
-                    token
+                    token,
                 );
             })
             .send('invalid text message here')
@@ -274,8 +274,8 @@ describe('OAuthPrompt', function () {
                     }
                     prompt.context.sendActivity(`attemptCount ${prompt.attemptCount}`);
                     return false;
-                }
-            )
+                },
+            ),
         );
 
         // Initialize TestAdapter.
@@ -315,7 +315,7 @@ describe('OAuthPrompt', function () {
 
                 adapter.signOutUser(
                     new TurnContext(adapter, { channelId: activity.channelId, from: activity.recipient }),
-                    connectionName
+                    connectionName,
                 );
             })
             .send('Another!')
@@ -368,7 +368,7 @@ describe('OAuthPrompt', function () {
                 connectionName,
                 title: 'Login',
                 timeout: 300000,
-            })
+            }),
         );
 
         const streamingActivity = {
@@ -465,7 +465,7 @@ describe('OAuthPrompt', function () {
 
                 await assert.rejects(
                     OAuthPrompt.sendOAuthCard({}, context),
-                    new Error('OAuth prompt is not supported by the current adapter')
+                    new Error('OAuth prompt is not supported by the current adapter'),
                 );
             });
 
@@ -541,7 +541,7 @@ describe('OAuthPrompt', function () {
                         { type: 'azp', value: uuid() },
                         { type: 'ver', value: '2.0' },
                         { type: 'aud', value: uuid() },
-                    ])
+                    ]),
                 );
                 // Override sendActivity
                 context.sendActivity = async function (activity) {
@@ -623,7 +623,7 @@ describe('OAuthPrompt', function () {
                         { type: 'azp', value: uuid() },
                         { type: 'ver', value: '2.0' },
                         { type: 'aud', value: AuthenticationConstants.ToBotFromChannelTokenIssuer },
-                    ])
+                    ]),
                 );
                 // Override sendActivity
                 context.sendActivity = async function (activity) {
@@ -668,7 +668,7 @@ describe('OAuthPrompt', function () {
                         name: tokenResponseEventName,
                         conversation: { id: 'conversationId' },
                         channelId: Channels.Test,
-                    })
+                    }),
                 );
                 function setActiveDialog(dc, dialog) {
                     // Create stack if not already there.
@@ -706,7 +706,7 @@ describe('OAuthPrompt', function () {
                     undefined,
                     undefined,
                     credsFactory,
-                    { requiredEndorsements: [] }
+                    { requiredEndorsements: [] },
                 );
                 const adapter = new TestCloudAdapter(botFrameworkAuthentication);
                 const oAuthPrompt = new OAuthPrompt('OAuthPrompt');
@@ -766,7 +766,7 @@ describe('OAuthPrompt', function () {
                     undefined,
                     undefined,
                     credsFactory,
-                    { requiredEndorsements: [] }
+                    { requiredEndorsements: [] },
                 );
                 const adapter = new TestCloudAdapter(botFrameworkAuthentication);
                 const oAuthPrompt = new OAuthPrompt('OAuthPrompt');
@@ -829,7 +829,7 @@ describe('OAuthPrompt', function () {
                     title: 'Sign in',
                     timeout: 30000,
                     text: 'Please sign in',
-                })
+                }),
             );
 
             const adapter = new TestAdapter(async (turnContext) => {
@@ -866,7 +866,7 @@ describe('OAuthPrompt', function () {
                     title: 'Sign in',
                     timeout: 30000,
                     text: 'Please sign in',
-                })
+                }),
             );
 
             const adapter = new SignInTestAdapter(async (turnContext) => {
@@ -906,7 +906,7 @@ describe('OAuthPrompt', function () {
                     turnContext.activity.channelId,
                     userId,
                     exchangeToken,
-                    token
+                    token,
                 );
 
                 // Positive case: Token
@@ -968,7 +968,7 @@ describe('OAuthPrompt', function () {
                     title: 'Sign in',
                     timeout: 30000,
                     text: 'Please sign in',
-                })
+                }),
             );
         });
 
@@ -986,7 +986,7 @@ describe('OAuthPrompt', function () {
                         activity.channelId,
                         activity.recipient.id,
                         exchangeToken,
-                        token
+                        token,
                     );
                 })
                 .send({
@@ -1194,7 +1194,7 @@ async function testTimeout(
     oauthPromptActivity,
     shouldSucceed = true,
     tokenResponse = 'Failed',
-    noTokenResponse = 'Ended'
+    noTokenResponse = 'Ended',
 ) {
     const connectionName = 'myConnection';
     const token = 'abc123';
@@ -1223,8 +1223,8 @@ async function testTimeout(
 
                 assert(!shouldSucceed, 'recognition failed during testTimeout');
                 return false;
-            }
-        )
+            },
+        ),
     );
 
     const adapter = new TestAdapter(async (turnContext) => {
@@ -1266,7 +1266,7 @@ async function testTimeout(
                 activity.channelId,
                 activity.recipient.id,
                 exchangeToken,
-                token
+                token,
             );
         })
         .send(oauthPromptActivity)

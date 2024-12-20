@@ -135,13 +135,13 @@ export interface FoundChoice {
 export function findChoices(
     utterance: string,
     choices: (string | Choice)[],
-    options?: FindChoicesOptions
+    options?: FindChoicesOptions,
 ): ModelResult<FoundChoice>[] {
     const opt: FindChoicesOptions = options || {};
 
     // Normalize choices
     const list: Choice[] = (choices || []).map((choice: Choice) =>
-        typeof choice === 'string' ? { value: choice } : choice
+        typeof choice === 'string' ? { value: choice } : choice,
     );
 
     // Build up full list of synonyms to search over.

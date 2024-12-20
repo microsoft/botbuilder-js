@@ -25,7 +25,10 @@ export class ActivityPrompt extends Dialog {
      * @param dialogId Unique ID of the dialog within its parent `DialogSet` or `ComponentDialog`.
      * @param validator Validator that will be called each time a new activity is received.
      */
-    constructor(dialogId: string, private validator: PromptValidator<Activity>) {
+    constructor(
+        dialogId: string,
+        private validator: PromptValidator<Activity>,
+    ) {
         super(dialogId);
     }
 
@@ -80,7 +83,7 @@ export class ActivityPrompt extends Dialog {
         const recognized: PromptRecognizerResult<Activity> = await this.onRecognize(
             dc.context,
             state.state,
-            state.options
+            state.options,
         );
 
         if (state.state['attemptCount'] === undefined) {
@@ -162,7 +165,7 @@ export class ActivityPrompt extends Dialog {
         context: TurnContext,
         state: object,
         options: PromptOptions,
-        isRetry: boolean
+        isRetry: boolean,
     ): Promise<void> {
         if (isRetry && options.retryPrompt) {
             await context.sendActivity(options.retryPrompt, undefined, InputHints.ExpectingInput);
@@ -184,7 +187,7 @@ export class ActivityPrompt extends Dialog {
     protected async onRecognize(
         context: TurnContext,
         _state: object,
-        _options: PromptOptions
+        _options: PromptOptions,
     ): Promise<PromptRecognizerResult<Activity>> {
         return { succeeded: true, value: context.activity };
     }

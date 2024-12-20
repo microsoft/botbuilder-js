@@ -6,10 +6,8 @@
  * Licensed under the MIT License.
  */
 import { v4 as uuidv4 } from 'uuid';
-import { ActivityTypes } from 'botbuilder-core';
-import { TurnContext, telemetryTrackDialogView } from 'botbuilder-core';
-import { DialogInstance } from './dialog';
-import { Dialog, DialogReason, DialogTurnResult } from './dialog';
+import { ActivityTypes, TurnContext, telemetryTrackDialogView } from 'botbuilder-core';
+import { DialogInstance, Dialog, DialogReason, DialogTurnResult } from './dialog';
 import { DialogContext } from './dialogContext';
 import { WaterfallStepContext } from './waterfallStepContext';
 
@@ -260,7 +258,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
         dc: DialogContext,
         index: number,
         reason: DialogReason,
-        result?: any
+        result?: any,
     ): Promise<DialogTurnResult> {
         if (index < this.steps.length) {
             // Update persisted step index
@@ -278,7 +276,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
                 onNext: async (stepResult?: any): Promise<DialogTurnResult<any>> => {
                     if (nextCalled) {
                         throw new Error(
-                            `WaterfallStepContext.next(): method already called for dialog and step '${this.id}[${index}]'.`
+                            `WaterfallStepContext.next(): method already called for dialog and step '${this.id}[${index}]'.`,
                         );
                     }
                     nextCalled = true;

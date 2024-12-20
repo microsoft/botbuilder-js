@@ -61,7 +61,7 @@ async function main() {
         await exec(
             process.platform === 'win32' ? 'npm.cmd' : 'npm',
             ['i', `${cldrDataPackageName}@${cldrDataPackageVersion}`, '--no-save'],
-            { cwd: tempDirectory, env: process.env }
+            { cwd: tempDirectory, env: process.env },
         );
     } catch (err) {
         plog('Could not install cldr-data');
@@ -88,17 +88,17 @@ async function main() {
         numbersDirectoryPaths.forEach((v) => {
             fs.copyFileSync(
                 path.join(cldrDataDirectory, v, numbersFileName),
-                path.join(vendorDirectory, v, numbersFileName)
+                path.join(vendorDirectory, v, numbersFileName),
             );
         });
 
         fs.copyFileSync(
             path.join(cldrDataDirectory, supplementalDirectoryName, likelySubtagsFileName),
-            path.join(vendorDirectory, supplementalDirectoryName, likelySubtagsFileName)
+            path.join(vendorDirectory, supplementalDirectoryName, likelySubtagsFileName),
         );
         fs.copyFileSync(
             path.join(cldrDataDirectory, supplementalDirectoryName, numberingSystemsFileName),
-            path.join(vendorDirectory, supplementalDirectoryName, numberingSystemsFileName)
+            path.join(vendorDirectory, supplementalDirectoryName, numberingSystemsFileName),
         );
     } catch (err) {
         plog('Could not copy files');

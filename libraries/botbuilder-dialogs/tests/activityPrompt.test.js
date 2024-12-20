@@ -40,7 +40,7 @@ describe('ActivityPrompt', function () {
                 assert(prompt, 'validator missing PromptValidatorContext.');
                 assert(typeof prompt.recognized.value === 'object', 'recognized.value was not an object.');
                 return true;
-            })
+            }),
         );
 
         await adapter
@@ -73,7 +73,7 @@ describe('ActivityPrompt', function () {
                 assert(prompt, 'validator missing PromptValidatorContext.');
                 assert(typeof prompt.recognized.value === 'object', 'recognized.value was not an object.');
                 return false;
-            })
+            }),
         );
 
         await adapter
@@ -106,7 +106,7 @@ describe('ActivityPrompt', function () {
                 assert(prompt, 'validator missing PromptValidatorContext.');
                 assert(typeof prompt.recognized.value === 'object', 'recognized.value was not an object.');
                 return false;
-            })
+            }),
         );
 
         await adapter
@@ -132,7 +132,7 @@ describe('ActivityPrompt', function () {
                     return false;
                 }
                 return true;
-            })
+            }),
         );
 
         const adapter = new TestAdapter(async (turnContext) => {

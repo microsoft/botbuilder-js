@@ -66,7 +66,7 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
         dialogId: string,
         validator?: PromptValidator<FoundChoice>,
         defaultLocale?: string,
-        choiceDefaults?: ChoiceDefaultsChoicePrompt
+        choiceDefaults?: ChoiceDefaultsChoicePrompt,
     ) {
         super(dialogId, validator);
         this.style = ListStyle.auto;
@@ -104,7 +104,7 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
         context: TurnContext,
         state: any,
         options: PromptOptions,
-        isRetry: boolean
+        isRetry: boolean,
     ): Promise<void> {
         // Determine locale
         const locale = this.determineCulture(context.activity);
@@ -140,7 +140,7 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
     protected async onRecognize(
         context: TurnContext,
         state: any,
-        options: PromptOptions
+        options: PromptOptions,
     ): Promise<PromptRecognizerResult<FoundChoice>> {
         const result: PromptRecognizerResult<FoundChoice> = { succeeded: false };
         const activity = context.activity;
@@ -168,7 +168,7 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
     private determineCulture(activity: Activity, opt?: FindChoicesOptions): string {
         const optLocale = opt && opt.locale ? opt.locale : null;
         let culture = PromptCultureModels.mapToNearestLanguage(
-            activity.locale || optLocale || this.defaultLocale || PromptCultureModels.English.locale
+            activity.locale || optLocale || this.defaultLocale || PromptCultureModels.English.locale,
         );
         if (!(culture && this.choiceDefaults[culture])) {
             culture = PromptCultureModels.English.locale;

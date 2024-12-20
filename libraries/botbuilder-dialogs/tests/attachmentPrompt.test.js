@@ -68,7 +68,7 @@ describe('AttachmentPrompt', function () {
             new AttachmentPrompt('prompt', async (prompt) => {
                 assert(prompt);
                 return prompt.recognized.succeeded;
-            })
+            }),
         );
 
         await adapter
@@ -102,7 +102,7 @@ describe('AttachmentPrompt', function () {
             new AttachmentPrompt('prompt', async (prompt) => {
                 assert(prompt);
                 return prompt.recognized.succeeded;
-            })
+            }),
         );
 
         await adapter
@@ -142,7 +142,7 @@ describe('AttachmentPrompt', function () {
                     await prompt.context.sendActivity('Bad input.');
                 }
                 return prompt.recognized.succeeded;
-            })
+            }),
         );
 
         await adapter

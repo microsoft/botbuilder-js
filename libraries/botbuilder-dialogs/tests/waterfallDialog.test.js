@@ -66,7 +66,7 @@ describe('WaterfallDialog', function () {
                     assert(step);
                     return await step.endDialog('ending WaterfallDialog.');
                 },
-            ])
+            ]),
         );
 
         await adapter
@@ -179,7 +179,7 @@ describe('WaterfallDialog', function () {
                     assert(step);
                     return await step.endDialog(step.result);
                 },
-            ])
+            ]),
         );
 
         await adapter
@@ -217,7 +217,7 @@ describe('WaterfallDialog', function () {
                     assert.strictEqual(
                         step.options.test,
                         'test',
-                        `step.options.test "${step.options.test}", was not expected value of "test".`
+                        `step.options.test "${step.options.test}", was not expected value of "test".`,
                     );
                     await step.context.sendActivity('bot responding.');
                     return Dialog.EndOfTurn;
@@ -226,7 +226,7 @@ describe('WaterfallDialog', function () {
                     assert(step);
                     return await step.endDialog('ending WaterfallDialog.');
                 },
-            ])
+            ]),
         );
 
         await adapter
@@ -265,7 +265,7 @@ describe('WaterfallDialog', function () {
                     assert.strictEqual(
                         step.options.test,
                         'test1',
-                        `step.options.test "${step.options.test}", was not expected value of "test1".`
+                        `step.options.test "${step.options.test}", was not expected value of "test1".`,
                     );
                     step.options.test = 'test2';
                     await step.context.sendActivity('bot responding.');
@@ -277,7 +277,7 @@ describe('WaterfallDialog', function () {
                     assert.strictEqual(
                         step.options.test,
                         'test2',
-                        `step.options.test "${step.options.test}", was not expected value of "test2".`
+                        `step.options.test "${step.options.test}", was not expected value of "test2".`,
                     );
                     step.options.test = 'test3';
                     await step.context.sendActivity('bot responding again.');
@@ -288,11 +288,11 @@ describe('WaterfallDialog', function () {
                     assert.strictEqual(
                         step.options.test,
                         'test3',
-                        `step.options.test "${step.options.test}", was not expected value of "test3".`
+                        `step.options.test "${step.options.test}", was not expected value of "test3".`,
                     );
                     return await step.endDialog('ending WaterfallDialog.');
                 },
-            ])
+            ]),
         );
 
         await adapter
@@ -340,7 +340,7 @@ describe('WaterfallDialog', function () {
                     assert.strictEqual(
                         step.values.test,
                         'test1',
-                        `step.values.test ["${step.values.test}"] was not expected value "test1".`
+                        `step.values.test ["${step.values.test}"] was not expected value "test1".`,
                     );
                     step.values.test2 = 'test2';
                     await step.context.sendActivity('bot responding again.');
@@ -352,16 +352,16 @@ describe('WaterfallDialog', function () {
                     assert.strictEqual(
                         step.values.test,
                         'test1',
-                        `step.values.test ["${step.values.test}"] was not expected value "test1".`
+                        `step.values.test ["${step.values.test}"] was not expected value "test1".`,
                     );
                     assert.strictEqual(
                         step.values.test2,
                         'test2',
-                        `step.values.test2 ["${step.values.test2}"] was not expected value "test2".`
+                        `step.values.test2 ["${step.values.test2}"] was not expected value "test2".`,
                     );
                     return await step.endDialog('ending WaterfallDialog.');
                 },
-            ])
+            ]),
         );
 
         await adapter
@@ -409,16 +409,16 @@ describe('WaterfallDialog', function () {
                     assert.strictEqual(
                         step.values.test,
                         'test1',
-                        `step.values.test ["${step.values.test}"] was not expected value "test1".`
+                        `step.values.test ["${step.values.test}"] was not expected value "test1".`,
                     );
                     assert.strictEqual(
                         step.values.test_b,
                         undefined,
-                        "step.values.test_b should not be available in WaterfallDialog('a')."
+                        "step.values.test_b should not be available in WaterfallDialog('a').",
                     );
                     return await step.endDialog('ending WaterfallDialog.');
                 },
-            ])
+            ]),
         );
 
         dialogs.add(
@@ -428,11 +428,11 @@ describe('WaterfallDialog', function () {
                     assert.equal(
                         typeof step.values,
                         'object',
-                        'new step.values for second WaterfallDialog should be an object.'
+                        'new step.values for second WaterfallDialog should be an object.',
                     );
                     assert(
                         !step.values.test,
-                        "new WaterfallDialog's step.values shouldn't have values from parent dialog's step.values."
+                        "new WaterfallDialog's step.values shouldn't have values from parent dialog's step.values.",
                     );
 
                     // Add a new value to this WaterfallDialog's step.values.
@@ -445,21 +445,21 @@ describe('WaterfallDialog', function () {
                     assert.equal(
                         typeof step.values,
                         'object',
-                        'step.values for second WaterfallDialog should be an object.'
+                        'step.values for second WaterfallDialog should be an object.',
                     );
                     assert(
                         !step.values.test,
-                        "new WaterfallDialog's step.values shouldn't have values from parent dialog's step.values."
+                        "new WaterfallDialog's step.values shouldn't have values from parent dialog's step.values.",
                     );
                     assert.strictEqual(
                         step.values.test_b,
                         'test_b',
-                        "step.values.test_b should not be available in WaterfallDialog 'a'."
+                        "step.values.test_b should not be available in WaterfallDialog 'a'.",
                     );
 
                     return await step.endDialog();
                 },
-            ])
+            ]),
         );
 
         await adapter
@@ -498,7 +498,7 @@ describe('WaterfallDialog', function () {
                     assert.strictEqual(
                         step.options.test_a,
                         'test_a',
-                        `step.options.test_a "${step.options.test_a}", was not expected value of "test_a".`
+                        `step.options.test_a "${step.options.test_a}", was not expected value of "test_a".`,
                     );
                     await step.context.sendActivity('bot responding.');
                     return await step.beginDialog('b');
@@ -509,11 +509,11 @@ describe('WaterfallDialog', function () {
                     assert.strictEqual(
                         step.options.test_a,
                         'test_a',
-                        `step.options.test_a "${step.options.test_a}", was not expected value of "test_a".`
+                        `step.options.test_a "${step.options.test_a}", was not expected value of "test_a".`,
                     );
                     return await step.endDialog('ending WaterfallDialog.');
                 },
-            ])
+            ]),
         );
 
         dialogs.add(
@@ -524,7 +524,7 @@ describe('WaterfallDialog', function () {
                     assert.strictEqual(
                         step.options.test_a,
                         undefined,
-                        `step.options.test_a "${step.options.test_a}", was not expected value of "undefined".`
+                        `step.options.test_a "${step.options.test_a}", was not expected value of "undefined".`,
                     );
                     step.options.test_b = 'test_b';
                     return Dialog.EndOfTurn;
@@ -535,11 +535,11 @@ describe('WaterfallDialog', function () {
                     assert.strictEqual(
                         step.options.test_b,
                         'test_b',
-                        `step.options.test_b "${step.options.test_b}", was not expected value of "test_b".`
+                        `step.options.test_b "${step.options.test_b}", was not expected value of "test_b".`,
                     );
                     return await step.endDialog();
                 },
-            ])
+            ]),
         );
 
         await adapter
@@ -581,7 +581,7 @@ describe('WaterfallDialog', function () {
                     assert(step, 'step not found.');
                     return Dialog.EndOfTurn;
                 },
-            ])
+            ]),
         );
 
         await adapter
@@ -625,7 +625,7 @@ describe('WaterfallDialog', function () {
                         assert(
                             err.message ===
                                 "WaterfallStepContext.next(): method already called for dialog and step 'a[0]'.",
-                            err.message
+                            err.message,
                         );
                     }
                     return Dialog.EndOfTurn;
@@ -636,7 +636,7 @@ describe('WaterfallDialog', function () {
                 async function (step) {
                     assert(step, 'step not found.');
                 },
-            ])
+            ]),
         );
 
         await adapter.send(beginMessage).assertReply('bot responding.').startTest();
@@ -672,11 +672,11 @@ describe('WaterfallDialog', function () {
                     assert(step, 'step not found.');
                     assert(
                         step.context.activity.text === 'continue.',
-                        `expected "continue." not ${step.context.activity.text}`
+                        `expected "continue." not ${step.context.activity.text}`,
                     );
                     return await step.endDialog('done.');
                 },
-            ])
+            ]),
         );
 
         await adapter
@@ -697,7 +697,7 @@ describe('WaterfallDialog', function () {
             trackEvent(telemetry) {
                 assert(
                     telemetry.properties.StepName == dialog.steps[index].name,
-                    `telemetry contains incorrect step name: "${telemetry.properties.StepName}"`
+                    `telemetry contains incorrect step name: "${telemetry.properties.StepName}"`,
                 );
                 trackEventCalled = true;
             },
@@ -711,7 +711,7 @@ describe('WaterfallDialog', function () {
                     values: { instanceId: '(guid)' },
                 },
             },
-            DialogReason.cancelCalled
+            DialogReason.cancelCalled,
         );
         assert(trackEventCalled, 'trackEvent was never called.');
     });

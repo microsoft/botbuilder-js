@@ -179,7 +179,10 @@ export abstract class Prompt<T> extends Dialog {
      * @param dialogId Unique ID of the prompt within its parent `DialogSet` or `ComponentDialog`.
      * @param validator (Optional) custom validator used to provide additional validation and re-prompting logic for the prompt.
      */
-    protected constructor(dialogId: string, private validator?: PromptValidator<T>) {
+    protected constructor(
+        dialogId: string,
+        private validator?: PromptValidator<T>,
+    ) {
         super(dialogId);
     }
 
@@ -294,7 +297,7 @@ export abstract class Prompt<T> extends Dialog {
             const recognized: PromptRecognizerResult<T> = await this.onRecognize(
                 dc.context,
                 state.state,
-                state.options
+                state.options,
             );
             return recognized.succeeded;
         }
@@ -352,7 +355,7 @@ export abstract class Prompt<T> extends Dialog {
         context: TurnContext,
         state: object,
         options: PromptOptions,
-        isRetry: boolean
+        isRetry: boolean,
     ): Promise<void>;
 
     /**
@@ -368,7 +371,7 @@ export abstract class Prompt<T> extends Dialog {
     protected abstract onRecognize(
         context: TurnContext,
         state: object,
-        options: PromptOptions
+        options: PromptOptions,
     ): Promise<PromptRecognizerResult<T>>;
 
     /**
@@ -386,7 +389,7 @@ export abstract class Prompt<T> extends Dialog {
         channelId: string,
         choices: (string | Choice)[],
         style: ListStyle,
-        options?: ChoiceFactoryOptions
+        options?: ChoiceFactoryOptions,
     ): Partial<Activity> {
         // Get base prompt text (if any)
         let text = '';

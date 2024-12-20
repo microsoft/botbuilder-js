@@ -34,7 +34,7 @@ describe('NumberPrompt', function () {
     it('should call NumberPrompt using dc.prompt().', async function () {
         const adapter = createAdapter(
             (dialogContext) => dialogContext.prompt('prompt', 'Please send a number.'),
-            (turnContext, result) => turnContext.sendActivity(result.toString())
+            (turnContext, result) => turnContext.sendActivity(result.toString()),
         );
 
         await adapter.send('Hello').assertReply('Please send a number.').send('35').assertReply('35').startTest();
@@ -48,7 +48,7 @@ describe('NumberPrompt', function () {
                 assert(prompt);
                 const value = prompt.recognized.value;
                 return value !== undefined && value >= 1 && value <= 100;
-            }
+            },
         );
 
         await adapter
@@ -73,7 +73,7 @@ describe('NumberPrompt', function () {
                 assert(prompt);
                 const value = prompt.recognized.value;
                 return value !== undefined && value >= 1 && value <= 100;
-            }
+            },
         );
 
         await adapter
@@ -102,7 +102,7 @@ describe('NumberPrompt', function () {
                     await prompt.context.sendActivity('out of range');
                 }
                 return valid;
-            }
+            },
         );
 
         await adapter
@@ -123,7 +123,7 @@ describe('NumberPrompt', function () {
                 assert(prompt);
                 const value = prompt.recognized.value;
                 return value !== undefined && value >= 1 && value <= 100;
-            }
+            },
         );
 
         await adapter.send('Hello').send('0').send('25').assertReply('25').startTest();
@@ -137,7 +137,7 @@ describe('NumberPrompt', function () {
             (prompt) => {
                 assert(prompt);
                 return prompt.recognized.value === 0;
-            }
+            },
         );
 
         await adapter
@@ -166,7 +166,7 @@ describe('NumberPrompt', function () {
                 }
 
                 return true;
-            }
+            },
         );
 
         await adapter
@@ -201,7 +201,7 @@ describe('NumberPrompt', function () {
                 return turnContext.sendActivity(reply);
             },
             undefined,
-            'es-es'
+            'es-es',
         );
 
         await adapter.send('Hello').assertReply('Please send a number.').send('3,14').startTest();
@@ -215,7 +215,7 @@ describe('NumberPrompt', function () {
                 return turnContext.sendActivity(reply);
             },
             undefined,
-            'en-us'
+            'en-us',
         );
 
         await adapter
@@ -231,7 +231,7 @@ describe('NumberPrompt', function () {
             (turnContext, reply) => {
                 assert.strictEqual(reply, 1500.25);
                 return turnContext.sendActivity(reply);
-            }
+            },
         );
 
         await adapter.send('Hello').assertReply('Please send a number.').send('1,500.25').startTest();
@@ -243,7 +243,7 @@ describe('NumberPrompt', function () {
             (turnContext, reply) => {
                 assert.strictEqual(reply, 3.14);
                 return turnContext.sendActivity(reply);
-            }
+            },
         );
 
         await adapter

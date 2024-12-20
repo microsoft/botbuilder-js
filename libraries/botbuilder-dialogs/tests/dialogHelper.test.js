@@ -114,10 +114,10 @@ class SimpleComponentDialog extends ComponentDialog {
         this.WaterfallDialog = 'WaterfallDialog';
         this.addDialog(new TextPrompt(this.TextPrompt));
         this.addDialog(
-            new WaterfallDialog(this.WaterfallDialog, [this.promptForName.bind(this), this.finalStep.bind(this)])
+            new WaterfallDialog(this.WaterfallDialog, [this.promptForName.bind(this), this.finalStep.bind(this)]),
         );
         this.initialDialogId = this.WaterfallDialog;
-        this.endReason;
+        this.endReason = '';
     }
 
     async onEndDialog(context, instance, reason) {
@@ -144,7 +144,7 @@ class ComponentDialogWithPrematureEnd extends ComponentDialog {
         const waterfallDialog = 'waterfallDialog';
         this.addDialog(new WaterfallDialog(waterfallDialog, [this.finalStep.bind(this)]));
         this.initialDialogId = waterfallDialog;
-        this.endReason;
+        this.endReason = '';
     }
 
     async onEndDialog(context, instance, reason) {
@@ -163,7 +163,7 @@ class ComponentDialogWithCancellation extends ComponentDialog {
         const waterfallDialog = 'waterfallDialog';
         this.addDialog(new WaterfallDialog(waterfallDialog, [this.finalStep.bind(this)]));
         this.initialDialogId = waterfallDialog;
-        this.endReason;
+        this.endReason = '';
     }
 
     async onEndDialog(context, instance, reason) {
@@ -259,6 +259,7 @@ describe('runDialog()', function () {
             assert.strictEqual(_eocSent.type, ActivityTypes.EndOfConversation);
             assert.strictEqual(_eocSent.code, EndOfConversationCodes.CompletedSuccessfully);
         });
+
         it('handles premature dialog cancellation', async function () {
             const dialog = new ComponentDialogWithCancellation();
             const testFlow = createTestFlow(dialog, FlowTestCase.MiddleSkill);

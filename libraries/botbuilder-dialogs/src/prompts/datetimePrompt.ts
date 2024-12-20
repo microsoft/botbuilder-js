@@ -71,7 +71,7 @@ export class DateTimePrompt extends Prompt<DateTimeResolution[]> {
         context: TurnContext,
         state: any,
         options: PromptOptions,
-        isRetry: boolean
+        isRetry: boolean,
     ): Promise<void> {
         if (isRetry && options.retryPrompt) {
             await context.sendActivity(options.retryPrompt, undefined, InputHints.ExpectingInput);
@@ -93,7 +93,7 @@ export class DateTimePrompt extends Prompt<DateTimeResolution[]> {
     protected async onRecognize(
         context: TurnContext,
         _state: any,
-        _options: PromptOptions
+        _options: PromptOptions,
     ): Promise<PromptRecognizerResult<DateTimeResolution[]>> {
         const result: PromptRecognizerResult<DateTimeResolution[]> = { succeeded: false };
         const activity: Activity = context.activity;

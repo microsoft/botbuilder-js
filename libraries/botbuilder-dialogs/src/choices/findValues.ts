@@ -88,7 +88,7 @@ export interface SortedValue {
 export function findValues(
     utterance: string,
     values: SortedValue[],
-    options?: FindValuesOptions
+    options?: FindValuesOptions,
 ): ModelResult<FoundValue>[] {
     function indexOfToken(token: Token, startPos: number): number {
         for (let i: number = startPos; i < tokens.length; i++) {
@@ -126,7 +126,7 @@ export function findValues(
         index: number,
         value: string,
         vTokens: Token[],
-        startPos: number
+        startPos: number,
     ): ModelResult<FoundValue> | undefined {
         // Match value to utterance and calculate total deviation.
         // - The tokens are matched in order so "second last" will match in
@@ -223,7 +223,7 @@ export function findValues(
 
     // Sort matches by score descending
     matches = matches.sort(
-        (a: ModelResult<FoundValue>, b: ModelResult<FoundValue>) => b.resolution.score - a.resolution.score
+        (a: ModelResult<FoundValue>, b: ModelResult<FoundValue>) => b.resolution.score - a.resolution.score,
     );
 
     // Filter out duplicate matching indexes and overlapping characters.

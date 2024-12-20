@@ -32,7 +32,7 @@ describe('DialogContext', function () {
                     assert(step, 'WaterfallStepContext not passed in to WaterfallStep.');
                     return await step.endDialog(true);
                 },
-            ])
+            ]),
         );
 
         await adapter.send(beginMessage).startTest();
@@ -60,7 +60,7 @@ describe('DialogContext', function () {
                     assert(step.options.z === 'z', 'Correct DialogOptions was not passed in to WaterfallDialog.');
                     return await step.endDialog(true);
                 },
-            ])
+            ]),
         );
 
         await adapter.send(beginMessage).startTest();
@@ -79,13 +79,13 @@ describe('DialogContext', function () {
                     assert.strictEqual(
                         err.message,
                         "DialogContext.beginDialog(): A dialog with an id of 'b' wasn't found.",
-                        `unexpected error message thrown: "${err.message}"`
+                        `unexpected error message thrown: "${err.message}"`,
                     );
 
                     assert(err instanceof DialogContextError, 'err should be a DialogContextError');
                     assert(err.dialogContext, 'err should include dialogContext');
                     return true;
-                }
+                },
             );
         });
 
@@ -98,7 +98,7 @@ describe('DialogContext', function () {
                 async function (step) {
                     return await step.endDialog();
                 },
-            ])
+            ]),
         );
 
         await adapter.send(beginMessage).startTest();
@@ -123,11 +123,11 @@ describe('DialogContext', function () {
                     assert.strictEqual(
                         step.options.prompt,
                         'test',
-                        'promptOrOptions arg was not correctly passed through.'
+                        'promptOrOptions arg was not correctly passed through.',
                     );
                     return await step.endDialog();
                 },
-            ])
+            ]),
         );
 
         await adapter.send(beginMessage).startTest();
@@ -151,7 +151,7 @@ describe('DialogContext', function () {
                     assert(step, 'WaterfallStepContext not passed in to WaterfallStep.');
                     return await step.endDialog();
                 },
-            ])
+            ]),
         );
 
         await adapter.send(beginMessage).startTest();
@@ -177,7 +177,7 @@ describe('DialogContext', function () {
                     assert.strictEqual(step.options.choices.length, 3, 'not all choices were passed in.');
                     return await step.endDialog();
                 },
-            ])
+            ]),
         );
 
         await adapter.send(beginMessage).startTest();
@@ -207,7 +207,7 @@ describe('DialogContext', function () {
                     assert.strictEqual(step.result, 120, "incorrect step.result value received from 'b' dialog.");
                     return await step.endDialog(119);
                 },
-            ])
+            ]),
         );
 
         dialogs.add(
@@ -216,7 +216,7 @@ describe('DialogContext', function () {
                     assert(step, 'WaterfallStepContext not passed in to WaterfallStep.');
                     return await step.endDialog(120);
                 },
-            ])
+            ]),
         );
 
         await adapter.send(beginMessage).startTest();
@@ -254,7 +254,7 @@ describe('DialogContext', function () {
                     assert(step, 'WaterfallStepContext not passed in to WaterfallStep.');
                     return await step.endDialog(true);
                 },
-            ])
+            ]),
         );
 
         await adapter.send(beginMessage).send(continueMessage).startTest();
@@ -286,7 +286,7 @@ describe('DialogContext', function () {
                 async function () {
                     assert(false, "shouldn't continue");
                 },
-            ])
+            ]),
         );
 
         await assert.rejects(
@@ -296,13 +296,13 @@ describe('DialogContext', function () {
                 assert.strictEqual(
                     err.message,
                     "DialogContext.continueDialog(): Can't continue dialog. A dialog with an id of 'b' wasn't found.",
-                    `unexpected error message thrown: "${err.message}"`
+                    `unexpected error message thrown: "${err.message}"`,
                 );
 
                 assert(err instanceof DialogContextError, 'err should be a DialogContextError');
                 assert(err.dialogContext, 'err should include dialogContext');
                 return true;
-            }
+            },
         );
     });
 
@@ -349,7 +349,7 @@ describe('DialogContext', function () {
                     assert(step.result, 'ended dialog.', 'unexpected step.result received.');
                     return await step.endDialog(true);
                 },
-            ])
+            ]),
         );
 
         dialogs.add(
@@ -358,7 +358,7 @@ describe('DialogContext', function () {
                     assert(step, 'WaterfallStepContext not passed in to WaterfallStep.');
                     return await step.endDialog('ended dialog.');
                 },
-            ])
+            ]),
         );
 
         await adapter.send(beginMessage).startTest();
@@ -374,7 +374,7 @@ describe('DialogContext', function () {
             assert.strictEqual(
                 results.result,
                 undefined,
-                'received unexpected value for results.result (expected undefined).'
+                'received unexpected value for results.result (expected undefined).',
             );
         });
 
@@ -389,7 +389,7 @@ describe('DialogContext', function () {
                     assert(step, 'WaterfallStepContext not passed in to WaterfallStep.');
                     return await step.replaceDialog('b', { z: step.options.z });
                 },
-            ])
+            ]),
         );
 
         await adapter.send(beginMessage).startTest();
@@ -415,7 +415,7 @@ describe('DialogContext', function () {
                     assert(step, 'WaterfallStepContext not passed in to WaterfallStep.');
                     return await step.replaceDialog('b', { z: step.options.z });
                 },
-            ])
+            ]),
         );
 
         dialogs.add(
@@ -426,7 +426,7 @@ describe('DialogContext', function () {
                     assert.strictEqual(step.options.z, 'z', 'incorrect step.options received.');
                     return await step.endDialog(step.options.z);
                 },
-            ])
+            ]),
         );
 
         await adapter.send(beginMessage).startTest();
@@ -450,7 +450,7 @@ describe('DialogContext', function () {
                     assert(step, 'WaterfallStepContext not passed in to WaterfallStep.');
                     return await step.endDialog();
                 },
-            ])
+            ]),
         );
 
         await adapter.send(beginMessage).startTest();
