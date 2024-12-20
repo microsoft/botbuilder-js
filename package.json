@@ -15,11 +15,13 @@
     ],
     "nohoist": [
       "**/@types/selenium-webdriver",
-      "botbuilder/filenamify"
+      "botbuilder/filenamify",
+      "botbuilder-stdlib/@azure/core-http-compat"
     ],
     "nohoistComments": {
       "**/@types/selenium-webdriver": "This package is excluded from the root @types folder as it requires ES2015+, whereas some BotBuilder libraries support ES5+.",
-      "botbuilder/filenamify": "This package is excluded because it's compiled as CJS by tsup as it's ESM-only."
+      "botbuilder/filenamify": "This package is excluded because it's compiled as CJS by tsup as it's ESM-only.",
+      "botbuilder-stdlib/@azure/core-http-compat": "This package is excluded to access the utils functions from botbuilder-stdlib/node_modules folder."
     }
   },
   "scripts": {

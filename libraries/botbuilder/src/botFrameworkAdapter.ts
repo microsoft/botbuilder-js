@@ -9,7 +9,6 @@
 import * as z from 'zod';
 import { BotFrameworkHttpAdapter } from './botFrameworkHttpAdapter';
 import { ConnectorClientBuilder, Request, Response, ResponseT, WebRequest, WebResponse } from './interfaces';
-import { HttpClient, RequestPolicyFactory, userAgentPolicy } from '@azure/core-http';
 import { INodeBufferT, INodeSocketT, LogicT } from './zod';
 import { arch, release, type } from 'os';
 import { delay, retry } from 'botbuilder-stdlib';
@@ -1501,75 +1500,37 @@ export class BotFrameworkAdapter
     }
 
     private createConnectorClientInternal(serviceUrl: string, credentials: AppCredentials): ConnectorClient {
+        const options: ConnectorClientOptions = { ...this.settings.clientOptions };
         if (BotFrameworkAdapter.isStreamingServiceUrl(serviceUrl)) {
             // Check if we have a streaming server. Otherwise, requesting a connector client
             // for a non-existent streaming connection results in an error
             if (!this.streamingServer) {
                 throw new Error(
-                    `Cannot create streaming connector client for serviceUrl ${serviceUrl} without a streaming connection. Call 'useWebSocket' or 'useNamedPipe' to start a streaming connection.`
+                    `Cannot create streaming connector client for serviceUrl ${serviceUrl} without a streaming connection. Call 'useWebSocket' or 'useNamedPipe' to start a streaming connection.`,
                 );
             }
 
-            const clientOptions = this.getClientOptions(serviceUrl, new StreamingHttpClient(this.streamingServer));
-            return new ConnectorClient(credentials, clientOptions);
+            options.httpClient = new StreamingHttpClient(this.streamingServer);
         }
 
-        const clientOptions = this.getClientOptions(serviceUrl);
-        return new ConnectorClient(credentials, clientOptions);
-    }
-
-    private getClientOptions(serviceUrl: string, httpClient?: HttpClient): ConnectorClientOptions {
-        const { requestPolicyFactories, ...clientOptions } = this.settings.clientOptions ?? {};
-
-        const options: ConnectorClientOptions = Object.assign({}, { baseUri: serviceUrl }, clientOptions);
-
-        if (httpClient) {
-            options.httpClient = httpClient;
-        }
-
+        options.baseUri = serviceUrl;
         const userAgent = typeof options.userAgent === 'function' ? options.userAgent(USER_AGENT) : options.userAgent;
-        const setUserAgent = userAgentPolicy({
-            value: `${USER_AGENT}${userAgent ?? ''}`,
-        });
+        options.userAgent = `${USER_AGENT} ${userAgent ?? ''}`;
 
-        const acceptHeader: RequestPolicyFactory = {
-            create: (nextPolicy) => ({
-                sendRequest: (httpRequest) => {
-                    if (!httpRequest.headers.contains('accept')) {
-                        httpRequest.headers.set('accept', '*/*');
-                    }
-                    return nextPolicy.sendRequest(httpRequest);
-                },
-            }),
-        };
+        options.requestPolicyFactories = [
+            {
+                create: (nextPolicy) => ({
+                    sendRequest: (httpRequest) => {
+                        if (!httpRequest.headers.contains('accept')) {
+                            httpRequest.headers.set('accept', '*/*');
+                        }
+                        return nextPolicy.sendRequest(httpRequest);
+                    },
+                }),
+            },
+        ];
 
-        // Resolve any user request policy factories, then include our user agent via a factory policy
-        options.requestPolicyFactories = (defaultRequestPolicyFactories) => {
-            let defaultFactories = [];
-
-            if (requestPolicyFactories) {
-                if (typeof requestPolicyFactories === 'function') {
-                    const newDefaultFactories = requestPolicyFactories(defaultRequestPolicyFactories);
-                    if (newDefaultFactories) {
-                        defaultFactories = newDefaultFactories;
-                    }
-                } else if (requestPolicyFactories) {
-                    defaultFactories = [...requestPolicyFactories];
-                }
-
-                // If the user has supplied custom factories, allow them to optionally set user agent
-                // before we do.
-                defaultFactories = [...defaultFactories, acceptHeader, setUserAgent];
-            } else {
-                // In the case that there are no user supplied factories, inject our user agent as
-                // the first policy to ensure none of the default policies override it.
-                defaultFactories = [acceptHeader, setUserAgent, ...defaultRequestPolicyFactories];
-            }
-
-            return defaultFactories;
-        };
-
-        return options;
+        return new ConnectorClient(credentials, options);
     }
 
     // Retrieves the ConnectorClient from the TurnContext or creates a new ConnectorClient with the provided serviceUrl and credentials.
@@ -1770,10 +1731,10 @@ export class BotFrameworkAdapter
                 ? contextOrServiceUrl.activity.serviceUrl
                 : contextOrServiceUrl
             : this.settings.oAuthEndpoint
-            ? this.settings.oAuthEndpoint
-            : JwtTokenValidation.isGovernment(this.settings.channelService)
-            ? US_GOV_OAUTH_ENDPOINT
-            : OAUTH_ENDPOINT;
+                ? this.settings.oAuthEndpoint
+                : JwtTokenValidation.isGovernment(this.settings.channelService)
+                    ? US_GOV_OAUTH_ENDPOINT
+                    : OAUTH_ENDPOINT;
     }
 
     /**
@@ -2172,7 +2133,7 @@ function abortWebSocketUpgrade(socket: INodeSocket, err: any): void {
         AuthenticationError.isStatusCodeError(err)
             ? (message = `HTTP/1.1 ${err.statusCode} ${StatusCodes[err.statusCode]}\r\n${
                   err.message
-              }\r\n${connectionHeader}\r\n`)
+                }\r\n${connectionHeader}\r\n`)
             : (message = AuthenticationError.determineStatusCodeAndBuildMessage(err));
 
         socket.write(message);

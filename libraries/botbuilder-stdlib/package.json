@@ -10,6 +10,12 @@
     "url": "https://github.com/Microsoft/botbuilder-js/issues"
   },
   "dependencies": {
+    "@azure/core-auth": "^1.9.0",
+    "@azure/core-http-compat": "^2.1.2",
+    "@azure/core-rest-pipeline": "^1.18.1",
+    "@azure/core-client": "^1.9.2",
+    "@azure/core-tracing": "^1.2.0",
+    "@azure/abort-controller": "^2.1.2",
     "eslint-plugin-only-warn": "^1.1.0"
   },
   "repository": {
