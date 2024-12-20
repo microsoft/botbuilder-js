@@ -8,6 +8,7 @@ const testBotPath = require.resolve('./test.bot');
 const govTestBotPath = require.resolve('./govTest.bot');
 const legacyBotPath = require.resolve('./legacy.bot');
 const saveBotPath = testBotPath.replace('test.bot', 'save.bot');
+const UNSUPPORTED_VERSION = 'v22.0.0';
 
 describe('LoadAndSaveTests', function () {
     it('DeserializeBotFile', async function () {
@@ -89,12 +90,19 @@ describe('LoadAndSaveTests', function () {
         const config = await bf.BotConfiguration.load(testBotPath);
         await config.saveAs(saveBotPath, secret);
 
-        await assert.rejects(
-            bf.BotConfiguration.load(saveBotPath),
-            new Error(
-                'You are attempting to perform an operation which needs access to the secret and --secret is missing'
-            )
-        );
+        if (UNSUPPORTED_VERSION.localeCompare(process.version) < 1) {
+            await assert.rejects(
+                bf.BotConfiguration.load(saveBotPath),
+                new Error(`This method is not available for Node.js versions over ${UNSUPPORTED_VERSION}.`),
+            );
+        } else {
+            await assert.rejects(
+                bf.BotConfiguration.load(saveBotPath),
+                new Error(
+                    'You are attempting to perform an operation which needs access to the secret and --secret is missing'
+                ),
+            );
+        }
     });
 
     it('LoadAndVerifyChannelServiceSync', async function () {
@@ -354,17 +362,24 @@ describe('LoadAndSaveTests', function () {
     });
 
     it('LegacyEncryption', async function () {
-        let config = await bf.BotConfiguration.load(legacyBotPath, 'password');
-        assert.equal(config.services[0].appPassword, 'xyzpdq', 'value should be unencrypted');
-        assert.ok(config.padlock != null, 'padlock should exist');
-        assert.ok(!config.secretKey, 'secretKey should not exist');
+        if (UNSUPPORTED_VERSION.localeCompare(process.version) < 1) {
+            await assert.rejects(
+                bf.BotConfiguration.load(legacyBotPath, 'password'),
+                new Error(`This method is not available for Node.js versions over ${UNSUPPORTED_VERSION}.`),
+            );
+        } else {
+            let config = await bf.BotConfiguration.load(legacyBotPath, 'password');
+            assert.equal(config.services[0].appPassword, 'xyzpdq', 'value should be unencrypted');
+            assert.ok(config.padlock != null, 'padlock should exist');
+            assert.ok(!config.secretKey, 'secretKey should not exist');
 
-        const secret = bf.BotConfiguration.generateKey();
-        await config.saveAs(saveBotPath, secret);
-        config = await bf.BotConfiguration.load(saveBotPath, secret);
-        fs.unlinkSync(saveBotPath);
-        assert.ok(config.padlock != null, 'padlock should exist');
-        assert.ok(config.padlock.length > 0, 'padlock should not be empty');
-        assert.ok(!config.secretKey, 'secretKey should not exist');
+            const secret = bf.BotConfiguration.generateKey();
+            await config.saveAs(saveBotPath, secret);
+            config = await bf.BotConfiguration.load(saveBotPath, secret);
+            fs.unlinkSync(saveBotPath);
+            assert.ok(config.padlock != null, 'padlock should exist');
+            assert.ok(config.padlock.length > 0, 'padlock should not be empty');
+            assert.ok(!config.secretKey, 'secretKey should not exist');
+        }
     });
 });

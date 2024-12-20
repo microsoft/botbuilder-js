@@ -46,7 +46,10 @@ export class LanguageServiceUtils {
      * @param {QnAMakerOptions} _options Settings used to configure the instance.
      * @param {QnAMakerEndpoint} endpoint The endpoint of the knowledge base to query.
      */
-    constructor(public _options: QnAMakerOptions, readonly endpoint: QnAMakerEndpoint) {
+    constructor(
+        public _options: QnAMakerOptions,
+        readonly endpoint: QnAMakerEndpoint,
+    ) {
         this.httpRequestUtils = new HttpRequestUtils();
 
         this.validateOptions(this._options);
@@ -92,7 +95,7 @@ export class LanguageServiceUtils {
             filters: this.getFilters(
                 queryOptions.strictFilters,
                 queryOptions.strictFiltersJoinOperator,
-                queryOptions.filters
+                queryOptions.filters,
             ),
             qnaId: queryOptions.qnaId,
             rankerType: queryOptions.rankerType,
@@ -106,7 +109,7 @@ export class LanguageServiceUtils {
             url,
             payloadBody,
             this.endpoint,
-            queryOptions.timeout
+            queryOptions.timeout,
         );
 
         if (Array.isArray(qnaResults?.answers)) {
@@ -127,8 +130,7 @@ export class LanguageServiceUtils {
     async emitTraceInfo(
         turnContext: TurnContext,
         answers: QnAMakerResult[],
-        queryOptions?: QnAMakerOptions
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        queryOptions?: QnAMakerOptions,
     ): Promise<any> {
         const requestOptions: QnAMakerOptions = { ...this._options, ...queryOptions };
         const { scoreThreshold, top, strictFilters, metadataBoost, context, qnaId } = requestOptions;
@@ -216,7 +218,7 @@ export class LanguageServiceUtils {
     private validateScoreThreshold(scoreThreshold: number): void {
         if (typeof scoreThreshold !== 'number' || !(scoreThreshold > 0 && scoreThreshold <= 1)) {
             throw new TypeError(
-                `"${scoreThreshold}" is an invalid scoreThreshold. QnAMakerOptions.scoreThreshold must have a value between 0 and 1.`
+                `"${scoreThreshold}" is an invalid scoreThreshold. QnAMakerOptions.scoreThreshold must have a value between 0 and 1.`,
             );
         }
     }
@@ -224,7 +226,7 @@ export class LanguageServiceUtils {
     private validateTop(qnaOptionTop: number): void {
         if (!Number.isInteger(qnaOptionTop) || qnaOptionTop < 1) {
             throw new RangeError(
-                `"${qnaOptionTop}" is an invalid top value. QnAMakerOptions.top must be an integer greater than 0.`
+                `"${qnaOptionTop}" is an invalid top value. QnAMakerOptions.top must be an integer greater than 0.`,
             );
         }
     }
@@ -232,7 +234,7 @@ export class LanguageServiceUtils {
     private getFilters(
         strictFilters: QnAMakerMetadata[],
         metadataJoinOperator: JoinOperator,
-        filters: Filters
+        filters: Filters,
     ): Filters {
         if (filters) {
             return filters;

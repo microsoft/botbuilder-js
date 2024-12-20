@@ -72,7 +72,7 @@ describe('BlobsTranscriptStore', function () {
             assert.throws(() => new BlobsTranscriptStore(null, null, null, [], {}), 'throws for missing url');
             assert.throws(
                 () => new BlobsTranscriptStore(null, null, null, 'url', {}),
-                ReferenceError('Invalid credential type.')
+                ReferenceError('Invalid credential type.'),
             );
         });
 
@@ -110,7 +110,7 @@ describe('BlobsTranscriptStore', function () {
                 channelId,
                 conversationId,
                 undefined,
-                rest[0].timestamp
+                rest[0].timestamp,
             );
             assert.deepStrictEqual(result.items, rest);
         });
@@ -154,7 +154,7 @@ describe('BlobsTranscriptStore', function () {
                     channelId,
                     id,
                     created,
-                }))
+                })),
             );
         });
     });

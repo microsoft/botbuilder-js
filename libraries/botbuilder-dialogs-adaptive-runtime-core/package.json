@@ -28,8 +28,7 @@
     }
   },
   "dependencies": {
-    "dependency-graph": "^1.0.0",
-    "eslint-plugin-only-warn": "^1.1.0"
+    "dependency-graph": "^1.0.0"
   },
   "devDependencies": {
     "mocha": "^10.7.3",
@@ -39,7 +38,7 @@
     "build": "tsc -b",
     "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
     "depcheck": "depcheck --config ../../.depcheckrc --ignores dependency-graph",
-    "lint": "eslint .",
+    "lint": "eslint . --config ../../eslint.config.cjs",
     "postbuild": "downlevel-dts lib _ts3.4/lib --checksum",
     "test": "nyc mocha",
     "test:min": "nyc --silent mocha --reporter dot"

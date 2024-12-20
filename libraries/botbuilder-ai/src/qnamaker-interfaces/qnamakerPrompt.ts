@@ -22,7 +22,7 @@ export interface QnAMakerPrompt {
     /**
      * The QnA object returned from the API (Optional parameter).
      */
-    qna?: object; // eslint-disable-line @typescript-eslint/ban-types
+    qna?: object;
 
     /**
      * Display Text - Text displayed to represent a follow up question prompt.

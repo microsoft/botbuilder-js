@@ -1,6 +1,6 @@
 {
     "name": "<%= botname %>",
-    "version": "1.0.0",
+    "version": "4.1.6",
     "description": "<%= botDescription %>",
     "author": "Generated using Microsoft Bot Builder Yeoman generator v<%= version %>",
     "license": "MIT",
@@ -16,7 +16,7 @@
         "url": "https://github.com"
     },
     "dependencies": {
-        "botbuilder": "^4.23.1",
+        "botbuilder": "4.1.6",
         "restify": "~11.1.0"
     },
     "devDependencies": {
