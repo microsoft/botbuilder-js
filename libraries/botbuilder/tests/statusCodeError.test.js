@@ -17,7 +17,7 @@ describe('StatusCodeError', function () {
             assert.strictEqual(
                 error.statusCode,
                 StatusCodes.NOT_FOUND,
-                `statusCode should be the code ${StatusCodes.NOT_FOUND}`
+                `statusCode should be the code ${StatusCodes.NOT_FOUND}`,
             );
         });
 
@@ -28,7 +28,7 @@ describe('StatusCodeError', function () {
             assert.strictEqual(
                 error.statusCode,
                 StatusCodes.NOT_FOUND,
-                `statusCode should be the code ${StatusCodes.NOT_FOUND}`
+                `statusCode should be the code ${StatusCodes.NOT_FOUND}`,
             );
         });
 

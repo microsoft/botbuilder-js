@@ -39,7 +39,7 @@ export class CloudSkillHandler extends CloudChannelServiceHandler {
         adapter: BotAdapter,
         logic: (context: TurnContext) => Promise<void>,
         conversationIdFactory: SkillConversationIdFactoryBase,
-        auth: BotFrameworkAuthentication
+        auth: BotFrameworkAuthentication,
     ) {
         super(auth);
 
@@ -60,7 +60,7 @@ export class CloudSkillHandler extends CloudChannelServiceHandler {
             adapter,
             logic,
             conversationIdFactory,
-            () => auth.getOriginatingAudience()
+            () => auth.getOriginatingAudience(),
         );
     }
 
@@ -71,9 +71,9 @@ export class CloudSkillHandler extends CloudChannelServiceHandler {
      * This method allows you to send an activity to the end of a conversation.
      *
      * This is slightly different from replyToActivity().
-     * * sendToConversation(conversationId) - will append the activity to the end
+     * - sendToConversation(conversationId) - will append the activity to the end
      * of the conversation according to the timestamp or semantics of the channel.
-     * * replyToActivity(conversationId,ActivityId) - adds the activity as a reply
+     * - replyToActivity(conversationId,ActivityId) - adds the activity as a reply
      * to another activity, if the channel supports it. If the channel does not
      * support nested replies, replyToActivity falls back to sendToConversation.
      *
@@ -88,7 +88,7 @@ export class CloudSkillHandler extends CloudChannelServiceHandler {
     protected onSendToConversation(
         claimsIdentity: ClaimsIdentity,
         conversationId: string,
-        activity: Activity
+        activity: Activity,
     ): Promise<ResourceResponse> {
         return this.inner.onSendToConversation(claimsIdentity, conversationId, activity);
     }
@@ -100,9 +100,9 @@ export class CloudSkillHandler extends CloudChannelServiceHandler {
      * This method allows you to reply to an activity.
      *
      * This is slightly different from sendToConversation().
-     * * sendToConversation(conversationId) - will append the activity to the end
+     * - sendToConversation(conversationId) - will append the activity to the end
      * of the conversation according to the timestamp or semantics of the channel.
-     * * replyToActivity(conversationId,ActivityId) - adds the activity as a reply
+     * - replyToActivity(conversationId,ActivityId) - adds the activity as a reply
      * to another activity, if the channel supports it. If the channel does not
      * support nested replies, replyToActivity falls back to sendToConversation.
      *
@@ -119,7 +119,7 @@ export class CloudSkillHandler extends CloudChannelServiceHandler {
         claimsIdentity: ClaimsIdentity,
         conversationId: string,
         activityId: string,
-        activity: Activity
+        activity: Activity,
     ): Promise<ResourceResponse> {
         return this.inner.onReplyToActivity(claimsIdentity, conversationId, activityId, activity);
     }
@@ -145,7 +145,7 @@ export class CloudSkillHandler extends CloudChannelServiceHandler {
         claimsIdentity: ClaimsIdentity,
         conversationId: string,
         activityId: string,
-        activity: Activity
+        activity: Activity,
     ): Promise<ResourceResponse> {
         return this.inner.onUpdateActivity(claimsIdentity, conversationId, activityId, activity);
     }
@@ -158,8 +158,6 @@ export class CloudSkillHandler extends CloudChannelServiceHandler {
      *
      * Some channels allow you to delete an existing activity, and if successful
      * this method will remove the specified activity.
-     *
-     *
      * @param claimsIdentity ClaimsIdentity for the bot, should have AudienceClaim, AppIdClaim and ServiceUrlClaim.
      * @param conversationId Conversation ID.
      * @param activityId activityId to delete.
@@ -168,7 +166,7 @@ export class CloudSkillHandler extends CloudChannelServiceHandler {
     protected async onDeleteActivity(
         claimsIdentity: ClaimsIdentity,
         conversationId: string,
-        activityId: string
+        activityId: string,
     ): Promise<void> {
         return this.inner.onDeleteActivity(claimsIdentity, conversationId, activityId);
     }
@@ -184,13 +182,12 @@ export class CloudSkillHandler extends CloudChannelServiceHandler {
      * @param claimsIdentity ClaimsIdentity for the bot, should have AudienceClaim, AppIdClaim and ServiceUrlClaim.
      * @param userId User ID.
      * @param conversationId Conversation ID.
-     *
      * @returns The ChannelAccount object representing the member of the conversation.
      */
     protected async onGetConversationMember(
         claimsIdentity: ClaimsIdentity,
         userId: string,
-        conversationId: string
+        conversationId: string,
     ): Promise<ChannelAccount> {
         return this.inner.onGetMember(claimsIdentity, userId, conversationId);
     }

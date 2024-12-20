@@ -119,7 +119,7 @@ export function teamsGetChannelId(activity: Activity): string | null {
 export function teamsNotifyUser(
     activity: Partial<Activity>,
     alertInMeeting = false,
-    externalResourceUrl?: string
+    externalResourceUrl?: string,
 ): void {
     validateActivity(activity);
 

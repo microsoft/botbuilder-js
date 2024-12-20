@@ -22,6 +22,6 @@ export interface ConnectorClientBuilder {
     createConnectorClientWithIdentity: (
         serviceUrl: string,
         claimsIdentity: ClaimsIdentity,
-        audience: string
+        audience: string,
     ) => Promise<ConnectorClient>;
 }

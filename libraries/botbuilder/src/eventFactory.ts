@@ -33,7 +33,7 @@ export class EventFactory {
     static createHandoffInitiation<T = unknown>(
         context: TurnContext,
         handoffContext: T,
-        transcript?: Transcript
+        transcript?: Transcript,
     ): Activity {
         if (!context) {
             throw new TypeError('EventFactory.createHandoffInitiation(): Missing context.');
@@ -42,7 +42,7 @@ export class EventFactory {
         const handoffEvent = this.createHandoffEvent(
             HandoffEventNames.InitiateHandoff,
             handoffContext,
-            context.activity.conversation
+            context.activity.conversation,
         );
 
         handoffEvent.from = context.activity.from;
@@ -89,7 +89,7 @@ export class EventFactory {
     private static createHandoffEvent<T = unknown>(
         name: string,
         value: T,
-        conversation: ConversationAccount
+        conversation: ConversationAccount,
     ): Activity {
         const handoffEvent: Partial<Activity> = { type: ActivityTypes.Event };
 

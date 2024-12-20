@@ -26,7 +26,7 @@ export class SharePointActivityHandler extends ActivityHandler {
     /**
      * Invoked when an invoke activity is received from the connector.
      * Invoke activities can be used to communicate many different things.
-     * * Invoke activities communicate programmatic commands from a client or channel to a bot.
+     * Invoke activities communicate programmatic commands from a client or channel to a bot.
      *
      * @param context A strongly-typed context object for this turn
      * @returns A task that represents the work queued to execute
@@ -39,32 +39,32 @@ export class SharePointActivityHandler extends ActivityHandler {
                 switch (context.activity.name) {
                     case 'cardExtension/getCardView':
                         return ActivityHandler.createInvokeResponse(
-                            await this.onSharePointTaskGetCardViewAsync(context, context.activity.value as AceRequest)
+                            await this.onSharePointTaskGetCardViewAsync(context, context.activity.value as AceRequest),
                         );
 
                     case 'cardExtension/getQuickView':
                         return ActivityHandler.createInvokeResponse(
-                            await this.onSharePointTaskGetQuickViewAsync(context, context.activity.value as AceRequest)
+                            await this.onSharePointTaskGetQuickViewAsync(context, context.activity.value as AceRequest),
                         );
 
                     case 'cardExtension/getPropertyPaneConfiguration':
                         return ActivityHandler.createInvokeResponse(
                             await this.onSharePointTaskGetPropertyPaneConfigurationAsync(
                                 context,
-                                context.activity.value as AceRequest
-                            )
+                                context.activity.value as AceRequest,
+                            ),
                         );
 
                     case 'cardExtension/setPropertyPaneConfiguration':
                         return ActivityHandler.createInvokeResponse(
                             await this.onSharePointTaskSetPropertyPaneConfigurationAsync(
                                 context,
-                                context.activity.value as AceRequest
-                            )
+                                context.activity.value as AceRequest,
+                            ),
                         );
                     case 'cardExtension/handleAction':
                         return ActivityHandler.createInvokeResponse(
-                            await this.onSharePointTaskHandleActionAsync(context, context.activity.value as AceRequest)
+                            await this.onSharePointTaskHandleActionAsync(context, context.activity.value as AceRequest),
                         );
                     default:
                         return super.onInvokeActivity(context);
@@ -89,7 +89,7 @@ export class SharePointActivityHandler extends ActivityHandler {
      */
     protected async onSharePointTaskGetCardViewAsync(
         _context: TurnContext,
-        _aceRequest: AceRequest
+        _aceRequest: AceRequest,
     ): Promise<CardViewResponse> {
         throw new Error('NotImplemented');
     }
@@ -103,7 +103,7 @@ export class SharePointActivityHandler extends ActivityHandler {
      */
     protected async onSharePointTaskGetQuickViewAsync(
         _context: TurnContext,
-        _aceRequest: AceRequest
+        _aceRequest: AceRequest,
     ): Promise<QuickViewResponse> {
         throw new Error('NotImplemented');
     }
@@ -117,7 +117,7 @@ export class SharePointActivityHandler extends ActivityHandler {
      */
     protected async onSharePointTaskGetPropertyPaneConfigurationAsync(
         _context: TurnContext,
-        _aceRequest: AceRequest
+        _aceRequest: AceRequest,
     ): Promise<GetPropertyPaneConfigurationResponse> {
         throw new Error('NotImplemented');
     }
@@ -131,7 +131,7 @@ export class SharePointActivityHandler extends ActivityHandler {
      */
     protected async onSharePointTaskSetPropertyPaneConfigurationAsync(
         _context: TurnContext,
-        _aceRequest: AceRequest
+        _aceRequest: AceRequest,
     ): Promise<SetPropertyPaneConfigurationResponse> {
         throw new Error('NotImplemented');
     }
@@ -145,7 +145,7 @@ export class SharePointActivityHandler extends ActivityHandler {
      */
     protected async onSharePointTaskHandleActionAsync(
         _context: TurnContext,
-        _aceRequest: AceRequest
+        _aceRequest: AceRequest,
     ): Promise<HandleActionResponse> {
         throw new Error('NotImplemented');
     }

@@ -42,7 +42,10 @@ export class SetSpeakMiddleware implements Middleware {
      * @param voiceName The SSML voice name attribute value.
      * @param fallbackToTextForSpeak true if an empty Activity.Speak is populated with Activity.Text.
      */
-    constructor(private readonly voiceName: string | null, private readonly fallbackToTextForSpeak: boolean) {}
+    constructor(
+        private readonly voiceName: string | null,
+        private readonly fallbackToTextForSpeak: boolean,
+    ) {}
 
     /**
      * Processes an incoming activity.
@@ -78,7 +81,7 @@ export class SetSpeakMiddleware implements Middleware {
                             }'>${activity.speak}</speak>`;
                         }
                     }
-                })
+                }),
             );
 
             return next();

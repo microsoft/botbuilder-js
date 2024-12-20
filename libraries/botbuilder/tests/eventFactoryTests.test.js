@@ -42,7 +42,7 @@ describe('EventFactory', function () {
         it('should throw if turnContext is falsy', function () {
             assert.throws(
                 () => EventFactory.createHandoffInitiation(null, 'some text'),
-                TypeError('EventFactory.createHandoffInitiation(): Missing context.')
+                TypeError('EventFactory.createHandoffInitiation(): Missing context.'),
             );
         });
     });
@@ -82,14 +82,14 @@ describe('EventFactory', function () {
         it('should throw if conversation is falsy', function () {
             assert.throws(
                 () => EventFactory.createHandoffStatus(null, 'some text'),
-                TypeError('EventFactory.createHandoffStatus(): missing conversation.')
+                TypeError('EventFactory.createHandoffStatus(): missing conversation.'),
             );
         });
 
         it('should throw if state is falsy', function () {
             assert.throws(
                 () => EventFactory.createHandoffStatus({}, null),
-                TypeError('EventFactory.createHandoffStatus(): missing state.')
+                TypeError('EventFactory.createHandoffStatus(): missing state.'),
             );
         });
     });

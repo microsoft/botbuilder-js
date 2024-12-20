@@ -38,6 +38,7 @@ module.exports = [
             '**/*.lu',
             '**/*.dialog',
             '**/*.js.map',
+            '**/vendors'
         ],
     },
 

@@ -10,7 +10,7 @@ describe('SkillHttpClient', function () {
     it('should fail to construct without required parameters', function () {
         assert.throws(
             () => new SkillHttpClient(new SimpleCredentialProvider('', '')),
-            new Error('conversationIdFactory missing')
+            new Error('conversationIdFactory missing'),
         );
     });
 });
