@@ -44,7 +44,7 @@ function getBlobKey(activity: Activity, options?: BlobsTranscriptStoreOptions): 
 
     return sanitizeBlobKey(
         [activity.channelId, activity.conversation.id, `${formatTicks(timestamp)}-${activity.id}.json`].join('/'),
-        options
+        options,
     );
 }
 
@@ -102,7 +102,7 @@ export class BlobsTranscriptStore implements TranscriptStore {
         containerName: string,
         options?: BlobsTranscriptStoreOptions,
         blobServiceUri = '',
-        tokenCredential?: StorageSharedKeyCredential | AnonymousCredential | TokenCredential
+        tokenCredential?: StorageSharedKeyCredential | AnonymousCredential | TokenCredential,
     ) {
         if (blobServiceUri != '' && tokenCredential != null) {
             z.object({ blobServiceUri: z.string() }).parse({
@@ -116,7 +116,7 @@ export class BlobsTranscriptStore implements TranscriptStore {
             this._containerClient = new ContainerClient(
                 blobServiceUri,
                 tokenCredential,
-                options?.storagePipelineOptions
+                options?.storagePipelineOptions,
             );
 
             // At most one promise at a time to be friendly to local emulator users
@@ -132,7 +132,7 @@ export class BlobsTranscriptStore implements TranscriptStore {
             this._containerClient = new ContainerClient(
                 connectionString,
                 containerName,
-                options?.storagePipelineOptions
+                options?.storagePipelineOptions,
             );
 
             // At most one promise at a time to be friendly to local emulator users
@@ -170,7 +170,7 @@ export class BlobsTranscriptStore implements TranscriptStore {
         channelId: string,
         conversationId: string,
         continuationToken?: string,
-        startDate?: Date
+        startDate?: Date,
     ): Promise<PagedResult<Activity>> {
         z.object({ channelId: z.string(), conversationId: z.string() }).parse({ channelId, conversationId });
 
@@ -195,7 +195,7 @@ export class BlobsTranscriptStore implements TranscriptStore {
             const fromIdx =
                 startDate != null
                     ? blobItems.findIndex(
-                          (blobItem) => blobItem?.properties?.createdOn && blobItem?.properties?.createdOn >= startDate
+                          (blobItem) => blobItem?.properties?.createdOn && blobItem?.properties?.createdOn >= startDate,
                       )
                     : 0;
 
@@ -213,7 +213,7 @@ export class BlobsTranscriptStore implements TranscriptStore {
                         const activity = (await StreamConsumers.json(readableStreamBody)) as any;
                         return { ...activity, timestamp: new Date(activity.timestamp) } as Activity;
                     },
-                    { concurrency: this._concurrency }
+                    { concurrency: this._concurrency },
                 );
 
                 activities.forEach((activity) => {

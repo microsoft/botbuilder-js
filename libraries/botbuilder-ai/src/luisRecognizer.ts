@@ -117,7 +117,7 @@ export interface LuisRecognizerTelemetryClient {
     recognize(
         context: TurnContext,
         telemetryProperties?: { [key: string]: string },
-        telemetryMetrics?: { [key: string]: number }
+        telemetryMetrics?: { [key: string]: number },
     ): Promise<RecognizerResult>;
 }
 
@@ -246,7 +246,7 @@ const UnsafeLuisRecognizerUnion = z.custom<LuisRecognizerOptionsV3 | LuisRecogni
         z.record(z.unknown()).safeParse(val).success,
     {
         message: 'LuisRecognizerOptionsV3 | LuisRecognizerOptionsV2 | LuisPredictionOptions',
-    }
+    },
 );
 
 /**
@@ -301,7 +301,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
     constructor(
         application: LuisApplication | string,
         options?: LuisRecognizerOptionsV3 | LuisRecognizerOptionsV2 | LuisPredictionOptions,
-        includeApiResults?: boolean
+        includeApiResults?: boolean,
     ) {
         if (typeof application === 'string') {
             const parsedEndpoint: Url = Url(application);
@@ -440,7 +440,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
         context: DialogContext | TurnContext,
         telemetryProperties?: Record<string, string>,
         telemetryMetrics?: Record<string, number>,
-        options?: LuisRecognizerOptionsV2 | LuisRecognizerOptionsV3 | LuisPredictionOptions
+        options?: LuisRecognizerOptionsV2 | LuisRecognizerOptionsV3 | LuisPredictionOptions,
     ): Promise<RecognizerResult>;
 
     /**
@@ -451,7 +451,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
      */
     async recognize(
         utterance: string,
-        options?: LuisRecognizerOptionsV2 | LuisRecognizerOptionsV3 | LuisPredictionOptions
+        options?: LuisRecognizerOptionsV2 | LuisRecognizerOptionsV3 | LuisPredictionOptions,
     ): Promise<RecognizerResult>;
 
     /**
@@ -465,7 +465,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
             | LuisRecognizerOptionsV3
             | LuisPredictionOptions,
         maybeTelemetryMetrics?: Record<string, number>,
-        maybeOptions?: LuisRecognizerOptionsV2 | LuisRecognizerOptionsV3 | LuisPredictionOptions
+        maybeOptions?: LuisRecognizerOptionsV2 | LuisRecognizerOptionsV3 | LuisPredictionOptions,
     ): Promise<RecognizerResult> {
         // This type check, when true, logically implies that the function is being invoked as the two-argument string + optional options overload variant.
         if (typeof contextOrUtterance === 'string') {
@@ -544,7 +544,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
         recognizerResult: RecognizerResult,
         turnContext: TurnContext,
         telemetryProperties?: { [key: string]: string },
-        telemetryMetrics?: { [key: string]: number }
+        telemetryMetrics?: { [key: string]: number },
     ): Promise<void> {
         await this.fillTelemetryProperties(recognizerResult, turnContext, telemetryProperties).then((props) => {
             this.telemetryClient.trackEvent({
@@ -566,7 +566,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
     protected async fillTelemetryProperties(
         recognizerResult: RecognizerResult,
         turnContext: TurnContext,
-        telemetryProperties?: { [key: string]: string }
+        telemetryProperties?: { [key: string]: string },
     ): Promise<{ [key: string]: string }> {
         const [firstIntent, secondIntent] = LuisRecognizer.sortedIntents(recognizerResult);
 
@@ -617,7 +617,6 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
         // If the `error` received is a azure-cognitiveservices-luis-runtime error,
         // it may have a `response` property and `response.statusCode`.
         // If these properties exist, we should populate the error with a correct and informative error message.
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const response: Record<'status', number> = (error as any).response;
 
         if (response?.status) {
@@ -660,7 +659,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
     // Merges the default options set by the Recognizer contructor with the 'user' options passed into the 'recognize' method
     private setLuisPredictionOptions(
         defaultOptions: LuisPredictionOptions,
-        userOptions: LuisPredictionOptions
+        userOptions: LuisPredictionOptions,
     ): LuisPredictionOptions {
         return Object.assign(defaultOptions, userOptions);
     }
@@ -669,19 +668,19 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
     private validateLuisApplication(): void {
         if (!this.application.applicationId) {
             throw new Error(
-                `Invalid \`applicationId\` value detected: ${this.application.applicationId}\nPlease make sure your applicationId is a valid LUIS Application Id, e.g. "b31aeaf3-3511-495b-a07f-571fc873214b".`
+                `Invalid \`applicationId\` value detected: ${this.application.applicationId}\nPlease make sure your applicationId is a valid LUIS Application Id, e.g. "b31aeaf3-3511-495b-a07f-571fc873214b".`,
             );
         }
         if (!this.application.endpointKey) {
             throw new Error(
-                `Invalid \`endpointKey\` value detected: ${this.application.endpointKey}\nPlease make sure your endpointKey is a valid LUIS Endpoint Key, e.g. "048ec46dc58e495482b0c447cfdbd291".`
+                `Invalid \`endpointKey\` value detected: ${this.application.endpointKey}\nPlease make sure your endpointKey is a valid LUIS Endpoint Key, e.g. "048ec46dc58e495482b0c447cfdbd291".`,
             );
         }
     }
 
     // Builds a LuisRecognizer Strategy depending on the options passed
     private buildRecognizer(
-        userOptions: LuisRecognizerOptionsV2 | LuisRecognizerOptionsV3 | LuisPredictionOptions
+        userOptions: LuisRecognizerOptionsV2 | LuisRecognizerOptionsV3 | LuisPredictionOptions,
     ): LuisRecognizerV3 | LuisRecognizerV2 {
         if (isLuisRecognizerOptionsV3(userOptions)) {
             return new LuisRecognizerV3(this.application, userOptions);
