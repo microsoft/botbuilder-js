@@ -124,12 +124,12 @@ export namespace SkillValidation {
         credentials: ICredentialProvider,
         channelService: string,
         channelId: string,
-        authConfig: AuthenticationConfiguration
+        authConfig: AuthenticationConfiguration,
     ): Promise<ClaimsIdentity> {
         if (!authConfig) {
             throw new AuthenticationError(
                 'SkillValidation.authenticateChannelToken(): invalid authConfig parameter',
-                StatusCodes.INTERNAL_SERVER_ERROR
+                StatusCodes.INTERNAL_SERVER_ERROR,
             );
         }
 
@@ -149,7 +149,7 @@ export namespace SkillValidation {
         const tokenExtractor = new JwtTokenExtractor(
             verifyOptions,
             openIdMetadataUrl,
-            AuthenticationConstants.AllowedSigningAlgorithms
+            AuthenticationConstants.AllowedSigningAlgorithms,
         );
 
         const parts: string[] = authHeader.split(' ');
@@ -157,7 +157,7 @@ export namespace SkillValidation {
             parts[0],
             parts[1],
             channelId,
-            authConfig.requiredEndorsements
+            authConfig.requiredEndorsements,
         );
 
         await validateIdentity(identity, credentials);
@@ -176,7 +176,7 @@ export namespace SkillValidation {
             // No valid identity. Not Authorized.
             throw new AuthenticationError(
                 'SkillValidation.validateIdentity(): Invalid identity',
-                StatusCodes.UNAUTHORIZED
+                StatusCodes.UNAUTHORIZED,
             );
         }
 
@@ -184,7 +184,7 @@ export namespace SkillValidation {
             // The token is in some way invalid. Not Authorized.
             throw new AuthenticationError(
                 'SkillValidation.validateIdentity(): Token not authenticated',
-                StatusCodes.UNAUTHORIZED
+                StatusCodes.UNAUTHORIZED,
             );
         }
 
@@ -194,7 +194,7 @@ export namespace SkillValidation {
             // No version claim
             throw new AuthenticationError(
                 `SkillValidation.validateIdentity(): '${AuthenticationConstants.VersionClaim}' claim is required on skill Tokens.`,
-                StatusCodes.UNAUTHORIZED
+                StatusCodes.UNAUTHORIZED,
             );
         }
 
@@ -204,7 +204,7 @@ export namespace SkillValidation {
             // Claim is not present or doesn't have a value. Not Authorized.
             throw new AuthenticationError(
                 `SkillValidation.validateIdentity(): '${AuthenticationConstants.AudienceClaim}' claim is required on skill Tokens.`,
-                StatusCodes.UNAUTHORIZED
+                StatusCodes.UNAUTHORIZED,
             );
         }
 
@@ -212,7 +212,7 @@ export namespace SkillValidation {
             // The AppId is not valid. Not Authorized.
             throw new AuthenticationError(
                 'SkillValidation.validateIdentity(): Invalid audience.',
-                StatusCodes.UNAUTHORIZED
+                StatusCodes.UNAUTHORIZED,
             );
         }
 
@@ -221,7 +221,7 @@ export namespace SkillValidation {
             // Invalid appId
             throw new AuthenticationError(
                 'SkillValidation.validateIdentity(): Invalid appId.',
-                StatusCodes.UNAUTHORIZED
+                StatusCodes.UNAUTHORIZED,
             );
         }
 
@@ -244,7 +244,7 @@ export namespace SkillValidation {
                     value: AuthenticationConstants.AnonymousSkillAppId,
                 },
             ],
-            AuthenticationConstants.AnonymousAuthType
+            AuthenticationConstants.AnonymousAuthType,
         );
     }
 }

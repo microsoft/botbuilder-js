@@ -30,7 +30,7 @@ export abstract class UserTokenClient {
         userId: string,
         connectionName: string,
         channelId: string,
-        magicCode: string
+        magicCode: string,
     ): Promise<TokenResponse>;
 
     /**
@@ -44,7 +44,7 @@ export abstract class UserTokenClient {
     abstract getSignInResource(
         connectionName: string,
         activity: Activity,
-        finalRediect: string
+        finalRediect: string,
     ): Promise<SignInUrlResponse>;
 
     /**
@@ -79,7 +79,7 @@ export abstract class UserTokenClient {
         userId: string,
         connectionName: string,
         resourceUrls: string[],
-        channelId: string
+        channelId: string,
     ): Promise<Record<string, TokenResponse>>;
 
     /**
@@ -95,7 +95,7 @@ export abstract class UserTokenClient {
         userId: string,
         connectionName: string,
         channelId: string,
-        exchangeRequest: TokenExchangeRequest
+        exchangeRequest: TokenExchangeRequest,
     ): Promise<TokenResponse>;
 
     /**

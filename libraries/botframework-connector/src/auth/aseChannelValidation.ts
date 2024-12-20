@@ -12,11 +12,10 @@ import { ClaimsIdentity } from './claimsIdentity';
 import { AuthenticationConstants } from './authenticationConstants';
 import { AuthenticationConfiguration } from './authenticationConfiguration';
 import { GovernmentConstants } from './governmentConstants';
-import { ICredentialProvider } from './credentialProvider';
+import { ICredentialProvider, SimpleCredentialProvider } from './credentialProvider';
 import { JwtTokenExtractor } from './jwtTokenExtractor';
 import { JwtTokenValidation } from './jwtTokenValidation';
 import { AuthenticationError } from './authenticationError';
-import { SimpleCredentialProvider } from './credentialProvider';
 import { StatusCodes } from 'botframework-schema';
 import { BetweenBotAndAseChannelTokenValidationParameters } from './tokenValidationParameters';
 
@@ -80,18 +79,18 @@ export namespace AseChannelValidation {
      */
     export async function authenticateAseChannelToken(
         authHeader: string,
-        authConfig: AuthenticationConfiguration = new AuthenticationConfiguration()
+        authConfig: AuthenticationConfiguration = new AuthenticationConfiguration(),
     ): Promise<ClaimsIdentity> {
         const tokenExtractor: JwtTokenExtractor = new JwtTokenExtractor(
             BetweenBotAndAseChannelTokenValidationParameters,
             MetadataUrl,
-            AuthenticationConstants.AllowedSigningAlgorithms
+            AuthenticationConstants.AllowedSigningAlgorithms,
         );
 
         const identity: ClaimsIdentity = await tokenExtractor.getIdentityFromAuthHeader(
             authHeader,
             ChannelId,
-            authConfig.requiredEndorsements
+            authConfig.requiredEndorsements,
         );
         if (!identity) {
             // No valid identity. Not Authorized.
@@ -111,7 +110,7 @@ export namespace AseChannelValidation {
         if (versionClaim === null) {
             throw new AuthenticationError(
                 'Unauthorized. "ver" claim is required on Emulator Tokens.',
-                StatusCodes.UNAUTHORIZED
+                StatusCodes.UNAUTHORIZED,
             );
         }
 
@@ -127,7 +126,7 @@ export namespace AseChannelValidation {
                 // No claim around AppID. Not Authorized.
                 throw new AuthenticationError(
                     'Unauthorized. "appid" claim is required on Emulator Token version "1.0".',
-                    StatusCodes.UNAUTHORIZED
+                    StatusCodes.UNAUTHORIZED,
                 );
             }
 
@@ -139,7 +138,7 @@ export namespace AseChannelValidation {
                 // No claim around AppID. Not Authorized.
                 throw new AuthenticationError(
                     'Unauthorized. "azp" claim is required on Emulator Token version "2.0".',
-                    StatusCodes.UNAUTHORIZED
+                    StatusCodes.UNAUTHORIZED,
                 );
             }
 
@@ -148,14 +147,14 @@ export namespace AseChannelValidation {
             // Unknown Version. Not Authorized.
             throw new AuthenticationError(
                 `Unauthorized. Unknown Emulator Token version "${versionClaim}".`,
-                StatusCodes.UNAUTHORIZED
+                StatusCodes.UNAUTHORIZED,
             );
         }
 
         if (!(await _creadentialProvider.isValidAppId(appId))) {
             throw new AuthenticationError(
                 `Unauthorized. Invalid AppId passed on token: ${appId}`,
-                StatusCodes.UNAUTHORIZED
+                StatusCodes.UNAUTHORIZED,
             );
         }
 

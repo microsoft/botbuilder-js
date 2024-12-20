@@ -15,7 +15,7 @@ describe('AseChannelTestSuite', function () {
             AseChannelValidation.init(config);
             assert.strictEqual(
                 AseChannelValidation.MetadataUrl,
-                GovernmentConstants.ToBotFromEmulatorOpenIdMetadataUrl
+                GovernmentConstants.ToBotFromEmulatorOpenIdMetadataUrl,
             );
         });
 
@@ -24,7 +24,7 @@ describe('AseChannelTestSuite', function () {
             AseChannelValidation.init(config);
             assert.strictEqual(
                 AseChannelValidation.MetadataUrl,
-                AuthenticationConstants.ToBotFromEmulatorOpenIdMetadataUrl
+                AuthenticationConstants.ToBotFromEmulatorOpenIdMetadataUrl,
             );
         });
 
@@ -42,20 +42,20 @@ describe('AseChannelTestSuite', function () {
                 assert.strictEqual(
                     true,
                     BetweenBotAndAseChannelTokenValidationParameters.issuer.includes(
-                        `https://sts.windows.net/${tmpId}/`
-                    )
+                        `https://sts.windows.net/${tmpId}/`,
+                    ),
                 );
                 assert.strictEqual(
                     true,
                     BetweenBotAndAseChannelTokenValidationParameters.issuer.includes(
-                        `https://login.microsoftonline.com/${tmpId}/v2.0`
-                    )
+                        `https://login.microsoftonline.com/${tmpId}/v2.0`,
+                    ),
                 );
                 assert.strictEqual(
                     true,
                     BetweenBotAndAseChannelTokenValidationParameters.issuer.includes(
-                        `https://login.microsoftonline.us/${tmpId}/v2.0`
-                    )
+                        `https://login.microsoftonline.us/${tmpId}/v2.0`,
+                    ),
                 );
             });
         });

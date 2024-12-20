@@ -66,7 +66,7 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
         private readonly credentialsFactory: ServiceClientCredentialsFactory,
         private readonly authConfiguration: AuthenticationConfiguration,
         private readonly botFrameworkClientFetch?: (input: RequestInfo, init?: RequestInit) => Promise<Response>,
-        private readonly connectorClientOptions: ConnectorClientOptions = {}
+        private readonly connectorClientOptions: ConnectorClientOptions = {},
     ) {
         super();
     }
@@ -90,7 +90,7 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
             if (!isAuthDisabled) {
                 throw new AuthenticationError(
                     'Unauthorized Access. Request is not authorized',
-                    StatusCodes.UNAUTHORIZED
+                    StatusCodes.UNAUTHORIZED,
                 );
             }
 
@@ -125,7 +125,7 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
             this.toChannelFromBotLoginUrl,
             this.validateAuthority,
             this.credentialsFactory,
-            this.connectorClientOptions
+            this.connectorClientOptions,
         );
 
         return {
@@ -145,7 +145,7 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
      */
     async authenticateStreamingRequest(
         authHeader: string,
-        channelIdHeader: string
+        channelIdHeader: string,
     ): Promise<AuthenticateRequestResult> {
         if (!channelIdHeader?.trim() && !(await this.credentialsFactory.isAuthenticationDisabled())) {
             throw new AuthenticationError("'channelIdHeader' required.", StatusCodes.UNAUTHORIZED);
@@ -172,7 +172,7 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
             appId,
             this.toChannelFromBotOAuthScope,
             this.toChannelFromBotLoginUrl,
-            this.validateAuthority
+            this.validateAuthority,
         );
 
         return new UserTokenClientImpl(appId, credentials, this.oAuthUrl, this.connectorClientOptions);
@@ -191,7 +191,7 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
             this.toChannelFromBotLoginUrl,
             this.validateAuthority,
             this.credentialsFactory,
-            this.connectorClientOptions
+            this.connectorClientOptions,
         );
     }
 
@@ -205,20 +205,20 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
             this.credentialsFactory,
             this.toChannelFromBotLoginUrl,
             this.botFrameworkClientFetch,
-            this.connectorClientOptions
+            this.connectorClientOptions,
         );
     }
 
     private async JwtTokenValidation_authenticateRequest(
         activity: Partial<Activity>,
-        authHeader: string
+        authHeader: string,
     ): Promise<ClaimsIdentity> {
         if (!authHeader.trim()) {
             const isAuthDisabled = await this.credentialsFactory.isAuthenticationDisabled();
             if (!isAuthDisabled) {
                 throw new AuthenticationError(
                     'Unauthorized Access. Request is not authorized',
-                    StatusCodes.UNAUTHORIZED
+                    StatusCodes.UNAUTHORIZED,
                 );
             }
 
@@ -236,7 +236,7 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
         const claimsIdentity: ClaimsIdentity = await this.JwtTokenValidation_validateAuthHeader(
             authHeader,
             activity.channelId,
-            activity.serviceUrl
+            activity.serviceUrl,
         );
 
         return claimsIdentity;
@@ -245,7 +245,7 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
     private async JwtTokenValidation_validateAuthHeader(
         authHeader: string,
         channelId: string,
-        serviceUrl = ''
+        serviceUrl = '',
     ): Promise<ClaimsIdentity> {
         const identity = await this.JwtTokenValidation_authenticateToken(authHeader, channelId, serviceUrl);
 
@@ -262,7 +262,7 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
             // Skill claims must be validated using AuthenticationConfiguration validateClaims
             throw new AuthenticationError(
                 'Unauthorized Access. Request is not authorized. Skill Claims require validation.',
-                StatusCodes.UNAUTHORIZED
+                StatusCodes.UNAUTHORIZED,
             );
         }
     }
@@ -270,7 +270,7 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
     private async JwtTokenValidation_authenticateToken(
         authHeader: string,
         channelId: string,
-        serviceUrl: string
+        serviceUrl: string,
     ): Promise<ClaimsIdentity | undefined> {
         if (AseChannelValidation.isTokenFromAseChannel(channelId)) {
             return AseChannelValidation.authenticateAseChannelToken(authHeader);
@@ -290,7 +290,7 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
 
     private async SkillValidation_authenticateChannelToken(
         authHeader: string,
-        channelId: string
+        channelId: string,
     ): Promise<ClaimsIdentity> {
         // Add allowed token issuers from configuration.
         const verifyOptions: VerifyOptions = {
@@ -305,7 +305,7 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
             verifyOptions,
             this.toBotFromEmulatorOpenIdMetadataUrl,
             AuthenticationConstants.AllowedSigningAlgorithms,
-            this.connectorClientOptions?.proxySettings
+            this.connectorClientOptions?.proxySettings,
         );
 
         const parts: string[] = authHeader.split(' ');
@@ -313,7 +313,7 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
             parts[0],
             parts[1],
             channelId,
-            this.authConfiguration.requiredEndorsements
+            this.authConfiguration.requiredEndorsements,
         );
 
         await this.SkillValidation_ValidateIdentity(identity);
@@ -326,7 +326,7 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
             // No valid identity. Not Authorized.
             throw new AuthenticationError(
                 'SkillValidation.validateIdentity(): Invalid identity',
-                StatusCodes.UNAUTHORIZED
+                StatusCodes.UNAUTHORIZED,
             );
         }
 
@@ -334,7 +334,7 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
             // The token is in some way invalid. Not Authorized.
             throw new AuthenticationError(
                 'SkillValidation.validateIdentity(): Token not authenticated',
-                StatusCodes.UNAUTHORIZED
+                StatusCodes.UNAUTHORIZED,
             );
         }
 
@@ -343,7 +343,7 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
             // No version claim
             throw new AuthenticationError(
                 `SkillValidation.validateIdentity(): '${AuthenticationConstants.VersionClaim}' claim is required on skill Tokens.`,
-                StatusCodes.UNAUTHORIZED
+                StatusCodes.UNAUTHORIZED,
             );
         }
 
@@ -353,7 +353,7 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
             // Claim is not present or doesn't have a value. Not Authorized.
             throw new AuthenticationError(
                 `SkillValidation.validateIdentity(): '${AuthenticationConstants.AudienceClaim}' claim is required on skill Tokens.`,
-                StatusCodes.UNAUTHORIZED
+                StatusCodes.UNAUTHORIZED,
             );
         }
 
@@ -361,7 +361,7 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
             // The AppId is not valid. Not Authorized.
             throw new AuthenticationError(
                 'SkillValidation.validateIdentity(): Invalid audience.',
-                StatusCodes.UNAUTHORIZED
+                StatusCodes.UNAUTHORIZED,
             );
         }
 
@@ -370,14 +370,14 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
             // Invalid appId
             throw new AuthenticationError(
                 'SkillValidation.validateIdentity(): Invalid appId.',
-                StatusCodes.UNAUTHORIZED
+                StatusCodes.UNAUTHORIZED,
             );
         }
     }
 
     private async EmulatorValidation_authenticateEmulatorToken(
         authHeader: string,
-        channelId: string
+        channelId: string,
     ): Promise<ClaimsIdentity> {
         // Add allowed token issuers from configuration.
         const verifyOptions: VerifyOptions = {
@@ -392,13 +392,13 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
             verifyOptions,
             this.toBotFromEmulatorOpenIdMetadataUrl,
             AuthenticationConstants.AllowedSigningAlgorithms,
-            this.connectorClientOptions?.proxySettings
+            this.connectorClientOptions?.proxySettings,
         );
 
         const identity: ClaimsIdentity = await tokenExtractor.getIdentityFromAuthHeader(
             authHeader,
             channelId,
-            this.authConfiguration.requiredEndorsements
+            this.authConfiguration.requiredEndorsements,
         );
         if (!identity) {
             // No valid identity. Not Authorized.
@@ -418,7 +418,7 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
         if (versionClaim === null) {
             throw new AuthenticationError(
                 'Unauthorized. "ver" claim is required on Emulator Tokens.',
-                StatusCodes.UNAUTHORIZED
+                StatusCodes.UNAUTHORIZED,
             );
         }
 
@@ -434,7 +434,7 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
                 // No claim around AppID. Not Authorized.
                 throw new AuthenticationError(
                     'Unauthorized. "appid" claim is required on Emulator Token version "1.0".',
-                    StatusCodes.UNAUTHORIZED
+                    StatusCodes.UNAUTHORIZED,
                 );
             }
 
@@ -446,7 +446,7 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
                 // No claim around AppID. Not Authorized.
                 throw new AuthenticationError(
                     'Unauthorized. "azp" claim is required on Emulator Token version "2.0".',
-                    StatusCodes.UNAUTHORIZED
+                    StatusCodes.UNAUTHORIZED,
                 );
             }
 
@@ -455,14 +455,14 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
             // Unknown Version. Not Authorized.
             throw new AuthenticationError(
                 `Unauthorized. Unknown Emulator Token version "${versionClaim}".`,
-                StatusCodes.UNAUTHORIZED
+                StatusCodes.UNAUTHORIZED,
             );
         }
 
         if (!(await this.credentialsFactory.isValidAppId(appId))) {
             throw new AuthenticationError(
                 `Unauthorized. Invalid AppId passed on token: ${appId}`,
-                StatusCodes.UNAUTHORIZED
+                StatusCodes.UNAUTHORIZED,
             );
         }
 
@@ -472,20 +472,20 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
     private async ChannelValidation_authenticateChannelToken(
         authHeader: string,
         serviceUrl: string,
-        channelId: string
+        channelId: string,
     ): Promise<ClaimsIdentity> {
         const tokenValidationParameters = this.ChannelValidation_GetTokenValidationParameters();
         const tokenExtractor: JwtTokenExtractor = new JwtTokenExtractor(
             tokenValidationParameters,
             this.toBotFromChannelOpenIdMetadataUrl,
             AuthenticationConstants.AllowedSigningAlgorithms,
-            this.connectorClientOptions?.proxySettings
+            this.connectorClientOptions?.proxySettings,
         );
 
         const identity: ClaimsIdentity = await tokenExtractor.getIdentityFromAuthHeader(
             authHeader,
             channelId,
-            this.authConfiguration.requiredEndorsements
+            this.authConfiguration.requiredEndorsements,
         );
 
         return this.governmentChannelValidation_ValidateIdentity(identity, serviceUrl);
@@ -502,7 +502,7 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
 
     private async governmentChannelValidation_ValidateIdentity(
         identity: ClaimsIdentity,
-        serviceUrl: string
+        serviceUrl: string,
     ): Promise<ClaimsIdentity> {
         if (!identity) {
             // No valid identity. Not Authorized.
@@ -532,7 +532,7 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
             // The AppId is not valid or not present. Not Authorized.
             throw new AuthenticationError(
                 `Unauthorized. Invalid AppId passed on token: ${audClaim}`,
-                StatusCodes.UNAUTHORIZED
+                StatusCodes.UNAUTHORIZED,
             );
         }
 

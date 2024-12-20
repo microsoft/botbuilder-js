@@ -68,7 +68,7 @@ describe('JwtTokenValidation', function () {
                     [AuthenticationConstants.ServiceUrlClaim]: activity.serviceUrl,
                     [AuthenticationConstants.VersionClaim]: version,
                     tid: tenant,
-                })
+                }),
             );
             const credentials = makeCredentials(appId, appPassword, tenant, token);
 
@@ -82,7 +82,7 @@ describe('JwtTokenValidation', function () {
                 activity,
                 makeAuthHeader('Bearer', accessToken),
                 provider,
-                channelService
+                channelService,
             );
 
             // Assert expected results
@@ -140,7 +140,7 @@ describe('JwtTokenValidation', function () {
                     assert(claims.isAuthenticated);
                     assert.strictEqual(
                         claims.getClaimValue(AuthenticationConstants.ServiceUrlClaim),
-                        'https://service.url'
+                        'https://service.url',
                     );
                 },
                 label: 'succeeds with a specific tenant',

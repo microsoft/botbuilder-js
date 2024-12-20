@@ -48,7 +48,7 @@ export namespace ChannelValidation {
         credentials: ICredentialProvider,
         serviceUrl: string,
         channelId: string,
-        authConfig: AuthenticationConfiguration = new AuthenticationConfiguration()
+        authConfig: AuthenticationConfiguration = new AuthenticationConfiguration(),
     ): Promise<ClaimsIdentity> {
         const identity: ClaimsIdentity = await authenticateChannelToken(authHeader, credentials, channelId, authConfig);
 
@@ -75,18 +75,18 @@ export namespace ChannelValidation {
         authHeader: string,
         credentials: ICredentialProvider,
         channelId: string,
-        authConfig: AuthenticationConfiguration = new AuthenticationConfiguration()
+        authConfig: AuthenticationConfiguration = new AuthenticationConfiguration(),
     ): Promise<ClaimsIdentity> {
         const tokenExtractor: JwtTokenExtractor = new JwtTokenExtractor(
             ToBotFromChannelTokenValidationParameters,
             OpenIdMetadataEndpoint ? OpenIdMetadataEndpoint : AuthenticationConstants.ToBotFromChannelOpenIdMetadataUrl,
-            AuthenticationConstants.AllowedSigningAlgorithms
+            AuthenticationConstants.AllowedSigningAlgorithms,
         );
 
         const identity: ClaimsIdentity = await tokenExtractor.getIdentityFromAuthHeader(
             authHeader,
             channelId,
-            authConfig.requiredEndorsements
+            authConfig.requiredEndorsements,
         );
 
         return await validateIdentity(identity, credentials);
@@ -101,7 +101,7 @@ export namespace ChannelValidation {
      */
     export async function validateIdentity(
         identity: ClaimsIdentity,
-        credentials: ICredentialProvider
+        credentials: ICredentialProvider,
     ): Promise<ClaimsIdentity> {
         if (!identity || !identity.isAuthenticated) {
             // The token is in some way invalid. Not Authorized.
@@ -129,7 +129,7 @@ export namespace ChannelValidation {
             // The AppId is not valid or not present. Not Authorized.
             throw new AuthenticationError(
                 `Unauthorized. Invalid AppId passed on token: ${audClaim}`,
-                StatusCodes.UNAUTHORIZED
+                StatusCodes.UNAUTHORIZED,
             );
         }
 

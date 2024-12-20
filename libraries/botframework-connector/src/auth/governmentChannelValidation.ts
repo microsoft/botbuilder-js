@@ -48,7 +48,7 @@ export namespace GovernmentChannelValidation {
         authHeader: string,
         credentials: ICredentialProvider,
         serviceUrl: string,
-        channelId: string
+        channelId: string,
     ): Promise<ClaimsIdentity> {
         const identity: ClaimsIdentity = await authenticateChannelToken(authHeader, credentials, channelId);
 
@@ -75,18 +75,18 @@ export namespace GovernmentChannelValidation {
         authHeader: string,
         credentials: ICredentialProvider,
         channelId: string,
-        authConfig: AuthenticationConfiguration = new AuthenticationConfiguration()
+        authConfig: AuthenticationConfiguration = new AuthenticationConfiguration(),
     ): Promise<ClaimsIdentity> {
         const tokenExtractor: JwtTokenExtractor = new JwtTokenExtractor(
             ToBotFromGovernmentChannelTokenValidationParameters,
             OpenIdMetadataEndpoint ? OpenIdMetadataEndpoint : GovernmentConstants.ToBotFromChannelOpenIdMetadataUrl,
-            AuthenticationConstants.AllowedSigningAlgorithms
+            AuthenticationConstants.AllowedSigningAlgorithms,
         );
 
         const identity: ClaimsIdentity = await tokenExtractor.getIdentityFromAuthHeader(
             authHeader,
             channelId,
-            authConfig.requiredEndorsements
+            authConfig.requiredEndorsements,
         );
 
         return await validateIdentity(identity, credentials);
@@ -101,7 +101,7 @@ export namespace GovernmentChannelValidation {
      */
     export async function validateIdentity(
         identity: ClaimsIdentity,
-        credentials: ICredentialProvider
+        credentials: ICredentialProvider,
     ): Promise<ClaimsIdentity> {
         if (!identity) {
             // No valid identity. Not Authorized.
@@ -134,7 +134,7 @@ export namespace GovernmentChannelValidation {
             // The AppId is not valid or not present. Not Authorized.
             throw new AuthenticationError(
                 `Unauthorized. Invalid AppId passed on token: ${audClaim}`,
-                StatusCodes.UNAUTHORIZED
+                StatusCodes.UNAUTHORIZED,
             );
         }
 

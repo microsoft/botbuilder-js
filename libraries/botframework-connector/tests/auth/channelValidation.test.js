@@ -7,18 +7,19 @@ const { StatusCodes } = require('botframework-schema');
 
 describe('ChannelValidation', function () {
     const credentials = new SimpleCredentialProvider('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F');
+
     describe('validateIdentity', function () {
         it('should fail if unauthenticated', async function () {
             await assert.rejects(
                 ChannelValidation.validateIdentity(new ClaimsIdentity([], false), undefined),
-                new AuthenticationError('Unauthorized. Is not authenticated', StatusCodes.UNAUTHORIZED)
+                new AuthenticationError('Unauthorized. Is not authenticated', StatusCodes.UNAUTHORIZED),
             );
         });
 
         it('should fail if no identity', async function () {
             await assert.rejects(
                 ChannelValidation.validateIdentity(undefined, undefined),
-                new AuthenticationError('Unauthorized. Is not authenticated', StatusCodes.UNAUTHORIZED)
+                new AuthenticationError('Unauthorized. Is not authenticated', StatusCodes.UNAUTHORIZED),
             );
         });
 
@@ -26,9 +27,9 @@ describe('ChannelValidation', function () {
             await assert.rejects(
                 ChannelValidation.validateIdentity(
                     new ClaimsIdentity([{ type: 'peanut', value: 'peanut' }], true),
-                    credentials
+                    credentials,
                 ),
-                new AuthenticationError('Unauthorized. Issuer Claim MUST be present.', StatusCodes.UNAUTHORIZED)
+                new AuthenticationError('Unauthorized. Issuer Claim MUST be present.', StatusCodes.UNAUTHORIZED),
             );
         });
 
@@ -36,9 +37,9 @@ describe('ChannelValidation', function () {
             await assert.rejects(
                 ChannelValidation.validateIdentity(
                     new ClaimsIdentity([{ type: 'iss', value: 'peanut' }], true),
-                    credentials
+                    credentials,
                 ),
-                new AuthenticationError('Unauthorized. Issuer Claim MUST be present.', StatusCodes.UNAUTHORIZED)
+                new AuthenticationError('Unauthorized. Issuer Claim MUST be present.', StatusCodes.UNAUTHORIZED),
             );
         });
 
@@ -46,9 +47,9 @@ describe('ChannelValidation', function () {
             await assert.rejects(
                 ChannelValidation.validateIdentity(
                     new ClaimsIdentity([{ type: 'iss', value: 'https://api.botframework.com' }], true),
-                    credentials
+                    credentials,
                 ),
-                new AuthenticationError('Unauthorized. Invalid AppId passed on token: null', StatusCodes.UNAUTHORIZED)
+                new AuthenticationError('Unauthorized. Invalid AppId passed on token: null', StatusCodes.UNAUTHORIZED),
             );
         });
 
@@ -60,11 +61,14 @@ describe('ChannelValidation', function () {
                             { type: 'iss', value: 'https://api.botframework.com' },
                             { type: 'aud', value: 'peanut' },
                         ],
-                        true
+                        true,
                     ),
-                    credentials
+                    credentials,
                 ),
-                new AuthenticationError('Unauthorized. Invalid AppId passed on token: peanut', StatusCodes.UNAUTHORIZED)
+                new AuthenticationError(
+                    'Unauthorized. Invalid AppId passed on token: peanut',
+                    StatusCodes.UNAUTHORIZED,
+                ),
             );
         });
 
@@ -75,9 +79,9 @@ describe('ChannelValidation', function () {
                         { type: 'iss', value: 'https://api.botframework.com' },
                         { type: 'aud', value: credentials.appId },
                     ],
-                    true
+                    true,
                 ),
-                credentials
+                credentials,
             );
         });
     });

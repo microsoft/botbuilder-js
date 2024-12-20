@@ -7,7 +7,7 @@ describe('MicrosoftAppCredentialsTestSuite', function () {
             const credentials1 = new MicrosoftAppCredentials('appId', 'password', 'tenantId', 'audience');
             assert.strictEqual(
                 AuthenticationConstants.ToChannelFromBotLoginUrlPrefix + 'tenantId',
-                credentials1.oAuthEndpoint
+                credentials1.oAuthEndpoint,
             );
             assert.strictEqual('audience', credentials1.oAuthScope);
 
@@ -15,7 +15,7 @@ describe('MicrosoftAppCredentialsTestSuite', function () {
             assert.strictEqual(
                 AuthenticationConstants.ToChannelFromBotLoginUrlPrefix +
                     AuthenticationConstants.DefaultChannelAuthTenant,
-                credentials2.oAuthEndpoint
+                credentials2.oAuthEndpoint,
             );
             assert.strictEqual(AuthenticationConstants.ToChannelFromBotOAuthScope, credentials2.oAuthScope);
         });

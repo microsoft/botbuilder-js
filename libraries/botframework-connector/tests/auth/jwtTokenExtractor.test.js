@@ -17,7 +17,7 @@ describe('JwtTokenExtractor', function () {
                 issuer,
             },
             metadata,
-            [algorithm]
+            [algorithm],
         );
 
         return { client, issuer, sign, verify };
@@ -52,7 +52,7 @@ describe('JwtTokenExtractor', function () {
                     clockTolerance: -10,
                 },
                 metadata,
-                [algorithm]
+                [algorithm],
             );
 
             await assert.rejects(client.getIdentityFromAuthHeader(`Bearer ${token}`), {

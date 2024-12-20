@@ -20,7 +20,7 @@ describe('AppCredentials', function () {
         const certCreds = new CertificateAppCredentials(APP_ID, CERT_THUMBPRINT, CERT_KEY);
         strictEqual(
             certCreds.oAuthEndpoint,
-            AuthenticationConstants.ToChannelFromBotLoginUrlPrefix + AuthenticationConstants.DefaultChannelAuthTenant
+            AuthenticationConstants.ToChannelFromBotLoginUrlPrefix + AuthenticationConstants.DefaultChannelAuthTenant,
         );
         strictEqual(certCreds.oAuthScope, AuthenticationConstants.ToBotFromChannelTokenIssuer);
 
@@ -65,7 +65,7 @@ describe('AppCredentials', function () {
             const tokenGenerator = new MicrosoftAppCredentials(APP_ID);
             strictEqual(
                 tokenGenerator.tokenCacheKey,
-                `${APP_ID}${AuthenticationConstants.ToBotFromChannelTokenIssuer}-cache`
+                `${APP_ID}${AuthenticationConstants.ToBotFromChannelTokenIssuer}-cache`,
             );
 
             const oAuthScope = 'oAuthScope';
@@ -76,7 +76,7 @@ describe('AppCredentials', function () {
             const certCreds = new CertificateAppCredentials(APP_ID, CERT_THUMBPRINT, CERT_KEY);
             strictEqual(
                 certCreds.tokenCacheKey,
-                `${APP_ID}${AuthenticationConstants.ToBotFromChannelTokenIssuer}-cache`
+                `${APP_ID}${AuthenticationConstants.ToBotFromChannelTokenIssuer}-cache`,
             );
             certCreds.oAuthScope = oAuthScope;
             strictEqual(certCreds.tokenCacheKey, `${APP_ID}${oAuthScope}-cache`);

@@ -28,6 +28,6 @@ export class AuthenticationConfiguration {
     constructor(
         public requiredEndorsements: string[] = [],
         public validateClaims?: ValidateClaims,
-        public validTokenIssuers?: string[]
+        public validTokenIssuers?: string[],
     ) {}
 }

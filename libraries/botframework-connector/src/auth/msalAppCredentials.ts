@@ -64,14 +64,14 @@ export class MsalAppCredentials extends AppCredentials {
         maybeClientApplicationOrAppId?: ConfidentialClientApplication | string,
         maybeAppIdOrAppPasswordOrCertificate?: string | Certificate,
         maybeAuthority?: string,
-        maybeScope?: string
+        maybeScope?: string,
     ) {
         const appId =
             typeof maybeClientApplicationOrAppId === 'string'
                 ? maybeClientApplicationOrAppId
                 : typeof maybeAppIdOrAppPasswordOrCertificate === 'string'
-                ? maybeAppIdOrAppPasswordOrCertificate
-                : undefined;
+                  ? maybeAppIdOrAppPasswordOrCertificate
+                  : undefined;
 
         super(appId, undefined, maybeScope);
 

@@ -30,7 +30,7 @@ export class ManagedIdentityServiceClientCredentialsFactory extends ServiceClien
         ok(appId?.trim(), 'ManagedIdentityServiceClientCredentialsFactory.constructor(): missing appId.');
         ok(
             tokenProviderFactory,
-            'ManagedIdentityServiceClientCredentialsFactory.constructor(): missing tokenProviderFactory.'
+            'ManagedIdentityServiceClientCredentialsFactory.constructor(): missing tokenProviderFactory.',
         );
 
         this.appId = appId;
@@ -58,7 +58,7 @@ export class ManagedIdentityServiceClientCredentialsFactory extends ServiceClien
     async createCredentials(appId: string, audience: string): Promise<ServiceClientCredentials> {
         ok(
             await this.isValidAppId(appId),
-            'ManagedIdentityServiceClientCredentialsFactory.createCredentials(): Invalid Managed ID.'
+            'ManagedIdentityServiceClientCredentialsFactory.createCredentials(): Invalid Managed ID.',
         );
 
         return new ManagedIdentityAppCredentials(this.appId, audience, this.tokenProviderFactory);

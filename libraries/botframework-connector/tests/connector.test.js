@@ -136,6 +136,7 @@ describe('Bot Framework Connector SDK', function () {
                     message: 'Invalid userId: invalid-id',
                 });
             });
+
             it('should fail without members', async function () {
                 const params = createConversation();
                 params.members = [];
@@ -145,6 +146,7 @@ describe('Bot Framework Connector SDK', function () {
                     message: 'Conversations must be to a single member',
                 });
             });
+
             it('should fail with bot member', async function () {
                 const params = createConversation();
                 params.members = [bot];
@@ -164,6 +166,7 @@ describe('Bot Framework Connector SDK', function () {
                 const members = await client.conversations.getConversationMembers(result.id);
                 members.should.matchAny((member) => member.id === user.id);
             });
+
             it('should fail with invalid conversationId', async function () {
                 const params = createConversation();
 
@@ -173,7 +176,7 @@ describe('Bot Framework Connector SDK', function () {
                     {
                         code: 'BadArgument',
                         message: 'Slack API error',
-                    }
+                    },
                 );
             });
         });
@@ -186,6 +189,7 @@ describe('Bot Framework Connector SDK', function () {
                 const result2 = await client.conversations.sendToConversation(result.id, createActivity());
                 assert(!!result2.id);
             });
+
             it('should return a valid activityId with Teams activity', async function () {
                 const params = createConversation();
                 const activity = createActivity();
@@ -212,6 +216,7 @@ describe('Bot Framework Connector SDK', function () {
                 const result2 = await client.conversations.sendToConversation(result.id, activity);
                 assert(!!result2.id);
             });
+
             it('should fail with invalid conversationId', async function () {
                 const params = createConversation();
 
@@ -221,9 +226,10 @@ describe('Bot Framework Connector SDK', function () {
                     {
                         code: 'BadArgument',
                         message: 'Slack API error',
-                    }
+                    },
                 );
             });
+
             it('should send a Hero card', async function () {
                 const params = createConversation();
                 const activity = createActivity();
@@ -235,8 +241,7 @@ describe('Bot Framework Connector SDK', function () {
                             subtitle: 'JPEG image',
                             images: [
                                 {
-                                    url:
-                                        'https://docs.microsoft.com/en-us/bot-framework/media/designing-bots/core/dialogs-screens.png',
+                                    url: 'https://docs.microsoft.com/en-us/bot-framework/media/designing-bots/core/dialogs-screens.png',
                                 },
                             ],
                         },
@@ -258,6 +263,7 @@ describe('Bot Framework Connector SDK', function () {
                 const members = await client.conversations.getActivityMembers(result.id, result.activityId);
                 members.should.matchAny((member) => member.id === user.id);
             });
+
             it('should fail with invalid conversationId', async function () {
                 const params = createConversation();
                 params.activity = createActivity();
@@ -268,7 +274,7 @@ describe('Bot Framework Connector SDK', function () {
                     {
                         code: 'BadArgument',
                         message: 'Slack API error',
-                    }
+                    },
                 );
             });
         });
@@ -285,6 +291,7 @@ describe('Bot Framework Connector SDK', function () {
                 const result3 = await client.conversations.replyToActivity(conversationId, result2.id, reply);
                 assert(!!result3.id);
             });
+
             it('should fail with invalid conversationId', async function () {
                 const result = await client.conversations.createConversation(createConversation());
                 const result2 = await client.conversations.sendToConversation(result.id, createActivity());
@@ -293,7 +300,7 @@ describe('Bot Framework Connector SDK', function () {
                     {
                         code: 'ServiceError',
                         message: 'Invalid ConversationId: invalid-id',
-                    }
+                    },
                 );
             });
         });
@@ -304,9 +311,10 @@ describe('Bot Framework Connector SDK', function () {
                 conversation.activity = createActivity();
                 const result = await client.conversations.createConversation(conversation);
                 await assert.doesNotReject(
-                    async () => await client.conversations.deleteActivity(result.id, result.activityId)
+                    async () => await client.conversations.deleteActivity(result.id, result.activityId),
                 );
             });
+
             it('should fail with invalid conversationId', async function () {
                 const result = await client.conversations.createConversation(createConversation());
                 const result2 = await client.conversations.sendToConversation(result.id, createActivity());
@@ -329,6 +337,7 @@ describe('Bot Framework Connector SDK', function () {
                 const result3 = await client.conversations.updateActivity(conversationId, result2.id, updatedActivity);
                 assert(!!result3.id);
             });
+
             it('should fail with invalid conversationId', async function () {
                 const result = await client.conversations.createConversation(createConversation());
                 const result2 = await client.conversations.sendToConversation(result.id, createActivity());
@@ -337,7 +346,7 @@ describe('Bot Framework Connector SDK', function () {
                     {
                         code: 'ServiceError',
                         message: 'Invalid ConversationId: invalid-id',
-                    }
+                    },
                 );
             });
         });
@@ -379,6 +388,7 @@ describe('Bot Framework Connector SDK', function () {
             });
         });
     });
+
     describe('TokenApiClient', function () {
         describe('tokenApiClient Construction', function () {
             it('should not throw on http url', function () {
@@ -387,6 +397,7 @@ describe('Bot Framework Connector SDK', function () {
                 });
                 assert(client);
             });
+
             it('should throw on null credentials', function () {
                 assert.throws(
                     () =>
@@ -395,10 +406,11 @@ describe('Bot Framework Connector SDK', function () {
                         }),
                     {
                         message: "'credentials' cannot be null.",
-                    }
+                    },
                 );
             });
         });
+
         describe('botSignIn', function () {
             it('should return a valid sign in url', async function () {
                 const urlRegex = /https:\/\/token.botframework.com\/api\/oauth\/signin\?signin=.*/i;
@@ -415,6 +427,7 @@ describe('Bot Framework Connector SDK', function () {
                 assert(result._response.bodyAsText.match(urlRegex));
             });
         });
+
         describe('userToken', function () {
             describe('getToken', function () {
                 it('should throw on null userId', async function () {
@@ -422,15 +435,18 @@ describe('Bot Framework Connector SDK', function () {
                         message: 'userId cannot be null',
                     });
                 });
+
                 it('should throw on null connectionName', async function () {
                     await assert.rejects(async () => await tokenApiClient.userToken.getToken(user.id, null), {
                         message: 'connectionName cannot be null',
                     });
                 });
+
                 it('should return null on invalid connection string', async function () {
                     const result = await tokenApiClient.userToken.getToken(user.id, 'invalid');
                     assert.strictEqual(result.token, null);
                 });
+
                 it('should return token with no magic code', async function () {
                     const result = await tokenApiClient.userToken.getToken(user.id, 'slack', { code: null });
                     assert(result.channelId);
@@ -439,6 +455,7 @@ describe('Bot Framework Connector SDK', function () {
                     assert(result.expiration);
                 });
             });
+
             describe('getAadTokens', function () {
                 it('should throw on null userId', async function () {
                     await assert.rejects(
@@ -448,9 +465,10 @@ describe('Bot Framework Connector SDK', function () {
                             }),
                         {
                             message: 'userId cannot be null',
-                        }
+                        },
                     );
                 });
+
                 it('should throw on null connectionName', async function () {
                     await assert.rejects(
                         async () =>
@@ -459,9 +477,10 @@ describe('Bot Framework Connector SDK', function () {
                             }),
                         {
                             message: 'connectionName cannot be null',
-                        }
+                        },
                     );
                 });
+
                 it('should return token', async function () {
                     const result = await tokenApiClient.userToken.getAadTokens(user.id, 'slack', {
                         resourceUrls: ['http://localhost'],
@@ -472,12 +491,14 @@ describe('Bot Framework Connector SDK', function () {
                     assert(result.expiration);
                 });
             });
+
             describe('getTokenStatus', function () {
                 it('should throw on null userId', async function () {
                     await assert.rejects(async () => await tokenApiClient.userToken.getTokenStatus(null), {
                         message: 'userId cannot be null',
                     });
                 });
+
                 it('should return token', async function () {
                     const result = await tokenApiClient.userToken.getTokenStatus(user.id);
                     assert(result.channelId);
@@ -486,12 +507,14 @@ describe('Bot Framework Connector SDK', function () {
                     assert(result.serviceProviderDisplayName);
                 });
             });
+
             describe('signOut', function () {
                 it('should throw on null userId', async function () {
                     await assert.rejects(async () => tokenApiClient.userToken.signOut(null), {
                         message: 'userId cannot be null',
                     });
                 });
+
                 it('should return a response', async function () {
                     const result = await tokenApiClient.userToken.signOut(user.id);
                     assert(result.body);

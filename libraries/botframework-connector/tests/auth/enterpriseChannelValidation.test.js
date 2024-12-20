@@ -11,14 +11,14 @@ describe('EnterpriseChannelValidator', function () {
     it('validateIdentity should fail if unauthenticated', async function () {
         await assert.rejects(
             EnterpriseChannelValidation.validateIdentity(new ClaimsIdentity([], false), undefined),
-            new AuthenticationError('Unauthorized. Is not authenticated', StatusCodes.UNAUTHORIZED)
+            new AuthenticationError('Unauthorized. Is not authenticated', StatusCodes.UNAUTHORIZED),
         );
     });
 
     it('validateIdentity should fail if no identity', async function () {
         await assert.rejects(
             EnterpriseChannelValidation.validateIdentity(undefined, undefined),
-            new AuthenticationError('Unauthorized. No valid identity.', StatusCodes.UNAUTHORIZED)
+            new AuthenticationError('Unauthorized. No valid identity.', StatusCodes.UNAUTHORIZED),
         );
     });
 
@@ -26,9 +26,9 @@ describe('EnterpriseChannelValidator', function () {
         await assert.rejects(
             EnterpriseChannelValidation.validateIdentity(
                 new ClaimsIdentity([{ type: 'iss', value: 'peanut' }], true),
-                credentials
+                credentials,
             ),
-            new AuthenticationError('Unauthorized. Issuer Claim MUST be present.', StatusCodes.UNAUTHORIZED)
+            new AuthenticationError('Unauthorized. Issuer Claim MUST be present.', StatusCodes.UNAUTHORIZED),
         );
     });
 
@@ -36,9 +36,9 @@ describe('EnterpriseChannelValidator', function () {
         await assert.rejects(
             EnterpriseChannelValidation.validateIdentity(
                 new ClaimsIdentity([{ type: 'iss', value: 'https://api.botframework.com' }], true),
-                credentials
+                credentials,
             ),
-            new AuthenticationError('Unauthorized. Invalid AppId passed on token: null', StatusCodes.UNAUTHORIZED)
+            new AuthenticationError('Unauthorized. Invalid AppId passed on token: null', StatusCodes.UNAUTHORIZED),
         );
     });
 
@@ -50,11 +50,11 @@ describe('EnterpriseChannelValidator', function () {
                         { type: 'iss', value: 'https://api.botframework.com' },
                         { type: 'aud', value: 'peanut' },
                     ],
-                    true
+                    true,
                 ),
-                credentials
+                credentials,
             ),
-            new AuthenticationError('Unauthorized. Invalid AppId passed on token: peanut', StatusCodes.UNAUTHORIZED)
+            new AuthenticationError('Unauthorized. Invalid AppId passed on token: peanut', StatusCodes.UNAUTHORIZED),
         );
     });
 
@@ -65,9 +65,9 @@ describe('EnterpriseChannelValidator', function () {
                     { type: 'iss', value: 'https://api.botframework.com' },
                     { type: 'aud', value: credentials.appId },
                 ],
-                true
+                true,
             ),
-            credentials
+            credentials,
         );
     });
 });

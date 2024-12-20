@@ -24,7 +24,10 @@ export class ClaimsIdentity {
      * @param {Claim[]} claims An array of [Claim](xref:botframework-connector.Claim).
      * @param {string | boolean} authenticationType The type of auth for this set of claims, or boolean to override isAuthenticated
      */
-    constructor(public readonly claims: Claim[], private readonly authenticationType?: string | boolean) {}
+    constructor(
+        readonly claims: Claim[],
+        private readonly authenticationType?: string | boolean,
+    ) {}
 
     /**
      * Returns authentication status.
