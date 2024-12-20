@@ -30,7 +30,7 @@ export class ParseErrorListener implements ANTLRErrorListener<any> {
         line: number,
         charPositionInLine: number,
         _msg: string,
-        _e: RecognitionException | undefined
+        _e: RecognitionException | undefined,
     ): void {
         const syntaxErrorMessage = 'Invalid expression format.';
         throw Error(`syntax error at line ${line}:${charPositionInLine} ${syntaxErrorMessage}`);

@@ -26,7 +26,7 @@ export class MultivariateNumericEvaluator extends ExpressionEvaluator {
             type,
             MultivariateNumericEvaluator.evaluator(func, verify),
             ReturnType.Number,
-            FunctionUtils.validateTwoOrMoreThanTwoNumbers
+            FunctionUtils.validateTwoOrMoreThanTwoNumbers,
         );
     }
 

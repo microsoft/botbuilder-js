@@ -17,13 +17,10 @@ export class AddDays extends TimeTransformEvaluator {
      * Initializes a new instance of the [AddDays](xref:adaptive-expressions.AddDays) class.
      */
     constructor() {
-        super(
-            ExpressionType.AddDays,
-            (ts: Date, num: number): Date => {
-                const newDate = new Date(ts);
-                newDate.setDate(ts.getDate() + num);
-                return newDate;
-            }
-        );
+        super(ExpressionType.AddDays, (ts: Date, num: number): Date => {
+            const newDate = new Date(ts);
+            newDate.setDate(ts.getDate() + num);
+            return newDate;
+        });
     }
 }

@@ -31,7 +31,7 @@ export type ValueWithError = {
 export type EvaluateExpressionDelegate = (
     expression: Expression,
     state: MemoryInterface,
-    options: Options
+    options: Options,
 ) => ValueWithError;
 
 /**
@@ -67,7 +67,7 @@ export class ExpressionEvaluator {
         type: string,
         evaluator: EvaluateExpressionDelegate,
         returnType: ReturnType = ReturnType.Object,
-        validator?: ValidateExpressionDelegate
+        validator?: ValidateExpressionDelegate,
     ) {
         this.type = type;
         this._evaluator = evaluator;

@@ -1,4 +1,3 @@
-/* eslint-disable security/detect-object-injection */
 const assert = require('assert');
 const bigInt = require('big-integer');
 const { Expression, SimpleObjectMemory, FunctionUtils, Options, NumericEvaluator, StackedMemory } = require('../lib');
@@ -441,50 +440,8 @@ const testCases = [
             [
                 'dataUriToBinary(dataUri(hello))',
                 new Uint8Array([
-                    100,
-                    97,
-                    116,
-                    97,
-                    58,
-                    116,
-                    101,
-                    120,
-                    116,
-                    47,
-                    112,
-                    108,
-                    97,
-                    105,
-                    110,
-                    59,
-                    99,
-                    104,
-                    97,
-                    114,
-                    115,
-                    101,
-                    116,
-                    61,
-                    117,
-                    116,
-                    102,
-                    45,
-                    56,
-                    59,
-                    98,
-                    97,
-                    115,
-                    101,
-                    54,
-                    52,
-                    44,
-                    97,
-                    71,
-                    86,
-                    115,
-                    98,
-                    71,
-                    56,
+                    100, 97, 116, 97, 58, 116, 101, 120, 116, 47, 112, 108, 97, 105, 110, 59, 99, 104, 97, 114, 115,
+                    101, 116, 61, 117, 116, 102, 45, 56, 59, 98, 97, 115, 101, 54, 52, 44, 97, 71, 86, 115, 98, 71, 56,
                     61,
                 ]),
             ],
@@ -1088,8 +1045,7 @@ const scope = {
         subTitle: 'Dialog Sub Title',
     },
     doubleNestedItems: [[{ x: 1 }, { x: 2 }], [{ x: 3 }]],
-    xmlStr:
-        "<?xml version='1.0'?> <produce> <item> <name>Gala</name> <type>apple</type> <count>20</count> </item> <item> <name>Honeycrisp</name> <type>apple</type> <count>10</count> </item> </produce>",
+    xmlStr: "<?xml version='1.0'?> <produce> <item> <name>Gala</name> <type>apple</type> <count>20</count> </item> <item> <name>Honeycrisp</name> <type>apple</type> <count>10</count> </item> </produce>",
     callStack: [
         {
             x: 3,
@@ -1291,7 +1247,7 @@ const assertObjectEquals = (actual, expected, input) => {
         assert.strictEqual(
             parseFloat(actual.toString()),
             parseFloat(expected.toString()),
-            `Numbers don't match. ${debugMessage}`
+            `Numbers don't match. ${debugMessage}`,
         );
     } else if (Array.isArray(actual) && Array.isArray(expected)) {
         assert.strictEqual(actual.length, expected.length);

@@ -184,7 +184,7 @@ export class SimpleObjectMemory implements MemoryInterface {
      */
     private getCircularReplacer(): any {
         const seen = new WeakSet();
-        // eslint-disable-next-line @typescript-eslint/ban-types
+
         return (_key: any, value: object): any => {
             if (typeof value === 'object' && value) {
                 if (seen.has(value)) {

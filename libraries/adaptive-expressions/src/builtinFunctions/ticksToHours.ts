@@ -29,7 +29,7 @@ export class TicksToHours extends ExpressionEvaluator {
             ExpressionType.TicksToHours,
             TicksToHours.evaluator,
             ReturnType.Number,
-            FunctionUtils.validateUnaryNumber
+            FunctionUtils.validateUnaryNumber,
         );
     }
 

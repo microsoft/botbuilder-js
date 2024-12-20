@@ -1,4 +1,3 @@
-/* eslint-disable security/detect-object-injection */
 /**
  * @module adaptive-expressions
  */
@@ -31,7 +30,8 @@ export class ExpressionParser implements ExpressionParserInterface {
 
     private readonly ExpressionTransformer = class
         extends AbstractParseTreeVisitor<Expression>
-        implements ExpressionAntlrParserVisitor<Expression> {
+        implements ExpressionAntlrParserVisitor<Expression>
+    {
         private readonly escapeRegex: RegExp = new RegExp(/\\[^\r\n]?/g);
         private readonly _lookupFunction: EvaluatorLookup = undefined;
         constructor(lookup: EvaluatorLookup) {
@@ -162,7 +162,7 @@ export class ExpressionParser implements ExpressionParserInterface {
                         ExpressionType.SetProperty,
                         expr,
                         new Constant(key),
-                        this.visit(kvPair.expression())
+                        this.visit(kvPair.expression()),
                     );
                 }
             }
@@ -200,7 +200,7 @@ export class ExpressionParser implements ExpressionParserInterface {
         private readonly makeExpression = (functionType: string, ...children: Expression[]): Expression => {
             if (!this._lookupFunction(functionType)) {
                 throw new Error(
-                    `${functionType} does not have an evaluator, it's not a built-in function or a custom function.`
+                    `${functionType} does not have an evaluator, it's not a built-in function or a custom function.`,
                 );
             }
 
@@ -217,7 +217,7 @@ export class ExpressionParser implements ExpressionParserInterface {
                 if (child instanceof ep.LambdaContext) {
                     const evalParam = this.makeExpression(
                         ExpressionType.Accessor,
-                        new Constant(child.IDENTIFIER().text)
+                        new Constant(child.IDENTIFIER().text),
                     );
                     const evalFun = this.visit(child.expression());
                     result.push(evalParam);
@@ -313,7 +313,7 @@ export class ExpressionParser implements ExpressionParserInterface {
             return new Constant('');
         } else {
             return new this.ExpressionTransformer(this.EvaluatorLookup).transform(
-                ExpressionParser.antlrParse(expression)
+                ExpressionParser.antlrParse(expression),
             );
         }
     }

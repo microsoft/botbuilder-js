@@ -34,7 +34,7 @@ export class TitleCase extends StringTransformEvaluator {
             } else {
                 return inputStr.replace(
                     /\w\S*/g,
-                    (txt): string => txt.charAt(0).toUpperCase() + txt.substr(1).toLocaleLowerCase(locale)
+                    (txt): string => txt.charAt(0).toUpperCase() + txt.substr(1).toLocaleLowerCase(locale),
                 );
             }
         }

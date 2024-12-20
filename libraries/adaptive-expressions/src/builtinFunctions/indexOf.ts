@@ -38,7 +38,7 @@ export class IndexOf extends ExpressionEvaluator {
             if (args[0] == null || typeof args[0] === 'string') {
                 if (args[1] === undefined || typeof args[1] === 'string') {
                     value = InternalFunctionUtils.parseStringOrUndefined(args[0]).indexOf(
-                        InternalFunctionUtils.parseStringOrUndefined(args[1])
+                        InternalFunctionUtils.parseStringOrUndefined(args[1]),
                     );
                 } else {
                     error = `Can only look for indexof string in ${expression}`;

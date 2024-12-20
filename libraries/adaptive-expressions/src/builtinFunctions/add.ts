@@ -62,7 +62,7 @@ export class Add extends ExpressionEvaluator {
             expression,
             2,
             Number.MAX_SAFE_INTEGER,
-            ReturnType.String | ReturnType.Number
+            ReturnType.String | ReturnType.Number,
         );
     }
 }

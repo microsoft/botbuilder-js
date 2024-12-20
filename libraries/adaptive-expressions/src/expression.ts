@@ -142,7 +142,7 @@ export class Expression {
      */
     referenceWalk(
         expression: Expression,
-        extension?: (arg0: Expression) => boolean
+        extension?: (arg0: Expression) => boolean,
     ): { path: string; refs: Set<string> } {
         let path: string;
         let refs = new Set<string>();
@@ -206,7 +206,7 @@ export class Expression {
                 const iteratorName = (children[1].children[0] as Constant).value as string;
                 const nonLocalRefs2 = Array.from(refs2).filter(
                     (x): boolean =>
-                        !(x === iteratorName || x.startsWith(iteratorName + '.') || x.startsWith(iteratorName + '['))
+                        !(x === iteratorName || x.startsWith(iteratorName + '.') || x.startsWith(iteratorName + '[')),
                 );
                 refs = new Set([...refs, ...refs0, ...nonLocalRefs2]);
             } else {
@@ -298,8 +298,8 @@ export class Expression {
                     }
 
                     return { value, error };
-                }
-            )
+                },
+            ),
         );
     }
 

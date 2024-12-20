@@ -53,7 +53,7 @@ export class GetProperty extends ExpressionEvaluator {
                     value = InternalFunctionUtils.wrapGetValue(
                         new SimpleObjectMemory(firstItem),
                         property.toString(),
-                        options
+                        options,
                     );
                 }
             }

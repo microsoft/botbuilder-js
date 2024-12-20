@@ -147,7 +147,7 @@ export class Node {
                 // Ensure action is not already there
                 const found =
                     this._allTriggers.find(
-                        (existing) => trigger.action != undefined && trigger.action === existing.action
+                        (existing) => trigger.action != undefined && trigger.action === existing.action,
                     ) !== undefined;
                 op = Operation.found;
                 if (!found) {

@@ -29,7 +29,7 @@ export class Sum extends ExpressionEvaluator {
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply(
             (args: any[]): number => args[0].reduce((x: number, y: number): number => x + y),
-            FunctionUtils.verifyNumericList
+            FunctionUtils.verifyNumericList,
         );
     }
 

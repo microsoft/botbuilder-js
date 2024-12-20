@@ -34,7 +34,7 @@ export class ComparisonEvaluator extends ExpressionEvaluator {
         type: string,
         func: (arg0: any[]) => boolean,
         validator: ValidateExpressionDelegate,
-        verify?: VerifyExpression
+        verify?: VerifyExpression,
     ) {
         super(type, ComparisonEvaluator.evaluator(func, verify), ReturnType.Boolean, validator);
     }
@@ -52,7 +52,7 @@ export class ComparisonEvaluator extends ExpressionEvaluator {
                 expression,
                 state,
                 newOptions,
-                verify
+                verify,
             );
             let error = childrenError;
             if (!error) {

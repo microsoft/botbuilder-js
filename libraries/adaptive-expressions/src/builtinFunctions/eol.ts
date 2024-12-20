@@ -11,6 +11,7 @@ import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEv
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { ReturnType } from '../returnType';
+import os from 'os';
 
 /**
  * Return the newline string according to the environment.
@@ -39,8 +40,6 @@ export class EOL extends ExpressionEvaluator {
         } else if (typeof self !== 'undefined') {
             return self.navigator.platform.includes('Win') ? '\r\n' : '\n';
         } else {
-            // eslint-disable-next-line @typescript-eslint/no-var-requires
-            const os = require('os');
             return os.EOL;
         }
     }

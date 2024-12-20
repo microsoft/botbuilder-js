@@ -30,7 +30,7 @@ export class RegexErrorListener implements ANTLRErrorListener<any> {
         _line: number,
         _charPositionInLine: number,
         _msg: string,
-        _e: RecognitionException | undefined
+        _e: RecognitionException | undefined,
     ): void {
         throw Error('Regular expression is invalid.');
     }

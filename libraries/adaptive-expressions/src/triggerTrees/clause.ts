@@ -104,7 +104,7 @@ export class Clause extends Expression {
         let longerCount = longer.children.length;
         let swapped = false;
         if (longerCount < shorterCount) {
-            longer = this;
+            longer = this as Clause;
             shorter = other;
             const tmp = longerCount;
             longerCount = shorterCount;
@@ -219,7 +219,7 @@ export class Clause extends Expression {
     private _bindingRelationship(
         soFar: RelationshipType,
         shorterClause: Clause,
-        longerClause: Clause
+        longerClause: Clause,
     ): RelationshipType {
         if (soFar === RelationshipType.equal) {
             let swapped = false;

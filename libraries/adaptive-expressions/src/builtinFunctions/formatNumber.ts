@@ -1,4 +1,3 @@
-/* eslint-disable security/detect-object-injection */
 /**
  * @module adaptive-expressions
  */
@@ -31,35 +30,40 @@ export class FormatNumber extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithOptionsAndError((args: unknown[], options: Options): {
-            value: unknown;
-            error: string;
-        } => {
-            let value: unknown = null;
-            let error: string;
-            const number = args[0];
-            const precision = args[1];
-            let locale = options.locale ? options.locale : Intl.DateTimeFormat().resolvedOptions().locale;
-            locale = FunctionUtils.determineLocale(args, 3, locale);
-            if (!FunctionUtils.isNumber(number)) {
-                error = `formatNumber first argument ${number} must be a number`;
-            } else if (!FunctionUtils.isNumber(precision)) {
-                error = `formatNumber second argument ${precision} must be a number`;
-            } else if (locale && typeof locale !== 'string') {
-                error = `formatNubmer third argument ${locale} is not a valid locale`;
-            } else {
-                const fixedNotation = `,.${precision}f`;
-                const roundedNumber = this.roundToPrecision(number, precision);
-                const formatLocale = localeInfo[locale];
-                if (formatLocale !== undefined) {
-                    value = d3formatLocale(formatLocale).format(fixedNotation)(roundedNumber);
+        return FunctionUtils.applyWithOptionsAndError(
+            (
+                args: unknown[],
+                options: Options,
+            ): {
+                value: unknown;
+                error: string;
+            } => {
+                let value: unknown = null;
+                let error: string;
+                const number = args[0];
+                const precision = args[1];
+                let locale = options.locale ? options.locale : Intl.DateTimeFormat().resolvedOptions().locale;
+                locale = FunctionUtils.determineLocale(args, 3, locale);
+                if (!FunctionUtils.isNumber(number)) {
+                    error = `formatNumber first argument ${number} must be a number`;
+                } else if (!FunctionUtils.isNumber(precision)) {
+                    error = `formatNumber second argument ${precision} must be a number`;
+                } else if (locale && typeof locale !== 'string') {
+                    error = `formatNubmer third argument ${locale} is not a valid locale`;
                 } else {
-                    value = d3format(fixedNotation)(roundedNumber);
+                    const fixedNotation = `,.${precision}f`;
+                    const roundedNumber = this.roundToPrecision(number, precision);
+                    const formatLocale = localeInfo[locale];
+                    if (formatLocale !== undefined) {
+                        value = d3formatLocale(formatLocale).format(fixedNotation)(roundedNumber);
+                    } else {
+                        value = d3format(fixedNotation)(roundedNumber);
+                    }
                 }
-            }
 
-            return { value, error };
-        });
+                return { value, error };
+            },
+        );
     }
 
     private static roundToPrecision = (num: number, digits: number): number =>

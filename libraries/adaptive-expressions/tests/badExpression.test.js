@@ -546,7 +546,7 @@ describe('expression functional test', function () {
                 assert.throws(
                     () => parser.parse(invalidExpression),
                     /syntax error at line [0-9]+:[0-9]+ Invalid expression format./,
-                    'Error message not match.'
+                    'Error message not match.',
                 );
             });
         });

@@ -66,7 +66,6 @@ export * from './getNextViableTime';
 export * from './getPastTime';
 export * from './getPreviousViableDate';
 export * from './getPreviousViableTime';
-export * from './getPastTime';
 export * from './getProperty';
 export * from './getTimeOfDay';
 export * from './greaterThan';

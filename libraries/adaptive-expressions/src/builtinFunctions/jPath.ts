@@ -35,11 +35,9 @@ export class JPath extends ExpressionEvaluator {
     /**
      * @private
      */
-    // eslint-disable-next-line @typescript-eslint/ban-types
     private static evalJPath(jsonEntity: object | string, path: string): ValueWithError {
         let error: string;
         let evaled: any;
-        // eslint-disable-next-line @typescript-eslint/ban-types
         let json: object;
         if (typeof jsonEntity === 'string') {
             try {

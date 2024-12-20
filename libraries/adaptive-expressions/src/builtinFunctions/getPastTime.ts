@@ -63,7 +63,7 @@ export class GetPastTime extends ExpressionEvaluator {
             expression,
             [ReturnType.String, ReturnType.String],
             ReturnType.Number,
-            ReturnType.String
+            ReturnType.String,
         );
     }
 }

@@ -32,9 +32,9 @@ export class StartsWith extends ExpressionEvaluator {
         return FunctionUtils.apply(
             (args: any[]): boolean =>
                 InternalFunctionUtils.parseStringOrUndefined(args[0]).startsWith(
-                    InternalFunctionUtils.parseStringOrUndefined(args[1])
+                    InternalFunctionUtils.parseStringOrUndefined(args[1]),
                 ),
-            FunctionUtils.verifyStringOrNull
+            FunctionUtils.verifyStringOrNull,
         );
     }
 

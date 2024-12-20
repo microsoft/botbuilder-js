@@ -25,7 +25,7 @@ export class SortByDescending extends ExpressionEvaluator {
             ExpressionType.SortByDescending,
             InternalFunctionUtils.sortBy(true),
             ReturnType.Array,
-            SortByDescending.validator
+            SortByDescending.validator,
         );
     }
 

@@ -28,7 +28,7 @@ export class StringTransformEvaluator extends ExpressionEvaluator {
             type,
             FunctionUtils.applyWithOptions(func, FunctionUtils.verifyStringOrNull),
             ReturnType.String,
-            validator ? validator : FunctionUtils.validateUnaryString
+            validator ? validator : FunctionUtils.validateUnaryString,
         );
     }
 }

@@ -28,7 +28,7 @@ export class StringOrValue extends ExpressionEvaluator {
             ExpressionType.StringOrValue,
             StringOrValue.evaluator,
             ReturnType.Object,
-            FunctionUtils.validateUnaryString
+            FunctionUtils.validateUnaryString,
         );
     }
 
