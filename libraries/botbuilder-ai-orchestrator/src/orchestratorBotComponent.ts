@@ -25,7 +25,7 @@ export class OrchestratorBotComponent extends BotComponent {
                         },
                     ];
                 },
-            })
+            }),
         );
     }
 }

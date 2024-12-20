@@ -3,8 +3,6 @@
  * Licensed under the MIT License.
  */
 
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-
 const { LabelType } = require('../lib');
 class MockResolver {
     constructor(score, entityScore) {
