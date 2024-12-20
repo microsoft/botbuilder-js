@@ -17,7 +17,8 @@ export interface StaticActivityTemplateConfiguration {
  * Defines a static activity as a template.
  */
 export class StaticActivityTemplate
-    implements TemplateInterface<Partial<Activity>, unknown>, StaticActivityTemplateConfiguration, Configurable {
+    implements TemplateInterface<Partial<Activity>, unknown>, StaticActivityTemplateConfiguration, Configurable
+{
     static $kind = 'Microsoft.StaticActivityTemplate';
 
     /**

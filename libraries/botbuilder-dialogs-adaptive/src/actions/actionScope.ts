@@ -42,7 +42,8 @@ export interface ActionScopeConfiguration extends DialogConfiguration {
  */
 export class ActionScope<O extends object = {}>
     extends Dialog<O>
-    implements DialogDependencies, ActionScopeConfiguration {
+    implements DialogDependencies, ActionScopeConfiguration
+{
     /**
      * Creates a new `ActionScope` instance.
      *
@@ -144,7 +145,7 @@ export class ActionScope<O extends object = {}>
      */
     protected async onActionScopeResult(
         dc: DialogContext,
-        actionScopeResult: ActionScopeResult
+        actionScopeResult: ActionScopeResult,
     ): Promise<DialogTurnResult> {
         switch (actionScopeResult.actionScopeCommand) {
             case ActionScopeCommands.GotoAction:

@@ -33,7 +33,7 @@ export class ValueRecognizer extends AdaptiveRecognizer {
         dialogContext: DialogContext,
         activity: Activity,
         telemetryProperties?: { [key: string]: string },
-        telemetryMetrics?: { [key: string]: number }
+        telemetryMetrics?: { [key: string]: number },
     ): Promise<RecognizerResult> {
         const recognizerResult: RecognizerResult = {
             text: activity.text,
@@ -60,7 +60,7 @@ export class ValueRecognizer extends AdaptiveRecognizer {
             dialogContext,
             TelemetryLoggerConstants.ValueRecognizerResultEvent,
             this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties, dialogContext),
-            telemetryMetrics
+            telemetryMetrics,
         );
 
         return recognizerResult;

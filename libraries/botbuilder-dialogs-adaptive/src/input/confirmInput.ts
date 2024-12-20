@@ -31,7 +31,6 @@ import {
     recognizeChoices,
 } from 'botbuilder-dialogs';
 
-// eslint-disable-next-line import/no-extraneous-dependencies
 import * as Recognizers from '@microsoft/recognizers-text-choice';
 import { ChoiceOptionsSet } from './choiceOptionsSet';
 

@@ -14,14 +14,18 @@ import { BeginDialogConfiguration, DynamicBeginDialog } from './actions';
  * Internal serializer for `DynamicBeginDialog` which bind the x.dialog resourceId to the DynamicBeginDialog.dialog property.
  */
 export class DynamicBeginDialogDeserializer
-    implements CustomDeserializer<DynamicBeginDialog, BeginDialogConfiguration> {
+    implements CustomDeserializer<DynamicBeginDialog, BeginDialogConfiguration>
+{
     /**
      * Intializes an instance of `DynamicBeginDialogDeserializer`.
      *
      * @param _resourceExplorer The `ResourceExplorer` used by the deserializer.
      * @param _resourceId The resource id of the dynamic dialog.
      */
-    constructor(private readonly _resourceExplorer: ResourceExplorer, private readonly _resourceId: string) {}
+    constructor(
+        private readonly _resourceExplorer: ResourceExplorer,
+        private readonly _resourceId: string,
+    ) {}
 
     /**
      * The method that loads the configuration object to a `DynamicBeginDialog` object.

@@ -397,7 +397,7 @@ export abstract class InputDialog extends Dialog implements InputDialogConfigura
     protected trackGeneratorResultEvent(
         dc: DialogContext,
         activityTemplate: TemplateInterface<Partial<Activity>, DialogStateManager>,
-        msg: Partial<Activity>
+        msg: Partial<Activity>,
     ): void {
         this.telemetryClient.trackEvent({
             name: TelemetryLoggerConstants.GeneratorResultEvent,
@@ -424,7 +424,7 @@ export abstract class InputDialog extends Dialog implements InputDialogConfigura
         channelId: string,
         choices: Choice[],
         style: ListStyle,
-        options?: ChoiceFactoryOptions
+        options?: ChoiceFactoryOptions,
     ): Partial<Activity> {
         // Create temporary msg
         let msg: Partial<Activity>;

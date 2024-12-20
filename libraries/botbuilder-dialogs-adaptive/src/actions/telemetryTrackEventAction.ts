@@ -55,7 +55,8 @@ export interface TelemetryTrackEventActionConfiguration extends DialogConfigurat
  */
 export class TelemetryTrackEventAction<O extends object = {}>
     extends Dialog
-    implements TelemetryTrackEventActionConfiguration {
+    implements TelemetryTrackEventActionConfiguration
+{
     static $kind = 'Microsoft.TelemetryTrackEventAction';
 
     /**

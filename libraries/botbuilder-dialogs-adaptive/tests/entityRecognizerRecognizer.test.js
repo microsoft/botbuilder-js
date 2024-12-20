@@ -44,7 +44,7 @@ const getDialogContext = (testName, text, locale = 'en-us') => {
             from: bot,
             locale,
         }),
-        {}
+        {},
     );
 };
 

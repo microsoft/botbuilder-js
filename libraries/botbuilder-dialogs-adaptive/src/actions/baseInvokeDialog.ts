@@ -39,7 +39,8 @@ export interface BaseInvokeDialogConfiguration extends DialogConfiguration {
  */
 export class BaseInvokeDialog<O extends object = {}>
     extends Dialog<O>
-    implements DialogDependencies, BaseInvokeDialogConfiguration {
+    implements DialogDependencies, BaseInvokeDialogConfiguration
+{
     /**
      * Initializes a new instance of the [BaseInvokeDialog](xref:botbuilder-dialogs-adaptive.BaseInvokeDialog) class.
      *

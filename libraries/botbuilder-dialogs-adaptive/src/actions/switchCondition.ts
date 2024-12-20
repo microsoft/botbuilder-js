@@ -39,7 +39,7 @@ type CaseInput = {
 class CasesConverter implements Converter<Array<CaseInput | Case>, Case[]> {
     convert(items: Array<CaseInput | Case>): Case[] {
         return items.map(
-            (item: CaseInput | Case): Case => (item instanceof Case ? item : new Case(item.value, item.actions))
+            (item: CaseInput | Case): Case => (item instanceof Case ? item : new Case(item.value, item.actions)),
         );
     }
 }
@@ -59,7 +59,8 @@ export interface SwitchConditionConfiguration extends DialogConfiguration {
  */
 export class SwitchCondition<O extends object = {}>
     extends Dialog<O>
-    implements DialogDependencies, SwitchConditionConfiguration {
+    implements DialogDependencies, SwitchConditionConfiguration
+{
     static $kind = 'Microsoft.SwitchCondition';
 
     constructor();
@@ -176,8 +177,8 @@ export class SwitchCondition<O extends object = {}>
                         caseScope.value,
                         Expression.orExpression(
                             Expression.equalsExpression(this.condition, new Constant(intVal)),
-                            Expression.equalsExpression(this.condition, new Constant(caseScope.value))
-                        )
+                            Expression.equalsExpression(this.condition, new Constant(caseScope.value)),
+                        ),
                     );
                     continue;
                 }
@@ -188,8 +189,8 @@ export class SwitchCondition<O extends object = {}>
                         caseScope.value,
                         Expression.orExpression(
                             Expression.equalsExpression(this.condition, new Constant(floatVal)),
-                            Expression.equalsExpression(this.condition, new Constant(caseScope.value))
-                        )
+                            Expression.equalsExpression(this.condition, new Constant(caseScope.value)),
+                        ),
                     );
                     continue;
                 }
@@ -200,8 +201,8 @@ export class SwitchCondition<O extends object = {}>
                         caseScope.value,
                         Expression.orExpression(
                             Expression.equalsExpression(this.condition, new Constant(true)),
-                            Expression.equalsExpression(this.condition, new Constant(caseScope.value))
-                        )
+                            Expression.equalsExpression(this.condition, new Constant(caseScope.value)),
+                        ),
                     );
                     continue;
                 }
@@ -211,8 +212,8 @@ export class SwitchCondition<O extends object = {}>
                         caseScope.value,
                         Expression.orExpression(
                             Expression.equalsExpression(this.condition, new Constant(false)),
-                            Expression.equalsExpression(this.condition, new Constant(caseScope.value))
-                        )
+                            Expression.equalsExpression(this.condition, new Constant(caseScope.value)),
+                        ),
                     );
                     continue;
                 }
@@ -221,7 +222,7 @@ export class SwitchCondition<O extends object = {}>
                 const { value } = new ValueExpression(caseScope.value).tryGetValue(dc.state);
                 this._caseExpresssions.set(
                     caseScope.value,
-                    Expression.equalsExpression(this.condition, new Constant(value))
+                    Expression.equalsExpression(this.condition, new Constant(value)),
                 );
             }
         }
@@ -234,7 +235,7 @@ export class SwitchCondition<O extends object = {}>
             const { value, error } = caseCondition.tryEvaluate(dc.state);
             if (error) {
                 throw new Error(
-                    `Expression evaluation resulted in an error. Expression: ${caseCondition.toString()}. Error: ${error}`
+                    `Expression evaluation resulted in an error. Expression: ${caseCondition.toString()}. Error: ${error}`,
                 );
             }
 

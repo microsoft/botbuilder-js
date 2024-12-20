@@ -40,7 +40,7 @@ const getDialogContext = (testName, text, locale = 'en-us') => {
             from: bot,
             locale,
         }),
-        {}
+        {},
     );
 };
 
@@ -69,7 +69,7 @@ describe('EntityRecognizer Tests', function () {
         new RegexEntityRecognizer().configure({
             name: 'size',
             pattern: '(?i)(small|medium|large)',
-        })
+        }),
     );
 
     it('test age', async function () {

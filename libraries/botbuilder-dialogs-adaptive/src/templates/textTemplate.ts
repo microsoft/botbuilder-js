@@ -20,7 +20,8 @@ export interface TextTemplateConfiguration {
  * and processed through registered language generator.
  */
 export class TextTemplate<D = Record<string, unknown>>
-    implements TemplateInterface<string, D>, TextTemplateConfiguration, Configurable {
+    implements TemplateInterface<string, D>, TextTemplateConfiguration, Configurable
+{
     static $kind = 'Microsoft.TextTemplate';
 
     /**

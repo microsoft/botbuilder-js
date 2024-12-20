@@ -44,7 +44,7 @@ export class OnDialogEvent extends OnCondition implements OnDialogEventConfigura
     protected createExpression(): Expression {
         return Expression.andExpression(
             Expression.parse(`${TurnPath.dialogEvent}.name == '${this.event}'`),
-            super.createExpression()
+            super.createExpression(),
         );
     }
 }

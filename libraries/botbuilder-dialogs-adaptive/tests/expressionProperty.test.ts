@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
 import * as assert from 'assert';
 import { DialogExpression, AdaptiveDialog } from '../';
 

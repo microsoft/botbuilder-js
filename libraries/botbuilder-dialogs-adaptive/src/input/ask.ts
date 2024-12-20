@@ -111,10 +111,10 @@ export class Ask extends SendActivity implements AskConfiguration {
             lastTrigger &&
             !expected.some(
                 (prop: string): boolean =>
-                    !lastExpectedProperties.some((lastProp: string): boolean => lastProp === prop)
+                    !lastExpectedProperties.some((lastProp: string): boolean => lastProp === prop),
             ) &&
             !lastExpectedProperties.some(
-                (lastProp: string): boolean => !expected.some((prop: string): boolean => prop === lastProp)
+                (lastProp: string): boolean => !expected.some((prop: string): boolean => prop === lastProp),
             ) &&
             lastTrigger.name === trigger.name
         ) {

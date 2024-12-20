@@ -15,6 +15,13 @@ import {
     tokenExchangeOperationName,
     tokenResponseEventName,
     verifyStateOperationName,
+    Activity,
+    ActivityTypes,
+    InputHints,
+    StatusCodes,
+    TokenExchangeInvokeRequest,
+    TokenResponse,
+    TurnContext,
 } from 'botbuilder';
 
 import {
@@ -24,16 +31,6 @@ import {
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
-
-import {
-    Activity,
-    ActivityTypes,
-    InputHints,
-    StatusCodes,
-    TokenExchangeInvokeRequest,
-    TokenResponse,
-    TurnContext,
-} from 'botbuilder';
 
 import {
     Converter,

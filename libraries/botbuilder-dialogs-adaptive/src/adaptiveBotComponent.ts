@@ -272,8 +272,8 @@ export class AdaptiveBotComponent extends BotComponent {
                                 loader: new DynamicBeginDialogDeserializer(resourceExplorer, resourceId),
                             }));
                     },
-                }
-            )
+                },
+            ),
         );
     }
 }

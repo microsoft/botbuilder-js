@@ -60,7 +60,7 @@ export class CrossTrainedRecognizerSet extends AdaptiveRecognizer implements Cro
         dialogContext: DialogContext,
         activity: Activity,
         telemetryProperties?: Record<string, string>,
-        telemetryMetrics?: Record<string, number>
+        telemetryMetrics?: Record<string, number>,
     ): Promise<RecognizerResult> {
         if (!this.recognizers.length) {
             return {
@@ -80,11 +80,11 @@ export class CrossTrainedRecognizerSet extends AdaptiveRecognizer implements Cro
                     dialogContext,
                     activity,
                     telemetryProperties,
-                    telemetryMetrics
+                    telemetryMetrics,
                 );
                 result['id'] = recognizer.id;
                 return result;
-            })
+            }),
         );
 
         const result = this.processResults(results);
@@ -92,7 +92,7 @@ export class CrossTrainedRecognizerSet extends AdaptiveRecognizer implements Cro
             dialogContext,
             TelemetryLoggerConstants.CrossTrainedRecognizerSetResultEvent,
             this.fillRecognizerResultTelemetryProperties(result, telemetryProperties, dialogContext),
-            telemetryMetrics
+            telemetryMetrics,
         );
         return result;
     }
@@ -162,7 +162,7 @@ export class CrossTrainedRecognizerSet extends AdaptiveRecognizer implements Cro
                     // filter out redirect results and return `ChooseIntent`.
                     const recognizersWithRealIntents = pickBy(
                         recognizerResults,
-                        (value) => !this.isRedirect(getTopScoringIntent(value).intent)
+                        (value) => !this.isRedirect(getTopScoringIntent(value).intent),
                     );
                     return this.createChooseIntentResult(recognizersWithRealIntents);
                 }

@@ -36,7 +36,7 @@ export class LanguageResourceLoader {
                 const suffix = suffixs[index];
                 const resourcesWithSuffix = allResouces.filter(
                     (u): boolean =>
-                        this.parseLGFileName(u.id).language.toLocaleLowerCase() === suffix.toLocaleLowerCase()
+                        this.parseLGFileName(u.id).language.toLocaleLowerCase() === suffix.toLocaleLowerCase(),
                 );
                 resourcesWithSuffix.forEach((u): void => {
                     const resourceName = u.id;
@@ -57,7 +57,7 @@ export class LanguageResourceLoader {
 
             if (resourceMapping.has(locale)) {
                 const resourcesWithEmptySuffix = allResouces.filter(
-                    (u): boolean => this.parseLGFileName(u.id).language === ''
+                    (u): boolean => this.parseLGFileName(u.id).language === '',
                 );
                 resourcesWithEmptySuffix.forEach((u): void => {
                     const resourceName = u.id;
@@ -133,7 +133,7 @@ export class LanguageResourceLoader {
         for (const currentLocale of resourceMapping.keys()) {
             const currentResourcePool: Resource[] = resourceMapping.get(currentLocale);
             const existLocale = Array.from(resourcePoolDict.keys()).find((u) =>
-                this.hasSameResourcePool(resourcePoolDict.get(u), currentResourcePool)
+                this.hasSameResourcePool(resourcePoolDict.get(u), currentResourcePool),
             );
             if (existLocale === undefined) {
                 resourcePoolDict.set(currentLocale, currentResourcePool);

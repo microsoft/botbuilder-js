@@ -22,7 +22,8 @@ export interface TemplateEngineLanguageGeneratorConfiguration {
  */
 export class TemplateEngineLanguageGenerator<T = unknown, D extends Record<string, unknown> = Record<string, unknown>>
     extends Configurable
-    implements LanguageGenerator<T, D>, TemplateEngineLanguageGeneratorConfiguration {
+    implements LanguageGenerator<T, D>, TemplateEngineLanguageGeneratorConfiguration
+{
     static $kind = 'Microsoft.TemplateEngineLanguageGenerator';
 
     private readonly DEFAULTLABEL: string = 'Unknown';

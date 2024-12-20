@@ -162,7 +162,7 @@ export class ForEachPage<O extends object = {}> extends ActionScope<O> implement
      */
     protected async onContinueLoop(
         dc: DialogContext,
-        _actionScopeResult: ActionScopeResult
+        _actionScopeResult: ActionScopeResult,
     ): Promise<DialogTurnResult> {
         return await this.nextPage(dc);
     }

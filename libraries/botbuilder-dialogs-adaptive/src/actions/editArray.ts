@@ -152,7 +152,7 @@ export class EditArray<O extends object = {}> extends Dialog<O> implements EditA
 
         if (!this.itemsProperty) {
             throw new Error(
-                `EditArray: "${this.changeType.toString()}" operation couldn't be performed because the itemsProperty wasn't specified.`
+                `EditArray: "${this.changeType.toString()}" operation couldn't be performed because the itemsProperty wasn't specified.`,
             );
         }
 
@@ -224,7 +224,7 @@ export class EditArray<O extends object = {}> extends Dialog<O> implements EditA
             throw new Error(
                 `EditArray: "${this.changeType.toString()}" operation couldn't be performed for list "${
                     this.itemsProperty
-                }" because a value wasn't specified.`
+                }" because a value wasn't specified.`,
             );
         }
     }

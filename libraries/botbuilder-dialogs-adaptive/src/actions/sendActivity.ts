@@ -102,7 +102,7 @@ export class SendActivity<O extends object = {}> extends Dialog<O> implements Se
             {
                 utterance: dc.context.activity.text || '',
             },
-            options
+            options,
         );
 
         const activityResult = await this.activity.bind(dc, data);

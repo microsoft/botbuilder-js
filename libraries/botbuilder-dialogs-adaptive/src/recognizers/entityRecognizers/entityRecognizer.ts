@@ -28,7 +28,7 @@ export class EntityRecognizer extends AdaptiveRecognizer {
         dialogContext: DialogContext,
         activity: Partial<Activity>,
         _telemetryProperties?: Record<string, string>,
-        _telemetryMetrics?: Record<string, number>
+        _telemetryMetrics?: Record<string, number>,
     ): Promise<RecognizerResult> {
         // Identify matched intents
         const text = activity.text ?? '';
@@ -56,7 +56,7 @@ export class EntityRecognizer extends AdaptiveRecognizer {
             dialogContext,
             dialogContext.context.activity.text,
             dialogContext.context.activity.locale,
-            entityPool
+            entityPool,
         );
         entityPool.push(...newEntities);
 
@@ -109,7 +109,7 @@ export class EntityRecognizer extends AdaptiveRecognizer {
         _dialogContext: DialogContext,
         _text: string,
         _locale: string,
-        _entities: Entity[]
+        _entities: Entity[],
     ): Promise<Entity[]> {
         return [];
     }

@@ -226,14 +226,14 @@ export class OnCondition extends Configurable implements DialogDependencies, OnC
                     return { value: changed, error: undefined };
                 },
                 ReturnType.Boolean,
-                FunctionUtils.validateUnary
+                FunctionUtils.validateUnary,
             );
             allExpressions.push(
                 new Expression(
                     ExpressionType.Ignore,
                     Expression.lookup(ExpressionType.Ignore),
-                    new Expression(evaluator.type, evaluator)
-                )
+                    new Expression(evaluator.type, evaluator),
+                ),
             );
         }
 

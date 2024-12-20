@@ -22,7 +22,7 @@ export abstract class AdaptiveRecognizer extends Recognizer implements AdaptiveR
      * (Optional) Flag that designates whether personally identifiable information (PII) should log to telemetry.
      */
     logPersonalInformation: BoolExpression = new BoolExpression(
-        '=settings.runtimeSettings.telemetry.logPersonalInformation'
+        '=settings.runtimeSettings.telemetry.logPersonalInformation',
     );
 
     /**
@@ -36,11 +36,11 @@ export abstract class AdaptiveRecognizer extends Recognizer implements AdaptiveR
     protected fillRecognizerResultTelemetryProperties(
         recognizerResult: RecognizerResult,
         telemetryProperties: Record<string, string>,
-        dialogContext: DialogContext
+        dialogContext: DialogContext,
     ): Record<string, string> {
         if (!dialogContext) {
             throw new Error(
-                'DialogContext needed for state in AdaptiveRecognizer.fillRecognizerResultTelemetryProperties method.'
+                'DialogContext needed for state in AdaptiveRecognizer.fillRecognizerResultTelemetryProperties method.',
             );
         }
         const { intent, score } = getTopScoringIntent(recognizerResult);
@@ -51,7 +51,7 @@ export abstract class AdaptiveRecognizer extends Recognizer implements AdaptiveR
             Intents: intentsCount > 0 ? JSON.stringify(recognizerResult.intents) : undefined,
             Entities: recognizerResult.entities ? JSON.stringify(recognizerResult.entities) : undefined,
             AdditionalProperties: JSON.stringify(
-                omit(recognizerResult, ['text', 'alteredText', 'intents', 'entities'])
+                omit(recognizerResult, ['text', 'alteredText', 'intents', 'entities']),
             ),
         };
 
