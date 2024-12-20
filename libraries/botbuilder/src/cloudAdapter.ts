@@ -95,7 +95,7 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
         req: Request,
         socket: INodeDuplex,
         head: INodeBuffer,
-        logic: (context: TurnContext) => Promise<void>
+        logic: (context: TurnContext) => Promise<void>,
     ): Promise<void>;
 
     /**

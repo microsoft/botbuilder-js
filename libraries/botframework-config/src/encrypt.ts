@@ -6,6 +6,7 @@
  */
 
 import crypto from 'crypto';
+import { version as nodeVersion } from 'process';
 
 /**
  * @private
@@ -100,10 +101,26 @@ export function decryptString(encryptedValue: string, secret: string): string {
  * @param secret
  */
 export function legacyDecrypt(encryptedValue: string, secret: string): string {
-    // LEGACY for pre standardized SHA256 encryption, this uses some undocumented nodejs MD5 hash internally and is deprecated
-    const decipher: crypto.Decipher = crypto.createDecipher('aes192', secret);
-    let value: string = decipher.update(encryptedValue, 'hex', 'utf8');
-    value += decipher.final('utf8');
+    const UNSUPPORTED_VERSION = 'v22.0.0';
+    if (!isNodeCompatible(nodeVersion, UNSUPPORTED_VERSION)) {
+        throw new Error(`This method is not available for Node.js versions over ${UNSUPPORTED_VERSION}.`);
+    } else {
+        // LEGACY for pre standardized SHA256 encryption, this uses some undocumented nodejs MD5 hash internally and is deprecated
+        const decipher: crypto.Decipher = crypto.createDecipher('aes192', secret);
+        let value: string = decipher.update(encryptedValue, 'hex', 'utf8');
+        value += decipher.final('utf8');
 
-    return value;
+        return value;
+    }
+}
+
+/**
+ * private
+ *
+ * @param currentVersion The current version of Node.js.
+ * @param minVersion The minimum unsupported version.
+ * @returns true if the current version of Node is lower than the unsupported version.
+ */
+function isNodeCompatible(currentVersion: string, minVersion: string): boolean {
+    return minVersion.localeCompare(currentVersion) > 0;
 }

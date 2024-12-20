@@ -30,7 +30,7 @@ async function TestJson(
     telemetryProperties,
     telemetryMetrics,
     logPersonalInformation,
-    useUtteranceInsteadOfContext = false
+    useUtteranceInsteadOfContext = false,
 ) {
     if (includeAllIntents === undefined) includeAllIntents = true;
     if (includeInstance === undefined) includeInstance = true;
@@ -117,7 +117,7 @@ describe('LuisRecognizer V3', function () {
 
     if (!mockLuis && endpointKey === 'MockedKey') {
         console.warn(
-            'WARNING: skipping LuisRecognizer test suite because the LUISAPPKEY environment variable is not defined'
+            'WARNING: skipping LuisRecognizer test suite because the LUISAPPKEY environment variable is not defined',
         );
         return;
     }
@@ -136,7 +136,7 @@ describe('LuisRecognizer V3', function () {
             undefined,
             undefined,
             undefined,
-            useUtteranceInsteadOfContext
+            useUtteranceInsteadOfContext,
         );
     });
 
@@ -154,7 +154,7 @@ describe('LuisRecognizer V3', function () {
             undefined,
             undefined,
             undefined,
-            useUtteranceInsteadOfContext
+            useUtteranceInsteadOfContext,
         );
     });
 
