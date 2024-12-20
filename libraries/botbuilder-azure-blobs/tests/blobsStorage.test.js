@@ -26,7 +26,7 @@ describe('BlobsStorage', function () {
             assert.throws(() => new BlobsStorage(null, null, null, [], {}), 'throws for missing url');
             assert.throws(
                 () => new BlobsStorage(null, null, null, 'url', {}),
-                ReferenceError('Invalid credential type.')
+                ReferenceError('Invalid credential type.'),
             );
         });
 
@@ -40,7 +40,7 @@ describe('BlobsStorage', function () {
                 null,
                 null,
                 'https://test.blob.core.windows.net/blob',
-                new StorageSharedKeyCredential('accountName', 'accountKey')
+                new StorageSharedKeyCredential('accountName', 'accountKey'),
             );
         });
     });
@@ -52,6 +52,21 @@ describe('BlobsStorage', function () {
 
         maybeIt('should write a set of values', async () => {
             await client.write({ foo, bar });
+        });
+
+        maybeIt('should fail with eTag conflict error', async () => {
+            const changes = {
+                item1: {
+                    key1: 'value1',
+                    eTag: 'etag1',
+                },
+                item2: {
+                    key2: 'value2',
+                    eTag: 'etag1',
+                },
+            };
+
+            await assert.rejects(() => client.write(changes), 'Storage: error writing "item2" due to eTag conflict.');
         });
     });
 
@@ -87,6 +102,7 @@ describe('BlobsStorage', function () {
         }
 
         let sandbox;
+
         beforeEach(function () {
             sandbox = sinon.createSandbox({});
         });

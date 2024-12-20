@@ -90,7 +90,7 @@ describe('TelemetryWaterfall', function () {
             if (telemetry.name === 'WaterfallStep') {
                 assert(
                     telemetry.properties.StepName === 'Step' + (count + 1) + 'of' + dialog.steps.length,
-                    'waterfallstep step name is wrong'
+                    'waterfallstep step name is wrong',
                 );
                 count++;
             }
@@ -252,23 +252,23 @@ describe('TelemetryWaterfall', function () {
 
         assert(
             component.findDialog('secondary').telemetryClient instanceof NullTelemetryClient,
-            'should be nulltelemetryclient by default'
+            'should be nulltelemetryclient by default',
         );
         assert(
             component.telemetryClient instanceof NullTelemetryClient,
-            'child dialog should have same telemetry client'
+            'child dialog should have same telemetry client',
         );
 
         component.telemetryClient = new TestClient();
 
         assert(
             component.findDialog('secondary').telemetryClient instanceof TestClient,
-            'child dialogs should now be TestClient'
+            'child dialogs should now be TestClient',
         );
         assert(component.telemetryClient instanceof TestClient, 'component should have a testclient as well');
         assert(
             component.telemetryClient === component.findDialog('secondary').telemetryClient,
-            'component should have same client as children'
+            'component should have same client as children',
         );
 
         component.addDialog(new WaterfallDialog('third'), [
@@ -279,29 +279,29 @@ describe('TelemetryWaterfall', function () {
 
         assert(
             component.findDialog('third').telemetryClient instanceof TestClient,
-            'child dialogs should now be TestClient'
+            'child dialogs should now be TestClient',
         );
         assert(
             component.findDialog('secondary').telemetryClient instanceof TestClient,
-            'child dialogs should now be TestClient'
+            'child dialogs should now be TestClient',
         );
         assert(
             component.telemetryClient === component.findDialog('third').telemetryClient,
-            'component should have same client as new children'
+            'component should have same client as new children',
         );
         assert(
             component.findDialog('third').telemetryClient === component.findDialog('secondary').telemetryClient,
-            'children should have identical clients'
+            'children should have identical clients',
         );
 
         component.telemetryClient = null;
         assert(
             component.findDialog('secondary').telemetryClient instanceof NullTelemetryClient,
-            'child dialog should be reset to nulltelemetryclient'
+            'child dialog should be reset to nulltelemetryclient',
         );
         assert(
             component.telemetryClient instanceof NullTelemetryClient,
-            'component should be reset to nulltelemetryclient'
+            'component should be reset to nulltelemetryclient',
         );
     });
 });

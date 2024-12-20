@@ -22,7 +22,7 @@ export class ConfigurationResourceExporer extends ResourceExplorer {
         this.addFolders(
             applicationRoot,
             ['node_modules'], // Composer copies to `dialogs/imported` so `node_modules` will contain dupes
-            configuration.string(['NODE_ENV']) === 'dev' // watch in dev only!
+            configuration.string(['NODE_ENV']) === 'dev', // watch in dev only!
         );
     }
 }
