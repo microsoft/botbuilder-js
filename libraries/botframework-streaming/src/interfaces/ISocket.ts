@@ -18,10 +18,7 @@ export interface ISocket {
     write(buffer: INodeBuffer);
     connect(serverAddress: string): Promise<void>;
     close();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     setOnMessageHandler(handler: (x: any) => void);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     setOnErrorHandler(handler: (x: any) => void);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     setOnCloseHandler(handler: (x: any) => void);
 }

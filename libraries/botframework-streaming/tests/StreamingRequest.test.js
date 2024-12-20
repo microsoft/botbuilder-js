@@ -46,7 +46,7 @@ describe('Streaming Extensions Request tests', function () {
 
         expect(() => {
             r.addStream(undefined);
-        }).throws;
+        }).to.throw();
     });
 
     it('is able to add streams to the request', function () {

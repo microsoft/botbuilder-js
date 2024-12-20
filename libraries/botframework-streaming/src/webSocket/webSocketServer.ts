@@ -53,7 +53,7 @@ export class WebSocketServer implements IStreamingTransportServer {
             this._requestHandler,
             this._requestManager,
             this._sender,
-            this._receiver
+            this._receiver,
         );
 
         this._closedSignal = (x: string): string => {

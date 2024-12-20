@@ -13,7 +13,6 @@ import { IReceiveResponse } from '../interfaces';
 class PendingRequest {
     requestId: string;
     resolve: (response: IReceiveResponse) => void;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     reject: (reason?: any) => void;
 }
 

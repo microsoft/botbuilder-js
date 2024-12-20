@@ -25,7 +25,11 @@ export class RequestDisassembler extends PayloadDisassembler {
      * @param id The ID of this disassembler.
      * @param request The request to be disassembled.
      */
-    constructor(sender: PayloadSender, id: string, public request?: StreamingRequest) {
+    constructor(
+        sender: PayloadSender,
+        id: string,
+        public request?: StreamingRequest,
+    ) {
         super(sender, id);
     }
 

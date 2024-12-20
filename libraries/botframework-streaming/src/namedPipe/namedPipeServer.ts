@@ -32,7 +32,11 @@ export class NamedPipeServer implements IStreamingTransportServer {
      * @param requestHandler Optional [RequestHandler](xref:botframework-streaming.RequestHandler) to process incoming messages received by this client.
      * @param autoReconnect Deprecated: Automatic reconnection is the default behavior.
      */
-    constructor(private readonly baseName: string, requestHandler?: RequestHandler, autoReconnect?: boolean) {
+    constructor(
+        private readonly baseName: string,
+        requestHandler?: RequestHandler,
+        autoReconnect?: boolean,
+    ) {
         if (!baseName) {
             throw new TypeError('NamedPipeServer: Missing baseName parameter');
         }

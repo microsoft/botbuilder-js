@@ -82,7 +82,7 @@ describe('StreamManager', function () {
         const stream = new SubscribableStream();
         stream.write('hello');
         expect(() => sm.closeStream(pa.id)).to.not.throw();
-        expect(called).to.be.true;
+        expect(called).to.equal(true);
     });
 
     it('does not throw when asked to close a stream that does not exist', function () {
@@ -95,6 +95,6 @@ describe('StreamManager', function () {
             end: true,
         };
         expect(() => sm.closeStream(head.id)).to.not.throw();
-        expect(called).to.be.false;
+        expect(called).to.equal(false);
     });
 });

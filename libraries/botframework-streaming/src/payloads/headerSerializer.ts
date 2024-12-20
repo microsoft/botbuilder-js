@@ -41,7 +41,7 @@ export class HeaderSerializer {
             this.headerLengthPadder(header.payloadLength, this.LengthLength, '0'),
             this.LengthOffset,
             this.LengthLength,
-            this.Encoding
+            this.Encoding,
         );
         buffer.write(this.Delimiter, this.LengthDelimeterOffset, 1, this.Encoding);
         buffer.write(header.id, this.IdOffset);

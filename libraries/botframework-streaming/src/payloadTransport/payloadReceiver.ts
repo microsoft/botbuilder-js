@@ -54,7 +54,7 @@ export class PayloadReceiver {
      */
     subscribe(
         getStream: (header: IHeader) => SubscribableStream,
-        receiveAction: (header: IHeader, stream: SubscribableStream, count: number) => void
+        receiveAction: (header: IHeader, stream: SubscribableStream, count: number) => void,
     ): void {
         this._getStream = getStream;
         this._receiveAction = receiveAction;
@@ -86,7 +86,7 @@ export class PayloadReceiver {
                 let readSoFar = 0;
                 while (readSoFar < PayloadConstants.MaxHeaderLength) {
                     this._receiveHeaderBuffer = await this._receiver.receive(
-                        PayloadConstants.MaxHeaderLength - readSoFar
+                        PayloadConstants.MaxHeaderLength - readSoFar,
                     );
 
                     if (this._receiveHeaderBuffer) {
@@ -108,7 +108,7 @@ export class PayloadReceiver {
                     ) {
                         const count = Math.min(
                             header.payloadLength - bytesActuallyRead,
-                            PayloadConstants.MaxPayloadLength
+                            PayloadConstants.MaxPayloadLength,
                         );
                         this._receivePayloadBuffer = await this._receiver.receive(count);
                         bytesActuallyRead += this._receivePayloadBuffer.byteLength;

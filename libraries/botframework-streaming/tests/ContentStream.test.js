@@ -67,7 +67,7 @@ describe('Streaming Extensions ContentStream Tests ', function () {
     it('does not return the stream when it is is undefined', function () {
         const cs = new ContentStream('1', new PayloadAssembler(streamManager, { id: 'csa1', header: header }));
 
-        expect(cs.getStream()).to.not.be.undefined;
+        expect(cs.getStream()).to.not.equal(undefined);
     });
 
     it('reads a stream of length 0 and returns an empty string', function () {
@@ -76,7 +76,7 @@ describe('Streaming Extensions ContentStream Tests ', function () {
             new PayloadAssembler(streamManager, {
                 id: 'csa1',
                 header: { ...header, payloadLength: 0 },
-            })
+            }),
         );
 
         return cs.readAsString().then((data) => {
@@ -93,13 +93,13 @@ describe('Streaming Extensions ContentStream Tests ', function () {
             new PayloadAssembler(streamManager, {
                 id: 'csa1',
                 header: assemblerHeader,
-            })
+            }),
         );
 
         return cs
             .readAsJson()
             .then((data) => {
-                expect(data).to.not.be.undefined;
+                expect(data).to.not.be.undefined();
             })
             .catch((err) => {
                 expect(err.toString()).to.equal('SyntaxError: Unexpected end of JSON input');

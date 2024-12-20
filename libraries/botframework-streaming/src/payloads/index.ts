@@ -12,4 +12,3 @@ export * from './payloadAssemblerManager';
 export * from './payloadTypes';
 export * from './requestManager';
 export * from './sendOperations';
-export * from './streamManager';

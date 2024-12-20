@@ -17,7 +17,7 @@ describe('RequestManager', function () {
         rm.getResponse(REQUEST_ID);
 
         rm.getResponse(REQUEST_ID).catch((reason) =>
-            expect(reason).to.equal(`requestId '${REQUEST_ID}' already exists in RequestManager`)
+            expect(reason).to.equal(`requestId '${REQUEST_ID}' already exists in RequestManager`),
         );
     });
 

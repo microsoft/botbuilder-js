@@ -22,7 +22,7 @@ export class CancelDisassembler {
     constructor(
         private readonly sender: PayloadSender,
         private readonly id: string,
-        private readonly payloadType: PayloadTypes
+        private readonly payloadType: PayloadTypes,
     ) {}
 
     /**

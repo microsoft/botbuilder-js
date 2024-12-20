@@ -20,7 +20,6 @@ export class NamedPipeTransport implements ITransportSender, ITransportReceiver 
     private _activeOffset = 0;
     private _activeReceiveCount = 0;
     private _activeReceiveResolve: (resolve: INodeBuffer) => void;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private _activeReceiveReject: (reason?: any) => void;
 
     /**

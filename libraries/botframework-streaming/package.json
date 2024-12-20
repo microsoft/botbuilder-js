@@ -32,7 +32,6 @@
   "dependencies": {
     "@types/node": "18.19.47",
     "@types/ws": "^6.0.3",
-    "eslint-plugin-only-warn": "^1.1.0",
     "uuid": "^10.0.0",
     "ws": "^7.5.10"
   },

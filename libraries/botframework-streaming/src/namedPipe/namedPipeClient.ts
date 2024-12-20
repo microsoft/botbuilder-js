@@ -47,7 +47,7 @@ export class NamedPipeClient implements IStreamingTransportClient {
             this._requestHandler,
             this._requestManager,
             this._sender,
-            this._receiver
+            this._receiver,
         );
     }
 
@@ -83,7 +83,6 @@ export class NamedPipeClient implements IStreamingTransportClient {
         return this._protocolAdapter.sendRequest(request);
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private onConnectionDisconnected(sender: Record<string, unknown>, args: any): void {
         if (!this._isDisconnecting) {
             this._isDisconnecting = true;
@@ -101,7 +100,7 @@ export class NamedPipeClient implements IStreamingTransportClient {
                         .then((): void => {})
                         .catch((error): void => {
                             throw new Error(
-                                `Failed to reconnect. Reason: ${error.message} Sender: ${sender} Args: ${args}. `
+                                `Failed to reconnect. Reason: ${error.message} Sender: ${sender} Args: ${args}. `,
                             );
                         });
                 }

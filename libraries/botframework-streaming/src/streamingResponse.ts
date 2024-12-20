@@ -46,7 +46,6 @@ export class StreamingResponse {
      *
      * @param body The JSON text to write to the body of the streaming response.
      */
-    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
     setBody(body: any): void {
         const stream = new SubscribableStream();
         stream.write(JSON.stringify(body), 'utf8');
@@ -56,8 +55,8 @@ export class StreamingResponse {
                     type: 'application/json; charset=utf-8',
                     contentLength: stream.length,
                 },
-                stream
-            )
+                stream,
+            ),
         );
     }
 }
