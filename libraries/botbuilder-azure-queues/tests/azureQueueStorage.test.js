@@ -47,7 +47,7 @@ describe('AzureQueueStorage', function () {
                 new ContinueConversationLater().configure({
                     date: '=addSeconds(utcNow(), 2)',
                     value: 'foo',
-                })
+                }),
             );
 
             dm.initialTurnState.set(DialogTurnStateConstants.queueStorage, queueStorage);
@@ -62,7 +62,7 @@ describe('AzureQueueStorage', function () {
             await adapter.send('hi').startTest();
 
             const { receivedMessageItems } = await new Promise((resolve) => setTimeout(resolve, 2000)).then(() =>
-                queue.receiveMessages()
+                queue.receiveMessages(),
             );
             assert.strictEqual(receivedMessageItems.length, 1);
 

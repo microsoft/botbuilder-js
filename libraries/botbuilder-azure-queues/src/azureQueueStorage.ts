@@ -42,7 +42,7 @@ export class AzureQueueStorage extends QueueStorage {
     async queueActivity(
         activity: Partial<Activity>,
         visibilityTimeout?: number,
-        messageTimeToLive?: number
+        messageTimeToLive?: number,
     ): Promise<string> {
         await this._initialize();
 
