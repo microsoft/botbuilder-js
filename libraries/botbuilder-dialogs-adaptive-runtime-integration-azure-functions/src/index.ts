@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import * as z from 'zod';
 import fs from 'fs';
 import mime from 'mime';
@@ -62,7 +60,7 @@ const extensionContentTypes: Record<string, string> = {
 export function makeTriggers(
     runtimeServices: () => Promise<[ServiceCollection, Configuration]>,
     applicationRoot: string,
-    options: Partial<Options> = {}
+    options: Partial<Options> = {},
 ): Record<string, AzureFunction> {
     const resolvedOptions = TypedOptions.parse(Object.assign({}, defaultOptions, options));
 
@@ -106,8 +104,8 @@ export function makeTriggers(
                                 name: z.string(),
                                 enabled: z.boolean().optional(),
                                 route: z.string(),
-                            })
-                        )
+                            }),
+                        ),
                     ) ?? [];
 
                 const adapterSetting = adapterSettings
@@ -137,7 +135,7 @@ export function makeTriggers(
                     res,
                     async (turnContext) => {
                         await bot.run(turnContext);
-                    }
+                    },
                 );
             } catch (err) {
                 if (resolvedOptions.logErrors) {
@@ -167,7 +165,7 @@ export function makeTriggers(
                     authHeader,
                     conversationId,
                     activityId,
-                    activity
+                    activity,
                 );
 
                 const res = context.res as Response;
@@ -202,8 +200,8 @@ export function makeTriggers(
                 const contents = await new Promise((resolve, reject) =>
                     // eslint-disable-next-line security/detect-non-literal-fs-filename
                     fs.readFile(path.join(staticDirectory, filePath), 'utf8', (err, contents) =>
-                        err ? reject(err) : resolve(contents)
-                    )
+                        err ? reject(err) : resolve(contents),
+                    ),
                 );
 
                 res.status(200);
@@ -235,11 +233,11 @@ export function makeTriggers(
 export function triggers(
     applicationRoot: string,
     settingsDirectory: string,
-    options: Partial<Options> = {}
+    options: Partial<Options> = {},
 ): Record<string, AzureFunction> {
     return makeTriggers(
         memoize(() => getRuntimeServices(applicationRoot, settingsDirectory)),
         applicationRoot,
-        options
+        options,
     );
 }

@@ -59,12 +59,12 @@ export class ActiveLearningUtils {
                     ActiveLearningUtils.includeForClustering(
                         prevScore,
                         qnaSearchResults[i].score * 100,
-                        ActiveLearningUtils.PreviousLowScoreVariationMultiplier
+                        ActiveLearningUtils.PreviousLowScoreVariationMultiplier,
                     ) &&
                     this.includeForClustering(
                         topAnswerScore,
                         qnaSearchResults[i].score * 100,
-                        ActiveLearningUtils.MaxLowScoreVariationMultiplier
+                        ActiveLearningUtils.MaxLowScoreVariationMultiplier,
                     )
                 ) {
                     prevScore = qnaSearchResults[i].score * 100;

@@ -14,7 +14,15 @@ import { CommonTokenStream } from 'antlr4ts/CommonTokenStream';
 import { Diagnostic, DiagnosticSeverity } from './diagnostic';
 import { ErrorListener } from './errorListener';
 import { ExpressionParser } from 'adaptive-expressions';
-import { FileContext, LGFileParser } from './generated/LGFileParser';
+import {
+    FileContext,
+    LGFileParser,
+    ErrorDefinitionContext,
+    ImportDefinitionContext,
+    OptionDefinitionContext,
+    TemplateBodyContext,
+    TemplateDefinitionContext,
+} from './generated/LGFileParser';
 import { LGFileLexer } from './generated/LGFileLexer';
 import { LGResource } from './lgResource';
 import { LGTemplateLexer } from './generated/LGTemplateLexer';
@@ -35,14 +43,6 @@ import {
     LGTemplateParser,
     StructuredTemplateBodyContext,
 } from './generated/LGTemplateParser';
-
-import {
-    ErrorDefinitionContext,
-    ImportDefinitionContext,
-    OptionDefinitionContext,
-    TemplateBodyContext,
-    TemplateDefinitionContext,
-} from './generated/LGFileParser';
 
 export declare type ImportResolverDelegate = (lgResource: LGResource, resourceId: string) => LGResource;
 
@@ -76,7 +76,7 @@ export class TemplatesParser {
     static parseFile(
         filePath: string,
         importResolver?: ImportResolverDelegate,
-        expressionParser?: ExpressionParser
+        expressionParser?: ExpressionParser,
     ): Templates {
         const fullPath = TemplateExtensions.normalizePath(filePath);
         const content = fs.readFileSync(fullPath, 'utf-8');
@@ -98,7 +98,7 @@ export class TemplatesParser {
         content: string,
         id = '',
         importResolver?: ImportResolverDelegate,
-        expressionParser?: ExpressionParser
+        expressionParser?: ExpressionParser,
     ): Templates {
         const resource = new LGResource(id, id, content);
         return TemplatesParser.parseResource(resource, importResolver, expressionParser);
@@ -115,7 +115,7 @@ export class TemplatesParser {
     static parseResource(
         resource: LGResource,
         importResolver?: ImportResolverDelegate,
-        expressionParser?: ExpressionParser
+        expressionParser?: ExpressionParser,
     ): Templates {
         return TemplatesParser.innerParseResource(resource, importResolver, expressionParser);
     }
@@ -141,7 +141,6 @@ export class TemplatesParser {
         newTemplates.options = originalTemplates.options;
         newTemplates.namedReferences = originalTemplates.namedReferences;
         try {
-            // eslint-disable-next-line @typescript-eslint/no-use-before-define
             const resource = new LGResource(id, id, content);
             newTemplates = new TemplatesTransformer(newTemplates).transform(this.antlrParseTemplates(resource));
             newTemplates.references = this.getReferences(newTemplates)
@@ -203,7 +202,7 @@ export class TemplatesParser {
         importResolver?: ImportResolverDelegate,
         expressionParser?: ExpressionParser,
         cachedTemplates: Map<string, Templates> = new Map<string, Templates>(),
-        parentTemplates: Templates[] = []
+        parentTemplates: Templates[] = [],
     ): Templates {
         if (!resource) {
             throw new Error('lg resource is empty.');
@@ -224,7 +223,6 @@ export class TemplatesParser {
         }
 
         try {
-            // eslint-disable-next-line @typescript-eslint/no-use-before-define
             templates = new TemplatesTransformer(templates).transform(this.antlrParseTemplates(resource));
             templates.references = this.getReferences(templates, cachedTemplates, parentTemplates);
             const semanticErrors = new StaticChecker(templates).check();
@@ -267,7 +265,7 @@ export class TemplatesParser {
     private static getReferences(
         file: Templates,
         cachedTemplates: Map<string, Templates> = new Map<string, Templates>(),
-        parentTemplates: Templates[] = []
+        parentTemplates: Templates[] = [],
     ): Templates[] {
         const resourcesFound = new Set<Templates>();
         this.resolveImportResources(file, resourcesFound, cachedTemplates, parentTemplates);
@@ -283,7 +281,7 @@ export class TemplatesParser {
         start: Templates,
         resourcesFound: Set<Templates>,
         cachedTemplates: Map<string, Templates>,
-        parentTemplates: Templates[]
+        parentTemplates: Templates[],
     ): void {
         resourcesFound.add(start);
         parentTemplates.push(start);
@@ -298,7 +296,7 @@ export class TemplatesParser {
                     importItem.sourceRange.range,
                     error.message,
                     DiagnosticSeverity.Error,
-                    start.source
+                    start.source,
                 );
                 throw new TemplateException(error.message, [diagnostic]);
             }
@@ -312,7 +310,7 @@ export class TemplatesParser {
                     importItem.sourceRange.range,
                     errorMsg,
                     DiagnosticSeverity.Error,
-                    start.source
+                    start.source,
                 );
                 throw new TemplateException(errorMsg, [diagnostic]);
             }
@@ -325,7 +323,7 @@ export class TemplatesParser {
                     start.importResolver,
                     start.expressionParser,
                     cachedTemplates,
-                    parentTemplates
+                    parentTemplates,
                 );
                 start.namedReferences[importItem.alias] = childResource;
                 continue;
@@ -342,7 +340,7 @@ export class TemplatesParser {
                         start.importResolver,
                         start.expressionParser,
                         cachedTemplates,
-                        parentTemplates
+                        parentTemplates,
                     );
                     cachedTemplates.set(resource.id, childResource);
                 }
@@ -413,8 +411,8 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<void> impleme
             this.templates.diagnostics.push(
                 this.buildTemplatesDiagnostic(
                     TemplateErrors.syntaxError(`Unexpected content: '${lineContent}'`),
-                    context
-                )
+                    context,
+                ),
             );
         }
     }
@@ -443,7 +441,7 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<void> impleme
                 const asAliasArray = asAlias.split(/\s+/);
                 if (asAliasArray.length !== 2 || asAliasArray[0] !== 'as') {
                     this.templates.diagnostics.push(
-                        this.buildTemplatesDiagnostic(TemplateErrors.importFormatError, context)
+                        this.buildTemplatesDiagnostic(TemplateErrors.importFormatError, context),
                     );
                     return;
                 } else {
@@ -489,7 +487,7 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<void> impleme
         if (this.templates.toArray().some((u): boolean => u.name === templateName)) {
             const diagnostic = this.buildTemplatesDiagnostic(
                 TemplateErrors.duplicatedTemplateInSameTemplate(templateName),
-                context.templateNameLine()
+                context.templateNameLine(),
             );
             this.templates.diagnostics.push(diagnostic);
         } else {
@@ -515,7 +513,7 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<void> impleme
             if (!this.templateNamePartRegex.test(id)) {
                 const diagnostic = this.buildTemplatesDiagnostic(
                     TemplateErrors.invalidTemplateName(templateName),
-                    context
+                    context,
                 );
                 this.templates.diagnostics.push(diagnostic);
                 break;
@@ -543,7 +541,7 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<void> impleme
             const diagnostic = this.buildTemplatesDiagnostic(
                 TemplateErrors.noTemplateBody(template.name),
                 context,
-                DiagnosticSeverity.Warning
+                DiagnosticSeverity.Warning,
             );
             this.templates.diagnostics.push(diagnostic);
         } else {
@@ -611,7 +609,7 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<void> impleme
             templateName = templateNameLine.substr(0, leftBracketIndex).trim();
             const paramStr = templateNameLine.substr(
                 leftBracketIndex + 1,
-                templateNameLine.length - leftBracketIndex - 2
+                templateNameLine.length - leftBracketIndex - 2,
             );
             if (paramStr !== undefined && paramStr.trim() !== '') {
                 parameters = paramStr.split(',').map((u: string): string => u.trim());
@@ -627,13 +625,13 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<void> impleme
     private buildTemplatesDiagnostic(
         errorMessage: string,
         context: ParserRuleContext,
-        severity: DiagnosticSeverity = DiagnosticSeverity.Error
+        severity: DiagnosticSeverity = DiagnosticSeverity.Error,
     ): Diagnostic {
         return new Diagnostic(
             TemplateExtensions.convertToRange(context),
             errorMessage,
             severity,
-            this.templates.source
+            this.templates.source,
         );
     }
 }

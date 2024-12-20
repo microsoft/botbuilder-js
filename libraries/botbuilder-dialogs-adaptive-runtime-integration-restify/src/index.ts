@@ -72,7 +72,7 @@ async function resolveOptions(options: Partial<Options>, configuration: Configur
 export async function start(
     applicationRoot: string,
     settingsDirectory: string,
-    options: Partial<Options> = {}
+    options: Partial<Options> = {},
 ): Promise<void> {
     const [services, configuration] = await getRuntimeServices(applicationRoot, settingsDirectory);
 
@@ -104,7 +104,7 @@ export async function makeServer(
     configuration: Configuration,
     applicationRoot: string,
     options: Partial<Options> = {},
-    server = restify.createServer()
+    server = restify.createServer(),
 ): Promise<restify.Server> {
     server.use(restify.plugins.acceptParser(server.acceptable));
     server.use(restify.plugins.queryParser());
@@ -125,12 +125,11 @@ export async function makeServer(
         }
 
         if (res && !res.headersSent) {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const statusCode = typeof (err as any)?.statusCode === 'number' ? (err as any).statusCode : 500;
 
             res.status(statusCode);
             res.json({
-                message: err instanceof Error ? err.message : err ?? 'Internal server error',
+                message: err instanceof Error ? err.message : (err ?? 'Internal server error'),
             });
         }
     };
@@ -155,8 +154,8 @@ export async function makeServer(
                     name: z.string(),
                     enabled: z.boolean().optional(),
                     route: z.string(),
-                })
-            )
+                }),
+            ),
         ) ?? [];
 
     adapters
@@ -187,7 +186,7 @@ export async function makeServer(
                     res.setHeader('Content-Type', contentType);
                 }
             },
-        })
+        }),
     );
 
     server.on('upgrade', async (req, socket, head) => {
