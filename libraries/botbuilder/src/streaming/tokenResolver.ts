@@ -60,7 +60,7 @@ export class TokenResolver {
 
                 setTimeout(
                     () => this.pollForToken(adapter, context, activity, oauthCard.connectionName, pollingTimeout, log),
-                    TokenResolver.PollingIntervalMs
+                    TokenResolver.PollingIntervalMs,
                 );
             }
         }
@@ -75,7 +75,7 @@ export class TokenResolver {
         activity: Activity,
         connectionName: string,
         pollingTimeout: Date,
-        log?: string[]
+        log?: string[],
     ) {
         if (pollingTimeout > new Date()) {
             const tokenApiClientCredentials = context.turnState.get(adapter.TokenApiClientCredentialsKey);
@@ -90,7 +90,7 @@ export class TokenResolver {
                                 TokenResolver.createTokenResponseActivity(
                                     TurnContext.getConversationReference(activity),
                                     tokenResponse.token,
-                                    connectionName
+                                    connectionName,
                                 )
                             );
                             // received a token, send it to the bot and end polling
@@ -121,7 +121,7 @@ export class TokenResolver {
                     if (log) log.push('Polling again');
                     setTimeout(
                         () => this.pollForToken(adapter, context, activity, connectionName, pollingTimeout),
-                        pollingIntervalMs
+                        pollingIntervalMs,
                     );
                 });
         }
@@ -130,7 +130,7 @@ export class TokenResolver {
     private static createTokenResponseActivity(
         relatesTo: Partial<ConversationReference>,
         token: string,
-        connectionName: string
+        connectionName: string,
     ): Partial<Activity> {
         const tokenResponse: Partial<Activity> = {
             id: uuidv4(),

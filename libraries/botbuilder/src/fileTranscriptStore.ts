@@ -142,7 +142,7 @@ export class FileTranscriptStore implements TranscriptStore {
         channelId: string,
         conversationId: string,
         continuationToken?: string,
-        startDate?: Date
+        startDate?: Date,
     ): Promise<PagedResult<Activity>> {
         if (!channelId) {
             throw new Error('Missing channelId');
@@ -160,10 +160,12 @@ export class FileTranscriptStore implements TranscriptStore {
             return pagedResult;
         }
 
+        //eslint-disable-next-line security/detect-non-literal-fs-filename
         const transcriptFolderContents = await readdir(transcriptFolder);
         const include = includeWhen((fileName) => !continuationToken || parse(fileName).name === continuationToken);
         const items = transcriptFolderContents.filter(
-            (transcript) => transcript.endsWith('.json') && withDateFilter(startDate, transcript) && include(transcript)
+            (transcript) =>
+                transcript.endsWith('.json') && withDateFilter(startDate, transcript) && include(transcript),
         );
 
         pagedResult.items = await Promise.all(
@@ -171,9 +173,10 @@ export class FileTranscriptStore implements TranscriptStore {
                 .slice(0, FileTranscriptStore.PageSize)
                 .sort()
                 .map(async (activityFilename) => {
+                    //eslint-disable-next-line security/detect-non-literal-fs-filename
                     const json = await readFile(join(transcriptFolder, activityFilename), 'utf8');
                     return parseActivity(json);
-                })
+                }),
         );
         const { length } = pagedResult.items;
         if (length === FileTranscriptStore.PageSize && items[length]) {
@@ -201,6 +204,8 @@ export class FileTranscriptStore implements TranscriptStore {
         if (!exists) {
             return pagedResult;
         }
+
+        //eslint-disable-next-line security/detect-non-literal-fs-filename
         const channels = await readdir(channelFolder);
         const items = channels.filter(includeWhen((di) => !continuationToken || di === continuationToken));
         pagedResult.items = items
@@ -250,6 +255,7 @@ export class FileTranscriptStore implements TranscriptStore {
         if (!exists) {
             await mkdirp(transcriptPath);
         }
+        //eslint-disable-next-line security/detect-non-literal-fs-filename
         return writeFile(join(transcriptPath, activityFilename), json, 'utf8');
     }
 

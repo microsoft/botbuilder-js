@@ -13,9 +13,11 @@ describe('CloudSkillHandler', function () {
     const handler = new CloudSkillHandler(adapter, bot, factory, authConfig);
 
     let sandbox;
+
     beforeEach(function () {
         sandbox = sinon.createSandbox();
     });
+
     afterEach(function () {
         sandbox.restore();
     });
