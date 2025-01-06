@@ -13,7 +13,7 @@ describe('UserTokenClient', function () {
             it(`should throw with null ${paramName}`, function () {
                 assert.throws(
                     () => UserTokenClient.createTokenExchangeState(...values),
-                    (thrown) => thrown.message.includes(paramName) && thrown.message.includes('received null')
+                    (thrown) => thrown.message.includes(paramName) && thrown.message.includes('received null'),
                 );
             });
         });

@@ -9,6 +9,9 @@ import * as Mappers from './models/mappers';
 import * as operations from './operations';
 import { TeamsConnectorClientContext } from './teamsConnectorClientContext';
 
+/**
+ * Implements a client for the Teams Bot Connector service.
+ */
 class TeamsConnectorClient extends TeamsConnectorClientContext {
     // Operation groups
     teams: operations.Teams;
@@ -27,11 +30,6 @@ class TeamsConnectorClient extends TeamsConnectorClientContext {
 
 // Operation Specifications
 
-export {
-    TeamsConnectorClient,
-    TeamsConnectorClientContext,
-    Models as TeamsConnectorModels,
-    Mappers as TeamsConnectorMappers,
-};
+export { TeamsConnectorClient, Models as TeamsConnectorModels, Mappers as TeamsConnectorMappers };
 
 export * from './operations';
