@@ -23,7 +23,7 @@ export function allowedCallersClaimsValidator(allowedCallers: string[]): Validat
             const appId = JwtTokenValidation.getAppIdFromClaims(claims);
             if (!allowed.has(appId)) {
                 throw new Error(
-                    `Received a request from an application with an appID of "${appId}". To enable requests from this skill, add the skill to your configuration file.`
+                    `Received a request from an application with an appID of "${appId}". To enable requests from this skill, add the skill to your configuration file.`,
                 );
             }
         }

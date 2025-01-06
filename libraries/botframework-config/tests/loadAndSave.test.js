@@ -99,7 +99,7 @@ describe('LoadAndSaveTests', function () {
             await assert.rejects(
                 bf.BotConfiguration.load(saveBotPath),
                 new Error(
-                    'You are attempting to perform an operation which needs access to the secret and --secret is missing'
+                    'You are attempting to perform an operation which needs access to the secret and --secret is missing',
                 ),
             );
         }
@@ -158,12 +158,12 @@ describe('LoadAndSaveTests', function () {
                         const appInsights = config2.services[i];
                         assert.ok(
                             appInsights.instrumentationKey.includes('0000000'),
-                            'failed to decrypt instrumentationKey'
+                            'failed to decrypt instrumentationKey',
                         );
                         assert.equal(
                             appInsights.applicationId,
                             '00000000-0000-0000-0000-000000000007',
-                            'failed to decrypt applicationId'
+                            'failed to decrypt applicationId',
                         );
                         assert.equal(appInsights.apiKeys.key1, 'testKey1', 'failed to decrypt key1');
                         assert.equal(appInsights.apiKeys.key2, 'testKey2', 'failed to decrypt key2');
@@ -175,7 +175,7 @@ describe('LoadAndSaveTests', function () {
                         const storage = config2.services[i];
                         assert.ok(
                             storage.connectionString.includes('UseDevelopmentStorage'),
-                            'failed to decrypt connectionString'
+                            'failed to decrypt connectionString',
                         );
                         assert.equal(storage.container, 'testContainer', 'failed to decrypt container');
                     }
@@ -188,7 +188,7 @@ describe('LoadAndSaveTests', function () {
                         assert.equal(
                             storage.key,
                             'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==',
-                            'failed to decrypt key'
+                            'failed to decrypt key',
                         );
                         assert.equal(storage.database, 'testDatabase', 'failed to decrypt database');
                         assert.equal(storage.collection, 'testCollection', 'failed to decrypt collection');
@@ -264,12 +264,12 @@ describe('LoadAndSaveTests', function () {
                         const appInsights = config2.services[i];
                         assert.ok(
                             !appInsights.instrumentationKey.includes('0000000'),
-                            'failed to encrypt instrumentationKey'
+                            'failed to encrypt instrumentationKey',
                         );
                         assert.equal(
                             appInsights.applicationId,
                             '00000000-0000-0000-0000-000000000007',
-                            'should not encrypt applicationId'
+                            'should not encrypt applicationId',
                         );
                         assert.notEqual(appInsights.apiKeys.key1, 'testKey1', 'failed to encrypt key1');
                         assert.notEqual(appInsights.apiKeys.key2, 'testKey2', 'failed to encrypt key2');
@@ -281,7 +281,7 @@ describe('LoadAndSaveTests', function () {
                         const storage = config2.services[i];
                         assert.ok(
                             !storage.connectionString.includes('UseDevelopmentStorage'),
-                            'failed to encrypt connectionString'
+                            'failed to encrypt connectionString',
                         );
                         assert.equal(storage.container, 'testContainer', 'should not have encrypted container');
                     }
@@ -294,7 +294,7 @@ describe('LoadAndSaveTests', function () {
                         assert.notEqual(
                             storage.key,
                             'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==',
-                            'failed to encrypt key'
+                            'failed to encrypt key',
                         );
                         assert.equal(storage.database, 'testDatabase', 'should not have encrypted database');
                         assert.equal(storage.collection, 'testCollection', 'should not have encrypted collection');

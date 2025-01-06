@@ -14,7 +14,7 @@
 export async function retryAction<T>(
     promise: (n: number) => Promise<T>,
     maxRetries: number,
-    initialDelay = 500
+    initialDelay = 500,
 ): Promise<T | undefined> {
     let delay = initialDelay,
         n = 1;

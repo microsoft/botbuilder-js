@@ -39,13 +39,9 @@ export class OnChooseIntent extends OnIntent implements OnChooseIntentConfigurat
      */
     protected createExpression(): Expression {
         if (this.intents?.length) {
-            const constraints = this.intents.map(
-                (intent: string): Expression => {
-                    return Expression.parse(
-                        `contains(jPath(${TurnPath.recognized}, '.candidates.intent'), '${intent}')`
-                    );
-                }
-            );
+            const constraints = this.intents.map((intent: string): Expression => {
+                return Expression.parse(`contains(jPath(${TurnPath.recognized}, '.candidates.intent'), '${intent}')`);
+            });
             return Expression.andExpression(super.createExpression(), ...constraints);
         }
         return super.createExpression();

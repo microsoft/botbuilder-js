@@ -90,15 +90,15 @@ export class TeamsActivityHandler extends ActivityHandler {
                 switch (context.activity.name) {
                     case 'config/fetch':
                         return ActivityHandler.createInvokeResponse(
-                            await this.handleTeamsConfigFetch(context, context.activity.value)
+                            await this.handleTeamsConfigFetch(context, context.activity.value),
                         );
                     case 'config/submit':
                         return ActivityHandler.createInvokeResponse(
-                            await this.handleTeamsConfigSubmit(context, context.activity.value)
+                            await this.handleTeamsConfigSubmit(context, context.activity.value),
                         );
                     case 'fileConsent/invoke':
                         return ActivityHandler.createInvokeResponse(
-                            await this.handleTeamsFileConsent(context, context.activity.value)
+                            await this.handleTeamsFileConsent(context, context.activity.value),
                         );
 
                     case 'actionableMessage/executeAction':
@@ -107,43 +107,43 @@ export class TeamsActivityHandler extends ActivityHandler {
 
                     case 'composeExtension/queryLink':
                         return ActivityHandler.createInvokeResponse(
-                            await this.handleTeamsAppBasedLinkQuery(context, context.activity.value)
+                            await this.handleTeamsAppBasedLinkQuery(context, context.activity.value),
                         );
 
                     case 'composeExtension/anonymousQueryLink':
                         return ActivityHandler.createInvokeResponse(
-                            await this.handleTeamsAnonymousAppBasedLinkQuery(context, context.activity.value)
+                            await this.handleTeamsAnonymousAppBasedLinkQuery(context, context.activity.value),
                         );
 
                     case 'composeExtension/query':
                         return ActivityHandler.createInvokeResponse(
-                            await this.handleTeamsMessagingExtensionQuery(context, context.activity.value)
+                            await this.handleTeamsMessagingExtensionQuery(context, context.activity.value),
                         );
 
                     case 'composeExtension/selectItem':
                         return ActivityHandler.createInvokeResponse(
-                            await this.handleTeamsMessagingExtensionSelectItem(context, context.activity.value)
+                            await this.handleTeamsMessagingExtensionSelectItem(context, context.activity.value),
                         );
 
                     case 'composeExtension/submitAction':
                         return ActivityHandler.createInvokeResponse(
                             await this.handleTeamsMessagingExtensionSubmitActionDispatch(
                                 context,
-                                context.activity.value
-                            )
+                                context.activity.value,
+                            ),
                         );
 
                     case 'composeExtension/fetchTask':
                         return ActivityHandler.createInvokeResponse(
-                            await this.handleTeamsMessagingExtensionFetchTask(context, context.activity.value)
+                            await this.handleTeamsMessagingExtensionFetchTask(context, context.activity.value),
                         );
 
                     case 'composeExtension/querySettingUrl':
                         return ActivityHandler.createInvokeResponse(
                             await this.handleTeamsMessagingExtensionConfigurationQuerySettingUrl(
                                 context,
-                                context.activity.value
-                            )
+                                context.activity.value,
+                            ),
                         );
 
                     case 'composeExtension/setting':
@@ -156,22 +156,22 @@ export class TeamsActivityHandler extends ActivityHandler {
 
                     case 'task/fetch':
                         return ActivityHandler.createInvokeResponse(
-                            await this.handleTeamsTaskModuleFetch(context, context.activity.value)
+                            await this.handleTeamsTaskModuleFetch(context, context.activity.value),
                         );
 
                     case 'task/submit':
                         return ActivityHandler.createInvokeResponse(
-                            await this.handleTeamsTaskModuleSubmit(context, context.activity.value)
+                            await this.handleTeamsTaskModuleSubmit(context, context.activity.value),
                         );
 
                     case 'tab/fetch':
                         return ActivityHandler.createInvokeResponse(
-                            await this.handleTeamsTabFetch(context, context.activity.value)
+                            await this.handleTeamsTabFetch(context, context.activity.value),
                         );
 
                     case 'tab/submit':
                         return ActivityHandler.createInvokeResponse(
-                            await this.handleTeamsTabSubmit(context, context.activity.value)
+                            await this.handleTeamsTabSubmit(context, context.activity.value),
                         );
 
                     default:
@@ -237,7 +237,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      */
     protected async handleTeamsFileConsent(
         context: TurnContext,
-        fileConsentCardResponse: FileConsentCardResponse
+        fileConsentCardResponse: FileConsentCardResponse,
     ): Promise<void> {
         switch (fileConsentCardResponse.action) {
             case 'accept':
@@ -260,7 +260,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      */
     protected async handleTeamsFileConsentAccept(
         _context: TurnContext,
-        _fileConsentCardResponse: FileConsentCardResponse
+        _fileConsentCardResponse: FileConsentCardResponse,
     ): Promise<void> {
         throw new Error('NotImplemented');
     }
@@ -276,7 +276,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      */
     protected async handleTeamsFileConsentDecline(
         _context: TurnContext,
-        _fileConsentCardResponse: FileConsentCardResponse
+        _fileConsentCardResponse: FileConsentCardResponse,
     ): Promise<void> {
         throw new Error('NotImplemented');
     }
@@ -290,7 +290,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      */
     protected async handleTeamsO365ConnectorCardAction(
         _context: TurnContext,
-        _query: O365ConnectorCardActionQuery
+        _query: O365ConnectorCardActionQuery,
     ): Promise<void> {
         throw new Error('NotImplemented');
     }
@@ -319,7 +319,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      */
     protected async handleTeamsSigninVerifyState(
         _context: TurnContext,
-        _query: SigninStateVerificationQuery
+        _query: SigninStateVerificationQuery,
     ): Promise<void> {
         throw new Error('NotImplemented');
     }
@@ -333,7 +333,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      */
     protected async handleTeamsSigninTokenExchange(
         _context: TurnContext,
-        _query: SigninStateVerificationQuery
+        _query: SigninStateVerificationQuery,
     ): Promise<void> {
         throw new Error('NotImplemented');
     }
@@ -347,7 +347,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      */
     protected async handleTeamsMessagingExtensionCardButtonClicked(
         _context: TurnContext,
-        _cardData: any
+        _cardData: any,
     ): Promise<void> {
         throw new Error('NotImplemented');
     }
@@ -361,7 +361,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      */
     protected async handleTeamsTaskModuleFetch(
         _context: TurnContext,
-        _taskModuleRequest: TaskModuleRequest
+        _taskModuleRequest: TaskModuleRequest,
     ): Promise<TaskModuleResponse> {
         throw new Error('NotImplemented');
     }
@@ -375,7 +375,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      */
     protected async handleTeamsTaskModuleSubmit(
         _context: TurnContext,
-        _taskModuleRequest: TaskModuleRequest
+        _taskModuleRequest: TaskModuleRequest,
     ): Promise<TaskModuleResponse> {
         throw new Error('NotImplemented');
     }
@@ -413,7 +413,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      */
     protected async handleTeamsAppBasedLinkQuery(
         _context: TurnContext,
-        _query: AppBasedLinkQuery
+        _query: AppBasedLinkQuery,
     ): Promise<MessagingExtensionResponse> {
         throw new Error('NotImplemented');
     }
@@ -429,7 +429,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      */
     protected async handleTeamsAnonymousAppBasedLinkQuery(
         _context: TurnContext,
-        _query: AppBasedLinkQuery
+        _query: AppBasedLinkQuery,
     ): Promise<MessagingExtensionResponse> {
         throw new Error('NotImplemented');
     }
@@ -445,7 +445,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      */
     protected async handleTeamsMessagingExtensionQuery(
         _context: TurnContext,
-        _query: MessagingExtensionQuery
+        _query: MessagingExtensionQuery,
     ): Promise<MessagingExtensionResponse> {
         throw new Error('NotImplemented');
     }
@@ -461,7 +461,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      */
     protected async handleTeamsMessagingExtensionSelectItem(
         _context: TurnContext,
-        _query: any
+        _query: any,
     ): Promise<MessagingExtensionResponse> {
         throw new Error('NotImplemented');
     }
@@ -479,7 +479,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      */
     protected async handleTeamsMessagingExtensionSubmitActionDispatch(
         context: TurnContext,
-        action: MessagingExtensionAction
+        action: MessagingExtensionAction,
     ): Promise<MessagingExtensionActionResponse> {
         if (action.botMessagePreviewAction) {
             switch (action.botMessagePreviewAction) {
@@ -504,7 +504,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      */
     protected async handleTeamsMessagingExtensionSubmitAction(
         _context: TurnContext,
-        _action: MessagingExtensionAction
+        _action: MessagingExtensionAction,
     ): Promise<MessagingExtensionActionResponse> {
         throw new Error('NotImplemented');
     }
@@ -519,7 +519,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      */
     protected async handleTeamsMessagingExtensionBotMessagePreviewEdit(
         _context: TurnContext,
-        _action: MessagingExtensionAction
+        _action: MessagingExtensionAction,
     ): Promise<MessagingExtensionActionResponse> {
         throw new Error('NotImplemented');
     }
@@ -534,7 +534,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      */
     protected async handleTeamsMessagingExtensionBotMessagePreviewSend(
         _context: TurnContext,
-        _action: MessagingExtensionAction
+        _action: MessagingExtensionAction,
     ): Promise<MessagingExtensionActionResponse> {
         throw new Error('NotImplemented');
     }
@@ -548,7 +548,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      */
     protected async handleTeamsMessagingExtensionFetchTask(
         _context: TurnContext,
-        _action: MessagingExtensionAction
+        _action: MessagingExtensionAction,
     ): Promise<MessagingExtensionActionResponse> {
         throw new Error('NotImplemented');
     }
@@ -562,7 +562,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      */
     protected async handleTeamsMessagingExtensionConfigurationQuerySettingUrl(
         _context: TurnContext,
-        _query: MessagingExtensionQuery
+        _query: MessagingExtensionQuery,
     ): Promise<MessagingExtensionResponse> {
         throw new Error('NotImplemented');
     }
@@ -967,8 +967,8 @@ export class TeamsActivityHandler extends ActivityHandler {
             membersAdded: TeamsChannelAccount[],
             teamInfo: TeamInfo,
             context: TurnContext,
-            next: () => Promise<void>
-        ) => Promise<void>
+            next: () => Promise<void>,
+        ) => Promise<void>,
     ): this {
         return this.on('TeamsMembersAdded', async (context, next) => {
             const teamsChannelData = context.activity.channelData as TeamsChannelData;
@@ -988,8 +988,8 @@ export class TeamsActivityHandler extends ActivityHandler {
             membersRemoved: TeamsChannelAccount[],
             teamInfo: TeamInfo,
             context: TurnContext,
-            next: () => Promise<void>
-        ) => Promise<void>
+            next: () => Promise<void>,
+        ) => Promise<void>,
     ): this {
         return this.on('TeamsMembersRemoved', async (context, next) => {
             const teamsChannelData = context.activity.channelData as TeamsChannelData;
@@ -1008,8 +1008,8 @@ export class TeamsActivityHandler extends ActivityHandler {
             channelInfo: ChannelInfo,
             teamInfo: TeamInfo,
             context: TurnContext,
-            next: () => Promise<void>
-        ) => Promise<void>
+            next: () => Promise<void>,
+        ) => Promise<void>,
     ): this {
         return this.on('TeamsChannelCreated', async (context, next) => {
             const teamsChannelData = context.activity.channelData as TeamsChannelData;
@@ -1028,8 +1028,8 @@ export class TeamsActivityHandler extends ActivityHandler {
             channelInfo: ChannelInfo,
             teamInfo: TeamInfo,
             context: TurnContext,
-            next: () => Promise<void>
-        ) => Promise<void>
+            next: () => Promise<void>,
+        ) => Promise<void>,
     ): this {
         return this.on('TeamsChannelDeleted', async (context, next) => {
             const teamsChannelData = context.activity.channelData as TeamsChannelData;
@@ -1048,8 +1048,8 @@ export class TeamsActivityHandler extends ActivityHandler {
             channelInfo: ChannelInfo,
             teamInfo: TeamInfo,
             context: TurnContext,
-            next: () => Promise<void>
-        ) => Promise<void>
+            next: () => Promise<void>,
+        ) => Promise<void>,
     ): this {
         return this.on('TeamsChannelRenamed', async (context, next) => {
             const teamsChannelData = context.activity.channelData as TeamsChannelData;
@@ -1064,7 +1064,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @returns A promise that represents the work queued.
      */
     onTeamsTeamArchivedEvent(
-        handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>
+        handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>,
     ): this {
         return this.on('TeamsTeamArchived', async (context, next) => {
             const teamsChannelData = context.activity.channelData as TeamsChannelData;
@@ -1079,7 +1079,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @returns A promise that represents the work queued.
      */
     onTeamsTeamDeletedEvent(
-        handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>
+        handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>,
     ): this {
         return this.on('TeamsTeamDeleted', async (context, next) => {
             const teamsChannelData = context.activity.channelData as TeamsChannelData;
@@ -1094,7 +1094,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @returns A promise that represents the work queued.
      */
     onTeamsTeamHardDeletedEvent(
-        handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>
+        handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>,
     ): this {
         return this.on('TeamsTeamHardDeleted', async (context, next) => {
             const teamsChannelData = context.activity.channelData as TeamsChannelData;
@@ -1113,8 +1113,8 @@ export class TeamsActivityHandler extends ActivityHandler {
             channelInfo: ChannelInfo,
             teamInfo: TeamInfo,
             context: TurnContext,
-            next: () => Promise<void>
-        ) => Promise<void>
+            next: () => Promise<void>,
+        ) => Promise<void>,
     ): this {
         return this.on('TeamsChannelRestored', async (context, next) => {
             const teamsChannelData = context.activity.channelData as TeamsChannelData;
@@ -1129,7 +1129,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @returns A promise that represents the work queued.
      */
     onTeamsTeamRenamedEvent(
-        handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>
+        handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>,
     ): this {
         return this.on('TeamsTeamRenamed', async (context, next) => {
             const teamsChannelData = context.activity.channelData as TeamsChannelData;
@@ -1144,7 +1144,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @returns A promise that represents the work queued.
      */
     onTeamsTeamRestoredEvent(
-        handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>
+        handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>,
     ): this {
         return this.on('TeamsTeamRestored', async (context, next) => {
             const teamsChannelData = context.activity.channelData as TeamsChannelData;
@@ -1159,7 +1159,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @returns A promise that represents the work queued.
      */
     onTeamsTeamUnarchivedEvent(
-        handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>
+        handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>,
     ): this {
         return this.on('TeamsTeamUnarchived', async (context, next) => {
             const teamsChannelData = context.activity.channelData as TeamsChannelData;
@@ -1172,7 +1172,6 @@ export class TeamsActivityHandler extends ActivityHandler {
      *
      * @param context The context object for the current turn.
      * @returns A promise that represents the work queued.
-     *
      * @remarks
      * Override this method to support channel-specific behavior across multiple channels or to add
      * custom event sub-type events.
@@ -1258,7 +1257,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @returns A promise that represents the work queued.
      */
     onTeamsMeetingStartEvent(
-        handler: (meeting: MeetingStartEventDetails, context: TurnContext, next: () => Promise<void>) => Promise<void>
+        handler: (meeting: MeetingStartEventDetails, context: TurnContext, next: () => Promise<void>) => Promise<void>,
     ): this {
         return this.on('TeamsMeetingStart', async (context, next) => {
             const meeting = TeamsMeetingStartT.parse(context.activity.value);
@@ -1271,7 +1270,7 @@ export class TeamsActivityHandler extends ActivityHandler {
                     title: meeting.Title,
                 },
                 context,
-                next
+                next,
             );
         });
     }
@@ -1283,7 +1282,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @returns A promise that represents the work queued.
      */
     onTeamsMeetingEndEvent(
-        handler: (meeting: MeetingEndEventDetails, context: TurnContext, next: () => Promise<void>) => Promise<void>
+        handler: (meeting: MeetingEndEventDetails, context: TurnContext, next: () => Promise<void>) => Promise<void>,
     ): this {
         return this.on('TeamsMeetingEnd', async (context, next) => {
             const meeting = TeamsMeetingEndT.parse(context.activity.value);
@@ -1296,7 +1295,7 @@ export class TeamsActivityHandler extends ActivityHandler {
                     title: meeting.Title,
                 },
                 context,
-                next
+                next,
             );
         });
     }
@@ -1308,7 +1307,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @returns A promise that represents the work queued.
      */
     onTeamsReadReceiptEvent(
-        handler: (receiptInfo: ReadReceiptInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>
+        handler: (receiptInfo: ReadReceiptInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>,
     ): this {
         return this.on('TeamsReadReceipt', async (context, next) => {
             const receiptInfo = context.activity.value;
@@ -1326,8 +1325,8 @@ export class TeamsActivityHandler extends ActivityHandler {
         handler: (
             meeting: MeetingParticipantsEventDetails,
             context: TurnContext,
-            next: () => Promise<void>
-        ) => Promise<void>
+            next: () => Promise<void>,
+        ) => Promise<void>,
     ): this {
         return this.on('TeamsMeetingParticipantsJoin', async (context, next) => {
             const meeting = context.activity.value;
@@ -1336,7 +1335,7 @@ export class TeamsActivityHandler extends ActivityHandler {
                     members: meeting?.members,
                 },
                 context,
-                next
+                next,
             );
         });
     }
@@ -1351,8 +1350,8 @@ export class TeamsActivityHandler extends ActivityHandler {
         handler: (
             meeting: MeetingParticipantsEventDetails,
             context: TurnContext,
-            next: () => Promise<void>
-        ) => Promise<void>
+            next: () => Promise<void>,
+        ) => Promise<void>,
     ): this {
         return this.on('TeamsMeetingParticipantsLeave', async (context, next) => {
             const meeting = context.activity.value;
@@ -1361,7 +1360,7 @@ export class TeamsActivityHandler extends ActivityHandler {
                     members: meeting?.members,
                 },
                 context,
-                next
+                next,
             );
         });
     }

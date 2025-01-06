@@ -137,7 +137,7 @@ export class ConfigurationBotFrameworkAuthentication extends BotFrameworkAuthent
         credentialsFactory?: ServiceClientCredentialsFactory,
         authConfiguration?: AuthenticationConfiguration,
         botFrameworkClientFetch?: (input: RequestInfo, init?: RequestInit) => Promise<Response>,
-        connectorClientOptions: ConnectorClientOptions = {}
+        connectorClientOptions: ConnectorClientOptions = {},
     ) {
         super();
 
@@ -177,11 +177,11 @@ export class ConfigurationBotFrameworkAuthentication extends BotFrameworkAuthent
                 CallerId,
                 credentialsFactory ??
                     new ConfigurationServiceClientCredentialFactory(
-                        typedBotFrameworkAuthConfig as ConfigurationServiceClientCredentialFactoryOptions
+                        typedBotFrameworkAuthConfig as ConfigurationServiceClientCredentialFactoryOptions,
                     ),
                 authConfiguration ?? { requiredEndorsements: [] },
                 botFrameworkClientFetch,
-                connectorClientOptions
+                connectorClientOptions,
             );
         } catch (err) {
             // Throw a new error with the validation details prominently featured.
@@ -272,7 +272,7 @@ export function createBotFrameworkAuthenticationFromConfiguration(
     credentialsFactory?: ServiceClientCredentialsFactory,
     authConfiguration?: AuthenticationConfiguration,
     botFrameworkClientFetch?: (input: RequestInfo, init?: RequestInit) => Promise<Response>,
-    connectorClientOptions: ConnectorClientOptions = {}
+    connectorClientOptions: ConnectorClientOptions = {},
 ): BotFrameworkAuthentication {
     const botFrameworkAuthConfig = configuration?.get<ConfigurationBotFrameworkAuthenticationOptions>();
 
@@ -281,6 +281,6 @@ export function createBotFrameworkAuthenticationFromConfiguration(
         credentialsFactory,
         authConfiguration,
         botFrameworkClientFetch,
-        connectorClientOptions
+        connectorClientOptions,
     );
 }

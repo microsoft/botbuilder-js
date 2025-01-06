@@ -58,7 +58,7 @@ export class TeamsInfo {
         context: TurnContext,
         meetingId?: string,
         participantId?: string,
-        tenantId?: string
+        tenantId?: string,
     ): Promise<TeamsMeetingParticipant> {
         if (!context) {
             throw new Error('context is required.');
@@ -151,7 +151,7 @@ export class TeamsInfo {
         context: TurnContext,
         activity: Activity,
         teamsChannelId: string,
-        botAppId?: string
+        botAppId?: string,
     ): Promise<[ConversationReference, string]> {
         if (!context) {
             throw new Error('TurnContext cannot be null');
@@ -188,11 +188,11 @@ export class TeamsInfo {
                 async (turnContext) => {
                     conversationReference = TurnContext.getConversationReference(turnContext.activity);
                     newActivityId = turnContext.activity.id;
-                }
+                },
             );
         } else {
             const connectorClient = (context.adapter as BotFrameworkAdapter).createConnectorClient(
-                context.activity.serviceUrl
+                context.activity.serviceUrl,
             );
             const conversationResourceResponse = await connectorClient.conversations.createConversation(convoParams);
             conversationReference = TurnContext.getConversationReference(context.activity);
@@ -225,7 +225,6 @@ export class TeamsInfo {
      *
      * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      * @returns The list of [TeamsChannelAccount](xref:botframework-schema.TeamsChannelAccount).
-     *
      * @deprecated Use `getPagedTeamMembers` instead.
      */
     static async getMembers(context: TurnContext): Promise<TeamsChannelAccount[]> {
@@ -250,7 +249,7 @@ export class TeamsInfo {
     static async getPagedMembers(
         context: TurnContext,
         pageSize?: number,
-        continuationToken?: string
+        continuationToken?: string,
     ): Promise<TeamsPagedMembersResult> {
         const teamId = this.getTeamId(context);
         const options: TeamsConnectorModels.ConversationsGetConversationPagedMembersOptionalParams = {
@@ -290,7 +289,6 @@ export class TeamsInfo {
      * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      * @param teamId ID of the Teams team.
      * @returns The list of [TeamsChannelAccount](xref:botframework-schema.TeamsChannelAccount) of the members.
-     *
      * @deprecated Use `getPagedTeamMembers` instead.
      */
     static async getTeamMembers(context: TurnContext, teamId?: string): Promise<TeamsChannelAccount[]> {
@@ -314,7 +312,7 @@ export class TeamsInfo {
         context: TurnContext,
         teamId?: string,
         pageSize?: number,
-        continuationToken?: string
+        continuationToken?: string,
     ): Promise<TeamsPagedMembersResult> {
         const t = teamId || this.getTeamId(context);
         if (!t) {
@@ -357,7 +355,7 @@ export class TeamsInfo {
     static async sendMeetingNotification(
         context: TurnContext,
         notification: MeetingNotification,
-        meetingId?: string
+        meetingId?: string,
     ): Promise<MeetingNotificationResponse> {
         const activity = context.activity;
 
@@ -386,7 +384,7 @@ export class TeamsInfo {
         context: TurnContext,
         activity: Activity,
         tenantId: string,
-        members: TeamsMember[]
+        members: TeamsMember[],
     ): Promise<BatchOperationResponse> {
         if (!activity) {
             throw new Error('activity is required.');
@@ -412,7 +410,7 @@ export class TeamsInfo {
     static async sendMessageToAllUsersInTenant(
         context: TurnContext,
         activity: Activity,
-        tenantId: string
+        tenantId: string,
     ): Promise<BatchOperationResponse> {
         if (!activity) {
             throw new Error('activity is required.');
@@ -437,7 +435,7 @@ export class TeamsInfo {
         context: TurnContext,
         activity: Activity,
         tenantId: string,
-        teamId: string
+        teamId: string,
     ): Promise<BatchOperationResponse> {
         if (!activity) {
             throw new Error('activity is required.');
@@ -452,7 +450,7 @@ export class TeamsInfo {
         return await this.getTeamsConnectorClient(context).teams.sendMessageToAllUsersInTeam(
             activity,
             tenantId,
-            teamId
+            teamId,
         );
     }
 
@@ -469,7 +467,7 @@ export class TeamsInfo {
         context: TurnContext,
         activity: Activity,
         tenantId: string,
-        members: TeamsMember[]
+        members: TeamsMember[],
     ): Promise<BatchOperationResponse> {
         if (!activity) {
             throw new Error('activity is required.');
@@ -484,7 +482,7 @@ export class TeamsInfo {
         return await this.getTeamsConnectorClient(context).teams.sendMessageToListOfChannels(
             activity,
             tenantId,
-            members
+            members,
         );
     }
 
@@ -538,15 +536,14 @@ export class TeamsInfo {
      */
     private static async getMembersInternal(
         connectorClient: ConnectorClient,
-        conversationId: string
+        conversationId: string,
     ): Promise<TeamsChannelAccount[]> {
         if (!conversationId) {
             throw new Error('The getMembers operation needs a valid conversationId.');
         }
 
-        const teamMembers: ChannelAccount[] = await connectorClient.conversations.getConversationMembers(
-            conversationId
-        );
+        const teamMembers: ChannelAccount[] =
+            await connectorClient.conversations.getConversationMembers(conversationId);
         teamMembers.forEach((member): void => {
             member.aadObjectId = (member as any).objectId;
         });
@@ -560,7 +557,7 @@ export class TeamsInfo {
     private static async getPagedMembersInternal(
         connectorClient: ConnectorClient,
         conversationId: string,
-        options: TeamsConnectorModels.ConversationsGetConversationPagedMembersOptionalParams
+        options: TeamsConnectorModels.ConversationsGetConversationPagedMembersOptionalParams,
     ): Promise<TeamsPagedMembersResult> {
         if (!conversationId) {
             throw new Error('The getPagedMembers operation needs a valid conversationId.');
@@ -568,7 +565,7 @@ export class TeamsInfo {
 
         const pagedMembersResult: PagedMembersResult = await connectorClient.conversations.getConversationPagedMembers(
             conversationId,
-            options
+            options,
         );
 
         const teamsPagedMembersResult: TeamsPagedMembersResult = {
@@ -585,7 +582,7 @@ export class TeamsInfo {
     private static async getMemberInternal(
         connectorClient: ConnectorClient,
         conversationId: string,
-        userId: string
+        userId: string,
     ): Promise<TeamsChannelAccount> {
         if (!conversationId) {
             throw new Error('The getMember operation needs a valid conversationId.');
@@ -597,7 +594,7 @@ export class TeamsInfo {
 
         const teamMember: ChannelAccount = await connectorClient.conversations.getConversationMember(
             conversationId,
-            userId
+            userId,
         );
 
         return teamMember as TeamsChannelAccount;

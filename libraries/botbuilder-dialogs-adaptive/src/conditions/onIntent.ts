@@ -73,8 +73,8 @@ export class OnIntent extends OnDialogEvent implements OnIntentConfiguration {
                             return Expression.parse(`exists(${entity})`);
                         }
                         return Expression.parse(`exists(@${entity})`);
-                    })
-                )
+                    }),
+                ),
             );
         }
 

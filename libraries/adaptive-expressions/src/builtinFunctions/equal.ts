@@ -22,7 +22,7 @@ export class Equal extends ComparisonEvaluator {
         super(
             ExpressionType.Equal,
             (args) => FunctionUtils.commonEquals(args[0], args[1]),
-            FunctionUtils.validateBinary
+            FunctionUtils.validateBinary,
         );
     }
 }

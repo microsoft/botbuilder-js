@@ -27,7 +27,7 @@ export class UriPathAndQuery extends ExpressionEvaluator {
             ExpressionType.UriPathAndQuery,
             UriPathAndQuery.evaluator,
             ReturnType.String,
-            FunctionUtils.validateUnary
+            FunctionUtils.validateUnary,
         );
     }
 

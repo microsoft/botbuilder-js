@@ -39,7 +39,7 @@ export class JwtTokenExtractor {
         tokenValidationParameters: VerifyOptions,
         metadataUrl: string,
         allowedSigningAlgorithms: string[] | Algorithm[],
-        proxySettings?: ProxySettings
+        proxySettings?: ProxySettings,
     ) {
         this.tokenValidationParameters = { ...tokenValidationParameters };
         this.tokenValidationParameters.algorithms = allowedSigningAlgorithms as Algorithm[];
@@ -67,7 +67,7 @@ export class JwtTokenExtractor {
     async getIdentityFromAuthHeader(
         authorizationHeader: string,
         channelId: string,
-        requiredEndorsements?: string[]
+        requiredEndorsements?: string[],
     ): Promise<ClaimsIdentity | null> {
         if (!authorizationHeader) {
             return null;
@@ -94,7 +94,7 @@ export class JwtTokenExtractor {
         scheme: string,
         parameter: string,
         channelId: string,
-        requiredEndorsements: string[] = []
+        requiredEndorsements: string[] = [],
     ): Promise<ClaimsIdentity | null> {
         // No header in correct scheme or no token
         if (scheme !== 'Bearer' || !parameter) {
@@ -139,7 +139,7 @@ export class JwtTokenExtractor {
     private async validateToken(
         jwtToken: string,
         channelId: string,
-        requiredEndorsements: string[]
+        requiredEndorsements: string[],
     ): Promise<ClaimsIdentity> {
         let header: Partial<JwtHeader> = {};
         const decodedToken = decode(jwtToken, { complete: true });
@@ -169,21 +169,21 @@ export class JwtTokenExtractor {
                 if (!isEndorsed) {
                     throw new AuthenticationError(
                         `Could not validate endorsement for key: ${keyId} with endorsements: ${endorsements.join(',')}`,
-                        StatusCodes.UNAUTHORIZED
+                        StatusCodes.UNAUTHORIZED,
                     );
                 }
 
                 // Verify that additional endorsements are satisfied. If no additional endorsements are expected, the requirement is satisfied as well
                 const additionalEndorsementsSatisfied = requiredEndorsements.every((endorsement) =>
-                    EndorsementsValidator.validate(endorsement, endorsements)
+                    EndorsementsValidator.validate(endorsement, endorsements),
                 );
 
                 if (!additionalEndorsementsSatisfied) {
                     throw new AuthenticationError(
                         `Could not validate additional endorsement for key: ${keyId} with endorsements: ${requiredEndorsements.join(
-                            ','
+                            ',',
                         )}. Expected endorsements: ${requiredEndorsements.join(',')}`,
-                        StatusCodes.UNAUTHORIZED
+                        StatusCodes.UNAUTHORIZED,
                     );
                 }
             }
@@ -192,7 +192,7 @@ export class JwtTokenExtractor {
                 if (this.tokenValidationParameters.algorithms.indexOf(header.alg as Algorithm) === -1) {
                     throw new AuthenticationError(
                         `"Token signing algorithm '${header.alg}' not in allowed list`,
-                        StatusCodes.UNAUTHORIZED
+                        StatusCodes.UNAUTHORIZED,
                     );
                 }
             }

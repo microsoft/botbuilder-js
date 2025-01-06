@@ -31,6 +31,7 @@ class MockResponse {
 
 describe('channelServiceRoutes', function () {
     let sandbox;
+
     beforeEach(function () {
         sandbox = sinon.createSandbox();
     });
@@ -50,6 +51,7 @@ describe('channelServiceRoutes', function () {
 
     describe('register()', function () {
         let channel, server;
+
         beforeEach(function () {
             const testHandler = sandbox.mock(ChannelServiceHandler);
             channel = new ChannelServiceRoutes(testHandler);
@@ -120,7 +122,7 @@ describe('channelServiceRoutes', function () {
                             statusCode: 200,
                             body: testResource,
                         },
-                        done
+                        done,
                     );
 
                     const service = sandbox.createStubInstance(ChannelServiceHandler);
@@ -145,7 +147,7 @@ describe('channelServiceRoutes', function () {
                         assert.deepStrictEqual(
                             err,
                             resourceResponse,
-                            `expected: ${JSON.stringify(resourceResponse)}. received: ${JSON.stringify(err)}`
+                            `expected: ${JSON.stringify(resourceResponse)}. received: ${JSON.stringify(err)}`,
                         );
                         done();
                     };
@@ -171,7 +173,7 @@ describe('channelServiceRoutes', function () {
                         assert.deepStrictEqual(
                             err,
                             resourceResponse,
-                            `expected: ${JSON.stringify(resourceResponse)}. received: ${JSON.stringify(err)}`
+                            `expected: ${JSON.stringify(resourceResponse)}. received: ${JSON.stringify(err)}`,
                         );
                         done();
                     };
@@ -197,7 +199,7 @@ describe('channelServiceRoutes', function () {
                             statusCode: 200,
                             body: testResource,
                         },
-                        done
+                        done,
                     );
 
                     const service = sandbox.createStubInstance(ChannelServiceHandler);
@@ -222,7 +224,7 @@ describe('channelServiceRoutes', function () {
                         assert.deepStrictEqual(
                             err,
                             resourceResponse,
-                            `expected: ${JSON.stringify(resourceResponse)}. received: ${JSON.stringify(err)}`
+                            `expected: ${JSON.stringify(resourceResponse)}. received: ${JSON.stringify(err)}`,
                         );
                         done();
                     };
@@ -249,7 +251,7 @@ describe('channelServiceRoutes', function () {
                         assert.deepStrictEqual(
                             err,
                             resourceResponse,
-                            `expected: ${JSON.stringify(resourceResponse)}. received: ${JSON.stringify(err)}`
+                            `expected: ${JSON.stringify(resourceResponse)}. received: ${JSON.stringify(err)}`,
                         );
                         done();
                     };
@@ -275,7 +277,7 @@ describe('channelServiceRoutes', function () {
                             statusCode: 200,
                             body: testResource,
                         },
-                        done
+                        done,
                     );
 
                     const service = sandbox.createStubInstance(ChannelServiceHandler);
@@ -300,7 +302,7 @@ describe('channelServiceRoutes', function () {
                         assert.deepStrictEqual(
                             err,
                             resourceResponse,
-                            `expected: ${JSON.stringify(resourceResponse)}. received: ${JSON.stringify(err)}`
+                            `expected: ${JSON.stringify(resourceResponse)}. received: ${JSON.stringify(err)}`,
                         );
                         done();
                     };
@@ -327,7 +329,7 @@ describe('channelServiceRoutes', function () {
                         assert.deepStrictEqual(
                             err,
                             resourceResponse,
-                            `expected: ${JSON.stringify(resourceResponse)}. received: ${JSON.stringify(err)}`
+                            `expected: ${JSON.stringify(resourceResponse)}. received: ${JSON.stringify(err)}`,
                         );
                         done();
                     };
@@ -353,7 +355,7 @@ describe('channelServiceRoutes', function () {
                             statusCode: 200,
                             body: {},
                         },
-                        done
+                        done,
                     );
 
                     const service = sandbox.createStubInstance(ChannelServiceHandler);
@@ -378,7 +380,7 @@ describe('channelServiceRoutes', function () {
                         assert.deepStrictEqual(
                             err,
                             resourceResponse,
-                            `expected: ${JSON.stringify(resourceResponse)}. received: ${JSON.stringify(err)}`
+                            `expected: ${JSON.stringify(resourceResponse)}. received: ${JSON.stringify(err)}`,
                         );
                         done();
                     };
@@ -402,7 +404,7 @@ describe('channelServiceRoutes', function () {
                             statusCode: 200,
                             body: testResource,
                         },
-                        done
+                        done,
                     );
 
                     const service = sandbox.createStubInstance(ChannelServiceHandler);
@@ -427,7 +429,7 @@ describe('channelServiceRoutes', function () {
                         assert.deepStrictEqual(
                             err,
                             resourceResponse,
-                            `expected: ${JSON.stringify(resourceResponse)}. received: ${JSON.stringify(err)}`
+                            `expected: ${JSON.stringify(resourceResponse)}. received: ${JSON.stringify(err)}`,
                         );
                         done();
                     };
@@ -451,7 +453,7 @@ describe('channelServiceRoutes', function () {
                             statusCode: 201,
                             body: testResource,
                         },
-                        done
+                        done,
                     );
 
                     const service = sandbox.createStubInstance(ChannelServiceHandler);
@@ -476,7 +478,7 @@ describe('channelServiceRoutes', function () {
                         assert.deepStrictEqual(
                             err,
                             resourceResponse,
-                            `expected: ${JSON.stringify(resourceResponse)}. received: ${JSON.stringify(err)}`
+                            `expected: ${JSON.stringify(resourceResponse)}. received: ${JSON.stringify(err)}`,
                         );
                         done();
                     };
@@ -500,7 +502,7 @@ describe('channelServiceRoutes', function () {
                             statusCode: 200,
                             body: testResource,
                         },
-                        done
+                        done,
                     );
 
                     const service = sandbox.createStubInstance(ChannelServiceHandler);
@@ -525,7 +527,7 @@ describe('channelServiceRoutes', function () {
                         assert.deepStrictEqual(
                             err,
                             resourceResponse,
-                            `expected: ${JSON.stringify(resourceResponse)}. received: ${JSON.stringify(err)}`
+                            `expected: ${JSON.stringify(resourceResponse)}. received: ${JSON.stringify(err)}`,
                         );
                         done();
                     };
@@ -549,7 +551,7 @@ describe('channelServiceRoutes', function () {
                             statusCode: 200,
                             body: testResource,
                         },
-                        done
+                        done,
                     );
 
                     const service = sandbox.createStubInstance(ChannelServiceHandler);
@@ -574,7 +576,7 @@ describe('channelServiceRoutes', function () {
                         assert.deepStrictEqual(
                             err,
                             resourceResponse,
-                            `expected: ${JSON.stringify(resourceResponse)}. received: ${JSON.stringify(err)}`
+                            `expected: ${JSON.stringify(resourceResponse)}. received: ${JSON.stringify(err)}`,
                         );
                         done();
                     };
@@ -598,7 +600,7 @@ describe('channelServiceRoutes', function () {
                             statusCode: 200,
                             body: testResource,
                         },
-                        done
+                        done,
                     );
 
                     const service = sandbox.createStubInstance(ChannelServiceHandler);
@@ -623,7 +625,7 @@ describe('channelServiceRoutes', function () {
                         assert.deepStrictEqual(
                             err,
                             resourceResponse,
-                            `expected: ${JSON.stringify(resourceResponse)}. received: ${JSON.stringify(err)}`
+                            `expected: ${JSON.stringify(resourceResponse)}. received: ${JSON.stringify(err)}`,
                         );
                         done();
                     };
@@ -647,7 +649,7 @@ describe('channelServiceRoutes', function () {
                             statusCode: 200,
                             body: {},
                         },
-                        done
+                        done,
                     );
 
                     const service = sandbox.createStubInstance(ChannelServiceHandler);
@@ -672,7 +674,7 @@ describe('channelServiceRoutes', function () {
                         assert.deepStrictEqual(
                             err,
                             resourceResponse,
-                            `expected: ${JSON.stringify(resourceResponse)}. received: ${JSON.stringify(err)}`
+                            `expected: ${JSON.stringify(resourceResponse)}. received: ${JSON.stringify(err)}`,
                         );
                         done();
                     };
@@ -696,7 +698,7 @@ describe('channelServiceRoutes', function () {
                             statusCode: 200,
                             body: testResource,
                         },
-                        done
+                        done,
                     );
 
                     const service = sandbox.createStubInstance(ChannelServiceHandler);
@@ -721,7 +723,7 @@ describe('channelServiceRoutes', function () {
                         assert.deepStrictEqual(
                             err,
                             resourceResponse,
-                            `expected: ${JSON.stringify(resourceResponse)}. received: ${JSON.stringify(err)}`
+                            `expected: ${JSON.stringify(resourceResponse)}. received: ${JSON.stringify(err)}`,
                         );
                         done();
                     };
@@ -748,7 +750,7 @@ describe('channelServiceRoutes', function () {
                         assert.deepStrictEqual(
                             err,
                             resourceResponse,
-                            `expected: ${JSON.stringify(resourceResponse)}. received: ${JSON.stringify(err)}`
+                            `expected: ${JSON.stringify(resourceResponse)}. received: ${JSON.stringify(err)}`,
                         );
                         done();
                     };
@@ -774,7 +776,7 @@ describe('channelServiceRoutes', function () {
                             statusCode: 200,
                             body: testResource,
                         },
-                        done
+                        done,
                     );
 
                     const service = sandbox.createStubInstance(ChannelServiceHandler);
@@ -799,7 +801,7 @@ describe('channelServiceRoutes', function () {
                         assert.deepStrictEqual(
                             err,
                             resourceResponse,
-                            `expected: ${JSON.stringify(resourceResponse)}. received: ${JSON.stringify(err)}`
+                            `expected: ${JSON.stringify(resourceResponse)}. received: ${JSON.stringify(err)}`,
                         );
                         done();
                     };
@@ -826,7 +828,7 @@ describe('channelServiceRoutes', function () {
                         assert.deepStrictEqual(
                             err,
                             resourceResponse,
-                            `expected: ${JSON.stringify(resourceResponse)}. received: ${JSON.stringify(err)}`
+                            `expected: ${JSON.stringify(resourceResponse)}. received: ${JSON.stringify(err)}`,
                         );
                         done();
                     };
@@ -885,7 +887,7 @@ describe('channelServiceRoutes', function () {
                             assert.deepStrictEqual(
                                 body,
                                 source,
-                                `expected: ${JSON.stringify(source)}. received: ${JSON.stringify(body)}`
+                                `expected: ${JSON.stringify(source)}. received: ${JSON.stringify(body)}`,
                             );
                             done();
                         })

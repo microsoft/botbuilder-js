@@ -28,10 +28,8 @@ export class ExpressionFunctions {
     /**
      * Read only Dictionary of built in functions.
      */
-    static readonly standardFunctions: ReadonlyMap<
-        string,
-        ExpressionEvaluator
-    > = ExpressionFunctions.getStandardFunctions();
+    static readonly standardFunctions: ReadonlyMap<string, ExpressionEvaluator> =
+        ExpressionFunctions.getStandardFunctions();
 
     /**
      * @private

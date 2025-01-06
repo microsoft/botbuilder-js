@@ -30,7 +30,7 @@ describe('BotFrameworkAuthenticationFactory', function () {
     it('should throw with an unknown channel service', function () {
         assert.throws(
             () => BotFrameworkAuthenticationFactory.create('unknown'),
-            new Error('The provided ChannelService value is not supported.')
+            new Error('The provided ChannelService value is not supported.'),
         );
     });
 
@@ -66,7 +66,7 @@ describe('BotFrameworkAuthenticationFactory', function () {
                 undefined,
                 undefined,
                 credsFactory,
-                { requiredEndorsements: [] }
+                { requiredEndorsements: [] },
             );
             assert.strictEqual(pBFA.getOriginatingAudience(), AuthenticationConstants.ToChannelFromBotOAuthScope);
             assert.strictEqual(pBFA.credentialsFactory, credsFactory);
@@ -85,7 +85,7 @@ describe('BotFrameworkAuthenticationFactory', function () {
             // If authentication was enabled 'UnusedAudienceWhenAuthIsDisabled' would have been used, but is unnecessary with disabled authentication.
             assert.strictEqual(
                 connectorClient.credentials.oAuthScope,
-                AuthenticationConstants.ToChannelFromBotOAuthScope
+                AuthenticationConstants.ToChannelFromBotOAuthScope,
             );
 
             const userTokenClient = await pBFA.createUserTokenClient(claimsIdentity);
@@ -107,7 +107,7 @@ describe('BotFrameworkAuthenticationFactory', function () {
                 undefined,
                 undefined,
                 credsFactory,
-                { requiredEndorsements: [] }
+                { requiredEndorsements: [] },
             );
             assert.strictEqual(pBFA.getOriginatingAudience(), AuthenticationConstants.ToChannelFromBotOAuthScope);
             assert.strictEqual(pBFA.credentialsFactory, credsFactory);

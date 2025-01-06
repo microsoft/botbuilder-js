@@ -26,7 +26,7 @@ export class ReplaceIgnoreCase extends ExpressionEvaluator {
             ExpressionType.ReplaceIgnoreCase,
             ReplaceIgnoreCase.evaluator(),
             ReturnType.String,
-            ReplaceIgnoreCase.validator
+            ReplaceIgnoreCase.validator,
         );
     }
 
@@ -45,7 +45,7 @@ export class ReplaceIgnoreCase extends ExpressionEvaluator {
                 result = InternalFunctionUtils.parseStringOrUndefined(args[0]).replace(
                     // eslint-disable-next-line security/detect-non-literal-regexp
                     new RegExp(InternalFunctionUtils.parseStringOrUndefined(args[1]), 'gi'),
-                    InternalFunctionUtils.parseStringOrUndefined(args[2])
+                    InternalFunctionUtils.parseStringOrUndefined(args[2]),
                 );
             }
 

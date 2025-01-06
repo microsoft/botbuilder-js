@@ -34,7 +34,7 @@ export class OnContinueConversation extends OnEventActivity {
         // add constraints for activity type
         return Expression.andExpression(
             Expression.parse(`${TurnPath.activity}.name == 'ContinueConversation'`),
-            super.createExpression()
+            super.createExpression(),
         );
     }
 }

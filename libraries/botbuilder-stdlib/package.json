@@ -26,7 +26,7 @@
     "build": "tsc -b",
     "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
     "depcheck": "depcheck --config ../../.depcheckrc",
-    "lint": "eslint .",
+    "lint": "eslint . --config ../../eslint.config.cjs",
     "postbuild": "downlevel-dts lib _ts3.4/lib",
     "test": "yarn build && nyc mocha --check-leaks tests"
   },

@@ -47,6 +47,7 @@ describe('The AzureBlobTranscriptStore', function () {
     let mockBlobClient;
     let mockContainer;
     let pagedAsyncIterableIterator;
+
     beforeEach(function () {
         sandbox = sinon.createSandbox();
 
@@ -110,6 +111,7 @@ describe('The AzureBlobTranscriptStore', function () {
         storage = new AzureBlobTranscriptStore(getSettings());
         storage.containerClient = mockContainer;
     });
+
     after(function () {
         // reset mock
         sandbox.restore();
@@ -127,14 +129,14 @@ describe('The AzureBlobTranscriptStore', function () {
         it('it is constructed with an invalid container name', function () {
             assert.throws(
                 () => new AzureBlobTranscriptStore({ containerName: '$%^$@' }),
-                new Error('Invalid container name.')
+                new Error('Invalid container name.'),
             );
         });
 
         it('it is constructed without the storageAccountOrConnectionString in the settings', function () {
             assert.throws(
                 () => new AzureBlobTranscriptStore({ ...getSettings(), storageAccountOrConnectionString: '' }),
-                new Error('The storageAccountOrConnectionString is required.')
+                new Error('The storageAccountOrConnectionString is required.'),
             );
         });
 

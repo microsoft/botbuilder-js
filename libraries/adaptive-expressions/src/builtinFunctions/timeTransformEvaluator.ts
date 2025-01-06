@@ -68,7 +68,7 @@ export class TimeTransformEvaluator extends ExpressionEvaluator {
             expression,
             [ReturnType.String, ReturnType.String],
             ReturnType.String,
-            ReturnType.Number
+            ReturnType.Number,
         );
     }
 }

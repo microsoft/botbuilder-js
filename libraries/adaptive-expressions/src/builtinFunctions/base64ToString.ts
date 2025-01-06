@@ -24,7 +24,7 @@ export class Base64ToString extends ExpressionEvaluator {
             ExpressionType.Base64ToString,
             Base64ToString.evaluator(),
             ReturnType.String,
-            FunctionUtils.validateUnary
+            FunctionUtils.validateUnary,
         );
     }
 

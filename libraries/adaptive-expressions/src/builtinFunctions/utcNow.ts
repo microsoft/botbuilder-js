@@ -31,18 +31,16 @@ export class UtcNow extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithOptionsAndError(
-            (args: unknown[], options: Options): ValueWithError => {
-                let locale = options.locale ? options.locale : Intl.DateTimeFormat().resolvedOptions().locale;
-                let format = FunctionUtils.DefaultDateTimeFormat;
-                ({ format, locale } = FunctionUtils.determineFormatAndLocale(args, 2, format, locale));
+        return FunctionUtils.applyWithOptionsAndError((args: unknown[], options: Options): ValueWithError => {
+            let locale = options.locale ? options.locale : Intl.DateTimeFormat().resolvedOptions().locale;
+            let format = FunctionUtils.DefaultDateTimeFormat;
+            ({ format, locale } = FunctionUtils.determineFormatAndLocale(args, 2, format, locale));
 
-                return {
-                    value: dayjs(new Date()).locale(locale).utc().format(format),
-                    error: undefined,
-                };
-            }
-        );
+            return {
+                value: dayjs(new Date()).locale(locale).utc().format(format),
+                error: undefined,
+            };
+        });
     }
 
     /**

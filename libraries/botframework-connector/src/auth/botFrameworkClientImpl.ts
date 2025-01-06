@@ -53,7 +53,7 @@ export class BotFrameworkClientImpl implements BotFrameworkClient {
         private readonly credentialsFactory: ServiceClientCredentialsFactory,
         private readonly loginEndpoint: string,
         private readonly botFrameworkClientFetch?: ReturnType<typeof botFrameworkClientFetchImpl>,
-        private readonly connectorClientOptions?: ConnectorClientOptions
+        private readonly connectorClientOptions?: ConnectorClientOptions,
     ) {
         this.botFrameworkClientFetch ??= botFrameworkClientFetchImpl(this.connectorClientOptions);
 
@@ -83,7 +83,7 @@ export class BotFrameworkClientImpl implements BotFrameworkClient {
         toUrl: string,
         serviceUrl: string,
         conversationId: string,
-        activity: Activity
+        activity: Activity,
     ): Promise<InvokeResponse<T>> {
         z.object({
             fromBotId: z.string().optional(),
@@ -105,7 +105,7 @@ export class BotFrameworkClientImpl implements BotFrameworkClient {
             fromBotId,
             toBotId,
             this.loginEndpoint,
-            true
+            true,
         );
 
         // Capture current activity settings before changing them.

@@ -47,7 +47,7 @@ class SimpleAdapter extends BotAdapter {
         assert(reference, 'SimpleAdapter.deleteActivity: missing reference.');
         assert(
             reference.activityId === '1234',
-            `SimpleAdapter.deleteActivity: invalid activityId of "${reference.activityId}".`
+            `SimpleAdapter.deleteActivity: invalid activityId of "${reference.activityId}".`,
         );
         return Promise.resolve();
     }
@@ -127,7 +127,7 @@ describe('TurnContext', function () {
         context.turnState.set('foo', 'bar');
         assert(
             context.turnState.get('foo') === 'bar',
-            `invalid value of "${context.turnState.get('foo')}" after set().`
+            `invalid value of "${context.turnState.get('foo')}" after set().`,
         );
     });
 
@@ -156,7 +156,7 @@ describe('TurnContext', function () {
         context.turnState.push('foo', 'b');
         assert(
             context.turnState.get('foo') === 'b',
-            `invalid value of "${context.turnState.get('foo')}" after push().`
+            `invalid value of "${context.turnState.get('foo')}" after push().`,
         );
         const old = context.turnState.pop('foo');
         assert(old == 'b', 'popped value not returned.');
@@ -340,7 +340,7 @@ describe('TurnContext', function () {
         const activity2 = TurnContext.applyConversationReference(
             { text: 'foo', type: 'message', locale: 'es-ES' },
             reference,
-            true
+            true,
         );
         assert(activity2.id, 'activity2 missing id');
         assert(activity2.from, 'activity2 missing from');
@@ -350,7 +350,7 @@ describe('TurnContext', function () {
         assert(activity2.locale, 'activity2 missing locale.');
         assert(
             activity2.locale !== testMessageWithLocale.locale,
-            'the activity2 locale is being overwritten by the reference locale'
+            'the activity2 locale is being overwritten by the reference locale',
         );
 
         // Round trip outgoing activity without a replyToId

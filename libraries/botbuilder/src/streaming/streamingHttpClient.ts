@@ -45,7 +45,7 @@ export class StreamingHttpClient implements HttpClient {
         }
         if (!this.server.isConnected) {
             throw new Error(
-                'StreamingHttpClient.sendRequest(): Streaming connection is disconnected, and the request could not be sent.'
+                'StreamingHttpClient.sendRequest(): Streaming connection is disconnected, and the request could not be sent.',
             );
         }
 

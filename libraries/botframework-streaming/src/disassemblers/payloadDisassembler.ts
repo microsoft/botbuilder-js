@@ -24,7 +24,10 @@ export abstract class PayloadDisassembler {
      * @param sender The [PayloadSender](xref:botframework-streaming.PayloadSender) used to send the disassembled payload chunks.
      * @param id The ID of this disassembler.
      */
-    constructor(private readonly sender: PayloadSender, private readonly id: string) {}
+    constructor(
+        private readonly sender: PayloadSender,
+        private readonly id: string,
+    ) {}
 
     /**
      * Serializes the item into the [IStreamWrapper](xref:botframework-streaming.IStreamWrapper) that exposes the stream and length of the result.

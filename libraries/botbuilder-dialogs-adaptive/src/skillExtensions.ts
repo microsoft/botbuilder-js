@@ -44,7 +44,7 @@ export class SkillExtensions {
      */
     static useSkillConversationIdFactory(
         dialogManager: DialogManager,
-        skillConversationIdFactory: SkillConversationIdFactoryBase
+        skillConversationIdFactory: SkillConversationIdFactoryBase,
     ): DialogManager {
         dialogManager.initialTurnState.set(skillConversationIdFactoryKey, skillConversationIdFactory);
         return dialogManager;

@@ -55,7 +55,7 @@ describe('BotFrameworkHttpClient', function () {
         it('should fail to construct without required parameters', function () {
             assert.throws(
                 () => new BotFrameworkHttpClient(),
-                new Error('BotFrameworkHttpClient(): missing credentialProvider')
+                new Error('BotFrameworkHttpClient(): missing credentialProvider'),
             );
         });
 
@@ -74,7 +74,7 @@ describe('BotFrameworkHttpClient', function () {
                 'http://skillUrl/api/good',
                 'serviceUrl',
                 'conversationId',
-                { type: 'message', conversation: {} }
+                { type: 'message', conversation: {} },
             );
             assert.strictEqual(response.status, 200);
         });
@@ -94,7 +94,7 @@ describe('BotFrameworkHttpClient', function () {
                 'http://skillUrl/api/bad',
                 'serviceUrl',
                 'conversationId',
-                { type: 'message', conversation: {} }
+                { type: 'message', conversation: {} },
             );
             assert.strictEqual(response.status, 404);
         });
@@ -114,7 +114,7 @@ describe('BotFrameworkHttpClient', function () {
                 'http://skillUrl/api/good',
                 'serviceUrl',
                 'conversationId',
-                { type: 'message', conversation: {} }
+                { type: 'message', conversation: {} },
             );
             assert.strictEqual(response.status, 200);
         });
@@ -135,9 +135,11 @@ describe('BotFrameworkHttpClient', function () {
                     'http://skillUrl/api/good',
                     'serviceUrl',
                     'conversationId',
-                    { type: 'message', conversation: {} }
+                    { type: 'message', conversation: {} },
                 ),
-                new Error('BotFrameworkHttpClient.postActivity(): Unable to get appCredentials to connect to the skill')
+                new Error(
+                    'BotFrameworkHttpClient.postActivity(): Unable to get appCredentials to connect to the skill',
+                ),
             );
         });
 
@@ -153,7 +155,7 @@ describe('BotFrameworkHttpClient', function () {
 
             await assert.rejects(
                 client.postActivity(fromBotId, 'toBotId', 'http://skillUrl/api/good', 'serviceUrl', 'conversationId'),
-                new Error('BotFrameworkHttpClient.postActivity(): missing activity')
+                new Error('BotFrameworkHttpClient.postActivity(): missing activity'),
             );
         });
 
@@ -175,9 +177,9 @@ describe('BotFrameworkHttpClient', function () {
                     'http://skillUrl/api/good',
                     'serviceUrl',
                     'conversationId',
-                    activity
+                    activity,
                 ),
-                new Error('BotFrameworkHttpClient.postActivity(): Activity must have a ConversationReference')
+                new Error('BotFrameworkHttpClient.postActivity(): Activity must have a ConversationReference'),
             );
         });
 
@@ -197,7 +199,7 @@ describe('BotFrameworkHttpClient', function () {
                 'http://skillUrl/api/good',
                 'serviceUrl',
                 'conversationId',
-                activity
+                activity,
             );
             assert.strictEqual(response.status, 200);
             assert.strictEqual(activity.recipient, undefined);
@@ -220,7 +222,7 @@ describe('BotFrameworkHttpClient', function () {
                 'http://skillUrl/api/good',
                 'serviceUrl',
                 'conversationId',
-                forwardedActivity
+                forwardedActivity,
             );
             assert.strictEqual(forwardedActivity.relatesTo, originalRelatesTo);
         });

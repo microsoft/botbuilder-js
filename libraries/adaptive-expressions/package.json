@@ -38,7 +38,6 @@
     "btoa-lite": "^1.0.0",
     "d3-format": "^2.0.0",
     "dayjs": "^1.11.13",
-    "eslint-plugin-only-warn": "^1.1.0",
     "jspath": "^0.4.0",
     "lodash": "^4.17.21",
     "lru-cache": "^5.1.1",

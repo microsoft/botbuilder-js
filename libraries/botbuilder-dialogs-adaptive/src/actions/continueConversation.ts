@@ -100,7 +100,7 @@ export class ContinueConversation extends Dialog implements ContinueConversation
                 value: this.value?.getValue(dc.state),
             },
             conversationReference,
-            true
+            true,
         );
 
         const queueStorage: QueueStorage = dc.context.turnState.get(DialogTurnStateConstants.queueStorage);

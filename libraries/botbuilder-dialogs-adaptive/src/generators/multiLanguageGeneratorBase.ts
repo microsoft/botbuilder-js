@@ -20,10 +20,11 @@ export interface MultiLanguageGeneratorBaseConfiguration {
  */
 export abstract class MultiLanguageGeneratorBase<
         T = unknown,
-        D extends Record<string, unknown> = Record<string, unknown>
+        D extends Record<string, unknown> = Record<string, unknown>,
     >
     extends Configurable
-    implements LanguageGenerator<T, D>, MultiLanguageGeneratorBaseConfiguration {
+    implements LanguageGenerator<T, D>, MultiLanguageGeneratorBaseConfiguration
+{
     /**
      * Language policy required by language generator.
      */
@@ -50,7 +51,7 @@ export abstract class MultiLanguageGeneratorBase<
      */
     abstract tryGetGenerator(
         dialogContext: DialogContext,
-        locale: string
+        locale: string,
     ): { exist: boolean; result: LanguageGenerator<T, D> };
 
     /**
