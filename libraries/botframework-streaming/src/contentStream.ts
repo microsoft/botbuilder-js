@@ -91,7 +91,6 @@ export class ContentStream {
         return <T>JSON.parse(stringToParse);
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private async readAll(): Promise<Record<string, any>> {
         // do a read-all
         const allData: INodeBuffer[] = [];
@@ -107,14 +106,15 @@ export class ContentStream {
 
         if (count < this.length) {
             const readToEnd = new Promise<boolean>((resolve): void => {
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                const callback = (cs: ContentStream) => (chunk: any): void => {
-                    allData.push(chunk);
-                    count += (chunk as INodeBuffer).length;
-                    if (count === cs.length) {
-                        resolve(true);
-                    }
-                };
+                const callback =
+                    (cs: ContentStream) =>
+                    (chunk: any): void => {
+                        allData.push(chunk);
+                        count += (chunk as INodeBuffer).length;
+                        if (count === cs.length) {
+                            resolve(true);
+                        }
+                    };
 
                 stream.subscribe(callback(this));
             });
