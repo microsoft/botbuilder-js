@@ -424,7 +424,6 @@ export class ActivityHandler extends ActivityHandlerBase {
      * Called to initiate the event emission process.
      *
      * @param context The context object for the current turn.
-     *
      * @remarks
      * Typically, you would provide this method as the function handler that the adapter calls
      * to perform the bot's logic after the received activity has been pre-processed by the adapter
@@ -451,7 +450,6 @@ export class ActivityHandler extends ActivityHandlerBase {
      * Called at the start of the event emission process.
      *
      * @param context The context object for the current turn.
-     *
      * @remarks
      * Override this method to use custom logic for emitting events.
      *
@@ -468,7 +466,6 @@ export class ActivityHandler extends ActivityHandlerBase {
      * Runs all registered _message_ handlers and then continues the event emission process.
      *
      * @param context The context object for the current turn.
-     *
      * @remarks
      * Override this method to support channel-specific behavior across multiple channels.
      *
@@ -484,7 +481,6 @@ export class ActivityHandler extends ActivityHandlerBase {
      * Runs all registered _message update_ handlers and then continues the event emission process.
      *
      * @param context The context object for the current turn.
-     *
      * @remarks
      * Override this method to support channel-specific behavior across multiple channels.
      *
@@ -502,7 +498,6 @@ export class ActivityHandler extends ActivityHandlerBase {
      * Runs all registered _message delete_ handlers and then continues the event emission process.
      *
      * @param context The context object for the current turn.
-     *
      * @remarks
      * Override this method to support channel-specific behavior across multiple channels.
      *
@@ -568,7 +563,6 @@ export class ActivityHandler extends ActivityHandlerBase {
      * Handle _signin invoke activity type_.
      *
      * @param _context The context object for the current turn.
-     *
      * @remarks
      * Override this method to support channel-specific behavior across multiple channels.
      */
@@ -585,7 +579,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      */
     protected onAdaptiveCardInvoke(
         _context: TurnContext,
-        _invokeValue: AdaptiveCardInvokeValue
+        _invokeValue: AdaptiveCardInvokeValue,
     ): Promise<AdaptiveCardInvokeResponse> {
         return Promise.reject(new InvokeException(StatusCodes.NOT_IMPLEMENTED));
     }
@@ -605,7 +599,6 @@ export class ActivityHandler extends ActivityHandlerBase {
      * Runs all registered _endOfConversation_ handlers and then continues the event emission process.
      *
      * @param context The context object for the current turn.
-     *
      * @remarks
      * Override this method to support channel-specific behavior across multiple channels.
      *
@@ -621,7 +614,6 @@ export class ActivityHandler extends ActivityHandlerBase {
      * Runs all registered _typing_ handlers and then continues the event emission process.
      *
      * @param context The context object for the current turn.
-     *
      * @remarks
      * Override this method to support channel-specific behavior across multiple channels.
      *
@@ -637,7 +629,6 @@ export class ActivityHandler extends ActivityHandlerBase {
      * Runs all registered _instllationupdate_ handlers and then continues the event emission process.
      *
      * @param context The context object for the current turn.
-     *
      * @remarks
      * Override this method to support channel-specific behavior across multiple channels.
      *
@@ -673,7 +664,6 @@ export class ActivityHandler extends ActivityHandlerBase {
      * Runs the _installation update_ sub-type handlers, as appropriate, and then continues the event emission process.
      *
      * @param context The context object for the current turn.
-     *
      * @remarks
      * Override this method to support channel-specific behavior across multiple channels or to add
      * custom conversation update sub-type events.
@@ -700,7 +690,6 @@ export class ActivityHandler extends ActivityHandlerBase {
      * Runs all registered _installation update add_ handlers and then continues the event emission process.
      *
      * @param context The context object for the current turn.
-     *
      * @remarks
      * Override this method to support channel-specific behavior across multiple channels.
      *
@@ -716,7 +705,6 @@ export class ActivityHandler extends ActivityHandlerBase {
      * Runs all registered _installation update remove_ handlers and then continues the event emission process.
      *
      * @param context The context object for the current turn.
-     *
      * @remarks
      * Override this method to support channel-specific behavior across multiple channels.
      *
@@ -732,7 +720,6 @@ export class ActivityHandler extends ActivityHandlerBase {
      * Runs all registered _unrecognized activity type_ handlers and then continues the event emission process.
      *
      * @param context The context object for the current turn.
-     *
      * @remarks
      * Override this method to support channel-specific behavior across multiple channels.
      *
@@ -750,7 +737,7 @@ export class ActivityHandler extends ActivityHandlerBase {
             const response = this.createAdaptiveCardInvokeErrorResponse(
                 StatusCodes.BAD_REQUEST,
                 'BadRequest',
-                'Missing value property for search'
+                'Missing value property for search',
             );
 
             throw new InvokeException(StatusCodes.BAD_REQUEST, response);
@@ -763,7 +750,7 @@ export class ActivityHandler extends ActivityHandlerBase {
                 const response = this.createAdaptiveCardInvokeErrorResponse(
                     StatusCodes.BAD_REQUEST,
                     'BadRequest',
-                    'Missing kind property for search.'
+                    'Missing kind property for search.',
                 );
 
                 throw new InvokeException(StatusCodes.BAD_REQUEST, response);
@@ -774,7 +761,7 @@ export class ActivityHandler extends ActivityHandlerBase {
             const response = this.createAdaptiveCardInvokeErrorResponse(
                 StatusCodes.BAD_REQUEST,
                 'BadRequest',
-                'Missing queryText for search.'
+                'Missing queryText for search.',
             );
 
             throw new InvokeException(StatusCodes.BAD_REQUEST, response);
@@ -789,7 +776,7 @@ export class ActivityHandler extends ActivityHandlerBase {
             const response = this.createAdaptiveCardInvokeErrorResponse(
                 StatusCodes.BAD_REQUEST,
                 'BadRequest',
-                'Missing value property'
+                'Missing value property',
             );
 
             throw new InvokeException(StatusCodes.BAD_REQUEST, response);
@@ -799,7 +786,7 @@ export class ActivityHandler extends ActivityHandlerBase {
             const response = this.createAdaptiveCardInvokeErrorResponse(
                 StatusCodes.BAD_REQUEST,
                 'NotSupported',
-                `The action '${value.action.type}' is not supported.`
+                `The action '${value.action.type}' is not supported.`,
             );
 
             throw new InvokeException(StatusCodes.BAD_REQUEST, response);
@@ -828,7 +815,7 @@ export class ActivityHandler extends ActivityHandlerBase {
     private createAdaptiveCardInvokeErrorResponse(
         statusCode: StatusCodes,
         code: string,
-        message: string
+        message: string,
     ): AdaptiveCardInvokeResponse {
         return {
             statusCode,
@@ -841,7 +828,6 @@ export class ActivityHandler extends ActivityHandlerBase {
      * Runs all registered _conversation update_ handlers and then continues the event emission process.
      *
      * @param context The context object for the current turn.
-     *
      * @remarks
      * Override this method to support channel-specific behavior across multiple channels.
      *
@@ -860,7 +846,6 @@ export class ActivityHandler extends ActivityHandlerBase {
      * Runs the _conversation update_ sub-type handlers, as appropriate, and then continues the event emission process.
      *
      * @param context The context object for the current turn.
-     *
      * @remarks
      * Override this method to support channel-specific behavior across multiple channels or to add
      * custom conversation update sub-type events.
@@ -884,7 +869,6 @@ export class ActivityHandler extends ActivityHandlerBase {
      * Runs the _message update_ sub-type handlers, as appropriate, and then continues the event emission process.
      *
      * @param context The context object for the current turn.
-     *
      * @remarks
      * Override this method to support channel-specific behavior across multiple channels or to add
      * custom conversation update sub-type events.
@@ -899,7 +883,6 @@ export class ActivityHandler extends ActivityHandlerBase {
      * Runs the _message delete_ sub-type handlers, as appropriate, and then continues the event emission process.
      *
      * @param context The context object for the current turn.
-     *
      * @remarks
      * Override this method to support channel-specific behavior across multiple channels or to add
      * custom conversation update sub-type events.
@@ -913,7 +896,6 @@ export class ActivityHandler extends ActivityHandlerBase {
      * Runs all registered _message reaction_ handlers and then continues the event emission process.
      *
      * @param context The context object for the current turn.
-     *
      * @remarks
      * Override this method to support channel-specific behavior across multiple channels.
      *
@@ -933,7 +915,6 @@ export class ActivityHandler extends ActivityHandlerBase {
      *
      * @param reactionsAdded The list of reactions added.
      * @param context The context object for the current turn.
-     *
      * @remarks
      * Override this method to support channel-specific behavior across multiple channels.
      *
@@ -950,7 +931,6 @@ export class ActivityHandler extends ActivityHandlerBase {
      *
      * @param reactionsRemoved The list of reactions removed.
      * @param context The context object for the current turn.
-     *
      * @remarks
      * Override this method to support channel-specific behavior across multiple channels.
      *
@@ -960,7 +940,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      */
     protected async onReactionsRemovedActivity(
         reactionsRemoved: MessageReaction[],
-        context: TurnContext
+        context: TurnContext,
     ): Promise<void> {
         await this.handle(context, 'ReactionsRemoved', this.defaultNextEvent(context));
     }
@@ -969,7 +949,6 @@ export class ActivityHandler extends ActivityHandlerBase {
      * Runs the _message reaction_ sub-type handlers, as appropriate, and then continues the event emission process.
      *
      * @param context The context object for the current turn.
-     *
      * @remarks
      * Override this method to support channel-specific behavior across multiple channels or to add
      * custom message reaction sub-type events.
@@ -991,7 +970,6 @@ export class ActivityHandler extends ActivityHandlerBase {
      * Runs all registered event_ handlers and then continues the event emission process.
      *
      * @param context The context object for the current turn.
-     *
      * @remarks
      * Override this method to support channel-specific behavior across multiple channels.
      *
@@ -1010,7 +988,6 @@ export class ActivityHandler extends ActivityHandlerBase {
      * Runs the _event_ sub-type handlers, as appropriate, and then continues the event emission process.
      *
      * @param context The context object for the current turn.
-     *
      * @remarks
      * Override this method to support channel-specific behavior across multiple channels or to add custom event sub-type events.
      * For certain channels, such as  Web Chat and custom Direct Line clients, developers can emit custom event activities from the client.

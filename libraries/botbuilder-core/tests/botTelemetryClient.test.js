@@ -31,12 +31,12 @@ describe('BotTelemetryClient', function () {
         it('should throw TypeError if trackTrace and trackPageView do not exist', function () {
             assert.throws(
                 () => telemetryTrackDialogView(undefined, 'dialogName'),
-                TypeError('"telemetryClient" parameter does not have methods trackPageView() or trackTrace()')
+                TypeError('"telemetryClient" parameter does not have methods trackPageView() or trackTrace()'),
             );
 
             assert.throws(
                 () => telemetryTrackDialogView({}, 'dialogName'),
-                TypeError('"telemetryClient" parameter does not have methods trackPageView() or trackTrace()')
+                TypeError('"telemetryClient" parameter does not have methods trackPageView() or trackTrace()'),
             );
         });
     });

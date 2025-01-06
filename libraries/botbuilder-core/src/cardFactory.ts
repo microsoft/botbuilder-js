@@ -65,7 +65,6 @@ export class CardFactory {
      *
      * @param card A description of the Adaptive Card to return.
      * @returns An [Attachment](xref:botframework-schema.Attachment).
-     *
      * @remarks
      * Adaptive Cards are an open card exchange format enabling developers to exchange UI content in a common and consistent way.
      * For channels that don't yet support Adaptive Cards natively, the Bot Framework will
@@ -115,7 +114,7 @@ export class CardFactory {
         title: string,
         media: (MediaUrl | string)[],
         buttons?: (CardAction | string)[],
-        other?: Partial<AnimationCard>
+        other?: Partial<AnimationCard>,
     ): Attachment {
         return mediaCard(CardFactory.contentTypes.animationCard, title, media, buttons, other);
     }
@@ -134,7 +133,7 @@ export class CardFactory {
         title: string,
         media: (MediaUrl | string)[],
         buttons?: (CardAction | string)[],
-        other?: Partial<AudioCard>
+        other?: Partial<AudioCard>,
     ): Attachment {
         return mediaCard(CardFactory.contentTypes.audioCard, title, media, buttons, other);
     }
@@ -149,7 +148,6 @@ export class CardFactory {
      *      is converted to an `imBack` button with a title and value set to the value of the string.
      * @param other Optional. Any additional properties to include on the card.
      * @returns An [Attachment](xref:botframework-schema.Attachment).
-     *
      * @remarks
      * Hero cards tend to have one dominant, full-width image.
      * Channels typically render the card's text and buttons below the image.
@@ -167,7 +165,7 @@ export class CardFactory {
         title: string,
         images?: (CardImage | string)[],
         buttons?: (CardAction | string)[],
-        other?: Partial<HeroCard>
+        other?: Partial<HeroCard>,
     ): Attachment;
     /**
      * Returns an attachment for a hero card.
@@ -180,7 +178,6 @@ export class CardFactory {
      *      is converted to an `imBack` button with a title and value set to the value of the string.
      * @param other Optional. Any additional properties to include on the card.
      * @returns An [Attachment](xref:botframework-schema.Attachment).
-     *
      * @remarks
      * Hero cards tend to have one dominant, full-width image.
      * Channels typically render the card's text and buttons below the image.
@@ -198,7 +195,7 @@ export class CardFactory {
         text: string,
         images?: (CardImage | string)[],
         buttons?: (CardAction | string)[],
-        other?: Partial<HeroCard>
+        other?: Partial<HeroCard>,
     ): Attachment;
     /**
      * Returns an attachment for a hero card.
@@ -211,7 +208,6 @@ export class CardFactory {
      *      is converted to an `imBack` button with a title and value set to the value of the string.
      * @param other Optional. Any additional properties to include on the card.
      * @returns An [Attachment](xref:botframework-schema.Attachment).
-     *
      * @remarks
      * Hero cards tend to have one dominant, full-width image.
      * Channels typically render the card's text and buttons below the image.
@@ -248,7 +244,7 @@ export class CardFactory {
         text?: string,
         link?: string,
         tokenExchangeResource?: TokenExchangeResource,
-        tokenPostResource?: TokenPostResource
+        tokenPostResource?: TokenPostResource,
     ): Attachment {
         const card: Partial<OAuthCard> = {
             buttons: [{ type: ActionTypes.Signin, title: title, value: link, channelData: undefined }],
@@ -268,7 +264,6 @@ export class CardFactory {
      *
      * @param card a description of the Office 365 connector card to return.
      * @returns An [Attachment](xref:botframework-schema.Attachment).
-     *
      * @remarks
      * For example:
      * ```JavaScript
@@ -308,7 +303,6 @@ export class CardFactory {
      * @param url The URL of the sign-in page to use.
      * @param text Optional. Additional text to include on the card.
      * @returns An [Attachment](xref:botframework-schema.Attachment).
-     *
      * @remarks
      * For channels that don't natively support sign-in cards, an alternative message is rendered.
      */
@@ -333,7 +327,6 @@ export class CardFactory {
      *      is converted to an `imBack` button with a title and value set to the value of the string.
      * @param other Optional. Any additional properties to include on the card.
      * @returns An [Attachment](xref:botframework-schema.Attachment).
-     *
      * @remarks
      * Thumbnail cards are similar to hero cards but instead of a full width image,
      * they're typically rendered with a smaller thumbnail version of the image.
@@ -344,7 +337,7 @@ export class CardFactory {
         title: string,
         images?: (CardImage | string)[],
         buttons?: (CardAction | string)[],
-        other?: Partial<ThumbnailCard>
+        other?: Partial<ThumbnailCard>,
     ): Attachment;
     /**
      * Returns an attachment for a thumbnail card.
@@ -357,7 +350,6 @@ export class CardFactory {
      *      is converted to an `imBack` button with a title and value set to the value of the string.
      * @param other Optional. Any additional properties to include on the card.
      * @returns An [Attachment](xref:botframework-schema.Attachment).
-     *
      * @remarks
      * Thumbnail cards are similar to hero cards but instead of a full width image,
      * they're typically rendered with a smaller thumbnail version of the image.
@@ -369,7 +361,7 @@ export class CardFactory {
         text: string,
         images?: (CardImage | string)[],
         buttons?: (CardAction | string)[],
-        other?: Partial<ThumbnailCard>
+        other?: Partial<ThumbnailCard>,
     ): Attachment;
     /**
      * Returns an attachment for a thumbnail card.
@@ -382,7 +374,6 @@ export class CardFactory {
      *      is converted to an `imBack` button with a title and value set to the value of the string.
      * @param other Optional. Any additional properties to include on the card.
      * @returns An [Attachment](xref:botframework-schema.Attachment).
-     *
      * @remarks
      * Thumbnail cards are similar to hero cards but instead of a full width image,
      * they're typically rendered with a smaller thumbnail version of the image.
@@ -394,7 +385,7 @@ export class CardFactory {
         text?: any,
         images?: any,
         buttons?: any,
-        other?: Partial<ThumbnailCard>
+        other?: Partial<ThumbnailCard>,
     ): Attachment {
         if (typeof text !== 'string') {
             other = buttons;
@@ -433,7 +424,7 @@ export class CardFactory {
         title: string,
         media: (MediaUrl | string)[],
         buttons?: (CardAction | string)[],
-        other?: Partial<VideoCard>
+        other?: Partial<VideoCard>,
     ): Attachment {
         return mediaCard(CardFactory.contentTypes.videoCard, title, media, buttons, other);
     }
@@ -511,7 +502,7 @@ function mediaCard(
     title: string,
     media: (MediaUrl | string)[],
     buttons?: (CardAction | string)[],
-    other?: any
+    other?: any,
 ): Attachment {
     const card: VideoCard = { ...other };
     if (title) {

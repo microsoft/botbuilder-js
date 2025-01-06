@@ -17,6 +17,7 @@ const noop = () => null;
 
 describe('CloudAdapterBase', function () {
     let sandbox;
+
     beforeEach(function () {
         sandbox = sinon.createSandbox({ useFakeTimers: true });
     });
@@ -270,7 +271,7 @@ describe('CloudAdapterBase', function () {
                         activity: {
                             name: 'ContinueConversation',
                         },
-                    })
+                    }),
                 );
             });
 
@@ -289,7 +290,7 @@ describe('CloudAdapterBase', function () {
             const { logic, verify } = bootstrap(
                 sinon.match({
                     claims: sinon.match.some(sinon.match({ type: AuthenticationConstants.AppIdClaim, value: appId })),
-                })
+                }),
             );
 
             await adapter.continueConversationAsync(appId, {}, undefined, logic);
@@ -303,13 +304,13 @@ describe('CloudAdapterBase', function () {
             const { logic, verify } = bootstrap(
                 sinon.match({
                     claims: sinon.match.some(sinon.match({ type: AuthenticationConstants.AppIdClaim, value: appId })),
-                })
+                }),
             );
 
             await adapter.continueConversationAsync(
                 new ClaimsIdentity([{ type: AuthenticationConstants.AppIdClaim, value: appId }]),
                 {},
-                logic
+                logic,
             );
 
             verify();
@@ -321,7 +322,7 @@ describe('CloudAdapterBase', function () {
             const { logic } = bootstrap(
                 sinon.match({
                     claims: sinon.match.some(sinon.match({ type: AuthenticationConstants.AppIdClaim, value: appId })),
-                })
+                }),
             );
 
             const error = new Error('oh no');
@@ -332,7 +333,7 @@ describe('CloudAdapterBase', function () {
 
                     throw error;
                 }),
-                error
+                error,
             );
         });
     });
@@ -372,7 +373,7 @@ describe('CloudAdapterBase', function () {
                         activity: {
                             name: 'CreateConversation',
                         },
-                    })
+                    }),
                 );
             });
 
@@ -389,12 +390,12 @@ describe('CloudAdapterBase', function () {
         it('throws for bad args', async function () {
             await assert.rejects(
                 adapter.createConversationAsync('botAppId', 'channelId', undefined, 'audience', {}, () => null),
-                { name: 'TypeError' }
+                { name: 'TypeError' },
             );
 
             await assert.rejects(
                 adapter.createConversationAsync('botAppId', 'channelId', '', 'audience', {}, () => null),
-                { name: 'TypeError' }
+                { name: 'TypeError' },
             );
 
             await assert.rejects(
@@ -404,14 +405,14 @@ describe('CloudAdapterBase', function () {
                     'serviceUrl',
                     'audience',
                     undefined,
-                    () => null
+                    () => null,
                 ),
-                { name: 'TypeError' }
+                { name: 'TypeError' },
             );
 
             await assert.rejects(
                 adapter.createConversationAsync('botAppId', 'channelId', 'serviceUrl', 'audience', {}, undefined),
-                { name: 'TypeError' }
+                { name: 'TypeError' },
             );
         });
 
@@ -425,7 +426,7 @@ describe('CloudAdapterBase', function () {
                 [serviceUrl, audience],
                 sinon.match({
                     claims: sinon.match.some(sinon.match({ type: AuthenticationConstants.AppIdClaim, value: appId })),
-                })
+                }),
             );
 
             mockedConnectorClient.expects('createConversation').withArgs(parameters).once().resolves({ id: 'id' });
@@ -445,7 +446,7 @@ describe('CloudAdapterBase', function () {
                 [serviceUrl, audience],
                 sinon.match({
                     claims: sinon.match.some(sinon.match({ type: AuthenticationConstants.AppIdClaim, value: appId })),
-                })
+                }),
             );
 
             const error = new Error('oh no');
@@ -454,7 +455,7 @@ describe('CloudAdapterBase', function () {
 
             await assert.rejects(
                 adapter.createConversationAsync(appId, 'channelId', serviceUrl, audience, parameters, logic),
-                error
+                error,
             );
         });
     });

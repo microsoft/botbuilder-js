@@ -79,7 +79,7 @@ export class BotStateSet {
      */
     async saveAllChanges(context: TurnContext, force = false): Promise<void> {
         const promises: Promise<void>[] = this.botStates.map((botstate: BotState) =>
-            botstate.saveChanges(context, force)
+            botstate.saveChanges(context, force),
         );
 
         await Promise.all(promises);
