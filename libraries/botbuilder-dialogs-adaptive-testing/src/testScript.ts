@@ -218,7 +218,7 @@ export class TestScript extends Configurable implements TestScriptConfiguration 
             const activity = TurnContext.applyConversationReference(
                 { name: 'inspector', type: ActivityTypes.Event },
                 adapter.conversation,
-                true
+                true,
             );
             await adapter.processActivity(activity, async (turnContext) => await di.inspect(turnContext, inspector));
         };

@@ -3,6 +3,7 @@ const { makeResourceExplorer } = require('./utils');
 
 describe('MiscTests', function () {
     let resourceExplorer;
+
     before(function () {
         resourceExplorer = makeResourceExplorer('MiscTests');
     });

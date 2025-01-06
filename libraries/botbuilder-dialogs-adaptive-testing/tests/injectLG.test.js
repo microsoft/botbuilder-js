@@ -3,6 +3,7 @@ const { makeResourceExplorer } = require('./utils');
 
 describe('ActionScopeTests', function () {
     let resourceExplorer;
+
     before(function () {
         resourceExplorer = makeResourceExplorer('InjectLGTests');
     });

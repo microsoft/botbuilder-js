@@ -3,6 +3,7 @@ const { makeResourceExplorer } = require('./utils');
 
 describe('SelectorTests', function () {
     let resourceExplorer;
+
     before(function () {
         resourceExplorer = makeResourceExplorer('SelectorTests');
     });
@@ -27,7 +28,7 @@ describe('SelectorTests', function () {
         await TestUtils.runTestScript(resourceExplorer, 'SelectorTests_Priority');
     });
 
-    it('Priority', async function () {
+    it('FloatPriority', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'SelectorTests_Float_Priority');
     });
 

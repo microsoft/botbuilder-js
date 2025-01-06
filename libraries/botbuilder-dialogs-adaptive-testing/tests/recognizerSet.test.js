@@ -31,7 +31,7 @@ const createRecognizer = () =>
                     new NumberEntityRecognizer(),
                     new PercentageEntityRecognizer(),
                     new PhoneNumberEntityRecognizer(),
-                    new TemperatureEntityRecognizer()
+                    new TemperatureEntityRecognizer(),
                 ),
             }),
             new RegexRecognizer().configure({
@@ -41,7 +41,7 @@ const createRecognizer = () =>
                     new UrlEntityRecognizer(),
                     new RegexEntityRecognizer('color', '(?i)(red|green|blue|purple|orange|violet|white|black)'),
                     new RegexEntityRecognizer('backgroundColor', '(?i)(back|background)'),
-                    new RegexEntityRecognizer('foregroundColor', '(?i)(foreground|front) {color}')
+                    new RegexEntityRecognizer('foregroundColor', '(?i)(foreground|front) {color}'),
                 ),
             }),
         ],
@@ -49,6 +49,7 @@ const createRecognizer = () =>
 
 describe('RecognizerSetTests', function () {
     let resourceExplorer;
+
     before(function () {
         resourceExplorer = makeResourceExplorer('RecognizerSetTests');
     });
