@@ -22,6 +22,9 @@ import {
     RestResponse,
 } from './compat';
 
+/**
+ * Compat implementation between @azure/core-http and @azure/core-client.
+ */
 export class ServiceClientContext {
     /**
      * If specified, this is the base URI that requests will be made against for this ServiceClient.
@@ -47,6 +50,7 @@ export class ServiceClientContext {
 
     /**
      * Initializes a new instance of the ConnectorClientContext class.
+     *
      * @param credentials Subscription credentials which uniquely identify client subscription.
      * @param [options] The parameter options
      */
@@ -95,7 +99,9 @@ export class ServiceClientContext {
 
     /**
      * Send the provided httpRequest.
+     *
      * @param request The HTTP request to send.
+     * @returns The HTTP response.
      */
     async sendRequest(request: PipelineRequest): Promise<HttpOperationResponse> {
         if (!request) {
@@ -109,9 +115,11 @@ export class ServiceClientContext {
 
     /**
      * Send an HTTP request that is populated using the provided OperationSpec.
+     *
      * @param operationArguments - The arguments that the HTTP request's templated values will be populated from.
      * @param operationSpec - The OperationSpec to use to populate the httpRequest.
      * @param callback - The callback to call when the response is received.
+     * @returns The response object.
      */
     async sendOperationRequest(
         operationArguments: OperationArguments,
@@ -214,6 +222,7 @@ export class ServiceClientContext {
     ): PipelinePolicy[] {
         if (Array.isArray(policies)) {
             const policy = createRequestPolicyFactoryPolicy(policies);
+            policy.name = 'ServiceClientContext_RequestPolicyFactories';
             client.pipeline.removePolicy(policy);
             client.pipeline.addPolicy(policy);
         } else if (typeof policies === 'function') {

@@ -512,11 +512,11 @@ describe('BotFrameworkAdapter', function () {
 
         it('ConnectorClient should use requestPolicyFactories from clientOptions', async function () {
             const policy = {
-                create(){
+                create() {
                     return {
-                        sendRequest(){}
-                    }
-                }
+                        sendRequest() {},
+                    };
+                },
             };
             const adapter = new BotFrameworkAdapter({ clientOptions: { requestPolicyFactories: [policy] } });
 
@@ -524,7 +524,9 @@ describe('BotFrameworkAdapter', function () {
                 const connectorClient = turnContext.turnState.get(turnContext.adapter.ConnectorClientKey);
 
                 assert(
-                    connectorClient._requestPolicyFactories.find((e) => e === policy),
+                    connectorClient._requestPolicyFactories.find(
+                        ({ name }) => name === 'ServiceClientContext_RequestPolicyFactories',
+                    ),
                     'requestPolicyFactories from clientOptions parameter is not used.',
                 );
             });

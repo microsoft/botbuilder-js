@@ -15,13 +15,14 @@ import { TeamsConnectorClientOptions } from './models';
 export class TeamsConnectorClientContext extends ServiceClientContext {
     /**
      * Initializes a new instance of the TeamsConnectorClientContext class.
+     *
      * @param credentials Subscription credentials which uniquely identify client subscription.
      * @param [options] The parameter options
      */
     constructor(credentials: ServiceClientCredentials, options?: TeamsConnectorClientOptions) {
         super(credentials, {
             ...options,
-            baseUri: options?.baseUri || 'https://api.botframework.com'
+            baseUri: options?.baseUri || 'https://api.botframework.com',
         });
     }
 }

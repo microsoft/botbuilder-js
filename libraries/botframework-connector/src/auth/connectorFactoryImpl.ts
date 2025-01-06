@@ -68,8 +68,8 @@ export class ConnectorFactoryImpl extends ConnectorFactory {
                         return nextPolicy.sendRequest(httpRequest);
                     },
                 }),
-            }
-        ]
+            },
+        ];
 
         return new ConnectorClient(credentials, options);
     }

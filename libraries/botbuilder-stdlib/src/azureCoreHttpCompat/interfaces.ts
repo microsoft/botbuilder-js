@@ -178,6 +178,7 @@ export interface ServiceClientOptions {
 export interface ServiceCallback<TResult> {
     /**
      * A method that will be invoked as a callback to a service function.
+     *
      * @param err - The error occurred if any, while executing the request; otherwise null.
      * @param result - The deserialized response body if an error did not occur.
      * @param request - The raw/actual request sent to the server if an error did not occur.
@@ -198,6 +199,7 @@ export interface HttpPipelineLogger {
 
     /**
      * Log the provided message.
+     *
      * @param logLevel - The HttpLogDetailLevel associated with this message.
      * @param message - The message to log.
      */

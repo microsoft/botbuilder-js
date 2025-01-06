@@ -34,11 +34,12 @@ import { toWebResourceLike } from '../../node_modules/@azure/core-http-compat/di
 
 /**
  * Creates a new WebResourceLike object from the provided resource.
+ *
  * @param resource The resource to convert to a WebResourceLike object.
  * @returns A new WebResourceLike object.
  */
 export function createWebResource(resource?: PipelineRequestOptions): WebResourceLike {
-    return toWebResourceLike(createPipelineRequest(resource ?? { url: ''}));
+    return toWebResourceLike(createPipelineRequest(resource ?? { url: '' }));
 }
 
 /**
