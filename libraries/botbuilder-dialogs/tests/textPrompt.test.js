@@ -56,7 +56,7 @@ describe('TextPrompt', function () {
             new TextPrompt('prompt', async (prompt) => {
                 assert(prompt);
                 return prompt.recognized.value.length >= 3;
-            })
+            }),
         );
 
         await adapter
@@ -157,7 +157,7 @@ describe('TextPrompt', function () {
                     await prompt.context.sendActivity('too short');
                 }
                 return valid;
-            })
+            }),
         );
 
         await adapter

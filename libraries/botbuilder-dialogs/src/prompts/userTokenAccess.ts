@@ -15,7 +15,6 @@ import {
 } from 'botframework-connector';
 
 const ExtendedUserTokenProviderT = z.custom<ExtendedUserTokenProvider>(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (val: any) =>
         typeof val.exchangeToken === 'function' &&
         typeof val.getSignInResource === 'function' &&
@@ -23,23 +22,22 @@ const ExtendedUserTokenProviderT = z.custom<ExtendedUserTokenProvider>(
         typeof val.signOutUser === 'function',
     {
         message: 'ExtendedUserTokenProvider',
-    }
+    },
 );
 
 type ConnectorClientBuilder = {
     createConnectorClientWithIdentity: (
         serviceUrl: string,
         claimsIdentity: ClaimsIdentity,
-        audience: string
+        audience: string,
     ) => Promise<ConnectorClient>;
 };
 
 const ConnectorClientBuilderT = z.custom<ConnectorClientBuilder>(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (val: any) => typeof val.createConnectorClientWithIdentity === 'function',
     {
         message: 'ConnectorClientBuilder',
-    }
+    },
 );
 
 /**
@@ -48,10 +46,10 @@ const ConnectorClientBuilderT = z.custom<ConnectorClientBuilder>(
 export async function getUserToken(
     context: TurnContext,
     settings: OAuthPromptSettings,
-    magicCode: string
+    magicCode: string,
 ): Promise<TokenResponse> {
     const userTokenClient = context.turnState.get<UserTokenClient>(
-        (context.adapter as CloudAdapterBase).UserTokenClientKey
+        (context.adapter as CloudAdapterBase).UserTokenClientKey,
     );
     const extendedUserTokenProvider = ExtendedUserTokenProviderT.safeParse(context.adapter);
 
@@ -60,14 +58,14 @@ export async function getUserToken(
             context.activity?.from?.id,
             settings.connectionName,
             context.activity?.channelId,
-            magicCode
+            magicCode,
         );
     } else if (extendedUserTokenProvider.success) {
         return extendedUserTokenProvider.data.getUserToken(
             context,
             settings.connectionName,
             magicCode,
-            settings.oAuthAppCredentials
+            settings.oAuthAppCredentials,
         );
     } else {
         throw new Error('OAuth prompt is not supported by the current adapter');
@@ -79,10 +77,10 @@ export async function getUserToken(
  */
 export async function getSignInResource(
     context: TurnContext,
-    settings: OAuthPromptSettings
+    settings: OAuthPromptSettings,
 ): Promise<SignInUrlResponse> {
     const userTokenClient = context.turnState.get<UserTokenClient>(
-        (context.adapter as CloudAdapterBase).UserTokenClientKey
+        (context.adapter as CloudAdapterBase).UserTokenClientKey,
     );
     const extendedUserTokenProvider = ExtendedUserTokenProviderT.safeParse(context.adapter);
     if (userTokenClient) {
@@ -93,7 +91,7 @@ export async function getSignInResource(
             settings.connectionName,
             context.activity?.from?.id,
             undefined,
-            settings.oAuthAppCredentials
+            settings.oAuthAppCredentials,
         );
     } else {
         throw new Error('OAuth prompt is not supported by the current adapter');
@@ -105,21 +103,21 @@ export async function getSignInResource(
  */
 export async function signOutUser(context: TurnContext, settings: OAuthPromptSettings): Promise<void> {
     const userTokenClient = context.turnState.get<UserTokenClient>(
-        (context.adapter as CloudAdapterBase).UserTokenClientKey
+        (context.adapter as CloudAdapterBase).UserTokenClientKey,
     );
     const extendedUserTokenProvider = ExtendedUserTokenProviderT.safeParse(context.adapter);
     if (userTokenClient) {
         await userTokenClient.signOutUser(
             context.activity?.from?.id,
             settings.connectionName,
-            context.activity?.channelId
+            context.activity?.channelId,
         );
     } else if (extendedUserTokenProvider.success) {
         await extendedUserTokenProvider.data.signOutUser(
             context,
             settings.connectionName,
             context.activity?.from?.id,
-            settings.oAuthAppCredentials
+            settings.oAuthAppCredentials,
         );
     } else {
         throw new Error('OAuth prompt is not supported by the current adapter');
@@ -132,10 +130,10 @@ export async function signOutUser(context: TurnContext, settings: OAuthPromptSet
 export async function exchangeToken(
     context: TurnContext,
     settings: OAuthPromptSettings,
-    tokenExchangeRequest: TokenExchangeRequest
+    tokenExchangeRequest: TokenExchangeRequest,
 ): Promise<TokenResponse> {
     const userTokenClient = context.turnState.get<UserTokenClient>(
-        (context.adapter as CloudAdapterBase).UserTokenClientKey
+        (context.adapter as CloudAdapterBase).UserTokenClientKey,
     );
     const extendedUserTokenProvider = ExtendedUserTokenProviderT.safeParse(context.adapter);
 
@@ -144,14 +142,14 @@ export async function exchangeToken(
             context.activity?.from?.id,
             settings.connectionName,
             context.activity?.channelId,
-            tokenExchangeRequest
+            tokenExchangeRequest,
         );
     } else if (extendedUserTokenProvider.success) {
         return extendedUserTokenProvider.data.exchangeToken(
             context,
             settings.connectionName,
             context.activity?.from?.id,
-            tokenExchangeRequest
+            tokenExchangeRequest,
         );
     } else {
         throw new Error('OAuth prompt is not supported by the current adapter');
@@ -165,10 +163,10 @@ export async function createConnectorClient(
     context: TurnContext,
     serviceUrl: string,
     claimsIdentity: ClaimsIdentity,
-    audience: string
+    audience: string,
 ): Promise<ConnectorClient> {
     const connectorFactory = context.turnState.get<ConnectorFactory>(
-        (context.adapter as CloudAdapterBase).ConnectorFactoryKey
+        (context.adapter as CloudAdapterBase).ConnectorFactoryKey,
     );
     const connectorClientBuilder = ConnectorClientBuilderT.safeParse(context.adapter);
     if (connectorFactory) {
