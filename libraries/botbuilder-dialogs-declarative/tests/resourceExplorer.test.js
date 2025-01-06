@@ -19,7 +19,7 @@ function assertResourceFound(explorer, id) {
     const dialogs = explorer.getResources('dialog');
     assert(
         dialogs.some((dialog) => dialog.id == id),
-        "getResources('dialog') should return resources"
+        "getResources('dialog') should return resources",
     );
 }
 
@@ -29,7 +29,7 @@ function assertResourceNotFound(explorer, id) {
     const dialogs = explorer.getResources('dialog');
     assert(
         dialogs.every((dialog) => dialog.id != id),
-        "getResouces('dialog') should not return resources"
+        "getResouces('dialog') should not return resources",
     );
 }
 
@@ -110,7 +110,7 @@ describe('ResourceExplorer', function () {
         assert.strictEqual(
             dialog.id,
             'test.dialog',
-            'resource id should be used as default dialog id if none assigned.'
+            'resource id should be used as default dialog id if none assigned.',
         );
         assert.strictEqual(dialog.triggers[0].actions[0].id, '1234567890');
         assert.strictEqual(dialog.triggers[0].actions[1].id, 'test3.dialog');
@@ -275,7 +275,7 @@ describe('ResourceExplorer', function () {
         const resourceExplorer = new ResourceExplorer({ declarativeTypes }).addFolder(
             join(__dirname, './resources/CycleDetection'),
             false,
-            false
+            false,
         );
 
         const root = resourceExplorer.loadType('root.dialog');

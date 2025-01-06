@@ -73,7 +73,7 @@ export class FolderResourceProvider extends ResourceProvider {
         this._resources.clear();
         const files: string[] = PathUtil.getFiles(this.directory, this.includeSubFolders);
         const filteredFiles: string[] = files.filter((filename): boolean =>
-            this.resourceExplorer.resourceTypes.has(extname(filename).toLowerCase().replace(/^\./, ''))
+            this.resourceExplorer.resourceTypes.has(extname(filename).toLowerCase().replace(/^\./, '')),
         );
         for (let i = 0; i < filteredFiles.length; i++) {
             const filename = filteredFiles[i];
