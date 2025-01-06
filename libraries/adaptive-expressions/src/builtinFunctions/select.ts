@@ -23,7 +23,7 @@ export class Select extends ExpressionEvaluator {
             ExpressionType.Select,
             InternalFunctionUtils.foreach,
             ReturnType.Array,
-            InternalFunctionUtils.ValidateLambdaExpression
+            InternalFunctionUtils.ValidateLambdaExpression,
         );
     }
 }

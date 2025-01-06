@@ -27,23 +27,21 @@ export class Merge extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError(
-            (args: unknown[]): ValueWithError => {
-                const result = {};
-                for (const arg of args) {
-                    const objectResult = this.parseToObjectList(arg);
-                    if (objectResult.error != null) {
-                        return { value: undefined, error: objectResult.error };
-                    }
-
-                    for (const item of objectResult.result) {
-                        Object.assign(result, item);
-                    }
+        return FunctionUtils.applyWithError((args: unknown[]): ValueWithError => {
+            const result = {};
+            for (const arg of args) {
+                const objectResult = this.parseToObjectList(arg);
+                if (objectResult.error != null) {
+                    return { value: undefined, error: objectResult.error };
                 }
 
-                return { value: result, error: undefined };
+                for (const item of objectResult.result) {
+                    Object.assign(result, item);
+                }
             }
-        );
+
+            return { value: result, error: undefined };
+        });
     }
 
     private static parseToObjectList(arg: unknown): { result: Record<string, unknown>[]; error: string } {

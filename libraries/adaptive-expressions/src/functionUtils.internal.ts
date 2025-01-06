@@ -16,8 +16,8 @@ import { Options } from './options';
 import { EvaluateExpressionDelegate, ValueWithError } from './expressionEvaluator';
 import { MemoryInterface, SimpleObjectMemory, StackedMemory } from './memory';
 import { TimexProperty } from '@microsoft/recognizers-text-data-types-timex-expression';
-import bigInt = require('big-integer');
-import util = require('util');
+import bigInt from 'big-integer';
+import util from 'util';
 
 /**
  * Utility functions only used internal
@@ -185,7 +185,7 @@ export class InternalFunctionUtils {
         if (!error) {
             const unixMilliSec: number = dayjs(timeStamp).utc().valueOf();
             result = this.UnixMilliSecondToTicksConstant.add(
-                bigInt(unixMilliSec).times(this.MillisecondToTickConstant)
+                bigInt(unixMilliSec).times(this.MillisecondToTickConstant),
             );
         }
 
@@ -212,7 +212,7 @@ export class InternalFunctionUtils {
             value = instanceMap.get(property);
             if (value === undefined) {
                 const prop: string = Array.from(instanceMap.keys()).find(
-                    (k: string): boolean => k.toLowerCase() === property.toLowerCase()
+                    (k: string): boolean => k.toLowerCase() === property.toLowerCase(),
                 );
                 if (prop !== undefined) {
                     value = instanceMap.get(prop);
@@ -220,7 +220,7 @@ export class InternalFunctionUtils {
             }
         } else {
             const prop: string = Object.keys(instance).find(
-                (k: string): boolean => k.toLowerCase() === property.toLowerCase()
+                (k: string): boolean => k.toLowerCase() === property.toLowerCase(),
             );
             if (prop !== undefined) {
                 value = instance[prop];
@@ -334,7 +334,7 @@ export class InternalFunctionUtils {
         state: MemoryInterface,
         options: Options,
         list: T[],
-        callback: (currentItem: T, result: U, error: string) => boolean
+        callback: (currentItem: T, result: U, error: string) => boolean,
     ): void {
         const firstChild = expression.children[1].children[0];
         if (!(firstChild instanceof Constant) || typeof firstChild.value !== 'string') {

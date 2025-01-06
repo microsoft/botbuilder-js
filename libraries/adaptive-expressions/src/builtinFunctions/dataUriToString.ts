@@ -24,7 +24,7 @@ export class DataUriToString extends ExpressionEvaluator {
             ExpressionType.DataUriToString,
             DataUriToString.evaluator(),
             ReturnType.String,
-            FunctionUtils.validateUnary
+            FunctionUtils.validateUnary,
         );
     }
 
@@ -34,7 +34,7 @@ export class DataUriToString extends ExpressionEvaluator {
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply(
             (args: any[]): string => atob(args[0].slice(args[0].indexOf(',') + 1)),
-            FunctionUtils.verifyString
+            FunctionUtils.verifyString,
         );
     }
 }

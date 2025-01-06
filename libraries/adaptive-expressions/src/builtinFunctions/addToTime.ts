@@ -60,7 +60,7 @@ export class AddToTime extends ExpressionEvaluator {
         interval: number,
         timeUnit: string,
         format?: string,
-        locale?: string
+        locale?: string,
     ): ValueWithError {
         let result: string;
         const error = InternalFunctionUtils.verifyISOTimestamp(timeStamp);
@@ -81,7 +81,7 @@ export class AddToTime extends ExpressionEvaluator {
             [ReturnType.String, ReturnType.String],
             ReturnType.String,
             ReturnType.Number,
-            ReturnType.String
+            ReturnType.String,
         );
     }
 }

@@ -24,7 +24,7 @@ export class XML extends ExpressionEvaluator {
 
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.applyWithError((args: unknown[]): { value: unknown; error: string } =>
-            XML.platformSpecificXML(args)
+            XML.platformSpecificXML(args),
         );
     }
 
