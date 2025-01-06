@@ -9,6 +9,7 @@
 /**
  * Extended information about an entity including $instance data.
  */
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export interface EntityInfo {
     /**
      * Name of entity.
@@ -86,6 +87,7 @@ export interface NormalizedEntityInfos {
 /**
  * Extended information about an entity including $instance data.
  */
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export class EntityInfo {
     /**
      * Print an entity as a string.

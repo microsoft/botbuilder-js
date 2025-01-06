@@ -9,7 +9,7 @@ const { NullTelemetryClient } = require('botbuilder');
 function createTelemetryClientAndStub(captureTelemetryAction) {
     if (captureTelemetryAction && typeof captureTelemetryAction !== 'function') {
         throw new TypeError(
-            `Failed test arrangement - createtelemetryClientAndStub() received ${typeof captureTelemetryAction} instead of undefined or a function.`
+            `Failed test arrangement - createtelemetryClientAndStub() received ${typeof captureTelemetryAction} instead of undefined or a function.`,
         );
     }
 

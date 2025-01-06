@@ -36,7 +36,8 @@ export interface EditActionsConfiguration extends DialogConfiguration {
  */
 export class EditActions<O extends object = {}>
     extends Dialog<O>
-    implements DialogDependencies, EditActionsConfiguration {
+    implements DialogDependencies, EditActionsConfiguration
+{
     static $kind = 'Microsoft.EditActions';
 
     constructor();
@@ -120,15 +121,13 @@ export class EditActions<O extends object = {}>
         }
 
         if (dc.parent instanceof ActionContext) {
-            const planActions = this.actions.map(
-                (action: Dialog): ActionState => {
-                    return {
-                        dialogStack: [],
-                        dialogId: action.id,
-                        options: options,
-                    };
-                }
-            );
+            const planActions = this.actions.map((action: Dialog): ActionState => {
+                return {
+                    dialogStack: [],
+                    dialogId: action.id,
+                    options: options,
+                };
+            });
 
             const changes: ActionChangeList = {
                 changeType: this.changeType.getValue(dc.state),
