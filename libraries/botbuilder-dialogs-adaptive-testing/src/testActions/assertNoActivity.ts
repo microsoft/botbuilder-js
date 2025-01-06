@@ -43,7 +43,7 @@ export class AssertNoActivity extends TestAction implements AssertNoActivityConf
     async execute(
         adapter: TestAdapter,
         _callback: (context: TurnContext) => Promise<void>,
-        _inspector?: Inspector
+        _inspector?: Inspector,
     ): Promise<void> {
         if (adapter.activeQueue.length > 0) {
             throw new Error(this.getConditionDescription());

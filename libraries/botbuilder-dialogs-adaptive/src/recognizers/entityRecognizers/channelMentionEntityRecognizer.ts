@@ -29,7 +29,7 @@ export class ChannelMentionEntityRecognizer extends AdaptiveRecognizer {
         _dialogContext: DialogContext,
         activity: Partial<Activity>,
         _telemetryProperties?: Record<string, string>,
-        _telemetryMetrics?: Record<string, number>
+        _telemetryMetrics?: Record<string, number>,
     ): Promise<RecognizerResult> {
         const result: RecognizerResult = {
             text: '',

@@ -30,7 +30,7 @@ export class EntityRecognizerSet extends Array<EntityRecognizer> {
         dialogContext: DialogContext,
         text: string,
         locale: string,
-        entities: Entity[] = []
+        entities: Entity[] = [],
     ): Promise<Entity[]> {
         const allNewEntities: Entity[] = [];
         let entitiesToProcess: Entity[] = [...entities];
@@ -53,14 +53,14 @@ export class EntityRecognizerSet extends Array<EntityRecognizer> {
                         dialogContext,
                         text,
                         locale,
-                        entitiesToProcess
+                        entitiesToProcess,
                     );
                     for (let j = 0; j < newEntities.length; j++) {
                         const newEntity = newEntities[j];
-                        // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+
                         if (
                             !allNewEntities.find(
-                                (entity) => !newEntity && JSON.stringify(entity) == JSON.stringify(newEntity)
+                                (entity) => !newEntity && JSON.stringify(entity) == JSON.stringify(newEntity),
                             )
                         ) {
                             allNewEntities.push(newEntity);

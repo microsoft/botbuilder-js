@@ -21,7 +21,7 @@ export class NotEqual extends ComparisonEvaluator {
         super(
             ExpressionType.NotEqual,
             (args) => !FunctionUtils.commonEquals(args[0], args[1]),
-            FunctionUtils.validateBinary
+            FunctionUtils.validateBinary,
         );
     }
 }

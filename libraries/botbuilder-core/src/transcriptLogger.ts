@@ -81,7 +81,7 @@ export class TranscriptLoggerMiddleware implements Middleware {
                 });
 
                 return responses;
-            }
+            },
         );
 
         // hook up update activity pipeline
@@ -111,11 +111,11 @@ export class TranscriptLoggerMiddleware implements Middleware {
                         id: reference.activityId,
                     },
                     reference,
-                    false
+                    false,
                 );
 
                 this.logActivity(transcript, this.cloneActivity(deleteActivity));
-            }
+            },
         );
 
         // process bot logic
@@ -236,7 +236,7 @@ export interface TranscriptStore extends TranscriptLogger {
         channelId: string,
         conversationId: string,
         continuationToken?: string,
-        startDate?: Date
+        startDate?: Date,
     ): Promise<PagedResult<Activity>>;
 
     /**

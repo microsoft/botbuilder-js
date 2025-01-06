@@ -135,7 +135,7 @@ describe('MiddlewareSet', function () {
                 }
             },
             () => Promise.reject(new Error('rejected')),
-            middleware(4)
+            middleware(4),
         );
 
         await assert.rejects(set.run(context, noop), (err) => {
@@ -163,7 +163,7 @@ describe('MiddlewareSet', function () {
                 assert.strictEqual(err.message, 'rejected');
                 assert.deepStrictEqual(stack, [1]);
                 return true;
-            }
+            },
         );
     });
 });

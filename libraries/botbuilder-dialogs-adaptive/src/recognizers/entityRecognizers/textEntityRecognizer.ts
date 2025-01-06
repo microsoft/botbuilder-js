@@ -29,17 +29,15 @@ export abstract class TextEntityRecognizer extends EntityRecognizer {
         dialogContext: DialogContext,
         text: string,
         locale: string,
-        entities: Entity[]
+        entities: Entity[],
     ): Promise<Entity[]> {
         const culture = Culture.mapToNearestLanguage(locale ?? '');
         return entities
             .filter((e: Entity): boolean => e.type == 'text')
-            .map(
-                (e: Entity): TextEntity => {
-                    const textEntity = new TextEntity();
-                    return Object.assign(textEntity, e);
-                }
-            )
+            .map((e: Entity): TextEntity => {
+                const textEntity = new TextEntity();
+                return Object.assign(textEntity, e);
+            })
             .reduce((entities: Entity[], textEntity: TextEntity) => {
                 return entities.concat(
                     this._recognize(textEntity.text, culture).map((result: ModelResult) => {
@@ -47,14 +45,14 @@ export abstract class TextEntityRecognizer extends EntityRecognizer {
                             {
                                 type: result.typeName,
                             },
-                            result
+                            result,
                         );
                         delete newEntity.typeName;
                         // The text recognizer libraries return models with End => array inclusive endIndex.
                         // We want end to be (end-start) = length, length = endIndex - startIndex.
                         newEntity.end += 1;
                         return newEntity;
-                    })
+                    }),
                 );
             }, []);
     }

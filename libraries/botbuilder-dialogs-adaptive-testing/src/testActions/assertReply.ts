@@ -49,7 +49,7 @@ export class AssertReply extends AssertReplyActivity implements AssertReplyConfi
             if (this.exact) {
                 if (activity.type == ActivityTypes.Message && activity.text != this.text) {
                     throw new Error(
-                        this.description || `Text ${activity.text} didn't match expected text: ${this.text}`
+                        this.description || `Text ${activity.text} didn't match expected text: ${this.text}`,
                     );
                 }
             } else {
@@ -58,7 +58,7 @@ export class AssertReply extends AssertReplyActivity implements AssertReplyConfi
                     !activity.text.toLowerCase().trim().includes(this.text.toLowerCase().trim())
                 ) {
                     throw new Error(
-                        this.description || `Text ${activity.text} didn't match expected text: ${this.text}`
+                        this.description || `Text ${activity.text} didn't match expected text: ${this.text}`,
                     );
                 }
             }

@@ -23,7 +23,7 @@ export class UriComponentToString extends ExpressionEvaluator {
             ExpressionType.UriComponentToString,
             UriComponentToString.evaluator(),
             ReturnType.String,
-            FunctionUtils.validateUnary
+            FunctionUtils.validateUnary,
         );
     }
 

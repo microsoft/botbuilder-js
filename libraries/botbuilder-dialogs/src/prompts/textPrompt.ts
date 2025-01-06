@@ -43,7 +43,7 @@ export class TextPrompt extends Prompt<string> {
         context: TurnContext,
         state: any,
         options: PromptOptions,
-        isRetry: boolean
+        isRetry: boolean,
     ): Promise<void> {
         if (isRetry && options.retryPrompt) {
             await context.sendActivity(options.retryPrompt, undefined, InputHints.ExpectingInput);
@@ -65,7 +65,7 @@ export class TextPrompt extends Prompt<string> {
     protected async onRecognize(
         context: TurnContext,
         _state: any,
-        _options: PromptOptions
+        _options: PromptOptions,
     ): Promise<PromptRecognizerResult<string>> {
         const value: string = context.activity.text;
 

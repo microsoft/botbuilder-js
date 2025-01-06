@@ -88,7 +88,7 @@ describe.windowsOnly('Streaming Extensions NamedPipe Library Tests', function ()
         it('Client connect', function () {
             const c = new TestClient('pipeName');
             const t = c.connect();
-            expect(t).to.not.be.undefined;
+            expect(t).to.not.equal(undefined);
             c.disconnect();
         });
 
@@ -122,7 +122,7 @@ describe.windowsOnly('Streaming Extensions NamedPipe Library Tests', function ()
             sock.writable = true;
             const transport = new NamedPipeTransport(sock, 'fakeSocket2');
             expect(transport).to.be.instanceOf(NamedPipeTransport);
-            expect(transport.isConnected).to.be.true;
+            expect(transport.isConnected).to.equal(true);
             expect(() => transport.close()).to.not.throw();
         });
 
@@ -134,7 +134,7 @@ describe.windowsOnly('Streaming Extensions NamedPipe Library Tests', function ()
             const transport = new NamedPipeTransport(sock, 'fakeSocket3');
             expect(transport).to.be.instanceOf(NamedPipeTransport);
             expect(() => transport.close()).to.not.throw();
-            expect(transport.isConnected).to.be.false;
+            expect(transport.isConnected).to.equal(false);
         });
 
         it('writes to the socket', function () {
@@ -144,7 +144,7 @@ describe.windowsOnly('Streaming Extensions NamedPipe Library Tests', function ()
             sock.writable = true;
             const transport = new NamedPipeTransport(sock, 'fakeSocket4');
             expect(transport).to.be.instanceOf(NamedPipeTransport);
-            expect(transport.isConnected).to.be.true;
+            expect(transport.isConnected).to.equal(true);
             const buff = Buffer.from('hello', 'utf8');
             const sent = transport.send(buff);
             expect(sent).to.equal(5);
@@ -158,7 +158,7 @@ describe.windowsOnly('Streaming Extensions NamedPipe Library Tests', function ()
             sock.writable = true;
             const transport = new NamedPipeTransport(sock, 'fakeSocket5');
             expect(transport).to.be.instanceOf(NamedPipeTransport);
-            expect(transport.isConnected).to.be.true;
+            expect(transport.isConnected).to.equal(true);
             sock.writable = false;
             const buff = Buffer.from('hello', 'utf8');
             const sent = transport.send(buff);
@@ -168,6 +168,7 @@ describe.windowsOnly('Streaming Extensions NamedPipe Library Tests', function ()
 
         // TODO: 2023-04-24 [hawo] #4462 The code today does not allows the receive() call to be rejected by reading a dead socket.
         //                         The receive() call will be rejected IFF the socket is closed/error AFTER the receive() call.
+        // eslint-disable-next-line mocha/no-skipped-tests
         it.skip('throws when reading from a dead socket', async function () {
             const sock = new FauxSock();
             sock.destroyed = true;
@@ -175,7 +176,7 @@ describe.windowsOnly('Streaming Extensions NamedPipe Library Tests', function ()
             sock.writable = true;
             const transport = new NamedPipeTransport(sock, 'fakeSocket5');
             expect(transport).to.be.instanceOf(NamedPipeTransport);
-            expect(transport.isConnected).to.be.false;
+            expect(transport.isConnected).to.equal(false);
             (await expectEventually(transport.receive(5))).to.throw();
             expect(() => transport.close()).to.not.throw();
         });
@@ -187,7 +188,7 @@ describe.windowsOnly('Streaming Extensions NamedPipe Library Tests', function ()
             sock.writable = true;
             const transport = new NamedPipeTransport(sock);
             expect(transport).to.be.instanceOf(NamedPipeTransport);
-            expect(transport.isConnected).to.be.true;
+            expect(transport.isConnected).to.equal(true);
             transport.receive(12).catch();
             transport.socketReceive(Buffer.from('Hello World!', 'utf8'));
 
@@ -201,12 +202,12 @@ describe.windowsOnly('Streaming Extensions NamedPipe Library Tests', function ()
             sock.writable = true;
             const transport = new NamedPipeTransport(sock, 'fakeSocket6');
             expect(transport).to.be.instanceOf(NamedPipeTransport);
-            expect(transport.isConnected).to.be.true;
+            expect(transport.isConnected).to.equal(true);
             transport.socketClose();
-            expect(transport._active).to.be.null;
-            expect(transport._activeReceiveResolve).to.be.null;
-            expect(transport._activeReceiveReject).to.be.null;
-            expect(transport.socket).to.be.null;
+            expect(transport._active).to.equal(null);
+            expect(transport._activeReceiveResolve).to.equal(null);
+            expect(transport._activeReceiveReject).to.equal(null);
+            expect(transport.socket).to.equal(null);
             expect(transport._activeOffset).to.equal(0);
             expect(transport._activeReceiveCount).to.equal(0);
         });
@@ -218,12 +219,12 @@ describe.windowsOnly('Streaming Extensions NamedPipe Library Tests', function ()
             sock.writable = true;
             const transport = new NamedPipeTransport(sock, 'fakeSocket6');
             expect(transport).to.be.instanceOf(NamedPipeTransport);
-            expect(transport.isConnected).to.be.true;
+            expect(transport.isConnected).to.equal(true);
             transport.socketError();
-            expect(transport._active).to.be.null;
-            expect(transport._activeReceiveResolve).to.be.null;
-            expect(transport._activeReceiveReject).to.be.null;
-            expect(transport.socket).to.be.null;
+            expect(transport._active).to.equal(null);
+            expect(transport._activeReceiveResolve).to.equal(null);
+            expect(transport._activeReceiveReject).to.equal(null);
+            expect(transport.socket).to.equal(null);
             expect(transport._activeOffset).to.equal(0);
             expect(transport._activeReceiveCount).to.equal(0);
         });
@@ -235,7 +236,7 @@ describe.windowsOnly('Streaming Extensions NamedPipe Library Tests', function ()
             sock.writable = true;
             const transport = new NamedPipeTransport(sock, 'fakeSocket6');
             expect(transport).to.be.instanceOf(NamedPipeTransport);
-            expect(transport.isConnected).to.be.true;
+            expect(transport.isConnected).to.equal(true);
             const buff = Buffer.from('hello', 'utf8');
             expect(() => transport.socketReceive(buff)).to.not.throw();
         });
@@ -261,6 +262,7 @@ describe.windowsOnly('Streaming Extensions NamedPipe Library Tests', function ()
         // TODO: 2023-04-24 [hawo] #4462 The client.send() call will only resolve when the other side responded.
         //                         Because the other side is not connected to anything, thus, no response is received.
         //                         Thus, the Promise is not resolved.
+        // eslint-disable-next-line mocha/no-skipped-tests
         it.skip('sends without throwing', function (done) {
             const req = new StreamingRequest();
             req.Verb = 'POST';
@@ -269,7 +271,7 @@ describe.windowsOnly('Streaming Extensions NamedPipe Library Tests', function ()
             client
                 .send(req)
                 .catch((err) => {
-                    expect(err).to.be.undefined;
+                    expect(err).to.equal(undefined);
                 })
                 .then(done);
         });
@@ -304,15 +306,16 @@ describe.windowsOnly('Streaming Extensions NamedPipe Library Tests', function ()
         it('returns true if isConnected === true on _receiver & _sender', function () {
             const server = new NamedPipeServer('pipeisConnected', new RequestHandler());
 
-            expect(server.isConnected).to.be.false;
+            expect(server.isConnected).to.equal(false);
             server._receiver = { isConnected: true };
             server._sender = { isConnected: true };
-            expect(server.isConnected).to.be.true;
+            expect(server.isConnected).to.equal(true);
         });
 
         // TODO: 2023-04-24 [hawo] #4462 The client.send() call will only resolve when the other side responded.
         //                         Because the other side is not connected to anything, thus, no response is received.
         //                         Thus, the Promise is not resolved.
+        // eslint-disable-next-line mocha/no-skipped-tests
         it.skip('sends without throwing', function (done) {
             const server = new NamedPipeServer('pipeA', new RequestHandler());
             expect(server).to.be.instanceOf(NamedPipeServer);
@@ -321,7 +324,7 @@ describe.windowsOnly('Streaming Extensions NamedPipe Library Tests', function ()
             server
                 .send(req)
                 .catch((err) => {
-                    expect(err).to.be.undefined;
+                    expect(err).to.equal(undefined);
                 })
                 .then(expect(() => server.disconnect()).to.not.throw())
                 .then(done);
@@ -354,7 +357,7 @@ describe.windowsOnly('Streaming Extensions NamedPipe Library Tests', function ()
                                 err.server = server;
                                 throw err;
                             }
-                        })
+                        }),
                     ),
                     (err) => {
                         // Verify we did get an addr in use error
@@ -363,12 +366,12 @@ describe.windowsOnly('Streaming Extensions NamedPipe Library Tests', function ()
                         assert(err.server, 'server attached to error');
                         assert(
                             err.server._incomingServer && !err.server._incomingServer.listening,
-                            'incoming server attached but not listening'
+                            'incoming server attached but not listening',
                         );
                         assert(!err.server._outgoingServer, 'no outgoing server attached');
 
                         return true;
-                    }
+                    },
                 );
             } finally {
                 servers.forEach((server) => server.disconnect());
@@ -386,7 +389,7 @@ describe.windowsOnly('Streaming Extensions NamedPipe Library Tests', function ()
 
         it('should return a Server when calling createNodeServer()', function () {
             const server = createNodeServer();
-            expect(server).to.not.be.null;
+            expect(server).to.not.equal(null);
             expect(server).to.be.instanceOf(Object);
             expect(typeof server.listen).to.equal('function');
             expect(typeof server.close).to.equal('function');
@@ -395,7 +398,7 @@ describe.windowsOnly('Streaming Extensions NamedPipe Library Tests', function ()
         it('should return the factory when calling getServerFactory()', function () {
             expect(() => getServerFactory()).to.not.throw();
             const serverFactoryFunction = getServerFactory();
-            expect(serverFactoryFunction).to.not.be.null;
+            expect(serverFactoryFunction).to.not.equal(null);
             expect(typeof serverFactoryFunction).to.equal('function');
         });
 

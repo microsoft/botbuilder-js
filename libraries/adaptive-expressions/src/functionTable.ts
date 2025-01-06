@@ -25,7 +25,7 @@ export class FunctionTable implements Map<string, ExpressionEvaluator> {
      */
     keys(): MapIterator<string> {
         const keysOfAllFunctions = Array.from(ExpressionFunctions.standardFunctions.keys()).concat(
-            Array.from(this.customFunctions.keys())
+            Array.from(this.customFunctions.keys()),
         );
         return keysOfAllFunctions[Symbol.iterator]();
     }
@@ -37,7 +37,7 @@ export class FunctionTable implements Map<string, ExpressionEvaluator> {
      */
     values(): MapIterator<ExpressionEvaluator> {
         const valuesOfAllFunctions = Array.from(ExpressionFunctions.standardFunctions.values()).concat(
-            Array.from(this.customFunctions.values())
+            Array.from(this.customFunctions.values()),
         );
         return valuesOfAllFunctions[Symbol.iterator]();
     }
@@ -106,7 +106,7 @@ export class FunctionTable implements Map<string, ExpressionEvaluator> {
      */
     add(
         param1: { key: string; value: ExpressionEvaluator } | string,
-        param2?: ExpressionEvaluator | customFunction
+        param2?: ExpressionEvaluator | customFunction,
     ): void {
         if (arguments.length === 1) {
             if (param1 instanceof Object) {
@@ -159,7 +159,7 @@ export class FunctionTable implements Map<string, ExpressionEvaluator> {
      */
     forEach(
         _callbackfn: (value: ExpressionEvaluator, key: string, map: Map<string, ExpressionEvaluator>) => void,
-        _thisArg?: any
+        _thisArg?: any,
     ): void {
         throw Error('forEach function not implemented');
     }

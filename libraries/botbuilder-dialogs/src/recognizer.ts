@@ -17,7 +17,7 @@ import {
 import { Configurable } from './configurable';
 import { DialogContext } from './dialogContext';
 import { DialogTurnStateConstants } from './dialogTurnStateConstants';
-import omit = require('lodash/omit');
+import omit from 'lodash/omit';
 
 export interface RecognizerConfiguration {
     id?: string;
@@ -51,7 +51,7 @@ export class Recognizer extends Configurable implements RecognizerConfiguration 
         _dialogContext: DialogContext,
         _activity: Partial<Activity>,
         _telemetryProperties?: Record<string, string>,
-        _telemetryMetrics?: Record<string, number>
+        _telemetryMetrics?: Record<string, number>,
     ): Promise<RecognizerResult> {
         throw new Error('Please implement recognize function.');
     }
@@ -113,7 +113,7 @@ export class Recognizer extends Configurable implements RecognizerConfiguration 
     protected fillRecognizerResultTelemetryProperties(
         recognizerResult: RecognizerResult,
         telemetryProperties: Record<string, string>,
-        _dialogContext?: DialogContext
+        _dialogContext?: DialogContext,
     ): Record<string, string> {
         const { intent, score } = getTopScoringIntent(recognizerResult);
         const intents = Object.entries(recognizerResult.intents);
@@ -126,7 +126,7 @@ export class Recognizer extends Configurable implements RecognizerConfiguration 
             Intents: intents.length > 0 ? JSON.stringify(recognizerResult.intents) : undefined,
             Entities: recognizerResult.entities ? JSON.stringify(recognizerResult.entities) : undefined,
             AdditionalProperties: JSON.stringify(
-                omit(recognizerResult, ['text', 'alteredText', 'intents', 'entities'])
+                omit(recognizerResult, ['text', 'alteredText', 'intents', 'entities']),
             ),
         };
 
@@ -161,7 +161,7 @@ export class Recognizer extends Configurable implements RecognizerConfiguration 
         dialogContext: DialogContext,
         eventName: string,
         telemetryProperties?: Record<string, string>,
-        telemetryMetrics?: Record<string, number>
+        telemetryMetrics?: Record<string, number>,
     ): void {
         if (this.telemetryClient instanceof NullTelemetryClient) {
             const turnStateTelemetryClient =

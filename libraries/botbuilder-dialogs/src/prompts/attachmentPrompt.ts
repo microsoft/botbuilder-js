@@ -40,7 +40,7 @@ export class AttachmentPrompt extends Prompt<Attachment[]> {
         context: TurnContext,
         state: any,
         options: PromptOptions,
-        isRetry: boolean
+        isRetry: boolean,
     ): Promise<void> {
         if (isRetry && options.retryPrompt) {
             await context.sendActivity(options.retryPrompt, undefined, InputHints.ExpectingInput);
@@ -61,7 +61,7 @@ export class AttachmentPrompt extends Prompt<Attachment[]> {
     protected async onRecognize(
         context: TurnContext,
         _state: any,
-        _options: PromptOptions
+        _options: PromptOptions,
     ): Promise<PromptRecognizerResult<Attachment[]>> {
         const value: Attachment[] = context.activity.attachments;
 

@@ -69,7 +69,7 @@ describe('ConversationAction', function () {
             new ContinueConversationLater().configure({
                 date: '=addSeconds(utcNow(), 2)',
                 value: 'foo',
-            })
+            }),
         );
 
         dm.initialTurnState.set(DialogTurnStateConstants.queueStorage, queueStorage);
@@ -118,7 +118,7 @@ describe('ConversationAction', function () {
                         ],
                     }),
                 ],
-            })
+            }),
         );
         dm.initialTurnState.set(DialogTurnStateConstants.queueStorage, queueStorage);
         const adapter = new TestAdapter((turnContext) => {
@@ -176,7 +176,7 @@ describe('ConversationAction', function () {
                         ],
                     }),
                 ],
-            })
+            }),
         );
         dm.initialTurnState.set(DialogTurnStateConstants.queueStorage, queueStorage);
         const adapter = new TestAdapter((turnContext) => {

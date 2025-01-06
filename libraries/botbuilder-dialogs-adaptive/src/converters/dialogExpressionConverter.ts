@@ -42,6 +42,6 @@ export class DialogExpressionConverter implements Converter<Input, DialogExpress
             }
             return new DialogExpression(value);
         }
-        return new DialogExpression((value as unknown) as Dialog);
+        return new DialogExpression(value as unknown as Dialog);
     }
 }

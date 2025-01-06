@@ -90,7 +90,7 @@ const ResolvePromisesSerial = (values, promise) =>
         .map((value) => () => promise(value))
         .reduce(
             (promise, func) => promise.then((result) => func().then(Array.prototype.concat.bind(result))),
-            Promise.resolve([])
+            Promise.resolve([]),
         );
 
 /**
@@ -155,7 +155,7 @@ export class BlobStorage implements Storage {
         this.containerClient = new ContainerClient(
             this.settings.storageAccountOrConnectionString,
             this.settings.containerName,
-            pipeline.options
+            pipeline.options,
         );
 
         this.useEmulator = settings.storageAccountOrConnectionString === 'UseDevelopmentStorage=true;';
@@ -194,7 +194,7 @@ export class BlobStorage implements Storage {
                                 // If blob does not exist, return an empty DocumentStoreItem.
                                 return { document: {} } as DocumentStoreItem;
                             }
-                        })
+                        }),
                     )
                         .then((items: DocumentStoreItem[]) => {
                             if (items !== null && items.length > 0) {
@@ -257,7 +257,7 @@ export class BlobStorage implements Storage {
             // depending on the payload's size. The default maximum size for a single blob upload is 128MB.
             // An 'InvalidBlockList' error is commonly caused due to concurrently uploading an object larger than 128MB in size.
             const promise: (b: any) => Promise<BlockBlobUploadResponse> = (
-                blob: any
+                blob: any,
             ): Promise<BlockBlobUploadResponse> => {
                 const blockBlobClient = this.containerClient.getBlockBlobClient(blob.id);
                 const uploadBlobResponse = blockBlobClient.upload(blob.data, blob.data.length, blob.options);
@@ -301,7 +301,7 @@ export class BlobStorage implements Storage {
                     sanitizedKeys.map(async (key: string) => {
                         const blockBlobClient = this.containerClient.getBlockBlobClient(key);
                         return await blockBlobClient.deleteIfExists();
-                    })
+                    }),
                 );
             })
             .then(() => {
@@ -328,7 +328,7 @@ export class BlobStorage implements Storage {
         // The number of path segments comprising the blob name cannot exceed 254
         const validKey: string = segments.reduce(
             (acc: any, curr: any, index: number) => [acc, curr].join(index < 255 ? '/' : ''),
-            base
+            base,
         );
 
         // Reserved URL characters must be escaped.

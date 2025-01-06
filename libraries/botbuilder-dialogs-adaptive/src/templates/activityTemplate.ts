@@ -28,7 +28,8 @@ export interface ActivityTemplateConguration {
  * and processed through registered language generator.
  */
 export class ActivityTemplate
-    implements TemplateInterface<Partial<Activity>, DialogStateManager>, ActivityTemplateConguration, Configurable {
+    implements TemplateInterface<Partial<Activity>, DialogStateManager>, ActivityTemplateConguration, Configurable
+{
     static $kind = 'Microsoft.ActivityTemplate';
 
     /**

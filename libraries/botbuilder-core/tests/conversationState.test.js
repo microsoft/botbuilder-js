@@ -12,6 +12,7 @@ describe('ConversationState', function () {
     const adapter = new TestAdapter();
     const context = new TurnContext(adapter, receivedMessage);
     const conversationState = new ConversationState(storage);
+
     it('should load and save state from storage.', async function () {
         // Simulate a "Turn" in a conversation by loading the state,
         // changing it and then saving the changes to state.
@@ -53,7 +54,7 @@ describe('ConversationState', function () {
         conversationState.getStorageKey = (_turnContext) => undefined;
         await assert.rejects(
             conversationState.load(context, true),
-            new Error('ConversationState: overridden getStorageKey method did not return a key.')
+            new Error('ConversationState: overridden getStorageKey method did not return a key.'),
         );
     });
 });

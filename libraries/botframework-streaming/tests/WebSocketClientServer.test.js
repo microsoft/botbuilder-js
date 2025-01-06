@@ -119,7 +119,7 @@ describe('WebSocket Client/Server Tests', function () {
                 });
 
                 it('should call disconnectHandler', function () {
-                    expect(disconnectionHandler.called).to.be.true;
+                    expect(disconnectionHandler.called).to.equal(true);
                 });
 
                 it('should disconnect', function () {
@@ -186,7 +186,7 @@ describe('WebSocket Client/Server Tests', function () {
                 });
 
                 it('should call disconnectHandler', function () {
-                    expect(disconnectionHandler.called).to.be.true;
+                    expect(disconnectionHandler.called).to.equal(true);
                 });
 
                 it('should disconnect', function () {

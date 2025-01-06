@@ -106,7 +106,7 @@ export class DialogStateManager {
      */
     getValue<T = any>(pathExpression: string, defaultValue?: T | (() => T)): T {
         function returnDefault(): T {
-            return typeof defaultValue == 'function' ? (defaultValue as Function)() : defaultValue;
+            return typeof defaultValue == 'function' ? (defaultValue as () => T)() : defaultValue;
         }
 
         // Get path segments
@@ -119,7 +119,7 @@ export class DialogStateManager {
         const scope = this.getMemoryScope(segments[0].toString());
         if (scope == undefined) {
             console.warn(
-                `DialogStateManager.getValue: a scope of '${segments[0]}' wasn't found for '${pathExpression}'.`
+                `DialogStateManager.getValue: a scope of '${segments[0]}' wasn't found for '${pathExpression}'.`,
             );
             return returnDefault();
         }
@@ -170,7 +170,7 @@ export class DialogStateManager {
                 // Only allow positive indexes
                 if (key < 0) {
                     throw new Error(
-                        `DialogStateManager.setValue: unable to update value for '${pathExpression}'. Negative indexes aren't allowed.`
+                        `DialogStateManager.setValue: unable to update value for '${pathExpression}'. Negative indexes aren't allowed.`,
                     );
                 }
 
@@ -386,7 +386,7 @@ export class DialogStateManager {
                             segment += c;
                         } else {
                             throw new Error(
-                                `DialogStateManager.normalizePath: Invalid path detected - ${pathExpression}`
+                                `DialogStateManager.normalizePath: Invalid path detected - ${pathExpression}`,
                             );
                         }
                         break;

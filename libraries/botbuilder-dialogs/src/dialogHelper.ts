@@ -36,7 +36,7 @@ import {
 export async function runDialog(
     dialog: Dialog,
     context: TurnContext,
-    accessor: StatePropertyAccessor<DialogState>
+    accessor: StatePropertyAccessor<DialogState>,
 ): Promise<void> {
     if (!dialog) {
         throw new Error('runDialog(): missing dialog');
@@ -76,7 +76,7 @@ export async function internalRun(
     context: TurnContext,
     dialogId: string,
     dialogContext: DialogContext,
-    dialogStateManagerConfiguration?: DialogStateManagerConfiguration
+    dialogStateManagerConfiguration?: DialogStateManagerConfiguration,
 ): Promise<DialogTurnResult> {
     // map TurnState into root dialog context.services
     context.turnState.forEach((service, key) => {
@@ -122,7 +122,7 @@ export async function internalRun(
 async function innerRun(
     context: TurnContext,
     dialogId: string,
-    dialogContext: DialogContext
+    dialogContext: DialogContext,
 ): Promise<DialogTurnResult> {
     // Handle EoC and Reprompt event from a parent bot (can be root bot to skill or skill to skill)
     if (isFromParentToSkill(context)) {
@@ -197,9 +197,8 @@ export function shouldSendEndOfConversationToParent(context: TurnContext, turnRe
     if (claimIdentity && SkillValidation.isSkillClaim(claimIdentity.claims)) {
         // EoC Activities returned by skills are bounced back to the bot by SkillHandler.
         // In those cases we will have a SkillConversationReference instance in state.
-        const skillConversationReference: SkillConversationReference = context.turnState.get(
-            SkillConversationReferenceKey
-        );
+        const skillConversationReference: SkillConversationReference =
+            context.turnState.get(SkillConversationReferenceKey);
         if (skillConversationReference) {
             // If the skillConversationReference.OAuthScope is for one of the supported channels, we are at the root and we should not send an EoC.
             return (
@@ -259,7 +258,7 @@ const sendStateSnapshotTrace = async (dialogContext: DialogContext): Promise<voi
         'BotState',
         'https://www.botframework.com/schemas/botState',
         snapshot,
-        traceLabel
+        traceLabel,
     );
     await dialogContext.context.sendActivity(traceActivity);
 };

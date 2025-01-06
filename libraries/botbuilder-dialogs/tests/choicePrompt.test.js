@@ -120,7 +120,7 @@ describe('ChoicePrompt', function () {
                     'Please choose a color.',
                     stringChoices.map((choice) => {
                         return { value: choice, action: {} };
-                    })
+                    }),
                 );
             } else if (results.status === DialogTurnStatus.complete) {
                 const selectedChoice = results.result;
@@ -286,7 +286,7 @@ describe('ChoicePrompt', function () {
                 }
                 return prompt.recognized.succeeded;
             },
-            'es-es'
+            'es-es',
         );
         dialogs.add(choicePrompt);
 
@@ -362,7 +362,7 @@ describe('ChoicePrompt', function () {
                 }
                 return prompt.recognized.succeeded;
             },
-            'es-es'
+            'es-es',
         );
         dialogs.add(choicePrompt);
 
@@ -439,7 +439,7 @@ describe('ChoicePrompt', function () {
                                 }
                                 return prompt.recognized.succeeded;
                             },
-                            'es-es'
+                            'es-es',
                         );
                         dialogs.add(choicePrompt);
 
@@ -454,9 +454,9 @@ describe('ChoicePrompt', function () {
                                 assert.strictEqual(activity.text, expectedAnswer);
                             })
                             .startTest();
-                    })
+                    }),
                 );
-            })
+            }),
         );
     });
 
@@ -489,7 +489,7 @@ describe('ChoicePrompt', function () {
                         }
                         return prompt.recognized.succeeded;
                     },
-                    null
+                    null,
                 );
                 dialogs.add(choicePrompt);
 
@@ -504,7 +504,7 @@ describe('ChoicePrompt', function () {
                         assert.strictEqual(activity.text, `Please choose a color.${expectedChoices}`);
                     })
                     .startTest();
-            })
+            }),
         );
     });
 
@@ -553,7 +553,7 @@ describe('ChoicePrompt', function () {
                 return prompt.recognized.succeeded;
             },
             culture.locale,
-            customDict
+            customDict,
         );
         dialogs.add(choicePrompt);
 

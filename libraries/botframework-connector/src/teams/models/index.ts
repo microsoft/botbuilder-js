@@ -18,7 +18,7 @@ import {
 /**
  * @interface
  * An interface representing TeamsConnectorClientOptions.
- * @extends ServiceClientOptions
+ * @augments ServiceClientOptions
  */
 export interface TeamsConnectorClientOptions extends ServiceClientOptions {
     /**
@@ -100,7 +100,7 @@ export type TeamsFetchMeetingParticipantResponse = TeamsMeetingParticipant & {
  * An interface representing TeamsFetchMeetingParticipantOptionalParams.
  * Optional Parameters.
  *
- * @extends RequestOptionsBase
+ * @augments RequestOptionsBase
  */
 export interface TeamsFetchMeetingParticipantOptionalParams extends RequestOptionsBase {
     /**

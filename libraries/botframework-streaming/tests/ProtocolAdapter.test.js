@@ -50,22 +50,22 @@ describe('Streaming Extensions ProtocolAdapter', function () {
             requestHandler,
             requestManager,
             payloadSender,
-            payloadReceiver
+            payloadReceiver,
         );
 
-        expect(protocolAdapter.assemblerManager).to.not.be.undefined;
+        expect(protocolAdapter.assemblerManager).to.not.equal(undefined);
 
-        expect(protocolAdapter.payloadReceiver).to.not.be.undefined;
+        expect(protocolAdapter.payloadReceiver).to.not.equal(undefined);
 
-        expect(protocolAdapter.payloadSender).to.not.be.undefined;
+        expect(protocolAdapter.payloadSender).to.not.equal(undefined);
 
-        expect(protocolAdapter.sendOperations).to.not.be.undefined;
+        expect(protocolAdapter.sendOperations).to.not.equal(undefined);
 
-        expect(protocolAdapter.streamManager).to.not.be.undefined;
+        expect(protocolAdapter.streamManager).to.not.equal(undefined);
 
-        expect(protocolAdapter.requestHandler).to.not.be.undefined;
+        expect(protocolAdapter.requestHandler).to.not.equal(undefined);
 
-        expect(protocolAdapter.requestManager).to.not.be.undefined;
+        expect(protocolAdapter.requestManager).to.not.equal(undefined);
     });
 
     it('processes requests.', async function () {
@@ -79,13 +79,13 @@ describe('Streaming Extensions ProtocolAdapter', function () {
             requestHandler,
             requestManager,
             payloadSender,
-            payloadReceiver
+            payloadReceiver,
         );
 
         const requestHandlerSpy = sinon.spy(requestHandler, 'processRequest');
 
         protocolAdapter.onReceiveRequest('42', { verb: 'POST', path: '/api/messages', streams: [] });
-        expect(requestHandlerSpy.called).to.be.true;
+        expect(requestHandlerSpy.called).to.equal(true);
     });
 
     it('processes responses.', async function () {
@@ -99,13 +99,13 @@ describe('Streaming Extensions ProtocolAdapter', function () {
             requestHandler,
             requestManager,
             payloadSender,
-            payloadReceiver
+            payloadReceiver,
         );
 
         const requestManagerSpy = sinon.spy(requestManager, 'signalResponse');
 
         protocolAdapter.onReceiveResponse('42', { statusCode: '200', streams: [] });
-        expect(requestManagerSpy.called).to.be.true;
+        expect(requestManagerSpy.called).to.equal(true);
     });
 
     it('does not throw when processing a cancellation for an already processed stream', async function () {
@@ -119,7 +119,7 @@ describe('Streaming Extensions ProtocolAdapter', function () {
             requestHandler,
             requestManager,
             payloadSender,
-            payloadReceiver
+            payloadReceiver,
         );
         const header = { payloadType: 'A', payloadLength: '5', id: '100', end: true };
         const assembler = new PayloadAssembler.PayloadAssembler(new StreamManager.StreamManager(), {
@@ -139,7 +139,7 @@ describe('Streaming Extensions ProtocolAdapter', function () {
             requestHandler,
             requestManager,
             payloadSender,
-            payloadReceiver
+            payloadReceiver,
         );
 
         expect(() => protocolAdapter.sendRequest(new Request.StreamingRequest())).to.not.throw();
@@ -159,14 +159,14 @@ describe('Streaming Extensions ProtocolAdapter', function () {
         };
         const s = new SubscribableStream.SubscribableStream();
         s.write(
-            '{"statusCode": "12345","streams": [{"id": "1","contentType": "text","length": "2"},{"id": "2","contentType": "text","length": "2"},{"id": "3","contentType": "text","length": "2"}]}'
+            '{"statusCode": "12345","streams": [{"id": "1","contentType": "text","length": "2"},{"id": "2","contentType": "text","length": "2"},{"id": "3","contentType": "text","length": "2"}]}',
         );
         const rp = { verb: 'POST', path: '/some/path' };
         rp.streams = [];
         rp.streams.push(s);
 
         pa.connect(receiver);
-        expect(pa.isConnected).to.be.true;
+        expect(pa.isConnected).to.equal(true);
         expect(() => pa.connect(receiver)).to.not.throw();
 
         pa.disconnect();

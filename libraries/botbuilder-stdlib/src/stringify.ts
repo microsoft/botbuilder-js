@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 /**
  * Encapsulates JSON.stringify function to detect and handle different types of errors (eg. Circular Structure).
  *
@@ -64,7 +62,7 @@ export function stringify(value: any, replacer?: (key: string, value: any) => an
                 const value = stringifyReplacer(replacer)(key, val);
                 return value;
             },
-            space
+            space,
         );
     }
 }

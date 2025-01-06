@@ -57,7 +57,7 @@ export class MultiLanguageRecognizer extends AdaptiveRecognizer implements Multi
         dialogContext: DialogContext,
         activity: Activity,
         telemetryProperties?: { [key: string]: string },
-        telemetryMetrics?: { [key: string]: number }
+        telemetryMetrics?: { [key: string]: number },
     ): Promise<RecognizerResult> {
         let languagepolicy: LanguagePolicy = this.languagePolicy;
         if (!languagepolicy) {
@@ -91,13 +91,13 @@ export class MultiLanguageRecognizer extends AdaptiveRecognizer implements Multi
                     dialogContext,
                     activity,
                     telemetryProperties,
-                    telemetryMetrics
+                    telemetryMetrics,
                 );
                 this.trackRecognizerResult(
                     dialogContext,
                     TelemetryLoggerConstants.MultiLanguageRecognizerResultEvent,
                     this.fillRecognizerResultTelemetryProperties(result, telemetryProperties, dialogContext),
-                    telemetryMetrics
+                    telemetryMetrics,
                 );
                 return result;
             }
@@ -112,7 +112,7 @@ export class MultiLanguageRecognizer extends AdaptiveRecognizer implements Multi
             dialogContext,
             TelemetryLoggerConstants.MultiLanguageRecognizerResultEvent,
             this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties, dialogContext),
-            telemetryMetrics
+            telemetryMetrics,
         );
 
         return recognizerResult;

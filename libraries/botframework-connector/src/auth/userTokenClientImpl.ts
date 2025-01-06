@@ -24,12 +24,12 @@ export class UserTokenClientImpl extends UserTokenClient {
         private readonly appId: string,
         credentials: ServiceClientCredentials,
         oauthEndpoint: string,
-        connectorClientOptions: ConnectorClientOptions = {}
+        connectorClientOptions: ConnectorClientOptions = {},
     ) {
         super();
         this.client = new TokenApiClient(
             credentials,
-            Object.assign({ baseUri: oauthEndpoint }, connectorClientOptions)
+            Object.assign({ baseUri: oauthEndpoint }, connectorClientOptions),
         );
     }
 
@@ -46,7 +46,7 @@ export class UserTokenClientImpl extends UserTokenClient {
         userId: string,
         connectionName: string,
         channelId: string,
-        magicCode: string
+        magicCode: string,
     ): Promise<TokenResponse> {
         z.object({
             userId: z.string(),
@@ -73,7 +73,7 @@ export class UserTokenClientImpl extends UserTokenClient {
     async getSignInResource(
         connectionName: string,
         activity: Activity,
-        finalRedirect: string
+        finalRedirect: string,
     ): Promise<SignInUrlResponse> {
         z.object({
             activity: z.record(z.unknown()),
@@ -85,7 +85,7 @@ export class UserTokenClientImpl extends UserTokenClient {
 
         const result = await this.client.botSignIn.getSignInResource(
             UserTokenClient.createTokenExchangeState(this.appId, connectionName, activity),
-            { finalRedirect }
+            { finalRedirect },
         );
 
         return result._response.parsedBody;
@@ -149,7 +149,7 @@ export class UserTokenClientImpl extends UserTokenClient {
         userId: string,
         connectionName: string,
         resourceUrls: string[],
-        channelId: string
+        channelId: string,
     ): Promise<Record<string, TokenResponse>> {
         z.object({
             userId: z.string(),
@@ -165,7 +165,7 @@ export class UserTokenClientImpl extends UserTokenClient {
             userId,
             connectionName,
             { resourceUrls },
-            { channelId }
+            { channelId },
         );
         return result._response.parsedBody as Record<string, TokenResponse>;
     }
@@ -183,7 +183,7 @@ export class UserTokenClientImpl extends UserTokenClient {
         userId: string,
         connectionName: string,
         channelId: string,
-        exchangeRequest: TokenExchangeRequest
+        exchangeRequest: TokenExchangeRequest,
     ): Promise<TokenResponse> {
         z.object({
             userId: z.string(),

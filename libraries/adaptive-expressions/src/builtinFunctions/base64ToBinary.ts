@@ -26,7 +26,7 @@ export class Base64ToBinary extends ExpressionEvaluator {
             ExpressionType.Base64ToBinary,
             Base64ToBinary.evaluator(),
             ReturnType.Object,
-            FunctionUtils.validateUnary
+            FunctionUtils.validateUnary,
         );
     }
 

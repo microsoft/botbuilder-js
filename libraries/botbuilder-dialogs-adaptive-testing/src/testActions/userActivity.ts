@@ -42,7 +42,7 @@ export class UserActivity extends TestAction implements UserActivityConfiguratio
     async execute(
         testAdapter: TestAdapter,
         callback: (context: TurnContext) => Promise<void>,
-        _inspector?: Inspector
+        _inspector?: Inspector,
     ): Promise<void> {
         if (!this.activity) {
             throw new Error('You must define one of Text of Activity properties');

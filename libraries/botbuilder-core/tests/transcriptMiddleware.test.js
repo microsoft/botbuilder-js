@@ -316,6 +316,7 @@ describe('TranscriptLoggerMiddleware', function () {
 
     describe("'s error handling", function () {
         let sandbox;
+
         beforeEach(function () {
             sandbox = sinon.createSandbox();
         });

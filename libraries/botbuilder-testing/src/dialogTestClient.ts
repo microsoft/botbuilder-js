@@ -6,8 +6,6 @@
  * Licensed under the MIT License.
  */
 
-/* eslint-disable @typescript-eslint/ban-types */
-
 import {
     Activity,
     TestAdapter,
@@ -60,7 +58,7 @@ export class DialogTestClient {
         targetDialog: Dialog,
         initialDialogOptions?: unknown,
         middlewares?: Middleware[],
-        conversationState?: ConversationState
+        conversationState?: ConversationState,
     );
     /**
      * Creates a [DialogTestClient](xref:botbuilder-testing.DialogTestClient) to test a [Dialog](xref:botbuilder-dialogs.Dialog) without having to create a full-fledged adapter.
@@ -81,7 +79,7 @@ export class DialogTestClient {
         targetDialog: Dialog,
         initialDialogOptions?: unknown,
         middlewares?: Middleware[],
-        conversationState?: ConversationState
+        conversationState?: ConversationState,
     );
     /**
      * Creates a [DialogTestClient](xref:botbuilder-testing.DialogTestClient) to test a [Dialog](xref:botbuilder-dialogs.Dialog) without having to create a full-fledged adapter.
@@ -97,7 +95,7 @@ export class DialogTestClient {
         targetDialog: Dialog,
         initialDialogOptions?: object,
         middlewares?: Middleware[],
-        conversationState?: ConversationState
+        conversationState?: ConversationState,
     ) {
         this.conversationState = conversationState || new ConversationState(new MemoryStorage());
 
@@ -108,7 +106,7 @@ export class DialogTestClient {
         if (typeof channelOrAdapter == 'string') {
             const channelIdToUse: string = channelOrAdapter;
             this._testAdapter = new TestAdapter(this._callback, { channelId: channelIdToUse }).use(
-                new AutoSaveStateMiddleware(this.conversationState)
+                new AutoSaveStateMiddleware(this.conversationState),
             );
         } else {
             const testAdapterToUse: TestAdapter = channelOrAdapter;
@@ -140,7 +138,6 @@ export class DialogTestClient {
      * @param activity an activity potentially with text
      * @returns a TestFlow that can be used to assert replies etc
      */
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async sendActivity(activity: Partial<Activity> | string): Promise<any> {
         await this._testAdapter.receiveActivity(activity);
         return this._testAdapter.activityBuffer.shift();
@@ -158,7 +155,7 @@ export class DialogTestClient {
     private getDefaultCallback(
         targetDialog: Dialog,
         initialDialogOptions: object,
-        dialogState: StatePropertyAccessor<DialogState>
+        dialogState: StatePropertyAccessor<DialogState>,
     ): (turnContext: TurnContext) => Promise<void> {
         return async (turnContext: TurnContext): Promise<void> => {
             const dialogSet = new DialogSet(dialogState);

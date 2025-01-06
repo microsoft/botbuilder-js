@@ -21,7 +21,12 @@ export class MicrosoftGovernmentAppCredentials extends MicrosoftAppCredentials {
      * @param {string} channelAuthTenant Optional. The oauth token tenant.
      * @param {string} oAuthScope Optional. The scope for the token.
      */
-    constructor(appId: string, public appPassword: string, channelAuthTenant?: string, oAuthScope?: string) {
+    constructor(
+        appId: string,
+        public appPassword: string,
+        channelAuthTenant?: string,
+        oAuthScope?: string,
+    ) {
         super(appId, appPassword, channelAuthTenant, oAuthScope);
     }
 

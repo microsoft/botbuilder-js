@@ -52,7 +52,7 @@ export class BotFrameworkAuthenticationFactory {
         credentialFactory: ServiceClientCredentialsFactory,
         authConfiguration: AuthenticationConfiguration,
         botFrameworkClientFetch?: (input: RequestInfo, init?: RequestInit) => Promise<Response>,
-        connectorClientOptions?: ConnectorClientOptions
+        connectorClientOptions?: ConnectorClientOptions,
     ): BotFrameworkAuthentication;
 
     /**
@@ -84,7 +84,7 @@ export class BotFrameworkAuthenticationFactory {
         maybeCredentialFactory?: ServiceClientCredentialsFactory,
         maybeAuthConfiguration?: AuthenticationConfiguration,
         maybeBotFrameworkClientFetch?: (input: RequestInfo, init?: RequestInit) => Promise<Response>,
-        maybeConnectorClientOptions: ConnectorClientOptions = {}
+        maybeConnectorClientOptions: ConnectorClientOptions = {},
     ): BotFrameworkAuthentication {
         if (
             !stringExt.isNilOrEmpty(maybeToChannelFromBotLoginUrl) ||
@@ -108,7 +108,7 @@ export class BotFrameworkAuthenticationFactory {
                 maybeCredentialFactory,
                 maybeAuthConfiguration,
                 maybeBotFrameworkClientFetch,
-                maybeConnectorClientOptions
+                maybeConnectorClientOptions,
             );
         } else {
             // else apply the built in default behavior, which is either the public cloud or the gov cloud depending on whether we have a channelService value present
@@ -125,7 +125,7 @@ export class BotFrameworkAuthenticationFactory {
                     maybeCredentialFactory,
                     maybeAuthConfiguration,
                     maybeBotFrameworkClientFetch,
-                    maybeConnectorClientOptions
+                    maybeConnectorClientOptions,
                 );
             } else if (maybeChannelService === GovernmentConstants.ChannelService) {
                 return new ParameterizedBotFrameworkAuthentication(
@@ -140,7 +140,7 @@ export class BotFrameworkAuthenticationFactory {
                     maybeCredentialFactory,
                     maybeAuthConfiguration,
                     maybeBotFrameworkClientFetch,
-                    maybeConnectorClientOptions
+                    maybeConnectorClientOptions,
                 );
             } else {
                 // The ChannelService value is used an indicator of which built in set of constants to use. If it is not recognized, a full configuration is expected.

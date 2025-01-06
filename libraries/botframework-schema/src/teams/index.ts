@@ -30,7 +30,6 @@ export type ConfigResponseConfig = BotConfigAuth | TaskModuleResponse;
  * @interface
  * An interface representing ChannelInfo.
  * A channel info object which decribes the channel.
- *
  */
 export interface ChannelInfo {
     /**
@@ -69,7 +68,6 @@ export interface ConfigResponse {
  * @interface
  * An interface representing ConversationList.
  * List of channels under a team
- *
  */
 export interface ConversationList {
     /**
@@ -82,7 +80,6 @@ export interface ConversationList {
  * @interface
  * An interface representing TeamDetails.
  * Details related to a team
- *
  */
 export interface TeamDetails {
     /**
@@ -117,7 +114,6 @@ export interface TeamDetails {
  * @interface
  * An interface representing TeamInfo.
  * Describes a team
- *
  */
 export interface TeamInfo {
     /**
@@ -138,7 +134,6 @@ export interface TeamInfo {
  * @interface
  * An interface representing NotificationInfo.
  * Specifies if a notification is to be sent for the mentions.
- *
  */
 export interface NotificationInfo {
     /**
@@ -161,7 +156,6 @@ export interface NotificationInfo {
  * @interface
  * An interface representing TenantInfo.
  * Describes a tenant
- *
  */
 export interface TenantInfo {
     /**
@@ -174,7 +168,6 @@ export interface TenantInfo {
  * @interface
  * An interface representing TeamsMeetingInfo.
  * Describes a meeting
- *
  */
 export interface TeamsMeetingInfo {
     /**
@@ -187,7 +180,6 @@ export interface TeamsMeetingInfo {
  * @interface
  * An interface representing TeamsChannelData.
  * Channel data specific to messages received in Microsoft Teams
- *
  */
 export interface TeamsChannelData {
     /**
@@ -234,7 +226,7 @@ export interface TeamsChannelData {
  * An interface representing TeamsChannelAccount.
  * Teams channel account detailing user Azure Active Directory details.
  *
- * @extends ChannelAccount
+ * @augments ChannelAccount
  */
 export interface TeamsChannelAccount extends ChannelAccount {
     /**
@@ -302,7 +294,6 @@ export interface Meeting {
  * @interface
  * An interface representing TeamsMeetingParticipant.
  * Teams meeting participant detailing user Azure Active Directory details.
- *
  */
 export interface TeamsMeetingParticipant {
     /**
@@ -334,7 +325,6 @@ export interface TeamsPagedMembersResult {
  * @interface
  * An interface representing O365ConnectorCardFact.
  * O365 connector card fact
- *
  */
 export interface O365ConnectorCardFact {
     /**
@@ -351,7 +341,6 @@ export interface O365ConnectorCardFact {
  * @interface
  * An interface representing O365ConnectorCardImage.
  * O365 connector card image
- *
  */
 export interface O365ConnectorCardImage {
     /**
@@ -368,7 +357,6 @@ export interface O365ConnectorCardImage {
  * @interface
  * An interface representing O365ConnectorCardSection.
  * O365 connector card section
- *
  */
 export interface O365ConnectorCardSection {
     /**
@@ -426,7 +414,6 @@ export interface O365ConnectorCardSection {
  * @interface
  * An interface representing O365ConnectorCard.
  * O365 connector card
- *
  */
 export interface O365ConnectorCard {
     /**
@@ -462,7 +449,7 @@ export interface O365ConnectorCard {
  * An interface representing O365ConnectorCardViewAction.
  * O365 connector card ViewAction action
  *
- * @extends O365ConnectorCardActionBase
+ * @augments O365ConnectorCardActionBase
  */
 export interface O365ConnectorCardViewAction extends O365ConnectorCardActionBase {
     /**
@@ -476,7 +463,6 @@ export interface O365ConnectorCardViewAction extends O365ConnectorCardActionBase
  * @interface
  * An interface representing O365ConnectorCardOpenUriTarget.
  * O365 connector card OpenUri target
- *
  */
 export interface O365ConnectorCardOpenUriTarget {
     /**
@@ -495,7 +481,7 @@ export interface O365ConnectorCardOpenUriTarget {
  * An interface representing O365ConnectorCardOpenUri.
  * O365 connector card OpenUri action
  *
- * @extends O365ConnectorCardActionBase
+ * @augments O365ConnectorCardActionBase
  */
 export interface O365ConnectorCardOpenUri extends O365ConnectorCardActionBase {
     /**
@@ -509,7 +495,7 @@ export interface O365ConnectorCardOpenUri extends O365ConnectorCardActionBase {
  * An interface representing O365ConnectorCardHttpPOST.
  * O365 connector card HttpPOST action
  *
- * @extends O365ConnectorCardActionBase
+ * @augments O365ConnectorCardActionBase
  */
 export interface O365ConnectorCardHttpPOST extends O365ConnectorCardActionBase {
     /**
@@ -523,7 +509,7 @@ export interface O365ConnectorCardHttpPOST extends O365ConnectorCardActionBase {
  * An interface representing O365ConnectorCardActionCard.
  * O365 connector card ActionCard action
  *
- * @extends O365ConnectorCardActionBase
+ * @augments O365ConnectorCardActionBase
  */
 export interface O365ConnectorCardActionCard extends O365ConnectorCardActionBase {
     /**
@@ -546,7 +532,7 @@ export interface O365ConnectorCardActionCard extends O365ConnectorCardActionBase
  * An interface representing O365ConnectorCardTextInput.
  * O365 connector card text input
  *
- * @extends O365ConnectorCardInputBase
+ * @augments O365ConnectorCardInputBase
  */
 export interface O365ConnectorCardTextInput extends O365ConnectorCardInputBase {
     /**
@@ -566,7 +552,7 @@ export interface O365ConnectorCardTextInput extends O365ConnectorCardInputBase {
  * An interface representing O365ConnectorCardDateInput.
  * O365 connector card date input
  *
- * @extends O365ConnectorCardInputBase
+ * @augments O365ConnectorCardInputBase
  */
 export interface O365ConnectorCardDateInput extends O365ConnectorCardInputBase {
     /**
@@ -580,7 +566,6 @@ export interface O365ConnectorCardDateInput extends O365ConnectorCardInputBase {
  * @interface
  * An interface representing O365ConnectorCardMultichoiceInputChoice.
  * O365O365 connector card multiple choice input item
- *
  */
 export interface O365ConnectorCardMultichoiceInputChoice {
     /**
@@ -598,7 +583,7 @@ export interface O365ConnectorCardMultichoiceInputChoice {
  * An interface representing O365ConnectorCardMultichoiceInput.
  * O365 connector card multiple choice input
  *
- * @extends O365ConnectorCardInputBase
+ * @augments O365ConnectorCardInputBase
  */
 export interface O365ConnectorCardMultichoiceInput extends O365ConnectorCardInputBase {
     /**
@@ -623,7 +608,6 @@ export interface O365ConnectorCardMultichoiceInput extends O365ConnectorCardInpu
  * @interface
  * An interface representing O365ConnectorCardActionQuery.
  * O365 connector card HttpPOST invoke query
- *
  */
 export interface O365ConnectorCardActionQuery {
     /**
@@ -642,7 +626,6 @@ export interface O365ConnectorCardActionQuery {
  * @interface
  * An interface representing SigninStateVerificationQuery.
  * Signin state (part of signin action auth flow) verification invoke query
- *
  */
 export interface SigninStateVerificationQuery {
     /**
@@ -657,7 +640,6 @@ export interface SigninStateVerificationQuery {
  * @interface
  * An interface representing MessagingExtensionQueryOptions.
  * Messaging extension query options
- *
  */
 export interface MessagingExtensionQueryOptions {
     /**
@@ -674,7 +656,6 @@ export interface MessagingExtensionQueryOptions {
  * @interface
  * An interface representing MessagingExtensionParameter.
  * Messaging extension query parameters
- *
  */
 export interface MessagingExtensionParameter {
     /**
@@ -684,14 +665,13 @@ export interface MessagingExtensionParameter {
     /**
      * @member {any} [value] Value of the parameter
      */
-    value?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+    value?: any;
 }
 
 /**
  * @interface
  * An interface representing MessagingExtensionQuery.
  * Messaging extension query
- *
  */
 export interface MessagingExtensionQuery {
     /**
@@ -718,7 +698,6 @@ export interface MessagingExtensionQuery {
  * @interface
  * An interface representing MessageActionsPayloadUser.
  * Represents a user entity.
- *
  */
 export interface MessageActionsPayloadUser {
     /**
@@ -741,7 +720,6 @@ export interface MessageActionsPayloadUser {
  * @interface
  * An interface representing MessageActionsPayloadApp.
  * Represents an application entity.
- *
  */
 export interface MessageActionsPayloadApp {
     /**
@@ -765,7 +743,6 @@ export interface MessageActionsPayloadApp {
  * @interface
  * An interface representing MessageActionsPayloadConversation.
  * Represents a team or channel entity.
- *
  */
 export interface MessageActionsPayloadConversation {
     /**
@@ -790,7 +767,6 @@ export interface MessageActionsPayloadConversation {
  * An interface representing MessageActionsPayloadFrom.
  * Represents a user, application, or conversation type that either sent or was
  * referenced in a message.
- *
  */
 export interface MessageActionsPayloadFrom {
     /**
@@ -813,7 +789,6 @@ export interface MessageActionsPayloadFrom {
  * @interface
  * An interface representing MessageActionsPayloadAttachment.
  * Represents the attachment in a message.
- *
  */
 export interface MessageActionsPayloadAttachment {
     /**
@@ -833,7 +808,7 @@ export interface MessageActionsPayloadAttachment {
      * @member {any} [content] The content of the attachment, in case of a code
      * snippet, email, or file.
      */
-    content?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+    content?: any;
     /**
      * @member {string} [name] The plaintext display name of the attachment.
      */
@@ -849,7 +824,6 @@ export interface MessageActionsPayloadAttachment {
  * @interface
  * An interface representing MessageActionsPayloadMention.
  * Represents the entity that was mentioned in the message.
- *
  */
 export interface MessageActionsPayloadMention {
     /**
@@ -872,7 +846,6 @@ export interface MessageActionsPayloadMention {
  * @interface
  * An interface representing MessageActionsPayloadReaction.
  * Represents the reaction of a user to a message.
- *
  */
 export interface MessageActionsPayloadReaction {
     /**
@@ -898,7 +871,6 @@ export interface MessageActionsPayloadReaction {
  * An interface representing MessageActionsPayload.
  * Represents the individual message within a chat or channel where a message
  * actions is taken.
- *
  */
 export interface MessageActionsPayload {
     /**
@@ -986,13 +958,12 @@ export interface MessageActionsPayload {
  * @interface
  * An interface representing TaskModuleRequest.
  * Task module invoke request value payload
- *
  */
 export interface TaskModuleRequest {
     /**
      * @member {any} [data] User input data. Free payload with key-value pairs.
      */
-    data?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+    data?: any;
     /**
      * @member {TaskModuleRequestContext} [context] Current user context, i.e.,
      * the current theme
@@ -1009,7 +980,7 @@ export interface TaskModuleRequest {
  * An interface representing MessagingExtensionAction.
  * Messaging extension action
  *
- * @extends TaskModuleRequest
+ * @augments TaskModuleRequest
  */
 export interface MessagingExtensionAction extends TaskModuleRequest {
     /**
@@ -1042,7 +1013,6 @@ export interface MessagingExtensionAction extends TaskModuleRequest {
  * @interface
  * An interface representing TaskModuleResponseBase.
  * Base class for Task Module responses
- *
  */
 export interface TaskModuleResponseBase {
     /**
@@ -1057,7 +1027,7 @@ export interface TaskModuleResponseBase {
  * An interface representing MessagingExtensionAttachment.
  * Messaging extension attachment.
  *
- * @extends Attachment
+ * @augments Attachment
  */
 export interface MessagingExtensionAttachment extends Attachment {
     /**
@@ -1070,7 +1040,6 @@ export interface MessagingExtensionAttachment extends Attachment {
  * @interface
  * An interface representing MessagingExtensionSuggestedAction.
  * Messaging extension Actions (Only when type is auth or config)
- *
  */
 export interface MessagingExtensionSuggestedAction {
     /**
@@ -1083,7 +1052,6 @@ export interface MessagingExtensionSuggestedAction {
  * @interface
  * An interface representing MessagingExtensionResult.
  * Messaging extension result
- *
  */
 export interface MessagingExtensionResult {
     /**
@@ -1135,7 +1103,6 @@ export interface CacheInfo {
  * @interface
  * An interface representing MessagingExtensionActionResponse.
  * Response of messaging extension action
- *
  */
 export interface MessagingExtensionActionResponse {
     /**
@@ -1157,7 +1124,6 @@ export interface MessagingExtensionActionResponse {
  * @interface
  * An interface representing MessagingExtensionResponse.
  * Messaging extension response
- *
  */
 export interface MessagingExtensionResponse {
     /**
@@ -1174,7 +1140,6 @@ export interface MessagingExtensionResponse {
  * @interface
  * An interface representing FileConsentCard.
  * File consent card attachment.
- *
  */
 export interface FileConsentCard {
     /**
@@ -1190,20 +1155,19 @@ export interface FileConsentCard {
      * consented to upload. This is free flow schema and is sent back in Value
      * field of Activity.
      */
-    acceptContext?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+    acceptContext?: any;
     /**
      * @member {any} [declineContext] Context sent back to the Bot if user
      * declined. This is free flow schema and is sent back in Value field of
      * Activity.
      */
-    declineContext?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+    declineContext?: any;
 }
 
 /**
  * @interface
  * An interface representing FileDownloadInfo.
  * File download info attachment.
- *
  */
 export interface FileDownloadInfo {
     /**
@@ -1221,14 +1185,13 @@ export interface FileDownloadInfo {
     /**
      * @member {any} [etag] ETag for the file.
      */
-    etag?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+    etag?: any;
 }
 
 /**
  * @interface
  * An interface representing FileInfoCard.
  * File info card.
- *
  */
 export interface FileInfoCard {
     /**
@@ -1242,14 +1205,13 @@ export interface FileInfoCard {
     /**
      * @member {any} [etag] ETag for the file.
      */
-    etag?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+    etag?: any;
 }
 
 /**
  * @interface
  * An interface representing FileUploadInfo.
  * Information about the file to be uploaded.
- *
  */
 export interface FileUploadInfo {
     /**
@@ -1280,7 +1242,6 @@ export interface FileUploadInfo {
  * An interface representing FileConsentCardResponse.
  * Represents the value of the invoke activity sent when the user acts on a
  * file consent card
- *
  */
 export interface FileConsentCardResponse {
     /**
@@ -1291,7 +1252,7 @@ export interface FileConsentCardResponse {
     /**
      * @member {any} [context] The context associated with the action.
      */
-    context?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+    context?: any;
     /**
      * @member {FileUploadInfo} [uploadInfo] If the user accepted the file,
      * contains information about the file to be uploaded.
@@ -1313,7 +1274,6 @@ export interface TabContext {
 /**
  * @interface
  * Current TabRequest entity context, or 'tabEntityId'.
- *
  */
 export interface TabEntityContext {
     /**
@@ -1325,7 +1285,6 @@ export interface TabEntityContext {
 /**
  * @interface
  * Invoke ('tab/fetch') request value payload.
- *
  */
 export interface TabRequest {
     /**
@@ -1345,7 +1304,6 @@ export interface TabRequest {
 /**
  * @interface
  * Envelope for Card Tab Response Payload.
- *
  */
 export interface TabResponse {
     /**
@@ -1357,7 +1315,6 @@ export interface TabResponse {
 /**
  * @interface
  * Envelope for cards for a Tab request.
- *
  */
 export interface TabResponseCard {
     /**
@@ -1369,7 +1326,6 @@ export interface TabResponseCard {
 /**
  * @interface
  * Envelope for cards for a TabResponse.
- *
  */
 export interface TabResponseCards {
     /**
@@ -1381,7 +1337,6 @@ export interface TabResponseCards {
 /**
  * @interface
  * Payload for Tab Response.
- *
  */
 export interface TabResponsePayload {
     /**
@@ -1402,7 +1357,6 @@ export interface TabResponsePayload {
 /**
  * @interface
  * Invoke ('tab/submit') request value payload.
- *
  */
 export interface TabSubmit {
     /**
@@ -1422,7 +1376,6 @@ export interface TabSubmit {
 /**
  * @interface
  * Invoke ('tab/submit') request value payload data.
- *
  */
 export interface TabSubmitData {
     /**
@@ -1438,7 +1391,6 @@ export interface TabSubmitData {
 /**
  * @interface
  * Tab SuggestedActions (Only when type is 'auth' or 'silentAuth').
- *
  */
 export interface TabSuggestedActions {
     /**
@@ -1451,7 +1403,7 @@ export interface TabSuggestedActions {
  * @interface
  * Tab response to 'task/submit'.
  *
- * @extends TaskModuleResponseBase
+ * @augments TaskModuleResponseBase
  */
 export interface TaskModuleCardResponse extends TaskModuleResponseBase {
     /**
@@ -1464,7 +1416,6 @@ export interface TaskModuleCardResponse extends TaskModuleResponseBase {
  * @interface
  * An interface representing TaskModuleTaskInfo.
  * Metadata for a Task Module.
- *
  */
 export interface TaskModuleTaskInfo {
     /**
@@ -1509,7 +1460,7 @@ export interface TaskModuleTaskInfo {
  * An interface representing TaskModuleContinueResponse.
  * Task Module Response with continue action.
  *
- * @extends TaskModuleResponseBase
+ * @augments TaskModuleResponseBase
  */
 export interface TaskModuleContinueResponse extends TaskModuleResponseBase {
     /**
@@ -1524,7 +1475,7 @@ export interface TaskModuleContinueResponse extends TaskModuleResponseBase {
  * An interface representing TaskModuleMessageResponse.
  * Task Module response with message action.
  *
- * @extends TaskModuleResponseBase
+ * @augments TaskModuleResponseBase
  */
 export interface TaskModuleMessageResponse extends TaskModuleResponseBase {
     /**
@@ -1538,7 +1489,6 @@ export interface TaskModuleMessageResponse extends TaskModuleResponseBase {
  * @interface
  * An interface representing TaskModuleResponse.
  * Envelope for Task Module Response.
- *
  */
 export interface TaskModuleResponse {
     /**
@@ -1556,7 +1506,6 @@ export interface TaskModuleResponse {
  * @interface
  * An interface representing TaskModuleRequestContext.
  * Current user context, i.e., the current theme
- *
  */
 export interface TaskModuleRequestContext {
     /**
@@ -1569,7 +1518,6 @@ export interface TaskModuleRequestContext {
  * @interface
  * An interface representing AppBasedLinkQuery.
  * Invoke request body type for app-based link query.
- *
  */
 export interface AppBasedLinkQuery {
     /**
