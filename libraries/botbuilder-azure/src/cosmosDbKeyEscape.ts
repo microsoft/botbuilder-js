@@ -21,7 +21,7 @@ export namespace CosmosDbKeyEscape {
 
             return map;
         },
-        new Map()
+        new Map(),
     );
 
     /**
@@ -43,7 +43,7 @@ export namespace CosmosDbKeyEscape {
         const keySplitted: string[] = key.split('');
 
         const firstIllegalCharIndex: number = keySplitted.findIndex((c: string): boolean =>
-            illegalKeys.some((i: string) => i === c)
+            illegalKeys.some((i: string) => i === c),
         );
 
         // If there are no illegal characters return immediately and avoid any further processing/allocations
@@ -54,7 +54,7 @@ export namespace CosmosDbKeyEscape {
         const sanitizedKey = keySplitted.reduce(
             (result: string, c: string) =>
                 result + (illegalKeyCharacterReplacementMap.has(c) ? illegalKeyCharacterReplacementMap.get(c) : c),
-            ''
+            '',
         );
 
         return truncateKey(`${sanitizedKey}${keySuffix || ''}`, compatibilityMode);

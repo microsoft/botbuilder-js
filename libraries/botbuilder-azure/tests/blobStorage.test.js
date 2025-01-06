@@ -32,7 +32,7 @@ const reset = async () => {
 const checkEmulator = () => {
     if (!fs.existsSync(emulatorPath)) {
         console.warn(
-            'These tests require Azure Storage Emulator! go to https://docs.microsoft.com/en-us/azure/storage/common/storage-use-emulator#get-the-storage-emulator to download and install.'
+            'These tests require Azure Storage Emulator! go to https://docs.microsoft.com/en-us/azure/storage/common/storage-use-emulator#get-the-storage-emulator to download and install.',
         );
     }
     return true;
@@ -40,115 +40,123 @@ const checkEmulator = () => {
 
 const storage = new BlobStorage(getSettings());
 
-describe('BlobStorage - Constructor', function () {
-    before('cleanup', reset);
-    after('cleanup', reset);
+describe('BlobStorage', function () {
+    describe('Constructor', function () {
+        before('cleanup', reset);
 
-    it('missing settings should throw error', function () {
-        assert.throws(() => new BlobStorage(), Error, 'constructor should have thrown error about missing settings.');
+        after('cleanup', reset);
+
+        it('missing settings should throw error', function () {
+            assert.throws(
+                () => new BlobStorage(),
+                Error,
+                'constructor should have thrown error about missing settings.',
+            );
+        });
+
+        it('Invalid container name should throw error', function () {
+            assert.throws(
+                () => new BlobStorage(getSettings('invalid--name')),
+                Error,
+                'constructor should have thrown error about invalid container name.',
+            );
+        });
     });
 
-    it('Invalid container name should throw error', function () {
-        assert.throws(
-            () => new BlobStorage(getSettings('invalid--name')),
-            Error,
-            'constructor should have thrown error about invalid container name.'
+    describe('BlobStorage - Base Storage Tests', function () {
+        before(
+            'cleanup',
+            flow(() => reset, checkEmulator),
         );
-    });
-});
 
-describe('BlobStorage - Base Storage Tests', function () {
-    before(
-        'cleanup',
-        flow(() => reset, checkEmulator)
-    );
-    after('cleanup', reset);
+        after('cleanup', reset);
 
-    it('return empty object when reading unknown key', async function () {
-        const { nockDone } = await usingNock(this.test, mode);
-        const testRan = await StorageBaseTests.returnEmptyObjectWhenReadingUnknownKey(storage);
+        it('return empty object when reading unknown key', async function () {
+            const { nockDone } = await usingNock(this.test, mode);
+            const testRan = await StorageBaseTests.returnEmptyObjectWhenReadingUnknownKey(storage);
 
-        assert.strictEqual(testRan, true);
-        nockDone();
-    });
+            assert.strictEqual(testRan, true);
+            nockDone();
+        });
 
-    it('throws when reading null keys', async function () {
-        const { nockDone } = await usingNock(this.test, mode);
-        const testRan = await StorageBaseTests.handleNullKeysWhenReading(storage);
+        it('throws when reading null keys', async function () {
+            const { nockDone } = await usingNock(this.test, mode);
+            const testRan = await StorageBaseTests.handleNullKeysWhenReading(storage);
 
-        assert.strictEqual(testRan, true);
-        nockDone();
-    });
+            assert.strictEqual(testRan, true);
+            nockDone();
+        });
 
-    it('throws when writing null keys', async function () {
-        const { nockDone } = await usingNock(this.test, mode);
-        const testRan = await StorageBaseTests.handleNullKeysWhenWriting(storage);
+        it('throws when writing null keys', async function () {
+            const { nockDone } = await usingNock(this.test, mode);
+            const testRan = await StorageBaseTests.handleNullKeysWhenWriting(storage);
 
-        assert.strictEqual(testRan, true);
-        nockDone();
-    });
+            assert.strictEqual(testRan, true);
+            nockDone();
+        });
 
-    it('does not throw when writing no items', async function () {
-        const { nockDone } = await usingNock(this.test, mode);
-        const testRan = await StorageBaseTests.doesNotThrowWhenWritingNoItems(storage);
+        it('does not throw when writing no items', async function () {
+            const { nockDone } = await usingNock(this.test, mode);
+            const testRan = await StorageBaseTests.doesNotThrowWhenWritingNoItems(storage);
 
-        assert.strictEqual(testRan, true);
-        nockDone();
-    });
+            assert.strictEqual(testRan, true);
+            nockDone();
+        });
 
-    it('create an object', async function () {
-        const { nockDone } = await usingNock(this.test, mode);
-        const testRan = await StorageBaseTests.createObject(storage);
+        it('create an object', async function () {
+            const { nockDone } = await usingNock(this.test, mode);
+            const testRan = await StorageBaseTests.createObject(storage);
 
-        assert.strictEqual(testRan, true);
-        nockDone();
-    });
+            assert.strictEqual(testRan, true);
+            nockDone();
+        });
 
-    it('handle crazy keys', async function () {
-        const { nockDone } = await usingNock(this.test, mode);
-        const testRan = await StorageBaseTests.handleCrazyKeys(storage);
+        it('handle crazy keys', async function () {
+            const { nockDone } = await usingNock(this.test, mode);
+            const testRan = await StorageBaseTests.handleCrazyKeys(storage);
 
-        assert.strictEqual(testRan, true);
-        nockDone();
-    });
+            assert.strictEqual(testRan, true);
+            nockDone();
+        });
 
-    it('update an object', async function () {
-        const { nockDone } = await usingNock(this.test, mode);
-        const testRan = await StorageBaseTests.updateObject(storage);
+        it('update an object', async function () {
+            const { nockDone } = await usingNock(this.test, mode);
+            const testRan = await StorageBaseTests.updateObject(storage);
 
-        assert.strictEqual(testRan, true);
-        nockDone();
-    });
+            assert.strictEqual(testRan, true);
+            nockDone();
+        });
 
-    it('delete an object', async function () {
-        const { nockDone } = await usingNock(this.test, mode);
-        const testRan = await StorageBaseTests.deleteObject(storage);
+        it('delete an object', async function () {
+            const { nockDone } = await usingNock(this.test, mode);
+            const testRan = await StorageBaseTests.deleteObject(storage);
 
-        assert.strictEqual(testRan, true);
-        nockDone();
-    });
+            assert.strictEqual(testRan, true);
+            nockDone();
+        });
 
-    it('does not throw when deleting an unknown object', async function () {
-        const { nockDone } = await usingNock(this.test, mode);
-        const testRan = await StorageBaseTests.deleteUnknownObject(storage);
+        it('does not throw when deleting an unknown object', async function () {
+            const { nockDone } = await usingNock(this.test, mode);
+            const testRan = await StorageBaseTests.deleteUnknownObject(storage);
 
-        assert.strictEqual(testRan, true);
-        nockDone();
-    });
+            assert.strictEqual(testRan, true);
+            nockDone();
+        });
 
-    it('performs batch operations', async function () {
-        const { nockDone } = await usingNock(this.test, mode);
-        const testRan = await StorageBaseTests.performBatchOperations(storage);
+        it('performs batch operations', async function () {
+            const { nockDone } = await usingNock(this.test, mode);
+            const testRan = await StorageBaseTests.performBatchOperations(storage);
 
-        assert.strictEqual(testRan, true);
-        nockDone();
-    });
+            assert.strictEqual(testRan, true);
+            nockDone();
+        });
 
-    it('proceeds through a waterfall dialog', async function () {
-        const { nockDone } = await usingNock(this.test, mode);
-        const testRan = await StorageBaseTests.proceedsThroughWaterfall(storage);
+        it('proceeds through a waterfall dialog', async function () {
+            const { nockDone } = await usingNock(this.test, mode);
+            const testRan = await StorageBaseTests.proceedsThroughWaterfall(storage);
 
-        assert.strictEqual(testRan, true);
-        nockDone();
+            assert.strictEqual(testRan, true);
+            nockDone();
+        });
     });
 });
