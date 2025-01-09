@@ -30,13 +30,16 @@
     }
   },
   "dependencies": {
+    "@rollup/plugin-commonjs": "^28.0.2",
     "@types/node": "18.19.47",
     "@types/ws": "^6.0.3",
+    "@web/dev-server-rollup": "^0.6.4",
+    "eslint-plugin-jsdoc": "^50.3.1",
     "uuid": "^10.0.0",
     "ws": "^7.5.10"
   },
   "devDependencies": {
-    "chai": "^4.5.0"
+    "chai": "^5.1.2"
   },
   "scripts": {
     "build": "npm-run-all -p build:lib build:browser",
@@ -45,9 +48,10 @@
     "build:browser:run": "tsup --config ../../tsup/browser.config.ts --define.entry src/index-browser.ts --define.outfile lib/index-browser.js --dts",
     "build:lib": "tsc -p tsconfig.json",
     "build:rollup": "yarn clean && yarn build && api-extractor run --verbose --local",
-    "clean": "rimraf _ts3.4 lib",
+    "clean": "rimraf _ts3.4 lib vendors",
     "depcheck": "depcheck --config ../../.depcheckrc",
     "lint": "eslint .",
+    "prebuild": "tsup ./node_modules/chai/*.js --format cjs --dts --out-dir vendors/chai --clean --sourcemap --target es2020",
     "postbuild": "downlevel-dts lib _ts3.4/lib --checksum",
     "test": "npm-run-all build test:mocha",
     "test:compat": "api-extractor run --verbose",
@@ -60,6 +64,7 @@
   "files": [
     "_ts3.4",
     "lib",
-    "src"
+    "src",
+    "vendors"
   ]
 }

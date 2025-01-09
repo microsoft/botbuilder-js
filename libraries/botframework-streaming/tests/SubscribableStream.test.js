@@ -1,5 +1,5 @@
 const { SubscribableStream } = require('../lib/subscribableStream');
-const { expect } = require('chai');
+const { expect } = require('../vendors/chai');
 
 describe('Streaming Extensions Stream Tests', function () {
     it('throws on invalid encoding types', function () {

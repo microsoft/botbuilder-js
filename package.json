@@ -15,11 +15,15 @@
     ],
     "nohoist": [
       "**/@types/selenium-webdriver",
-      "botbuilder/filenamify"
+      "botbuilder/filenamify",
+      "botbuilder/chai",
+      "botframework-streaming/chai"
     ],
     "nohoistComments": {
       "**/@types/selenium-webdriver": "This package is excluded from the root @types folder as it requires ES2015+, whereas some BotBuilder libraries support ES5+.",
-      "botbuilder/filenamify": "This package is excluded because it's compiled as CJS by tsup as it's ESM-only."
+      "botbuilder/filenamify": "This package is excluded because it's compiled as CJS by tsup as it's ESM-only.",
+      "botbuilder/chai": "This package is excluded because it's compiled as CJS by tsup as it's ESM-only.",
+      "botframework-streaming/chai": "This package is excluded because it's compiled as CJS by tsup as it's ESM-only."
     }
   },
   "scripts": {
@@ -85,6 +89,7 @@
     "eslint-plugin-mocha": "^10.5.0",
     "eslint-plugin-prettier": "^5.2.1",
     "eslint-plugin-security": "^3.0.1",
+    "jiti": "^2.4.2",
     "mocha-junit-reporter": "^2.2.1",
     "mocha": "^10.7.3",
     "npm-run-all": "^4.1.5",
