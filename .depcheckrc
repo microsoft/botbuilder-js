@@ -1,2 +1,2 @@
-ignores: ["chai", "filenamify", "mocha", "rimraf", "sinon", "uuid"]
+ignores: ["@rollup/plugin-commonjs", "@web/dev-server-rollup", "chai", "eslint-plugin-jsdoc", "filenamify", "mocha", "rimraf", "sinon", "uuid"]
 ignorePatterns: [".eslintrc.json", "lib"]
