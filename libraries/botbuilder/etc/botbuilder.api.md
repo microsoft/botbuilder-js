@@ -358,7 +358,7 @@ export class SharePointActivityHandler extends ActivityHandler {
 // @public
 export class SharePointSSOTokenExchangeMiddleware implements Middleware {
     constructor(storage: Storage_2, oAuthConnectionName: string);
-    onTurn(context: TurnContext, next: () => Promise<void>): Promise<void>;
+    onTurn(context: TurnContext, _next: () => Promise<void>): Promise<void>;
 }
 
 // @public @deprecated (undocumented)
