@@ -158,9 +158,7 @@ export class SharePointActivityHandler extends ActivityHandler {
      *
      * @param _context - A strongly-typed context object for this turn
      */
-    protected async onSignInInvoke(
-        _context: TurnContext
-    ): Promise<void> {
+    protected async onSignInInvoke(_context: TurnContext): Promise<void> {
         throw new Error('NotImplemented');
     }
 }
