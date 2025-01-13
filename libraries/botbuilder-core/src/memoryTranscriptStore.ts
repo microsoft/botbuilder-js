@@ -68,7 +68,7 @@ export class MemoryTranscriptStore implements TranscriptStore {
         channelId: string,
         conversationId: string,
         continuationToken?: string,
-        startDate?: Date
+        startDate?: Date,
     ): Promise<PagedResult<Activity>> {
         if (!channelId) {
             throw new Error('Missing channelId');
@@ -182,7 +182,7 @@ export class MemoryTranscriptStore implements TranscriptStore {
  */
 const createdSorter: (a: TranscriptInfo, b: TranscriptInfo) => number = (
     a: TranscriptInfo,
-    b: TranscriptInfo
+    b: TranscriptInfo,
 ): number => a.created.getTime() - b.created.getTime();
 
 /**
@@ -195,7 +195,7 @@ const timestampSorter: (a: Activity, b: Activity) => number = (a: Activity, b: A
  * @private
  */
 const skipWhileExpression: (expression: any) => (item: any) => boolean = (
-    expression: any
+    expression: any,
 ): ((item: any) => boolean) => {
     let skipping = true;
 

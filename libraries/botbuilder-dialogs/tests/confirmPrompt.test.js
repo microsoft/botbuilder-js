@@ -311,7 +311,7 @@ describe('ConfirmPrompt', function () {
                 }
                 return prompt.recognized.succeeded;
             },
-            'ja-jp'
+            'ja-jp',
         );
         dialogs.add(confirmPrompt);
 
@@ -393,7 +393,7 @@ describe('ConfirmPrompt', function () {
                 }
                 return prompt.recognized.succeeded;
             },
-            'es-es'
+            'es-es',
         );
         dialogs.add(confirmPrompt);
 
@@ -474,7 +474,7 @@ describe('ConfirmPrompt', function () {
                                 }
                                 return prompt.recognized.succeeded;
                             },
-                            testLocale
+                            testLocale,
                         );
                         dialogs.add(confirmPrompt);
 
@@ -489,9 +489,9 @@ describe('ConfirmPrompt', function () {
                                 assert.strictEqual(activity.text, expectedAnswer);
                             })
                             .startTest();
-                    })
+                    }),
                 );
-            })
+            }),
         );
     });
 
@@ -547,7 +547,7 @@ describe('ConfirmPrompt', function () {
                 return prompt.recognized.succeeded;
             },
             culture.locale,
-            customDict
+            customDict,
         );
         dialogs.add(confirmPrompt);
 

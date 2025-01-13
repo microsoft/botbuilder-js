@@ -1,9 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import assert from 'assert';
+import assert, { ok } from 'assert';
 import { DepGraph } from 'dependency-graph';
-import { ok } from 'assert';
 import { stringify } from './util';
 
 /**
@@ -13,7 +12,7 @@ import { stringify } from './util';
  * @template Initial true if the `initialValue` passed to the factory must be defined
  */
 export type Factory<Type, Initial extends boolean> = (
-    initialValue: Initial extends true ? Type : Type | undefined
+    initialValue: Initial extends true ? Type : Type | undefined,
 ) => Type;
 
 /**
@@ -26,7 +25,7 @@ export type Factory<Type, Initial extends boolean> = (
  */
 export type DependencyFactory<Type, Dependencies, Initial extends boolean> = (
     dependencies: Dependencies,
-    initialValue: Initial extends true ? Type : Type | undefined
+    initialValue: Initial extends true ? Type : Type | undefined,
 ) => Type;
 
 /**
@@ -97,7 +96,7 @@ export class ServiceCollection {
     addFactory<InstanceType, Dependencies>(
         key: string,
         dependencies: string[],
-        factory: DependencyFactory<InstanceType, Dependencies, false>
+        factory: DependencyFactory<InstanceType, Dependencies, false>,
     ): this;
 
     /**
@@ -106,7 +105,7 @@ export class ServiceCollection {
     addFactory<InstanceType, Dependencies>(
         key: string,
         depsOrFactory: string[] | Factory<InstanceType, false>,
-        maybeFactory?: DependencyFactory<InstanceType, Dependencies, false>
+        maybeFactory?: DependencyFactory<InstanceType, Dependencies, false>,
     ): this {
         const dependencies = Array.isArray(depsOrFactory) ? depsOrFactory : undefined;
 
@@ -129,8 +128,6 @@ export class ServiceCollection {
             this.graph.removeNode(key);
         }
 
-        // Note: we have done the type checking above, so disabling no-explicit-any is okay.
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         this.graph.addNode(key, factories.concat(factory) as any);
 
         return this;
@@ -157,7 +154,7 @@ export class ServiceCollection {
     composeFactory<InstanceType, Dependencies>(
         key: string,
         dependencies: string[],
-        factory: DependencyFactory<InstanceType, Dependencies, true>
+        factory: DependencyFactory<InstanceType, Dependencies, true>,
     ): this;
 
     /**
@@ -166,7 +163,7 @@ export class ServiceCollection {
     composeFactory<InstanceType, Dependencies>(
         key: string,
         depsOrFactory: string[] | Factory<InstanceType, true>,
-        maybeFactory?: DependencyFactory<InstanceType, Dependencies, true>
+        maybeFactory?: DependencyFactory<InstanceType, Dependencies, true>,
     ): this {
         if (maybeFactory) {
             return this.addFactory<InstanceType, Dependencies>(
@@ -176,7 +173,7 @@ export class ServiceCollection {
                     ok(value, `unable to create ${key}, initial value undefined`);
 
                     return maybeFactory(dependencies, value);
-                }
+                },
             );
         } else {
             ok(typeof depsOrFactory === 'function', 'illegal invocation with undefined factory');
@@ -193,43 +190,49 @@ export class ServiceCollection {
     // depend on results of dependency registration
     private buildNodes<ReturnType = Record<string, unknown>>(
         generateNodes: () => string[],
-        reuseServices: Record<string, unknown> = {}
+        reuseServices: Record<string, unknown> = {},
     ): ReturnType {
         // Consume all dependencies and then reset so updating registrations without re-registering
         // dependencies works
         this.dependencies.forEach((dependencies, node) =>
-            dependencies.forEach((dependency) => this.graph.addDependency(node, stringify(dependency)))
+            dependencies.forEach((dependency) => this.graph.addDependency(node, stringify(dependency))),
         );
 
         // Generate nodes after registering dependencies so ordering is correct
         const nodes = generateNodes();
 
-        const services = nodes.reduce((services, service) => {
-            // Extra precaution
-            if (!this.graph.hasNode(service)) {
-                return services;
-            }
+        const services = nodes.reduce(
+            (services, service) => {
+                // Extra precaution
+                if (!this.graph.hasNode(service)) {
+                    return services;
+                }
 
-            // Helper to generate return value
-            const assignValue = (value: unknown) => ({
-                ...services,
-                [service]: value,
-            });
+                // Helper to generate return value
+                const assignValue = (value: unknown) => ({
+                    ...services,
+                    [service]: value,
+                });
 
-            // Optionally reuse existing service
-            const reusedService = reuseServices[service];
-            if (reusedService !== undefined) {
-                return assignValue(reusedService);
-            }
+                // Optionally reuse existing service
+                const reusedService = reuseServices[service];
+                if (reusedService !== undefined) {
+                    return assignValue(reusedService);
+                }
 
-            // Each node stores a list of factory methods.
-            const factories = this.graph.getNodeData(service);
+                // Each node stores a list of factory methods.
+                const factories = this.graph.getNodeData(service);
 
-            // Produce the instance by reducing those factories, passing the instance along for composition.
-            const instance = factories.reduce((value, factory) => factory(services, value), <unknown>services[service]);
+                // Produce the instance by reducing those factories, passing the instance along for composition.
+                const instance = factories.reduce(
+                    (value, factory) => factory(services, value),
+                    <unknown>services[service],
+                );
 
-            return assignValue(instance);
-        }, <Record<string, unknown>>{});
+                return assignValue(instance);
+            },
+            <Record<string, unknown>>{},
+        );
 
         // Cache results for subsequent invocations that may desire pre-constructed instances
         Object.assign(this.cache, services);
@@ -254,7 +257,7 @@ export class ServiceCollection {
 
         const services = this.buildNodes<Record<string, InstanceType | undefined>>(
             () => this.graph.dependenciesOf(key).concat(key),
-            initialServices
+            initialServices,
         );
 
         return services[key];

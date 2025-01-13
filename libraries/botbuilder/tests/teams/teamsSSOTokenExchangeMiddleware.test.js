@@ -102,7 +102,7 @@ describe('TeamsSSOTokenExchangeMiddleware', function () {
             });
 
             const adapter = new TeamsSSOAdapter(createConversationReference(), logic).use(
-                new TeamsSSOTokenExchangeMiddleware(new MemoryStorage(), connectionName)
+                new TeamsSSOTokenExchangeMiddleware(new MemoryStorage(), connectionName),
             );
 
             adapter.addExchangeableToken(connectionName, Channels.Msteams, teamsUserId, fakeExchangeableItem, token);
@@ -120,7 +120,7 @@ describe('TeamsSSOTokenExchangeMiddleware', function () {
             });
 
             const adapter = new TeamsSSOAdapter(createConversationReference(), logic).use(
-                new TeamsSSOTokenExchangeMiddleware(new MemoryStorage(), connectionName)
+                new TeamsSSOTokenExchangeMiddleware(new MemoryStorage(), connectionName),
             );
 
             adapter.addExchangeableToken(connectionName, Channels.Msteams, teamsUserId, fakeExchangeableItem, token);
@@ -148,7 +148,7 @@ describe('TeamsSSOTokenExchangeMiddleware', function () {
 
             // Note: addExchangeableToken omitted so exchange does not take place
             const adapter = new TeamsSSOAdapter(createConversationReference(), logic).use(
-                new TeamsSSOTokenExchangeMiddleware(new MemoryStorage(), connectionName)
+                new TeamsSSOTokenExchangeMiddleware(new MemoryStorage(), connectionName),
             );
 
             await adapter
@@ -177,7 +177,7 @@ describe('TeamsSSOTokenExchangeMiddleware', function () {
             });
 
             const adapter = new TeamsSSOAdapter(createConversationReference(Channels.Directline), logic).use(
-                new TeamsSSOTokenExchangeMiddleware(new MemoryStorage(), connectionName)
+                new TeamsSSOTokenExchangeMiddleware(new MemoryStorage(), connectionName),
             );
 
             await adapter.send('test').assertReply('processed').startTest();
@@ -194,6 +194,7 @@ describe('TeamsSSOTokenExchangeMiddleware', function () {
         afterEach(function () {
             this.sandbox.restore();
         });
+
         it('exchange token with CloudAdapter', async function () {
             class TestCloudAdapter extends CloudAdapterBase {}
             const conversation = TestAdapter.createConversation('Convo1');

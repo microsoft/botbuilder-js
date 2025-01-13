@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable @typescript-eslint/no-require-imports */
 const Chinese = require('../vendors/cldr-data/main/zh/numbers.json');
 const English = require('../vendors/cldr-data/main/en/numbers.json');
 const French = require('../vendors/cldr-data/main/fr/numbers.json');

@@ -145,7 +145,7 @@ export class ForEach<O extends object = {}> extends ActionScope<O> implements Fo
      */
     protected async onContinueLoop(
         dc: DialogContext,
-        _actionScopeResult: ActionScopeResult
+        _actionScopeResult: ActionScopeResult,
     ): Promise<DialogTurnResult> {
         return await this.nextItem(dc);
     }

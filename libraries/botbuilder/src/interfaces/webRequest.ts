@@ -44,7 +44,6 @@ export interface WebRequest {
      *
      * @param event The event name.
      * @param args Arguments used to handle the event.
-     *
      * @returns A reference to the request object.
      */
     on?(event: string, ...args: any[]): any;

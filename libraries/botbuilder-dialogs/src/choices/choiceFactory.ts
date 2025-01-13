@@ -96,7 +96,7 @@ export class ChoiceFactory {
         choices: (string | Choice)[],
         text?: string,
         speak?: string,
-        options?: ChoiceFactoryOptions
+        options?: ChoiceFactoryOptions,
     ): Partial<Activity> {
         const channelId: string =
             typeof channelOrContext === 'string' ? channelOrContext : channel.getChannelId(channelOrContext);
@@ -150,7 +150,7 @@ export class ChoiceFactory {
                     title: choice.value,
                     type: ActionTypes.ImBack,
                     value: choice.value,
-                } as CardAction)
+                }) as CardAction,
         );
         const attachment = CardFactory.heroCard(undefined, text, undefined, buttons);
 
@@ -178,7 +178,7 @@ export class ChoiceFactory {
         choices: (string | Choice)[],
         text?: string,
         speak?: string,
-        options?: ChoiceFactoryOptions
+        options?: ChoiceFactoryOptions,
     ): Partial<Activity> {
         const opt: ChoiceFactoryOptions = {
             inlineSeparator: ', ',
@@ -229,7 +229,7 @@ export class ChoiceFactory {
         choices: (string | Choice)[],
         text?: string,
         speak?: string,
-        options?: ChoiceFactoryOptions
+        options?: ChoiceFactoryOptions,
     ): Partial<Activity> {
         const opt: ChoiceFactoryOptions = {
             includeNumbers: true,

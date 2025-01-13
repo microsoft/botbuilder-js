@@ -7,7 +7,7 @@
  */
 export interface Request<
     Body extends Record<string, unknown> = Record<string, unknown>,
-    Headers extends Record<string, string[] | string | undefined> = Record<string, string[] | string | undefined>
+    Headers extends Record<string, string[] | string | undefined> = Record<string, string[] | string | undefined>,
 > {
     body?: Body;
     headers: Headers;

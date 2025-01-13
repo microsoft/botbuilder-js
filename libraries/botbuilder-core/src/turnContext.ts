@@ -53,7 +53,7 @@ import {
 export type SendActivitiesHandler = (
     context: TurnContext,
     activities: Partial<Activity>[],
-    next: () => Promise<ResourceResponse[]>
+    next: () => Promise<ResourceResponse[]>,
 ) => Promise<ResourceResponse[]>;
 
 /**
@@ -85,7 +85,7 @@ export type SendActivitiesHandler = (
 export type UpdateActivityHandler = (
     context: TurnContext,
     activity: Partial<Activity>,
-    next: () => Promise<void>
+    next: () => Promise<void>,
 ) => Promise<void>;
 
 /**
@@ -117,7 +117,7 @@ export type UpdateActivityHandler = (
 export type DeleteActivityHandler = (
     context: TurnContext,
     reference: Partial<ConversationReference>,
-    next: () => Promise<void>
+    next: () => Promise<void>,
 ) => Promise<void>;
 
 export const BotCallbackHandlerKey = 'botCallbackHandler';
@@ -133,7 +133,7 @@ function getAppropriateReplyToId(source: Partial<Activity>): string | undefined 
     return undefined;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging, @typescript-eslint/no-empty-object-type
 export interface TurnContext {}
 
 /**
@@ -143,6 +143,7 @@ export interface TurnContext {}
  * Context provides information needed to process an incoming activity. The context object is
  * created by a [BotAdapter](xref:botbuilder-core.BotAdapter) and persists for the length of the turn.
  */
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export class TurnContext {
     private _adapter?: BotAdapter;
     private _activity?: Activity;
@@ -324,7 +325,7 @@ export class TurnContext {
     static applyConversationReference(
         activity: Partial<Activity>,
         reference: Partial<ConversationReference>,
-        isIncoming = false
+        isIncoming = false,
     ): Partial<Activity> {
         activity.channelId = reference.channelId;
         activity.locale ??= reference.locale;
@@ -371,7 +372,7 @@ export class TurnContext {
      */
     static getReplyConversationReference(
         activity: Partial<Activity>,
-        reply: ResourceResponse
+        reply: ResourceResponse,
     ): Partial<ConversationReference> {
         const reference: Partial<ConversationReference> = TurnContext.getConversationReference(activity);
 
@@ -410,7 +411,7 @@ export class TurnContext {
         name: string,
         value?: any,
         valueType?: string,
-        label?: string
+        label?: string,
     ): Promise<ResourceResponse | undefined> {
         const traceActivity: Partial<Activity> = {
             type: ActivityTypes.Trace,
@@ -456,7 +457,7 @@ export class TurnContext {
     async sendActivity(
         activityOrText: string | Partial<Activity>,
         speak?: string,
-        inputHint?: string
+        inputHint?: string,
     ): Promise<ResourceResponse | undefined> {
         let a: Partial<Activity>;
         if (typeof activityOrText === 'string') {
@@ -722,7 +723,6 @@ export class TurnContext {
      * Called when this turn context object is passed into the constructor for a new turn context.
      *
      * @param context The new turn context object.
-     *
      * @remarks
      * This copies private members from this object to the new object.
      * All property values are copied by reference.
@@ -862,7 +862,7 @@ export class TurnContext {
     private emit<A, T>(
         handlers: Array<(context: TurnContext, arg: A, next: () => Promise<T>) => Promise<T>>,
         arg: A,
-        next: () => Promise<T>
+        next: () => Promise<T>,
     ): Promise<T> {
         const runHandlers = ([handler, ...remaining]: typeof handlers): Promise<T> => {
             try {

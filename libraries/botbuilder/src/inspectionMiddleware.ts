@@ -90,7 +90,7 @@ abstract class InterceptionMiddleware implements Middleware {
     async onTurn(turnContext: TurnContext, next: () => Promise<void>): Promise<void> {
         const { shouldForwardToApplication, shouldIntercept } = await this.invokeInbound(
             turnContext,
-            TraceActivity.fromActivity(turnContext.activity, 'ReceivedActivity', 'Received Activity')
+            TraceActivity.fromActivity(turnContext.activity, 'ReceivedActivity', 'Received Activity'),
         );
 
         if (shouldIntercept) {
@@ -168,7 +168,6 @@ abstract class InterceptionMiddleware implements Middleware {
  *
  * @remarks
  * InspectionMiddleware for emulator inspection of runtime Activities and BotState.
- *
  * @deprecated This class will be removed in a future version of the framework.
  */
 export class InspectionMiddleware extends InterceptionMiddleware {
@@ -192,7 +191,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
         inspectionState: InspectionState,
         userState?: UserState,
         conversationState?: ConversationState,
-        credentials?: Partial<MicrosoftAppCredentials>
+        credentials?: Partial<MicrosoftAppCredentials>,
     ) {
         super();
 
@@ -312,7 +311,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
         const sessions = await this.inspectionStateAccessor.get(turnContext, InspectionSessionsByStatus.DefaultValue);
         const sessionId = this.openCommand(sessions, TurnContext.getConversationReference(turnContext.activity));
         await turnContext.sendActivity(
-            TraceActivity.makeCommandActivity(`${InspectionMiddleware.command} attach ${sessionId}`)
+            TraceActivity.makeCommandActivity(`${InspectionMiddleware.command} attach ${sessionId}`),
         );
         await this.inspectionState.saveChanges(turnContext, false);
     }
@@ -336,7 +335,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
      */
     private openCommand(
         sessions: InspectionSessionsByStatus,
-        conversationReference: Partial<ConversationReference>
+        conversationReference: Partial<ConversationReference>,
     ): string {
         const sessionId = uuidv4();
         sessions.openedSessions[sessionId] = conversationReference;
@@ -376,7 +375,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
     private async invokeSend(
         turnContext: TurnContext,
         session: InspectionSession,
-        activity: Partial<Activity>
+        activity: Partial<Activity>,
     ): Promise<any> {
         if (await session.send(activity)) {
             return true;
@@ -444,7 +443,6 @@ class InspectionSessionsByStatus {
  *
  * @remarks
  * InspectionState for use by the InspectionMiddleware for emulator inspection of runtime Activities and BotState.
- *
  * @deprecated This class will be removed in a future version of the framework.
  */
 export class InspectionState extends BotState {

@@ -11,7 +11,10 @@ class Bar {
 }
 
 class Baz {
-    constructor(public foo: Foo, public bar: Bar) {}
+    constructor(
+        public foo: Foo,
+        public bar: Bar,
+    ) {}
 }
 
 interface TestServices {
@@ -129,7 +132,7 @@ describe('ServiceCollection', function () {
             services.composeFactory<Record<string, unknown>, Record<string, Record<string, unknown>>>(
                 'b',
                 ['a'],
-                ({ a }, b) => ({ ...a, ...b })
+                ({ a }, b) => ({ ...a, ...b }),
             );
 
             const a = services.mustMakeInstance('a');
@@ -144,7 +147,7 @@ describe('ServiceCollection', function () {
             services.composeFactory<Record<string, unknown>, Record<string, Record<string, unknown>>>(
                 'b',
                 ['a'],
-                ({ a }, b) => ({ ...a, ...b })
+                ({ a }, b) => ({ ...a, ...b }),
             );
             assert.throws(() => services.makeInstance('b'));
         });

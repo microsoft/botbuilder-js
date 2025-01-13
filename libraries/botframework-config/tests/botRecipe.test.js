@@ -6,21 +6,22 @@ const { BotRecipe } = require('../lib');
 function assertService(newService, oldService) {
     assert(
         newService.type === oldService.type,
-        `newService.type [${newService.type}] !== oldService.type [${oldService.type}]`
+        `newService.type [${newService.type}] !== oldService.type [${oldService.type}]`,
     );
     assert(newService.id === oldService.id, `newService.id [${newService.id}] !== oldService.id [${oldService.id}]`);
     assert(
         newService.name === oldService.name,
-        `newService.name [${newService.name}] !== oldService.name [${oldService.name}]`
+        `newService.name [${newService.name}] !== oldService.name [${oldService.name}]`,
     );
     assert(
         newService.url === oldService.url,
-        `newService.url [${newService.url}] !== oldService.url [${oldService.url}]`
+        `newService.url [${newService.url}] !== oldService.url [${oldService.url}]`,
     );
 }
 
 describe('BotRecipe', function () {
     const recipe = new BotRecipe();
+
     it("should have a default version of '1.0'.", function () {
         assert(recipe.version === '1.0', `expected version '1.0', instead received ${recipe.version}`);
     });
@@ -28,7 +29,7 @@ describe('BotRecipe', function () {
     it('should have default resources be an empty array.', function () {
         assert(
             Array.isArray(recipe.resources),
-            `expected resources to be an Array, instead it is type "${typeof recipe.resources}"`
+            `expected resources to be an Array, instead it is type "${typeof recipe.resources}"`,
         );
         assert(recipe.resources.length === 0, `initial resources should be length 0, not ${recipe.resources.length}`);
     });
@@ -45,15 +46,15 @@ describe('BotRecipe', function () {
 
         assert(
             newRecipe.version === oldVersion,
-            `expected version ${oldVersion}, instead received ${newRecipe.version}`
+            `expected version ${oldVersion}, instead received ${newRecipe.version}`,
         );
         assert(
             Array.isArray(newRecipe.resources),
-            `expected resources to be an Array, instead it is type "${typeof newRecipe.resources}"`
+            `expected resources to be an Array, instead it is type "${typeof newRecipe.resources}"`,
         );
         assert(
             newRecipe.resources.length === oldResources.length,
-            `initial resources should be length ${oldResources.length}, not ${newRecipe.resources.length}`
+            `initial resources should be length ${oldResources.length}, not ${newRecipe.resources.length}`,
         );
         assertService(newRecipe.resources[0], oldEndpoint);
     });

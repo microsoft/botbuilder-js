@@ -38,7 +38,7 @@ export class SkillHttpClient extends BotFrameworkHttpClient {
     constructor(
         credentialProvider: ICredentialProvider,
         conversationIdFactory: SkillConversationIdFactoryBase,
-        channelService?: string
+        channelService?: string,
     ) {
         super(credentialProvider, channelService);
         if (!conversationIdFactory) {
@@ -63,7 +63,7 @@ export class SkillHttpClient extends BotFrameworkHttpClient {
         fromBotId: string,
         toSkill: BotFrameworkSkill,
         callbackUrl: string,
-        activity: Activity
+        activity: Activity,
     ): Promise<InvokeResponse<T>>;
     /**
      * Uses the SkillConversationIdFactory to create or retrieve a Skill Conversation Id, and sends the activity.
@@ -78,7 +78,7 @@ export class SkillHttpClient extends BotFrameworkHttpClient {
         fromBotId: string,
         toSkill: BotFrameworkSkill,
         callbackUrl: string,
-        activity: Activity
+        activity: Activity,
     ): Promise<InvokeResponse>;
     /**
      * Uses the `SkillConversationIdFactory` to create or retrieve a Skill Conversation Id, and sends the [Activity](xref:botframework-schema.Activity).
@@ -95,7 +95,7 @@ export class SkillHttpClient extends BotFrameworkHttpClient {
         fromBotIdOrSkill: string | BotFrameworkSkill,
         toSkillOrCallbackUrl: BotFrameworkSkill | string,
         callbackUrlOrActivity: string | Activity,
-        activityToForward?: Activity
+        activityToForward?: Activity,
     ): Promise<InvokeResponse<T>> {
         let originatingAudience: string;
         let fromBotId: string;
@@ -125,13 +125,12 @@ export class SkillHttpClient extends BotFrameworkHttpClient {
                 fromBotOAuthScope: originatingAudience,
             };
 
-            skillConversationId = await this.conversationIdFactory.createSkillConversationIdWithOptions(
-                createIdOptions
-            );
+            skillConversationId =
+                await this.conversationIdFactory.createSkillConversationIdWithOptions(createIdOptions);
         } catch (err) {
             if (err.message === 'Not Implemented') {
                 skillConversationId = await this.conversationIdFactory.createSkillConversationId(
-                    TurnContext.getConversationReference(activity) as ConversationReference
+                    TurnContext.getConversationReference(activity) as ConversationReference,
                 );
             } else {
                 throw err;
@@ -144,7 +143,7 @@ export class SkillHttpClient extends BotFrameworkHttpClient {
             toSkill.skillEndpoint,
             callbackUrl,
             skillConversationId,
-            activity
+            activity,
         );
     }
 }

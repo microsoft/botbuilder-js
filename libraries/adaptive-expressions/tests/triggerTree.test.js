@@ -1,4 +1,3 @@
-/* eslint-disable security/detect-object-injection */
 const {
     Constant,
     Expression,
@@ -28,7 +27,7 @@ class Generator {
             expressions.push(
                 this.randomWeighted([1.0, 1.0])
                     ? this.generateSimpleComparison(name)
-                    : this.generateHasValueComparison(name)
+                    : this.generateHasValueComparison(name),
             );
         }
         return expressions;
@@ -105,7 +104,7 @@ class Generator {
                     let optional = Expression.makeExpression(
                         undefined,
                         Expression.lookup(ExpressionType.Optional),
-                        predicate.expression
+                        predicate.expression,
                     );
                     if (Math.random() < 0.25) {
                         optional = Expression.notExpression(optional);
@@ -237,7 +236,7 @@ class Generator {
                     type,
                     undefined,
                     Expression.makeExpression(ExpressionType.Accessor, undefined, new Constant(name)),
-                    new Constant(this.adjustIntValue(value, type))
+                    new Constant(this.adjustIntValue(value, type)),
                 );
                 break;
             case 1:
@@ -246,7 +245,7 @@ class Generator {
                     type,
                     undefined,
                     Expression.makeExpression(ExpressionType.Accessor, undefined, new Constant(name)),
-                    new Constant(this.adjustDoubleValue(value, type))
+                    new Constant(this.adjustDoubleValue(value, type)),
                 );
                 break;
         }
@@ -266,7 +265,7 @@ class Generator {
                 expression = Expression.makeExpression(
                     ExpressionType.Exists,
                     undefined,
-                    Expression.makeExpression(ExpressionType.Accessor, undefined, new Constant(name))
+                    Expression.makeExpression(ExpressionType.Accessor, undefined, new Constant(name)),
                 );
                 value = Math.floor(Math.random() * 2147483647);
                 break;
@@ -274,7 +273,7 @@ class Generator {
                 expression = Expression.makeExpression(
                     ExpressionType.Exists,
                     undefined,
-                    Expression.makeExpression(ExpressionType.Accessor, undefined, new Constant(name))
+                    Expression.makeExpression(ExpressionType.Accessor, undefined, new Constant(name)),
                 );
                 value = Math.random();
                 break;
@@ -283,7 +282,7 @@ class Generator {
                     ExpressionType.NotEqual,
                     undefined,
                     Expression.makeExpression(ExpressionType.Accessor, undefined, new Constant(name)),
-                    new Constant(null)
+                    new Constant(null),
                 );
                 value = this.randomString(5);
                 break;
@@ -513,6 +512,7 @@ describe('TriggerTree', function () {
         assert.strictEqual(matches[1].action, 3);
     });
 
+    //eslint-disable-next-line mocha/no-skipped-tests
     it.skip('Test Tree', function () {
         const numPredicates = 50;
         const numSingletons = 25;
@@ -586,7 +586,7 @@ describe('TriggerTree', function () {
 
         assert.strictEqual(
             tree.totalTriggers,
-            numSingletons + numConjunctions + numDisjunctions + numOptionals + numQuantifiers
+            numSingletons + numConjunctions + numDisjunctions + numOptionals + numQuantifiers,
         );
         all.push(...quantified);
 
@@ -597,7 +597,7 @@ describe('TriggerTree', function () {
 
         assert.strictEqual(
             tree.totalTriggers,
-            numSingletons + numConjunctions + numDisjunctions + numOptionals + numQuantifiers + numNots
+            numSingletons + numConjunctions + numDisjunctions + numOptionals + numQuantifiers + numNots,
         );
         all.push(...nots);
 

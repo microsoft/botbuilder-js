@@ -45,7 +45,7 @@ import { ModelResult } from './modelResult';
 export function recognizeChoices(
     utterance: string,
     choices: (string | Choice)[],
-    options?: FindChoicesOptions
+    options?: FindChoicesOptions,
 ): ModelResult<FoundChoice>[] {
     function matchChoiceByIndex(match: ModelResult<any>): void {
         try {
@@ -77,14 +77,14 @@ export function recognizeChoices(
             recognizeNumbers: true,
             recognizeOrdinals: true,
         } as FindChoicesOptions,
-        options
+        options,
     );
 
     // Normalize choices
     const list: Choice[] = (choices || [])
         .map((choice: Choice) => (typeof choice === 'string' ? { value: choice } : choice))
         .filter(
-            (choice: Choice) => choice // TODO: does this do anything?
+            (choice: Choice) => choice, // TODO: does this do anything?
         );
 
     // Try finding choices by text search first

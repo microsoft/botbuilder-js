@@ -25,7 +25,7 @@ export class XPath extends ExpressionEvaluator {
 
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.applyWithError((args: unknown[]): { value: unknown; error: string } =>
-            XPath.platformSpecificXPath(args)
+            XPath.platformSpecificXPath(args),
         );
     }
 
@@ -64,9 +64,10 @@ export class XPath extends ExpressionEvaluator {
         } else {
             let error: string;
             let result: unknown;
-            // eslint-disable-next-line @typescript-eslint/no-var-requires
+
+            //eslint-disable-next-line @typescript-eslint/no-require-imports
             const xpath = require('xpath');
-            // eslint-disable-next-line @typescript-eslint/no-var-requires
+            //eslint-disable-next-line @typescript-eslint/no-require-imports
             const { DOMParser } = require('@xmldom/xmldom');
             let doc: XMLDocument;
             try {

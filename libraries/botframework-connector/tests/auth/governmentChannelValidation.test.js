@@ -11,7 +11,7 @@ describe('GovernmentChannelValidator', function () {
     it('validateIdentity should fail if no identity', async function () {
         await assert.rejects(
             GovernmentChannelValidation.validateIdentity(new ClaimsIdentity([], false), undefined),
-            new AuthenticationError('Unauthorized. Is not authenticated', StatusCodes.UNAUTHORIZED)
+            new AuthenticationError('Unauthorized. Is not authenticated', StatusCodes.UNAUTHORIZED),
         );
     });
 
@@ -19,9 +19,9 @@ describe('GovernmentChannelValidator', function () {
         await assert.rejects(
             GovernmentChannelValidation.validateIdentity(
                 new ClaimsIdentity([{ type: 'iss', value: 'peanut' }], true),
-                credentials
+                credentials,
             ),
-            new AuthenticationError('Unauthorized. Issuer Claim MUST be present.', StatusCodes.UNAUTHORIZED)
+            new AuthenticationError('Unauthorized. Issuer Claim MUST be present.', StatusCodes.UNAUTHORIZED),
         );
     });
 
@@ -29,9 +29,9 @@ describe('GovernmentChannelValidator', function () {
         await assert.rejects(
             GovernmentChannelValidation.validateIdentity(
                 new ClaimsIdentity([{ type: 'iss', value: 'https://api.botframework.us' }], true),
-                credentials
+                credentials,
             ),
-            new AuthenticationError('Unauthorized. Invalid AppId passed on token: null', StatusCodes.UNAUTHORIZED)
+            new AuthenticationError('Unauthorized. Invalid AppId passed on token: null', StatusCodes.UNAUTHORIZED),
         );
     });
 
@@ -43,11 +43,11 @@ describe('GovernmentChannelValidator', function () {
                         { type: 'iss', value: 'https://api.botframework.us' },
                         { type: 'aud', value: 'peanut' },
                     ],
-                    true
+                    true,
                 ),
-                credentials
+                credentials,
             ),
-            new AuthenticationError('Unauthorized. Invalid AppId passed on token: peanut', StatusCodes.UNAUTHORIZED)
+            new AuthenticationError('Unauthorized. Invalid AppId passed on token: peanut', StatusCodes.UNAUTHORIZED),
         );
     });
 
@@ -58,9 +58,9 @@ describe('GovernmentChannelValidator', function () {
                     { type: 'iss', value: 'https://api.botframework.us' },
                     { type: 'aud', value: credentials.appId },
                 ],
-                true
+                true,
             ),
-            credentials
+            credentials,
         );
     });
 });

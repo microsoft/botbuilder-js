@@ -84,7 +84,7 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
         this.containerClient = new ContainerClient(
             this.settings.storageAccountOrConnectionString,
             this.settings.containerName,
-            pipeline.options
+            pipeline.options,
         );
     }
 
@@ -137,7 +137,7 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
         channelId: string,
         conversationId: string,
         continuationToken?: string,
-        startDate?: Date
+        startDate?: Date,
     ): Promise<PagedResult<Activity>> {
         if (!channelId) {
             throw new Error('Missing channelId');
@@ -174,7 +174,7 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
             const fromIdx =
                 startDate != null
                     ? blobItems.findIndex(
-                          (blobItem) => blobItem?.properties?.createdOn && blobItem?.properties?.createdOn >= startDate
+                          (blobItem) => blobItem?.properties?.createdOn && blobItem?.properties?.createdOn >= startDate,
                       )
                     : 0;
 
@@ -193,7 +193,7 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
                         const activity = (await StreamConsumers.json(readableStreamBody)) as any;
                         return { ...activity, timestamp: new Date(activity.timestamp) } as Activity;
                     },
-                    { concurrency: this.concurrency }
+                    { concurrency: this.concurrency },
                 );
 
                 activities.forEach((activity) => {

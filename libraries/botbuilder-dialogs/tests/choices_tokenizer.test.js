@@ -7,7 +7,7 @@ function assertToken(token, start, end, text, normalized) {
     assert(token.text === text, `Invalid token.text of '${token.text}' for '${text}' token.`);
     assert(
         token.normalized === normalized || text,
-        `Invalid token.normalized of '${token.normalized}' for '${text}' token.`
+        `Invalid token.normalized of '${token.normalized}' for '${text}' token.`,
     );
 }
 

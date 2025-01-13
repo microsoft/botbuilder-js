@@ -37,7 +37,6 @@ export type O365ConnectorCardActionType = 'ViewAction' | 'OpenUri' | 'HttpPOST' 
  * @interface
  * An interface representing O365ConnectorCardActionBase.
  * O365 connector card action base
- *
  */
 export interface O365ConnectorCardActionBase {
     /**
@@ -69,7 +68,6 @@ export type O365ConnectorCardInputType = 'textInput' | 'dateInput' | 'multichoic
  * @interface
  * An interface representing O365ConnectorCardInputBase.
  * O365 connector card input for ActionCard action
- *
  */
 export interface O365ConnectorCardInputBase {
     /**
@@ -107,7 +105,6 @@ export type FileDownloadInfoAttachment = TeamsAttachment<FileDownloadInfo>;
  * @interface
  * An interface representing MessageActionsPayloadBody.
  * Plaintext/HTML representation of the content of the message.
- *
  */
 export interface MessageActionsPayloadBody {
     /**

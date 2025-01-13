@@ -41,7 +41,7 @@ export class UserConversationUpdate extends TestAction implements UserConversati
     async execute(
         testAdapter: TestAdapter,
         callback: (context: TurnContext) => Promise<void>,
-        _inspector?: Inspector
+        _inspector?: Inspector,
     ): Promise<void> {
         const activity = testAdapter.makeActivity();
         activity.type = ActivityTypes.ConversationUpdate;

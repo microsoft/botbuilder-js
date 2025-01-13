@@ -39,7 +39,10 @@ export class PayloadAssembler {
      * @param streamManager The [StreamManager](xref:botframework-streaming.StreamManager) managing the stream being assembled.
      * @param params Parameters for a streaming assembler.
      */
-    constructor(private readonly streamManager: StreamManager, params: IAssemblerParams) {
+    constructor(
+        private readonly streamManager: StreamManager,
+        params: IAssemblerParams,
+    ) {
         if (params.header) {
             this.id = params.header.id;
             this.payloadType = params.header.payloadType;
@@ -141,7 +144,7 @@ export class PayloadAssembler {
 
     private async processStreams(
         responsePayload: IResponsePayload | IRequestPayload,
-        receiveResponse: IReceiveResponse | IReceiveRequest
+        receiveResponse: IReceiveResponse | IReceiveRequest,
     ): Promise<void> {
         responsePayload.streams?.forEach((responseStream) => {
             // There was a bug in how streams were handled. In .NET, the StreamDescription definiton mapped the
@@ -151,7 +154,7 @@ export class PayloadAssembler {
             // .NET code:
             // https://github.com/microsoft/botbuilder-dotnet/blob/a79036ddf6625ec3fd68a6f7295886eb7831bc1c/libraries/Microsoft.Bot.Streaming/Payloads/Models/StreamDescription.cs#L28-L29
             const contentType =
-                ((responseStream as unknown) as Record<string, string>).type ?? responseStream.contentType;
+                (responseStream as unknown as Record<string, string>).type ?? responseStream.contentType;
 
             const contentAssembler = this.streamManager.getPayloadAssembler(responseStream.id);
 

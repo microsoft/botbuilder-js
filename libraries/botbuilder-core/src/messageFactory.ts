@@ -82,7 +82,7 @@ export class MessageFactory {
         actions: (CardAction | string)[],
         text?: string,
         speak?: string,
-        inputHint?: InputHints | string
+        inputHint?: InputHints | string,
     ): Partial<Activity> {
         const msg: Partial<Activity> = {
             type: ActivityTypes.Message,
@@ -126,7 +126,7 @@ export class MessageFactory {
         attachment: Attachment,
         text?: string,
         speak?: string,
-        inputHint?: InputHints | string
+        inputHint?: InputHints | string,
     ): Partial<Activity> {
         return attachmentActivity(AttachmentLayoutTypes.List, [attachment], text, speak, inputHint);
     }
@@ -154,7 +154,7 @@ export class MessageFactory {
         attachments: Attachment[],
         text?: string,
         speak?: string,
-        inputHint?: InputHints | string
+        inputHint?: InputHints | string,
     ): Partial<Activity> {
         return attachmentActivity(AttachmentLayoutTypes.List, attachments, text, speak, inputHint);
     }
@@ -182,7 +182,7 @@ export class MessageFactory {
         attachments: Attachment[],
         text?: string,
         speak?: string,
-        inputHint?: InputHints | string
+        inputHint?: InputHints | string,
     ): Partial<Activity> {
         return attachmentActivity(AttachmentLayoutTypes.Carousel, attachments, text, speak, inputHint);
     }
@@ -210,7 +210,7 @@ export class MessageFactory {
         name?: string,
         text?: string,
         speak?: string,
-        inputHint?: InputHints | string
+        inputHint?: InputHints | string,
     ): Partial<Activity> {
         const a: Attachment = { contentType: contentType, contentUrl: url };
         if (name) {
@@ -234,7 +234,7 @@ function attachmentActivity(
     attachments: Attachment[],
     text?: string,
     speak?: string,
-    inputHint?: InputHints | string
+    inputHint?: InputHints | string,
 ): Partial<Activity> {
     const msg: Partial<Activity> = {
         type: ActivityTypes.Message,

@@ -28,7 +28,10 @@ export class ConnectedService implements IConnectedService {
      * @param source (Optional) JSON based service definition.
      * @param type (Optional) type of service being defined.
      */
-    constructor(source: IConnectedService = {} as IConnectedService, public type?: ServiceTypes) {
+    constructor(
+        source: IConnectedService = {} as IConnectedService,
+        public type?: ServiceTypes,
+    ) {
         Object.assign(this, source);
         if (type) {
             this.type = type;

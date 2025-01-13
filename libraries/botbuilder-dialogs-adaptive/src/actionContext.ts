@@ -32,7 +32,7 @@ export class ActionContext extends DialogContext {
         parentDialogContext: DialogContext,
         state: DialogState,
         actions: ActionState[],
-        changeKey: symbol
+        changeKey: symbol,
     ) {
         super(dialogs, parentDialogContext, state);
         this.actions = actions;

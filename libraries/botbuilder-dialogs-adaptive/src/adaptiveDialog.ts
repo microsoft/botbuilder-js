@@ -58,9 +58,8 @@ import { FirstSelector, MostSpecificSelector } from './selectors';
 import { TriggerSelector } from './triggerSelector';
 import { TelemetryLoggerConstants } from './telemetryLoggerConstants';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function isDialogDependencies(val: any): val is DialogDependencies {
-    return typeof ((val as unknown) as DialogDependencies).getDependencies === 'function';
+    return typeof (val as unknown as DialogDependencies).getDependencies === 'function';
 }
 
 export interface AdaptiveDialogConfiguration extends DialogConfiguration {
@@ -485,7 +484,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
     protected async processEvent(
         actionContext: ActionContext,
         dialogEvent: DialogEvent,
-        preBubble: boolean
+        preBubble: boolean,
     ): Promise<boolean> {
         // Save into turn
         actionContext.state.setValue(TurnPath.dialogEvent, dialogEvent);
@@ -501,7 +500,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
                 // we have received a RecognizedIntent event
                 // get the value and promote to turn.recognized, topintent, topscore and lastintent
                 const recognizedResult = actionContext.state.getValue<RecognizerResult>(
-                    `${TurnPath.dialogEvent}.value`
+                    `${TurnPath.dialogEvent}.value`,
                 );
                 const { intent, score } = getTopScoringIntent(recognizedResult);
                 actionContext.state.setValue(TurnPath.recognized, recognizedResult);
@@ -1069,7 +1068,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
         properties: string[],
         turn: number,
         text: string,
-        entityToInfo: Record<string, EntityInfo[]>
+        entityToInfo: Record<string, EntityInfo[]>,
     ): void {
         Object.keys(entities).forEach((entityName) => {
             const instances = entities[this.instanceKey][entityName];
@@ -1084,7 +1083,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
                 properties,
                 turn,
                 text,
-                entityToInfo
+                entityToInfo,
             );
         });
     }
@@ -1103,7 +1102,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
         properties: string[],
         turn: number,
         text: string,
-        entityToInfo: Record<string, EntityInfo[]>
+        entityToInfo: Record<string, EntityInfo[]>,
     ): void {
         if (!name.startsWith('$')) {
             // Entities representing schema properties end in "Property" to prevent name collisions with the property itself.
@@ -1140,7 +1139,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
                         property,
                         turn,
                         text,
-                        entityToInfo
+                        entityToInfo,
                     );
                 } else if (typeof entity === 'object' && entity !== null) {
                     if (isEmpty(entity)) {
@@ -1161,7 +1160,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
                             properties,
                             turn,
                             text,
-                            entityToInfo
+                            entityToInfo,
                         );
                     }
                 } else if (isOp) {
@@ -1185,7 +1184,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
         property: string,
         turn: number,
         text: string,
-        entityToInfo: Record<string, EntityInfo[]>
+        entityToInfo: Record<string, EntityInfo[]>,
     ): void {
         if (instance && rootInstance) {
             entityToInfo[name] ??= [];
@@ -1224,7 +1223,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
         lastEvent: string,
         nextAssignment: EntityAssignment,
         askDefault: Record<string, string>,
-        dialogDefault: Record<string, unknown>
+        dialogDefault: Record<string, unknown>,
     ): EntityAssignment[] {
         const globalExpectedOnly: string[] = this.dialogSchema.schema[this.expectedOnlyKey] ?? [];
         const requiresValue: string[] = this.dialogSchema.schema[this.requiresValueKey] ?? [];
@@ -1240,7 +1239,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
                             property: alternative.property,
                             operation: alternative.operation,
                             isExpected: expected.includes(alternative.property),
-                        })
+                        }),
                     );
                 }
             });
@@ -1262,7 +1261,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
                                     property: propSchema.name,
                                     operation: entity.operation,
                                     isExpected,
-                                })
+                                }),
                             );
                         } else if (entity.property === entityName && !entity.value && !entity.operation && isExpected) {
                             // Recast property with no value as match for property entities.
@@ -1272,7 +1271,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
                                     property: propSchema.name,
                                     operation: null,
                                     isExpected,
-                                })
+                                }),
                             );
                         }
                     }
@@ -1305,7 +1304,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
                     if (!alternative.value) {
                         // If alternative matches one alternative, it answers chooseProperty.
                         const matches = nextAssignment.alternatives.filter((a) =>
-                            this.matchesAssignment(alternative, a)
+                            this.matchesAssignment(alternative, a),
                         );
                         if (matches.length === 1) {
                             assignments.push(
@@ -1313,7 +1312,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
                                     value: alternative,
                                     operation: AdaptiveEvents.chooseProperty,
                                     isExpected: true,
-                                })
+                                }),
                             );
                         }
                     }
@@ -1331,7 +1330,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
                             property: null,
                             operation: alternative.operation,
                             isExpected: false,
-                        })
+                        }),
                     );
                 }
             });
@@ -1383,7 +1382,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
     private defaultOperation(
         assignment: EntityAssignment,
         askDefault: Record<string, string>,
-        dialogDefault: Record<string, unknown>
+        dialogDefault: Record<string, unknown>,
     ): string {
         let operation: string;
         if (assignment.property) {
@@ -1411,7 +1410,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
                 ...acc,
                 [assignment.property]: [...(acc[assignment.property] ?? []), assignment],
             }),
-            {}
+            {},
         );
 
         const output: EntityAssignment[] = [];
@@ -1433,7 +1432,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
                                 (choice): boolean =>
                                     !isEqual(choice, candidate) ||
                                     (EntityInfo.sharesRoot(choice.value, candidate.value) &&
-                                        !EntityInfo.overlaps(choice.value, candidate.value))
+                                        !EntityInfo.overlaps(choice.value, candidate.value)),
                             );
                             output.push(candidate);
                         }
@@ -1449,7 +1448,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
         actionContext: ActionContext,
         entities: NormalizedEntityInfos,
         existing: EntityAssignments,
-        lastEvent: string
+        lastEvent: string,
     ): Partial<EntityInfo>[] {
         const assignments = new EntityAssignments();
         const expected: string[] = actionContext.state.getValue(DialogPath.expectedProperties, []);
@@ -1462,7 +1461,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
 
         const nextAssignment = existing.nextAssignment;
         let candidates = this.removeOverlappingPerProperty(
-            this.candidates(entities, expected, lastEvent, nextAssignment, askDefaultOp, defaultOp)
+            this.candidates(entities, expected, lastEvent, nextAssignment, askDefaultOp, defaultOp),
         ).sort((a, b): number => (a.isExpected === b.isExpected ? 0 : a.isExpected ? -1 : 1));
 
         const usedEntities = new Set(candidates.map((candidate) => candidate.value));
@@ -1607,7 +1606,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
     private mergeAssignments(
         newAssignments: EntityAssignments,
         old: EntityAssignments,
-        comparer: EntityAssignmentComparer
+        comparer: EntityAssignmentComparer,
     ): void {
         let list = old.assignments;
         for (const assign of newAssignments.assignments) {

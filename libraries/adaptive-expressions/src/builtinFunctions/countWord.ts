@@ -29,7 +29,7 @@ export class CountWord extends ExpressionEvaluator {
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply(
             (args: any[]): number => InternalFunctionUtils.parseStringOrUndefined(args[0]).trim().split(/\s+/).length,
-            FunctionUtils.verifyStringOrNull
+            FunctionUtils.verifyStringOrNull,
         );
     }
 }

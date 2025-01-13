@@ -33,7 +33,8 @@ export interface IfConditionConfiguration extends DialogConfiguration {
  */
 export class IfCondition<O extends object = {}>
     extends Dialog<O>
-    implements DialogDependencies, IfConditionConfiguration {
+    implements DialogDependencies, IfConditionConfiguration
+{
     static $kind = 'Microsoft.IfCondition';
 
     constructor();

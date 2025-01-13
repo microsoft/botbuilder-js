@@ -13,7 +13,6 @@ import { TurnContext } from './turnContext';
  * [BotState](xref:botbuilder-core.BotState) object.
  *
  * @template T The type of the state property to access. Default type is `any`.
- *
  * @remarks
  * To create a state property in a state management objet, use the
  * [createProperty\<T>](xref:botbuilder-core.BotState.createProperty) method.
@@ -46,9 +45,15 @@ export interface StatePropertyAccessor<T = any> {
      * const value = await myProperty.get(context, { count: 0 });
      * ```
      * @param context Context for the current turn of conversation with the user.
-     * @param defaultValue (Optional) default value to copy to the backing storage object if the property isn't found.
      */
     get(context: TurnContext): Promise<T | undefined>;
+
+    /**
+     * Reads a persisted property from its backing storage object.
+     *
+     * @param context Context for the current turn of conversation with the user.
+     * @param defaultValue (Optional) default value to copy to the backing storage object if the property isn't found.
+     */
     get(context: TurnContext, defaultValue: T): Promise<T>;
 
     /**
@@ -88,7 +93,10 @@ export class BotStatePropertyAccessor<T = any> implements StatePropertyAccessor<
      * @param state Parent BotState instance.
      * @param name Unique name of the property for the parent BotState.
      */
-    constructor(protected readonly state: BotState, public readonly name: string) {}
+    constructor(
+        protected readonly state: BotState,
+        readonly name: string,
+    ) {}
 
     /**
      * Deletes the persisted property from its backing storage object.

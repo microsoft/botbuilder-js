@@ -24,7 +24,7 @@ export function shallowCopy<T>(value: T): T {
  */
 export function makeRevocable<T extends Record<string, any>>(
     target: T,
-    handler?: ProxyHandler<T>
+    handler?: ProxyHandler<T>,
 ): { proxy: T; revoke(): void } {
     // Ensure proxy supported (some browsers don't)
     if (typeof Proxy !== 'undefined' && Proxy.revocable) {

@@ -32,7 +32,6 @@ export class BrowserWebSocket implements ISocket {
      */
     async connect(serverAddress: string): Promise<void> {
         let resolver: (value: void | PromiseLike<void>) => void;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         let rejector: (reason?: any) => void;
 
         if (!this.webSocket) {
@@ -83,7 +82,6 @@ export class BrowserWebSocket implements ISocket {
      *
      * @param handler The callback to handle the "message" event.
      */
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     setOnMessageHandler(handler: (x: any) => void): void {
         const bufferKey = 'buffer';
         const packets = [];
@@ -92,7 +90,7 @@ export class BrowserWebSocket implements ISocket {
             const queueEntry = { buffer: null };
             packets.push(queueEntry);
             fileReader.onload = (e): void => {
-                const t = (e.target as unknown) as IBrowserFileReader;
+                const t = e.target as unknown as IBrowserFileReader;
                 queueEntry[bufferKey] = t.result;
                 if (packets[0] === queueEntry) {
                     while (0 < packets.length && packets[0][bufferKey]) {
@@ -110,7 +108,6 @@ export class BrowserWebSocket implements ISocket {
      *
      * @param handler The callback to handle the "error" event.
      */
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     setOnErrorHandler(handler: (x: any) => void): void {
         this.webSocket.onerror = (error): void => {
             if (error) {
@@ -124,7 +121,6 @@ export class BrowserWebSocket implements ISocket {
      *
      * @param handler The callback to handle the "close" event.
      */
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     setOnCloseHandler(handler: (x: any) => void): void {
         this.webSocket.onclose = handler;
     }

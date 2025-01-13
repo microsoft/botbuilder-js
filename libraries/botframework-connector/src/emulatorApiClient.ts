@@ -26,7 +26,7 @@ export class EmulatorApiClient {
     static async emulateOAuthCards(
         credentials: AppCredentials,
         emulatorUrl: string,
-        emulate: boolean
+        emulate: boolean,
     ): Promise<boolean> {
         const token = await credentials.getToken();
         const requestUrl: string =

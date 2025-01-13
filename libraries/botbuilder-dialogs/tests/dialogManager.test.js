@@ -118,7 +118,7 @@ function createTestFlow(dialog, testCase = FlowTestCase.RootBotOnly, enabledTrac
             _dmTurnResult = await dm.onTurn(context);
         },
         convRef,
-        enabledTrace
+        enabledTrace,
     );
 
     adapter.use(new AutoSaveStateMiddleware(userState, convoState));
@@ -133,10 +133,10 @@ class SimpleComponentDialog extends ComponentDialog {
         this.WaterfallDialog = 'WaterfallDialog';
         this.addDialog(new TextPrompt(this.TextPrompt));
         this.addDialog(
-            new WaterfallDialog(this.WaterfallDialog, [this.promptForName.bind(this), this.finalStep.bind(this)])
+            new WaterfallDialog(this.WaterfallDialog, [this.promptForName.bind(this), this.finalStep.bind(this)]),
         );
         this.initialDialogId = this.WaterfallDialog;
-        this.endReason;
+        this.endReason = '';
     }
 
     async onEndDialog(context, instance, reason) {
@@ -378,7 +378,7 @@ describe('DialogManager', function () {
         // Leaf nodes / non-containers should not be registered.
         strictEqual(
             dm.dialogs.getDialogs().find((d) => d instanceof SendActivity),
-            undefined
+            undefined,
         );
     });
 

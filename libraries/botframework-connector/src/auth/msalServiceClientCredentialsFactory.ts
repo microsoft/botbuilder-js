@@ -24,7 +24,10 @@ export class MsalServiceClientCredentialsFactory implements ServiceClientCredent
      * @param appId App ID for validation.
      * @param clientApplication An `@azure/msal-node` `ConfidentialClientApplication` instance.
      */
-    constructor(appId: string, private readonly clientApplication: ConfidentialClientApplication) {
+    constructor(
+        appId: string,
+        private readonly clientApplication: ConfidentialClientApplication,
+    ) {
         this.appId = appId;
     }
 
@@ -49,7 +52,7 @@ export class MsalServiceClientCredentialsFactory implements ServiceClientCredent
         appId: string,
         audience: string,
         loginEndpoint: string,
-        _validateAuthority: boolean
+        _validateAuthority: boolean,
     ): Promise<ServiceClientCredentials> {
         if (await this.isAuthenticationDisabled()) {
             return MsalAppCredentials.Empty;
@@ -66,7 +69,7 @@ export class MsalServiceClientCredentialsFactory implements ServiceClientCredent
                 this.clientApplication,
                 appId,
                 undefined,
-                audience || AuthenticationConstants.ToBotFromChannelTokenIssuer
+                audience || AuthenticationConstants.ToBotFromChannelTokenIssuer,
             );
         }
 
@@ -75,7 +78,7 @@ export class MsalServiceClientCredentialsFactory implements ServiceClientCredent
                 this.clientApplication,
                 appId,
                 undefined,
-                audience || GovernmentConstants.ToChannelFromBotOAuthScope
+                audience || GovernmentConstants.ToChannelFromBotOAuthScope,
             );
         }
 

@@ -23,7 +23,7 @@ export class LessThanOrEqual extends ComparisonEvaluator {
             ExpressionType.LessThanOrEqual,
             LessThanOrEqual.func,
             FunctionUtils.validateBinary,
-            FunctionUtils.verifyNotNull
+            FunctionUtils.verifyNotNull,
         );
     }
 

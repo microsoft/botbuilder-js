@@ -29,7 +29,7 @@ describe('ComponentDialog', function () {
         component.addDialog(simpleH2ofall);
         assert(
             component.initialDialogId === 'simpleWaterfall',
-            `unexpected change in initialDialogId, it is now ${component.initialDialogId}`
+            `unexpected change in initialDialogId, it is now ${component.initialDialogId}`,
         );
     });
 
@@ -101,7 +101,7 @@ describe('ComponentDialog', function () {
             const results = await dc.beginDialog('composite');
             assert(
                 results.status === DialogTurnStatus.complete,
-                `unexpected DialogTurnStatus received: ${results.status}`
+                `unexpected DialogTurnStatus received: ${results.status}`,
             );
             assert(results.result === undefined, `unexpected results.result received: ${results.result}`);
         });
@@ -134,7 +134,7 @@ describe('ComponentDialog', function () {
             const results = await dc.beginDialog('composite');
             assert(
                 results.status === DialogTurnStatus.waiting,
-                `unexpected DialogTurnStatus received: ${results.status}`
+                `unexpected DialogTurnStatus received: ${results.status}`,
             );
             assert(results.result === undefined, `unexpected results.result received: ${results.result}`);
         });
@@ -187,7 +187,7 @@ describe('ComponentDialog', function () {
             } else {
                 assert(
                     results.status === DialogTurnStatus.complete,
-                    `results.status should be 'complete' not ${results.status}`
+                    `results.status should be 'complete' not ${results.status}`,
                 );
                 assert(results.result === undefined, `results.result should be undefined, not ${results.result}`);
                 await turnContext.sendActivity('Done.');
@@ -242,11 +242,11 @@ describe('ComponentDialog', function () {
             const results = await dc.beginDialog('component');
             assert(
                 results.status === DialogTurnStatus.cancelled,
-                `should have returned ${DialogTurnStatus.cancelled} not ${results.status}`
+                `should have returned ${DialogTurnStatus.cancelled} not ${results.status}`,
             );
             assert(
                 dc.stack.length === 0,
-                `should have a dialogStack without 0 dialogs, not ${dc.stack.length} dialogs`
+                `should have a dialogStack without 0 dialogs, not ${dc.stack.length} dialogs`,
             );
         });
 
@@ -270,7 +270,7 @@ describe('ComponentDialog', function () {
                 simpleStepContextCheck(step);
                 assert(
                     step.reason === DialogReason.endCalled,
-                    `called ComponentDialog should have bubbled up "cancelCalled" not "${step.reason}".`
+                    `called ComponentDialog should have bubbled up "cancelCalled" not "${step.reason}".`,
                 );
                 await step.context.sendActivity('Cancelled successfully.');
                 return await step.endDialog();
@@ -327,7 +327,7 @@ describe('ComponentDialog', function () {
                     await step.context.sendActivity('Child finished.');
                     return await step.endDialog();
                 },
-            ])
+            ]),
         );
 
         const parentComponent = new ComponentDialog('parentComponent');
@@ -339,7 +339,7 @@ describe('ComponentDialog', function () {
                     await step.context.sendActivity(`Parent called with: ${step.options.value}`);
                     return await step.endDialog(step.options.value);
                 },
-            ])
+            ]),
         );
 
         const dialogs = new DialogSet(dialogState);
@@ -354,7 +354,7 @@ describe('ComponentDialog', function () {
             } else {
                 assert(
                     results.status === DialogTurnStatus.complete,
-                    `results.status should be 'complete' not ${results.status}`
+                    `results.status should be 'complete' not ${results.status}`,
                 );
                 assert(results.result === undefined, `results.result should be undefined, not ${results.result}`);
                 await turnContext.sendActivity('Done.');
@@ -408,7 +408,7 @@ describe('ComponentDialog', function () {
             } else {
                 assert(
                     results.status === DialogTurnStatus.complete,
-                    `results.status should be 'complete' not ${results.status}`
+                    `results.status should be 'complete' not ${results.status}`,
                 );
                 assert(results.result === undefined, `results.result should be undefined, not ${results.result}`);
                 await turnContext.sendActivity('Done.');

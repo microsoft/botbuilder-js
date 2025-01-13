@@ -23,7 +23,7 @@ export class GreaterThanOrEqual extends ComparisonEvaluator {
             ExpressionType.GreaterThanOrEqual,
             GreaterThanOrEqual.func,
             FunctionUtils.validateBinary,
-            FunctionUtils.verifyNotNull
+            FunctionUtils.verifyNotNull,
         );
     }
 

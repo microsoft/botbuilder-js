@@ -141,7 +141,7 @@ export class ChoiceInput extends InputDialog implements ChoiceInputConfiguration
     protected trackGeneratorResultEvent(
         dc: DialogContext,
         activityTemplate: TemplateInterface<Partial<Activity>, DialogStateManager>,
-        msg: Partial<Activity>
+        msg: Partial<Activity>,
     ): void {
         const options = dc.state.getValue(ChoiceInput.OPTIONS_PROPERTY);
         const properties = {

@@ -7,7 +7,7 @@ class MockContentStream {
             {
                 readAsJson: async () => ({ type: ActivityTypes.Invoke, serviceUrl: 'somewhere/', channelId: 'test' }),
             },
-            options
+            options,
         );
 
         this.readAsJson = config.readAsJson;
@@ -23,7 +23,7 @@ class MockStreamingRequest {
                 path: '/api/messages',
                 streams: [new MockContentStream()],
             },
-            options
+            options,
         );
 
         this.verb = config.verb;

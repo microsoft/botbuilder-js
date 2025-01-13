@@ -129,7 +129,7 @@ describe('MessageFactory', function () {
             [{ contentType: 'a' }, { contentType: 'b' }],
             'foo',
             'bar',
-            InputHints.IgnoringInput
+            InputHints.IgnoringInput,
         );
         assertMessage(activity);
         assertAttachments(activity, 2, ['a', 'b']);
@@ -151,7 +151,7 @@ describe('MessageFactory', function () {
             [{ contentType: 'a' }, { contentType: 'b' }],
             'foo',
             'bar',
-            InputHints.IgnoringInput
+            InputHints.IgnoringInput,
         );
         assertMessage(activity);
         assertAttachments(activity, 2, ['a', 'b']);
@@ -167,7 +167,7 @@ describe('MessageFactory', function () {
         assertAttachments(activity, 1, ['content-type']);
         assert(
             activity.attachments[0].contentUrl === 'https://example.com/content',
-            'invalid attachment[0].contentUrl.'
+            'invalid attachment[0].contentUrl.',
         );
     });
 
@@ -177,7 +177,7 @@ describe('MessageFactory', function () {
         assertAttachments(activity, 1, ['content-type']);
         assert(
             activity.attachments[0].contentUrl === 'https://example.com/content',
-            'invalid attachment[0].contentUrl.'
+            'invalid attachment[0].contentUrl.',
         );
         assert(activity.attachments[0].name === 'file name', 'invalid attachment[0].name.');
     });
@@ -189,13 +189,13 @@ describe('MessageFactory', function () {
             'file name',
             'foo',
             'bar',
-            InputHints.IgnoringInput
+            InputHints.IgnoringInput,
         );
         assertMessage(activity);
         assertAttachments(activity, 1, ['content-type']);
         assert(
             activity.attachments[0].contentUrl === 'https://example.com/content',
-            'invalid attachment[0].contentUrl.'
+            'invalid attachment[0].contentUrl.',
         );
         assert(activity.attachments[0].name === 'file name', 'invalid attachment[0].name.');
         assert(activity.text === 'foo', 'invalid text field.');

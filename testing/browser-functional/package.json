@@ -7,7 +7,7 @@
   "devDependencies": {
     "axios": "^1.7.7",
     "dotenv": "^16.4.5",
-    "nightwatch": "^3.7.0"
+    "nightwatch": "^3.9.0"
   },
   "directories": {
     "test": "tests"

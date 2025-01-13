@@ -22,6 +22,6 @@ export abstract class TestAction extends Configurable {
     abstract execute(
         adapter: TestAdapter,
         callback: (context: TurnContext) => Promise<void>,
-        inspector?: Inspector
+        inspector?: Inspector,
     ): void;
 }

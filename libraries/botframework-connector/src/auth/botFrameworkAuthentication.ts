@@ -33,7 +33,7 @@ export abstract class BotFrameworkAuthentication {
      */
     abstract authenticateStreamingRequest(
         authHeader: string,
-        channelIdHeader: string
+        channelIdHeader: string,
     ): Promise<AuthenticateRequestResult>;
 
     /**
@@ -96,7 +96,7 @@ export abstract class BotFrameworkAuthentication {
     protected async generateCallerId(
         credentialFactory: ServiceClientCredentialsFactory,
         claimsIdentity: ClaimsIdentity,
-        callerId: string
+        callerId: string,
     ): Promise<string | null> {
         // Is the bot accepting all incoming messages?
         if (await credentialFactory.isAuthenticationDisabled()) {
