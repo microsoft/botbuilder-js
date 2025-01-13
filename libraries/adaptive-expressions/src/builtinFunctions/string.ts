@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { formatLocale as d3formatLocale, format as d3format } from 'd3-format';
+import { formatLocale as d3formatLocale, format as d3format } from '../../vendors/d3-format';
 import { EvaluateExpressionDelegate, ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
