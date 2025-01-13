@@ -7,7 +7,7 @@ import { ConnectorClientOptions } from '../connectorApi/models';
 import { ConnectorFactory } from './connectorFactory';
 import type { ServiceClientCredentialsFactory } from './serviceClientCredentialsFactory';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const packageInfo: Record<'name' | 'version', string> = require('../../package.json');
 export const USER_AGENT = `Microsoft-BotFramework/3.1 ${packageInfo.name}/${
     packageInfo.version
@@ -32,7 +32,7 @@ export class ConnectorFactoryImpl extends ConnectorFactory {
         private readonly loginEndpoint: string,
         private readonly validateAuthority: boolean,
         private readonly credentialFactory: ServiceClientCredentialsFactory,
-        private readonly connectorClientOptions: ConnectorClientOptions = {}
+        private readonly connectorClientOptions: ConnectorClientOptions = {},
     ) {
         super();
     }
@@ -48,7 +48,7 @@ export class ConnectorFactoryImpl extends ConnectorFactory {
             this.appId,
             audience ?? this.toChannelFromBotOAuthScope,
             this.loginEndpoint,
-            this.validateAuthority
+            this.validateAuthority,
         );
 
         // A new connector client for making calls against this serviceUrl using credentials derived from the current appId and the specified audience.

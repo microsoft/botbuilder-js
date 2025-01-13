@@ -14,13 +14,12 @@ export interface BotFrameworkClient {
      * @param conversationId A conversation ID to use for the conversation with the skill.
      * @param activity Activity to forward.
      */
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     postActivity: <T = any>(
         fromBotId: string,
         toBotId: string,
         toUrl: string,
         serviceUrl: string,
         conversationId: string,
-        activity: Activity
+        activity: Activity,
     ) => Promise<InvokeResponse<T>>;
 }

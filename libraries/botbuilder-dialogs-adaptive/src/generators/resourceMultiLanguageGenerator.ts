@@ -26,7 +26,8 @@ export interface ResourceMultiLanguageGeneratorConfiguration extends MultiLangua
  */
 export class ResourceMultiLanguageGenerator<T = unknown, D extends Record<string, unknown> = Record<string, unknown>>
     extends MultiLanguageGeneratorBase<T, D>
-    implements ResourceMultiLanguageGeneratorConfiguration {
+    implements ResourceMultiLanguageGeneratorConfiguration
+{
     static $kind = 'Microsoft.ResourceMultiLanguageGenerator';
 
     /**

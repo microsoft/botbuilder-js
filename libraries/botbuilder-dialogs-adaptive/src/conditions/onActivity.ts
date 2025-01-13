@@ -46,7 +46,7 @@ export class OnActivity extends OnDialogEvent implements OnActivityConfiguration
         // add constraints for activity type
         return Expression.andExpression(
             Expression.parse(`${TurnPath.activity}.type == '${this.type}'`),
-            super.createExpression()
+            super.createExpression(),
         );
     }
 }

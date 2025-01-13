@@ -43,7 +43,7 @@ export class ProtocolAdapter {
         requestHandler: RequestHandler,
         requestManager: RequestManager,
         sender: PayloadSender,
-        receiver: PayloadReceiver
+        receiver: PayloadReceiver,
     ) {
         this.requestHandler = requestHandler;
         this.requestManager = requestManager;
@@ -54,12 +54,12 @@ export class ProtocolAdapter {
         this.assemblerManager = new PayloadAssemblerManager(
             this.streamManager,
             (id: string, response: IReceiveResponse): Promise<void> => this.onReceiveResponse(id, response),
-            (id: string, request: IReceiveRequest): Promise<void> => this.onReceiveRequest(id, request)
+            (id: string, request: IReceiveRequest): Promise<void> => this.onReceiveRequest(id, request),
         );
         this.payloadReceiver.subscribe(
             (header: IHeader): SubscribableStream => this.assemblerManager.getPayloadStream(header),
             (header: IHeader, contentStream: SubscribableStream, contentLength: number): void =>
-                this.assemblerManager.onReceive(header, contentStream, contentLength)
+                this.assemblerManager.onReceive(header, contentStream, contentLength),
         );
     }
 

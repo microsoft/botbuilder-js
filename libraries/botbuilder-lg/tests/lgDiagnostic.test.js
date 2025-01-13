@@ -131,14 +131,14 @@ describe('LGExceptionTest', function () {
         assert.strictEqual(diagnostics[2].severity, DiagnosticSeverity.Error);
         assert(
             diagnostics[2].message.includes(
-                "Error occurred when parsing expression 'NOTemplate()'. NOTemplate does not have an evaluator"
-            )
+                "Error occurred when parsing expression 'NOTemplate()'. NOTemplate does not have an evaluator",
+            ),
         );
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[3].severity);
         assert(
             diagnostics[3].message.includes(
-                "Error occurred when parsing expression 'NOTemplate()'. NOTemplate does not have an evaluator"
-            )
+                "Error occurred when parsing expression 'NOTemplate()'. NOTemplate does not have an evaluator",
+            ),
         );
         assert.strictEqual(diagnostics[4].severity, DiagnosticSeverity.Error);
         assert(diagnostics[4].message.includes(TemplateErrors.invalidStrucName('Activity%')));
@@ -193,14 +193,14 @@ describe('LGExceptionTest', function () {
         assert.strictEqual(diagnostics[0].severity, DiagnosticSeverity.Error);
         assert(
             diagnostics[0].message.includes(
-                "Error occurred when parsing expression 'NotExistTemplate()'. NotExistTemplate does not have an evaluator"
-            )
+                "Error occurred when parsing expression 'NotExistTemplate()'. NotExistTemplate does not have an evaluator",
+            ),
         );
         assert.strictEqual(diagnostics[1].severity, DiagnosticSeverity.Error);
         assert(
             diagnostics[1].message.includes(
-                "Error occurred when parsing expression 'template5('hello', 'world')'. arguments mismatch for template 'template5'. Expecting '1' arguments, actual '2'"
-            )
+                "Error occurred when parsing expression 'template5('hello', 'world')'. arguments mismatch for template 'template5'. Expecting '1' arguments, actual '2'",
+            ),
         );
     });
 
@@ -240,20 +240,20 @@ describe('LGExceptionTest', function () {
         assert.strictEqual(diagnostics[0].severity, DiagnosticSeverity.Error);
         assert(
             diagnostics[0].message.includes(
-                "Error occurred when parsing expression 'templateRef()'. templateRef does not have an evaluator"
-            )
+                "Error occurred when parsing expression 'templateRef()'. templateRef does not have an evaluator",
+            ),
         );
         assert.strictEqual(diagnostics[1].severity, DiagnosticSeverity.Error);
         assert(
             diagnostics[1].message.includes(
-                "Error occurred when parsing expression 'templateRef(a)'. templateRef does not have an evaluator"
-            )
+                "Error occurred when parsing expression 'templateRef(a)'. templateRef does not have an evaluator",
+            ),
         );
         assert.strictEqual(diagnostics[2].severity, DiagnosticSeverity.Error);
         assert(
             diagnostics[2].message.includes(
-                "Error occurred when parsing expression 'templateRefInMultiLine()'. templateRefInMultiLine does not have an evaluator"
-            )
+                "Error occurred when parsing expression 'templateRefInMultiLine()'. templateRefInMultiLine does not have an evaluator",
+            ),
         );
     });
 
@@ -297,8 +297,8 @@ describe('LGExceptionTest', function () {
         assert.throws(
             () => templates.evaluate('wPhrase'),
             new Error(
-                "Loop detected: welcome_user => wPhrase [wPhrase]  Error occurred when evaluating '-${wPhrase()}'. [welcome_user]  Error occurred when evaluating '-${welcome_user()}'."
-            )
+                "Loop detected: welcome_user => wPhrase [wPhrase]  Error occurred when evaluating '-${wPhrase()}'. [welcome_user]  Error occurred when evaluating '-${welcome_user()}'.",
+            ),
         );
 
         // Without ThrowOnRecursive does not throw exception when loop is detected
@@ -313,18 +313,19 @@ describe('LGExceptionTest', function () {
         // ThrowOnRecursive throws InvalidOperationException
         assert.throws(
             () => templates.analyzeTemplate('wPhrase', { ThrowOnRecursive: true }),
-            new Error('Loop detected: welcome_user,wPhrase => wPhrase')
+            new Error('Loop detected: welcome_user,wPhrase => wPhrase'),
         );
 
         assert.throws(
             () => templates.analyzeTemplate('selfLoop', { ThrowOnRecursive: true }),
-            new Error('Loop detected: selfLoop => selfLoop')
+            new Error('Loop detected: selfLoop => selfLoop'),
         );
     });
 
     it('AddTextWithWrongId', function () {
-        const diagnostics = Templates.parseResource(new LGResource('a.lg', 'a.lg', '[import](xx.lg) \r\n # t \n - hi'))
-            .diagnostics;
+        const diagnostics = Templates.parseResource(
+            new LGResource('a.lg', 'a.lg', '[import](xx.lg) \r\n # t \n - hi'),
+        ).diagnostics;
         assert.strictEqual(diagnostics.length, 1);
         assert(diagnostics[0].message.includes('Could not find file'));
     });
@@ -334,8 +335,8 @@ describe('LGExceptionTest', function () {
         assert.throws(
             () => templates.evaluate('template1'),
             new Error(
-                "first(createArray(1, 2)) is neither a string nor a null object. [template1]  Error occurred when evaluating '-${length(first(createArray(1,2)))}'."
-            )
+                "first(createArray(1, 2)) is neither a string nor a null object. [template1]  Error occurred when evaluating '-${length(first(createArray(1,2)))}'.",
+            ),
         );
     });
 
@@ -345,71 +346,71 @@ describe('LGExceptionTest', function () {
         assert.throws(
             () => templates.evaluate('template1'),
             new Error(
-                "'dialog.abc' evaluated to null. [template1]  Error occurred when evaluating '-I want ${dialog.abc}'."
-            )
+                "'dialog.abc' evaluated to null. [template1]  Error occurred when evaluating '-I want ${dialog.abc}'.",
+            ),
         );
 
         assert.throws(
             () => templates.evaluate('prebuilt1'),
             new Error(
-                "'dialog.abc' evaluated to null. [prebuilt1]  Error occurred when evaluating '-I want ${foreach(dialog.abc, item, template1())}'."
-            )
+                "'dialog.abc' evaluated to null. [prebuilt1]  Error occurred when evaluating '-I want ${foreach(dialog.abc, item, template1())}'.",
+            ),
         );
 
         assert.throws(
             () => templates.evaluate('template2'),
             new Error(
-                "'dialog.abc' evaluated to null. [template1]  Error occurred when evaluating '-I want ${dialog.abc}'. [template2]  Error occurred when evaluating '-With composition ${template1()}'."
-            )
+                "'dialog.abc' evaluated to null. [template1]  Error occurred when evaluating '-I want ${dialog.abc}'. [template2]  Error occurred when evaluating '-With composition ${template1()}'.",
+            ),
         );
 
         assert.throws(
             () => templates.evaluate('conditionalTemplate1', { dialog: true }),
             new Error(
-                "'dialog.abc' evaluated to null. [template1]  Error occurred when evaluating '-I want ${dialog.abc}'. [conditionalTemplate1] Condition '${dialog}':  Error occurred when evaluating '-I want ${template1()}'."
-            )
+                "'dialog.abc' evaluated to null. [template1]  Error occurred when evaluating '-I want ${dialog.abc}'. [conditionalTemplate1] Condition '${dialog}':  Error occurred when evaluating '-I want ${template1()}'.",
+            ),
         );
 
         assert.throws(
             () => templates.evaluate('conditionalTemplate2'),
             new Error(
-                "'dialog.abc' evaluated to null. [conditionalTemplate2] Condition '${dialog.abc}': Error occurred when evaluating '-IF :${dialog.abc}'."
-            )
+                "'dialog.abc' evaluated to null. [conditionalTemplate2] Condition '${dialog.abc}': Error occurred when evaluating '-IF :${dialog.abc}'.",
+            ),
         );
 
         assert.throws(
             () => templates.evaluate('structured1'),
             new Error(
-                "'dialog.abc' evaluated to null. [structured1] Property 'Text': Error occurred when evaluating 'Text=I want ${dialog.abc}'."
-            )
+                "'dialog.abc' evaluated to null. [structured1] Property 'Text': Error occurred when evaluating 'Text=I want ${dialog.abc}'.",
+            ),
         );
 
         assert.throws(
             () => templates.evaluate('structured2'),
             new Error(
-                "'dialog.abc' evaluated to null. [template1]  Error occurred when evaluating '-I want ${dialog.abc}'. [structured2] Property 'Text': Error occurred when evaluating 'Text=I want ${template1()}'."
-            )
+                "'dialog.abc' evaluated to null. [template1]  Error occurred when evaluating '-I want ${dialog.abc}'. [structured2] Property 'Text': Error occurred when evaluating 'Text=I want ${template1()}'.",
+            ),
         );
 
         assert.throws(
             () => templates.evaluate('structured3'),
             new Error(
-                "'dialog.abc' evaluated to null. [template1]  Error occurred when evaluating '-I want ${dialog.abc}'. [structured2] Property 'Text': Error occurred when evaluating 'Text=I want ${template1()}'. [structured3]  Error occurred when evaluating '${structured2()}'."
-            )
+                "'dialog.abc' evaluated to null. [template1]  Error occurred when evaluating '-I want ${dialog.abc}'. [structured2] Property 'Text': Error occurred when evaluating 'Text=I want ${template1()}'. [structured3]  Error occurred when evaluating '${structured2()}'.",
+            ),
         );
 
         assert.throws(
             () => templates.evaluate('switchcase1', { turn: { testValue: 1 } }),
             new Error(
-                "'dialog.abc' evaluated to null. [switchcase1] Case '${1}': Error occurred when evaluating '-I want ${dialog.abc}'."
-            )
+                "'dialog.abc' evaluated to null. [switchcase1] Case '${1}': Error occurred when evaluating '-I want ${dialog.abc}'.",
+            ),
         );
 
         assert.throws(
             () => templates.evaluate('switchcase2', { turn: { testValue: 0 } }),
             new Error(
-                "'dialog.abc' evaluated to null. [switchcase2] Case 'Default': Error occurred when evaluating '-I want ${dialog.abc}'."
-            )
+                "'dialog.abc' evaluated to null. [switchcase2] Case 'Default': Error occurred when evaluating '-I want ${dialog.abc}'.",
+            ),
         );
     });
 
@@ -424,13 +425,14 @@ describe('LGExceptionTest', function () {
         assert.strictEqual(diagnostics.length, 1);
         assert(diagnostics[0].message.includes('Close } is missing in Expression'));
 
-        diagnostics = Templates.parseResource(new LGResource('', '', '#Demo2\r\n- ${createArray(1,\r\n, 2,3)'))
-            .diagnostics;
+        diagnostics = Templates.parseResource(
+            new LGResource('', '', '#Demo2\r\n- ${createArray(1,\r\n, 2,3)'),
+        ).diagnostics;
         assert.strictEqual(diagnostics.length, 1);
         assert(diagnostics[0].message.includes('Close } is missing in Expression'));
 
         diagnostics = Templates.parseResource(
-            new LGResource('', '', '#Demo4\r\n- ${createArray(1,\r\n2,3)\r\n> this is a comment')
+            new LGResource('', '', '#Demo4\r\n- ${createArray(1,\r\n2,3)\r\n> this is a comment'),
         ).diagnostics;
         assert.strictEqual(diagnostics.length, 1);
         assert(diagnostics[0].message.includes('Close } is missing in Expression'));

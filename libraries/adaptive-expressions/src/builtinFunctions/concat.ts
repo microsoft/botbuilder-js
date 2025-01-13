@@ -24,7 +24,7 @@ export class Concat extends ExpressionEvaluator {
             ExpressionType.Concat,
             Concat.evaluator(),
             ReturnType.String | ReturnType.Array,
-            FunctionUtils.validateAtLeastOne
+            FunctionUtils.validateAtLeastOne,
         );
     }
 

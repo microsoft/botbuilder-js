@@ -81,7 +81,7 @@ export class LanguageGeneratorManager<T = unknown, D extends Record<string, unkn
             const resource = resources.find(
                 (u) =>
                     LanguageResourceLoader.parseLGFileName(u.id).prefix ===
-                    LanguageResourceLoader.parseLGFileName(resourceName).prefix
+                    LanguageResourceLoader.parseLGFileName(resourceName).prefix,
             );
 
             if (resource === undefined) {

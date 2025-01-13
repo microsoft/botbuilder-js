@@ -33,7 +33,7 @@ export class GetNextViableTime extends ExpressionEvaluator {
             ExpressionType.GetNextViableTime,
             GetNextViableTime.evaluator,
             ReturnType.String,
-            FunctionUtils.validateUnaryOrBinaryString
+            FunctionUtils.validateUnaryOrBinaryString,
         );
     }
 
@@ -43,7 +43,7 @@ export class GetNextViableTime extends ExpressionEvaluator {
     private static evaluator(
         expr: Expression,
         state: MemoryInterface,
-        options: Options
+        options: Options,
     ): { value: any; error: string } {
         let parsed: TimexProperty;
         const currentTime = dayjs(new Date().toISOString());
@@ -77,7 +77,7 @@ export class GetNextViableTime extends ExpressionEvaluator {
 
         if (!error) {
             ({ timexProperty: parsed, error: error } = InternalFunctionUtils.parseTimexProperty(
-                (args[0] as string).replace('XX', '00')
+                (args[0] as string).replace('XX', '00'),
             ));
         }
 

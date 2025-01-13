@@ -24,7 +24,10 @@ export class DialogContextError extends Error {
      * @param {Error | string} error Source error or error message.
      * @param {DialogContext} dialogContext Dialog context that is the source of the error.
      */
-    constructor(public readonly error: Error | string, dialogContext: DialogContext) {
+    constructor(
+        readonly error: Error | string,
+        dialogContext: DialogContext,
+    ) {
         super();
 
         if (!(error instanceof Error) && typeof error !== 'string') {

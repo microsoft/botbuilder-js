@@ -16,7 +16,8 @@ import { ComponentMemoryScopes, ComponentPathResolvers, MemoryScope, PathResolve
  */
 export class DialogsComponentRegistration
     extends ComponentRegistration
-    implements ComponentMemoryScopes, ComponentPathResolvers {
+    implements ComponentMemoryScopes, ComponentPathResolvers
+{
     private readonly services = new ServiceCollection({
         memoryScopes: [],
         pathResolvers: [],

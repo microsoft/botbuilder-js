@@ -24,7 +24,7 @@ describe('DialogSet', function () {
                 function (step) {
                     assert(step);
                 },
-            ])
+            ]),
         );
     });
 
@@ -32,7 +32,7 @@ describe('DialogSet', function () {
         const dialogs = new DialogSet();
         await assert.rejects(
             dialogs.createContext({ type: 'message', text: 'hi' }),
-            new Error('DialogSet.createContext(): the dialog set was not bound to a stateProperty when constructed.')
+            new Error('DialogSet.createContext(): the dialog set was not bound to a stateProperty when constructed.'),
         );
     });
 
@@ -45,14 +45,14 @@ describe('DialogSet', function () {
                     function (dc) {
                         assert(dc);
                     },
-                ])
+                ]),
             )
             .add(
                 new WaterfallDialog('B', [
                     function (dc) {
                         assert(dc);
                     },
-                ])
+                ]),
             );
         assert(dialogs.find('A'), 'dialog A not found.');
         assert(dialogs.find('B'), 'dialog B not found.');
@@ -92,7 +92,7 @@ describe('DialogSet', function () {
                     await step.context.sendActivity('Good bye!');
                     return await step.endDialog();
                 },
-            ])
+            ]),
         );
 
         const adapter = new TestAdapter(async (turnContext) => {

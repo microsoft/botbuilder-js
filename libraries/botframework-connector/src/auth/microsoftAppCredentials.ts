@@ -27,13 +27,18 @@ export class MicrosoftAppCredentials extends AppCredentials {
      * @param {string} appId The Microsoft app ID.
      * @param {string} appPassword The Microsoft app password.
      * @param {string} channelAuthTenant Tenant ID of the Azure AD tenant where the bot is created.
-     *   * Required for SingleTenant app types.
-     *   * Optional for MultiTenant app types. **Note**: '_botframework.com_' is the default tenant when no value is provided.
+     *   - Required for SingleTenant app types.
+     *   - Optional for MultiTenant app types. **Note**: '_botframework.com_' is the default tenant when no value is provided.
      *
      * More information: https://learn.microsoft.com/en-us/security/zero-trust/develop/identity-supported-account-types.
      * @param {string} oAuthScope Optional. The scope for the token.
      */
-    constructor(appId: string, public appPassword: string, channelAuthTenant?: string, oAuthScope?: string) {
+    constructor(
+        appId: string,
+        public appPassword: string,
+        channelAuthTenant?: string,
+        oAuthScope?: string,
+    ) {
         super(appId, channelAuthTenant, oAuthScope);
     }
 

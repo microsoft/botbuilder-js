@@ -24,7 +24,10 @@ export class MockLuisLoader implements CustomDeserializer<MockLuisRecognizer, Lu
      * @param {ResourceExplorer} _resourceExplorer ResourceExplorer to use.
      * @param {Record<string, string>} _configuration Configuration to use.
      */
-    constructor(private _resourceExplorer: ResourceExplorer, private _configuration?: Record<string, string>) {}
+    constructor(
+        private _resourceExplorer: ResourceExplorer,
+        private _configuration?: Record<string, string>,
+    ) {}
 
     /**
      * @param config Config to recognize intents and entities in a users utterance.
@@ -36,7 +39,7 @@ export class MockLuisLoader implements CustomDeserializer<MockLuisRecognizer, Lu
         const externalEntityRecognizer = config.externalEntityRecognizer;
         if (typeof externalEntityRecognizer === 'string') {
             recognizer.externalEntityRecognizer = this._resourceExplorer.loadType<Recognizer>(
-                `${externalEntityRecognizer}.dialog`
+                `${externalEntityRecognizer}.dialog`,
             );
         }
         let name = recognizer.applicationId.toString();

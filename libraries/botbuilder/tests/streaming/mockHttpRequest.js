@@ -12,7 +12,7 @@ class MockHttpRequest {
                     'sec-websocket-protocol': '',
                 },
             },
-            options
+            options,
         );
 
         this.method = config.method;

@@ -69,7 +69,7 @@ export class ConvertToUTC extends ExpressionEvaluator {
         timeStamp: string,
         sourceTimezone: string,
         format?: string,
-        locale?: string
+        locale?: string,
     ): ValueWithError {
         let result: string;
         let error: string;

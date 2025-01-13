@@ -61,7 +61,7 @@ export class AdaptiveTestBotComponent extends BotComponent {
                         { kind: AssertTelemetryContains.$kind, type: AssertTelemetryContains },
                     ];
                 },
-            })
+            }),
         );
     }
 }

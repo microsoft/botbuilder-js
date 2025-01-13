@@ -52,12 +52,12 @@ export class SkillConversationIdFactory extends SkillConversationIdFactoryBase {
     async getSkillConversationReference(skillConversationId: string): Promise<SkillConversationReference> {
         const skillConversationInfo = await this.storage.read([skillConversationId]);
         if (!skillConversationInfo) {
-            return undefined!; // eslint-disable-line @typescript-eslint/no-non-null-assertion
+            return undefined!;
         }
 
         const skillConversationReference = skillConversationInfo[skillConversationId];
         if (!skillConversationReference) {
-            return undefined!; // eslint-disable-line @typescript-eslint/no-non-null-assertion
+            return undefined!;
         }
 
         return skillConversationReference as SkillConversationReference;

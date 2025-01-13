@@ -28,8 +28,8 @@ export class CertificateAppCredentials extends AppCredentials {
      * @param certificateThumbprint A hex encoded thumbprint of the certificate.
      * @param certificatePrivateKey A PEM encoded certificate private key.
      * @param channelAuthTenant Tenant ID of the Azure AD tenant where the bot is created.
-     *   * Required for SingleTenant app types.
-     *   * Optional for MultiTenant app types. **Note**: '_botframework.com_' is the default tenant when no value is provided.
+     *   - Required for SingleTenant app types.
+     *   - Optional for MultiTenant app types. **Note**: '_botframework.com_' is the default tenant when no value is provided.
      *
      * More information: https://learn.microsoft.com/en-us/security/zero-trust/develop/identity-supported-account-types.
      * @param oAuthScope Optional. The scope for the token.
@@ -42,7 +42,7 @@ export class CertificateAppCredentials extends AppCredentials {
         certificatePrivateKey: string,
         channelAuthTenant?: string,
         oAuthScope?: string,
-        x5c?: string
+        x5c?: string,
     ) {
         super(appId, channelAuthTenant, oAuthScope);
         this.certificateThumbprint = certificateThumbprint;
@@ -58,7 +58,7 @@ export class CertificateAppCredentials extends AppCredentials {
             this.createClientApplication(),
             this.appId,
             this.oAuthEndpoint,
-            this.oAuthScope
+            this.oAuthScope,
         );
         return this.credentials.getToken(forceRefresh);
     }

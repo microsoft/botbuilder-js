@@ -66,7 +66,7 @@ export class ConfirmPrompt extends Prompt<boolean> {
         dialogId: string,
         validator?: PromptValidator<boolean>,
         defaultLocale?: string,
-        choiceDefaults?: ChoiceDefaultsConfirmPrompt
+        choiceDefaults?: ChoiceDefaultsConfirmPrompt,
     ) {
         super(dialogId, validator);
         this.style = ListStyle.auto;
@@ -107,7 +107,7 @@ export class ConfirmPrompt extends Prompt<boolean> {
         context: TurnContext,
         state: any,
         options: PromptOptions,
-        isRetry: boolean
+        isRetry: boolean,
     ): Promise<void> {
         // Format prompt to send
         let prompt: Partial<Activity>;
@@ -138,7 +138,7 @@ export class ConfirmPrompt extends Prompt<boolean> {
     protected async onRecognize(
         context: TurnContext,
         _state,
-        _options: PromptOptions
+        _options: PromptOptions,
     ): Promise<PromptRecognizerResult<boolean>> {
         const result: PromptRecognizerResult<boolean> = { succeeded: false };
         const activity = context.activity;
@@ -174,7 +174,7 @@ export class ConfirmPrompt extends Prompt<boolean> {
      */
     private determineCulture(activity: Activity): string {
         let culture = PromptCultureModels.mapToNearestLanguage(
-            activity.locale || this.defaultLocale || PromptCultureModels.English.locale
+            activity.locale || this.defaultLocale || PromptCultureModels.English.locale,
         );
         if (!(culture && this.choiceDefaults[culture])) {
             culture = PromptCultureModels.English.locale;

@@ -27,18 +27,13 @@ export enum ResponseStatusCode {
     NoContent = 204,
     ResetContent = 205,
     PartialContent = 206,
-    Ambiguous = 300,
     MultipleChoices = 300,
-    Moved = 301,
     MovedPermanently = 301,
     Found = 302,
-    Redirect = 302,
-    RedirectMethod = 303,
     SeeOther = 303,
     NotModified = 304,
     UseProxy = 305,
     Unused = 306,
-    RedirectKeepVerb = 307,
     TemporaryRedirect = 307,
     BadRequest = 400,
     Unauthorized = 401,
@@ -65,6 +60,30 @@ export enum ResponseStatusCode {
     ServiceUnavailable = 503,
     GatewayTimeout = 504,
     HttpVersionNotSupported = 505,
+
+    // Synonyms
+    /* eslint-disable @typescript-eslint/no-duplicate-enum-values */
+    /**
+     * Synonym for MultipleChoices.
+     */
+    Ambiguous = 300,
+    /**
+     * Synonym for MovedPermanently.
+     */
+    Moved = 301,
+    /**
+     * Synonym for Found.
+     */
+    Redirect = 302,
+    /**
+     * Synonym for SeeOther.
+     */
+    RedirectMethod = 303,
+    /**
+     * Synonym for TemporaryRedirect.
+     */
+    RedirectKeepVerb = 307,
+    /* eslint-enable @typescript-eslint/no-duplicate-enum-values */
 }
 
 /**

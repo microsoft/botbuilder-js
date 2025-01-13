@@ -157,7 +157,7 @@ export class EntityAssignment implements EntityAssignmentConfiguration {
      */
     toString(): string {
         return `${this.isExpected ? '+' : ''}${this.event}: ${this.property} = ${this.operation}(${EntityInfo.toString(
-            this.value
+            this.value,
         )})`;
     }
 }

@@ -30,7 +30,7 @@ export class SubtractFromTime extends ExpressionEvaluator {
             ExpressionType.SubtractFromTime,
             SubtractFromTime.evaluator,
             ReturnType.String,
-            SubtractFromTime.validator
+            SubtractFromTime.validator,
         );
     }
 
@@ -73,7 +73,7 @@ export class SubtractFromTime extends ExpressionEvaluator {
             [ReturnType.String, ReturnType.String],
             ReturnType.String,
             ReturnType.Number,
-            ReturnType.String
+            ReturnType.String,
         );
     }
 }

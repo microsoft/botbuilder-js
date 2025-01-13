@@ -123,6 +123,7 @@ class SetSkillBotFrameworkClientMiddleware {
 
 describe('ActionTests', function () {
     let resourceExplorer;
+
     before(function () {
         resourceExplorer = makeResourceExplorer('ActionTests', LanguageGenerationBotComponent);
     });
@@ -158,7 +159,7 @@ describe('ActionTests', function () {
             undefined,
             undefined,
             new SetSkillConversationIdFactoryBaseMiddleware(),
-            new SetSkillBotFrameworkClientMiddleware()
+            new SetSkillBotFrameworkClientMiddleware(),
         );
     });
 
@@ -214,7 +215,7 @@ describe('ActionTests', function () {
             undefined,
             undefined,
             new SetSkillConversationIdFactoryBaseMiddleware(),
-            new SetSkillBotFrameworkClientMiddleware()
+            new SetSkillBotFrameworkClientMiddleware(),
         );
     });
 
@@ -400,8 +401,8 @@ describe('ActionTests', function () {
                     Object.assign({}, [
                         { text: 'Joe is 52', age: 52 },
                         { text: 'text', age: 11 },
-                    ])
-                )
+                    ]),
+                ),
             )
             .reply(200, 'array');
         nock('http://foo.com')

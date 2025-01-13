@@ -6,6 +6,7 @@ const { makeResourceExplorer } = require('./utils');
 
 describe('QnAMakerRecognizerTests', function () {
     let resourceExplorer;
+
     before(function () {
         resourceExplorer = makeResourceExplorer('QnAMakerRecognizerTests', QnAMakerBotComponent);
     });
@@ -24,7 +25,7 @@ describe('QnAMakerRecognizerTests', function () {
             .post(/knowledgebases/)
             .replyWithFile(
                 200,
-                path.join(__dirname, 'resources/QnAMakerRecognizerTests/QnaMaker_ReturnsAnswerWithIntent.json')
+                path.join(__dirname, 'resources/QnAMakerRecognizerTests/QnaMaker_ReturnsAnswerWithIntent.json'),
             );
         await TestUtils.runTestScript(resourceExplorer, 'QnAMakerRecognizerTests_ReturnsAnswerWithIntent');
     });
@@ -34,7 +35,7 @@ describe('QnAMakerRecognizerTests', function () {
             .post(/knowledgebases/)
             .replyWithFile(
                 200,
-                path.join(__dirname, 'resources/QnAMakerRecognizerTests/QnaMaker_ReturnsNoAnswer.json')
+                path.join(__dirname, 'resources/QnAMakerRecognizerTests/QnaMaker_ReturnsNoAnswer.json'),
             );
         await TestUtils.runTestScript(resourceExplorer, 'QnAMakerRecognizerTests_ReturnsNoAnswer');
     });

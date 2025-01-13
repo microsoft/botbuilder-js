@@ -77,7 +77,7 @@ describe('ConfigurationServiceClientCredentialFactory', function () {
                 assert(err.message.includes('MicrosoftAppId'));
                 assert(err.message.includes('MicrosoftAppPassword'));
                 return true;
-            }
+            },
         );
     });
 

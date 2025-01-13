@@ -47,7 +47,7 @@ describe('PasswordServiceClientCredentialFactory', function () {
         ];
 
         const credentials = await Promise.all(
-            testArgs.map((args) => credFactory.createCredentials(args[0], args[1], args[2]))
+            testArgs.map((args) => credFactory.createCredentials(args[0], args[1], args[2])),
         );
         credentials.forEach((cred, idx) => {
             // The PasswordServiceClientCredentialFactory generates subclasses of the AppCredentials class.

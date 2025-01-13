@@ -122,7 +122,7 @@ export namespace ActivityEx {
         name: string,
         valueType?: string,
         value?: unknown,
-        label?: string
+        label?: string,
     ): Partial<ITraceActivity> {
         return {
             type: ActivityTypes.Trace,
@@ -188,7 +188,7 @@ export namespace ActivityEx {
         name: string,
         value?: unknown,
         valueType?: string,
-        label?: string
+        label?: string,
     ): ITraceActivity {
         return {
             type: ActivityTypes.Trace,
@@ -229,7 +229,7 @@ export namespace ActivityEx {
      * @returns This activity as a contact relation update activity; or null.
      */
     export function asContactRelationUpdateActivity(
-        source: Partial<Activity>
+        source: Partial<Activity>,
     ): Partial<IContactRelationUpdateActivity> {
         return isActivity(source, ActivityTypes.ContactRelationUpdate) ? source : null;
     }
@@ -371,7 +371,7 @@ export namespace ActivityEx {
      * @returns This activity as a command result activity; or null.
      */
     export function asCommandResultActivity<T = unknown>(
-        source: Partial<Activity>
+        source: Partial<Activity>,
     ): Partial<ICommandResultActivity<T>> {
         return isActivity(source, ActivityTypes.CommandResult) ? source : null;
     }

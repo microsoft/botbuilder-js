@@ -27,7 +27,7 @@ export class PayloadAssemblerManager {
     constructor(
         private readonly streamManager: StreamManager,
         private readonly onReceiveResponse: (id: string, receiveResponse: IReceiveResponse) => Promise<void>,
-        private readonly onReceiveRequest: (id: string, receiveRequest: IReceiveRequest) => Promise<void>
+        private readonly onReceiveRequest: (id: string, receiveRequest: IReceiveRequest) => Promise<void>,
     ) {}
 
     /**

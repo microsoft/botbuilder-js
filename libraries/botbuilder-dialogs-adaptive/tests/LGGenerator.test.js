@@ -49,7 +49,7 @@ describe('LGLanguageGenerator', function () {
                 assert.equal(resourceNames.length, 7);
                 assert.deepStrictEqual(
                     new Set(resourceNames),
-                    new Set(['a.lg', 'b.lg', 'c.lg', 'NormalStructuredLG.lg', 'root.lg', 'subDialog.lg', 'test.lg'])
+                    new Set(['a.lg', 'b.lg', 'c.lg', 'NormalStructuredLG.lg', 'root.lg', 'subDialog.lg', 'test.lg']),
                 );
             });
 
@@ -67,7 +67,7 @@ describe('LGLanguageGenerator', function () {
                         'NormalStructuredLG.lg',
                         'root.lg',
                         'subDialog.lg',
-                    ])
+                    ]),
                 );
             });
 
@@ -85,7 +85,7 @@ describe('LGLanguageGenerator', function () {
                         'NormalStructuredLG.lg',
                         'root.lg',
                         'subDialog.lg',
-                    ])
+                    ]),
                 );
             });
         });

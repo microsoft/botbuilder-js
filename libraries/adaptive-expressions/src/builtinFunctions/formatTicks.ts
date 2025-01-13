@@ -32,40 +32,38 @@ export class FormatTicks extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithOptionsAndError(
-            (args: unknown[], options: Options): ValueWithError => {
-                let error: string;
-                let arg = args[0];
-                let locale = options.locale ? options.locale : Intl.DateTimeFormat().resolvedOptions().locale;
-                let format = FunctionUtils.DefaultDateTimeFormat;
-                if (FunctionUtils.isNumber(arg)) {
-                    arg = bigInt(arg);
-                }
-                if (typeof arg === 'string') {
-                    arg = bigInt(arg);
-                }
-                if (!bigInt.isInstance(arg)) {
-                    error = `formatTicks first argument ${arg} is not a number, numeric string or bigInt`;
-                } else {
-                    // Convert to ms
-                    arg = arg
-                        .subtract(InternalFunctionUtils.UnixMilliSecondToTicksConstant)
-                        .divide(InternalFunctionUtils.MillisecondToTickConstant)
-                        .toJSNumber();
-                }
-
-                let value: any;
-                if (!error) {
-                    ({ format, locale } = FunctionUtils.determineFormatAndLocale(args, 3, format, locale));
-                    if (FunctionUtils.isNumber(arg)) {
-                        const dateString: string = new Date(arg).toISOString();
-                        value = dayjs(dateString).locale(locale).utc().format(format);
-                    }
-                }
-
-                return { value, error };
+        return FunctionUtils.applyWithOptionsAndError((args: unknown[], options: Options): ValueWithError => {
+            let error: string;
+            let arg = args[0];
+            let locale = options.locale ? options.locale : Intl.DateTimeFormat().resolvedOptions().locale;
+            let format = FunctionUtils.DefaultDateTimeFormat;
+            if (FunctionUtils.isNumber(arg)) {
+                arg = bigInt(arg);
             }
-        );
+            if (typeof arg === 'string') {
+                arg = bigInt(arg);
+            }
+            if (!bigInt.isInstance(arg)) {
+                error = `formatTicks first argument ${arg} is not a number, numeric string or bigInt`;
+            } else {
+                // Convert to ms
+                arg = arg
+                    .subtract(InternalFunctionUtils.UnixMilliSecondToTicksConstant)
+                    .divide(InternalFunctionUtils.MillisecondToTickConstant)
+                    .toJSNumber();
+            }
+
+            let value: any;
+            if (!error) {
+                ({ format, locale } = FunctionUtils.determineFormatAndLocale(args, 3, format, locale));
+                if (FunctionUtils.isNumber(arg)) {
+                    const dateString: string = new Date(arg).toISOString();
+                    value = dayjs(dateString).locale(locale).utc().format(format);
+                }
+            }
+
+            return { value, error };
+        });
     }
 
     /**

@@ -8,5 +8,4 @@
 
 import { TransportDisconnectedEvent } from './transportDisconnectedEvent';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type TransportDisconnectedEventHandler = (sender: any, e: TransportDisconnectedEvent) => void;

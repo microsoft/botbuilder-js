@@ -50,14 +50,12 @@ export class RecognizerSet extends AdaptiveRecognizer implements RecognizerSetCo
         dialogContext: DialogContext,
         activity: Activity,
         telemetryProperties?: { [key: string]: string },
-        telemetryMetrics?: { [key: string]: number }
+        telemetryMetrics?: { [key: string]: number },
     ): Promise<RecognizerResult> {
         const results = await Promise.all(
-            this.recognizers.map(
-                (recognizer: Recognizer): Promise<RecognizerResult> => {
-                    return recognizer.recognize(dialogContext, activity, telemetryProperties, telemetryMetrics);
-                }
-            )
+            this.recognizers.map((recognizer: Recognizer): Promise<RecognizerResult> => {
+                return recognizer.recognize(dialogContext, activity, telemetryProperties, telemetryMetrics);
+            }),
         );
 
         const recognizerResult: RecognizerResult = this.mergeResults(results);
@@ -66,7 +64,7 @@ export class RecognizerSet extends AdaptiveRecognizer implements RecognizerSetCo
             dialogContext,
             TelemetryLoggerConstants.RecognizerSetResultEvent,
             this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties, dialogContext),
-            telemetryMetrics
+            telemetryMetrics,
         );
 
         return recognizerResult;
@@ -118,9 +116,8 @@ export class RecognizerSet extends AdaptiveRecognizer implements RecognizerSetCo
                 for (const [propertyName, propertyVal] of Object.entries(result.entities)) {
                     if (propertyName === '$instance') {
                         for (const [entityName, entityValue] of Object.entries(propertyVal)) {
-                            const mergedInstanceEntities = (mergedRecognizerResult.entities['$instance'][
-                                entityName
-                            ] ??= []);
+                            const mergedInstanceEntities = (mergedRecognizerResult.entities['$instance'][entityName] ??=
+                                []);
                             mergedInstanceEntities.push(...entityValue);
                         }
                     } else {

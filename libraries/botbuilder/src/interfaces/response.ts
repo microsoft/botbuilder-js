@@ -25,5 +25,5 @@ export const ResponseT = z.custom<Response>(
         typeof val.status === 'function',
     {
         message: 'Response',
-    }
+    },
 );

@@ -627,7 +627,6 @@ export class SkypeMentionNormalizeMiddleware implements Middleware {
 export interface StatePropertyAccessor<T = any> {
     delete(context: TurnContext): Promise<void>;
     get(context: TurnContext): Promise<T | undefined>;
-    // (undocumented)
     get(context: TurnContext, defaultValue: T): Promise<T>;
     set(context: TurnContext, value: T): Promise<void>;
 }

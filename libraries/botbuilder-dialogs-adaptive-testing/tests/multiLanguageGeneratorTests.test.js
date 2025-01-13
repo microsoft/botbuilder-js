@@ -3,6 +3,7 @@ const { makeResourceExplorer } = require('./utils');
 
 describe('MultiLanguageGeneratorTests', function () {
     let resourceExplorer;
+
     before(function () {
         resourceExplorer = makeResourceExplorer('MultiLanguageGeneratorTests');
     });

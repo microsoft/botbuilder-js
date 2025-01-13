@@ -75,7 +75,7 @@ export class RegexRecognizer extends AdaptiveRecognizer implements RegexRecogniz
         dialogContext: DialogContext,
         activity: Activity,
         telemetryProperties?: { [key: string]: string },
-        telemetryMetrics?: { [key: string]: number }
+        telemetryMetrics?: { [key: string]: number },
     ): Promise<RecognizerResult> {
         const text = activity.text ?? '';
         const locale = activity.locale ?? Culture.English;
@@ -176,13 +176,13 @@ export class RegexRecognizer extends AdaptiveRecognizer implements RegexRecogniz
             'RegexRecognizer',
             recognizerResult,
             'RecognizerResult',
-            'Regex RecognizerResult'
+            'Regex RecognizerResult',
         );
         this.trackRecognizerResult(
             dialogContext,
             TelemetryLoggerConstants.RegexRecognizerResultEvent,
             this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties, dialogContext),
-            telemetryMetrics
+            telemetryMetrics,
         );
         return recognizerResult;
     }
