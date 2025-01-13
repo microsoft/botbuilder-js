@@ -208,7 +208,7 @@ export class ResourceExplorer {
     registerType<T>(
         kind: string,
         type: Newable<T>,
-        loader?: CustomDeserializer<T, Record<string, unknown>>
+        loader?: CustomDeserializer<T, Record<string, unknown>>,
     ): ResourceExplorer {
         this.registerComponentTypes();
         this.registerTypeInternal(kind, type, loader);
@@ -286,7 +286,7 @@ export class ResourceExplorer {
                     return value;
                 }
                 return this.load(value as { $kind: string } & Record<string, unknown>);
-            })
+            }),
         );
 
         if (result instanceof Dialog && !config['id']) {

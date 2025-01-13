@@ -42,7 +42,7 @@ export class MemoryAssertions extends TestAction implements MemoryAssertionsConf
     async execute(
         _adapter: TestAdapter,
         _callback: (context: TurnContext) => Promise<void>,
-        inspector?: Inspector
+        inspector?: Inspector,
     ): Promise<void> {
         if (inspector) {
             await inspector((dc) => {

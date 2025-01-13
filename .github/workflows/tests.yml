@@ -50,7 +50,7 @@ jobs:
         run: yarn test:github
 
       - name: coveralls
-        if: matrix.node-version == '22.x'
+        if: matrix.node-version == '22.x' && matrix.os == 'windows'
         uses: coverallsapp/github-action@v1.1.2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}

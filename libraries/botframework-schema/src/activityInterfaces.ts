@@ -82,7 +82,7 @@ export interface IActivity {
     /**
      * Contains channel-specific content.
      */
-    channelData?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+    channelData?: any;
 }
 
 export interface IConversationUpdateActivity extends IActivity {
@@ -196,7 +196,7 @@ export interface IMessageActivity extends IActivity {
     /**
      * A value that is associated with the activity.
      */
-    value?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+    value?: any;
 }
 
 export interface IMessageUpdateActivity extends IMessageActivity, IActivity {}
@@ -247,7 +247,7 @@ export interface IEventActivity extends IActivity {
     /**
      * A value that is associated with the activity.
      */
-    value?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+    value?: any;
 
     /**
      * A reference to another conversation or activity.
@@ -264,7 +264,7 @@ export interface IInvokeActivity extends IActivity {
     /**
      * A value that is associated with the activity.
      */
-    value?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+    value?: any;
 
     /**
      * A reference to another conversation or activity.
@@ -291,7 +291,7 @@ export interface ITraceActivity extends IActivity {
     /**
      * A value that is associated with the activity.
      */
-    value?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+    value?: any;
 
     /**
      * A reference to another conversation or activity.

@@ -27,7 +27,7 @@ export class IndicesAndValues extends ExpressionEvaluator {
             ExpressionType.IndicesAndValues,
             IndicesAndValues.evaluator,
             ReturnType.Array,
-            FunctionUtils.validateUnary
+            FunctionUtils.validateUnary,
         );
     }
 
@@ -35,7 +35,6 @@ export class IndicesAndValues extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(expression: Expression, state: any, options: Options): ValueWithError {
-        // eslint-disable-next-line @typescript-eslint/ban-types
         let result: object = undefined;
         let error: string = undefined;
         let value: any = undefined;

@@ -88,7 +88,7 @@ describe('DatetimePrompt', function () {
             new DateTimePrompt('prompt', async (prompt) => {
                 assert(prompt);
                 return prompt.recognized.succeeded;
-            })
+            }),
         );
 
         await adapter
@@ -124,7 +124,7 @@ describe('DatetimePrompt', function () {
             new DateTimePrompt('prompt', async (prompt) => {
                 assert(prompt);
                 return prompt.recognized.succeeded;
-            })
+            }),
         );
 
         await adapter
@@ -165,7 +165,7 @@ describe('DatetimePrompt', function () {
                     await prompt.context.sendActivity('That was a bad date.');
                 }
                 return prompt.recognized.succeeded;
-            })
+            }),
         );
 
         await adapter
@@ -200,7 +200,7 @@ describe('DatetimePrompt', function () {
             new DateTimePrompt('prompt', async (prompt) => {
                 assert(prompt);
                 return prompt.recognized.succeeded;
-            })
+            }),
         );
 
         await adapter.send('Hello').send(invalidMessage).send(answerMessage2).assertReply('2012-09-02').startTest();

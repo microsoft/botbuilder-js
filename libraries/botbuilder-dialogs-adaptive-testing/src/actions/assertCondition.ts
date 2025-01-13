@@ -42,7 +42,6 @@ export class AssertCondition<O extends object = {}> extends Dialog<O> implements
      *
      * @param property Properties that extend RecognizerConfiguration.
      * @returns Expression converter.
-     *
      */
     getConverter(property: keyof AssertConditionConfiguration): Converter | ConverterFactory {
         switch (property) {

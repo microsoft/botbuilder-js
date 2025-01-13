@@ -12,10 +12,12 @@ const workingFolder = path.join(os.tmpdir(), 'botbuilder-transcript-tests');
 describe('The FileTranscriptStore', function () {
     let storage;
     const startDate = new Date();
+
     before(async function () {
         await fs.remove(workingFolder);
         storage = new FileTranscriptStore(workingFolder);
     });
+
     after(function () {
         return fs.remove(workingFolder);
     });
@@ -27,14 +29,14 @@ describe('The FileTranscriptStore', function () {
         let pagedResult = await storage.getTranscriptActivities('test', 'deleteActivitySpec');
         assert.ok(
             pagedResult.items.length === 1,
-            `Expected pagedResult.items.length to be 1 but it was ${pagedResult.items.length}`
+            `Expected pagedResult.items.length to be 1 but it was ${pagedResult.items.length}`,
         );
 
         await storage.deleteTranscript('test', 'deleteActivitySpec');
         pagedResult = await storage.getTranscriptActivities('test', 'deleteActivitySpec');
         assert.ok(
             pagedResult.items.length === 0,
-            `Expected pagedResult.items.length to be 0 but it was ${pagedResult.items.length}`
+            `Expected pagedResult.items.length to be 0 but it was ${pagedResult.items.length}`,
         );
     });
 
@@ -46,13 +48,14 @@ describe('The FileTranscriptStore', function () {
         const pagedResult = await storage.getTranscriptActivities('test', 'deleteActivitySpec');
         assert.ok(
             pagedResult.items.length === 1,
-            `Expected pagedResult.items.length to be 1 but it was ${pagedResult.items.length}`
+            `Expected pagedResult.items.length to be 1 but it was ${pagedResult.items.length}`,
         );
     });
 
     describe('should log activities', function () {
         const conversationId = 'logActivitySpec';
         let activities;
+
         before(function () {
             activities = createActivities(conversationId, startDate);
             return Promise.all(activities.map((activity) => storage.logActivity(activity)));
@@ -72,7 +75,7 @@ describe('The FileTranscriptStore', function () {
             const pagedResult = await storage.getTranscriptActivities('otherChannelId', conversationId);
             assert.ok(
                 !pagedResult.continuationToken,
-                'expected pagedResult.continuationToken to be false but it was not'
+                'expected pagedResult.continuationToken to be false but it was not',
             );
             assert.ok(pagedResult.items.length === 0, 'Expected pagedResult.items.length to be 0 but it was not');
         });
@@ -81,7 +84,7 @@ describe('The FileTranscriptStore', function () {
             const pagedResult = await storage.getTranscriptActivities('test', 'someOtherConversation');
             assert.ok(
                 !pagedResult.continuationToken,
-                'expected pagedResult.continuationToken to be false but it was not'
+                'expected pagedResult.continuationToken to be false but it was not',
             );
             assert.ok(pagedResult.items.length === 0, 'Expected pagedResult.items.length to be 0 but it was not');
         });
@@ -92,8 +95,8 @@ describe('The FileTranscriptStore', function () {
             pagedResult.items.forEach((item, index) =>
                 assert.ok(
                     JSON.stringify(item) === JSON.stringify(activities[index]),
-                    `item #${index} does not match what was persisted to disk`
-                )
+                    `item #${index} does not match what was persisted to disk`,
+                ),
             );
         });
 
@@ -102,11 +105,11 @@ describe('The FileTranscriptStore', function () {
                 'test',
                 conversationId,
                 null,
-                new Date(startDate.getTime() + 60000 * 5)
+                new Date(startDate.getTime() + 60000 * 5),
             );
             assert.ok(
                 pagedResult.items.length === 5,
-                `Expected the pagedResult.items.length to be 5 but it was ${pagedResult.items.length}`
+                `Expected the pagedResult.items.length to be 5 but it was ${pagedResult.items.length}`,
             );
         });
     });
@@ -119,21 +122,21 @@ describe('The FileTranscriptStore', function () {
         it('no activity is passed to the "logActivity" function', async function () {
             await assert.rejects(
                 storage.logActivity(null),
-                new Error('activity cannot be null for logActivity()', 'An error should exist')
+                new Error('activity cannot be null for logActivity()', 'An error should exist'),
             );
         });
 
         it('no channelId is passed to the "getTranscriptActivities" function', async function () {
             await assert.rejects(
                 storage.getTranscriptActivities(null, '123456'),
-                new Error('Missing channelId', 'An error should exist')
+                new Error('Missing channelId', 'An error should exist'),
             );
         });
 
         it('no conversationId is passed to the "getTranscriptActivities" function', async function () {
             await assert.rejects(
                 storage.getTranscriptActivities({}),
-                new Error('Missing conversationId', 'An error should exist')
+                new Error('Missing conversationId', 'An error should exist'),
             );
         });
 
@@ -148,7 +151,7 @@ describe('The FileTranscriptStore', function () {
         it('no conversationId is passed to the "deleteTranscript" function', async function () {
             await assert.rejects(
                 storage.deleteTranscript({}),
-                new Error('Missing conversationId', 'An error should exist')
+                new Error('Missing conversationId', 'An error should exist'),
             );
         });
     });
@@ -156,11 +159,13 @@ describe('The FileTranscriptStore', function () {
     describe('should retrieve activities', function () {
         const conversationId = 'retrieveActivitiesSpec';
         let activities;
+
         before(function () {
             activities = createActivities(conversationId, startDate, 60);
             storage = new FileTranscriptStore(workingFolder);
             return Promise.all(activities.map((activity) => storage.logActivity(activity)));
         });
+
         after(function () {
             return fs.remove(workingFolder);
         });
@@ -169,12 +174,12 @@ describe('The FileTranscriptStore', function () {
             const pagedResult = await storage.getTranscriptActivities('test', conversationId);
             assert.ok(
                 typeof pagedResult.continuationToken === 'string',
-                `Expected a continuationToken but got ${pagedResult.continuationToken}`
+                `Expected a continuationToken but got ${pagedResult.continuationToken}`,
             );
             const pagedResult1 = await storage.getTranscriptActivities(
                 'test',
                 conversationId,
-                pagedResult.continuationToken
+                pagedResult.continuationToken,
             );
             assert.ok(!!pagedResult1.items.length, 'Expected the pagedResult to contain items but it did not');
             assert.ok(JSON.stringify(pagedResult) !== JSON.stringify(pagedResult1));
@@ -189,12 +194,12 @@ describe('The FileTranscriptStore', function () {
                     set(target, p, value) {
                         if (target[p]) {
                             assert.fail(
-                                'This ID already returned by getTranscriptActivities and it should not have been'
+                                'This ID already returned by getTranscriptActivities and it should not have been',
                             );
                         }
                         return (target[p] = value);
                     },
-                }
+                },
             );
             let increments = ~~(activities.length / 20);
             while (increments--) {
@@ -219,23 +224,23 @@ describe('The FileTranscriptStore', function () {
                     set(target, p, value) {
                         if (target[p]) {
                             assert.fail(
-                                'This ID already returned by getTranscriptActivities and it should not have been'
+                                'This ID already returned by getTranscriptActivities and it should not have been',
                             );
                         }
                         return (target[p] = value);
                     },
-                }
+                },
             );
             while (i--) {
                 continuationToken = pagedResult.continuationToken;
                 pagedResult = await storage.getTranscriptActivities('test', conversationId, continuationToken);
                 assert.ok(
                     i === 0 || !!pagedResult.continuationToken,
-                    'Expected a continuationToken but did not receive one'
+                    'Expected a continuationToken but did not receive one',
                 );
                 assert.ok(
                     continuationToken !== pagedResult.continuationToken,
-                    'The newly returned continuationToken should not match the last one received'
+                    'The newly returned continuationToken should not match the last one received',
                 );
                 pagedResult.items.forEach((item) => (seen[item.id] = true));
             }
@@ -245,6 +250,7 @@ describe('The FileTranscriptStore', function () {
 
     describe('should list transcripts', function () {
         let activities;
+
         before(function () {
             activities = [];
             let ct = 100;
@@ -254,6 +260,7 @@ describe('The FileTranscriptStore', function () {
             storage = new FileTranscriptStore(workingFolder);
             return Promise.all(activities.map((activity) => storage.logActivity(activity)));
         });
+
         after(function () {
             return fs.remove(workingFolder);
         });
@@ -271,18 +278,18 @@ describe('The FileTranscriptStore', function () {
                         }
                         return (target[p] = value);
                     },
-                }
+                },
             );
             while (i--) {
                 continuationToken = pagedResult.continuationToken;
                 pagedResult = await storage.listTranscripts('test', continuationToken);
                 assert.ok(
                     i === 0 || !!pagedResult.continuationToken,
-                    'Expected a continuationToken but did not receive one'
+                    'Expected a continuationToken but did not receive one',
                 );
                 assert.ok(
                     continuationToken !== pagedResult.continuationToken,
-                    'The newly returned continuationToken should not match the last one received'
+                    'The newly returned continuationToken should not match the last one received',
                 );
                 pagedResult.items.forEach((item) => (seen[item.id] = true));
             }

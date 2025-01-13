@@ -174,7 +174,7 @@ function createSkillClientAndStub(captureAction, returnStatusCode = StatusCodes.
 
     if (captureAction && typeof captureAction !== 'function') {
         throw new TypeError(
-            `Failed test arrangement - createSkillClientAndStub() received ${typeof captureAction} instead of undefined or a function.`
+            `Failed test arrangement - createSkillClientAndStub() received ${typeof captureAction} instead of undefined or a function.`,
         );
     }
 

@@ -153,7 +153,7 @@ export type CardViewParameters =
 export function BasicCardView(
     cardBar: CardBarComponent,
     header: CardTextComponent,
-    footer?: CardViewFooterParameters
+    footer?: CardViewFooterParameters,
 ): TextCardViewParameters {
     return {
         cardViewType: 'text',
@@ -182,7 +182,7 @@ export function PrimaryTextCardView(
     cardBar: CardBarComponent,
     header: CardTextComponent,
     body: CardTextComponent,
-    footer?: CardViewFooterParameters
+    footer?: CardViewFooterParameters,
 ): TextCardViewParameters {
     return {
         cardViewType: 'text',
@@ -211,7 +211,7 @@ export function ImageCardView(
     cardBar: CardBarComponent,
     header: CardTextComponent,
     image: CardImage,
-    footer?: CardViewFooterParameters
+    footer?: CardViewFooterParameters,
 ): TextCardViewParameters {
     return {
         cardViewType: 'text',
@@ -242,7 +242,7 @@ export function TextInputCardView(
     cardBar: CardBarComponent,
     header: CardTextComponent,
     body: CardTextInputComponent,
-    footer?: CardViewActionsFooterParameters
+    footer?: CardViewActionsFooterParameters,
 ): TextInputCardViewParameters {
     return {
         cardViewType: 'textInput',
@@ -271,7 +271,7 @@ export function SearchCardView(
     cardBar: CardBarComponent,
     header: CardTextComponent,
     body: CardSearchBoxComponent,
-    footer: CardSearchFooterComponent
+    footer: CardSearchFooterComponent,
 ): SearchCardViewParameters {
     return {
         cardViewType: 'search',
@@ -301,7 +301,7 @@ export function SignInCardView(
     cardBar: CardBarComponent,
     header: CardTextComponent,
     body: CardTextComponent,
-    footer: CardButtonComponent
+    footer: CardButtonComponent,
 ): SignInCardViewParameters {
     return {
         cardViewType: 'signIn',

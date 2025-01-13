@@ -11,4 +11,4 @@ export type Maybe<T> = T | Nil;
 export type Newable<T, A extends unknown[] = unknown[]> = new (...args: A) => T;
 
 // Extends<T> mimics Newable<T>, but works for abstract classes as well
-export type Extends<T> = Function & { prototype: T }; // eslint-disable-line @typescript-eslint/ban-types
+export type Extends<T> = Function & { prototype: T }; // eslint-disable-line @typescript-eslint/no-unsafe-function-type

@@ -39,10 +39,10 @@ const pushDownNot = (expression: Expression, inNot = false): Expression => {
                             ? ExpressionType.Or
                             : ExpressionType.And
                         : inNot
-                        ? ExpressionType.And
-                        : ExpressionType.Or,
+                          ? ExpressionType.And
+                          : ExpressionType.Or,
                     undefined,
-                    ...children
+                    ...children,
                 );
             }
             break;
@@ -58,7 +58,7 @@ const pushDownNot = (expression: Expression, inNot = false): Expression => {
                         newExpr = Expression.makeExpression(
                             undefined,
                             negation,
-                            ...expression.children.map((child) => pushDownNot(child, true))
+                            ...expression.children.map((child) => pushDownNot(child, true)),
                         );
                     } else {
                         // Replace with negation and stop
@@ -391,7 +391,7 @@ export class Trigger {
                         const { expression: newPredicate, changed } = this._substituteVariable(
                             quantifier.variable,
                             binding,
-                            predicate
+                            predicate,
                         );
                         children.push(newPredicate);
                         if (!changed) {
@@ -423,7 +423,7 @@ export class Trigger {
                         const { expression: newPredicate, changed: predicateChanged } = this._substituteVariable(
                             quantifier.variable,
                             binding,
-                            predicate
+                            predicate,
                         );
                         changed = changed || predicateChanged;
                         children.push(newPredicate);
@@ -463,7 +463,7 @@ export class Trigger {
     private _substituteVariable(
         variable: string,
         binding: string,
-        expression: Expression
+        expression: Expression,
     ): { expression: Expression; changed: boolean } {
         let newExpr = expression;
         let changed = false;
@@ -483,7 +483,7 @@ export class Trigger {
                 const { expression: childExpr, changed: childChanged } = this._substituteVariable(
                     variable,
                     binding,
-                    child
+                    child,
                 );
                 children.push(childExpr);
                 changed = changed || childChanged;

@@ -30,7 +30,7 @@ export class ChannelServiceHandler extends ChannelServiceHandlerBase {
     constructor(
         private readonly credentialProvider: ICredentialProvider,
         private readonly authConfig: AuthenticationConfiguration,
-        protected readonly channelService = process.env[AuthenticationConstants.ChannelService]
+        protected readonly channelService = process.env[AuthenticationConstants.ChannelService],
     ) {
         super();
 
@@ -62,7 +62,7 @@ export class ChannelServiceHandler extends ChannelServiceHandlerBase {
             this.channelService,
             'unknown',
             undefined,
-            this.authConfig
+            this.authConfig,
         );
     }
 }

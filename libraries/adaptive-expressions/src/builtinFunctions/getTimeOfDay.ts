@@ -26,7 +26,7 @@ export class GetTimeOfDay extends ExpressionEvaluator {
             ExpressionType.GetTimeOfDay,
             GetTimeOfDay.evaluator(),
             ReturnType.String,
-            FunctionUtils.validateUnaryString
+            FunctionUtils.validateUnaryString,
         );
     }
 

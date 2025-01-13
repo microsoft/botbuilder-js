@@ -145,7 +145,7 @@ export class DialogSet {
             // If we are adding a new dialog with a conflicting name, add a suffix to avoid
             // dialog name collisions.
             let nextSuffix = 2;
-            // eslint-disable-next-line no-constant-condition
+
             while (true) {
                 const suffixId = dialog.id + nextSuffix.toString();
                 if (!Object.prototype.hasOwnProperty.call(this.dialogs, suffixId)) {
@@ -166,8 +166,8 @@ export class DialogSet {
         this.dialogs[dialog.id] = dialog;
 
         // Automatically add any child dependencies the dialog might have
-        if (typeof ((dialog as any) as DialogDependencies).getDependencies == 'function') {
-            ((dialog as any) as DialogDependencies).getDependencies().forEach((child: Dialog): void => {
+        if (typeof (dialog as any as DialogDependencies).getDependencies == 'function') {
+            (dialog as any as DialogDependencies).getDependencies().forEach((child: Dialog): void => {
                 this.add(child);
             });
         }
@@ -184,7 +184,7 @@ export class DialogSet {
     async createContext(context: TurnContext): Promise<DialogContext> {
         if (!this.dialogState) {
             throw new Error(
-                'DialogSet.createContext(): the dialog set was not bound to a stateProperty when constructed.'
+                'DialogSet.createContext(): the dialog set was not bound to a stateProperty when constructed.',
             );
         }
         const state: DialogState = await this.dialogState.get(context, { dialogStack: [] } as DialogState);

@@ -201,7 +201,7 @@ const buildQnAMakerTestFlowPreciseAnswer = (
     resourceExplorer,
     testName,
     enablePreciseAnswer,
-    displayPreciseAnswerOnly
+    displayPreciseAnswerOnly,
 ) => {
     const adapter = initializeAdapter(testName);
     const dialog = resourceExplorer.loadType('QnAMakerBot.main.dialog');
@@ -213,6 +213,7 @@ const buildQnAMakerTestFlowPreciseAnswer = (
 
 describe('Json load tests', function () {
     let resourceExplorer;
+
     beforeEach(function () {
         const services = new ServiceCollection({
             declarativeTypes: [],
@@ -226,7 +227,7 @@ describe('Json load tests', function () {
         resourceExplorer = new ResourceExplorer({ declarativeTypes }).addFolder(
             path.join(__dirname, 'resources/JsonDialog'),
             true,
-            false
+            false,
         );
     });
 
@@ -510,7 +511,7 @@ describe('Json load tests', function () {
         const suggestionActivity = QnACardBuilder.getSuggestionsCard(
             suggestionList,
             'Did you mean:',
-            'None of the above.'
+            'None of the above.',
         );
         await buildQnAMakerTestFlow(resourceExplorer, this.fullTitle())
             .send('Q11')
@@ -528,7 +529,7 @@ describe('Json load tests', function () {
         const suggestionActivity = QnACardBuilder.getSuggestionsCard(
             suggestionList,
             'Did you mean:',
-            'None of the above.'
+            'None of the above.',
         );
         const noAnswerActivity = 'No QnAMaker answers found.';
         await buildQnAMakerTestFlow(resourceExplorer, this.fullTitle())
@@ -547,7 +548,7 @@ describe('Json load tests', function () {
         const suggestionActivity = QnACardBuilder.getSuggestionsCard(
             suggestionList,
             'Did you mean:',
-            'None of the above.'
+            'None of the above.',
         );
         await buildQnAMakerTestFlow(resourceExplorer, this.fullTitle())
             .send('Q11')

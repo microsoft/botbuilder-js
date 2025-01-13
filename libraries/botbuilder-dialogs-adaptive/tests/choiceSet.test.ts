@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
 import 'mocha';
 import { ObjectExpression } from 'adaptive-expressions';
 import * as assert from 'assert';
@@ -30,7 +29,7 @@ describe('ChoiceSetTests', function () {
     it('TestValue', async function () {
         const state = {};
         const ep = new ObjectExpression<ChoiceSet>(
-            new ChoiceSet([{ value: 'test1' }, { value: 'test2' }, { value: 'test3' }])
+            new ChoiceSet([{ value: 'test1' }, { value: 'test2' }, { value: 'test3' }]),
         );
         const { value } = ep.tryGetValue(state);
         assertValues(value);

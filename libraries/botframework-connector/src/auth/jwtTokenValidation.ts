@@ -41,7 +41,7 @@ export namespace JwtTokenValidation {
         authHeader: string,
         credentials: ICredentialProvider,
         channelService: string,
-        authConfig?: AuthenticationConfiguration
+        authConfig?: AuthenticationConfiguration,
     ): Promise<ClaimsIdentity> {
         if (!authConfig) {
             authConfig = new AuthenticationConfiguration();
@@ -53,7 +53,7 @@ export namespace JwtTokenValidation {
             if (!isAuthDisabled) {
                 throw new AuthenticationError(
                     'Unauthorized Access. Request is not authorized',
-                    StatusCodes.UNAUTHORIZED
+                    StatusCodes.UNAUTHORIZED,
                 );
             }
 
@@ -78,7 +78,7 @@ export namespace JwtTokenValidation {
             channelService,
             activity.channelId,
             activity.serviceUrl,
-            authConfig
+            authConfig,
         );
 
         return claimsIdentity;
@@ -101,7 +101,7 @@ export namespace JwtTokenValidation {
         channelService: string,
         channelId: string,
         serviceUrl = '',
-        authConfig: AuthenticationConfiguration = new AuthenticationConfiguration()
+        authConfig: AuthenticationConfiguration = new AuthenticationConfiguration(),
     ): Promise<ClaimsIdentity> {
         if (!authHeader.trim()) {
             throw new AuthenticationError("'authHeader' required.", StatusCodes.BAD_REQUEST);
@@ -113,7 +113,7 @@ export namespace JwtTokenValidation {
             channelService,
             channelId,
             authConfig,
-            serviceUrl
+            serviceUrl,
         );
 
         await validateClaims(authConfig, identity.claims);
@@ -121,14 +121,13 @@ export namespace JwtTokenValidation {
         return identity;
     }
 
-    // eslint-disable-next-line jsdoc/require-jsdoc, no-inner-declarations
     async function authenticateToken(
         authHeader: string,
         credentials: ICredentialProvider,
         channelService: string,
         channelId: string,
         authConfig: AuthenticationConfiguration,
-        serviceUrl: string
+        serviceUrl: string,
     ): Promise<ClaimsIdentity> {
         if (AseChannelValidation.isTokenFromAseChannel(channelId)) {
             return AseChannelValidation.authenticateAseChannelToken(authHeader);
@@ -140,7 +139,7 @@ export namespace JwtTokenValidation {
                 credentials,
                 channelService,
                 channelId,
-                authConfig
+                authConfig,
             );
         }
 
@@ -149,7 +148,7 @@ export namespace JwtTokenValidation {
                 authHeader,
                 credentials,
                 channelService,
-                channelId
+                channelId,
             );
         }
 
@@ -160,7 +159,7 @@ export namespace JwtTokenValidation {
                     authHeader,
                     credentials,
                     serviceUrl,
-                    channelId
+                    channelId,
                 );
             }
 
@@ -174,7 +173,7 @@ export namespace JwtTokenValidation {
                     authHeader,
                     credentials,
                     serviceUrl,
-                    channelId
+                    channelId,
                 );
             }
 
@@ -189,7 +188,7 @@ export namespace JwtTokenValidation {
                 credentials,
                 serviceUrl,
                 channelId,
-                channelService
+                channelService,
             );
         }
 
@@ -197,7 +196,7 @@ export namespace JwtTokenValidation {
             authHeader,
             credentials,
             channelId,
-            channelService
+            channelService,
         );
     }
 
@@ -207,7 +206,7 @@ export namespace JwtTokenValidation {
      * @param authConfig The authentication configuration.
      * @param claims The list of claims to validate.
      */
-    // eslint-disable-next-line no-inner-declarations
+
     async function validateClaims(authConfig: AuthenticationConfiguration, claims: Claim[] = []): Promise<void> {
         if (authConfig.validateClaims) {
             // Call the validation method if defined (it should throw an exception if the validation fails)
@@ -216,7 +215,7 @@ export namespace JwtTokenValidation {
             // Skill claims must be validated using AuthenticationConfiguration validateClaims
             throw new AuthenticationError(
                 'Unauthorized Access. Request is not authorized. Skill Claims require validation.',
-                StatusCodes.UNAUTHORIZED
+                StatusCodes.UNAUTHORIZED,
             );
         }
     }
@@ -267,7 +266,6 @@ export namespace JwtTokenValidation {
         return appId;
     }
 
-    // eslint-disable-next-line jsdoc/require-jsdoc, no-inner-declarations
     function isPublicAzure(channelService: string): boolean {
         return !channelService || channelService.length === 0;
     }

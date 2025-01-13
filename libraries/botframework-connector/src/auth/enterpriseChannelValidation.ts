@@ -47,13 +47,13 @@ export namespace EnterpriseChannelValidation {
         credentials: ICredentialProvider,
         serviceUrl: string,
         channelId: string,
-        channelService: string
+        channelService: string,
     ): Promise<ClaimsIdentity> {
         const identity: ClaimsIdentity = await authenticateChannelToken(
             authHeader,
             credentials,
             channelId,
-            channelService
+            channelService,
         );
 
         const serviceUrlClaim: string = identity.getClaimValue(AuthenticationConstants.ServiceUrlClaim);
@@ -81,7 +81,7 @@ export namespace EnterpriseChannelValidation {
         credentials: ICredentialProvider,
         channelId: string,
         channelService: string,
-        authConfig: AuthenticationConfiguration = new AuthenticationConfiguration()
+        authConfig: AuthenticationConfiguration = new AuthenticationConfiguration(),
     ): Promise<ClaimsIdentity> {
         const tokenExtractor: JwtTokenExtractor = new JwtTokenExtractor(
             ToBotFromEnterpriseChannelTokenValidationParameters,
@@ -89,15 +89,15 @@ export namespace EnterpriseChannelValidation {
                 ? ChannelValidation.OpenIdMetadataEndpoint
                 : AuthenticationConstants.ToBotFromEnterpriseChannelOpenIdMetadataUrlFormat.replace(
                       '{channelService}',
-                      channelService
+                      channelService,
                   ),
-            AuthenticationConstants.AllowedSigningAlgorithms
+            AuthenticationConstants.AllowedSigningAlgorithms,
         );
 
         const identity: ClaimsIdentity = await tokenExtractor.getIdentityFromAuthHeader(
             authHeader,
             channelId,
-            authConfig.requiredEndorsements
+            authConfig.requiredEndorsements,
         );
 
         return await validateIdentity(identity, credentials);
@@ -112,7 +112,7 @@ export namespace EnterpriseChannelValidation {
      */
     export async function validateIdentity(
         identity: ClaimsIdentity,
-        credentials: ICredentialProvider
+        credentials: ICredentialProvider,
     ): Promise<ClaimsIdentity> {
         if (!identity) {
             // No valid identity. Not Authorized.
@@ -145,7 +145,7 @@ export namespace EnterpriseChannelValidation {
             // The AppId is not valid or not present. Not Authorized.
             throw new AuthenticationError(
                 `Unauthorized. Invalid AppId passed on token: ${audClaim}`,
-                StatusCodes.UNAUTHORIZED
+                StatusCodes.UNAUTHORIZED,
             );
         }
 

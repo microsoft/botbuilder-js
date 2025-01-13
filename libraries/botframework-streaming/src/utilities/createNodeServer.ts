@@ -35,27 +35,24 @@ export function createNodeServer(callback?: ConnectionListener): INodeServer {
  * @returns a server factory function
  */
 export function getServerFactory(): (callback?: ConnectionListener) => INodeServer {
-    if (typeof require !== undefined) {
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
+    if (typeof require !== 'undefined') {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
         return require('net').Server;
     }
 
     throw TypeError(
-        "require is undefined. Must be in a Node module to require 'net' dynamically in order to fetch Server factory."
+        "require is undefined. Must be in a Node module to require 'net' dynamically in order to fetch Server factory.",
     );
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function isNetServer(o: any): o is INodeServer {
     return hasCloseMethod(o) && hasListenMethod(o);
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function hasCloseMethod(o: any): o is INodeServer {
     return o.close && typeof o.close === 'function';
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function hasListenMethod(o: any): o is INodeServer {
     return o.listen && typeof o.listen === 'function';
 }

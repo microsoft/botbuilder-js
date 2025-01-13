@@ -68,7 +68,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
     constructor(
         logicOrConversation?: ((context: TurnContext) => Promise<void>) | ConversationReference,
         template?: Partial<Activity>,
-        sendTraceActivity = false
+        sendTraceActivity = false,
     ) {
         super();
         this._sendTraceActivity = sendTraceActivity;
@@ -215,7 +215,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
      */
     async processActivity(
         activity: string | Partial<Activity>,
-        callback?: (context: TurnContext) => Promise<any>
+        callback?: (context: TurnContext) => Promise<any>,
     ): Promise<any> {
         const request: Partial<Activity> =
             typeof activity === 'string' ? { type: ActivityTypes.Message, text: activity } : activity;
@@ -346,7 +346,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
      */
     continueConversation(
         _reference: Partial<ConversationReference>,
-        _logic: (revocableContext: TurnContext) => Promise<void>
+        _logic: (revocableContext: TurnContext) => Promise<void>,
     ): Promise<void> {
         return Promise.reject(new Error('not implemented'));
     }
@@ -404,7 +404,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
         userSays: string | Partial<Activity>,
         expected: string | Partial<Activity> | ((activity: Partial<Activity>, description?: string) => void),
         description?: string,
-        _timeout?: number
+        _timeout?: number,
     ): TestFlow {
         return this.send(userSays).assertReply(expected, description);
     }
@@ -425,20 +425,23 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
             throw new Error('Missing array of activities');
         }
 
-        const activityInspector: any = (expected: Partial<Activity>): TestActivityInspector => (
-            actual: Partial<Activity>,
-            description2: string
-        ): any => validateTranscriptActivity(actual, expected, description2);
+        const activityInspector: any =
+            (expected: Partial<Activity>): TestActivityInspector =>
+            (actual: Partial<Activity>, description2: string): any =>
+                validateTranscriptActivity(actual, expected, description2);
 
         // Chain all activities in a TestFlow, check if its a user message (send) or a bot reply (assert)
-        return activities.reduce((flow: TestFlow, activity: Partial<Activity>) => {
-            // tslint:disable-next-line:prefer-template
-            const assertDescription = `reply ${description ? ' from ' + description : ''}`;
+        return activities.reduce(
+            (flow: TestFlow, activity: Partial<Activity>) => {
+                // tslint:disable-next-line:prefer-template
+                const assertDescription = `reply ${description ? ' from ' + description : ''}`;
 
-            return this.isReply(activity)
-                ? flow.assertReply(activityInspector(activity, description), assertDescription, timeout)
-                : flow.send(activity);
-        }, new TestFlow(Promise.resolve(), this));
+                return this.isReply(activity)
+                    ? flow.assertReply(activityInspector(activity, description), assertDescription, timeout)
+                    : flow.send(activity);
+            },
+            new TestFlow(Promise.resolve(), this),
+        );
     }
 
     private _userTokens: UserToken[] = [];
@@ -479,14 +482,13 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
      * @param includeFilter Optional. A comma-separated list of connection's to include. If present,
      *      the `includeFilter` parameter limits the tokens this method returns.
      * @param _oAuthAppCredentials AppCredentials for OAuth.
-     *
      * @returns The [TokenStatus](xref:botframework-connector.TokenStatus) objects retrieved.
      */
     async getTokenStatus(
         context: TurnContext,
         userId: string,
         includeFilter?: string,
-        _oAuthAppCredentials?: any
+        _oAuthAppCredentials?: any,
     ): Promise<any[]> {
         if (!context || !context.activity) {
             throw new Error('testAdapter.getTokenStatus(): context with activity is required');
@@ -506,7 +508,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
                 (x) =>
                     x.channelId === context.activity.channelId &&
                     x.userId === userId &&
-                    (!filter || filter.includes(x.connectionName))
+                    (!filter || filter.includes(x.connectionName)),
             )
             .map((token) => ({
                 ConnectionName: token.connectionName,
@@ -531,7 +533,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
 
         if (magicCode) {
             const magicCodeRecord = this._magicCodes.find(
-                (item) => key.equalsKey(item.key) && item.magicCode === magicCode
+                (item) => key.equalsKey(item.key) && item.magicCode === magicCode,
             );
             if (magicCodeRecord) {
                 // move the token to long term dictionary
@@ -560,7 +562,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
         this._userTokens = this._userTokens.filter(
             (token) =>
                 connectionName &&
-                (connectionName !== token.connectionName || channelId !== token.channelId || userId !== token.userId)
+                (connectionName !== token.connectionName || channelId !== token.channelId || userId !== token.userId),
         );
     }
 
@@ -586,7 +588,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
     async getAadTokens(
         _context: TurnContext,
         _connectionName: string,
-        _resourceUrls: string[]
+        _resourceUrls: string[],
     ): Promise<{
         [propertyName: string]: TokenResponse;
     }> {
@@ -609,7 +611,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
         channelId: string,
         userId: string,
         exchangeableItem: string,
-        token: string
+        token: string,
     ) {
         const key: ExchangeableToken = new ExchangeableToken();
         key.channelId = channelId;
@@ -633,7 +635,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
         context: TurnContext,
         connectionName: string,
         userId?: string,
-        _finalRedirect?: string
+        _finalRedirect?: string,
     ): Promise<SignInUrlResponse> {
         return {
             signInLink: `https://botframeworktestadapter.com/oauthsignin/${connectionName}/${context.activity.channelId}/${userId}`,
@@ -658,7 +660,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
         context: TurnContext,
         connectionName: string,
         userId: string,
-        tokenExchangeRequest: TokenExchangeRequest
+        tokenExchangeRequest: TokenExchangeRequest,
     ): Promise<TokenResponse> {
         const exchangeableValue: string = tokenExchangeRequest.token
             ? tokenExchangeRequest.token
@@ -789,7 +791,7 @@ export class TestFlow {
     constructor(
         public previous: Promise<void>,
         private adapter: TestAdapter,
-        private callback?: (turnContext: TurnContext) => Promise<unknown>
+        private callback?: (turnContext: TurnContext) => Promise<unknown>,
     ) {}
 
     /**
@@ -807,7 +809,7 @@ export class TestFlow {
         userSays: string | Partial<Activity>,
         expected: string | Partial<Activity> | ((activity: Partial<Activity>, description?: string) => void),
         description?: string,
-        timeout?: number
+        timeout?: number,
     ): TestFlow {
         return this.send(userSays).assertReply(expected, description || `test("${userSays}", "${expected}")`, timeout);
     }
@@ -822,7 +824,7 @@ export class TestFlow {
         return new TestFlow(
             this.previous.then(() => this.adapter.processActivity(userSays, this.callback)),
             this.adapter,
-            this.callback
+            this.callback,
         );
     }
 
@@ -840,7 +842,7 @@ export class TestFlow {
                 return this.adapter.processActivity(cu, this.callback);
             }),
             this.adapter,
-            this.callback
+            this.callback,
         );
     }
 
@@ -855,7 +857,7 @@ export class TestFlow {
     assertReply(
         expected: string | Partial<Activity> | TestActivityInspector,
         description?: string,
-        timeout?: number
+        timeout?: number,
     ): TestFlow {
         function defaultInspector(reply: Partial<Activity>, description2?: string): void {
             if (typeof expected === 'object') {
@@ -902,8 +904,8 @@ export class TestFlow {
                                 new Error(
                                     `TestAdapter.assertReply(${expecting}): ${description} Timed out after ${
                                         current - start
-                                    }ms.`
-                                )
+                                    }ms.`,
+                                ),
                             );
                         } else if (adapter.activeQueue.length > 0) {
                             // Activity received
@@ -922,7 +924,7 @@ export class TestFlow {
                 });
             }),
             this.adapter,
-            this.callback
+            this.callback,
         );
     }
 
@@ -955,7 +957,7 @@ export class TestFlow {
                             assert.strictEqual(
                                 reply,
                                 undefined,
-                                `${JSON.stringify(reply)} is responded when waiting for no reply: '${description}'`
+                                `${JSON.stringify(reply)} is responded when waiting for no reply: '${description}'`,
                             );
                             resolve();
                         } else {
@@ -966,7 +968,7 @@ export class TestFlow {
                 });
             }),
             this.adapter,
-            this.callback
+            this.callback,
         );
     }
 
@@ -988,12 +990,12 @@ export class TestFlow {
                 }
                 assert.fail(
                     `TestAdapter.assertReplyOneOf(): ${description2 || ''} FAILED, Expected one of :${JSON.stringify(
-                        candidates
-                    )}`
+                        candidates,
+                    )}`,
                 );
             },
             description,
-            timeout
+            timeout,
         );
     }
 
@@ -1011,7 +1013,7 @@ export class TestFlow {
                 });
             }),
             this.adapter,
-            this.callback
+            this.callback,
         );
     }
 
@@ -1079,7 +1081,7 @@ function validateActivity(activity: Partial<Activity>, expected: Partial<Activit
 function validateTranscriptActivity(
     activity: Partial<Activity>,
     expected: Partial<Activity>,
-    description: string
+    description: string,
 ): void {
     assert.equal(activity.type, expected.type, `failed "type" assert on ${description}`);
     assert.equal(activity.text, expected.text, `failed "text" assert on ${description}`);
@@ -1087,6 +1089,6 @@ function validateTranscriptActivity(
     assert.deepEqual(
         activity.suggestedActions,
         expected.suggestedActions,
-        `failed "suggestedActions" assert on ${description}`
+        `failed "suggestedActions" assert on ${description}`,
     );
 }

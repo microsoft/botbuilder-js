@@ -171,7 +171,7 @@ export class OAuthPrompt extends Dialog {
     constructor(
         dialogId: string,
         private settings: OAuthPromptSettings,
-        private validator?: PromptValidator<TokenResponse>
+        private validator?: PromptValidator<TokenResponse>,
     ) {
         super(dialogId);
     }
@@ -326,7 +326,7 @@ export class OAuthPrompt extends Dialog {
     static async sendOAuthCard(
         settings: OAuthPromptSettings,
         turnContext: TurnContext,
-        prompt?: string | Partial<Activity>
+        prompt?: string | Partial<Activity>,
     ): Promise<void> {
         // Initialize outgoing message
         const msg: Partial<Activity> =
@@ -377,7 +377,7 @@ export class OAuthPrompt extends Dialog {
                 settings.text,
                 link,
                 signInResource.tokenExchangeResource,
-                signInResource.tokenPostResource
+                signInResource.tokenPostResource,
             );
 
             // Set the appropriate ActionType for the button.
@@ -425,7 +425,7 @@ export class OAuthPrompt extends Dialog {
                     context,
                     context.activity.serviceUrl,
                     claimsIdentity,
-                    state.scope
+                    state.scope,
                 );
 
                 context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
@@ -450,8 +450,8 @@ export class OAuthPrompt extends Dialog {
                 await context.sendActivity(
                     this.getTokenExchangeInvokeResponse(
                         StatusCodes.BAD_REQUEST,
-                        'The bot received an InvokeActivity that is missing a TokenExchangeInvokeRequest value. This is required to be sent with the InvokeActivity.'
-                    )
+                        'The bot received an InvokeActivity that is missing a TokenExchangeInvokeRequest value. This is required to be sent with the InvokeActivity.',
+                    ),
                 );
             } else if (context.activity.value.connectionName != this.settings.connectionName) {
                 // Connection name on activity does not match that of setting
@@ -459,8 +459,8 @@ export class OAuthPrompt extends Dialog {
                     this.getTokenExchangeInvokeResponse(
                         StatusCodes.BAD_REQUEST,
                         'The bot received an InvokeActivity with a TokenExchangeInvokeRequest containing a ConnectionName that does not match the ConnectionName' +
-                            'expected by the bots active OAuthPrompt. Ensure these names match when sending the InvokeActivityInvalid ConnectionName in the TokenExchangeInvokeRequest'
-                    )
+                            'expected by the bots active OAuthPrompt. Ensure these names match when sending the InvokeActivityInvalid ConnectionName in the TokenExchangeInvokeRequest',
+                    ),
                 );
             } else {
                 let tokenExchangeResponse: TokenResponse;
@@ -478,12 +478,12 @@ export class OAuthPrompt extends Dialog {
                     await context.sendActivity(
                         this.getTokenExchangeInvokeResponse(
                             StatusCodes.PRECONDITION_FAILED,
-                            'The bot is unable to exchange token. Proceed with regular login.'
-                        )
+                            'The bot is unable to exchange token. Proceed with regular login.',
+                        ),
                     );
                 } else {
                     await context.sendActivity(
-                        this.getTokenExchangeInvokeResponse(StatusCodes.OK, null, context.activity.value.id)
+                        this.getTokenExchangeInvokeResponse(StatusCodes.OK, null, context.activity.value.id),
                     );
                     token = {
                         channelId: tokenExchangeResponse.channelId,

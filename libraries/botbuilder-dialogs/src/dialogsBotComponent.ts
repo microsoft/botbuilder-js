@@ -51,7 +51,7 @@ export class DialogsBotComponent extends BotComponent {
                 new ClassMemoryScope(),
                 new ThisMemoryScope(),
                 new ConversationMemoryScope(),
-                new UserMemoryScope()
+                new UserMemoryScope(),
             );
         });
 
@@ -61,8 +61,8 @@ export class DialogsBotComponent extends BotComponent {
                 new HashPathResolver(),
                 new AtAtPathResolver(),
                 new AtPathResolver(),
-                new PercentPathResolver()
-            )
+                new PercentPathResolver(),
+            ),
         );
     }
 }

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 const assert = require('assert');
 const { Recognizer } = require('botbuilder-dialogs');
 const {
@@ -59,7 +58,7 @@ describe('RegexRecognizer Tests', function () {
             new UrlEntityRecognizer(),
             new RegexEntityRecognizer('color', '(red|green|blue|purple|orange|violet|white|black)'),
             new RegexEntityRecognizer('backgroundColor', '(back|background) {color}'),
-            new RegexEntityRecognizer('foregroundColor', '(foreground|front) {color}')
+            new RegexEntityRecognizer('foregroundColor', '(foreground|front) {color}'),
         ),
     });
 
@@ -177,7 +176,7 @@ describe('RegexRecognizer Tests', function () {
                     new OrdinalEntityRecognizer(),
                     new RegexEntityRecognizer('color', '(red|green|blue|purple|orange|violet|white|black)'),
                     new RegexEntityRecognizer('backgroundColor', '(back|background) {color}'),
-                    new RegexEntityRecognizer('foregroundColor', '(foreground|front) {color}')
+                    new RegexEntityRecognizer('foregroundColor', '(foreground|front) {color}'),
                 ),
             });
             const trackEventSpy = spyOnTelemetryClientTrackEvent(recognizerWithDefaultLogPii);
@@ -263,7 +262,7 @@ describe('RegexRecognizer Tests', function () {
     it('recognize dimension', async function () {
         const dc = createContext('');
         const activity = createMessageActivity(
-            'The six-mile trip to my airport hotel that had taken 20 minutes earlier in the day took more than three hours.'
+            'The six-mile trip to my airport hotel that had taken 20 minutes earlier in the day took more than three hours.',
         );
         const result = await recognizer.recognize(dc, activity);
         const entities = result.entities;
@@ -450,7 +449,7 @@ describe('RegexRecognizer Tests', function () {
         };
         const properties = recognizer.fillRecognizerResultTelemetryProperties(
             recognizerResultSample,
-            telemetryProperties
+            telemetryProperties,
         );
         assert('Text' in properties);
         assert.strictEqual(properties['Text'], recognizerResultSample['text']);

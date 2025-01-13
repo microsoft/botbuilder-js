@@ -69,12 +69,12 @@ export class BotFrameworkHttpClient implements BotFrameworkClient {
         toUrl: string,
         serviceUrl: string,
         conversationId: string,
-        activity: Activity
+        activity: Activity,
     ): Promise<InvokeResponse<T>> {
         const appCredentials = await this.getAppCredentials(fromBotId, toBotId);
         if (!appCredentials) {
             throw new Error(
-                'BotFrameworkHttpClient.postActivity(): Unable to get appCredentials to connect to the skill'
+                'BotFrameworkHttpClient.postActivity(): Unable to get appCredentials to connect to the skill',
             );
         }
 
@@ -152,7 +152,6 @@ export class BotFrameworkHttpClient implements BotFrameworkClient {
      *
      * @param appId The application id.
      * @param oAuthScope Optional. The OAuth scope.
-     *
      * @returns The app credentials to be used to acquire tokens.
      */
     protected async buildCredentials(appId: string, oAuthScope?: string): Promise<AppCredentials> {

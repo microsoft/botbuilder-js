@@ -3,6 +3,7 @@ const { makeResourceExplorer } = require('./utils');
 
 describe('AdaptiveDialogTests', function () {
     let resourceExplorer;
+
     before(function () {
         resourceExplorer = makeResourceExplorer('AdaptiveDialogTests');
     });
@@ -103,7 +104,7 @@ describe('AdaptiveDialogTests', function () {
         await TestUtils.runTestScript(resourceExplorer, 'AdaptiveDialog_NestedRecognizers');
     });
 
-    it('PropertySetInInterruption', async function () {
+    it('PropertyBotInterruption', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'AdaptiveDialog_ParentBotInterruption');
     });
 

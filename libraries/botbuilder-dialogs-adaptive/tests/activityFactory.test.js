@@ -38,7 +38,7 @@ describe('ActivityFactoryTest', function () {
         assert.strictEqual(result.attachments, undefined);
         assert.strictEqual(
             result.text.replace(/\r\n/g, '\n').replace(/\n/g, '').replace(/\s+/g, ''),
-            '{"lgType":"Acti","key":"value"}'
+            '{"lgType":"Acti","key":"value"}',
         );
     });
 
@@ -567,7 +567,7 @@ function assertAdaptiveCardActivity(activity) {
     assert.strictEqual(
         activity.attachments[0].contentType,
         'application/vnd.microsoft.card.adaptive',
-        'attachment type should be adaptivecard'
+        'attachment type should be adaptivecard',
     );
     assert.strictEqual(activity.attachments[0].content.body[0].text, 'test', 'text of first body should have value');
 }
@@ -603,7 +603,7 @@ function assertAnimationCardActivity(activity) {
     assert.strictEqual(card.autostart, true);
     assert.strictEqual(
         card.image.url,
-        'https://docs.microsoft.com/en-us/bot-framework/media/how-it-works/architecture-resize.png'
+        'https://docs.microsoft.com/en-us/bot-framework/media/how-it-works/architecture-resize.png',
     );
     assert.strictEqual(card.media[0].url, 'http://oi42.tinypic.com/1rchlx.jpg');
 }
@@ -627,7 +627,7 @@ function assertReceiptCardActivity(activity) {
     assert.strictEqual(button.value, 'https://azure.microsoft.com/en-us/pricing/');
     assert.strictEqual(
         button.image,
-        'https://account.windowsazure.com/content/6.10.1.38-.8225.160809-1618/aux-pre/images/offer-icon-freetrial.png'
+        'https://account.windowsazure.com/content/6.10.1.38-.8225.160809-1618/aux-pre/images/offer-icon-freetrial.png',
     );
 
     const facts = card.facts;
@@ -642,14 +642,14 @@ function assertReceiptCardActivity(activity) {
     assert.strictEqual(items[0].title, 'Data Transfer');
     assert.strictEqual(
         items[0].image.url,
-        'https://github.com/amido/azure-vector-icons/raw/master/renders/traffic-manager.png'
+        'https://github.com/amido/azure-vector-icons/raw/master/renders/traffic-manager.png',
     );
     assert.strictEqual(items[0].price, '$ 38.45');
     assert.strictEqual(items[0].quantity, '368');
     assert.strictEqual(items[1].title, 'App Service');
     assert.strictEqual(
         items[1].image.url,
-        'https://github.com/amido/azure-vector-icons/raw/master/renders/cloud-service.png'
+        'https://github.com/amido/azure-vector-icons/raw/master/renders/cloud-service.png',
     );
     assert.strictEqual(items[1].price, '$ 45.00');
     assert.strictEqual(items[1].quantity, '720');

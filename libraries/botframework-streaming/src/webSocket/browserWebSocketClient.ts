@@ -59,7 +59,7 @@ export class WebSocketClient implements IStreamingTransportClient {
             this._requestHandler,
             this._requestManager,
             this._sender,
-            this._receiver
+            this._receiver,
         );
     }
 
@@ -94,7 +94,6 @@ export class WebSocketClient implements IStreamingTransportClient {
         return this._protocolAdapter.sendRequest(request);
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private onConnectionDisconnected(sender: Record<string, unknown>, args: any): void {
         // Rejects all pending requests on disconnect.
         this._requestManager.rejectAllResponses(new Error('Disconnect was called.'));
@@ -106,8 +105,8 @@ export class WebSocketClient implements IStreamingTransportClient {
 
         throw new Error(
             `Unable to re-connect client to transport for url ${this._url}. Sender: '${JSON.stringify(
-                sender
-            )}'. Args:' ${JSON.stringify(args)}`
+                sender,
+            )}'. Args:' ${JSON.stringify(args)}`,
         );
     }
 }

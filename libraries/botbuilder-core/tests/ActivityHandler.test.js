@@ -340,7 +340,7 @@ describe('ActivityHandler', function () {
                     },
                 },
             },
-            bot
+            bot,
         );
         assert(onAdpativeCardInvokeCalled);
     });
@@ -637,7 +637,7 @@ describe('ActivityHandler', function () {
                     assertFalseFlag(
                         dispatchMessageUpdateActivityCalled,
                         'dispatchMessageUpdateActivity',
-                        'onMessageUpdate'
+                        'onMessageUpdate',
                     );
                     dispatchMessageUpdateActivityCalled = true;
                 }
@@ -689,7 +689,7 @@ describe('ActivityHandler', function () {
                     assertFalseFlag(
                         dispatchMessageDeleteActivityCalled,
                         'dispatchMessageDeleteActivity',
-                        'onMessageDelete'
+                        'onMessageDelete',
                     );
                     dispatchMessageDeleteActivityCalled = true;
                 }
@@ -922,7 +922,7 @@ describe('ActivityHandler', function () {
                 assertFalseFlag(onTokenResponseEventCalled, 'onTokenResponseEvent', 'onTurn', 'onEvent');
                 assert(
                     !onTokenResponseEventCalled,
-                    'onEvent should not be true before onTurn and onEvent handlers complete.'
+                    'onEvent should not be true before onTurn and onEvent handlers complete.',
                 );
                 onTokenResponseEventCalled = true;
                 await next();
@@ -950,7 +950,7 @@ describe('ActivityHandler', function () {
                 assertFalseFlag(onUnrecognizedActivityTypeCalled, 'onUnrecognizedActivityType', 'onTurn');
                 assert(
                     !onUnrecognizedActivityTypeCalled,
-                    'onUnrecognizedActivityType should not be true before onTurn and onUnrecognizedActivityType handlers complete.'
+                    'onUnrecognizedActivityType should not be true before onTurn and onUnrecognizedActivityType handlers complete.',
                 );
                 onUnrecognizedActivityTypeCalled = true;
                 await next();

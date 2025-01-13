@@ -52,7 +52,7 @@ describe('BotFrameworkAdapter Streaming tests', function () {
         const adapter = new BotFrameworkAdapter();
 
         adapter.useNamedPipe(async (_) => {}, 'PipeyMcPipeface');
-        expect(adapter.streamingServer.disconnect()).to.not.throw;
+        expect(() => adapter.streamingServer.disconnect()).to.not.throw();
     });
 
     it("throws exception when trying to connect to a different named pipe than it's connected to", async function () {
@@ -66,7 +66,7 @@ describe('BotFrameworkAdapter Streaming tests', function () {
             {
                 message:
                     'This BotFrameworkAdapter instance is already connected to a different stream. Use a new instance to connect to the provided pipeName.',
-            }
+            },
         );
     });
 
@@ -83,7 +83,7 @@ describe('BotFrameworkAdapter Streaming tests', function () {
     it('isStreamingConnectionOpen returns false without a streamingServer', function () {
         const adapter = new BotFrameworkAdapter();
 
-        expect(adapter.isStreamingConnectionOpen).to.be.false;
+        expect(adapter.isStreamingConnectionOpen).to.equal(false);
     });
 
     it('sendActivities should throw an error if streaming connection is closed.', async function () {
@@ -102,8 +102,8 @@ describe('BotFrameworkAdapter Streaming tests', function () {
         await assert.rejects(
             adapter.sendActivities(new TurnContext(adapter, activity), [reply]),
             new Error(
-                'BotFrameworkAdapter.sendActivities(): Unable to send activity as Streaming connection is closed.'
-            )
+                'BotFrameworkAdapter.sendActivities(): Unable to send activity as Streaming connection is closed.',
+            ),
         );
     });
 
@@ -142,7 +142,7 @@ describe('BotFrameworkAdapter Streaming tests', function () {
             await adapter.useWebSocket(request, realSocket, Buffer.from([]), async (context) => {
                 await bot.run(context);
             });
-            expect(writeSpy.called).to.be.true;
+            expect(writeSpy.called).to.equal(true);
         });
 
         it('returns status code 401 when request is not authorized', async function () {
@@ -165,13 +165,13 @@ describe('BotFrameworkAdapter Streaming tests', function () {
                     expect(err.message).to.equal('Unauthorized. Is not authenticated');
                     const socketResponse = MockNetSocket.createNonSuccessResponse(
                         StatusCodes.UNAUTHORIZED,
-                        err.message
+                        err.message,
                     );
-                    expect(writeSpy.called).to.be.true;
-                    expect(writeSpy.calledWithExactly(socketResponse)).to.be.true;
-                    expect(destroySpy.calledOnceWithExactly()).to.be.true;
+                    expect(writeSpy.called).to.equal(true);
+                    expect(writeSpy.calledWithExactly(socketResponse)).to.equal(true);
+                    expect(destroySpy.calledOnceWithExactly()).to.equal(true);
                     return true;
-                }
+                },
             );
         });
 
@@ -193,11 +193,11 @@ describe('BotFrameworkAdapter Streaming tests', function () {
                     expect(err.message).to.equal("'authHeader' required.");
                     expect(err.statusCode).to.equal(StatusCodes.BAD_REQUEST);
                     const socketResponse = MockNetSocket.createNonSuccessResponse(StatusCodes.BAD_REQUEST, err.message);
-                    expect(writeSpy.called).to.be.true;
-                    expect(writeSpy.calledWithExactly(socketResponse)).to.be.true;
-                    expect(destroySpy.calledOnceWithExactly()).to.be.true;
+                    expect(writeSpy.called).to.equal(true);
+                    expect(writeSpy.calledWithExactly(socketResponse)).to.equal(true);
+                    expect(destroySpy.calledOnceWithExactly()).to.equal(true);
                     return true;
-                }
+                },
             );
         });
 
@@ -211,7 +211,7 @@ describe('BotFrameworkAdapter Streaming tests', function () {
 
             await assert.rejects(adapter.useWebSocket(request, socket, Buffer.from([]), uncallableLogic), (err) => {
                 expect(err.message).to.equal('Streaming logic needs to be provided to `useWebSocket`');
-                expect(useWebSocketSpy.called).to.be.true;
+                expect(useWebSocketSpy.called).to.equal(true);
                 return true;
             });
         });
@@ -257,7 +257,7 @@ describe('BotFrameworkAdapter Streaming tests', function () {
 
             const response = await adapter.processRequest(request);
             expect(response.statusCode).to.equal(StatusCodes.OK);
-            expect(response.streams[0].content).to.not.be.undefined;
+            expect(response.streams[0].content).to.not.equal(undefined);
         });
 
         it('returns user agent information from cache when a GET hits the version endpoint more than once', async function () {
@@ -269,11 +269,11 @@ describe('BotFrameworkAdapter Streaming tests', function () {
 
             const response = await adapter.processRequest(request);
             expect(response.statusCode).to.equal(StatusCodes.OK);
-            expect(response.streams[0].content).to.not.be.undefined;
+            expect(response.streams[0].content).to.not.equal(undefined);
 
             const response2 = await adapter.processRequest(request);
             expect(response2.statusCode).to.equal(StatusCodes.OK);
-            expect(response2.streams[0].content).to.not.be.undefined;
+            expect(response2.streams[0].content).to.not.equal(undefined);
         });
 
         it('should return 405 for unsupported methods to valid paths', async function () {
@@ -353,7 +353,7 @@ describe('BotFrameworkAdapter Streaming tests', function () {
 
             const response = await adapter.processRequest(request);
             expect(response.statusCode).to.equal(StatusCodes.INTERNAL_SERVER_ERROR);
-            expect(middlewareCalled).to.be.true;
+            expect(middlewareCalled).to.equal(true);
         });
 
         it('executes middleware', async function () {
@@ -379,8 +379,8 @@ describe('BotFrameworkAdapter Streaming tests', function () {
 
             const response = await adapter.processRequest(request);
             expect(response.statusCode).to.equal(StatusCodes.NOT_IMPLEMENTED);
-            expect(runSpy.called).to.be.true;
-            expect(middlewareCalled).to.be.true;
+            expect(runSpy.called).to.equal(true);
+            expect(middlewareCalled).to.equal(true);
         });
     });
 
@@ -398,7 +398,7 @@ describe('BotFrameworkAdapter Streaming tests', function () {
 
         const connection = adapter.createConnectorClient('fakeUrl');
         connection.sendRequest({ method: 'POST', url: 'testResultDotCom', body: 'Test body!' });
-        expect(writeSpy.called).to.be.true;
+        expect(writeSpy.called).to.equal(true);
     }).timeout(2000);
 
     describe('private methods', function () {
@@ -409,7 +409,7 @@ describe('BotFrameworkAdapter Streaming tests', function () {
             ];
 
             serviceUrls.forEach((serviceUrl) => {
-                expect(BotFrameworkAdapter.isStreamingServiceUrl(serviceUrl)).to.be.true;
+                expect(BotFrameworkAdapter.isStreamingServiceUrl(serviceUrl)).to.equal(true);
             });
         });
 
@@ -417,7 +417,7 @@ describe('BotFrameworkAdapter Streaming tests', function () {
             const serviceUrls = ['http://yayay.com', 'HTTPS://yayay.com'];
 
             serviceUrls.forEach((serviceUrl) => {
-                expect(BotFrameworkAdapter.isStreamingServiceUrl(serviceUrl)).to.be.false;
+                expect(BotFrameworkAdapter.isStreamingServiceUrl(serviceUrl)).to.equal(false);
             });
         });
     });

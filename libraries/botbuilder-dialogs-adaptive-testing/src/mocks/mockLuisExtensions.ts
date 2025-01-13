@@ -52,7 +52,7 @@ function flattenSettings(settings: Record<string, any>): Record<string, string> 
  */
 export function useMockLuisSettings(
     directory: string,
-    endpoint = 'https://westus.api.cognitive.microsoft.com'
+    endpoint = 'https://westus.api.cognitive.microsoft.com',
 ): Record<string, string> {
     const files = fs.readdirSync(directory);
     const settings = files

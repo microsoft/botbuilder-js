@@ -165,7 +165,7 @@ export class BeginSkill extends SkillDialog implements BeginSkillConfiguration {
                     const { conversationState, skillClient, conversationIdFactory, ...rest } = this;
                     return rest;
                 },
-            })
+            }),
         );
     }
 
