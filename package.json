@@ -15,12 +15,14 @@
     ],
     "nohoist": [
       "**/@types/selenium-webdriver",
+      "adaptive-expressions/d3-format",
       "botbuilder/filenamify",
       "botbuilder/chai",
       "botframework-streaming/chai"
     ],
     "nohoistComments": {
       "**/@types/selenium-webdriver": "This package is excluded from the root @types folder as it requires ES2015+, whereas some BotBuilder libraries support ES5+.",
+      "adaptive-expressions/d3-format": "This package is excluded because it's compiled as CJS by tsup as it's ESM-only.",
       "botbuilder/filenamify": "This package is excluded because it's compiled as CJS by tsup as it's ESM-only.",
       "botbuilder/chai": "This package is excluded because it's compiled as CJS by tsup as it's ESM-only.",
       "botframework-streaming/chai": "This package is excluded because it's compiled as CJS by tsup as it's ESM-only."
