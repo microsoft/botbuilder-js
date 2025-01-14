@@ -13,9 +13,13 @@ const lodashPlugin = require('eslint-plugin-lodash');
 const mochaPlugin = require('eslint-plugin-mocha');
 const prettierPluginRecommended = require('eslint-plugin-prettier/recommended');
 const securityPlugin = require('eslint-plugin-security');
+const botbulderPlugin = require('./tools/eslint/plugins/botbuilder');
 
 module.exports = [
     // Base configurations.
+    botbulderPlugin.configs.processors.disableLine({
+        'import/no-extraneous-dependencies': [/@microsoft\/recognizers-text/],
+    }),
     eslint.configs.recommended,
     ...tseslint.configs.recommended,
     importPlugin.flatConfigs.recommended,
@@ -38,7 +42,7 @@ module.exports = [
             '**/*.lu',
             '**/*.dialog',
             '**/*.js.map',
-            '**/vendors'
+            '**/vendors',
         ],
     },
 

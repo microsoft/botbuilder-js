@@ -128,7 +128,7 @@ describe('updateVersions', function () {
             const pkg: Package = {
                 name: 'sort',
                 version: '1.0.0',
-                main: 'index.js'
+                main: 'index.js',
             };
 
             const earlier = getPackageVersion(pkg, newVersion, {
