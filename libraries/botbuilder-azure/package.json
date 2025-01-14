@@ -35,7 +35,7 @@
     "botbuilder": "4.1.6",
     "botbuilder-stdlib": "4.1.6",
     "lodash": "^4.17.20",
-    "p-map": "^4.0.0"
+    "p-map": "^7.0.3"
   },
   "devDependencies": {
     "fs-extra": "^11.2.0",
@@ -46,9 +46,10 @@
     "build": "tsc -b",
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder-azure --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-azure .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Azure\" --readme none",
     "build:rollup": "yarn clean && yarn build && api-extractor run --verbose --local",
-    "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
+    "clean": "rimraf _ts3.4 lib vendors tsconfig.tsbuildinfo",
     "depcheck": "depcheck --config ../../.depcheckrc",
     "lint": "eslint . --config ../../eslint.config.cjs",
+    "prebuild": "tsup ./node_modules/p-map/*.js --format cjs --dts --out-dir vendors/p-map --clean --sourcemap",
     "postbuild": "downlevel-dts lib _ts3.4/lib --checksum",
     "test": "yarn build && nyc mocha tests/",
     "test:compat": "api-extractor run --verbose"
@@ -56,6 +57,7 @@
   "files": [
     "_ts3.4",
     "lib",
-    "src"
+    "src",
+    "vendors"
   ]
 }

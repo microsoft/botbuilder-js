@@ -15,8 +15,7 @@
     "fast-glob": "^3.3.2",
     "lodash": "^4.17.20",
     "minimatch": "^9.0.5",
-    "minimist": "^1.2.6",
-    "p-map": "^4.0.0"
+    "minimist": "^1.2.6"
   },
   "devDependencies": {
     "@types/minimist": "^1.2.5",

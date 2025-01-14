@@ -16,11 +16,15 @@
     "nohoist": [
       "**/@types/selenium-webdriver",
       "botbuilder/filenamify",
+      "botbuilder-azure/p-map",
+      "botbuilder-azure-blobs/p-map",
       "adaptive-expressions/d3-format"
     ],
     "nohoistComments": {
       "**/@types/selenium-webdriver": "This package is excluded from the root @types folder as it requires ES2015+, whereas some BotBuilder libraries support ES5+.",
       "botbuilder/filenamify": "This package is excluded because it's compiled as CJS by tsup as it's ESM-only.",
+      "botbuilder-azure/p-map": "This package is excluded because it's compiled as CJS by tsup as it's ESM-only.",
+      "botbuilder-azure-blobs/p-map": "This package is excluded because it's compiled as CJS by tsup as it's ESM-only.",
       "adaptive-expressions/d3-format": "This package is excluded because it's compiled as CJS by tsup as it's ESM-only."
     }
   },
