@@ -5,7 +5,7 @@
 
 const { AuthenticationConstants, CertificateAppCredentials, MicrosoftAppCredentials } = require('../');
 const { ok: assert, strictEqual } = require('assert');
-const { WebResource } = require('@azure/core-http');
+const { createWebResource } = require('botbuilder-stdlib/lib/azureCoreHttpCompat');
 
 const APP_ID = '2cd87869-38a0-4182-9251-d056e8f0ac24';
 const APP_PASSWORD = 'password';
@@ -43,13 +43,13 @@ describe('AppCredentials', function () {
     describe('signRequest', function () {
         it('should not sign request when appId is falsy', async function () {
             const creds = new MicrosoftAppCredentials('');
-            const webRequest = await creds.signRequest(new WebResource());
+            const webRequest = await creds.signRequest(createWebResource());
             assert(!webRequest.headers.Authorization);
         });
 
         it('should not sign request when appId is anonymous skill appId', async function () {
             const creds = new MicrosoftAppCredentials(AuthenticationConstants.AnonymousSkillAppId);
-            const webRequest = await creds.signRequest(new WebResource());
+            const webRequest = await creds.signRequest(createWebResource());
             assert(!webRequest.headers.Authorization);
         });
     });

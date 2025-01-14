@@ -27,7 +27,7 @@
     }
   },
   "dependencies": {
-    "@azure/core-http": "^3.0.4",
+    "@azure/core-rest-pipeline": "^1.18.1",
     "@azure/identity": "^4.4.1",
     "@azure/msal-node": "^2.13.1",
     "@types/jsonwebtoken": "9.0.6",

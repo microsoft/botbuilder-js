@@ -10,7 +10,8 @@
 
 'use strict';
 
-const { stripRequest, stripResponse, WebResource } = require("@azure/core-http");
+const { stripRequest, stripResponse } = require("../utils");
+const { createWebResource } = require("botbuilder-stdlib/lib/azureCoreHttpCompat");
 const uuid = require('uuid');
 
 /**
@@ -81,7 +82,7 @@ function _deleteValue(tagName, tagValue, options, callback) {
   }
 
   // Create HTTP transport objects
-  let httpRequest = new WebResource();
+  let httpRequest = createWebResource();
   httpRequest.method = 'DELETE';
   httpRequest.url = requestUrl;
   httpRequest.headers = {};
@@ -209,7 +210,7 @@ function _createOrUpdateValue(tagName, tagValue, options, callback) {
   }
 
   // Create HTTP transport objects
-  let httpRequest = new WebResource();
+  let httpRequest = createWebResource();
   httpRequest.method = 'PUT';
   httpRequest.url = requestUrl;
   httpRequest.headers = {};
@@ -369,7 +370,7 @@ function _createOrUpdate(tagName, options, callback) {
   }
 
   // Create HTTP transport objects
-  let httpRequest = new WebResource();
+  let httpRequest = createWebResource();
   httpRequest.method = 'PUT';
   httpRequest.url = requestUrl;
   httpRequest.headers = {};
@@ -526,7 +527,7 @@ function _deleteMethod(tagName, options, callback) {
   }
 
   // Create HTTP transport objects
-  let httpRequest = new WebResource();
+  let httpRequest = createWebResource();
   httpRequest.method = 'DELETE';
   httpRequest.url = requestUrl;
   httpRequest.headers = {};
@@ -643,7 +644,7 @@ function _list(options, callback) {
   }
 
   // Create HTTP transport objects
-  let httpRequest = new WebResource();
+  let httpRequest = createWebResource();
   httpRequest.method = 'GET';
   httpRequest.url = requestUrl;
   httpRequest.headers = {};
@@ -771,7 +772,7 @@ function _listNext(nextPageLink, options, callback) {
   requestUrl = requestUrl.replace('{nextLink}', nextPageLink);
 
   // Create HTTP transport objects
-  let httpRequest = new WebResource();
+  let httpRequest = createWebResource();
   httpRequest.method = 'GET';
   httpRequest.url = requestUrl;
   httpRequest.headers = {};

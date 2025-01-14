@@ -28,7 +28,7 @@ import { ObjectExpression } from 'adaptive-expressions';
 import { Recognizer } from 'botbuilder-dialogs';
 import { RecognizerConfiguration } from 'botbuilder-dialogs';
 import { RecognizerResult } from 'botbuilder-core';
-import { RequestOptionsBase } from '@azure/core-http';
+import { RequestOptionsBase } from 'botbuilder-stdlib/lib/azureCoreHttpCompat';
 import { ServiceCollection } from 'botbuilder-dialogs-adaptive-runtime-core';
 import { StringExpression } from 'adaptive-expressions';
 import { TemplateInterface } from 'botbuilder-dialogs';
