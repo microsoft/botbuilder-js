@@ -14,7 +14,7 @@ const mochaPlugin = require('eslint-plugin-mocha');
 const prettierPluginRecommended = require('eslint-plugin-prettier/recommended');
 const securityPlugin = require('eslint-plugin-security');
 
-module.exports = [
+module.exports = config = [
     // Base configurations.
     eslint.configs.recommended,
     ...tseslint.configs.recommended,
@@ -193,3 +193,18 @@ module.exports = [
         },
     },
 ];
+
+// Apply only to repository tools.
+if (
+    ['testing', 'tools', 'tsup', 'botbuilder-vendors', 'botbuilder-repo-utils'].some((tool) =>
+        process.cwd().includes(`\\${tool}`),
+    )
+) {
+    config.push({
+        rules: {
+            'security/detect-non-literal-fs-filename': 'off',
+            'mocha/no-exports': 'off',
+            'mocha/no-top-level-hooks': 'off',
+        },
+    });
+}

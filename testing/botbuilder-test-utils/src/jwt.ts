@@ -13,10 +13,18 @@ import { randomUUID } from 'crypto';
  * Registers mocha hooks for proper usage
  */
 export function mocha(): void {
-    before(() => nock.disableNetConnect());
-    beforeEach(() => nock.cleanAll());
-    after(() => nock.enableNetConnect());
-    afterEach(() => nock.cleanAll());
+    before(function () {
+        nock.disableNetConnect();
+    });
+    beforeEach(function () {
+        nock.cleanAll();
+    });
+    after(function () {
+        nock.enableNetConnect();
+    });
+    afterEach(function () {
+        nock.cleanAll();
+    });
 }
 
 export type Options = {
@@ -44,7 +52,6 @@ export type Result = {
 // encodes a forge big int as a base64 string
 const encodeBigInt = (bigInt: forge.jsbn.BigInteger): string =>
     // Note: the @types declarations for forge are wrong, `toString` does take a base.
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     forge.util.encode64(forge.util.hexToBytes((bigInt as any).toString(16)));
 
 const formatHost = (url: url.Url): string => `${url.protocol}//${url.host}`;
