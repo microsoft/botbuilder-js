@@ -13,6 +13,7 @@ const lodashPlugin = require('eslint-plugin-lodash');
 const mochaPlugin = require('eslint-plugin-mocha');
 const prettierPluginRecommended = require('eslint-plugin-prettier/recommended');
 const securityPlugin = require('eslint-plugin-security');
+const path = require('path');
 
 module.exports = config = [
     // Base configurations.
@@ -197,7 +198,7 @@ module.exports = config = [
 // Apply only to repository tools.
 if (
     ['testing', 'tools', 'tsup', 'botbuilder-vendors', 'botbuilder-repo-utils'].some((tool) =>
-        process.cwd().includes(`\\${tool}`),
+        process.cwd().includes(`${path.sep}${tool}`),
     )
 ) {
     config.push({
