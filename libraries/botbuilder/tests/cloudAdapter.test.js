@@ -87,7 +87,7 @@ describe('CloudAdapter', function () {
                 return this.configuration;
             }
 
-            set(_path, _val) { }
+            set(_path, _val) {}
         }
 
         const activity = { type: ActivityTypes.Invoke, value: 'invoke' };
