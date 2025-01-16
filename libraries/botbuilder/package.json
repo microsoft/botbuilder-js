@@ -30,6 +30,7 @@
     "@azure/core-http": "^3.0.4",
     "@azure/msal-node": "^2.13.1",
     "axios": "^1.7.7",
+    "base64url": "^3.0.0",
     "botbuilder-core": "4.1.6",
     "botbuilder-stdlib": "4.1.6",
     "botframework-connector": "4.1.6",
