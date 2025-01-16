@@ -136,7 +136,6 @@ describe('CloudAdapter', function () {
             mock.verify();
         });
 
-        //eslint-disable-next-line mocha/no-skipped-tests
         it('throws exception on expired token', async function () {
             const consoleStub = sandbox.stub(console, 'error');
 
@@ -153,11 +152,10 @@ describe('CloudAdapter', function () {
             const modulus = Buffer.from(publicKeyForge.n.toByteArray()).toString('base64url');
             const exponent = Buffer.from(publicKeyForge.e.toByteArray()).toString('base64url');
 
-            nock('https://login.microsoftonline.com')
-                .get('/common/v2.0/.well-known/openid-configuration')
-                .reply(200, {
-                    jwks_uri: 'https://login.microsoftonline.com/common/discovery/v2.0/keys',
-                });
+            // Mock the request to get jwks_uri
+            nock('https://login.microsoftonline.com').get('/common/v2.0/.well-known/openid-configuration').reply(200, {
+                jwks_uri: 'https://login.microsoftonline.com/common/discovery/v2.0/keys',
+            });
 
             // Mock the request to the jwks_uri
             nock('https://login.microsoftonline.com')
@@ -187,7 +185,9 @@ describe('CloudAdapter', function () {
             };
 
             // Create the token using the secret key
-            const token = "Bearer " + jwt.sign(payload, privateKey.export({ type: 'pkcs1', format: 'pem' }), { header, algorithm: 'RS256' });
+            const token =
+                'Bearer ' +
+                jwt.sign(payload, privateKey.export({ type: 'pkcs1', format: 'pem' }), { header, algorithm: 'RS256' });
 
             const activity = { type: ActivityTypes.Invoke, value: 'invoke' };
             // Mock request and response
