@@ -66,6 +66,9 @@ export class SharePointActivityHandler extends ActivityHandler {
                         return ActivityHandler.createInvokeResponse(
                             await this.onSharePointTaskHandleActionAsync(context, context.activity.value as AceRequest),
                         );
+                    case 'cardExtension/token':
+                        await this.onSignInInvoke(context);
+                        return ActivityHandler.createInvokeResponse();
                     default:
                         return super.onInvokeActivity(context);
                 }
@@ -137,7 +140,7 @@ export class SharePointActivityHandler extends ActivityHandler {
     }
 
     /**
-     * Override this in a derived class to provide logic for setting configuration pane properties.
+     * Override this in a derived class to provide logic for handling ACE action.
      *
      * @param _context - A strongly-typed context object for this turn
      * @param _aceRequest - The Ace invoke request value payload
@@ -147,6 +150,15 @@ export class SharePointActivityHandler extends ActivityHandler {
         _context: TurnContext,
         _aceRequest: AceRequest,
     ): Promise<HandleActionResponse> {
+        throw new Error('NotImplemented');
+    }
+
+    /**
+     * Override this method to support channel-specific behavior across multiple channels.
+     *
+     * @param _context - A strongly-typed context object for this turn
+     */
+    protected async onSignInInvoke(_context: TurnContext): Promise<void> {
         throw new Error('NotImplemented');
     }
 }
