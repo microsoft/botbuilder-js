@@ -49,7 +49,8 @@
     "botbuilder-test-utils": "0.0.0",
     "dotenv": "^16.4.5",
     "nock": "^13.5.5",
-    "should": "^13.2.3"
+    "should": "^13.2.3",
+    "uuid": "^11.0.5"
   },
   "scripts": {
     "build": "tsc -b",
