@@ -10,13 +10,12 @@ describe('ChannelServiceRoutes - Integration Tests', function () {
         const app = express();
         const handler = new ChannelServiceHandler(
             new SimpleCredentialProvider('', ''),
-            new AuthenticationConfiguration()
+            new AuthenticationConfiguration(),
         );
         const routes = new ChannelServiceRoutes(handler);
 
         routes.register(app);
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const bfRoutes = (app._router.stack as Array<any>).filter((layer) => {
             const route: express.IRoute = layer.route;
             if (route) {
@@ -31,13 +30,12 @@ describe('ChannelServiceRoutes - Integration Tests', function () {
         const app = express();
         const handler = new ChannelServiceHandler(
             new SimpleCredentialProvider('', ''),
-            new AuthenticationConfiguration()
+            new AuthenticationConfiguration(),
         );
         const routes = new ChannelServiceRoutes(handler);
 
         routes.register(app, '/test');
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const bfRoutes = (app._router.stack as Array<any>).filter((layer) => {
             const route: express.IRoute = layer.route;
             if (route) {
@@ -52,7 +50,7 @@ describe('ChannelServiceRoutes - Integration Tests', function () {
         const server = createServer();
         const handler = new ChannelServiceHandler(
             new SimpleCredentialProvider('', ''),
-            new AuthenticationConfiguration()
+            new AuthenticationConfiguration(),
         );
         const routes = new ChannelServiceRoutes(handler);
 
@@ -76,7 +74,7 @@ describe('ChannelServiceRoutes - Integration Tests', function () {
         const server = createServer();
         const handler = new ChannelServiceHandler(
             new SimpleCredentialProvider('', ''),
-            new AuthenticationConfiguration()
+            new AuthenticationConfiguration(),
         );
         const routes = new ChannelServiceRoutes(handler);
 

@@ -14,8 +14,9 @@ const mochaPlugin = require('eslint-plugin-mocha');
 const prettierPluginRecommended = require('eslint-plugin-prettier/recommended');
 const securityPlugin = require('eslint-plugin-security');
 const botbuilderPlugin = require('./tools/eslint/plugins/botbuilder');
+const path = require('path');
 
-module.exports = [
+module.exports = config = [
     // Base configurations.
     botbuilderPlugin.configs.processors.disableLine({
         'import/no-extraneous-dependencies': [/@microsoft\/recognizers-text/],
@@ -197,3 +198,18 @@ module.exports = [
         },
     },
 ];
+
+// Apply only to repository tools.
+if (
+    ['testing', 'tools', 'tsup', 'botbuilder-vendors', 'botbuilder-repo-utils'].some((tool) =>
+        process.cwd().includes(`${path.sep}${tool}`),
+    )
+) {
+    config.push({
+        rules: {
+            'security/detect-non-literal-fs-filename': 'off',
+            'mocha/no-exports': 'off',
+            'mocha/no-top-level-hooks': 'off',
+        },
+    });
+}

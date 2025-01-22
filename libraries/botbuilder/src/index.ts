@@ -30,3 +30,4 @@ export { Request, Response, WebRequest, WebResponse } from './interfaces';
 export { StatusCodeError } from './statusCodeError';
 export { StreamingHttpClient, TokenResolver } from './streaming';
 export { SharePointActivityHandler } from './sharepoint/sharePointActivityHandler';
+export { SharePointSSOTokenExchangeMiddleware } from './sharepoint/sharePointSSOTokenExchangeMiddleware';
