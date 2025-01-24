@@ -17,7 +17,7 @@ import { Activity, PagedResult, TranscriptInfo, TranscriptStore } from 'botbuild
 import { maybeCast } from 'botbuilder-stdlib';
 import { escape } from 'querystring';
 import StreamConsumers from 'stream/consumers';
-import pmap from 'p-map';
+import pmap from '../vendors/p-map';
 import { BlobStorageSettings } from './blobStorage';
 
 const ContainerNameCheck = new RegExp('^[a-z0-9](?!.*--)[a-z0-9-]{1,61}[a-z0-9]$');
