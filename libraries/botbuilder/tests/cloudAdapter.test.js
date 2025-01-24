@@ -6,6 +6,12 @@ const httpMocks = require('node-mocks-http');
 const net = require('net');
 const { expect } = require('../vendors/chai');
 const sinon = require('sinon');
+const jwt = require('jsonwebtoken');
+const { v4: uuidv4 } = require('uuid');
+const nock = require('nock');
+const forge = require('node-forge');
+const { generateKeyPairSync } = require('crypto');
+
 const {
     AuthenticationConfiguration,
     AuthenticationConstants,
@@ -130,19 +136,64 @@ describe('CloudAdapter', function () {
             mock.verify();
         });
 
-        //eslint-disable-next-line mocha/no-skipped-tests
-        it.skip('throws exception on expired token', async function () {
+        it('throws exception on expired token', async function () {
             const consoleStub = sandbox.stub(console, 'error');
 
-            // Expired token with removed AppID
-            const authorization =
-                'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Ii1LSTNROW5OUjdiUm9meG1lWm9YcWJIWkdldyIsImtpZCI6Ii1LSTNROW5OUjdiUm9meG1lWm9YcWJIWkdldyJ9.eyJhdWQiOiJodHRwczovL2FwaS5ib3RmcmFtZXdvcmsuY29tIiwiaXNzIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvZDZkNDk0MjAtZjM5Yi00ZGY3LWExZGMtZDU5YTkzNTg3MWRiLyIsImlhdCI6MTY5Mjg3MDMwMiwibmJmIjoxNjkyODcwMzAyLCJleHAiOjE2OTI5NTcwMDIsImFpbyI6IkUyRmdZUGhhdFZ6czVydGFFYTlWbDN2ZnIyQ2JBZ0E9IiwiYXBwaWQiOiIxNWYwMTZmZS00ODhjLTQwZTktOWNiZS00Yjk0OGY5OGUyMmMiLCJhcHBpZGFjciI6IjEiLCJpZHAiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC9kNmQ0OTQyMC1mMzliLTRkZjctYTFkYy1kNTlhOTM1ODcxZGIvIiwicmgiOiIwLkFXNEFJSlRVMXB2ejkwMmgzTldhazFoeDIwSXpMWTBwejFsSmxYY09EcS05RnJ4dUFBQS4iLCJ0aWQiOiJkNmQ0OTQyMC1mMzliLTRkZjctYTFkYy1kNTlhOTM1ODcxZGIiLCJ1dGkiOiJkenVwa1dWd2FVT2x1RldkbnlvLUFBIiwidmVyIjoiMS4wIn0.sbQH997Q2GDKiiYd6l5MIz_XNfXypJd6zLY9xjtvEgXMBB0x0Vu3fv9W0nM57_ZipQiZDTZuSQA5BE30KBBwU-ZVqQ7MgiTkmE9eF6Ngie_5HwSr9xMK3EiDghHiOP9pIj3oEwGOSyjR5L9n-7tLSdUbKVyV14nS8OQtoPd1LZfoZI3e7tVu3vx8Lx3KzudanXX8Vz7RKaYndj3RyRi4wEN5hV9ab40d7fQsUzygFd5n_PXC2rs0OhjZJzjCOTC0VLQEn1KwiTkSH1E-OSzkrMltn1sbhD2tv_H-4rqQd51vAEJ7esC76qQjz_pfDRLs6T2jvJyhd5MZrN_MT0TqlA';
+            const { publicKey, privateKey } = generateKeyPairSync('rsa', {
+                modulusLength: 2048, // Key length (in bits)
+            });
+
+            const fakeKid = uuidv4();
+            const fakeTid = 'd6d49420-f39b-4df7-a1dc-d59a935871db';
+
+            // Parse public key to get modulus and exponent
+            const publicKeyPem = publicKey.export({ type: 'spki', format: 'pem' });
+            const publicKeyForge = forge.pki.publicKeyFromPem(publicKeyPem);
+            const modulus = Buffer.from(publicKeyForge.n.toByteArray()).toString('base64url');
+            const exponent = Buffer.from(publicKeyForge.e.toByteArray()).toString('base64url');
+
+            // Mock the request to get jwks_uri
+            nock('https://login.microsoftonline.com').get('/common/v2.0/.well-known/openid-configuration').reply(200, {
+                jwks_uri: 'https://login.microsoftonline.com/common/discovery/v2.0/keys',
+            });
+
+            // Mock the request to the jwks_uri
+            nock('https://login.microsoftonline.com')
+                .get('/common/discovery/v2.0/keys')
+                .reply(200, {
+                    keys: [
+                        {
+                            kty: 'RSA',
+                            use: 'sig',
+                            kid: fakeKid,
+                            e: exponent,
+                            n: modulus,
+                        },
+                    ],
+                });
+
+            // Mock expired token
+            const header = { alg: 'RS256', typ: 'JWT', kid: fakeKid };
+            const payload = {
+                aud: 'https://api.botframework.com',
+                iss: `https://login.microsoftonline.com/${fakeTid}/v2.0`,
+                iat: Math.floor(Date.now() / 1000) - 7200, // Issued 2 hours ago
+                nbf: Math.floor(Date.now() / 1000) - 7200, // Not valid before 2 hours ago
+                exp: Math.floor(Date.now() / 1000) - 3600, // Expired 1 hour ago
+                tid: fakeTid,
+                ver: '2.0',
+            };
+
+            // Create the token using the secret key
+            const token =
+                'Bearer ' +
+                jwt.sign(payload, privateKey.export({ type: 'pkcs1', format: 'pem' }), { header, algorithm: 'RS256' });
 
             const activity = { type: ActivityTypes.Invoke, value: 'invoke' };
-
+            // Mock request and response
             const req = httpMocks.createRequest({
                 method: 'POST',
-                headers: { authorization },
+                headers: { authorization: token },
                 body: activity,
             });
 
@@ -179,7 +230,6 @@ describe('CloudAdapter', function () {
             const adapter = new CloudAdapter(botFrameworkAuthentication);
 
             await adapter.process(req, res, logic);
-
             assert.equal(StatusCodes.UNAUTHORIZED, res.statusCode);
             expect(consoleStub.calledWithMatch({ message: 'The token has expired' })).to.equal(true);
         });
