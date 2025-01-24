@@ -4,6 +4,7 @@ const { EmulatorValidation, AuthenticationConstants } = require('../..');
 const { strictEqual } = require('assert');
 
 function generateMockBearerToken(issuer) {
+    // [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="This is a fake secret.")]
     const secretKey = 'ThisIsASuperMockSecretKey123456789';
     const tenantId = uuidv4();
     const completeIssuer = issuer ? issuer.replace('{0}', tenantId) : null;
