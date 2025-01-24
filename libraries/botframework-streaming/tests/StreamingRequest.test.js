@@ -1,7 +1,7 @@
 const StreamingRequest = require('../lib/streamingRequest');
 const HttpContent = require('../lib/httpContentStream');
 const SubscribableStream = require('../lib/subscribableStream');
-const chai = require('chai');
+const chai = require('../vendors/chai');
 const expect = chai.expect;
 
 describe('Streaming Extensions Request tests', function () {

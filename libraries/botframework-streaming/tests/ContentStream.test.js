@@ -3,7 +3,7 @@ const { PayloadAssembler } = require('../lib/assemblers');
 const { PayloadTypes } = require('../lib/payloads/payloadTypes');
 const { StreamManager } = require('../lib/payloads/streamManager');
 const { SubscribableStream } = require('../lib/subscribableStream');
-const { expect } = require('chai');
+const { expect } = require('../vendors/chai');
 
 class TestPayloadAssembler {
     constructor(content) {

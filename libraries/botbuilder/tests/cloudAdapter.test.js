@@ -4,7 +4,7 @@
 const assert = require('assert');
 const httpMocks = require('node-mocks-http');
 const net = require('net');
-const { expect } = require('chai');
+const { expect } = require('../vendors/chai');
 const sinon = require('sinon');
 const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');

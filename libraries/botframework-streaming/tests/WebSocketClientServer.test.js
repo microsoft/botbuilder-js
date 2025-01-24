@@ -1,4 +1,4 @@
-const { expect } = require('chai');
+const { expect } = require('../vendors/chai');
 const { Server } = require('ws');
 const { spy, stub } = require('sinon');
 
