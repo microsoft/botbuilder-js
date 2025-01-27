@@ -1,5 +1,5 @@
 const { PayloadConstants } = require('../lib/payloads/payloadConstants');
-const { expect } = require('chai');
+const { expect } = require('../vendors/chai');
 
 describe('PayloadConstants', function () {
     it('has the proper value for MaxPayloadLength', function () {

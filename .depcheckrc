@@ -1,4 +1,6 @@
 ignores: [
+    "chai",
+    "p-map",
     "filenamify",
     "mocha",
     "rimraf",

@@ -1,5 +1,5 @@
 const { HttpContent, StreamingResponse, SubscribableStream } = require('..');
-const { expect } = require('chai');
+const { expect } = require('../vendors/chai');
 
 describe('Streaming Extensions Response Tests', function () {
     it('can set the response body', function () {
