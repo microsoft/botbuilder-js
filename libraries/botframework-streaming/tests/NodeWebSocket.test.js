@@ -1,4 +1,4 @@
-const { expect } = require('chai');
+const { expect } = require('../vendors/chai');
 const { FauxSock, FauxSocket, TestRequest, waitFor } = require('./helpers');
 const { NodeWebSocket } = require('../');
 const { randomBytes } = require('crypto');

@@ -3,7 +3,7 @@
 
 import * as z from 'zod';
 import StreamConsumers from 'stream/consumers';
-import pmap from 'p-map';
+import pmap from '../vendors/p-map';
 import {
     AnonymousCredential,
     ContainerClient,

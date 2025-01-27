@@ -570,6 +570,9 @@ export enum Severity {
     Warning = 2
 }
 
+// @public (undocumented)
+export const sharePointTokenExchange = "cardExtension/token";
+
 // @public
 export class ShowTypingMiddleware implements Middleware {
     constructor(delay?: number, period?: number);

@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
-    "lint": "eslint .",
+    "lint": "eslint . --config ../../eslint.config.cjs",
     "test": "npm-run-all test:gen test:mocha",
     "test:gen": "ts-node ./generateTests.ts",
     "test:mocha": "mocha ./tests/generated/*.test.js --parallel"
@@ -36,8 +36,7 @@
     "botframework-config": "4.1.6",
     "botframework-connector": "4.1.6",
     "botframework-schema": "4.1.6",
-    "botframework-streaming": "4.1.6",
-    "eslint-plugin-only-warn": "^1.1.0"
+    "botframework-streaming": "4.1.6"
   },
   "devDependencies": {
     "mocha": "^10.7.3"

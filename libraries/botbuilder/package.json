@@ -43,9 +43,11 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "chai": "^4.5.0",
+    "chai": "^5.1.2",
+    "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.20",
     "nock": "^13.5.5",
+    "node-forge": "^1.3.1",
     "node-mocks-http": "^1.16.0"
   },
   "scripts": {
@@ -55,7 +57,9 @@
     "clean": "rimraf _ts3.4 lib vendors tsconfig.tsbuildinfo",
     "depcheck": "depcheck --config ../../.depcheckrc",
     "lint": "eslint . --config ../../eslint.config.cjs",
-    "prebuild": "tsup ./node_modules/filenamify/*.js --format cjs --dts --out-dir vendors/filenamify --clean --sourcemap",
+    "prebuild": "yarn prebuild-filenamify && yarn prebuild-chai",
+    "prebuild-filenamify": "tsup ./node_modules/filenamify/*.js --format cjs --dts --out-dir vendors/filenamify --clean --sourcemap",
+    "prebuild-chai": "tsup ./node_modules/chai/*.js --format cjs --dts --out-dir vendors/chai --clean --sourcemap --target es2020 --external jiti --external @web/dev-server-rollup --external @rollup/plugin-commonjs",
     "postbuild": "downlevel-dts lib _ts3.4/lib --checksum",
     "test": "npm-run-all build test:mocha",
     "test:compat": "api-extractor run --verbose",

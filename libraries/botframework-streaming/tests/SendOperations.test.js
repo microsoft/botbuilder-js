@@ -1,7 +1,7 @@
 const { HttpContent, StreamingRequest, StreamingResponse, SubscribableStream } = require('..');
 const { PayloadSender } = require('../lib/payloadTransport');
 const { SendOperations } = require('../lib/payloads');
-const { expect } = require('chai');
+const { expect } = require('../vendors/chai');
 
 describe('SendOperations', function () {
     it('constructs a new instance', function () {
