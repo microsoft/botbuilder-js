@@ -391,7 +391,7 @@ export interface CoreAppCredentials {
 }
 
 // @public
-export function createBotFrameworkAuthenticationFromConfiguration(configuration: Configuration, credentialsFactory?: ServiceClientCredentialsFactory, authConfiguration?: AuthenticationConfiguration, botFrameworkClientFetch?: (input: RequestInfo, init?: RequestInit) => Promise<Response>, connectorClientOptions?: ConnectorClientOptions): BotFrameworkAuthentication;
+export function createBotFrameworkAuthenticationFromConfiguration(configuration: Configuration | null, credentialsFactory?: ServiceClientCredentialsFactory, authConfiguration?: AuthenticationConfiguration, botFrameworkClientFetch?: (input: RequestInfo, init?: RequestInit) => Promise<Response>, connectorClientOptions?: ConnectorClientOptions): BotFrameworkAuthentication;
 
 // @public
 export function createServiceClientCredentialFactoryFromConfiguration(configuration: Configuration): ConfigurationServiceClientCredentialFactory;
