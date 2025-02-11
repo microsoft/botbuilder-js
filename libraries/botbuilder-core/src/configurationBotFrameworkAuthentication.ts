@@ -112,13 +112,14 @@ const TypedOptions = z
     })
     .partial();
 
+type ZodOptions = z.infer<typeof TypedOptions>;
+
 /**
  * Contains settings used to configure a [ConfigurationBotFrameworkAuthentication](xref:botbuilder-core.ConfigurationBotFrameworkAuthentication) instance.
  */
-export interface ConfigurationBotFrameworkAuthenticationOptions extends z.infer<typeof TypedOptions>  {
+export interface ConfigurationBotFrameworkAuthenticationOptions extends ZodOptions {
     [key: string]: string | boolean | undefined;
 }
-
 
 /**
  * Creates a [BotFrameworkAuthentication](xref:botframework-connector.BotFrameworkAuthentication) instance from an object with the authentication values or a [Configuration](xref:botbuilder-dialogs-adaptive-runtime-core.Configuration) instance.

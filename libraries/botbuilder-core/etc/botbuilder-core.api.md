@@ -343,7 +343,13 @@ export class ComponentRegistration {
 
 // @public
 export class ConfigurationBotFrameworkAuthentication extends BotFrameworkAuthentication {
-    constructor(botFrameworkAuthConfig?: ConfigurationBotFrameworkAuthenticationOptions, credentialsFactory?: ServiceClientCredentialsFactory, authConfiguration?: AuthenticationConfiguration, botFrameworkClientFetch?: (input: RequestInfo, init?: RequestInit) => Promise<Response>, connectorClientOptions?: ConnectorClientOptions);
+    constructor(
+    botFrameworkAuthConfig?: ConfigurationBotFrameworkAuthenticationOptions,
+    credentialsFactory?: ServiceClientCredentialsFactory,
+    authConfiguration?: AuthenticationConfiguration,
+    botFrameworkClientFetch?: (input: RequestInfo, init?: RequestInit) => Promise<Response>,
+    connectorClientOptions?: ConnectorClientOptions,
+    );
     authenticateChannelRequest(authHeader: string): Promise<ClaimsIdentity>;
     authenticateRequest(activity: Activity, authHeader: string): Promise<AuthenticateRequestResult>;
     authenticateStreamingRequest(authHeader: string, channelIdHeader: string): Promise<AuthenticateRequestResult>;
@@ -355,7 +361,10 @@ export class ConfigurationBotFrameworkAuthentication extends BotFrameworkAuthent
 // Warning: (ae-forgotten-export) The symbol "TypedOptions" needs to be exported by the entry point index.d.ts
 //
 // @public
-export type ConfigurationBotFrameworkAuthenticationOptions = z.infer<typeof TypedOptions>;
+export interface ConfigurationBotFrameworkAuthenticationOptions extends z.infer<typeof TypedOptions>  {
+    // (undocumented)
+    [key: string]: string | boolean | undefined;
+}
 
 // @public
 export class ConfigurationServiceClientCredentialFactory extends PasswordServiceClientCredentialFactory {
@@ -391,7 +400,13 @@ export interface CoreAppCredentials {
 }
 
 // @public
-export function createBotFrameworkAuthenticationFromConfiguration(configuration: Configuration, credentialsFactory?: ServiceClientCredentialsFactory, authConfiguration?: AuthenticationConfiguration, botFrameworkClientFetch?: (input: RequestInfo, init?: RequestInit) => Promise<Response>, connectorClientOptions?: ConnectorClientOptions): BotFrameworkAuthentication;
+export function createBotFrameworkAuthenticationFromConfiguration(
+configuration: Configuration,
+credentialsFactory?: ServiceClientCredentialsFactory,
+authConfiguration?: AuthenticationConfiguration,
+botFrameworkClientFetch?: (input: RequestInfo, init?: RequestInit) => Promise<Response>,
+connectorClientOptions?: ConnectorClientOptions,
+): BotFrameworkAuthentication;
 
 // @public
 export function createServiceClientCredentialFactoryFromConfiguration(configuration: Configuration): ConfigurationServiceClientCredentialFactory;
@@ -570,9 +585,6 @@ export enum Severity {
     Warning = 2
 }
 
-// @public (undocumented)
-export const sharePointTokenExchange = "cardExtension/token";
-
 // @public
 export class ShowTypingMiddleware implements Middleware {
     constructor(delay?: number, period?: number);
@@ -627,6 +639,7 @@ export class SkypeMentionNormalizeMiddleware implements Middleware {
 export interface StatePropertyAccessor<T = any> {
     delete(context: TurnContext): Promise<void>;
     get(context: TurnContext): Promise<T | undefined>;
+    // (undocumented)
     get(context: TurnContext, defaultValue: T): Promise<T>;
     set(context: TurnContext, value: T): Promise<void>;
 }
