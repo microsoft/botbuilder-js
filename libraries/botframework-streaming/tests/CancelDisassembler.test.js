@@ -1,4 +1,4 @@
-const { expect } = require('chai');
+const { expect } = require('../vendors/chai');
 const { CancelDisassembler } = require('../lib/disassemblers');
 const { PayloadSender } = require('../lib/payloadTransport');
 const { PayloadTypes } = require('../lib/payloads');

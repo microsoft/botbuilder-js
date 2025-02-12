@@ -613,6 +613,8 @@ export enum Channels {
     // (undocumented)
     Line = "line",
     // (undocumented)
+    M365 = "m365extensions",
+    // (undocumented)
     Msteams = "msteams",
     // (undocumented)
     Omni = "omnichannel",
@@ -2899,6 +2901,8 @@ export interface QuickViewResponse {
     data: QuickViewData;
     externalLink: ExternalLinkActionParameters;
     focusParameters: FocusParameters;
+    postSsoViewId?: string;
+    requiresSso?: boolean;
     template: AdaptiveCard;
     title: string;
     viewId: string;

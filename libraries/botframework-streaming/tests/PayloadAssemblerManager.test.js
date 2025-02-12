@@ -1,6 +1,6 @@
 const { SubscribableStream } = require('../lib/subscribableStream');
 const { PayloadAssemblerManager, PayloadTypes, StreamManager } = require('../lib/payloads');
-const { expect } = require('chai');
+const { expect } = require('../vendors/chai');
 
 const streamManager = new StreamManager();
 

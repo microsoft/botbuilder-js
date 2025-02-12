@@ -75,28 +75,29 @@ export namespace EmulatorValidation {
             return false;
         }
 
+        const validTokenIssuers = ToBotFromBotOrEmulatorTokenValidationParameters.issuer;
+
         //Validation to manage the issuer object as a string.
-        if (Array.isArray(ToBotFromBotOrEmulatorTokenValidationParameters.issuer)) {
+        if (Array.isArray(validTokenIssuers)) {
             const tenantId = token?.payload[AuthenticationConstants.TenantIdClaim] ?? '';
 
             //Validate if there is an existing issuer with the same tid value.
-            if (
-                tenantId != '' &&
-                ToBotFromBotOrEmulatorTokenValidationParameters.issuer.find((issuer) => issuer.includes(tenantId)) ==
-                    null
-            ) {
+            if (tenantId != '' && validTokenIssuers.find((issuer) => issuer.includes(tenantId)) == null) {
                 //If the issuer doesn't exist, this is added using the Emulator token issuer structure.
                 //This allows use of the SingleTenant authentication through Emulator.
-                const newIssuer = AuthenticationConstants.ValidTokenIssuerUrlTemplateV1 + `${tenantId}/`;
-                ToBotFromBotOrEmulatorTokenValidationParameters.issuer.push(newIssuer);
+                validTokenIssuers.push(`${AuthenticationConstants.ValidTokenIssuerUrlTemplateV1}${tenantId}/`);
+                validTokenIssuers.push(`${AuthenticationConstants.ValidTokenIssuerUrlTemplateV2}${tenantId}/v2.0`);
+                validTokenIssuers.push(
+                    `${AuthenticationConstants.ValidGovernmentTokenIssuerUrlTemplateV1}${tenantId}/`,
+                );
+                validTokenIssuers.push(
+                    `${AuthenticationConstants.ValidGovernmentTokenIssuerUrlTemplateV2}${tenantId}/v2.0`,
+                );
             }
         }
 
         // Is the token issues by a source we consider to be the emulator?
-        if (
-            ToBotFromEmulatorTokenValidationParameters.issuer &&
-            ToBotFromEmulatorTokenValidationParameters.issuer.indexOf(issuer) === -1
-        ) {
+        if (validTokenIssuers && validTokenIssuers.indexOf(issuer) === -1) {
             // Not a Valid Issuer. This is NOT a Bot Framework Emulator Token.
             return false;
         }

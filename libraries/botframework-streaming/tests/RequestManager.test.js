@@ -1,5 +1,5 @@
 const { RequestManager } = require('../lib/payloads');
-const { expect } = require('chai');
+const { expect } = require('../vendors/chai');
 const { expectEventually } = require('./helpers');
 
 const REQUEST_ID = '123';

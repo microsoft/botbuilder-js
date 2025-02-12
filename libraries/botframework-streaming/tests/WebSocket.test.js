@@ -1,4 +1,4 @@
-const { expect } = require('chai');
+const { expect } = require('../vendors/chai');
 const { spy } = require('sinon');
 
 const { BrowserWebSocket } = require('../lib/index-browser');

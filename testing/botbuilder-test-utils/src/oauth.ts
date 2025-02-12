@@ -8,10 +8,18 @@ import nock from 'nock'; // eslint-disable-line import/no-extraneous-dependencie
  * Registers mocha hooks for proper usage
  */
 export function mocha(): void {
-    before(() => nock.disableNetConnect());
-    beforeEach(() => nock.cleanAll());
-    after(() => nock.enableNetConnect());
-    afterEach(() => nock.cleanAll());
+    before(function () {
+        nock.disableNetConnect();
+    });
+    beforeEach(function () {
+        nock.cleanAll();
+    });
+    after(function () {
+        nock.enableNetConnect();
+    });
+    afterEach(function () {
+        nock.cleanAll();
+    });
 }
 
 export type Options = {
