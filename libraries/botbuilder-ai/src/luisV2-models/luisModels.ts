@@ -4,7 +4,7 @@
  * license information.
  */
 
-import { RequestOptionsBase, HttpResponse } from '@azure/core-http';
+import { RequestOptionsBase, HttpOperationResponse as HttpResponse } from 'botbuilder-stdlib/lib/azureCoreHttpCompat';
 
 /**
  * Represents an intent prediction.

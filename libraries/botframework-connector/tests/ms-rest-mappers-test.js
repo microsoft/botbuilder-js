@@ -1,6 +1,6 @@
-const { Serializer } = require('@azure/core-http');
+const { createSerializer } = require('botbuilder-stdlib/lib/azureCoreHttpCompat');
 const Mappers = require('../lib/connectorApi/models/mappers');
-const serializer = new Serializer({ Activity: Mappers.Activity, Entity: Mappers.Entity });
+const serializer = createSerializer({ Activity: Mappers.Activity, Entity: Mappers.Entity });
 const assert = require('assert');
 
 describe('serialize', function () {

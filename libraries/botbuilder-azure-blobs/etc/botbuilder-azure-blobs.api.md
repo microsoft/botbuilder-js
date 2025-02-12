@@ -11,7 +11,7 @@ import { Storage as Storage_2 } from 'botbuilder-core';
 import { StoragePipelineOptions } from '@azure/storage-blob';
 import { StorageSharedKeyCredential } from '@azure/storage-blob';
 import { StoreItems } from 'botbuilder-core';
-import { TokenCredential } from '@azure/core-http';
+import { TokenCredential } from 'botbuilder-stdlib/lib/azureCoreHttpCompat';
 import { TranscriptInfo } from 'botbuilder-core';
 import { TranscriptStore } from 'botbuilder-core';
 

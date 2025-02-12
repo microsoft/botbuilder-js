@@ -10,7 +10,8 @@
 
 'use strict';
 
-const { stripRequest, stripResponse, WebResource } = require("@azure/core-http");
+const { stripRequest, stripResponse } = require("../utils");
+const { createWebResource } = require("botbuilder-stdlib/lib/azureCoreHttpCompat");
 const uuid = require('uuid');
 
 /**
@@ -178,7 +179,7 @@ function _checkExistence(resourceGroupName, deploymentName, options, callback) {
   }
 
   // Create HTTP transport objects
-  let httpRequest = new WebResource();
+  let httpRequest = createWebResource();
   httpRequest.method = 'HEAD';
   httpRequest.url = requestUrl;
   httpRequest.headers = {};
@@ -471,7 +472,7 @@ function _get(resourceGroupName, deploymentName, options, callback) {
   }
 
   // Create HTTP transport objects
-  let httpRequest = new WebResource();
+  let httpRequest = createWebResource();
   httpRequest.method = 'GET';
   httpRequest.url = requestUrl;
   httpRequest.headers = {};
@@ -643,7 +644,7 @@ function _cancel(resourceGroupName, deploymentName, options, callback) {
   }
 
   // Create HTTP transport objects
-  let httpRequest = new WebResource();
+  let httpRequest = createWebResource();
   httpRequest.method = 'POST';
   httpRequest.url = requestUrl;
   httpRequest.headers = {};
@@ -857,7 +858,7 @@ function _validate(resourceGroupName, deploymentName, parameters, options, callb
   }
 
   // Create HTTP transport objects
-  let httpRequest = new WebResource();
+  let httpRequest = createWebResource();
   httpRequest.method = 'POST';
   httpRequest.url = requestUrl;
   httpRequest.headers = {};
@@ -1058,7 +1059,7 @@ function _exportTemplate(resourceGroupName, deploymentName, options, callback) {
   }
 
   // Create HTTP transport objects
-  let httpRequest = new WebResource();
+  let httpRequest = createWebResource();
   httpRequest.method = 'POST';
   httpRequest.url = requestUrl;
   httpRequest.headers = {};
@@ -1229,7 +1230,7 @@ function _listByResourceGroup(resourceGroupName, options, callback) {
   }
 
   // Create HTTP transport objects
-  let httpRequest = new WebResource();
+  let httpRequest = createWebResource();
   httpRequest.method = 'GET';
   httpRequest.url = requestUrl;
   httpRequest.headers = {};
@@ -1407,7 +1408,7 @@ function _beginDeleteMethod(resourceGroupName, deploymentName, options, callback
   }
 
   // Create HTTP transport objects
-  let httpRequest = new WebResource();
+  let httpRequest = createWebResource();
   httpRequest.method = 'DELETE';
   httpRequest.url = requestUrl;
   httpRequest.headers = {};
@@ -1623,7 +1624,7 @@ function _beginCreateOrUpdate(resourceGroupName, deploymentName, parameters, opt
   }
 
   // Create HTTP transport objects
-  let httpRequest = new WebResource();
+  let httpRequest = createWebResource();
   httpRequest.method = 'PUT';
   httpRequest.url = requestUrl;
   httpRequest.headers = {};
@@ -1781,7 +1782,7 @@ function _listByResourceGroupNext(nextPageLink, options, callback) {
   requestUrl = requestUrl.replace('{nextLink}', nextPageLink);
 
   // Create HTTP transport objects
-  let httpRequest = new WebResource();
+  let httpRequest = createWebResource();
   httpRequest.method = 'GET';
   httpRequest.url = requestUrl;
   httpRequest.headers = {};
