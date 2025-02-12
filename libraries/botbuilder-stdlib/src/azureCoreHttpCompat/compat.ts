@@ -14,7 +14,7 @@ export {
 } from '@azure/core-http-compat';
 
 // Re-export. Can't access the HttpHeaders directly from the @azure/core-http-compat package because it is not defined in the package.json 'exports' property.
-export { HttpHeaders } from '../../node_modules/@azure/core-http-compat/dist/commonjs/util';
+export { HttpHeaders } from './util';
 
 // Re-export only TokenCredential, isTokenCredential as they are the same as the deprecated core-http library.
 export { TokenCredential, isTokenCredential } from '@azure/core-auth';
@@ -30,7 +30,7 @@ export {
 
 import { WebResourceLike } from '@azure/core-http-compat';
 import { PipelineRequestOptions, createPipelineRequest } from '@azure/core-rest-pipeline';
-import { toWebResourceLike } from '../../node_modules/@azure/core-http-compat/dist/commonjs/util';
+import { toWebResourceLike } from './util';
 
 /**
  * Creates a new WebResourceLike object from the provided resource.

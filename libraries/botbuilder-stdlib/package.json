@@ -17,6 +17,9 @@
     "@azure/core-tracing": "^1.2.0",
     "@azure/abort-controller": "^2.1.2"
   },
+  "devDependencies": {
+    "copyfiles": "^2.4.1"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/Microsoft/botbuilder-js.git"
@@ -26,6 +29,7 @@
     "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
     "depcheck": "depcheck --config ../../.depcheckrc",
     "lint": "eslint . --config ../../eslint.config.cjs",
+    "prebuild": "copyfiles -f ./node_modules/@azure/core-http-compat/dist/esm/{util,response}.{d.ts,js} src/azureCoreHttpCompat",
     "postbuild": "downlevel-dts lib _ts3.4/lib",
     "test": "yarn build && nyc mocha --check-leaks tests"
   },
@@ -41,6 +45,7 @@
   "files": [
     "_ts3.4",
     "lib",
-    "src"
+    "src",
+    "vendors"
   ]
 }

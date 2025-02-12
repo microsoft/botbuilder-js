@@ -10,7 +10,7 @@ import {
     OperationRequestOptions,
 } from '@azure/core-client';
 import { convertHttpClient, createRequestPolicyFactoryPolicy } from '@azure/core-http-compat';
-import { toCompatResponse } from '../../node_modules/@azure/core-http-compat/dist/commonjs/response';
+import { toCompatResponse } from './response';
 import { PipelineRequest, PipelinePolicy, createHttpHeaders } from '@azure/core-rest-pipeline';
 import {
     ServiceCallback,
