@@ -6,7 +6,7 @@
 
 import { ConfidentialClientApplication } from '@azure/msal-node';
 import { MsalAppCredentials } from './msalAppCredentials';
-import { ServiceClientCredentials } from '@azure/core-http';
+import { ServiceClientCredentials } from 'botbuilder-stdlib/lib/azureCoreHttpCompat';
 import { ServiceClientCredentialsFactory } from './serviceClientCredentialsFactory';
 import { AuthenticationConstants } from './authenticationConstants';
 import { GovernmentConstants } from './governmentConstants';
