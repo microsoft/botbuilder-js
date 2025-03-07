@@ -352,10 +352,13 @@ export class ConfigurationBotFrameworkAuthentication extends BotFrameworkAuthent
     createUserTokenClient(claimsIdentity: ClaimsIdentity): Promise<UserTokenClient>;
 }
 
-// Warning: (ae-forgotten-export) The symbol "TypedOptions" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "ZodOptions" needs to be exported by the entry point index.d.ts
 //
 // @public
-export type ConfigurationBotFrameworkAuthenticationOptions = z.infer<typeof TypedOptions>;
+export interface ConfigurationBotFrameworkAuthenticationOptions extends ZodOptions {
+    // (undocumented)
+    [key: string]: string | boolean | undefined;
+}
 
 // @public
 export class ConfigurationServiceClientCredentialFactory extends PasswordServiceClientCredentialFactory {
