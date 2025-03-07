@@ -25,6 +25,7 @@ export interface Filters {
     noPrivate: boolean;
     script: string;
     path: string[];
+    hasLocalDependencies: boolean;
 }
 
 /**
@@ -89,6 +90,10 @@ export async function collectWorkspacePackages(
                 filters.ignoreName?.length &&
                 filters.ignoreName.some((ignoreName) => minimatch(pkg.name, ignoreName))
             ) {
+                return;
+            }
+
+            if (filters.hasLocalDependencies && Object.keys(pkg.localDependencies ?? {}).length === 0) {
                 return;
             }
 
