@@ -1,0 +1,54 @@
+{
+  "name": "botbuilder-dialogs-fluent",
+  "author": "Microsoft Corp.",
+  "description": "Fluent execution flow library for the Microsoft BotBuilder dialog system.",
+  "version": "4.1.6",
+  "preview": true,
+  "license": "MIT",
+  "keywords": [
+    "botbuilder",
+    "botframework",
+    "bots",
+    "chatbots"
+  ],
+  "bugs": {
+    "url": "https://github.com/Microsoft/botbuilder-js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Microsoft/botbuilder-js.git"
+  },
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "typesVersions": {
+    "<3.9": {
+      "*": [
+        "_ts3.4/*"
+      ]
+    }
+  },
+  "dependencies": {
+    "botbuilder-core": "4.1.6",
+    "botbuilder-dialogs": "4.1.6",
+    "botbuilder-stdlib": "4.1.6",
+    "chokidar": "^3.6.0",
+    "zod": "^3.23.8",
+    "type-fest": "3.13.1"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "build-docs": "typedoc --theme markdown --entryPoint botbuilder-dialogs-fluent --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-dialogs .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Dialogs\" --readme none",
+    "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
+    "depcheck": "depcheck --config ../../.depcheckrc --ignores botbuilder-ai,botbuilder-dialogs-adaptive",
+    "lint": "eslint . --config ../../eslint.config.cjs",
+    "postbuild": "downlevel-dts lib _ts3.4/lib --checksum",
+    "test": "yarn build && nyc mocha tests/**/*.test.js --exit",
+    "test:compat": "api-extractor run --verbose"
+  },
+  "files": [
+    "_ts3.4",
+    "lib",
+    "schemas",
+    "src"
+  ]
+}
