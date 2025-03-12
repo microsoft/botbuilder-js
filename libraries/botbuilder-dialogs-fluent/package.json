@@ -30,8 +30,6 @@
   "dependencies": {
     "botbuilder-core": "4.1.6",
     "botbuilder-dialogs": "4.1.6",
-    "botbuilder-stdlib": "4.1.6",
-    "chokidar": "^3.6.0",
     "zod": "^3.23.8",
     "type-fest": "3.13.1"
   },
@@ -48,7 +46,6 @@
   "files": [
     "_ts3.4",
     "lib",
-    "schemas",
     "src"
   ]
 }

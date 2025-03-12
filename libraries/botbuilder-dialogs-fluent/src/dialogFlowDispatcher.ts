@@ -1,47 +1,24 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { 
-    DialogFlowContext,
-    DialogFlowTask,
-    DialogFlowError,
-    DialogFlowBoundCallable
- } from './';
-
-import { 
-    AbstractDialogFlowTask, 
+import { DialogFlowContext, DialogFlowTask, DialogFlowError, DialogFlowBoundCallable } from './';
+import {
+    AbstractDialogFlowTask,
     AsyncCallTask,
     DialogCallTask,
     RestartDialogFlowTask,
     SuspendDialogFlowTask,
     ReceiveActivityTask,
-    TaskResult, 
-    taskSucceeded, 
-    taskFailed, 
-    defaultProjector 
+    TaskResult,
+    taskSucceeded,
+    taskFailed,
+    defaultProjector,
 } from './tasks/';
 
-import { 
-    createHash, 
-    randomUUID 
-} from 'crypto';
-
-import { 
-    Choice,
-    DialogContext,
-    DialogReason, 
-    DialogTurnResult,
-    PromptOptions,
-} from 'botbuilder-dialogs';
-
-import { 
-    Activity, 
-    ResourceResponse, 
-    TokenResponse, 
-    TurnContext 
-} from 'botbuilder-core';
-
-import { Jsonify, JsonPrimitive, JsonValue } from 'type-fest';
+import { createHash, randomUUID } from 'crypto';
+import { Choice, DialogContext, DialogReason, DialogTurnResult, PromptOptions } from 'botbuilder-dialogs';
+import { Activity, ResourceResponse, TokenResponse, TurnContext } from 'botbuilder-core';
+import type { Jsonify, JsonPrimitive } from 'type-fest';
 import * as assert from 'node:assert';
 
 /**
@@ -53,94 +30,81 @@ export class DialogFlowDispatcher<O extends object, R = any> implements DialogFl
 
     /**
      * Initializes a new WorkflowDispatcher instance.
+     *
      * @param dc The dialog context for the current turn of conversation with the user.
      */
     constructor(private readonly dc: DialogContext) {
-        this.state = dc.activeDialog!.state as FluentDialogState<O>
+        this.state = dc.activeDialog!.state as FluentDialogState<O>;
         this.nextTask = 0;
     }
 
     /**
      * @inheritdoc
      */
-    public get options(): O {
+    get options(): O {
         return this.state.options;
     }
 
     /**
      * @inheritdoc
      */
-    public get channelId(): string {
+    get channelId(): string {
         return this.dc.context.activity.channelId;
     }
 
     /**
      * @inheritdoc
      */
-    public get dialogId(): string {
-        return this.dc.activeDialog!.id
+    get dialogId(): string {
+        return this.dc.activeDialog!.id;
     }
 
     /**
      * @inheritdoc
      */
-    public get isReplaying(): boolean {
-        return (this.nextTask < this.state.history.length) || 
-            !!(this.state.resumeState)
+    get isReplaying(): boolean {
+        return this.nextTask < this.state.history.length || !!this.state.resumeState;
     }
 
     /**
      * @inheritdoc
      */
-    public get currentUtcTime(): Date {
-        return new Date(
-            this.callBuiltIn(
-                Date.now, 
-                'currentUtcTime'));
+    get currentUtcTime(): Date {
+        return new Date(this.callBuiltIn(Date.now, 'currentUtcTime'));
     }
 
     /**
      * @inheritdoc
      */
-    public newGuid(): string {
+    newGuid(): string {
         return this.callBuiltIn(randomUUID, 'newGuid');
     }
 
     /**
      * @inheritdoc
      */
-    public call<T>(
-        task: (context: TurnContext) => Promise<T>
-    ): DialogFlowTask<T> {
+    call<T>(task: (context: TurnContext) => Promise<T>): DialogFlowTask<T> {
         return new AsyncCallTask<T>(task, defaultProjector);
     }
 
     /**
      * @inheritdoc
      */
-    public callAsUser<T>(
-        oauthDialogId: string, 
-        task: (token: string, context: TurnContext) => Promise<T>
-    ): DialogFlowTask<T> {
-        return this.callDialog<TokenResponse|undefined>(oauthDialogId)
-            .then((tokenResponse, context) => {
-                if (!tokenResponse || !tokenResponse.token) {
-                    throw new DialogFlowError("Sign-in failed.");
-                }
-                return task(tokenResponse.token, context);
-            });
+    callAsUser<T>(oauthDialogId: string, task: (token: string, context: TurnContext) => Promise<T>): DialogFlowTask<T> {
+        return this.callDialog<TokenResponse | undefined>(oauthDialogId).then((tokenResponse, context) => {
+            if (!tokenResponse || !tokenResponse.token) {
+                throw new DialogFlowError('Sign-in failed.');
+            }
+            return task(tokenResponse.token, context);
+        });
     }
 
     /**
      * @inheritdoc
      */
-    public callDialog<T = any>(
-        dialogId: string, 
-        options?: object
-    ): DialogFlowTask<T> {
+    callDialog<T = any>(dialogId: string, options?: object): DialogFlowTask<T> {
         return new DialogCallTask<T>(dialogId, options, defaultProjector);
     }
-
 
     /**
      * Helper function to simplify formatting the options for calling a prompt dialog.
@@ -152,7 +116,7 @@ export class DialogFlowDispatcher<O extends object, R = any> implements DialogFl
      * for use with a [ChoicePrompt](xref:botbuilder-dialogs.ChoicePrompt).
      * @returns The task instance which will yield the prompt result.
      */
-    public prompt<T = any>(
+    prompt<T = any>(
         dialogId: string,
         promptOrOptions: string | Partial<Activity> | PromptOptions,
         choices?: (string | Choice)[],
@@ -173,15 +137,15 @@ export class DialogFlowDispatcher<O extends object, R = any> implements DialogFl
 
         return this.callDialog<T>(dialogId, options);
     }
-    
+
     /**
      * @inheritdoc
      */
-    public sendActivity(
+    sendActivity(
         activityOrText: string | Partial<Activity>,
         speak?: string,
         inputHint?: string,
-    ): DialogFlowTask<ResourceResponse|undefined> {        
+    ): DialogFlowTask<ResourceResponse | undefined> {
         return this.call((context: TurnContext) => {
             return context.sendActivity(activityOrText, speak, inputHint);
         });
@@ -190,28 +154,26 @@ export class DialogFlowDispatcher<O extends object, R = any> implements DialogFl
     /**
      * @inheritdoc
      */
-    public receiveActivity(): DialogFlowTask<Activity> {
+    receiveActivity(): DialogFlowTask<Activity> {
         return new ReceiveActivityTask();
     }
 
     /**
      * @inheritdoc
      */
-    public restart(options?: O): DialogFlowTask<never> {
+    restart(options?: O): DialogFlowTask<never> {
         return new RestartDialogFlowTask(options);
     }
 
     /**
      * @inheritdoc
      */
-    public bind<T extends (...args: any[]) => any>(
-        func: T
-    ): DialogFlowBoundCallable<Parameters<T>, Jsonify<ReturnType<T>>> {
-
+    bind<T extends (...args: any[]) => any>(func: T): DialogFlowBoundCallable<Parameters<T>, Jsonify<ReturnType<T>>> {
+        // eslint-disable-next-line @typescript-eslint/no-this-alias -- 'this' in the function below is not the same as 'this' instance
         const context = this;
         const kind = `boundFunc_${func.name}_${func.length}`;
 
-        function bound(...args: Parameters<T>) : Jsonify<ReturnType<T>> {
+        function bound(...args: Parameters<T>): Jsonify<ReturnType<T>> {
             const callId = context.getHashOf(`${args.toString()}`);
             if (context.nextTask == context.state.history.length) {
                 assert.ok(!context.isReplaying);
@@ -220,31 +182,31 @@ export class DialogFlowDispatcher<O extends object, R = any> implements DialogFl
                     context.state.history.push({
                         kind: kind,
                         hashedId: callId,
-                        result: taskSucceeded(func(...args)) 
+                        result: taskSucceeded(func(...args)),
                     });
                 } catch (error) {
                     context.state.history.push({
                         kind: kind,
                         hashedId: callId,
-                        result: taskFailed(error)
+                        result: taskFailed(error),
                     });
                 }
             }
 
             const entry = context.state.history[context.nextTask++];
-    
+
             assert.equal(kind, entry.kind);
             assert.equal(callId, entry.hashedId);
-    
+
             if (entry.result.success == true) {
                 return entry.result.value;
             }
-    
-            throw new DialogFlowError(entry.result.error)
+
+            throw new DialogFlowError(entry.result.error);
         }
 
         bound.project = <O>(projector: (value: Jsonify<ReturnType<T>>) => O) => {
-            return (...args: Parameters<T>) : O => projector(bound(...args));
+            return (...args: Parameters<T>): O => projector(bound(...args));
         };
 
         return bound;
@@ -252,61 +214,51 @@ export class DialogFlowDispatcher<O extends object, R = any> implements DialogFl
 
     /**
      * Starts or resumes the workflow.
+     *
      * @param dialogFlow The workflow function to run.
      * @param reason The reason for starting or resuming the workflow.
      * @param resumeResult The result of the previous suspension, if any.
      * @returns A promise that resolves to the turn result.
      */
-    public async run(
+    async run(
         dialogFlow: (context: DialogFlowContext<O>) => Generator<DialogFlowTask, R>,
         reason: DialogReason,
-        resumeResult?: any
+        resumeResult?: any,
     ): Promise<DialogTurnResult> {
-
         const generator = dialogFlow(this);
 
         // Replay the recorded histroy
-        for (var it = generator.next(); it.done === false && this.nextTask < this.state.history.length; ) {
-
+        let it = generator.next();
+        for (; it.done === false && this.nextTask < this.state.history.length; ) {
             it = this.replayNext(generator, it.value);
         }
 
         // Resume from the last suspension, unless the workflow is run for the first time
         if (reason !== DialogReason.beginCalled) {
-
             assert.ok(!it.done && it.value instanceof SuspendDialogFlowTask);
             assert.equal(it.value.kind, this.state.resumeState?.kind);
             assert.equal(this.getHashOf(it.value.id), this.state.resumeState?.hashedId);
 
             this.state.resumeState = undefined;
 
-            it = this.record(
-                generator, 
-                it.value, 
-                await it.value.onResume(this.dc.context, resumeResult));
+            it = this.record(generator, it.value, await it.value.onResume(this.dc.context, resumeResult));
         }
 
-        // Execute and resume the async invocations 
-        while ((it.done === false) && it.value instanceof AsyncCallTask) {
-
-            it = this.record(
-                generator, 
-                it.value, 
-                await it.value.invoke(this.dc.context));
-
+        // Execute and resume the async invocations
+        while (it.done === false && it.value instanceof AsyncCallTask) {
+            it = this.record(generator, it.value, await it.value.invoke(this.dc.context));
         }
 
         assert.equal(this.nextTask, this.state.history.length);
 
         // If the workflow is being suspended, record the suspension point
         if (it.done === false) {
-
             assert.ok(it.value instanceof SuspendDialogFlowTask);
 
             this.state.resumeState = {
                 hashedId: this.getHashOf(it.value.id),
-                kind: it.value.kind
-            }
+                kind: it.value.kind,
+            };
 
             return await it.value.onSuspend(this.dc);
         }
@@ -314,35 +266,35 @@ export class DialogFlowDispatcher<O extends object, R = any> implements DialogFl
         return await this.dc.endDialog(it.value);
     }
 
-
     /**
      * Gets the hash of a value.
+     *
      * @param value The value to hash.
      * @returns The hashed value.
      */
     private getHashOf(value: string): string {
-        return createHash('sha256').update(value).digest("base64");
+        return createHash('sha256').update(value).digest('base64');
     }
 
     /**
      * Records the result of a task execution.
+     *
      * @param generator The generator to move forward.
      * @param task The task that was executed.
      * @param result The result of the task execution.
      * @returns The iterator used to continue the workflow.
      */
     private record(
-        generator: Generator<DialogFlowTask, R>, 
+        generator: Generator<DialogFlowTask, R>,
         task: AbstractDialogFlowTask<any>,
-        result: TaskResult
-    ) : IteratorResult<DialogFlowTask, R> {
-
+        result: TaskResult,
+    ): IteratorResult<DialogFlowTask, R> {
         assert.ok(!this.isReplaying);
 
         this.state.history.push({
             hashedId: this.getHashOf(task.id),
             kind: task.kind,
-            result: result
+            result: result,
         });
 
         this.nextTask = this.state.history.length;
@@ -351,15 +303,15 @@ export class DialogFlowDispatcher<O extends object, R = any> implements DialogFl
 
     /**
      * Replays the next recorded task execution result.
+     *
      * @param generator The generator to move forward.
      * @param task The task that was executed
      * @returns The iterator used to continue the workflow.
      */
     private replayNext(
-        generator: Generator<DialogFlowTask, R>, 
-        task: DialogFlowTask
-    ) : IteratorResult<DialogFlowTask, R> {
-
+        generator: Generator<DialogFlowTask, R>,
+        task: DialogFlowTask,
+    ): IteratorResult<DialogFlowTask, R> {
         assert.ok(this.nextTask < this.state.history.length);
         const entry = this.state.history[this.nextTask++];
 
@@ -369,23 +321,21 @@ export class DialogFlowDispatcher<O extends object, R = any> implements DialogFl
 
         return task.replay(generator, entry.result);
     }
- 
+
     /**
      * Calls a built-in function and records its result.
+     *
      * @param func The function to call.
      * @param kind The kind of the task.
      * @returns The result of the function call.
      */
-    private callBuiltIn<T extends JsonPrimitive>(
-        func: () => T, 
-        kind: string
-    ) : T {
+    private callBuiltIn<T extends JsonPrimitive>(func: () => T, kind: string): T {
         if (this.nextTask == this.state.history.length) {
             assert.ok(!this.state.resumeState);
             this.state.history.push({
                 kind: kind,
                 hashedId: '',
-                result: {success: true, value: func()}
+                result: { success: true, value: func() },
             });
         }
 

@@ -6,9 +6,9 @@
  * Licensed under the MIT License.
  */
 
-export {DialogFlowError} from './dialogFlowError';
-export {DialogFlowTask } from './dialogFlowTask';
-export {DialogFlowContext} from './dialogFlowContext';
-export {DialogFlowBoundCallable } from './dialogFlowBoundCallable';
-export {FluentDialog} from './fluentDialog';
+export { DialogFlowError } from './dialogFlowError';
+export { DialogFlowTask } from './dialogFlowTask';
+export { DialogFlowContext } from './dialogFlowContext';
+export { DialogFlowBoundCallable } from './dialogFlowBoundCallable';
+export { FluentDialog } from './fluentDialog';
 export * from './retryPolicy';

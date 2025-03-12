@@ -6,17 +6,15 @@ import { defaultProjector } from './abstractDialogFlowTask';
 import { DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
 import { Activity } from 'botbuilder-core';
 
-
 /**
  * Represents a task that prompts the user for input.
  */
 export class ReceiveActivityTask extends SuspendDialogFlowTask<Activity> {
-
     /**
      * Initializes a new ReceiveActivityTask instance.
      */
     constructor() {
-        super(defaultProjector, context => Promise.resolve<Activity>(context.activity));
+        super(defaultProjector, (context) => Promise.resolve<Activity>(context.activity));
     }
 
     /**
@@ -29,16 +27,15 @@ export class ReceiveActivityTask extends SuspendDialogFlowTask<Activity> {
     /**
      * @inheritdoc
      */
-    public override get id(): string {
+    override get id(): string {
         return '';
     }
 
     /**
      * @inheritdoc
      */
-    public override onSuspend(
-        dialogContext: DialogContext
-    ): Promise<DialogTurnResult> {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars -- required by the interface
+    override onSuspend(dialogContext: DialogContext): Promise<DialogTurnResult> {
         return Promise.resolve<DialogTurnResult>(Dialog.EndOfTurn);
     }
 }

@@ -1,4 +1,11 @@
 {
   "extends": "../../api-extractor.json",
-  "mainEntryPointFilePath": "./lib/index.d.ts"
+  "mainEntryPointFilePath": "./lib/index.d.ts",
+  "messages": {
+    "compilerMessageReporting": {
+      "TS2321": {
+        "logLevel": "none"
+      }
+    }
+  }
 }
