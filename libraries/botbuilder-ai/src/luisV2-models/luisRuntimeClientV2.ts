@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { ServiceClientCredentials, ServiceClientOptions } from '@azure/core-http';
+import { ServiceClientCredentials, ServiceClientOptions } from 'botbuilder-stdlib/lib/azureCoreHttpCompat';
 import * as Models from './luisResult';
 import * as Mappers from './luisMappers';
 import { LuisPrediction } from './luisPrediction';
@@ -30,9 +30,9 @@ class LUISRuntimeClientV2 extends LUISRuntimeClientContext {
      * @param [options] The parameter options
      */
     constructor(credentials: ServiceClientCredentials, endpoint: string, options?: ServiceClientOptions) {
-        super(credentials, endpoint, options);
+        const baseUri = options?.baseUri || `${endpoint}/luis/v2.0`;
+        super(credentials, endpoint, { ...options, baseUri });
         this.prediction = new LuisPrediction(this);
-        super.baseUri = '{Endpoint}/luis/v2.0';
     }
 }
 

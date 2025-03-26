@@ -12,7 +12,7 @@ import { EndorsementsValidator } from './endorsementsValidator';
 import { OpenIdMetadata } from './openIdMetadata';
 import { AuthenticationError } from './authenticationError';
 import { StatusCodes } from 'botframework-schema';
-import { ProxySettings } from '@azure/core-http';
+import { ProxySettings } from 'botbuilder-stdlib/lib/azureCoreHttpCompat';
 
 /**
  * A JWT token processing class that gets identity information and performs security token validation.

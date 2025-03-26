@@ -31,8 +31,7 @@
     "botbuilder-core": "4.1.6",
     "botbuilder-stdlib": "4.1.6",
     "p-map": "^7.0.3",
-    "zod": "^3.23.8",
-    "@azure/core-http": "^3.0.4"
+    "zod": "^3.23.8"
   },
   "scripts": {
     "build": "tsc -b",

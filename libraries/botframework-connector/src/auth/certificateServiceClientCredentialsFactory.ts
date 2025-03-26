@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import type { ServiceClientCredentials } from '@azure/core-http';
+import type { ServiceClientCredentials } from 'botbuilder-stdlib/lib/azureCoreHttpCompat';
 import { ServiceClientCredentialsFactory } from './serviceClientCredentialsFactory';
 import { ok } from 'assert';
 import { CertificateAppCredentials } from './certificateAppCredentials';
