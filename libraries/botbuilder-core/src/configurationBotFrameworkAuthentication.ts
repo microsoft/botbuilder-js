@@ -272,7 +272,7 @@ export class ConfigurationBotFrameworkAuthentication extends BotFrameworkAuthent
  * @returns A [ConfigurationBotFrameworkAuthentication](xref:botbuilder-core.ConfigurationBotFrameworkAuthentication) instance.
  */
 export function createBotFrameworkAuthenticationFromConfiguration(
-    configuration: Configuration,
+    configuration: Configuration | null,
     credentialsFactory?: ServiceClientCredentialsFactory,
     authConfiguration?: AuthenticationConfiguration,
     botFrameworkClientFetch?: (input: RequestInfo, init?: RequestInit) => Promise<Response>,
