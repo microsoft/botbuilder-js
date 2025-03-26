@@ -190,8 +190,8 @@ describe('updateVersions', function () {
                 return {
                     ...workspace,
                     relPath,
-                    absPath: path.join(root, ...relPath, '{package.json,package-with-tests.json}{,.js,.ts}'),
-                    posixPath: path.posix.join(root, ...relPath, '{package.json,package-with-tests.json}{,.js,.ts}'),
+                    absPath: path.join(root, ...relPath, 'package.json{,.js,.ts}'),
+                    posixPath: path.posix.join(root, ...relPath, 'package.json{,.js,.ts}'),
                 };
             });
 
