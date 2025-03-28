@@ -11,7 +11,7 @@ const {
     PasswordServiceClientCredentialFactory,
     SkillValidation,
 } = require('..');
-const { HttpHeaders } = require('@azure/core-http');
+const { createPipelineRequest, createHttpHeaders } = require('@azure/core-rest-pipeline');
 
 describe('BotFrameworkAuthenticationFactory', function () {
     it('should create anonymous BotFrameworkAuthentication', function () {
@@ -123,7 +123,7 @@ describe('BotFrameworkAuthenticationFactory', function () {
             assert.strictEqual(connectorFactory.credentialFactory, credsFactory);
 
             const connectorClient = await connectorFactory.create(HOST_SERVICE_URL, HOST_AUDIENCE);
-            assertHasAcceptHeader(connectorClient);
+            await assertHasAcceptHeader(connectorClient);
             assert.strictEqual(connectorClient.credentials.appId, APP_ID);
             assert.strictEqual(connectorClient.credentials.appPassword, APP_PASSWORD);
             assert.strictEqual(connectorClient.credentials.oAuthScope, HOST_AUDIENCE);
@@ -135,24 +135,18 @@ describe('BotFrameworkAuthenticationFactory', function () {
         });
     });
 
-    function assertHasAcceptHeader(client) {
+    async function assertHasAcceptHeader(client) {
         let hasAcceptHeader = false;
-        const mockNextPolicy = {
-            create: (_) => ({}),
-            sendRequest: (_) => {
-                return {};
-            },
-        };
 
         const length = client._requestPolicyFactories.length;
         for (let i = 0; i < length; i++) {
-            const mockHttp = {
-                headers: new HttpHeaders(),
-            };
+            const mockHttp = createPipelineRequest({
+                headers: createHttpHeaders(),
+            });
 
-            const result = client._requestPolicyFactories[i].create(mockNextPolicy);
+            const result = client._requestPolicyFactories[i];
 
-            result.sendRequest(mockHttp);
+            await result.sendRequest(mockHttp, (request) => ({ request, headers: mockHttp.headers }));
             if (mockHttp.headers.get('accept') == '*/*') {
                 hasAcceptHeader = true;
                 break;

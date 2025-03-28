@@ -4,7 +4,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import type { ServiceClientCredentials } from '@azure/core-http';
+import type { ServiceClientCredentials } from 'botbuilder-stdlib/lib/azureCoreHttpCompat';
 import { AuthenticationConstants } from './authenticationConstants';
 import { GovernmentConstants } from './governmentConstants';
 import { MicrosoftAppCredentials } from './microsoftAppCredentials';

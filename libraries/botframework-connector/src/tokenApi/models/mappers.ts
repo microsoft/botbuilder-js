@@ -3,7 +3,7 @@
  * Licensed under the MIT License.
  */
 
-import { CompositeMapper } from "@azure/core-http";
+import { CompositeMapper } from 'botbuilder-stdlib/lib/azureCoreHttpCompat';
 
 export const TokenExchangeResource: CompositeMapper = {
   serializedName: "TokenExchangeResource",

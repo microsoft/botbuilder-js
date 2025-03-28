@@ -9,6 +9,17 @@
   "bugs": {
     "url": "https://github.com/Microsoft/botbuilder-js/issues"
   },
+  "dependencies": {
+    "@azure/core-auth": "^1.9.0",
+    "@azure/core-http-compat": "^2.1.2",
+    "@azure/core-rest-pipeline": "^1.18.1",
+    "@azure/core-client": "^1.9.2",
+    "@azure/core-tracing": "^1.2.0",
+    "@azure/abort-controller": "^2.1.2"
+  },
+  "devDependencies": {
+    "copyfiles": "^2.4.1"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/Microsoft/botbuilder-js.git"
@@ -17,8 +28,9 @@
     "build": "tsc -b",
     "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
     "depcheck": "depcheck --config ../../.depcheckrc",
-    "lint": "eslint . --config ../../eslint.config.cjs",
-    "postbuild": "downlevel-dts lib _ts3.4/lib",
+    "lint": "eslint . --config ../../eslint.config.cjs --ignore-pattern src/azureCoreHttpCompat/{util,response}.{d.ts,js}",
+    "prebuild": "copyfiles -f node_modules/@azure/core-http-compat/dist/commonjs/{util,response}.{d.ts,js} src/azureCoreHttpCompat",
+    "postbuild": "copyfiles -f src/azureCoreHttpCompat/{util,response}.{d.ts,js} lib/azureCoreHttpCompat && downlevel-dts lib _ts3.4/lib",
     "test": "yarn build && nyc mocha --check-leaks tests"
   },
   "main": "lib/index.js",
