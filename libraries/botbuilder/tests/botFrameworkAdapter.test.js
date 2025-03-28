@@ -6,7 +6,8 @@ const sinon = require('sinon');
 const { BotFrameworkAdapter } = require('../');
 const { Conversations } = require('botframework-connector/lib/connectorApi/operations');
 const { UserToken, BotSignIn } = require('botframework-connector/lib/tokenApi/operations');
-const { userAgentPolicy, HttpHeaders } = require('@azure/core-http');
+const { HttpHeaders } = require('botbuilder-stdlib/lib/azureCoreHttpCompat');
+const { createPipelineRequest, createHttpHeaders } = require('@azure/core-rest-pipeline');
 
 const {
     ActivityTypes,
@@ -462,7 +463,7 @@ describe('BotFrameworkAdapter', function () {
             const userAgent = 'test user agent';
 
             nock(reference.serviceUrl)
-                .matchHeader('user-agent', ([val]) => val.endsWith(userAgent))
+                .matchHeader('user-agent', (val) => val.includes(userAgent))
                 .post('/v3/conversations/convo1/activities/1234')
                 .reply(200, { id: 'abc123id' });
 
@@ -510,16 +511,22 @@ describe('BotFrameworkAdapter', function () {
         });
 
         it('ConnectorClient should use requestPolicyFactories from clientOptions', async function () {
-            const setUserAgent = userAgentPolicy({ value: 'test' });
-            const factories = [setUserAgent];
-
-            const adapter = new BotFrameworkAdapter({ clientOptions: { requestPolicyFactories: factories } });
+            const policy = {
+                create() {
+                    return {
+                        sendRequest() {},
+                    };
+                },
+            };
+            const adapter = new BotFrameworkAdapter({ clientOptions: { requestPolicyFactories: [policy] } });
 
             await adapter.continueConversation(reference, async (turnContext) => {
                 const connectorClient = turnContext.turnState.get(turnContext.adapter.ConnectorClientKey);
 
                 assert(
-                    connectorClient._requestPolicyFactories.find((policy) => policy === setUserAgent),
+                    connectorClient._requestPolicyFactories.find(
+                        ({ name }) => name === 'ServiceClientContext_RequestPolicyFactories',
+                    ),
                     'requestPolicyFactories from clientOptions parameter is not used.',
                 );
             });
@@ -527,22 +534,16 @@ describe('BotFrameworkAdapter', function () {
 
         it('ConnectorClient should add requestPolicyFactory for accept header', async function () {
             let hasAcceptHeader = false;
-            const mockNextPolicy = {
-                create: () => ({}),
-                sendRequest: () => {
-                    return {};
-                },
-            };
             const client = new BotFrameworkAdapter().createConnectorClient('https://localhost');
             const length = client._requestPolicyFactories.length;
             for (let i = 0; i < length; i++) {
-                const mockHttp = {
-                    headers: new HttpHeaders(),
-                };
+                const mockHttp = createPipelineRequest({
+                    headers: createHttpHeaders(),
+                });
 
-                const result = client._requestPolicyFactories[i].create(mockNextPolicy);
+                const result = client._requestPolicyFactories[i];
 
-                result.sendRequest(mockHttp);
+                await result.sendRequest(mockHttp, (request) => ({ request, headers: mockHttp.headers }));
                 if (mockHttp.headers.get('accept') == '*/*') {
                     hasAcceptHeader = true;
                     break;
@@ -1364,7 +1365,7 @@ describe('BotFrameworkAdapter', function () {
 
     it('should create a User-Agent header with the same info as the host machine.', async function () {
         nock(reference.serviceUrl)
-            .matchHeader('user-agent', ([val]) => val.endsWith(userAgent))
+            .matchHeader('user-agent', (val) => val.includes(userAgent))
             .post('/v3/conversations/convo1/activities/1234')
             .reply(200, { id: 'abc123id' });
 
@@ -1377,7 +1378,7 @@ describe('BotFrameworkAdapter', function () {
 
     it('should still add Botbuilder User-Agent header when custom requestPolicyFactories are provided.', async function () {
         nock(reference.serviceUrl)
-            .matchHeader('user-agent', ([val]) => val.endsWith(userAgent))
+            .matchHeader('user-agent', (val) => val.includes(userAgent))
             .post('/v3/conversations/convo1/activities/1234')
             .reply(200, { id: 'abc123id' });
 

@@ -5,12 +5,11 @@
 
 import * as Mappers from './models/mappers';
 import * as Models from './models';
-import { ServiceClientCredentials } from '@azure/core-http';
+import { ServiceClientCredentials } from 'botbuilder-stdlib/lib/azureCoreHttpCompat';
 import * as operations from './operations';
 import { ConnectorClientContext } from './connectorClientContext';
 
 class ConnectorClient extends ConnectorClientContext {
-
     // Operation groups
     attachments: operations.Attachments;
     conversations: operations.Conversations;

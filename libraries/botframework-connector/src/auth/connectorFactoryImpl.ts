@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { getDefaultUserAgentValue, RequestPolicyFactory, userAgentPolicy } from '@azure/core-http';
 import { ConnectorClient } from '../connectorApi/connectorClient';
 import { ConnectorClientOptions } from '../connectorApi/models';
 import { ConnectorFactory } from './connectorFactory';
@@ -9,9 +8,7 @@ import type { ServiceClientCredentialsFactory } from './serviceClientCredentials
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const packageInfo: Record<'name' | 'version', string> = require('../../package.json');
-export const USER_AGENT = `Microsoft-BotFramework/3.1 ${packageInfo.name}/${
-    packageInfo.version
-} ${getDefaultUserAgentValue()} `;
+export const USER_AGENT = `Microsoft-BotFramework/3.1 ${packageInfo.name}/${packageInfo.version} `;
 
 /**
  * @internal
@@ -51,58 +48,29 @@ export class ConnectorFactoryImpl extends ConnectorFactory {
             this.validateAuthority,
         );
 
-        // A new connector client for making calls against this serviceUrl using credentials derived from the current appId and the specified audience.
-        const options = this.getClientOptions(serviceUrl);
+        const userAgent =
+            typeof this.connectorClientOptions?.userAgent === 'function'
+                ? this.connectorClientOptions?.userAgent(USER_AGENT)
+                : this.connectorClientOptions?.userAgent;
+        const options: ConnectorClientOptions = {
+            ...this.connectorClientOptions,
+            baseUri: serviceUrl,
+            userAgent: `${USER_AGENT} ${userAgent ?? ''}`,
+        };
+
+        options.requestPolicyFactories = [
+            {
+                create: (nextPolicy) => ({
+                    sendRequest: (httpRequest) => {
+                        if (!httpRequest.headers.contains('accept')) {
+                            httpRequest.headers.set('accept', '*/*');
+                        }
+                        return nextPolicy.sendRequest(httpRequest);
+                    },
+                }),
+            },
+        ];
+
         return new ConnectorClient(credentials, options);
-    }
-
-    private getClientOptions(serviceUrl: string): ConnectorClientOptions {
-        const { requestPolicyFactories, ...clientOptions } = this.connectorClientOptions;
-
-        const options: ConnectorClientOptions = Object.assign({}, { baseUri: serviceUrl }, clientOptions);
-
-        const userAgent = typeof options.userAgent === 'function' ? options.userAgent(USER_AGENT) : options.userAgent;
-        const setUserAgent = userAgentPolicy({
-            value: `${USER_AGENT}${userAgent ?? ''}`,
-        });
-
-        const acceptHeader: RequestPolicyFactory = {
-            create: (nextPolicy) => ({
-                sendRequest: (httpRequest) => {
-                    if (!httpRequest.headers.contains('accept')) {
-                        httpRequest.headers.set('accept', '*/*');
-                    }
-                    return nextPolicy.sendRequest(httpRequest);
-                },
-            }),
-        };
-
-        // Resolve any user request policy factories, then include our user agent via a factory policy
-        options.requestPolicyFactories = (defaultRequestPolicyFactories) => {
-            let defaultFactories = [];
-
-            if (requestPolicyFactories) {
-                if (typeof requestPolicyFactories === 'function') {
-                    const newDefaultFactories = requestPolicyFactories(defaultRequestPolicyFactories);
-                    if (newDefaultFactories) {
-                        defaultFactories = newDefaultFactories;
-                    }
-                } else if (requestPolicyFactories) {
-                    defaultFactories = [...requestPolicyFactories];
-                }
-
-                // If the user has supplied custom factories, allow them to optionally set user agent
-                // before we do.
-                defaultFactories = [...defaultFactories, setUserAgent, acceptHeader];
-            } else {
-                // In the case that there are no user supplied factories, inject our user agent as
-                // the first policy to ensure none of the default policies override it.
-                defaultFactories = [acceptHeader, setUserAgent, ...defaultRequestPolicyFactories];
-            }
-
-            return defaultFactories;
-        };
-
-        return options;
     }
 }

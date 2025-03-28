@@ -14,7 +14,7 @@
 
 'use strict';
 
-const { ServiceClient, Serializer } = require("@azure/core-http");
+const { ServiceClientContext, createSerializer } = require("botbuilder-stdlib/lib/azureCoreHttpCompat");
 const fs = require('fs');
 const path = require('path');
 
@@ -23,7 +23,7 @@ const operations = require('./operations');
 
 
 /** Class representing a ResourceManagementClient. */
-class ResourceManagementClient extends ServiceClient {
+class ResourceManagementClient extends ServiceClientContext {
   /**
    * Create a ResourceManagementClient.
    * @param {credentials} credentials - Credentials needed for the client to connect to Azure.
@@ -87,7 +87,7 @@ class ResourceManagementClient extends ServiceClient {
 
   addSerializationMixin(destObject) {
     ['serialize', 'serializeObject', 'deserialize'].forEach((property) => {
-      destObject[property] = Serializer[property];
+      destObject[property] = createSerializer()[property];
     });
   };
 
