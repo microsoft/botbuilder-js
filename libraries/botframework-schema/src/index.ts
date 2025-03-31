@@ -873,7 +873,7 @@ export interface ConversationParameters {
      * (Optional) When creating a new conversation, use this activity as the initial message to the
      * conversation
      */
-    activity: Activity;
+    activity?: Activity;
     /**
      * Channel specific payload for creating the conversation
      */
