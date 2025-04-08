@@ -17,7 +17,10 @@ const VENDORS_DIR = 'libraries/botbuilder-vendors/vendors';
 
 export const command = (argv: string[]) => async () => {
     try {
-        const flags = minimist(argv);
+        const flags = minimist(argv, {
+            alias: { setDependencies: 'set-dependencies' },
+            default: { setDependencies: false },
+        });
         const action = flags._[0];
         if (!actions.valid(action)) {
             throw failures.actionNotFound(action);
@@ -55,7 +58,7 @@ export const command = (argv: string[]) => async () => {
 
             logger.package.vendors.header({ vendors: newVendors.length });
 
-            await install({ vendors: newVendors, dependencies, pkgDir, directory });
+            await install({ vendors: newVendors, dependencies, pkgDir, directory, shouldSetDependencies: flags.setDependencies });
             await build({ pkgDir, vendors, directory });
 
             logger.package.footer();

@@ -16,7 +16,7 @@ import { logger } from '../utils';
  * @param param0.pkgDir Directory of the package.
  * @param param0.directory Directory to install vendor packages.
  */
-export async function install({ vendors, dependencies, pkgDir, directory }: any) {
+export async function install({ vendors, dependencies, pkgDir, directory, shouldSetDependencies }: any) {
     for (let i = 0; i < vendors.length; i++) {
         const vendor = vendors[i];
 
@@ -42,12 +42,12 @@ export async function install({ vendors, dependencies, pkgDir, directory }: any)
         await copyFile(source, destination);
     }
 
-    logger.package.dependencies.header({ dependencies: dependencies.length });
+    logger.package.dependencies.header({ dependencies: dependencies.length, shouldSetDependencies });
     for (let i = 0; i < dependencies.length; i++) {
         const { name, version } = dependencies[i];
         logger.package.dependencies.dependency({ isLast: i === dependencies.length - 1, name, version });
-        if (process.env.GITHUB_ACTIONS === 'true') {
-            // Only modify package.json if running in GitHub Actions, preventing changes to local files and pushing them back to the repository.
+        if (shouldSetDependencies) {
+            // Only modify package.json if the flag is set, preventing changes to local files and pushing them back to the repository.
             execSync(`npm pkg set dependencies["${name}"]="${version}"`, { cwd: pkgDir });
         }
     }
