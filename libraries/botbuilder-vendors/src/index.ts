@@ -58,7 +58,13 @@ export const command = (argv: string[]) => async () => {
 
             logger.package.vendors.header({ vendors: newVendors.length });
 
-            await install({ vendors: newVendors, dependencies, pkgDir, directory, shouldSetDependencies: flags.setDependencies });
+            await install({
+                vendors: newVendors,
+                dependencies,
+                pkgDir,
+                directory,
+                shouldSetDependencies: flags.setDependencies,
+            });
             await build({ pkgDir, vendors, directory });
 
             logger.package.footer();

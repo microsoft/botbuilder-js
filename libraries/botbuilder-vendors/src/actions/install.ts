@@ -15,6 +15,7 @@ import { logger } from '../utils';
  * @param param0.dependencies List of dependencies.
  * @param param0.pkgDir Directory of the package.
  * @param param0.directory Directory to install vendor packages.
+ * @param param0.shouldSetDependencies Conditional to know if the process should set the dependencies.
  */
 export async function install({ vendors, dependencies, pkgDir, directory, shouldSetDependencies }: any) {
     for (let i = 0; i < vendors.length; i++) {

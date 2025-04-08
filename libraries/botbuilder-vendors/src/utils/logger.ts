@@ -62,8 +62,12 @@ export const logger = {
         },
         dependencies: {
             header({ dependencies, shouldSetDependencies }: any) {
-                const tags = shouldSetDependencies ? dependencies > 0 ? [`${colors.green}[added]`] : [`${colors.red}[not found]`] : [`${colors.blue}[skipped]`];
-                tags.push(`${colors.yellow}[--set-dependencies=${shouldSetDependencies}]`)
+                const tags = shouldSetDependencies
+                    ? dependencies > 0
+                        ? [`${colors.green}[added]`]
+                        : [`${colors.red}[not found]`]
+                    : [`${colors.blue}[skipped]`];
+                tags.push(`${colors.yellow}[--set-dependencies=${shouldSetDependencies}]`);
                 console.log(
                     `├─ dependencies: ${colors.magenta}${dependencies} ${plural(dependencies, 'package')} ${tags.join('')}${colors.reset}`,
                 );
