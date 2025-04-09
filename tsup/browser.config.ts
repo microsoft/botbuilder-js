@@ -40,7 +40,7 @@ export default defineConfig((options) => {
                 global: 'globalThis',
             };
             options.alias = {
-                crypto: 'crypto-browserify',
+                crypto: resolve(__dirname, 'crypto-shim.js'),
                 http: 'stream-http',
                 https: 'https-browserify',
                 stream: 'stream-browserify',
