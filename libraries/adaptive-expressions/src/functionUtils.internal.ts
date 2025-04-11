@@ -210,21 +210,8 @@ export class InternalFunctionUtils {
         if (instance instanceof Map && (instance as Map<string, any>) !== undefined) {
             const instanceMap: Map<string, any> = instance as Map<string, any>;
             value = instanceMap.get(property);
-            if (value === undefined) {
-                const prop: string = Array.from(instanceMap.keys()).find(
-                    (k: string): boolean => k.toLowerCase() === property.toLowerCase(),
-                );
-                if (prop !== undefined) {
-                    value = instanceMap.get(prop);
-                }
-            }
         } else {
-            const prop: string = Object.keys(instance).find(
-                (k: string): boolean => k.toLowerCase() === property.toLowerCase(),
-            );
-            if (prop !== undefined) {
-                value = instance[prop];
-            }
+            value = instance[property];
         }
 
         return { value, error };
