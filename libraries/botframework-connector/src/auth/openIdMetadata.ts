@@ -26,10 +26,12 @@ export class OpenIdMetadata {
      *
      * @param url Metadata Url.
      * @param proxySettings The proxy settings for the request.
+     * @param tokenRefreshInterval The token refresh interval in hours. The default value is 24 hours.
      */
     constructor(
         private url: string,
         private proxySettings?: ProxySettings,
+        private tokenRefreshInterval: number = 24,
     ) {}
 
     /**
@@ -39,8 +41,8 @@ export class OpenIdMetadata {
      * @returns A `Promise` representation for either a [IOpenIdMetadataKey](botframework-connector:module.IOpenIdMetadataKey) or `null`.
      */
     async getKey(keyId: string): Promise<IOpenIdMetadataKey | null> {
-        // If keys are more than 24 hours old, refresh them
-        if (this.lastUpdated < Date.now() - 1000 * 60 * 60 * 24) {
+        // If keys are older than the refresh interval (default 24 hours), refresh them
+        if (this.lastUpdated < Date.now() - this.tokenRefreshInterval * 1000 * 60 * 60) {
             await this.refreshCache();
 
             // Search the cache even if we failed to refresh

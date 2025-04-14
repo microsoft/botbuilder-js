@@ -306,6 +306,7 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
             this.toBotFromEmulatorOpenIdMetadataUrl,
             AuthenticationConstants.AllowedSigningAlgorithms,
             this.connectorClientOptions?.proxySettings,
+            this.connectorClientOptions?.tokenRefreshInterval,
         );
 
         const parts: string[] = authHeader.split(' ');
@@ -393,6 +394,7 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
             this.toBotFromEmulatorOpenIdMetadataUrl,
             AuthenticationConstants.AllowedSigningAlgorithms,
             this.connectorClientOptions?.proxySettings,
+            this.connectorClientOptions?.tokenRefreshInterval,
         );
 
         const identity: ClaimsIdentity = await tokenExtractor.getIdentityFromAuthHeader(
@@ -480,6 +482,7 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
             this.toBotFromChannelOpenIdMetadataUrl,
             AuthenticationConstants.AllowedSigningAlgorithms,
             this.connectorClientOptions?.proxySettings,
+            this.connectorClientOptions?.tokenRefreshInterval,
         );
 
         const identity: ClaimsIdentity = await tokenExtractor.getIdentityFromAuthHeader(

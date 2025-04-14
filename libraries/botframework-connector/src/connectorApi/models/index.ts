@@ -17,6 +17,8 @@ export interface ConnectorClientOptions extends ServiceClientOptions {
    * HTTP and HTTPS agents which will be used for every HTTP request (Node.js only).
    */
   agentSettings?: AgentSettings;
+
+  tokenRefreshInterval?: number;
 }
 
 /**

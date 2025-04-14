@@ -34,22 +34,32 @@ export class JwtTokenExtractor {
      * @param metadataUrl Metadata Url.
      * @param allowedSigningAlgorithms Allowed signing algorithms.
      * @param proxySettings The proxy settings for the request.
+     * @param tokenRefreshInterval The token refresh interval in hours. The default value is 24 hours.
      */
     constructor(
         tokenValidationParameters: VerifyOptions,
         metadataUrl: string,
         allowedSigningAlgorithms: string[] | Algorithm[],
         proxySettings?: ProxySettings,
+        tokenRefreshInterval?: number,
     ) {
         this.tokenValidationParameters = { ...tokenValidationParameters };
         this.tokenValidationParameters.algorithms = allowedSigningAlgorithms as Algorithm[];
-        this.openIdMetadata = JwtTokenExtractor.getOrAddOpenIdMetadata(metadataUrl, proxySettings);
+        this.openIdMetadata = JwtTokenExtractor.getOrAddOpenIdMetadata(
+            metadataUrl,
+            proxySettings,
+            tokenRefreshInterval,
+        );
     }
 
-    private static getOrAddOpenIdMetadata(metadataUrl: string, proxySettings?: ProxySettings): OpenIdMetadata {
+    private static getOrAddOpenIdMetadata(
+        metadataUrl: string,
+        proxySettings?: ProxySettings,
+        tokenRefreshInterval?: number,
+    ): OpenIdMetadata {
         let metadata = this.openIdMetadataCache.get(metadataUrl);
         if (!metadata) {
-            metadata = new OpenIdMetadata(metadataUrl, proxySettings);
+            metadata = new OpenIdMetadata(metadataUrl, proxySettings, tokenRefreshInterval);
             this.openIdMetadataCache.set(metadataUrl, metadata);
         }
 
