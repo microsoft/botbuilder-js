@@ -18,6 +18,9 @@ export interface ConnectorClientOptions extends ServiceClientOptions {
    */
   agentSettings?: AgentSettings;
 
+  /**
+   * Token refresh interval in hours used to determine when to refresh the token cache. The default value is 24 hours.
+   */
   tokenRefreshInterval?: number;
 }
 
