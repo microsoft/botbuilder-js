@@ -49,7 +49,7 @@ export class HttpRequestUtils {
         }
 
         if (!endpoint) {
-            throw new TypeError('Payload body cannot be null.');
+            throw new TypeError('Endpoint body cannot be null.');
         }
 
         const headers = await this.getHeaders(endpoint);
