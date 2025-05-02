@@ -84,7 +84,7 @@ export class HttpRequestUtils {
             headers['Authorization'] = `EndpointKey ${endpoint.endpointKey}`;
         } else if (endpoint.managedIdentityClientId) {
             const client = new ManagedIdentityCredential({ clientId: endpoint.managedIdentityClientId });
-            const tokenResponse = await client.getToken(endpoint.host);
+            const tokenResponse = await client.getToken('https://cognitiveservices.azure.com/.default');
             headers['Authorization'] = `Bearer ${tokenResponse.token}`;
         }
         headers['User-Agent'] = this.getUserAgent();

@@ -227,12 +227,12 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
     /**
      * Gets or sets the QnA Maker endpoint key to use to query the knowledge base.
      */
-    endpointKey: StringExpression;
+    endpointKey: StringExpression = new StringExpression('');
 
     /**
      * Gets or sets the Managed Identity ClientId to use to query the knowledge base.
      */
-    managedIdentityClientId: StringExpression;
+    managedIdentityClientId: StringExpression = new StringExpression('');
 
     /**
      * Gets or sets the threshold for answers returned, based on score.
@@ -529,6 +529,10 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
             throw new Error('EndpointKey cannot be null or empty.');
         }
 
+        if (this.managedIdentityClientId) {
+            throw new Error('Cannot set EndpointKey when ManagedIdentityClientId is already set.');
+        }
+
         this.endpointKey = new StringExpression(endpointKey);
         return this;
     }
@@ -542,6 +546,10 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
     withManagedIdentityClientId(managedIdentityClientId: string): QnAMakerDialogWithoutOtherAuthorization {
         if (!managedIdentityClientId?.trim()) {
             throw new Error('ManagedIdentityClientId cannot be null or empty.');
+        }
+
+        if (this.endpointKey) {
+            throw new Error('Cannot set ManagedIdentityClientId when EndpointKey is already set.');
         }
 
         this.managedIdentityClientId = new StringExpression(managedIdentityClientId);
@@ -698,7 +706,9 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
             return qnaClient;
         }
 
-        if (!this.endpointKey && !this.managedIdentityClientId) {
+        const endpointKey = this.endpointKey?.getValue(dc.state);
+        const managedIdentityClientId = this.managedIdentityClientId?.getValue(dc.state);
+        if (!endpointKey?.trim() && !managedIdentityClientId?.trim()) {
             throw new Error(
                 'An authorization method is required. Either EndpointKey or ManagedIdentityClientId must be set, use withEndpointKey() or withManagedIdentityClientId() respectively.',
             );
@@ -706,8 +716,8 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
 
         const endpoint = {
             knowledgeBaseId: this.knowledgeBaseId.getValue(dc.state),
-            endpointKey: this.endpointKey?.getValue(dc.state),
-            managedIdentityClientId: this.managedIdentityClientId?.getValue(dc.state),
+            endpointKey,
+            managedIdentityClientId,
             host: this.qnaServiceType === ServiceType.language ? this.hostname.getValue(dc.state) : this.getHost(dc),
             qnaServiceType: this.qnaServiceType,
         };
