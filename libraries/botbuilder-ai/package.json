@@ -27,6 +27,7 @@
     }
   },
   "dependencies": {
+    "@azure/identity": "^4.4.1",
     "adaptive-expressions": "4.1.6",
     "botbuilder-core": "4.1.6",
     "botbuilder-dialogs": "4.1.6",

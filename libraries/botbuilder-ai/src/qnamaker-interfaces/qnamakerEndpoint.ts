@@ -21,7 +21,7 @@ export interface QnAMakerEndpoint {
      * Your endpoint key. For `v2` or `v3` knowledge bases this is your subscription key.
      * For example: `4cb65a02697745eca369XXXXXXXXXXXX`
      */
-    endpointKey: string;
+    endpointKey?: string;
 
     /**
      * The host path. For example: `https://testqnamaker.azurewebsites.net/qnamaker`
@@ -32,4 +32,9 @@ export interface QnAMakerEndpoint {
      * QnA service type '' - qnamaker, language
      */
     qnaServiceType?: ServiceType;
+
+    /**
+     * The ClientId of the Managed Identity resource. Access control (IAM) role `Cognitive Services User` must be assigned in the Language resource to the Managed Identity resource.
+     */
+    managedIdentityClientId?: string;
 }

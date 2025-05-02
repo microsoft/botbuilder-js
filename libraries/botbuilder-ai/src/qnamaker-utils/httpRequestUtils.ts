@@ -7,6 +7,7 @@
  */
 
 import * as os from 'os';
+import { ManagedIdentityCredential } from '@azure/identity';
 
 import { KnowledgeBaseAnswers } from '../qnamaker-interfaces/knowledgeBaseAnswers';
 import { QnAMakerEndpoint } from '../qnamaker-interfaces/qnamakerEndpoint';
@@ -51,7 +52,7 @@ export class HttpRequestUtils {
             throw new TypeError('Payload body cannot be null.');
         }
 
-        const headers = this.getHeaders(endpoint);
+        const headers = await this.getHeaders(endpoint);
 
         const qnaResult = await fetch(requestUrl, {
             method: 'POST',
@@ -75,11 +76,17 @@ export class HttpRequestUtils {
      *
      * @private
      */
-    private getHeaders(endpoint: QnAMakerEndpoint): Record<string, string> {
+    private async getHeaders(endpoint: QnAMakerEndpoint): Promise<Record<string, string>> {
         const headers = {};
 
-        headers['Ocp-Apim-Subscription-Key'] = endpoint.endpointKey;
-        headers['Authorization'] = `EndpointKey ${endpoint.endpointKey}`;
+        if (endpoint.endpointKey) {
+            headers['Ocp-Apim-Subscription-Key'] = endpoint.endpointKey;
+            headers['Authorization'] = `EndpointKey ${endpoint.endpointKey}`;
+        } else if (endpoint.managedIdentityClientId) {
+            const client = new ManagedIdentityCredential({ clientId: endpoint.managedIdentityClientId });
+            const tokenResponse = await client.getToken(endpoint.host);
+            headers['Authorization'] = `Bearer ${tokenResponse.token}`;
+        }
         headers['User-Agent'] = this.getUserAgent();
         headers['Content-Type'] = 'application/json';
 
