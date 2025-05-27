@@ -529,7 +529,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
             throw new Error('EndpointKey cannot be null or empty.');
         }
 
-        if (this.managedIdentityClientId) {
+        if (this.managedIdentityClientId.value) {
             throw new Error('Cannot set EndpointKey when ManagedIdentityClientId is already set.');
         }
 
@@ -548,7 +548,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
             throw new Error('ManagedIdentityClientId cannot be null or empty.');
         }
 
-        if (this.endpointKey) {
+        if (this.endpointKey.value) {
             throw new Error('Cannot set ManagedIdentityClientId when EndpointKey is already set.');
         }
 
