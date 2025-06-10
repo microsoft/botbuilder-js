@@ -24,6 +24,7 @@ export class CoreBotAdapter extends CloudAdapter {
 
         this.onTurnError = async (context, err) => {
             console.error('[onTurnError] unhandled error', err);
+            console.error('[onTurnError] unhandled error', err.stack);
 
             // Send the exception message to the user. Since the default behavior does not
             // send logs or trace activities, the bot appears hanging without any activity
