@@ -85,22 +85,17 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
      * @returns The identity validation result.
      */
     async authenticateChannelRequest(authHeader: string): Promise<ClaimsIdentity> {
-        if (!authHeader.trim()) {
-            const isAuthDisabled = await this.credentialsFactory.isAuthenticationDisabled();
-            if (!isAuthDisabled) {
+        if (!(await this.credentialsFactory.isAuthenticationDisabled())) {
+            return SkillValidation.createAnonymousSkillClaim();
+        } else {
+            if (!authHeader.trim()) {
                 throw new AuthenticationError(
                     'Unauthorized Access. Request is not authorized',
                     StatusCodes.UNAUTHORIZED,
                 );
             }
-
-            // In the scenario where auth is disabled, we still want to have the isAuthenticated flag set in the
-            // ClaimsIdentity. To do this requires adding in an empty claim. Since ChannelServiceHandler calls are
-            // always a skill callback call, we set the skill claim too.
-            return SkillValidation.createAnonymousSkillClaim();
+            return this.JwtTokenValidation_validateAuthHeader(authHeader, 'unknown', null);
         }
-
-        return this.JwtTokenValidation_validateAuthHeader(authHeader, 'unknown', null);
     }
 
     /**
