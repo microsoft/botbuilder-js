@@ -43,26 +43,27 @@ export class ChannelServiceHandler extends ChannelServiceHandlerBase {
     }
 
     protected async authenticate(authHeader: string): Promise<ClaimsIdentity> {
-        if (!authHeader) {
-            const isAuthDisabled = await this.credentialProvider.isAuthenticationDisabled();
-            if (!isAuthDisabled) {
-                throw new StatusCodeError(StatusCodes.UNAUTHORIZED);
-            }
+        const isAuthDisabled = await this.credentialProvider.isAuthenticationDisabled();
 
+        if (isAuthDisabled) {
             // In the scenario where Auth is disabled, we still want to have the
             // IsAuthenticated flag set in the ClaimsIdentity. To do this requires
             // adding in an empty claim.
             // Since ChannelServiceHandler calls are always a skill callback call, we set the skill claim too.
             return SkillValidation.createAnonymousSkillClaim();
-        }
+        } else {
+            if (!authHeader) {
+                throw new StatusCodeError(StatusCodes.UNAUTHORIZED);
+            }
 
-        return JwtTokenValidation.validateAuthHeader(
-            authHeader,
-            this.credentialProvider,
-            this.channelService,
-            'unknown',
-            undefined,
-            this.authConfig,
-        );
+            return JwtTokenValidation.validateAuthHeader(
+                authHeader,
+                this.credentialProvider,
+                this.channelService,
+                'unknown',
+                undefined,
+                this.authConfig,
+            );
+        }
     }
 }
