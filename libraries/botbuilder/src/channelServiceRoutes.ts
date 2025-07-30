@@ -436,7 +436,12 @@ export class ChannelServiceRoutes {
      */
     private static handleError(err: any, res: WebResponse): void {
         res.status(typeof err?.statusCode === 'number' ? err.statusCode : 500);
-        res.send(err instanceof Error ? err.message : err);
+        if (err instanceof Error) {
+            res.send(err.message);
+        } else {
+            res.send('An error occurred while processing the request.');
+            console.log(err);
+        }
         res.end();
     }
 }
