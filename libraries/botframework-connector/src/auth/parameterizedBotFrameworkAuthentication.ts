@@ -208,15 +208,7 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
         activity: Partial<Activity>,
         authHeader: string,
     ): Promise<ClaimsIdentity> {
-        if (!authHeader.trim()) {
-            const isAuthDisabled = await this.credentialsFactory.isAuthenticationDisabled();
-            if (!isAuthDisabled) {
-                throw new AuthenticationError(
-                    'Unauthorized Access. Request is not authorized',
-                    StatusCodes.UNAUTHORIZED,
-                );
-            }
-
+        if (await this.credentialsFactory.isAuthenticationDisabled()) {
             // Check if the activity is for a skill call and is coming from the Emulator.
             if (activity.channelId === Channels.Emulator && activity.recipient?.role === RoleTypes.Skill) {
                 return SkillValidation.createAnonymousSkillClaim();
@@ -226,15 +218,21 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
             // IsAuthenticated flag set in the ClaimsIdentity. To do this requires
             // adding in an empty claim.
             return new ClaimsIdentity([], AuthenticationConstants.AnonymousAuthType);
+        } else {
+            if (!authHeader.trim()) {
+                throw new AuthenticationError(
+                    'Unauthorized Access. Request is not authorized',
+                    StatusCodes.UNAUTHORIZED,
+                );
+            }
+            const claimsIdentity: ClaimsIdentity = await this.JwtTokenValidation_validateAuthHeader(
+                authHeader,
+                activity.channelId,
+                activity.serviceUrl,
+            );
+
+            return claimsIdentity;
         }
-
-        const claimsIdentity: ClaimsIdentity = await this.JwtTokenValidation_validateAuthHeader(
-            authHeader,
-            activity.channelId,
-            activity.serviceUrl,
-        );
-
-        return claimsIdentity;
     }
 
     private async JwtTokenValidation_validateAuthHeader(
