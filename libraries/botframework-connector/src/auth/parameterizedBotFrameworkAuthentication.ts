@@ -85,7 +85,7 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
      * @returns The identity validation result.
      */
     async authenticateChannelRequest(authHeader: string): Promise<ClaimsIdentity> {
-        if (!(await this.credentialsFactory.isAuthenticationDisabled())) {
+        if (await this.credentialsFactory.isAuthenticationDisabled()) {
             return SkillValidation.createAnonymousSkillClaim();
         } else {
             if (!authHeader.trim()) {
