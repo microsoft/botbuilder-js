@@ -440,7 +440,7 @@ export class ChannelServiceRoutes {
             res.send(err.message);
         } else {
             res.send('An error occurred while processing the request.');
-            console.log(err);
+            console.error(err);
         }
         res.end();
     }
