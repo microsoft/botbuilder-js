@@ -27,7 +27,7 @@ class SimpleConversationIdFactory extends SkillConversationIdFactoryBase {
         if (this.useCreateSkillConversationId) {
             return super.createSkillConversationIdWithOptions();
         }
-        const key = createHash('md5')
+        const key = createHash('sha512')
             .update(opts.activity.conversation.id + opts.activity.serviceUrl)
             .digest('hex');
 
@@ -42,7 +42,7 @@ class SimpleConversationIdFactory extends SkillConversationIdFactoryBase {
     }
 
     async createSkillConversationId(convRef) {
-        const key = createHash('md5')
+        const key = createHash('sha512')
             .update(convRef.conversation.id + convRef.serviceUrl)
             .digest('hex');
 
