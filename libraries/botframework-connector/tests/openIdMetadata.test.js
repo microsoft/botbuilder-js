@@ -78,7 +78,7 @@ GOG4x32vEzakArLPxAKwGvkvu0jToAyvSQIDAQAB
                 assert.equal(foundKey.key, publicKey);
             });
 
-            it('calls refreshCache if lastUpdated < (1000 * 60 * 60 * 24)', async function () {
+            it('calls refreshCache if lastUpdated < refreshInterval (default 24)', async function () {
                 let nockScope = setupNockCalls();
 
                 const openIdMetadata = new OpenIdMetadata(mockUrl + mockMetadataUrl);
@@ -91,6 +91,41 @@ GOG4x32vEzakArLPxAKwGvkvu0jToAyvSQIDAQAB
                 nockScope = setupNockCalls();
                 foundKey = await openIdMetadata.getKey(kid);
                 assert(nockScope.isDone(), 'nock calls not completed');
+                assert.equal(foundKey.key, publicKey);
+            });
+
+            it('calls refreshCache if lastUpdated > refreshInterval', async function () {
+                let nockScope = setupNockCalls();
+
+                const tokenRefreshInterval = 3; // 3 hours
+
+                const openIdMetadata = new OpenIdMetadata(mockUrl + mockMetadataUrl, null, tokenRefreshInterval);
+                let foundKey = await openIdMetadata.getKey(kid);
+                assert(nockScope.isDone(), 'nock calls not completed');
+
+                assert.equal(foundKey.key, publicKey);
+                openIdMetadata.lastUpdated = Date.now() - 1000 * 60 * 60 * 4;
+
+                nockScope = setupNockCalls();
+                foundKey = await openIdMetadata.getKey(kid);
+                assert(nockScope.isDone(), 'nock calls not completed');
+                assert.equal(foundKey.key, publicKey);
+            });
+
+            it('retrieves cached key if lastUpdated < refreshInterval', async function () {
+                let nockScope = setupNockCalls();
+
+                const tokenRefreshInterval = 3; // 3 hours
+
+                const openIdMetadata = new OpenIdMetadata(mockUrl + mockMetadataUrl, null, tokenRefreshInterval);
+                let foundKey = await openIdMetadata.getKey(kid);
+                assert(nockScope.isDone(), 'nock calls not completed');
+
+                assert.equal(foundKey.key, publicKey);
+                openIdMetadata.lastUpdated = Date.now() - 1000 * 60 * 60 * 2;
+
+                nockScope = setupNockCalls();
+                foundKey = await openIdMetadata.getKey(kid);
                 assert.equal(foundKey.key, publicKey);
             });
         });
