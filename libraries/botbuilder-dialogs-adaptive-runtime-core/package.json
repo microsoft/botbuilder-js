@@ -40,7 +40,7 @@
     "depcheck": "depcheck --config ../../.depcheckrc --ignores dependency-graph",
     "lint": "eslint . --config ../../eslint.config.cjs",
     "postbuild": "downlevel-dts lib _ts3.4/lib --checksum",
-    "test": "nyc mocha",
+    "test": "nyc mocha --experimental-transform-types",
     "test:min": "nyc --silent mocha --reporter dot"
   },
   "mocha": {
