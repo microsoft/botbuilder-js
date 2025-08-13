@@ -47,16 +47,9 @@ export namespace JwtTokenValidation {
             authConfig = new AuthenticationConfiguration();
         }
 
-        // eslint-disable-next-line prettier/prettier
-        if (!authHeader.trim()) {  // CodeQL [SM01513] We manually validate incoming tokens.  Checking for empty header as part of that.
-            const isAuthDisabled = await credentials.isAuthenticationDisabled();
-            if (!isAuthDisabled) {
-                throw new AuthenticationError(
-                    'Unauthorized Access. Request is not authorized',
-                    StatusCodes.UNAUTHORIZED,
-                );
-            }
+        const isAuthDisabled = await credentials.isAuthenticationDisabled();
 
+        if (isAuthDisabled) {
             // Check if the activity is for a skill call and is coming from the Emulator.
             if (
                 activity.channelId === Channels.Emulator &&
@@ -70,18 +63,25 @@ export namespace JwtTokenValidation {
             // IsAuthenticated flag set in the ClaimsIdentity. To do this requires
             // adding in an empty claim.
             return new ClaimsIdentity([], AuthenticationConstants.AnonymousAuthType);
+        } else {
+            if (!authHeader.trim()) {
+                throw new AuthenticationError(
+                    'Unauthorized Access. Request is not authorized',
+                    StatusCodes.UNAUTHORIZED,
+                );
+            }
+
+            const claimsIdentity: ClaimsIdentity = await validateAuthHeader(
+                authHeader,
+                credentials,
+                channelService,
+                activity.channelId,
+                activity.serviceUrl,
+                authConfig,
+            );
+
+            return claimsIdentity;
         }
-
-        const claimsIdentity: ClaimsIdentity = await validateAuthHeader(
-            authHeader,
-            credentials,
-            channelService,
-            activity.channelId,
-            activity.serviceUrl,
-            authConfig,
-        );
-
-        return claimsIdentity;
     }
 
     /**
@@ -153,8 +153,7 @@ export namespace JwtTokenValidation {
         }
 
         if (isPublicAzure(channelService)) {
-            // eslint-disable-next-line prettier/prettier
-            if (serviceUrl.trim()) { // CodeQL [SM01513] We manually validate incoming tokens.  Checking for empty serviceUrl as part of that.
+            if (isValidServiceURL(serviceUrl)) {
                 return await ChannelValidation.authenticateChannelTokenWithServiceUrl(
                     authHeader,
                     credentials,
@@ -167,8 +166,7 @@ export namespace JwtTokenValidation {
         }
 
         if (isGovernment(channelService)) {
-            // eslint-disable-next-line prettier/prettier
-            if (serviceUrl.trim()) { // CodeQL [SM01513] We manually validate incoming tokens.  Checking for empty serviceUrl as part of that.
+            if (isValidServiceURL(serviceUrl)) {
                 return await GovernmentChannelValidation.authenticateChannelTokenWithServiceUrl(
                     authHeader,
                     credentials,
@@ -181,8 +179,7 @@ export namespace JwtTokenValidation {
         }
 
         // Otherwise use Enterprise Channel Validation
-        // eslint-disable-next-line prettier/prettier
-        if (serviceUrl.trim()) { // CodeQL [SM01513] We manually validate incoming tokens.  Checking for empty serviceUrl as part of that.
+        if (isValidServiceURL(serviceUrl)) {
             return await EnterpriseChannelValidation.authenticateChannelTokenWithServiceUrl(
                 authHeader,
                 credentials,
@@ -268,6 +265,18 @@ export namespace JwtTokenValidation {
 
     function isPublicAzure(channelService: string): boolean {
         return !channelService || channelService.length === 0;
+    }
+
+    function isValidServiceURL(serviceUrl: string): boolean {
+        const trimmedUrl = serviceUrl.trim();
+        const absoluteUrl =
+            trimmedUrl.startsWith('http') || trimmedUrl.startsWith('wss') ? trimmedUrl : `https://${trimmedUrl}`;
+        try {
+            const newUri = new URL(absoluteUrl);
+            return !!newUri;
+        } catch {
+            return false;
+        }
     }
 
     /**
