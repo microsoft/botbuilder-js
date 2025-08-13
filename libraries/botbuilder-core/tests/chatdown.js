@@ -638,7 +638,7 @@ function* fileLineIterator(fileContents) {
 }
 
 function getHashCode(contents) {
-    return crypto.createHash('sha1').update(contents).digest('base64');
+    return crypto.createHash('sha512').update(contents).digest('base64');
 }
 
 class Activity {

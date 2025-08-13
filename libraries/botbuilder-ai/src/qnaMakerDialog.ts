@@ -116,6 +116,7 @@ export interface QnAMakerDialogConfiguration extends DialogConfiguration {
     knowledgeBaseId?: string | Expression | StringExpression;
     hostname?: string | Expression | StringExpression;
     endpointKey?: string | Expression | StringExpression;
+    managedIdentityClientId?: string | Expression | StringExpression;
     threshold?: number | string | Expression | NumberExpression;
     top?: number | string | Expression | IntExpression;
     noAnswer?: string | Partial<Activity> | TemplateInterface<Partial<Activity>, DialogStateManager>;
@@ -145,6 +146,8 @@ export type QnASuggestionsActivityFactory = (suggestionsList: string[], noMatche
 const qnaSuggestionsActivityFactory = z.custom<QnASuggestionsActivityFactory>((val) => typeof val === 'function', {
     message: 'QnASuggestionsActivityFactory',
 });
+
+type QnAMakerDialogWithoutOtherAuthorization = Omit<QnAMakerDialog, 'withEndpointKey' | 'withManagedIdentityClientId'>;
 
 /**
  * A dialog that supports multi-step and adaptive-learning QnA Maker services.
@@ -224,7 +227,12 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
     /**
      * Gets or sets the QnA Maker endpoint key to use to query the knowledge base.
      */
-    endpointKey: StringExpression;
+    endpointKey: StringExpression = new StringExpression('');
+
+    /**
+     * Gets or sets the Managed Identity ClientId to use to query the knowledge base.
+     */
+    managedIdentityClientId: StringExpression = new StringExpression('');
 
     /**
      * Gets or sets the threshold for answers returned, based on score.
@@ -335,7 +343,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
      * Initializes a new instance of the [QnAMakerDialog](xref:QnAMakerDialog) class.
      *
      * @param {string} knowledgeBaseId The ID of the QnA Maker knowledge base to query.
-     * @param {string} endpointKey The QnA Maker endpoint key to use to query the knowledge base.
+     * @param {string} endpointKey **Deprecated - use withEndpointKey() instead**. The QnA Maker endpoint key to use to query the knowledge base.
      * @param {string} hostname The QnA Maker host URL for the knowledge base, starting with "https://" and ending with "/qnamaker".
      * @param {string} noAnswer (Optional) The activity to send the user when QnA Maker does not find an answer.
      * @param {number} threshold (Optional) The threshold above which to treat answers found from the knowledgebase as a match.
@@ -372,7 +380,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
      * Initializes a new instance of the [QnAMakerDialog](xref:QnAMakerDialog) class.
      *
      * @param {string} knowledgeBaseId The ID of the QnA Maker knowledge base to query.
-     * @param {string} endpointKey The QnA Maker endpoint key to use to query the knowledge base.
+     * @param {string} endpointKey **Deprecated - use withEndpointKey() instead**. The QnA Maker endpoint key to use to query the knowledge base.
      * @param {string} hostname The QnA Maker host URL for the knowledge base, starting with "https://" and ending with "/qnamaker".
      * @param {string} noAnswer (Optional) The activity to send the user when QnA Maker does not find an answer.
      * @param {number} threshold (Optional) The threshold above which to treat answers found from the knowledgebase as a match.
@@ -435,6 +443,9 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         }
 
         if (endpointKey) {
+            console.warn(
+                "Providing an endpointKey in the QnAMakerDialog constructor is deprecated, use withEndpointKey() method instead and provide 'null' or 'empty' value in the constructor.",
+            );
             this.endpointKey = new StringExpression(endpointKey);
         }
 
@@ -508,6 +519,44 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
     }
 
     /**
+     * Uses the provided QnA Maker EndpointKey to authenticate against the resource to query the knowledge base.
+     *
+     * @param endpointKey The QnA Maker endpoint key to use to query the knowledge base.
+     * @returns The QnAMakerDialog instance.
+     */
+    withEndpointKey(endpointKey: string): QnAMakerDialogWithoutOtherAuthorization {
+        if (!endpointKey?.trim()) {
+            throw new Error('EndpointKey cannot be null or empty.');
+        }
+
+        if (this.managedIdentityClientId.value) {
+            throw new Error('Cannot set EndpointKey when ManagedIdentityClientId is already set.');
+        }
+
+        this.endpointKey = new StringExpression(endpointKey);
+        return this;
+    }
+
+    /**
+     * Uses the provided QnA Maker ManagedIdentityClientId to authenticate against the resource to query the knowledge base.
+     *
+     * @param managedIdentityClientId The QnA Maker managed identity client id to use to query the knowledge base.
+     * @returns The QnAMakerDialog instance.
+     */
+    withManagedIdentityClientId(managedIdentityClientId: string): QnAMakerDialogWithoutOtherAuthorization {
+        if (!managedIdentityClientId?.trim()) {
+            throw new Error('ManagedIdentityClientId cannot be null or empty.');
+        }
+
+        if (this.endpointKey.value) {
+            throw new Error('Cannot set ManagedIdentityClientId when EndpointKey is already set.');
+        }
+
+        this.managedIdentityClientId = new StringExpression(managedIdentityClientId);
+        return this;
+    }
+
+    /**
      * @param property Properties that extend QnAMakerDialogConfiguration.
      * @returns The expression converter.
      */
@@ -518,6 +567,8 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
             case 'hostname':
                 return new StringExpressionConverter();
             case 'endpointKey':
+                return new StringExpressionConverter();
+            case 'managedIdentityClientId':
                 return new StringExpressionConverter();
             case 'threshold':
                 return new NumberExpressionConverter();
@@ -655,9 +706,18 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
             return qnaClient;
         }
 
+        const endpointKey = this.endpointKey?.getValue(dc.state);
+        const managedIdentityClientId = this.managedIdentityClientId?.getValue(dc.state);
+        if (!endpointKey?.trim() && !managedIdentityClientId?.trim()) {
+            throw new Error(
+                'An authorization method is required. Either EndpointKey or ManagedIdentityClientId must be set, use withEndpointKey() or withManagedIdentityClientId() respectively.',
+            );
+        }
+
         const endpoint = {
             knowledgeBaseId: this.knowledgeBaseId.getValue(dc.state),
-            endpointKey: this.endpointKey.getValue(dc.state),
+            endpointKey,
+            managedIdentityClientId,
             host: this.qnaServiceType === ServiceType.language ? this.hostname.getValue(dc.state) : this.getHost(dc),
             qnaServiceType: this.qnaServiceType,
         };

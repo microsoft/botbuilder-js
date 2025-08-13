@@ -531,6 +531,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
     isTest: boolean;
     knowledgeBaseId: StringExpression;
     logPersonalInformation: BoolExpression;
+    managedIdentityClientId: StringExpression;
     noAnswer: TemplateInterface<Partial<Activity>, DialogStateManager>;
     protected onPreBubbleEvent(dc: DialogContext, e: DialogEvent): Promise<boolean>;
     protected options: string;
@@ -543,6 +544,9 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
     threshold: NumberExpression;
     top: IntExpression;
     useTeamsAdaptiveCard: boolean;
+    // Warning: (ae-forgotten-export) The symbol "QnAMakerDialogWithoutOtherAuthorization" needs to be exported by the entry point index.d.ts
+    withEndpointKey(endpointKey: string): QnAMakerDialogWithoutOtherAuthorization;
+    withManagedIdentityClientId(managedIdentityClientId: string): QnAMakerDialogWithoutOtherAuthorization;
 }
 
 // @public
@@ -562,9 +566,10 @@ export interface QnAMakerDialogResponseOptions {
 
 // @public
 export interface QnAMakerEndpoint {
-    endpointKey: string;
+    endpointKey?: string;
     host: string;
     knowledgeBaseId: string;
+    managedIdentityClientId?: string;
     qnaServiceType?: ServiceType;
 }
 

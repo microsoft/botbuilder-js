@@ -14,7 +14,7 @@ const {
 
 const AUTH_HEADER = 'Bearer HelloWorld';
 const AUTH_CONFIG = new AuthenticationConfiguration();
-const CREDENTIALS = new SimpleCredentialProvider('', '');
+const CREDENTIALS = new SimpleCredentialProvider('appId', 'appSecret');
 const ACTIVITY = { id: 'testId', type: ActivityTypes.Message };
 
 class NoAuthHandler extends ChannelServiceHandler {

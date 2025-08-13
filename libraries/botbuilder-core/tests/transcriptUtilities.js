@@ -172,9 +172,13 @@ const decompressZip = (inputPath, outputPath, callback) => {
         .pipe(unzip.Parse())
         .on('entry', (entry) => {
             if (entry.type === 'File' && entry.path.includes(zipTranscriptsRelativePath)) {
-                const fileExtractPath = path.join(outputPath, entry.path);
-                ensureDirectoryExists(fileExtractPath);
-                entry.pipe(fs.createWriteStream(fileExtractPath)).on('error', console.log);
+                if (entry.path.indexOf('..') == -1) {
+                    const fileExtractPath = path.join(outputPath, entry.path);
+                    ensureDirectoryExists(fileExtractPath);
+                    entry.pipe(fs.createWriteStream(fileExtractPath)).on('error', console.log);
+                } else {
+                    console.warn(`Skipping file ${entry.path} as it contains '..' in its path.`);
+                }
             } else {
                 entry.autodrain();
             }

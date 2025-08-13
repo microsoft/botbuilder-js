@@ -3038,7 +3038,7 @@ export function SignInCardView(cardBar: CardBarComponent, header: CardTextCompon
 // @public
 export interface SignInCardViewParameters extends BaseCardViewParameters {
     body: [CardTextComponent] | undefined;
-    cardViewType: 'signIn';
+    cardViewType: 'signIn' | 'signInSso';
     footer?: [CardButtonComponent];
     header: [CardTextComponent];
 }

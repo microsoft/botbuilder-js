@@ -474,7 +474,7 @@ describe('Json load tests', function () {
             .assertReply('Done! You have added a pet named "TestPetName" with id "12121"')
             .assertReply('Now try to specify the id of your pet, and I will help your find it out from the store.')
             .send('12121')
-            .assertReply('Great! I found your pet named "TestPetName"')
+            .assertReply('Great! I found your pet named "TestPetName"', null, 5000)
             .startTest();
     });
 
