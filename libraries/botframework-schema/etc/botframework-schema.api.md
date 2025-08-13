@@ -711,7 +711,7 @@ export interface ConversationMembers {
 
 // @public
 export interface ConversationParameters {
-    activity: Activity;
+    activity?: Activity;
     bot: ChannelAccount;
     channelData: any;
     isGroup: boolean;
