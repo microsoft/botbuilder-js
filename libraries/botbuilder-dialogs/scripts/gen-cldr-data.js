@@ -28,7 +28,7 @@ const tempDirectoryName = '.temp-gen-cldr-data';
 const tempProjectName = 'temp';
 const tempDirectory = path.join(os.tmpdir(), tempDirectoryName, tempProjectName);
 const cldrDataDirectory = path.join(tempDirectory, './node_modules/cldr-data');
-const vendorDirectory = path.join(__dirname, '../vendor/cldr-data');
+const vendorDirectory = path.join(__dirname, '../vendors/cldr-data');
 const cldrDataPackageName = 'cldr-data';
 const cldrDataPackageVersion = '35.1.0';
 
