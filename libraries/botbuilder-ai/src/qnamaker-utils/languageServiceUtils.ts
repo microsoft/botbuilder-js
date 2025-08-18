@@ -116,7 +116,7 @@ export class LanguageServiceUtils {
             return this.formatQnaResult(qnaResults as KnowledgeBaseAnswers);
         }
 
-        throw new Error(`Failed to query knowledgebase: ${qnaResults}`);
+        throw new Error(`Failed to query knowledgebase: ${JSON.stringify(qnaResults)}`);
     }
 
     /**

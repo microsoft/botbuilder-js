@@ -213,8 +213,8 @@ describe('CloudAdapter', function () {
             const claimsValidators = allowedCallersClaimsValidator(['*']);
             const authConfig = new AuthenticationConfiguration([], claimsValidators, validTokenIssuers);
             const credentialsFactory = new ConfigurationServiceClientCredentialFactory({
-                MicrosoftAppId: '',
-                MicrosoftAppPassword: '',
+                MicrosoftAppId: 'app-id',
+                MicrosoftAppPassword: 'app-password',
                 MicrosoftAppType: '',
                 MicrosoftAppTenantId: '',
             });
