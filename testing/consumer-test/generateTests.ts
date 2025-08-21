@@ -10,7 +10,7 @@
 import fs from 'fs';
 import path from 'path';
 
-const versions = ['4.7', '4.8', '4.9', '5.0', '5.1', '5.2', '5.3', '5.4', '5.5', '5.6'];
+const versions = ['4.8', '4.9', '5.0', '5.1', '5.2', '5.3', '5.4', '5.5', '5.6', '5.7', '5.8', '5.9'];
 const targets = ['es6', 'esnext'];
 
 const testsDir = path.resolve(__dirname, 'tests/generated');
