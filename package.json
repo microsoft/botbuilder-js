@@ -90,7 +90,7 @@
     "@standardlabs/is-private": "^1.0.1",
     "@types/lodash": "^4.17.7",
     "@types/mocha": "^10.0.8",
-    "@types/node": "18.19.47",
+    "@types/node": "^18.19.123",
     "@types/sinon": "^17.0.3",
     "applicationinsights": "^2.9.6",
     "depcheck": "^1.4.7",
@@ -120,7 +120,7 @@
     "typedoc-plugin-external-module-name": "^4.0.6",
     "typedoc-plugin-markdown": "^4.2.7",
     "typedoc": "^0.26.7",
-    "typescript": "~4.7",
+    "typescript": "~4.8",
     "typescript-eslint": "^8.15.0",
     "webpack-dev-server": "^5.2.1",
     "wsrun": "^5.2.4"

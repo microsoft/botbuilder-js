@@ -30,12 +30,12 @@
     }
   },
   "dependencies": {
-    "@types/node": "18.19.47",
     "@types/ws": "^6.0.3",
     "uuid": "^10.0.0",
     "ws": "^7.5.10"
   },
   "devDependencies": {
+    "@types/node": "^18.19.123",
     "chai": "^5.1.2"
   },
   "scripts": {

@@ -49,7 +49,7 @@
   "devDependencies": {
     "@types/jspath": "^0.4.2",
     "antlr4ts-cli": "0.5.0-alpha.4",
-    "typescript": "~4.7"
+    "typescript": "~4.8"
   },
   "scripts": {
     "build": "npm-run-all build:src build:tests build:browser",

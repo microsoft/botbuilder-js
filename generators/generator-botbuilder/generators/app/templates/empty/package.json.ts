@@ -25,10 +25,10 @@
     },
     "devDependencies": {
         "@types/dotenv": "6.1.1",
-        "@types/node": "^18.19.47",
+        "@types/node": "^18.19.123",
         "@types/restify": "8.4.2",
         "nodemon": "^2.0.4",
         "tslint": "^6.1.2",
-        "typescript": "^5.6.3"
+        "typescript": "^5.9.0"
     }
 }
