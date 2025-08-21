@@ -39,7 +39,6 @@ export interface INodeBuffer extends Uint8Array {
         sourceEnd?: number,
     ): number;
     copy(targetBuffer: Uint8Array, targetStart?: number, sourceStart?: number, sourceEnd?: number): number;
-    slice(start?: number, end?: number): this;
 
     writeUIntLE(value: number, offset: number, byteLength: number, noAssert?: boolean): number;
     writeUIntBE(value: number, offset: number, byteLength: number, noAssert?: boolean): number;
