@@ -39,7 +39,8 @@ const getSettings = (test = null) => {
         databaseId: 'CosmosPartitionedStorageTestDb',
         containerId: `CosmosPartitionedStorageTestContainer-${testId}`,
         cosmosClientOptions: {
-            agent: new https.Agent({ rejectUnauthorized: false }), // rejectUnauthorized disables the SSL verification for the locally-hosted Emulator
+            // rejectUnauthorized disables the SSL verification for the locally-hosted Emulator
+            agent: new https.Agent({ rejectUnauthorized: false }), // CodeQL [SM03616]  Used only in tests with local cosmosdb emulator
         },
     };
 };
@@ -53,7 +54,7 @@ const checkEmulator = async () => {
         } else {
             try {
                 const agent = new https.Agent({
-                    rejectUnauthorized: false,
+                    rejectUnauthorized: false, // CodeQL [SM03616]  Used only in tests with local cosmosdb emulator
                 });
                 await fetch(emulatorEndpoint, { agent });
                 canConnectToEmulator = true;
@@ -84,7 +85,7 @@ const cleanup = async () => {
         const client = new CosmosClient({
             endpoint: settings.cosmosDbEndpoint,
             key: settings.authKey,
-            agent: new https.Agent({ rejectUnauthorized: false }),
+            agent: new https.Agent({ rejectUnauthorized: false }), // CodeQL [SM03616]  Used only in tests with local cosmosdb emulator
         });
         try {
             await client.database(settings.databaseId).delete();
@@ -111,7 +112,7 @@ const prep = async function () {
         const client = new CosmosClient({
             endpoint: settings.cosmosDbEndpoint,
             key: settings.authKey,
-            agent: new https.Agent({ rejectUnauthorized: false }),
+            agent: new https.Agent({ rejectUnauthorized: false }), // CodeQL [SM03616]  Used only in tests with local cosmosdb emulator
         });
 
         // This throws if the db is already created. We want to always create it if it doesn't exist,
@@ -190,7 +191,7 @@ describe('CosmosDbPartitionedStorage', function () {
 
             const settingsWithClientOptions = getSettings(this.test);
             settingsWithClientOptions.cosmosClientOptions = {
-                agent: new https.Agent({ rejectUnauthorized: false }),
+                agent: new https.Agent({ rejectUnauthorized: false }), // CodeQL [SM03616]  Used only in tests with local cosmosdb emulator
                 connectionPolicy: { requestTimeout: 999 },
                 userAgentSuffix: 'test',
             };
@@ -209,7 +210,7 @@ describe('CosmosDbPartitionedStorage', function () {
 
             const settingsWithClientOptions = getSettings(this.test);
             settingsWithClientOptions.cosmosClientOptions = {
-                agent: new https.Agent({ rejectUnauthorized: false }),
+                agent: new https.Agent({ rejectUnauthorized: false }), // CodeQL [SM03616]  Used only in tests with local cosmosdb emulator
                 connectionPolicy: { requestTimeout: 999 },
             };
 
@@ -340,7 +341,7 @@ describe('CosmosDbPartitionedStorage', function () {
             const dbCreateClient = new CosmosClient({
                 endpoint: settingsWithNewDb.cosmosDbEndpoint,
                 key: settingsWithNewDb.authKey,
-                agent: new https.Agent({ rejectUnauthorized: false }),
+                agent: new https.Agent({ rejectUnauthorized: false }), // CodeQL [SM03616]  Used only in tests with local cosmosdb emulator
             });
             try {
                 await dbCreateClient.database(newDb).delete();
