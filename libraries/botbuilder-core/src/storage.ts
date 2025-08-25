@@ -133,6 +133,6 @@ export function calculateChangeHash(item: StoreItem): string {
 
     const result = stringify(rest);
     const hash = createHash('sha256', { encoding: 'utf-8' });
-    const hashed = hash.update(result).digest('hex'); // CodeQL [SM01511] We are not hashing a password or any user input here.
+    const hashed = hash.update(result).digest('hex'); // CodeQL [SM01511] Hash is for change detection only (non-secret, non-auth use); not used for passwords or credentials.
     return hashed;
 }
