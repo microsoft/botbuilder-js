@@ -27,10 +27,6 @@
     }
   },
   "dependencies": {
-    "@microsoft/recognizers-text-choice": "1.1.4",
-    "@microsoft/recognizers-text-date-time": "1.1.4",
-    "@microsoft/recognizers-text-number": "1.3.1",
-    "@microsoft/recognizers-text-suite": "1.1.4",
     "botbuilder-core": "4.1.6",
     "botbuilder-dialogs-adaptive-runtime-core": "4.1.6",
     "botframework-connector": "4.1.6",   
@@ -43,6 +39,12 @@
     "@types/globalize": "^1.5.5",
     "line-reader": "^0.4.0"
   },
+  "localDependencies": {
+    "@microsoft/recognizers-text-choice": "1.1.4",
+    "@microsoft/recognizers-text-date-time": "1.1.4",
+    "@microsoft/recognizers-text-number": "1.1.4",
+    "@microsoft/recognizers-text-suite": "1.1.4"
+  },
   "scripts": {
     "build": "tsc -b",
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder-dialogs --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-dialogs .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Dialogs\" --readme none",
@@ -53,16 +55,12 @@
     "postbuild": "downlevel-dts lib _ts3.4/lib --checksum",
     "test": "npm-run-all build test:mocha",
     "test:mocha": "nyc mocha --recursive --require source-map-support/register tests",
-    "test:compat": "api-extractor run --verbose",
-    "postinstall": "npm run text-suite && npm run date-time && npm run number-with-unit",
-    "text-suite": "npx rimraf ../@microsoft/recognizers-text-suite/node_modules/@microsoft/recognizers-text-number",
-    "date-time": "npx rimraf ../@microsoft/recognizers-text-date-time/node_modules/@microsoft/recognizers-text-number",
-    "number-with-unit": "npx rimraf ../@microsoft/recognizers-text-number-with-unit/node_modules/@microsoft/recognizers-text-number"
+    "test:compat": "api-extractor run --verbose"
   },
   "files": [
     "_ts3.4",
     "lib",
     "src",
-    "vendor"
+    "vendors"
   ]
 }

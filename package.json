@@ -5,6 +5,7 @@
   "workspaces": {
     "packages": [
       "libraries/*",
+      "libraries/botbuilder-vendors/vendors/**",
       "testing/*",
       "testing/browser-functional/browser-echo-bot",
       "tools"
@@ -63,10 +64,10 @@
     "test:runtime": "wsrun -m -p \"botbuilder-dialogs-adaptive-runtime*\" -t test",
     "test:runtime:min": "wsrun -m -p \"botbuilder-dialogs-adaptive-runtime*\" -t test:min",
     "test:schemas": "mocha libraries/botbuilder-dialogs-declarative/tests/schemaMergeTest.js --exit --bail",
-    "update-versions": "yarn workspace botbuilder-repo-utils update-versions"
+    "update-versions": "yarn workspace botbuilder-repo-utils update-versions",
+    "postupdate-versions": "yarn workspace botbuilder-vendors connect --set-dependencies"
   },
   "resolutions": {
-    "@microsoft/recognizers-text-number": "~1.3.1",
     "**/botbuilder-dialogs-adaptive-runtime-integration-restify/restify/send": "^0.19.0",
     "**/restify/find-my-way": "^8.2.2",
     "@babel/runtime-corejs3": "^7.26.10",
@@ -134,7 +135,8 @@
       "**/botframework-luis/**",
       "**/tests/**",
       "**/tools/**",
-      "**/internal.*"
+      "**/internal.*",
+      "**/vendors/**"
     ]
   }
 }
