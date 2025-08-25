@@ -31,6 +31,6 @@ export class JwtTokenProviderFactory implements IJwtTokenProviderFactory {
     createAzureServiceTokenProvider(appId: string): DefaultAzureCredential {
         ok(appId?.trim(), 'jwtTokenProviderFactory.createAzureServiceTokenProvider(): missing appId.');
 
-        return new DefaultAzureCredential({ managedIdentityClientId: appId });
+        return new DefaultAzureCredential({ managedIdentityClientId: appId }); // CodeQL [SM05138] Changing this would break retro-compatibility
     }
 }
