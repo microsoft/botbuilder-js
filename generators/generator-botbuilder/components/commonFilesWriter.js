@@ -40,7 +40,6 @@ module.exports.commonFilesWriter = (generator, templatePath) => {
 
   // write the project files common to all templates
   // do any text token processing where required
-  // NOTE:  core bot with tests overwrites this file to add a npm test script command
   generator.fs.copyTpl(
     generator.templatePath(path.join(templatePath, 'package.json.' + extension)),
     generator.destinationPath('package.json'),

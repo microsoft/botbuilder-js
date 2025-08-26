@@ -352,10 +352,13 @@ export class ConfigurationBotFrameworkAuthentication extends BotFrameworkAuthent
     createUserTokenClient(claimsIdentity: ClaimsIdentity): Promise<UserTokenClient>;
 }
 
-// Warning: (ae-forgotten-export) The symbol "TypedOptions" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "ZodOptions" needs to be exported by the entry point index.d.ts
 //
 // @public
-export type ConfigurationBotFrameworkAuthenticationOptions = z.infer<typeof TypedOptions>;
+export interface ConfigurationBotFrameworkAuthenticationOptions extends ZodOptions {
+    // (undocumented)
+    [key: string]: string | boolean | undefined;
+}
 
 // @public
 export class ConfigurationServiceClientCredentialFactory extends PasswordServiceClientCredentialFactory {
@@ -391,7 +394,7 @@ export interface CoreAppCredentials {
 }
 
 // @public
-export function createBotFrameworkAuthenticationFromConfiguration(configuration: Configuration, credentialsFactory?: ServiceClientCredentialsFactory, authConfiguration?: AuthenticationConfiguration, botFrameworkClientFetch?: (input: RequestInfo, init?: RequestInit) => Promise<Response>, connectorClientOptions?: ConnectorClientOptions): BotFrameworkAuthentication;
+export function createBotFrameworkAuthenticationFromConfiguration(configuration: Configuration | null, credentialsFactory?: ServiceClientCredentialsFactory, authConfiguration?: AuthenticationConfiguration, botFrameworkClientFetch?: (input: RequestInfo, init?: RequestInit) => Promise<Response>, connectorClientOptions?: ConnectorClientOptions): BotFrameworkAuthentication;
 
 // @public
 export function createServiceClientCredentialFactoryFromConfiguration(configuration: Configuration): ConfigurationServiceClientCredentialFactory;

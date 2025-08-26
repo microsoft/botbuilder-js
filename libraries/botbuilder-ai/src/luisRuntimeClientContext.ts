@@ -4,14 +4,17 @@
  * license information.
  */
 
-import { ServiceClient, ServiceClientCredentials, ServiceClientOptions } from '@azure/core-http';
+import {
+    ServiceClientContext,
+    ServiceClientCredentials,
+    ServiceClientOptions,
+} from 'botbuilder-stdlib/lib/azureCoreHttpCompat';
 
 /**
  * Client for LUIS context
  */
-export class LUISRuntimeClientContext extends ServiceClient {
+export class LUISRuntimeClientContext extends ServiceClientContext {
     endpoint: string;
-    credentials: ServiceClientCredentials;
 
     /**
      * Initializes a new instance of the LUISRuntimeClientContext class.
@@ -33,11 +36,10 @@ export class LUISRuntimeClientContext extends ServiceClient {
             options = {};
         }
 
-        super(credentials, options);
+        const baseUri = options?.baseUri || `${endpoint}/luis/v3.0-preview`;
 
-        this.baseUri = '{Endpoint}/luis/v3.0-preview';
-        this.requestContentType = 'application/json; charset=utf-8';
+        super(credentials, { ...options, baseUri });
+
         this.endpoint = endpoint;
-        this.credentials = credentials;
     }
 }

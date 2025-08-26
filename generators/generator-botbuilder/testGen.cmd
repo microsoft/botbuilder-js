@@ -58,53 +58,6 @@ npm run lint
 cd ..
 
 
-#
-# Core bot in TypeScript
-#
-echo Generating my-core-bot-ts
-yo botbuilder -N "my-core-bot-ts" -D "A core bot in ts" -L "TypeScript" -T "core" --noprompt
-cd ./my-core-bot-ts
-echo building and linting my-core-bot-ts
-npm run build
-npm run lint
-cd ..
-
-
-#
-# Core bot with tests in TypeScript
-#
-echo Generating my-core-bot-with-tests-ts
-yo botbuilder -N "my-core-bot-with-tests-ts" -D "A core bot with tests in ts" -L "TypeScript" -T "core" --addtests --noprompt
-cd ./my-core-bot-with-tests-ts
-echo building and linting my-core-bot-with-tests-ts
-npm run build
-npm run lint
-npm test
-cd ..
-
-
-#
-# Core bot in JavaScript
-#
-echo Generating my-core-bot-js
-yo botbuilder -N "my-core-bot-js" -D "A core bot in js" -L "JavaScript" -T "core" --noprompt
-cd ./my-core-bot-js
-echo linting my-core-bot-js
-npm run lint
-cd ..
-
-
-#
-# Core bot with tests in JavaScript
-#
-echo Generating my-core-bot-with-tests-js
-yo botbuilder -N "my-core-bot-with-tests-js" -D "A core bot with tests in js" -L "JavaScript" -T "core" --addtests --noprompt
-cd ./my-core-bot-with-tests-js
-echo linting my-core-bot-with-tests-js
-npm run lint
-npm test
-cd ..
-
 if [ "$1" = nocleanup ] || [ "$1" = noclean ]
 then
     echo "*****************************************************************************"
@@ -135,28 +88,4 @@ else
     # Echo bot in JavaScript
     #
     rm -rf ./my-echo-bot-js
-
-
-    #
-    # Core bot in TypeScript
-    #
-    rm -rf ./my-core-bot-ts
-
-
-    #
-    # Core bot with tests in TypeScript
-    #
-    rm -rf ./my-core-bot-with-tests-ts
-
-
-    #
-    # Core bot in JavaScript
-    #
-    rm -rf ./my-core-bot-js
-
-
-    #
-    # Core bot with tests in JavaScript
-    #
-    rm -rf ./my-core-bot-with-tests-js
 fi

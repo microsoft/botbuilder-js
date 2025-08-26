@@ -3,7 +3,7 @@
  * Licensed under the MIT License.
  */
 
-import { OperationURLParameter, OperationQueryParameter } from '@azure/core-http';
+import { OperationURLParameter, OperationQueryParameter } from 'botbuilder-stdlib/lib/azureCoreHttpCompat';
 
 export const teamId: OperationURLParameter = {
     parameterPath: 'teamId',

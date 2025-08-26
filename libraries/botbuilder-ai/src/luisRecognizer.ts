@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { RequestOptionsBase } from '@azure/core-http';
+import { RequestOptionsBase } from 'botbuilder-stdlib/lib/azureCoreHttpCompat';
 
 import Url from 'url-parse';
 import { BotTelemetryClient, NullTelemetryClient, RecognizerResult, TurnContext } from 'botbuilder-core';

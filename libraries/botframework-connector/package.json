@@ -27,11 +27,11 @@
     }
   },
   "dependencies": {
-    "@azure/core-http": "^3.0.4",
+    "@azure/core-rest-pipeline": "^1.18.1",
     "@azure/identity": "^4.4.1",
     "@azure/msal-node": "^2.13.1",
     "@types/jsonwebtoken": "9.0.6",
-    "axios": "^1.7.7",
+    "axios": "^1.8.2",
     "base64url": "^3.0.0",
     "botbuilder-stdlib": "4.1.6",
     "botframework-schema": "4.1.6",
@@ -45,7 +45,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@types/node": "18.19.47",
+    "@types/node": "^18.19.123",
     "botbuilder-test-utils": "0.0.0",
     "dotenv": "^16.4.5",
     "nock": "^13.5.5",
@@ -59,7 +59,7 @@
     "build:browser:run": "tsup --config ../../tsup/browser.config.ts",
     "build:downlevel-dts": "downlevel-dts lib _ts3.4/lib --checksum",
     "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
-    "depcheck": "depcheck --config ../../.depcheckrc --ignores azure,sinon,browserify-fs,buffer,crypto-browserify,https-browserify,stream-browserify,stream-http",
+    "depcheck": "depcheck --config ../../.depcheckrc --ignores azure,sinon,browserify-fs,buffer,https-browserify,stream-browserify,stream-http",
     "lint": "eslint .",
     "postbuild": "npm-run-all -p build:browser build:downlevel-dts",
     "test": "yarn build && yarn test:mocha",

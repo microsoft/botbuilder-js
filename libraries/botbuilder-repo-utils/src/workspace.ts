@@ -42,9 +42,7 @@ export async function collectWorkspacePackages(
 ): Promise<Array<Workspace>> {
     // Note: posix is required, this emits absolute paths that are platform specific
     const paths = await glob(
-        workspaces.map((workspace) =>
-            path.posix.join(repoRoot, workspace, '{package.json,package-with-tests.json}{,.js,.ts}'),
-        ),
+        workspaces.map((workspace) => path.posix.join(repoRoot, workspace, 'package.json{,.js,.ts}')),
     );
 
     const maybeWorkspaces = await Promise.all(

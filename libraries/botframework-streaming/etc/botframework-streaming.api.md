@@ -91,8 +91,6 @@ export interface INodeBuffer extends Uint8Array {
     // (undocumented)
     readUIntLE(offset: number, byteLength: number, noAssert?: boolean): number;
     // (undocumented)
-    slice(start?: number, end?: number): this;
-    // (undocumented)
     swap16(): this;
     // (undocumented)
     swap32(): this;

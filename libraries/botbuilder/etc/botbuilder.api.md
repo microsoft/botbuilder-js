@@ -41,8 +41,8 @@ import { ExtendedUserTokenProvider } from 'botbuilder-core';
 import { FileConsentCardResponse } from 'botbuilder-core';
 import { GetPropertyPaneConfigurationResponse } from 'botbuilder-core';
 import { HandleActionResponse } from 'botbuilder-core';
-import { HttpClient } from '@azure/core-http';
-import { HttpOperationResponse } from '@azure/core-http';
+import { HttpClient } from 'botbuilder-stdlib/lib/azureCoreHttpCompat';
+import { HttpOperationResponse } from 'botbuilder-stdlib/lib/azureCoreHttpCompat';
 import { ICredentialProvider } from 'botframework-connector';
 import { INodeBuffer } from 'botframework-streaming';
 import { INodeDuplex } from 'botframework-streaming';
@@ -101,7 +101,7 @@ import { TranscriptInfo } from 'botbuilder-core';
 import { TranscriptStore } from 'botbuilder-core';
 import { TurnContext } from 'botbuilder-core';
 import { UserState } from 'botbuilder-core';
-import { WebResource } from '@azure/core-http';
+import { WebResourceLike } from 'botbuilder-stdlib/lib/azureCoreHttpCompat';
 
 // Warning: (ae-forgotten-export) The symbol "ConnectorClientBuilder" needs to be exported by the entry point index.d.ts
 //
@@ -389,7 +389,7 @@ export class StatusCodeError extends Error {
 // @public
 export class StreamingHttpClient implements HttpClient {
     constructor(server: IStreamingTransportServer);
-    sendRequest(httpRequest: WebResource): Promise<HttpOperationResponse>;
+    sendRequest(httpRequest: WebResourceLike): Promise<HttpOperationResponse>;
 }
 
 // @public

@@ -12,7 +12,7 @@ import { EndorsementsValidator } from './endorsementsValidator';
 import { OpenIdMetadata } from './openIdMetadata';
 import { AuthenticationError } from './authenticationError';
 import { StatusCodes } from 'botframework-schema';
-import { ProxySettings } from '@azure/core-http';
+import { ProxySettings } from 'botbuilder-stdlib/lib/azureCoreHttpCompat';
 
 /**
  * A JWT token processing class that gets identity information and performs security token validation.
@@ -34,22 +34,32 @@ export class JwtTokenExtractor {
      * @param metadataUrl Metadata Url.
      * @param allowedSigningAlgorithms Allowed signing algorithms.
      * @param proxySettings The proxy settings for the request.
+     * @param tokenRefreshInterval The token refresh interval in hours. The default value is 24 hours.
      */
     constructor(
         tokenValidationParameters: VerifyOptions,
         metadataUrl: string,
         allowedSigningAlgorithms: string[] | Algorithm[],
         proxySettings?: ProxySettings,
+        tokenRefreshInterval?: number,
     ) {
         this.tokenValidationParameters = { ...tokenValidationParameters };
         this.tokenValidationParameters.algorithms = allowedSigningAlgorithms as Algorithm[];
-        this.openIdMetadata = JwtTokenExtractor.getOrAddOpenIdMetadata(metadataUrl, proxySettings);
+        this.openIdMetadata = JwtTokenExtractor.getOrAddOpenIdMetadata(
+            metadataUrl,
+            proxySettings,
+            tokenRefreshInterval,
+        );
     }
 
-    private static getOrAddOpenIdMetadata(metadataUrl: string, proxySettings?: ProxySettings): OpenIdMetadata {
+    private static getOrAddOpenIdMetadata(
+        metadataUrl: string,
+        proxySettings?: ProxySettings,
+        tokenRefreshInterval?: number,
+    ): OpenIdMetadata {
         let metadata = this.openIdMetadataCache.get(metadataUrl);
         if (!metadata) {
-            metadata = new OpenIdMetadata(metadataUrl, proxySettings);
+            metadata = new OpenIdMetadata(metadataUrl, proxySettings, tokenRefreshInterval);
             this.openIdMetadataCache.set(metadataUrl, metadata);
         }
 

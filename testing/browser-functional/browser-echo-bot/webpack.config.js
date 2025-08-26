@@ -61,10 +61,13 @@ module.exports = {
             tls: false,
             vm: false,
             path: false,
-            crypto: require.resolve('crypto-browserify'),
+            crypto: false,
             stream: require.resolve('stream-browserify'),
             buffer: require.resolve('buffer'),
             'process/browser': require.resolve('process/browser'),
+        },
+        alias: {
+            crypto: resolve(__dirname, 'crypto-shim.js'),
         },
     },
     output: {

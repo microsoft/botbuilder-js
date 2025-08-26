@@ -711,7 +711,7 @@ export interface ConversationMembers {
 
 // @public
 export interface ConversationParameters {
-    activity: Activity;
+    activity?: Activity;
     bot: ChannelAccount;
     channelData: any;
     isGroup: boolean;
@@ -3038,7 +3038,7 @@ export function SignInCardView(cardBar: CardBarComponent, header: CardTextCompon
 // @public
 export interface SignInCardViewParameters extends BaseCardViewParameters {
     body: [CardTextComponent] | undefined;
-    cardViewType: 'signIn';
+    cardViewType: 'signIn' | 'signInSso';
     footer?: [CardButtonComponent];
     header: [CardTextComponent];
 }

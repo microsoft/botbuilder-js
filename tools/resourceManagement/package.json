@@ -29,5 +29,8 @@
   },
   "scripts": {
     "test": "npm -s run-script jshint"
+  },
+  "dependencies": {
+    "botbuilder-stdlib": "4.1.6"
   }
 }

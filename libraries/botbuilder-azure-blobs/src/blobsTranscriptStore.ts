@@ -15,7 +15,7 @@ import {
     StoragePipelineOptions,
     StorageSharedKeyCredential,
 } from '@azure/storage-blob';
-import { isTokenCredential, TokenCredential } from '@azure/core-http';
+import { isTokenCredential, TokenCredential } from 'botbuilder-stdlib/lib/azureCoreHttpCompat';
 
 // Formats a timestamp in a way that is consistent with the C# SDK
 function formatTicks(timestamp: Date): string {

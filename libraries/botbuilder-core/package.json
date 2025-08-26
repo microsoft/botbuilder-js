@@ -35,7 +35,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "axios": "^1.7.7",
+    "axios": "^1.8.2",
     "mime-types": "^2.1.35",
     "unzipper": "^0.12.3"
   },

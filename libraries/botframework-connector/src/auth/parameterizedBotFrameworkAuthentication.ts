@@ -85,22 +85,17 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
      * @returns The identity validation result.
      */
     async authenticateChannelRequest(authHeader: string): Promise<ClaimsIdentity> {
-        if (!authHeader.trim()) {
-            const isAuthDisabled = await this.credentialsFactory.isAuthenticationDisabled();
-            if (!isAuthDisabled) {
+        if (await this.credentialsFactory.isAuthenticationDisabled()) {
+            return SkillValidation.createAnonymousSkillClaim();
+        } else {
+            if (!authHeader.trim()) {
                 throw new AuthenticationError(
                     'Unauthorized Access. Request is not authorized',
                     StatusCodes.UNAUTHORIZED,
                 );
             }
-
-            // In the scenario where auth is disabled, we still want to have the isAuthenticated flag set in the
-            // ClaimsIdentity. To do this requires adding in an empty claim. Since ChannelServiceHandler calls are
-            // always a skill callback call, we set the skill claim too.
-            return SkillValidation.createAnonymousSkillClaim();
+            return this.JwtTokenValidation_validateAuthHeader(authHeader, 'unknown', null);
         }
-
-        return this.JwtTokenValidation_validateAuthHeader(authHeader, 'unknown', null);
     }
 
     /**
@@ -213,15 +208,7 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
         activity: Partial<Activity>,
         authHeader: string,
     ): Promise<ClaimsIdentity> {
-        if (!authHeader.trim()) {
-            const isAuthDisabled = await this.credentialsFactory.isAuthenticationDisabled();
-            if (!isAuthDisabled) {
-                throw new AuthenticationError(
-                    'Unauthorized Access. Request is not authorized',
-                    StatusCodes.UNAUTHORIZED,
-                );
-            }
-
+        if (await this.credentialsFactory.isAuthenticationDisabled()) {
             // Check if the activity is for a skill call and is coming from the Emulator.
             if (activity.channelId === Channels.Emulator && activity.recipient?.role === RoleTypes.Skill) {
                 return SkillValidation.createAnonymousSkillClaim();
@@ -231,15 +218,21 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
             // IsAuthenticated flag set in the ClaimsIdentity. To do this requires
             // adding in an empty claim.
             return new ClaimsIdentity([], AuthenticationConstants.AnonymousAuthType);
+        } else {
+            if (!authHeader.trim()) {
+                throw new AuthenticationError(
+                    'Unauthorized Access. Request is not authorized',
+                    StatusCodes.UNAUTHORIZED,
+                );
+            }
+            const claimsIdentity: ClaimsIdentity = await this.JwtTokenValidation_validateAuthHeader(
+                authHeader,
+                activity.channelId,
+                activity.serviceUrl,
+            );
+
+            return claimsIdentity;
         }
-
-        const claimsIdentity: ClaimsIdentity = await this.JwtTokenValidation_validateAuthHeader(
-            authHeader,
-            activity.channelId,
-            activity.serviceUrl,
-        );
-
-        return claimsIdentity;
     }
 
     private async JwtTokenValidation_validateAuthHeader(
@@ -306,6 +299,7 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
             this.toBotFromEmulatorOpenIdMetadataUrl,
             AuthenticationConstants.AllowedSigningAlgorithms,
             this.connectorClientOptions?.proxySettings,
+            this.connectorClientOptions?.tokenRefreshInterval,
         );
 
         const parts: string[] = authHeader.split(' ');
@@ -393,6 +387,7 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
             this.toBotFromEmulatorOpenIdMetadataUrl,
             AuthenticationConstants.AllowedSigningAlgorithms,
             this.connectorClientOptions?.proxySettings,
+            this.connectorClientOptions?.tokenRefreshInterval,
         );
 
         const identity: ClaimsIdentity = await tokenExtractor.getIdentityFromAuthHeader(
@@ -480,6 +475,7 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
             this.toBotFromChannelOpenIdMetadataUrl,
             AuthenticationConstants.AllowedSigningAlgorithms,
             this.connectorClientOptions?.proxySettings,
+            this.connectorClientOptions?.tokenRefreshInterval,
         );
 
         const identity: ClaimsIdentity = await tokenExtractor.getIdentityFromAuthHeader(

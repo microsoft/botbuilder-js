@@ -18,6 +18,6 @@
     "restify": "^11.1.0"
   },
   "devDependencies": {
-    "typescript": "~4.7"
+    "typescript": "~4.8"
   }
 }

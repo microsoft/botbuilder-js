@@ -3,7 +3,7 @@
  * Licensed under the MIT License.
  */
 
-import { ServiceCallback, Serializer, OperationSpec } from "@azure/core-http";
+import { ServiceCallback, createSerializer, OperationSpec } from "botbuilder-stdlib/lib/azureCoreHttpCompat";
 import * as Models from "../models";
 import * as Mappers from "../models/botSignInMappers";
 import * as Parameters from "../models/parameters";
@@ -78,7 +78,7 @@ export class BotSignIn {
 }
 
 // Operation Specifications
-const serializer = new Serializer(Mappers);
+const serializer = createSerializer(Mappers);
 const getSignInUrlOperationSpec: OperationSpec = {
   httpMethod: "GET",
   path: "api/botsignin/GetSignInUrl",

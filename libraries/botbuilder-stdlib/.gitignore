@@ -2,3 +2,5 @@ _ts3.4
 lib
 coverage
 .nyc_output
+src/azureCoreHttpCompat/util.*
+src/azureCoreHttpCompat/response.*

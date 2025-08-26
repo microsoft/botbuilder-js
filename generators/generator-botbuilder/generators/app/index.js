@@ -8,7 +8,6 @@ const chalk = require('chalk');
 
 const pkg = require('../../package.json');
 const prompts = require('../../components/prompts');
-const { coreTemplateWriter } = require('../../components/coreTemplateWriter');
 const { echoTemplateWriter } = require('../../components/echoTemplateWriter');
 const { emptyTemplateWriter } = require('../../components/emptyTemplateWriter');
 const {
@@ -16,10 +15,8 @@ const {
     BOT_LANG_NAME_TYPESCRIPT,
     BOT_TEMPLATE_NAME_EMPTY,
     BOT_TEMPLATE_NAME_SIMPLE,
-    BOT_TEMPLATE_NAME_CORE,
     BOT_TEMPLATE_NOPROMPT_EMPTY,
     BOT_TEMPLATE_NOPROMPT_SIMPLE,
-    BOT_TEMPLATE_NOPROMPT_CORE
     } = require('../../components/constants');
 
 _.extend(Generator.prototype, require('yeoman-generator/lib/actions/install'));
@@ -131,11 +128,6 @@ module.exports = class extends Generator {
             echoTemplateWriter(this);
         break;
 
-        case _.toLower(BOT_TEMPLATE_NAME_CORE):
-        case _.toLower(BOT_TEMPLATE_NOPROMPT_CORE):
-            coreTemplateWriter(this);
-        break;
-
         default:
             const errorMsg = `ERROR:  Unable to generate a new bot.  Invalid template: [${template}]`;
             this.log(chalk.red(errorMsg));
@@ -170,23 +162,11 @@ module.exports = class extends Generator {
         const template = (this.templateConfig.template ? _.toLower(this.templateConfig.template) : undefined);
         const tmplEmpty = _.toLower(BOT_TEMPLATE_NOPROMPT_EMPTY);
         const tmplSimple = _.toLower(BOT_TEMPLATE_NOPROMPT_SIMPLE);
-        const tmplCore = _.toLower(BOT_TEMPLATE_NOPROMPT_CORE);
-        if (!template || (template !== tmplEmpty && template !== tmplSimple && template !== tmplCore)) {
+        if (!template || (template !== tmplEmpty && template !== tmplSimple)) {
             throw new Error('Must specify a template when using --noprompt argument.  Use --template or -T');
         }
 
-        // let's see if unit tests are requested
-        if(this.templateConfig.addtests) {
-            // so they're asking for tests, let's make sure they've specified the corebot template
-            // or else we have an invalid set of command line arguments.  unit tests are only available
-            // with the corebot template
-            if(template !== tmplCore) {
-                throw new Error('Invalid use of --addtests.  Can only be specified when using --template "core" or  -T "core" ');
-            }
-        } else {
-            this.templateConfig.addtests = false;
-        }
-            // when run using --noprompt and we have all the required templateConfig, then set final confirmation to true
+        // when run using --noprompt and we have all the required templateConfig, then set final confirmation to true
         // so we can go forward and create the new bot without prompting the user for confirmation
         this.templateConfig.finalConfirmation = true;
     }

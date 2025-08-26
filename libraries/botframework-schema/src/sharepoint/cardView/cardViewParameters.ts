@@ -114,7 +114,7 @@ export interface SignInCardViewParameters extends BaseCardViewParameters {
     /**
      * Card View type
      */
-    cardViewType: 'signIn';
+    cardViewType: 'signIn' | 'signInSso';
     /**
      * Header area components.
      */

@@ -6,13 +6,10 @@ const _ = require('lodash');
 const {
   BOT_TEMPLATE_NAME_EMPTY,
   BOT_TEMPLATE_NAME_SIMPLE,
-  BOT_TEMPLATE_NAME_CORE,
   BOT_TEMPLATE_NOPROMPT_EMPTY,
   BOT_TEMPLATE_NOPROMPT_SIMPLE,
-  BOT_TEMPLATE_NOPROMPT_CORE,
   BOT_HELP_URL_EMPTY,
   BOT_HELP_URL_SIMPLE,
-  BOT_HELP_URL_CORE,
   BOT_LANG_NAME_JAVASCRIPT,
   BOT_LANG_NAME_TYPESCRIPT
   } = require('./constants');
@@ -45,19 +42,12 @@ module.exports.configureCommandlineOptions = gen => {
     alias: 'L'
   });
 
-  const templateDesc = `The initial bot capabilities. (${BOT_TEMPLATE_NAME_EMPTY} | ${BOT_TEMPLATE_NAME_SIMPLE} | ${BOT_TEMPLATE_NAME_CORE})`;
+  const templateDesc = `The initial bot capabilities. (${BOT_TEMPLATE_NAME_EMPTY} | ${BOT_TEMPLATE_NAME_SIMPLE})`;
   gen.option('template', {
     desc: templateDesc,
     type: String,
     default: BOT_TEMPLATE_NOPROMPT_SIMPLE,
     alias: 'T'
-  });
-
-  gen.argument('addtests', {
-    desc: `Generate unit tests (${BOT_TEMPLATE_NAME_CORE} only).`,
-    type: Boolean,
-    required: false,
-    default: false
   });
 
   gen.argument('noprompt', {
@@ -154,10 +144,6 @@ module.exports.getPrompts = (generator) => {
             value: BOT_TEMPLATE_NOPROMPT_SIMPLE
           },
           {
-            name: `${BOT_TEMPLATE_NAME_CORE} - ${BOT_HELP_URL_CORE}`,
-            value: BOT_TEMPLATE_NOPROMPT_CORE
-          },
-          {
             name: `${BOT_TEMPLATE_NAME_EMPTY} - ${BOT_HELP_URL_EMPTY}`,
             value: BOT_TEMPLATE_NOPROMPT_EMPTY
           }
@@ -166,18 +152,6 @@ module.exports.getPrompts = (generator) => {
         }).then(answer => {
           // store the template prompt answer
           generator.templateConfig.template = answer.template;
-
-          if(_.toLower(answer.template) === _.toLower(BOT_TEMPLATE_NOPROMPT_CORE)) {
-            return generator.prompt({
-              type: 'confirm',
-              name: 'addtests',
-              message: 'Would you like to add unit tests to test your new bot?',
-              default: true
-            }).then(answer => {
-              // store the addtests prompt answer
-              generator.templateConfig.addtests = answer.addtests;
-            });
-          }
         });
     },
 

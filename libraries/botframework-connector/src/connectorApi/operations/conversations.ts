@@ -6,7 +6,7 @@
 import * as Mappers from "../models/conversationsMappers";
 import * as Models from "../models";
 import * as Parameters from "../models/parameters";
-import { ServiceCallback, RequestOptionsBase, RestResponse, Serializer, OperationSpec } from "@azure/core-http"
+import { ServiceCallback, RequestOptionsBase, RestResponse, createSerializer, OperationSpec } from "botbuilder-stdlib/lib/azureCoreHttpCompat"
 import { ConnectorClientContext } from "../connectorClientContext";
 import { ConversationIdHttpHeaderName } from "../../conversationConstants";
 
@@ -519,7 +519,7 @@ export class Conversations {
 }
 
 // Operation Specifications
-const serializer = new Serializer(Mappers);
+const serializer = createSerializer(Mappers);
 const getConversationsOperationSpec: OperationSpec = {
   httpMethod: "GET",
   path: "v3/conversations",

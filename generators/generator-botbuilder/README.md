@@ -14,7 +14,6 @@ The generator supports three different template options.  The table below can he
 |  Template  |  Description  |
 | ---------- |  ---------  |
 | Echo&nbsp;Bot | A good template if you want a little more than "Hello World!", but not much more.  This template handles the very basics of sending messages to a bot, and having the bot process the messages by repeating them back to the user.  This template produces a bot that simply "echoes" back to the user anything the user says to the bot. |
-| Core&nbsp;Bot | Our most advanced template, the Core template provides 6 core features every bot is likely to have.  This template covers the core features of a Conversational-AI bot using [LUIS](https://www.luis.ai).  See the **Core Bot Features** table below for more details. |
 | Empty&nbsp;Bot | A good template if you are familiar with Bot Framework v4, and simply want a basic skeleton project.  Also a good option if you want to take sample code from the documentation and paste it into a minimal bot in order to learn. |
 
 ### How to Choose a Template
@@ -22,7 +21,6 @@ The generator supports three different template options.  The table below can he
 | Template | When This Template is a Good Choice |
 | -------- | -------- |
 | Echo&nbsp;Bot  | You are new to Bot Framework v4 and want a working bot with minimal features. |
-| Core&nbsp;Bot | You understand some of the core concepts of Bot Framework v4 and are beyond the concepts introduced in the Echo Bot template.  You're familiar with or are ready to learn concepts such as language understanding using LUIS, managing multi-turn conversations with Dialogs, handling user initiated Dialog interruptions, and using Adaptive Cards to welcome your users. |
 | Empty&nbsp;Bot  | You are a seasoned Bot Framework v4 developer.  You've built bots before, and want the minimum skeleton of a bot. |
 
 ### Template Overview
@@ -31,38 +29,18 @@ The generator supports three different template options.  The table below can he
 
 The Echo Bot template is slightly more than the a classic "Hello World!" example, but not by much.  This template shows the basic structure of a bot, how a bot recieves messages from a user, and how a bot sends messages to a user.  The bot will "echo" back to the user, what the user says to the bot.  It is a good choice for first time, new to Bot Framework v4 developers.
 
-#### Core Bot Template
-
-The Core Bot template consists of set of core features most every bot is likely to have.  Building off of the core message processing features found in the Echo Bot template, this template adds a number of more sophisticated features.  The table below lists these features and provides links to additional documentation.
-
-| Core&nbsp;Bot&nbsp;Features | Description |
-| ------------------ | ----------- |
-| [Send and receive messages](https://docs.microsoft.com/azure/bot-service/bot-builder-howto-send-messages?view=azure-bot-service-4.0&tabs=javascript) | The primary way your bot will communicate with users, and likewise receive communication, is through message activities. Some messages may simply consist of plain text, while others may contain richer content such as cards or attachments. |
-| [Proactive messaging](https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-howto-proactive-message?view=azure-bot-service-4.0) using [Adaptive Cards](https://docs.microsoft.com/azure/bot-service/bot-builder-send-welcome-message?view=azure-bot-service-4.0?#using-adaptive-card-greeting) | The primary goal when creating any bot is to engage your user in a meaningful conversation. One of the best ways to achieve this goal is to ensure that from the moment a user first connects to your bot, they understand your bot’s main purpose and capabilities.  We refer to this as "welcoming the user."  The Core template uses an [Adaptive Card](http://adaptivecards.io) to implement this behavior.  |
-| [Language understanding using LUIS](https://docs.microsoft.com/azure/bot-service/bot-builder-howto-v4-luis?view=azure-bot-service-4.0) | The ability to understand what your user means conversationally and contextually can be a difficult task, but can provide your bot a more natural conversation feel. Language Understanding, called LUIS, enables you to do just that so that your bot can recognize the intent of user messages, allow for more natural language from your user, and better direct the conversation flow. |
-| [Multi-turn conversation support using Dialogs](https://docs.microsoft.com/azure/bot-service/bot-builder-concept-dialog?view=azure-bot-service-4.0) | The ability to manage conversations is an important part of the bot/user interation.  Bot Framework introduces the  concept of a Dialog to handle this conversational pattern.  Dialog objects process inbound Activities and generate outbound responses. The business logic of the bot runs either directly or indirectly within Dialog classes.  |
-| [Managing conversation state](https://docs.microsoft.com/azure/bot-service/bot-builder-howto-v4-state?view=azure-bot-service-4.0) | A key to good bot design is to track the context of a conversation, so that your bot remembers things like the answers to previous questions. |
-| [How to handle user-initiated interruptions](https://docs.microsoft.com/azure/bot-service/bot-builder-howto-handle-user-interrupt?view=azure-bot-service-4.0) | While you may think that your users will follow your defined conversation flow step by step, chances are good that they will change their minds or ask a question in the middle of the process instead of answering the question. Handling interruptions means making sure your bot is prepared to handle situations like this. |
-| [How to unit test a bot](https://aka.ms/cs-unit-test-docs) | Optionally, the Core Bot template can generate corresponding unit tests that shows how to use the testing framework introduced in Bot Framework version 4.5.  Selecting this option provides a complete set of units tests for Core Bot.  It shows how to write unit tests to test the various features of Core Bot. To add the Core Bot unit tests, run the generator and answer `yes` when prompted.  See below for an example of how to do this from the command line.  |
-
 #### Empty Bot Template
 
 The Empty Bot template is the minimal skeleton code for a bot.  It provides a stub `onTurn` handler but does not perform any actions.  If you are experienced writing bots with Bot Framework v4 and want the minimum scaffolding, the Empty template is for you.
 
 ## Features by Template
 
-|  Feature  |  Empty&nbsp;Bot  |  Echo&nbsp;Bot   |  Core&nbsp;Bot  |
-| --------- | :-----: | :-----: | :-----: |
-| Generate code in JavaScript or TypesScript | X | X | X |
-| Support local development and testing using the [Bot Framework Emulator v4](https://www.github.com/microsoft/botframework-emulator) | X | X | X |
-| Core bot message processing |  | X | X |
-| Deploy your bot to Microsoft Azure |  | X | X |
-| Welcome new users using Adaptive Card technology |  |  | X |
-| Support AI-based greetings using [LUIS](https://www.luis.ai) |  |  | X |
-| Use Dialogs to manage more in-depth conversations |  |  | X |
-| Manage conversation state |  |  | X |
-| Handle user interruptions |  |  | X |
-| Unit test a bot using Bot Framework Testing framework (optional) |  |  | X |
+|  Feature  |  Empty&nbsp;Bot  |  Echo&nbsp;Bot   |
+| --------- | :-----: | :-----: |
+| Generate code in JavaScript or TypesScript | X | X |
+| Support local development and testing using the [Bot Framework Emulator v4](https://www.github.com/microsoft/botframework-emulator) | X | X |
+| Core bot message processing |  | X |
+| Deploy your bot to Microsoft Azure |  | X |
 
 ## Installation
 
@@ -108,17 +86,16 @@ The generator supports a number of command line options that can be used to chan
 | --botname, -N     | The name given to the bot project |
 | --description, -D | A brief bit of text that describes the purpose of the bot |
 | --language, -L    | The programming language for the project.  Options are `JavaScript` or `TypeScript`. |
-| --template, -T    | The template used to generate the project.  Options are `empty`, `echo`, or `core`.  See [https://aka.ms/botbuilder-generator](https://aka.ms/botbuilder-generator) for additional information regarding the different template option and their functional differences. |
-| --addtests        | _A Core Bot Template Only Feature_.  The generator will add unit tests to the Core Bot generated bot.  This option is not available to other templates at this time.  To learn more about the test framework released with Bot Framework v4.5, see [How to unit test bots](https://aka.ms/js-unit-test-docs).  This option is intended to enable automated bot generation for testing purposes. |
+| --template, -T    | The template used to generate the project.  Options are `empty` or `echo`.  See [https://aka.ms/botbuilder-generator](https://aka.ms/botbuilder-generator) for additional information regarding the different template option and their functional differences. |
 | --noprompt        | The generator will not prompt for confirmation before creating a new bot.  Any requirement options not passed on the command line will use a reasonable default value.  This option is intended to enable automated bot generation for testing purposes. |
 
 #### Example Using Command Line Options
 
-This example shows how to pass command line options to the generator, setting the default language to TypeScript and the default template to Core.
+This example shows how to pass command line options to the generator, setting the default language to TypeScript and the default template to Echo.
 
 ```bash
-# Run the generator defaulting the language to TypeScript and the template to core
-yo botbuilder --L "TypeScript" --T "core"
+# Run the generator defaulting the language to TypeScript and the template to echo
+yo botbuilder --L "TypeScript" --T "Echo"
 ```
 
 ### Generating a Bot Using --noprompt
@@ -133,7 +110,6 @@ The generator can be run in `--noprompt` mode, which can be used for automated b
 | --description, -D | "Demonstrate the core capabilities of the Microsoft Bot Framework" |
 | --language, -L    | `JavaScript` |
 | --template, -T    | `echo` |
-| --addtests        | When specified, will cause the Core Bot template to add unit tests. |
 
 #### Examples Using --noprompt
 
@@ -149,13 +125,6 @@ This example shows how to run the generator in --noprompt mode, using all the de
 ```bash
 # Run the generator using all default options
 yo botbuilder --noprompt
-```
-
-This example shows how to run the generator in --noprompt mode, generating a TypeScript Core Bot with unit tests.
-
-```bash
-# Run the generator using all default options
-yo botbuilder -N "my-core-bot-with-tests" -D "A core bot with tests in TypeScript" -L "TypeScript" -T "core" --addtests --noprompt
 ```
 
 ## Running Your Bot
@@ -200,15 +169,6 @@ The code generated by the botbuilder generator is lint compliant.  Depending on 
 
 ```bash
 npm run lint
-```
-
-#### Testing Core Bots with Tests
-
-Core Bot templates generated with unit tests can be tested using the following:
-
-```bash
-# launch mocha, run unit tests, report code coverage
-npm test
 ```
 
 ## Deploy Your Bot to Azure
