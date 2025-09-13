@@ -399,6 +399,11 @@ export const Entity: CompositeMapper = {
           className: "ChannelAccount"
         }
       }
+    },
+    additionalProperties: {
+      type: {
+        name: "Object"
+      }
     }
   }
 };
@@ -711,12 +716,7 @@ export const Activity: CompositeMapper = {
           element: {
             type: {
               name: "Composite",
-              className: "Entity",
-              additionalProperties: {
-                type: {
-                  name: "Object"
-                }
-              }
+              className: "Entity"
             }
           }
         }
