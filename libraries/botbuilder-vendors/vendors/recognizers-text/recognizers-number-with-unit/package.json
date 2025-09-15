@@ -1,0 +1,12 @@
+{
+  "name": "@microsoft/recognizers-text-number-with-unit",
+  "version": "1.1.4",
+  "main": "index.js",
+  "localDependencies": {
+    "@microsoft/recognizers-text": "",
+    "@microsoft/recognizers-text-number": ""
+  },
+  "dependencies": {
+    "lodash": "^4.17.21"
+  }
+}

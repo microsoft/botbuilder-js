@@ -28,13 +28,6 @@
     }
   },
   "dependencies": {
-    "@microsoft/recognizers-text": "~1.1.4",
-    "@microsoft/recognizers-text-choice": "~1.1.4",
-    "@microsoft/recognizers-text-date-time": "~1.1.4",
-    "@microsoft/recognizers-text-number": "~1.3.1",
-    "@microsoft/recognizers-text-number-with-unit": "~1.1.4",
-    "@microsoft/recognizers-text-sequence": "~1.1.4",
-    "@microsoft/recognizers-text-suite": "1.1.4",
     "adaptive-expressions": "4.1.6",
     "botbuilder": "4.1.6",
     "botbuilder-core": "4.1.6",
@@ -49,26 +42,32 @@
   "devDependencies": {
     "@types/node-fetch": "^2.6.11"
   },
+  "localDependencies": {
+    "@microsoft/recognizers-text": "1.1.4",
+    "@microsoft/recognizers-text-choice": "1.1.4",
+    "@microsoft/recognizers-text-date-time": "1.1.4",
+    "@microsoft/recognizers-text-number": "1.1.4",
+    "@microsoft/recognizers-text-number-with-unit": "1.1.4",
+    "@microsoft/recognizers-text-sequence": "1.1.4",
+    "@microsoft/recognizers-text-suite": "1.1.4"
+  },
   "scripts": {
     "build": "npm-run-all build:src build:tests",
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder-dialogs-adaptive --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-dialogs .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Dialogs\" --readme none",
     "build:src": "tsc -b",
     "build:tests": "tsc -p tests/tsconfig.json",
     "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
-    "depcheck": "depcheck --config ../../.depcheckrc --ignores botbuilder-dialogs-adaptive-testing,mocha,sinon",
+    "depcheck": "depcheck --config ../../.depcheckrc",
     "lint": "eslint .",
     "postbuild": "downlevel-dts lib _ts3.4/lib --checksum",
     "test": "yarn build && nyc mocha tests/",
-    "test:compat": "api-extractor run --verbose",
-    "postinstall": "npm run text-suite && npm run date-time && npm run number-with-unit",
-    "text-suite": "npx rimraf ../@microsoft/recognizers-text-suite/node_modules/@microsoft/recognizers-text-number",
-    "date-time": "npx rimraf ../@microsoft/recognizers-text-date-time/node_modules/@microsoft/recognizers-text-number",
-    "number-with-unit": "npx rimraf ../@microsoft/recognizers-text-number-with-unit/node_modules/@microsoft/recognizers-text-number"
+    "test:compat": "api-extractor run --verbose"
   },
   "files": [
     "_ts3.4",
     "lib",
     "schemas",
-    "src"
+    "src",
+    "vendors"
   ]
 }

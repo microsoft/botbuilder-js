@@ -1,0 +1,12 @@
+{
+  "name": "@microsoft/recognizers-text-number",
+  "version": "1.1.4",
+  "main": "index.js",
+  "localDependencies": {
+    "@microsoft/recognizers-text": ""
+  },
+  "dependencies": {
+    "bignumber.js": "^7.2.1",
+    "lodash": "^4.17.21"
+  }
+}
