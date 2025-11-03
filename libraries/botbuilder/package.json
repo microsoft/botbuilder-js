@@ -29,7 +29,7 @@
   "dependencies": {
     "@azure/core-rest-pipeline": "^1.18.1",
     "@azure/msal-node": "^2.13.1",
-    "axios": "^1.8.2",
+    "axios": "^1.13.1",
     "botbuilder-core": "4.1.6",
     "botbuilder-stdlib": "4.1.6",
     "botframework-connector": "4.1.6",
