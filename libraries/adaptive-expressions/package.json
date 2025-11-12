@@ -61,7 +61,7 @@
     "build:browser:run": "tsup --no-minify --config ../../tsup/browser.config.ts",
     "build:browser:min": "terser lib/browser.js --compress --output lib/browser.js",
     "clean": "rimraf lib vendors tsconfig.tsbuildinfo",
-    "depcheck": "depcheck --config ../../.depcheckrc --ignores @types/xmldom,d3-format,sinon",
+    "depcheck": "depcheck --config ../../.depcheckrc --ignores @types/xmldom,d3-format,sinon,terser",
     "build-docs": "typedoc --theme markdown --entryPoint adaptive-expressions --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\adaptive-expressions .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Expression\" --readme none",
     "test": "yarn build && mocha tests --timeout 60000",
     "test:compat": "api-extractor run --verbose",
