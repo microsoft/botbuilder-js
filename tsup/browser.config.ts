@@ -22,7 +22,7 @@ export default defineConfig((options) => {
         format: ['cjs'],
         bundle: true,
         sourcemap: true,
-        minify: true,
+        minify: options.minify !== false,
         treeshake: true,
         splitting: false,
         external,
@@ -40,6 +40,7 @@ export default defineConfig((options) => {
                 global: 'globalThis',
             };
             options.alias = {
+                assert: 'assert',
                 crypto: resolve(__dirname, 'crypto-shim.js'),
                 http: 'stream-http',
                 https: 'https-browserify',
@@ -52,6 +53,7 @@ export default defineConfig((options) => {
         esbuildPlugins: [
             polyfillNode({
                 polyfills: {
+                    assert: false,
                     buffer: false,
                     child_process: true,
                     crypto: false,
