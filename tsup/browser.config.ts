@@ -22,7 +22,7 @@ export default defineConfig((options) => {
         format: ['cjs'],
         bundle: true,
         sourcemap: true,
-        minify: true,
+        minify: options.minify !== false,
         treeshake: true,
         splitting: false,
         external,
