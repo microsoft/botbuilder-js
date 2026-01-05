@@ -10654,10 +10654,7 @@
           "title": "ConversationAccount",
           "type": "object",
           "required": [
-            "conversationType",
-            "id",
-            "isGroup",
-            "name"
+            "id"
           ],
           "properties": {
             "isGroup": {
